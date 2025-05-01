@@ -1,15 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ESNext",
     "module": "ESNext",
-    "lib": ["ES2020", "DOM"],
+    "moduleResolution": "bundler",
     "strict": true,
-    "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
-    "rootDir": "src"
+    "types": ["vite/client", "chrome"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

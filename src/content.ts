@@ -1,4 +1,9 @@
-import "./ui/styles.css";
+import styles from "./ui/styles.css";
+
+// Then inject the styles like this:
+const style = document.createElement("style");
+style.textContent = styles;
+document.head.appendChild(style);
 
 class MeetSpeechAssistant {
   private recognition: SpeechRecognition;
@@ -19,8 +24,7 @@ class MeetSpeechAssistant {
 
     this.transcriptContainer = document.createElement("div");
     this.transcriptContainer.id = "meet-speech-transcript";
-    this.transcriptContainer.textContent =
-      "Click the microphone to start listening...";
+    this.transcriptContainer.textContent = "Click the microphone to start listening...";
 
     this.toggleButton = document.createElement("button");
     this.toggleButton.id = "meet-speech-toggle";
@@ -36,8 +40,7 @@ class MeetSpeechAssistant {
   }
 
   private setupRecognition(): void {
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     this.recognition = new SpeechRecognition();
 
     this.recognition.continuous = true;
@@ -46,7 +49,7 @@ class MeetSpeechAssistant {
 
     this.recognition.onresult = (event: SpeechRecognitionEvent) => {
       const transcript = Array.from(event.results)
-        .map((result) => result[0].transcript)
+        .map(result => result[0].transcript)
         .join("");
       this.transcriptContainer.textContent = transcript;
     };
