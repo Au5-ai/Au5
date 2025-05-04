@@ -99,6 +99,7 @@ export interface ExtensionStatus {
 export interface Config {
   /** Webhook endpoint URL */
   webhookUrl: string;
+  token: string;
 }
 
 // =====================================================================================
@@ -135,26 +136,32 @@ export interface Meeting {
 }
 
 // =====================================================================================
-// ------------------------------ ** EXTENSION MESSAGE HANDLING ** --------------------
+// ------------------------------ ** EXTENSION MESSAGING ** ---------------------------
 // =====================================================================================
 
 /**
- * Message sent by the calling script
+ * Types of messages that can be sent from the content/background script.
+ */
+export type ExtensionMessageType = "new_meeting_started" | "meeting_ended" | "recover_last_meeting"; // Add more as needed (e.g., "download_transcript", "retry_webhook")
+
+/**
+ * Message sent by the calling script to communicate an action or event.
  */
 export interface ExtensionMessage {
-  type:
-    | "new_meeting_started"
-    | "meeting_ended"
-    //| "download_transcript_at_index"
-    //| "retry_webhook_at_index"
-    | "recover_last_meeting"; // Type of message
-  index?: number; // Index of the meeting to process
+  /** Type of the message indicating the action to perform */
+  type: ExtensionMessageType;
+
+  /** Optional index of the meeting to act upon, used in actions like retry or download */
+  index?: number;
 }
 
 /**
- * Response sent by the called script
+ * Standardized response returned by the receiving script after processing a message.
  */
 export interface ExtensionResponse {
-  success: boolean; // Whether the message was processed successfully
-  message?: string | undefined; // Message explaining success or failure
+  /** Whether the action was handled successfully */
+  success: boolean;
+
+  /** Optional human-readable message explaining the outcome */
+  message?: string;
 }
