@@ -1,12 +1,4 @@
-import {
-  ChatMessage,
-  ExtensionMessage,
-  ExtensionResponse,
-  Meeting,
-  ResultLocal,
-  ResultSync,
-  TranscriptBlock
-} from "./types";
+import {ChatMessage, ExtensionMessage, ExtensionResponse, Meeting, ResultLocal, TranscriptBlock} from "./types";
 
 /** Time format options for formatting timestamps */
 const timeFormat: Intl.DateTimeFormatOptions = {
@@ -506,12 +498,12 @@ interface MessageHandler {
  * Handles the "new_meeting_started" message type.
  * Saves the current active tab ID to local Chrome storage under `meetingTabId`.
  */
-class NewMeetingStartedHandler implements MessageHandler {
+class MeetingStartedHandler implements MessageHandler {
   canHandle(message: ExtensionMessage): boolean {
     return message.type === "new_meeting_started";
   }
 
-  handle(message: ExtensionMessage): void {
+  handle(_: ExtensionMessage): void {
     chrome.tabs.query({active: true, currentWindow: true}, tabs => {
       const tabId = tabs[0]?.id;
       if (tabId !== undefined) {
@@ -538,52 +530,52 @@ class MeetingEndedHandler implements MessageHandler {
   }
 }
 
-/**
- * Handles the "download_transcript_at_index" message type.
- * Downloads a transcript at the specified index and sends the result back via sendResponse.
- */
-class DownloadTranscriptHandler implements MessageHandler {
-  canHandle(message: ExtensionMessage): boolean {
-    return message.type === "download_transcript_at_index";
-  }
+// /**
+//  * Handles the "download_transcript_at_index" message type.
+//  * Downloads a transcript at the specified index and sends the result back via sendResponse.
+//  */
+// class DownloadTranscriptHandler implements MessageHandler {
+//   canHandle(message: ExtensionMessage): boolean {
+//     return message.type === "download_transcript_at_index";
+//   }
 
-  async handle(message: ExtensionMessage, sendResponse: (response: ExtensionResponse) => void): Promise<void> {
-    if (typeof message.index === "number" && message.index >= 0) {
-      try {
-        await downloadTranscript(message.index, false);
-        sendResponse({success: true});
-      } catch (error) {
-        sendResponse({success: false, message: (error as Error).message});
-      }
-    } else {
-      sendResponse({success: false, message: "Invalid index"});
-    }
-  }
-}
+//   async handle(message: ExtensionMessage, sendResponse: (response: ExtensionResponse) => void): Promise<void> {
+//     if (typeof message.index === "number" && message.index >= 0) {
+//       try {
+//         await downloadTranscript(message.index, false);
+//         sendResponse({success: true});
+//       } catch (error) {
+//         sendResponse({success: false, message: (error as Error).message});
+//       }
+//     } else {
+//       sendResponse({success: false, message: "Invalid index"});
+//     }
+//   }
+// }
 
 /**
  * Handles the "retry_webhook_at_index" message type.
  * Attempts to re-post a transcript to the webhook for the given index and reports success/failure.
  */
-class RetryWebhookHandler implements MessageHandler {
-  canHandle(message: ExtensionMessage): boolean {
-    return message.type === "retry_webhook_at_index";
-  }
+// class RetryWebhookHandler implements MessageHandler {
+//   canHandle(message: ExtensionMessage): boolean {
+//     return message.type === "retry_webhook_at_index";
+//   }
 
-  async handle(message: ExtensionMessage, sendResponse: (response: ExtensionResponse) => void): Promise<void> {
-    if (typeof message.index === "number" && message.index >= 0) {
-      try {
-        await postTranscriptToWebhook(message.index);
-        sendResponse({success: true});
-      } catch (error) {
-        console.error("Webhook retry failed:", error);
-        sendResponse({success: false, message: (error as Error).message});
-      }
-    } else {
-      sendResponse({success: false, message: "Invalid index"});
-    }
-  }
-}
+//   async handle(message: ExtensionMessage, sendResponse: (response: ExtensionResponse) => void): Promise<void> {
+//     if (typeof message.index === "number" && message.index >= 0) {
+//       try {
+//         await postTranscriptToWebhook(message.index);
+//         sendResponse({success: true});
+//       } catch (error) {
+//         console.error("Webhook retry failed:", error);
+//         sendResponse({success: false, message: (error as Error).message});
+//       }
+//     } else {
+//       sendResponse({success: false, message: "Invalid index"});
+//     }
+//   }
+// }
 
 /**
  * Handles the "recover_last_meeting" message type.
@@ -608,10 +600,10 @@ class RecoverLastMeetingHandler implements MessageHandler {
  * List of all available message handlers using the strategy pattern.
  */
 const handlers: MessageHandler[] = [
-  new NewMeetingStartedHandler(),
+  new MeetingStartedHandler(),
   new MeetingEndedHandler(),
-  new DownloadTranscriptHandler(),
-  new RetryWebhookHandler(),
+  // new DownloadTranscriptHandler(),
+  // new RetryWebhookHandler(),
   new RecoverLastMeetingHandler()
 ];
 
@@ -625,7 +617,7 @@ chrome.runtime.onMessage.addListener((messageUnTyped: ExtensionMessage, sender, 
   for (const handler of handlers) {
     if (handler.canHandle(message)) {
       handler.handle(message, sendResponse);
-      return true; // Keep the message channel open for async response
+      return true;
     }
   }
 

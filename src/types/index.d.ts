@@ -1,127 +1,142 @@
+// =====================================================================================
+// ------------------------------ ** TRANSLATED CONTENT STRUCTURES ** -----------------
+// =====================================================================================
+
 /**
- * A chunk of transcript
+ * Represents a single spoken block in a meeting transcript.
  */
 export interface TranscriptBlock {
-  personName: string; // Name of the person who spoke
-  timestamp: string; // ISO timestamp of when the words were spoken
-  transcriptText: string; // Actual transcript text
+  /** Name of the person who spoke */
+  personName: string;
+
+  /** ISO timestamp of when the words were spoken */
+  timestamp: string;
+
+  /** The transcribed text spoken by the person */
+  text: string;
 }
 
 /**
- * A chat message
+ * Represents a single chat message sent during a meeting or session.
  */
 export interface ChatMessage {
-  personName: string; // Name of the person who sent the message
-  timestamp: string; // ISO timestamp of when the message was sent
-  chatMessageText: string; // Actual message text
+  /** Name of the person who sent the message */
+  personName: string;
+
+  /** ISO 8601 timestamp of when the message was sent */
+  timestamp: string;
+
+  /** The actual content of the chat message */
+  text: string;
 }
 
+// =====================================================================================
+// ------------------------------ ** WEBHOOK PAYLOAD STRUCTURE ** --------------------
+// =====================================================================================
+
 /**
- * Webhook body structure
+ * Structure of the webhook payload sent after a meeting.
  */
 export interface WebhookBody {
-  meetingTitle: string; // Title of the meeting
-  meetingStartTimestamp: string; // ISO timestamp of when the meeting started
-  meetingEndTimestamp: string; // ISO timestamp of when the meeting ended
-  transcript: TranscriptBlock[] | string; // Transcript as a formatted string or array of transcript blocks
-  chatMessages: ChatMessage[] | string; // Chat messages as a formatted string or array of chat messages
+  /** Title of the meeting */
+  meetingTitle: string;
+
+  /** ISO 8601 timestamp of when the meeting started */
+  meetingStartAt: string;
+
+  /** ISO 8601 timestamp of when the meeting ended */
+  meetingEndAt: string;
+
+  /**
+   * Transcript content.
+   * Can be either:
+   * - a formatted plain string
+   * - or a structured array of transcript blocks
+   */
+  transcript: string | TranscriptBlock[];
+
+  /**
+   * Chat messages during the meeting.
+   * Can be either:
+   * - a formatted plain string
+   * - or a structured array of chat messages
+   */
+  chatMessages: string | ChatMessage[];
 }
 
+// =====================================================================================
+// ------------------------------ ** LOCAL STORAGE STRUCTURES ** ----------------------
+// =====================================================================================
+
 /**
- * Local chrome storage structure
+ * Represents the structure of local Chrome extension storage.
  */
-export interface ResultLocal {
-  extensionStatusJSON: ExtensionStatusJSON;
-  meetingTabId: MeetingTabId;
-  meetingTitle: MeetingTitle;
-  meetingStartTimestamp: MeetingStartTimestamp;
-  transcript: Transcript;
-  chatMessages: ChatMessages;
-  isDeferredUpdatedAvailable: IsDeferredUpdatedAvailable;
-  meetings: Meeting[];
+export interface LocalStorageState {
+  /** Current status of the extension as a structured JSON object */
+  extensionStatus: ExtensionStatus;
+
+  /** Configuration settings for the extension */
+  config: Config;
+
+  /** History of recorded or processed meetings */
+  meeting: Meeting;
 }
 
 /**
- * Extension status JSON structure
+ * Represents the current status of the extension.
  */
-export interface ExtensionStatusJSON {
-  status: number; // Status of the extension
-  message: string; // Message of the status
+export interface ExtensionStatus {
+  /** Numeric status code representing the extension's state */
+  code: number;
+
+  /** Human-readable message describing the current status */
+  message: string;
 }
 
 /**
- * Meeting structure
+ * Represents the synced structure stored in Chrome's local storage.
+ */
+export interface Config {
+  /** Webhook endpoint URL */
+  webhookUrl: string;
+}
+
+// =====================================================================================
+// ------------------------------ ** MEETING STRUCTURE ** ----------------------------
+// =====================================================================================
+
+/**
+ * Represents a meeting and its related details.
  */
 export interface Meeting {
-  meetingTitle?: string; // Title of the meeting
-  title?: string; // Older key for meetingTitle
-  meetingStartTimestamp: string; // ISO timestamp of when the meeting started
-  meetingEndTimestamp: string; // ISO timestamp of when the meeting ended
-  transcript: TranscriptBlock[]; // Array of transcript blocks
-  chatMessages: ChatMessage[]; // Array of chat messages
-  webhookPostStatus: "new" | "failed" | "successful"; // Status of the webhook post request
+  /** ID of the Chrome tab where the meeting is running */
+  meetingTabId: number;
+
+  /** Title of the meeting (can be optional or fallback to older key `title`) */
+  meetingTitle?: string;
+
+  /** Legacy key for meeting title */
+  title?: string;
+
+  /** ISO 8601 timestamp of when the meeting started */
+  meetingStartAt: string;
+
+  /** ISO 8601 timestamp of when the meeting ended */
+  meetingEndAt: string;
+
+  /** Transcript content as an array of structured transcript blocks */
+  transcript: TranscriptBlock[];
+
+  /** Array of chat messages exchanged during the meeting */
+  chatMessages: ChatMessage[];
+
+  /** Status of the webhook post request for the meeting */
+  webhookPostStatus: "new" | "failed" | "successful";
 }
 
-/**
- * Tab ID of the meeting tab
- * A valid value indicates a meeting is in progress. Set to null once the meeting ends and processing is complete.
- */
-export type MeetingTabId = number | null;
-
-/**
- * ISO timestamp of when the most recent meeting started
- */
-export type MeetingStartTimestamp = string;
-
-/**
- * Title of the most recent meeting
- */
-export type MeetingTitle = string;
-
-/**
- * Transcript of the most recent meeting
- */
-export type Transcript = TranscriptBlock[];
-
-/**
- * Chat messages captured during the most recent meeting
- */
-export type ChatMessages = ChatMessage[];
-
-/**
- * Whether the extension has a deferred update waiting to be applied
- */
-export type IsDeferredUpdatedAvailable = boolean;
-
-/**
- * Sync chrome storage structure
- */
-export interface ResultSync {
-  autoPostWebhookAfterMeeting: AutoPostWebhookAfterMeeting;
-  operationMode: OperationMode;
-  webhookBodyType: WebhookBodyType;
-  webhookUrl: WebhookUrl;
-}
-
-/**
- * Whether to automatically post the webhook after each meeting
- */
-export type AutoPostWebhookAfterMeeting = boolean;
-
-/**
- * Mode of the extension, deciding whether to automatically capture transcripts or let the user decide per meeting
- */
-export type OperationMode = "auto" | "manual";
-
-/**
- * Type of webhook body to use
- */
-export type WebhookBodyType = "simple" | "advanced";
-
-/**
- * URL of the webhook
- */
-export type WebhookUrl = string;
+// =====================================================================================
+// ------------------------------ ** EXTENSION MESSAGE HANDLING ** --------------------
+// =====================================================================================
 
 /**
  * Message sent by the calling script
@@ -130,8 +145,8 @@ export interface ExtensionMessage {
   type:
     | "new_meeting_started"
     | "meeting_ended"
-    | "download_transcript_at_index"
-    | "retry_webhook_at_index"
+    //| "download_transcript_at_index"
+    //| "retry_webhook_at_index"
     | "recover_last_meeting"; // Type of message
   index?: number; // Index of the meeting to process
 }
