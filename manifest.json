@@ -1,28 +1,39 @@
 {
   "manifest_version": 3,
-  "name": "Au5.ai",
-  "version": "1.0",
-  "description": "Adds real-time speech recognition to Google Meet",
-  "permissions": ["storage", "activeTab", "scripting"],
-  "host_permissions": ["https://meet.google.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
-      "matches": ["https://meet.google.com/*"],
       "js": ["content.js"],
-      "run_at": "document_end"
+      "matches": ["*://meet.google.com/*-*-*"]
+    },
+    {
+      "js": ["rtcinjector.js"],
+      "matches": ["*://meet.google.com/*-*-*"],
+      "run_at": "document_start"
     }
   ],
-  "action": {
-    "default_popup": "ui/template.html",
-    "default_icon": {
-      "16": "icons/icon16.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
-    }
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self';"
   },
+  "host_permissions": ["*://meet.google.com/*-*-*"],
   "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
-  }
+    "16": "assets/icons/icon16.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
+  "name": "Au5.ai",
+  "permissions": [
+    "declarativeContent",
+    "activeTab",
+    "storage",
+    "alarms",
+    "scripting",
+    "unlimitedStorage",
+    "declarativeNetRequest"
+  ],
+  "short_name": "Au5",
+  "update_url": "https://clients2.google.com/service/update2/crx",
+  "version": "0.1.1"
 }
