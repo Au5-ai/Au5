@@ -31,40 +31,6 @@ export interface ChatMessage {
 }
 
 // =====================================================================================
-// ------------------------------ ** WEBHOOK PAYLOAD STRUCTURE ** --------------------
-// =====================================================================================
-
-/**
- * Structure of the webhook payload sent after a meeting.
- */
-export interface WebhookBody {
-  /** Title of the meeting */
-  meetingTitle: string;
-
-  /** ISO 8601 timestamp of when the meeting started */
-  meetingStartAt: string;
-
-  /** ISO 8601 timestamp of when the meeting ended */
-  meetingEndAt: string;
-
-  /**
-   * Transcript content.
-   * Can be either:
-   * - a formatted plain string
-   * - or a structured array of transcript blocks
-   */
-  transcript: string | TranscriptBlock[];
-
-  /**
-   * Chat messages during the meeting.
-   * Can be either:
-   * - a formatted plain string
-   * - or a structured array of chat messages
-   */
-  chatMessages: string | ChatMessage[];
-}
-
-// =====================================================================================
 // ------------------------------ ** LOCAL STORAGE STRUCTURES ** ----------------------
 // =====================================================================================
 
@@ -78,7 +44,7 @@ export interface LocalStorageState {
   /** Configuration settings for the extension */
   config: Config;
 
-  /** History of recorded or processed meetings */
+  /** History of recorded or processed meeting */
   meeting: Meeting;
 }
 
@@ -111,28 +77,25 @@ export interface Config {
  */
 export interface Meeting {
   /** ID of the Chrome tab where the meeting is running */
-  meetingTabId: number;
+  tabId: number;
 
   /** Title of the meeting (can be optional or fallback to older key `title`) */
-  meetingTitle?: string;
+  title?: string;
 
   /** Legacy key for meeting title */
   title?: string;
 
   /** ISO 8601 timestamp of when the meeting started */
-  meetingStartAt: string;
+  startAt: string;
 
   /** ISO 8601 timestamp of when the meeting ended */
-  meetingEndAt: string;
+  endAt: string;
 
   /** Transcript content as an array of structured transcript blocks */
   transcript: TranscriptBlock[];
 
   /** Array of chat messages exchanged during the meeting */
   chatMessages: ChatMessage[];
-
-  /** Status of the webhook post request for the meeting */
-  webhookPostStatus: "new" | "failed" | "successful";
 }
 
 // =====================================================================================
@@ -142,7 +105,7 @@ export interface Meeting {
 /**
  * Types of messages that can be sent from the content/background script.
  */
-export type ExtensionMessageType = "new_meeting_started" | "meeting_ended" | "recover_last_meeting"; // Add more as needed (e.g., "download_transcript", "retry_webhook")
+export type ExtensionMessageType = "meetingStarted" | "meetingEnded" | "recover_last_meeting"; // Add more as needed (e.g., "download_transcript", "retry_webhook")
 
 /**
  * Message sent by the calling script to communicate an action or event.
