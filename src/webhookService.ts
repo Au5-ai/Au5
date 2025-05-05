@@ -1,4 +1,9 @@
-import {ILocalStorageState, IMeeting, IStorageService} from "./types";
+import {MESSAGES} from "./constants";
+import {ILocalStorageState, IMeeting, IStorageService, STORAGE_KEYS} from "./types";
+
+const HEADERS = {
+  JSON: {"Content-Type": "application/json"}
+};
 
 export class WebhookService {
   constructor(private storage: IStorageService) {}
@@ -6,7 +11,7 @@ export class WebhookService {
   async post(url: string, payload: IMeeting): Promise<void> {
     const response = await fetch(url, {
       method: "POST",
-      headers: {"Content-Type": "application/json"},
+      headers: HEADERS.JSON,
       body: JSON.stringify(payload)
     });
 
@@ -14,31 +19,31 @@ export class WebhookService {
       throw new Error(`Webhook failed: ${response.status} ${response.statusText}`);
     }
 
-    await this.storage.remove("meeting");
+    await this.storage.remove(STORAGE_KEYS.MEETING);
     chrome.runtime.reload();
   }
 
   async process(): Promise<string> {
-    const config = await this.storage.getSync<ILocalStorageState>("config");
+    const config = await this.storage.getSync<ILocalStorageState>(STORAGE_KEYS.CONFIG);
 
     if (!config.config.webhookUrl) {
-      return "No webhook URL configured";
+      return MESSAGES.NO_WEBHOOK_URL;
     }
 
     const meeting = await this.pickupMeeting();
     await this.post(config.config.webhookUrl, meeting);
-    return "Webhook posted";
+    return MESSAGES.WEBHOOK_POSTED;
   }
 
   private async pickupMeeting(): Promise<IMeeting> {
-    const result = await this.storage.get<ILocalStorageState>("meeting");
+    const result = await this.storage.get<ILocalStorageState>(STORAGE_KEYS.MEETING);
 
     if (!result.meeting.startAt) {
-      throw new Error("No meetings found. Maybe attend one?");
+      throw new Error(MESSAGES.NO_MEETING_FOUND);
     }
 
     if (!result.meeting.transcript.length && !result.meeting.chatMessages.length) {
-      throw new Error("Empty transcript and chatMessages");
+      throw new Error(MESSAGES.EMPTY_MEETING_DATA);
     }
 
     return result.meeting;

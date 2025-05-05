@@ -152,8 +152,14 @@ export interface IMessageHandler {
 // ------------------------------ ** Local Storage ** ----------------------------------
 // =====================================================================================
 
+const STORAGE_KEYS = {
+  CONFIG: "configuration",
+  MEETING: "meeting"
+};
+
 export interface IStorageService {
   set<T>(key: string, value: T): Promise<void>;
   get<T>(key: string | string[]): Promise<T>;
   remove(keys: string | string[]): Promise<void>;
+  getSync<T>(key: string): Promise<T>;
 }
