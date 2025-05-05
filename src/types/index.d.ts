@@ -1,11 +1,11 @@
 // =====================================================================================
-// ------------------------------ ** TRANSLATED CONTENT STRUCTURES ** -----------------
+// ------------------------------ ** TRANSCRIPT & CHAT STRUCTURES ** -------------------
 // =====================================================================================
 
 /**
  * Represents a single spoken block in a meeting transcript.
  */
-export interface TranscriptBlock {
+export interface ITranscriptBlock {
   /** Name of the person who spoke */
   personName: string;
 
@@ -19,7 +19,7 @@ export interface TranscriptBlock {
 /**
  * Represents a single chat message sent during a meeting or session.
  */
-export interface ChatMessage {
+export interface IChatMessage {
   /** Name of the person who sent the message */
   personName: string;
 
@@ -31,27 +31,54 @@ export interface ChatMessage {
 }
 
 // =====================================================================================
-// ------------------------------ ** LOCAL STORAGE STRUCTURES ** ----------------------
+// ------------------------------ ** MEETING STRUCTURE ** -----------------------------
+// =====================================================================================
+
+/**
+ * Represents a meeting and its related details.
+ */
+export interface IMeeting {
+  /** ID of the Chrome tab where the meeting is running */
+  tabId: number;
+
+  /** Title of the meeting (can be optional or fallback to older key `title`) */
+  title?: string;
+
+  /** ISO 8601 timestamp of when the meeting started */
+  startAt: string;
+
+  /** ISO 8601 timestamp of when the meeting ended */
+  endAt: string;
+
+  /** Transcript content as an array of structured transcript blocks */
+  transcript: ITranscriptBlock[];
+
+  /** Array of chat messages exchanged during the meeting */
+  chatMessages: IChatMessage[];
+}
+
+// =====================================================================================
+// ------------------------------ ** LOCAL STORAGE STRUCTURES ** -----------------------
 // =====================================================================================
 
 /**
  * Represents the structure of local Chrome extension storage.
  */
-export interface LocalStorageState {
+export interface ILocalStorageState {
   /** Current status of the extension as a structured JSON object */
-  extensionStatus: ExtensionStatus;
+  extensionStatus: IExtensionStatus;
 
   /** Configuration settings for the extension */
-  config: Config;
+  config: IConfiguration;
 
-  /** History of recorded or processed meeting */
-  meeting: Meeting;
+  /** History of recorded or processed meetings */
+  meeting: IMeeting;
 }
 
 /**
  * Represents the current status of the extension.
  */
-export interface ExtensionStatus {
+export interface IExtensionStatus {
   /** Numeric status code representing the extension's state */
   code: number;
 
@@ -62,55 +89,27 @@ export interface ExtensionStatus {
 /**
  * Represents the synced structure stored in Chrome's local storage.
  */
-export interface Config {
+export interface IConfiguration {
   /** Webhook endpoint URL */
   webhookUrl: string;
+
+  /** Authentication token for the webhook */
   token: string;
 }
 
 // =====================================================================================
-// ------------------------------ ** MEETING STRUCTURE ** ----------------------------
-// =====================================================================================
-
-/**
- * Represents a meeting and its related details.
- */
-export interface Meeting {
-  /** ID of the Chrome tab where the meeting is running */
-  tabId: number;
-
-  /** Title of the meeting (can be optional or fallback to older key `title`) */
-  title?: string;
-
-  /** Legacy key for meeting title */
-  title?: string;
-
-  /** ISO 8601 timestamp of when the meeting started */
-  startAt: string;
-
-  /** ISO 8601 timestamp of when the meeting ended */
-  endAt: string;
-
-  /** Transcript content as an array of structured transcript blocks */
-  transcript: TranscriptBlock[];
-
-  /** Array of chat messages exchanged during the meeting */
-  chatMessages: ChatMessage[];
-}
-
-// =====================================================================================
-// ------------------------------ ** EXTENSION MESSAGING ** ---------------------------
+// ------------------------------ ** EXTENSION MESSAGING ** ----------------------------
 // =====================================================================================
 
 /**
  * Types of messages that can be sent from the content/background script.
  */
-export type ExtensionMessageType = "meetingStarted" | "meetingEnded" | "recover_last_meeting"; // Add more as needed (e.g., "download_transcript", "retry_webhook")
+export type ExtensionMessageType = "meetingStarted" | "meetingEnded";
 
 /**
  * Message sent by the calling script to communicate an action or event.
  */
-export interface ExtensionMessage {
+export interface IExtensionMessage {
   /** Type of the message indicating the action to perform */
   type: ExtensionMessageType;
 
@@ -121,10 +120,30 @@ export interface ExtensionMessage {
 /**
  * Standardized response returned by the receiving script after processing a message.
  */
-export interface ExtensionResponse {
+export interface IExtensionResponse {
   /** Whether the action was handled successfully */
   success: boolean;
 
   /** Optional human-readable message explaining the outcome */
   message?: string;
+}
+
+/**
+ * Interface that all message handlers must implement.
+ * Provides a mechanism to determine if a handler can process a message
+ * and a method to perform the handling logic.
+ */
+export interface IMessageHandler {
+  /**
+   * Determines if the handler can process the given message.
+   * @param message The message to check.
+   */
+  canHandle(message: IExtensionMessage): boolean;
+
+  /**
+   * Handles the given message.
+   * @param message The message to handle.
+   * @param sendResponse Callback to send the response.
+   */
+  handle(message: IExtensionMessage, sendResponse: (response: IExtensionResponse) => void): void | Promise<void>;
 }

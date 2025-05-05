@@ -1,22 +1,12 @@
 import {IStorageService} from "./storageService";
-import {ExtensionMessage, ExtensionResponse} from "./types";
+import {ExtensionMessage, ExtensionResponse, MessageHandler} from "./types";
 import {WebhookService} from "./webhookService";
-
-/**
- * Interface that all message handlers must implement.
- * Provides a mechanism to determine if a handler can process a message
- * and a method to perform the handling logic.
- */
-export interface MessageHandler {
-  canHandle(message: ExtensionMessage): boolean;
-  handle(message: ExtensionMessage, sendResponse: (response: ExtensionResponse) => void): void | Promise<void>;
-}
 
 /**
  * Handles the "new_meeting_started" message type.
  * Saves the current active tab ID to local Chrome storage under `meetingTabId`.
  */
-export class MeetingStartedHandler implements MessageHandler {
+export class MeetingStartedHandler implements IMessageHandler {
   constructor(private storageService: IStorageService) {}
 
   canHandle(message: ExtensionMessage): boolean {

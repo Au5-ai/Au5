@@ -1,3 +1,4 @@
+import {MessageHandler} from "./messageHandler";
 import {ExtensionMessage, ExtensionResponse} from "./types";
 
 export class MessageDispatcher {
