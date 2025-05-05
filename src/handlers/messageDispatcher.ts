@@ -1,4 +1,4 @@
-import {IExtensionMessage, IExtensionResponse, IMessageHandler} from "./types";
+import {IExtensionMessage, IExtensionResponse, IMessageHandler} from "../types";
 
 export class MessageDispatcher {
   private handlers: IMessageHandler[];

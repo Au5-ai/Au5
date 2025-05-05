@@ -1,5 +1,4 @@
-import {IExtensionMessage, IMessageHandler, IStorageService} from "./types";
-import {WebhookService} from "./webhookService";
+import {IExtensionMessage, IMessageHandler, IStorageService} from "../types";
 
 /**
  * Handles the "new_meeting_started" message type.
@@ -24,23 +23,5 @@ export class MeetingStartedHandler implements IMessageHandler {
     } catch (error) {
       console.error("Error saving meeting tab ID:", error);
     }
-  }
-}
-
-/**
- * Handles the "meeting_ended" message type.
- * Processes the last meeting and clears stored tab ID.
- */
-export class MeetingEndedHandler implements IMessageHandler {
-  constructor(private webhook: WebhookService, private storage: IStorageService) {}
-
-  canHandle(message: IExtensionMessage): boolean {
-    return message.type === "meetingEnded";
-  }
-
-  async handle(): Promise<void> {
-    await this.webhook.process();
-    await this.storage.remove("meeting");
-    chrome.runtime.reload();
   }
 }

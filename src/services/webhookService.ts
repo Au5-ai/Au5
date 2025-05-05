@@ -1,5 +1,5 @@
-import {MESSAGES} from "./constants";
-import {ILocalStorageState, IMeeting, IStorageService, STORAGE_KEYS} from "./types";
+import {MESSAGES} from "../constants/messages.constants";
+import {ILocalStorageState, IMeeting, IStorageService, STORAGE_KEYS} from "../types";
 
 const HEADERS = {
   JSON: {"Content-Type": "application/json"}
