@@ -1,8 +1,4 @@
-export interface IStorageService {
-  set<T>(key: string, value: T): Promise<void>;
-  get<T>(key: string | string[]): Promise<T>;
-  remove(keys: string | string[]): Promise<void>;
-}
+import {IStorageService} from "./types";
 
 export class ChromeStorageService implements IStorageService {
   async remove(keys: string | string[]): Promise<void> {

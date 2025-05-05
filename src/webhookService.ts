@@ -1,10 +1,9 @@
-import {StorageService} from "./storageService";
-import {LocalStorageState, Meeting} from "./types";
+import {ILocalStorageState, IMeeting, IStorageService} from "./types";
 
 export class WebhookService {
-  constructor(private storage: StorageService) {}
+  constructor(private storage: IStorageService) {}
 
-  async post(url: string, payload: Meeting): Promise<void> {
+  async post(url: string, payload: IMeeting): Promise<void> {
     const response = await fetch(url, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
@@ -20,7 +19,7 @@ export class WebhookService {
   }
 
   async process(): Promise<string> {
-    const config = await this.storage.getSync<LocalStorageState>("config");
+    const config = await this.storage.getSync<ILocalStorageState>("config");
 
     if (!config.config.webhookUrl) {
       return "No webhook URL configured";
@@ -31,8 +30,8 @@ export class WebhookService {
     return "Webhook posted";
   }
 
-  private async pickupMeeting(): Promise<Meeting> {
-    const result = await this.storage.get<LocalStorageState>("meeting");
+  private async pickupMeeting(): Promise<IMeeting> {
+    const result = await this.storage.get<ILocalStorageState>("meeting");
 
     if (!result.meeting.startAt) {
       throw new Error("No meetings found. Maybe attend one?");

@@ -147,3 +147,13 @@ export interface IMessageHandler {
    */
   handle(message: IExtensionMessage, sendResponse: (response: IExtensionResponse) => void): void | Promise<void>;
 }
+
+// =====================================================================================
+// ------------------------------ ** Local Storage ** ----------------------------------
+// =====================================================================================
+
+export interface IStorageService {
+  set<T>(key: string, value: T): Promise<void>;
+  get<T>(key: string | string[]): Promise<T>;
+  remove(keys: string | string[]): Promise<void>;
+}

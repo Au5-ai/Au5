@@ -1,5 +1,4 @@
-import {IStorageService} from "./storageService";
-import {ExtensionMessage, ExtensionResponse, MessageHandler} from "./types";
+import {IExtensionMessage, IMessageHandler, IStorageService} from "./types";
 import {WebhookService} from "./webhookService";
 
 /**
@@ -9,11 +8,11 @@ import {WebhookService} from "./webhookService";
 export class MeetingStartedHandler implements IMessageHandler {
   constructor(private storageService: IStorageService) {}
 
-  canHandle(message: ExtensionMessage): boolean {
+  canHandle(message: IExtensionMessage): boolean {
     return message.type === "meetingStarted";
   }
 
-  async handle(_: ExtensionMessage): Promise<void> {
+  async handle(_: IExtensionMessage): Promise<void> {
     try {
       const tabs = await chrome.tabs.query({active: true, currentWindow: true});
       const tabId = tabs[0]?.id;
@@ -32,10 +31,10 @@ export class MeetingStartedHandler implements IMessageHandler {
  * Handles the "meeting_ended" message type.
  * Processes the last meeting and clears stored tab ID.
  */
-export class MeetingEndedHandler implements MessageHandler {
+export class MeetingEndedHandler implements IMessageHandler {
   constructor(private webhook: WebhookService, private storage: IStorageService) {}
 
-  canHandle(message: ExtensionMessage): boolean {
+  canHandle(message: IExtensionMessage): boolean {
     return message.type === "meetingEnded";
   }
 
