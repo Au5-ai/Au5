@@ -149,13 +149,12 @@ export interface IMessageHandler {
 }
 
 // =====================================================================================
-// ------------------------------ ** Local Storage ** ----------------------------------
+// ------------------------------ ** Browser Service ** ----------------------------------
 // =====================================================================================
 
-const STORAGE_KEYS = {
-  CONFIG: "configuration",
-  MEETING: "meeting"
-};
+export interface IBrowserService {
+  reload(): void;
+}
 
 export interface IStorageService {
   set<T>(key: string, value: T): Promise<void>;

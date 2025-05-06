@@ -1,12 +1,10 @@
+import {HEADERS} from "../constants/http.constants";
 import {MESSAGES} from "../constants/messages.constants";
-import {ILocalStorageState, IMeeting, IStorageService, STORAGE_KEYS} from "../types";
-
-const HEADERS = {
-  JSON: {"Content-Type": "application/json"}
-};
+import {STORAGE_KEYS} from "../constants/storage.constants";
+import {ILocalStorageState, IMeeting, IStorageService, IBrowserService} from "../types";
 
 export class WebhookService {
-  constructor(private storage: IStorageService) {}
+  constructor(private storage: IStorageService, private browser: IBrowserService) {}
 
   async post(url: string, payload: IMeeting): Promise<void> {
     const response = await fetch(url, {
@@ -16,11 +14,11 @@ export class WebhookService {
     });
 
     if (!response.ok) {
-      throw new Error(`Webhook failed: ${response.status} ${response.statusText}`);
+      throw new Error(`${MESSAGES.WEBHOOK_FAILED}: ${response.status} ${response.statusText}`);
     }
 
     await this.storage.remove(STORAGE_KEYS.MEETING);
-    chrome.runtime.reload();
+    this.browser.reload();
   }
 
   async process(): Promise<string> {
