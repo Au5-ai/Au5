@@ -1,8 +1,8 @@
-import {MessageDispatcher} from "./handlers/messageDispatcher";
-import {MeetingEndedHandler} from "./handlers/meetingEndedHandler";
+import {MessageDispatcher} from "./handlers/message.dispatcher";
+import {MeetingEndedHandler} from "./handlers/meeting.ended.handler";
+import {MeetingStartedHandler} from "./handlers/meeting.started.handler";
 import {ChromeStorageService} from "./services/storage.service";
 import {WebhookService} from "./services/webhook.service";
-import {MeetingStartedHandler} from "./handlers/meetingStartedHandler";
 import {ChromeBrowserService} from "./services/browser.service";
 
 /**
