@@ -1,4 +1,4 @@
-import {IExtensionMessage, IExtensionResponse, IMessageHandler} from "../types";
+import {ExtensionMessage, ExtensionResponse, IMessageHandler} from "../types";
 
 export class MessageDispatcher {
   private handlers: IMessageHandler[];
@@ -7,7 +7,7 @@ export class MessageDispatcher {
     this.handlers = handlers;
   }
 
-  dispatch(message: IExtensionMessage, sendResponse: (response: IExtensionResponse) => void): boolean {
+  dispatch(message: ExtensionMessage, sendResponse: (response: ExtensionResponse) => void): boolean {
     for (const handler of this.handlers) {
       if (handler.canHandle(message)) {
         handler.handle(message, sendResponse);

@@ -1,30 +1,28 @@
-import {ExtensionMessageType} from "./types";
+import {ChromeBrowserService} from "./services/browser.service";
+import {ExtensionMessageType, IBrowserService, IconData} from "./types";
 import {waitForElement} from "./utils/dom.utils";
 
 let userName = "Mohammad Karimi";
 let hasMeetingStarted = false;
 
-async function meetingRoutines(): Promise<void> {
-  const meetingEndIconData = {
-    selector: "",
-    text: ""
-  };
-  const captionsIconData = {
-    selector: "",
-    text: ""
-  };
+const meetingEndIcon: IconData = {
+  selector: ".google-symbols",
+  text: "call_end"
+};
 
-  meetingEndIconData.selector = ".google-symbols";
-  meetingEndIconData.text = "call_end";
-  captionsIconData.selector = ".google-symbols";
-  captionsIconData.text = "closed_caption_off";
+const captionsIcon: IconData = {
+  selector: ".google-symbols",
+  text: "closed_caption_off"
+};
 
-  const element = await waitForElement(meetingEndIconData.selector, meetingEndIconData.text);
-  const message = {
-    type: ExtensionMessageType.MEETING_STARTED
-  };
-  chrome.runtime.sendMessage(message, function () {});
-  hasMeetingStarted = true;
+export async function meetingRoutines(browserService: IBrowserService): Promise<void> {
+  try {
+    await waitForElement(meetingEndIcon.selector, meetingEndIcon.text);
+    browserService.sendMessage({type: ExtensionMessageType.MEETING_STARTED});
+    hasMeetingStarted = true;
+  } catch (error) {
+    console.error("Failed to detect meeting start:", error);
+  }
 }
 
-meetingRoutines();
+meetingRoutines(new ChromeBrowserService());

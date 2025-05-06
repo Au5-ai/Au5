@@ -1,12 +1,12 @@
 import {HEADERS} from "../constants/http.constants";
 import {MESSAGES} from "../constants/messages.constants";
 import {STORAGE_KEYS} from "../constants/storage.constants";
-import {ILocalStorageState, IMeeting, IStorageService, IBrowserService} from "../types";
+import {LocalStorageState, Meeting, IStorageService, IBrowserService} from "../types";
 
 export class WebhookService {
   constructor(private storage: IStorageService, private browser: IBrowserService) {}
 
-  async post(url: string, payload: IMeeting): Promise<void> {
+  async post(url: string, payload: Meeting): Promise<void> {
     const response = await fetch(url, {
       method: "POST",
       headers: HEADERS.JSON,
@@ -22,7 +22,7 @@ export class WebhookService {
   }
 
   async process(): Promise<string> {
-    const config = await this.storage.getSync<ILocalStorageState>(STORAGE_KEYS.CONFIG);
+    const config = await this.storage.getSync<LocalStorageState>(STORAGE_KEYS.CONFIG);
 
     if (!config.config.webhookUrl) {
       return MESSAGES.NO_WEBHOOK_URL;
@@ -33,8 +33,8 @@ export class WebhookService {
     return MESSAGES.WEBHOOK_POSTED;
   }
 
-  private async pickupMeeting(): Promise<IMeeting> {
-    const result = await this.storage.get<ILocalStorageState>(STORAGE_KEYS.MEETING);
+  private async pickupMeeting(): Promise<Meeting> {
+    const result = await this.storage.get<LocalStorageState>(STORAGE_KEYS.MEETING);
 
     if (!result.meeting.startAt) {
       throw new Error(MESSAGES.NO_MEETING_FOUND);

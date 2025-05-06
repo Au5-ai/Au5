@@ -1,4 +1,4 @@
-import {IExtensionMessage, IMessageHandler, IStorageService} from "../types";
+import {ExtensionMessage, IMessageHandler, IStorageService} from "../types";
 
 /**
  * Handles the "new_meeting_started" message type.
@@ -7,11 +7,11 @@ import {IExtensionMessage, IMessageHandler, IStorageService} from "../types";
 export class MeetingStartedHandler implements IMessageHandler {
   constructor(private storageService: IStorageService) {}
 
-  canHandle(message: IExtensionMessage): boolean {
+  canHandle(message: ExtensionMessage): boolean {
     return message.type === "meetingStarted";
   }
 
-  async handle(_: IExtensionMessage): Promise<void> {
+  async handle(_: ExtensionMessage): Promise<void> {
     try {
       const tabs = await chrome.tabs.query({active: true, currentWindow: true});
       const tabId = tabs[0]?.id;

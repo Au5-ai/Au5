@@ -5,7 +5,7 @@
 /**
  * Represents a single spoken block in a meeting transcript.
  */
-export interface ITranscriptBlock {
+export interface TranscriptBlock {
   /** Name of the person who spoke */
   personName: string;
 
@@ -19,7 +19,7 @@ export interface ITranscriptBlock {
 /**
  * Represents a single chat message sent during a meeting or session.
  */
-export interface IChatMessage {
+export interface ChatMessage {
   /** Name of the person who sent the message */
   personName: string;
 
@@ -37,7 +37,7 @@ export interface IChatMessage {
 /**
  * Represents a meeting and its related details.
  */
-export interface IMeeting {
+export interface Meeting {
   /** ID of the Chrome tab where the meeting is running */
   tabId: number;
 
@@ -51,10 +51,10 @@ export interface IMeeting {
   endAt: string;
 
   /** Transcript content as an array of structured transcript blocks */
-  transcript: ITranscriptBlock[];
+  transcript: TranscriptBlock[];
 
   /** Array of chat messages exchanged during the meeting */
-  chatMessages: IChatMessage[];
+  chatMessages: ChatMessage[];
 }
 
 // =====================================================================================
@@ -64,21 +64,21 @@ export interface IMeeting {
 /**
  * Represents the structure of local Chrome extension storage.
  */
-export interface ILocalStorageState {
+export interface LocalStorageState {
   /** Current status of the extension as a structured JSON object */
-  extensionStatus: IExtensionStatus;
+  extensionStatus: ExtensionStatus;
 
   /** Configuration settings for the extension */
-  config: IConfiguration;
+  config: Configuration;
 
   /** History of recorded or processed meetings */
-  meeting: IMeeting;
+  meeting: Meeting;
 }
 
 /**
  * Represents the current status of the extension.
  */
-export interface IExtensionStatus {
+export interface ExtensionStatus {
   /** Numeric status code representing the extension's state */
   code: number;
 
@@ -112,7 +112,7 @@ export enum ExtensionMessageType {
 /**
  * Message sent by the calling script to communicate an action or event.
  */
-export interface IExtensionMessage {
+export interface ExtensionMessage {
   /** Type of the message indicating the action to perform */
   type: ExtensionMessageType;
 
@@ -123,7 +123,7 @@ export interface IExtensionMessage {
 /**
  * Standardized response returned by the receiving script after processing a message.
  */
-export interface IExtensionResponse {
+export interface ExtensionResponse {
   /** Whether the action was handled successfully */
   success: boolean;
 
@@ -141,14 +141,14 @@ export interface IMessageHandler {
    * Determines if the handler can process the given message.
    * @param message The message to check.
    */
-  canHandle(message: IExtensionMessage): boolean;
+  canHandle(message: ExtensionMessage): boolean;
 
   /**
    * Handles the given message.
    * @param message The message to handle.
    * @param sendResponse Callback to send the response.
    */
-  handle(message: IExtensionMessage, sendResponse: (response: IExtensionResponse) => void): void | Promise<void>;
+  handle(message: ExtensionMessage, sendResponse: (response: IExtensionResponse) => void): void | Promise<void>;
 }
 
 // =====================================================================================
@@ -157,6 +157,7 @@ export interface IMessageHandler {
 
 export interface IBrowserService {
   reload(): void;
+  sendMessage(message: ExtensionMessage, responseCallback: (response: ExtensionResponse) => void = () => {}): void;
 }
 
 export interface IStorageService {
@@ -164,4 +165,9 @@ export interface IStorageService {
   get<T>(key: string | string[]): Promise<T>;
   remove(keys: string | string[]): Promise<void>;
   getSync<T>(key: string): Promise<T>;
+}
+
+export interface IconData {
+  selector: string;
+  text: string;
 }

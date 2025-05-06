@@ -1,4 +1,4 @@
-import {IExtensionMessage, IMessageHandler, IStorageService} from "../types";
+import {ExtensionMessage, IMessageHandler, IStorageService} from "../types";
 import {WebhookService} from "../services/webhook.service";
 
 /**
@@ -8,7 +8,7 @@ import {WebhookService} from "../services/webhook.service";
 export class MeetingEndedHandler implements IMessageHandler {
   constructor(private webhook: WebhookService, private storage: IStorageService) {}
 
-  canHandle(message: IExtensionMessage): boolean {
+  canHandle(message: ExtensionMessage): boolean {
     return message.type === "meetingEnded";
   }
 
