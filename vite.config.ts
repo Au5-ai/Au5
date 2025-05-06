@@ -7,7 +7,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         background: resolve(__dirname, "src/background.ts"),
-        content: resolve(__dirname, "src/content.js"),
+        content: resolve(__dirname, "src/content.ts"),
       },
       output: {
         entryFileNames: "[name].js",
@@ -24,7 +24,6 @@ export default defineConfig({
         { src: "manifest.json", dest: "dist" },
         { src: "src/ui/template.html", dest: "dist/ui/" },
         { src: "src/assets/*", dest: "dist/assets/" },
-        { src: "src/rtcinjector.js", dest: "dist/" },
       ],
       hook: "writeBundle",
     }),

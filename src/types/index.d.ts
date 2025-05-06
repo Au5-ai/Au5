@@ -104,7 +104,10 @@ export interface IConfiguration {
 /**
  * Types of messages that can be sent from the content/background script.
  */
-export type ExtensionMessageType = "meetingStarted" | "meetingEnded";
+export enum ExtensionMessageType {
+  MEETING_STARTED = "meetingStarted",
+  MEETING_ENDED = "meetingEnded"
+}
 
 /**
  * Message sent by the calling script to communicate an action or event.

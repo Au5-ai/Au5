@@ -7,11 +7,6 @@
     {
       "js": ["content.js"],
       "matches": ["*://meet.google.com/*-*-*"]
-    },
-    {
-      "js": ["rtcinjector.js"],
-      "matches": ["*://meet.google.com/*-*-*"],
-      "run_at": "document_start"
     }
   ],
   "content_security_policy": {
