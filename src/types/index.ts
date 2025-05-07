@@ -86,17 +86,6 @@ export interface ExtensionStatus {
   message: string;
 }
 
-/**
- * Represents the synced structure stored in Chrome's local storage.
- */
-export interface Configuration {
-  /** Webhook endpoint URL */
-  webhookUrl: string;
-
-  /** Authentication token for the webhook */
-  token: string;
-}
-
 // =====================================================================================
 // ------------------------------ ** EXTENSION MESSAGING ** ----------------------------
 // =====================================================================================

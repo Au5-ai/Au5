@@ -17,5 +17,7 @@ const dispatcher = new MessageDispatcher([
 ]);
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  return dispatcher.dispatch(message, sendResponse);
+  //return dispatcher.dispatch(message, sendResponse);
+  console.log("Received message:", message, sender);
+  sendResponse({success: true});
 });
