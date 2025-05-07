@@ -1,1 +1,1 @@
-chrome.runtime.onMessage.addListener((e,c,s)=>{console.log("Received message:",e),s({success:!0})});
+chrome.runtime.onMessage.addListener((e,s,c)=>{console.log("Received message:",e,s),c({success:!0})});

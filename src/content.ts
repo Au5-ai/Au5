@@ -1,6 +1,7 @@
 import {ChromeBrowserService} from "./services/browser.service";
 import {ExtensionMessageType, IBrowserService, IconData} from "./types";
 import {waitForElement} from "./utils/dom.utils";
+import {Logger} from "./utils/logger";
 
 let userName = "Mohammad Karimi";
 let hasMeetingStarted = false;
@@ -28,23 +29,13 @@ export async function meetingRoutines(browserService: IBrowserService): Promise<
   }
 }
 
-await meetingRoutines(new ChromeBrowserService());
-setTimeout(() => updateMeetingTitle(), 5000);
+meetingRoutines(new ChromeBrowserService()).then(() => {
+  console.log(getMeetingTitleFromUrl());
+});
 
-function updateMeetingTitle() {
-  try {
-    // NON CRITICAL DOM DEPENDENCY
-    const meetingTitleElement = document.querySelector(".u6vdEc");
-    if (meetingTitleElement?.textContent) {
-      meetingTitle = meetingTitleElement.textContent;
-      overWriteChromeStorage(["meetingTitle"], false);
-    } else {
-      throw new Error("Meeting title element not found in DOM");
-    }
-  } catch (err) {
-    console.error(err);
-
-    if (!hasMeetingEnded) {
-    }
-  }
+function getMeetingTitleFromUrl(): string | null {
+  const url = new URL(window.location.href);
+  const pathSegments = url.pathname.split("/").filter(Boolean);
+  const meetingId = pathSegments.length > 0 ? pathSegments[pathSegments.length - 1] : null;
+  return meetingId;
 }
