@@ -1,7 +1,7 @@
 import {MessageDispatcher} from "./handlers/message.dispatcher";
 import {MeetingEndedHandler} from "./handlers/meeting.ended.handler";
-import {MeetingStartedHandler} from "./handlers/meeting.started.handler";
 import {ChromeStorageService} from "./services/storage.service";
+import {MeetingStartedHandler} from "./handlers/meeting.started.handler";
 import {WebhookService} from "./services/webhook.service";
 import {ChromeBrowserService} from "./services/browser.service";
 

@@ -1,5 +1,5 @@
 import {ChromeBrowserService} from "./services/browser.service";
-import {ExtensionMessageType, IBrowserService, IconData, ExtensionMessage} from "./types";
+import {ExtensionMessageType, IBrowserService, IconData} from "./types";
 import {waitForElement} from "./utils/dom.utils";
 
 let userName = "Mohammad Karimi";

@@ -89,7 +89,7 @@ export interface ExtensionStatus {
 /**
  * Represents the synced structure stored in Chrome's local storage.
  */
-export interface IConfiguration {
+export interface Configuration {
   /** Webhook endpoint URL */
   webhookUrl: string;
 
@@ -148,7 +148,7 @@ export interface IMessageHandler {
    * @param message The message to handle.
    * @param sendResponse Callback to send the response.
    */
-  handle(message: ExtensionMessage, sendResponse: (response: IExtensionResponse) => void): void | Promise<void>;
+  handle(message: ExtensionMessage, sendResponse: (response: ExtensionResponse) => void): void | Promise<void>;
 }
 
 // =====================================================================================
@@ -157,7 +157,7 @@ export interface IMessageHandler {
 
 export interface IBrowserService {
   reload(): void;
-  sendMessage(message: ExtensionMessage, responseCallback: (response: ExtensionResponse) => void = () => {}): void;
+  sendMessage(message: ExtensionMessage, responseCallback?: (response: ExtensionResponse) => void): void;
 }
 
 export interface IStorageService {
