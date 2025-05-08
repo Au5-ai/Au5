@@ -1,23 +1,29 @@
 //https://meet.google.com/uir-miof-cby
 import {ChromeBrowserService} from "./services/browser.service";
 import {ExtensionMessageType, IBrowserService, IconData, TranscriptBlock} from "./types";
-import {waitForElement} from "./utils/dom.utils";
+import {selectElements, waitForElement} from "./utils/dom.utils";
 import {Logger} from "./utils/logger";
 
-let userName = "Mohammad Karimi";
+export const CONFIG = {
+  userName: "Mohammad Karimi",
+  meetingEndIcon: {
+    selector: ".google-symbols",
+    text: "call_end"
+  },
+  captionsIcon: {
+    selector: ".google-symbols",
+    text: "closed_caption_off"
+  }
+};
+
+let userName = CONFIG.userName;
 let hasMeetingStarted = false;
 let meetingTitle = "";
 let hasMeetingEnded = false;
 
-const meetingEndIcon: IconData = {
-  selector: ".google-symbols",
-  text: "call_end"
-};
+const meetingEndIcon: IconData = CONFIG.meetingEndIcon;
 
-const captionsIcon: IconData = {
-  selector: ".google-symbols",
-  text: "closed_caption_off"
-};
+const captionsIcon: IconData = CONFIG.captionsIcon;
 
 export async function meetingRoutines(browserService: IBrowserService): Promise<void> {
   try {
@@ -90,23 +96,13 @@ function getMeetingTitleFromUrl(): string | null {
   return meetingId;
 }
 
-function selectElements(selector: string, text?: string): HTMLElement[] {
-  const elements = document.querySelectorAll<HTMLElement>(selector);
-  if (!text) {
-    return Array.from(elements);
-  }
-
-  const regex = new RegExp(text);
-  return Array.from(elements).filter(element => regex.test(element.textContent || ""));
-}
-
-let personNameBuffer = "",
-  transcriptTextBuffer = "",
-  timestampBuffer = "";
+let currentSpeakerName = "",
+  currentTranscript = "",
+  currentTimestamp = "";
 
 const reportErrorMessage = "There is a bug in TranscripTonic. Please report it.";
 function transcriptMutationCallback(mutationsList: MutationRecord[]): void {
-  mutationsList.forEach(() => {
+  mutationsList.forEach((mutation: MutationRecord) => {
     try {
       const transcriptRoot = canUseAriaBasedTranscriptSelector
         ? document.querySelector<HTMLElement>(`div[role="region"][tabindex="0"]`)
@@ -133,25 +129,25 @@ function transcriptMutationCallback(mutationsList: MutationRecord[]): void {
 
         if (currentPersonName && currentTranscriptText) {
           // No previous transcript
-          if (transcriptTextBuffer === "") {
-            personNameBuffer = currentPersonName;
-            timestampBuffer = new Date().toISOString();
-            transcriptTextBuffer = currentTranscriptText;
+          if (currentTranscript === "") {
+            currentSpeakerName = currentPersonName;
+            currentTimestamp = new Date().toISOString();
+            currentTranscript = currentTranscriptText;
           } else {
-            if (personNameBuffer !== currentPersonName) {
+            if (currentSpeakerName !== currentPersonName) {
               pushBufferToTranscript(); // Push old buffer
-              personNameBuffer = currentPersonName;
-              timestampBuffer = new Date().toISOString();
-              transcriptTextBuffer = currentTranscriptText;
+              currentSpeakerName = currentPersonName;
+              currentTimestamp = new Date().toISOString();
+              currentTranscript = currentTranscriptText;
             } else {
               // Same person continues speaking
               if (canUseAriaBasedTranscriptSelector) {
-                if (currentTranscriptText.length - transcriptTextBuffer.length < -250) {
+                if (currentTranscriptText.length - currentTranscript.length < -250) {
                   pushBufferToTranscript(); // Edge case: long segment reset
                 }
               }
 
-              transcriptTextBuffer = currentTranscriptText;
+              currentTranscript = currentTranscriptText;
 
               if (!canUseAriaBasedTranscriptSelector && currentTranscriptText.length > 250) {
                 person.remove(); // Force restart of transcript node
@@ -161,15 +157,15 @@ function transcriptMutationCallback(mutationsList: MutationRecord[]): void {
         }
       } else {
         console.log("No active transcript");
-        if (personNameBuffer && transcriptTextBuffer) {
+        if (currentSpeakerName && currentTranscript) {
           pushBufferToTranscript();
         }
-        personNameBuffer = "";
-        transcriptTextBuffer = "";
+        currentSpeakerName = "";
+        currentTranscript = "";
       }
 
       // Debug logs
-      console.log(transcriptTextBuffer);
+      console.log(currentTranscript);
     } catch (err) {
       console.error(err);
       if (!isTranscriptDomErrorCaptured && !hasMeetingEnded) {
@@ -184,14 +180,14 @@ function transcriptMutationCallback(mutationsList: MutationRecord[]): void {
 let transcript: TranscriptBlock[] = [];
 
 function pushBufferToTranscript(): void {
-  if (!transcriptTextBuffer || !timestampBuffer) return;
+  if (!currentTranscript || !currentTimestamp) return;
 
-  const name = personNameBuffer === "You" ? userName : personNameBuffer;
+  const name = currentSpeakerName === "You" ? userName : currentSpeakerName;
 
   transcript.push({
     personName: name,
-    timestamp: timestampBuffer,
-    text: transcriptTextBuffer
+    timestamp: currentTimestamp,
+    text: currentTranscript
   });
 
   //overWriteChromeStorage(["transcript"], false);

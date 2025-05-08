@@ -20,3 +20,13 @@ export async function waitForElement(selector: string, text?: string): Promise<H
     await new Promise(requestAnimationFrame);
   }
 }
+
+export function selectElements(selector: string, text?: string): HTMLElement[] {
+  const elements = document.querySelectorAll<HTMLElement>(selector);
+  if (!text) {
+    return Array.from(elements);
+  }
+
+  const regex = new RegExp(text);
+  return Array.from(elements).filter(element => regex.test(element.textContent || ""));
+}
