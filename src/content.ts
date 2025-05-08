@@ -56,29 +56,21 @@ meetingRoutines(new ChromeBrowserService()).then(() => {
 
   try {
     const captionsButton = selectElements(captionsIcon.selector, captionsIcon.text)[0];
-    console.log("captionsButton", captionsButton);
-    // Click captions icon if not in manual mode
     captionsButton?.click();
-
-    // Try ARIA-based selector first
     let transcriptTargetNode: HTMLElement | null = document.querySelector(`div[role="region"][tabindex="0"]`);
-
-    // Fallback for older UI
     if (!transcriptTargetNode) {
       transcriptTargetNode = document.querySelector(".a4cQT");
       canUseAriaBasedTranscriptSelector = false;
     }
 
     if (transcriptTargetNode) {
-      // Dim down the transcript
       if (canUseAriaBasedTranscriptSelector) {
         transcriptTargetNode.setAttribute("style", "opacity: 0.2;");
       } else {
         (transcriptTargetNode.children[1] as HTMLElement)?.setAttribute("style", "opacity: 0.2;");
       }
 
-      // Observe transcript changes
-      transcriptObserver = new MutationObserver(transcriptMutationCallback);
+      transcriptObserver = new MutationObserver(handleTranscriptMutations);
       transcriptObserver.observe(transcriptTargetNode, mutationConfig);
     } else {
       throw new Error("Transcript element not found in DOM");
@@ -101,71 +93,77 @@ let currentSpeakerName = "",
   currentTimestamp = "";
 
 const reportErrorMessage = "There is a bug in TranscripTonic. Please report it.";
-function transcriptMutationCallback(mutationsList: MutationRecord[]): void {
-  mutationsList.forEach((mutation: MutationRecord) => {
+function handleTranscriptMutations(mutations: MutationRecord[]): void {
+  for (const _ of mutations) {
     try {
-      const transcriptRoot = canUseAriaBasedTranscriptSelector
-        ? document.querySelector<HTMLElement>(`div[role="region"][tabindex="0"]`)
+      const transcriptContainer = canUseAriaBasedTranscriptSelector
+        ? document.querySelector<HTMLElement>('div[role="region"][tabindex="0"]')
         : document.querySelector<HTMLElement>(".a4cQT");
 
-      const people = canUseAriaBasedTranscriptSelector
-        ? transcriptRoot?.children
-        : transcriptRoot?.childNodes[1]?.firstChild?.childNodes;
+      const speakerElements = canUseAriaBasedTranscriptSelector
+        ? transcriptContainer?.children
+        : transcriptContainer?.childNodes[1]?.firstChild?.childNodes;
 
-      if (!people) return;
+      if (!speakerElements) return;
 
-      const hasValidPeople = canUseAriaBasedTranscriptSelector ? people.length > 1 : people.length > 0;
+      const hasSpeakers = canUseAriaBasedTranscriptSelector ? speakerElements.length > 1 : speakerElements.length > 0;
 
-      if (hasValidPeople) {
-        const person = canUseAriaBasedTranscriptSelector
-          ? (people[people.length - 2] as HTMLElement)
-          : (people[people.length - 1] as HTMLElement);
-
-        const nameNode = person.childNodes[0] as HTMLElement;
-        const transcriptNode = person.childNodes[1]?.lastChild as HTMLElement;
-
-        const currentPersonName = nameNode?.textContent ?? "";
-        const currentTranscriptText = transcriptNode?.textContent ?? "";
-
-        if (currentPersonName && currentTranscriptText) {
-          // No previous transcript
-          if (currentTranscript === "") {
-            currentSpeakerName = currentPersonName;
-            currentTimestamp = new Date().toISOString();
-            currentTranscript = currentTranscriptText;
-          } else {
-            if (currentSpeakerName !== currentPersonName) {
-              pushBufferToTranscript(); // Push old buffer
-              currentSpeakerName = currentPersonName;
-              currentTimestamp = new Date().toISOString();
-              currentTranscript = currentTranscriptText;
-            } else {
-              // Same person continues speaking
-              if (canUseAriaBasedTranscriptSelector) {
-                if (currentTranscriptText.length - currentTranscript.length < -250) {
-                  pushBufferToTranscript(); // Edge case: long segment reset
-                }
-              }
-
-              currentTranscript = currentTranscriptText;
-
-              if (!canUseAriaBasedTranscriptSelector && currentTranscriptText.length > 250) {
-                person.remove(); // Force restart of transcript node
-              }
-            }
-          }
-        }
-      } else {
+      if (!hasSpeakers) {
         console.log("No active transcript");
         if (currentSpeakerName && currentTranscript) {
-          pushBufferToTranscript();
+          flushTranscriptBuffer();
         }
         currentSpeakerName = "";
         currentTranscript = "";
+        continue;
       }
 
-      // Debug logs
-      console.log(currentTranscript);
+      const latestSpeakerElement = canUseAriaBasedTranscriptSelector
+        ? (speakerElements[speakerElements.length - 2] as HTMLElement)
+        : (speakerElements[speakerElements.length - 1] as HTMLElement);
+
+      const nameNode = latestSpeakerElement.childNodes[0] as HTMLElement;
+      const textNode = latestSpeakerElement.childNodes[1]?.lastChild as HTMLElement;
+
+      const speakerName = nameNode?.textContent?.trim() ?? "";
+      const transcriptText = textNode?.textContent?.trim() ?? "";
+
+      if (!speakerName || !transcriptText) continue;
+
+      if (currentTranscript === "") {
+        // New conversation start
+        currentSpeakerName = speakerName;
+        currentTimestamp = new Date().toISOString();
+        currentTranscript = transcriptText;
+      } else if (currentSpeakerName !== speakerName) {
+        // New speaker
+        flushTranscriptBuffer();
+        currentSpeakerName = speakerName;
+        currentTimestamp = new Date().toISOString();
+        currentTranscript = transcriptText;
+      } else {
+        // Same speaker continuing
+        if (canUseAriaBasedTranscriptSelector) {
+          const textDiff = transcriptText.length - currentTranscript.length;
+          if (textDiff < -250) {
+            flushTranscriptBuffer(); // Transcript reset fallback
+          }
+        }
+
+        currentTranscript = transcriptText;
+
+        if (!canUseAriaBasedTranscriptSelector && transcriptText.length > 250) {
+          console.log("Transcript text too long, trimming...");
+          latestSpeakerElement.remove(); // Google Meet UI workaround
+        }
+      }
+
+      // Debug log
+      console.log(
+        currentTranscript.length > 125
+          ? `${currentTranscript.slice(0, 50)} ... ${currentTranscript.slice(-50)}`
+          : currentTranscript
+      );
     } catch (err) {
       console.error(err);
       if (!isTranscriptDomErrorCaptured && !hasMeetingEnded) {
@@ -173,13 +171,13 @@ function transcriptMutationCallback(mutationsList: MutationRecord[]): void {
       }
       isTranscriptDomErrorCaptured = true;
     }
-  });
+  }
 }
 
 // Transcript array that holds one or more transcript blocks
 let transcript: TranscriptBlock[] = [];
 
-function pushBufferToTranscript(): void {
+function flushTranscriptBuffer(): void {
   if (!currentTranscript || !currentTimestamp) return;
 
   const name = currentSpeakerName === "You" ? userName : currentSpeakerName;
