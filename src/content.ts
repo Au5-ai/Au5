@@ -3,18 +3,7 @@ import {ChromeBrowserService} from "./services/browser.service";
 import {ExtensionMessageType, IBrowserService, IconData, TranscriptBlock} from "./types";
 import {selectElements, waitForElement} from "./utils/dom.utils";
 import {Logger} from "./utils/logger";
-
-export const CONFIG = {
-  userName: "Mohammad Karimi",
-  meetingEndIcon: {
-    selector: ".google-symbols",
-    text: "call_end"
-  },
-  captionsIcon: {
-    selector: ".google-symbols",
-    text: "closed_caption_off"
-  }
-};
+import {CONFIG} from "./constants";
 
 let userName = CONFIG.userName;
 let hasMeetingStarted = false;
@@ -22,7 +11,6 @@ let meetingTitle = "";
 let hasMeetingEnded = false;
 
 const meetingEndIcon: IconData = CONFIG.meetingEndIcon;
-
 const captionsIcon: IconData = CONFIG.captionsIcon;
 
 export async function meetingRoutines(browserService: IBrowserService): Promise<void> {
@@ -51,35 +39,57 @@ let isTranscriptDomErrorCaptured = false;
 let transcriptObserver: MutationObserver;
 let chatMessagesObserver: MutationObserver;
 
-meetingRoutines(new ChromeBrowserService()).then(() => {
-  Logger.info(getMeetingTitleFromUrl() ?? "No meeting title found", "meetingRoutines");
+meetingRoutines(new ChromeBrowserService())
+  .then(() => {
+    Logger.info(getMeetingTitleFromUrl() ?? "No meeting title found", "meetingRoutines");
 
-  try {
-    const captionsButton = selectElements(captionsIcon.selector, captionsIcon.text)[0];
-    captionsButton?.click();
-    let transcriptTargetNode: HTMLElement | null = document.querySelector(`div[role="region"][tabindex="0"]`);
-    if (!transcriptTargetNode) {
-      transcriptTargetNode = document.querySelector(".a4cQT");
-      canUseAriaBasedTranscriptSelector = false;
-    }
+    try {
+      const captionsButton = selectElements(captionsIcon.selector, captionsIcon.text)[0];
+      captionsButton?.click();
 
-    if (transcriptTargetNode) {
-      if (canUseAriaBasedTranscriptSelector) {
-        transcriptTargetNode.setAttribute("style", "opacity: 0.2;");
-      } else {
-        (transcriptTargetNode.children[1] as HTMLElement)?.setAttribute("style", "opacity: 0.2;");
+      const transcriptContainer = findTranscriptContainer();
+      if (!transcriptContainer) {
+        throw new Error("Transcript container not found in DOM");
       }
 
-      transcriptObserver = new MutationObserver(handleTranscriptMutations);
-      transcriptObserver.observe(transcriptTargetNode, mutationConfig);
-    } else {
-      throw new Error("Transcript element not found in DOM");
+      applyTranscriptStyle(transcriptContainer);
+      observeTranscript(transcriptContainer);
+    } catch (error) {
+      console.error("Transcript initialization error:", error);
+      isTranscriptDomErrorCaptured = true;
     }
-  } catch (err) {
-    console.error(err);
-    isTranscriptDomErrorCaptured = true;
+  })
+  .catch(error => {
+    console.error("Meeting routine execution failed:", error);
+  });
+
+/** Locates the appropriate transcript container and sets the flag. */
+function findTranscriptContainer(): HTMLElement | null {
+  let container = document.querySelector<HTMLElement>(CONFIG.transcriptSelectors.ariaBased);
+  canUseAriaBasedTranscriptSelector = Boolean(container);
+
+  if (!container) {
+    container = document.querySelector<HTMLElement>(CONFIG.transcriptSelectors.fallback);
   }
-});
+
+  return container;
+}
+
+/** Applies visual styles to the transcript container for debugging/user clarity. */
+function applyTranscriptStyle(container: HTMLElement): void {
+  if (canUseAriaBasedTranscriptSelector) {
+    container.style.opacity = CONFIG.transcriptStyles.opacity;
+  } else {
+    const innerElement = container.children[1] as HTMLElement | undefined;
+    innerElement?.setAttribute("style", `opacity: ${CONFIG.transcriptStyles.opacity};`);
+  }
+}
+
+/** Starts observing the transcript container for mutation changes. */
+function observeTranscript(container: HTMLElement): void {
+  transcriptObserver = new MutationObserver(handleTranscriptMutations);
+  transcriptObserver.observe(container, mutationConfig);
+}
 
 function getMeetingTitleFromUrl(): string | null {
   const url = new URL(window.location.href);
@@ -92,13 +102,12 @@ let currentSpeakerName = "",
   currentTranscript = "",
   currentTimestamp = "";
 
-const reportErrorMessage = "There is a bug in TranscripTonic. Please report it.";
 function handleTranscriptMutations(mutations: MutationRecord[]): void {
   for (const _ of mutations) {
     try {
       const transcriptContainer = canUseAriaBasedTranscriptSelector
-        ? document.querySelector<HTMLElement>('div[role="region"][tabindex="0"]')
-        : document.querySelector<HTMLElement>(".a4cQT");
+        ? document.querySelector<HTMLElement>(CONFIG.transcriptSelectors.ariaBased)
+        : document.querySelector<HTMLElement>(CONFIG.transcriptSelectors.fallback);
 
       const speakerElements = canUseAriaBasedTranscriptSelector
         ? transcriptContainer?.children
@@ -145,14 +154,14 @@ function handleTranscriptMutations(mutations: MutationRecord[]): void {
         // Same speaker continuing
         if (canUseAriaBasedTranscriptSelector) {
           const textDiff = transcriptText.length - currentTranscript.length;
-          if (textDiff < -250) {
+          if (textDiff < -CONFIG.maxTranscriptLength) {
             flushTranscriptBuffer(); // Transcript reset fallback
           }
         }
 
         currentTranscript = transcriptText;
 
-        if (!canUseAriaBasedTranscriptSelector && transcriptText.length > 250) {
+        if (!canUseAriaBasedTranscriptSelector && transcriptText.length > CONFIG.maxTranscriptLength) {
           console.log("Transcript text too long, trimming...");
           latestSpeakerElement.remove(); // Google Meet UI workaround
         }
@@ -160,14 +169,14 @@ function handleTranscriptMutations(mutations: MutationRecord[]): void {
 
       // Debug log
       console.log(
-        currentTranscript.length > 125
+        currentTranscript.length > CONFIG.transcriptTrimThreshold
           ? `${currentTranscript.slice(0, 50)} ... ${currentTranscript.slice(-50)}`
           : currentTranscript
       );
     } catch (err) {
       console.error(err);
       if (!isTranscriptDomErrorCaptured && !hasMeetingEnded) {
-        console.log(reportErrorMessage);
+        console.log(CONFIG.reportErrorMessage);
       }
       isTranscriptDomErrorCaptured = true;
     }
