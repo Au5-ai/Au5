@@ -54,6 +54,7 @@ meetingRoutines(new ChromeBrowserService())
 
       applyTranscriptStyle(transcriptContainer);
       observeTranscript(transcriptContainer);
+      endMeetingRoutine();
     } catch (error) {
       console.error("Transcript initialization error:", error);
       isTranscriptDomErrorCaptured = true;
@@ -62,6 +63,21 @@ meetingRoutines(new ChromeBrowserService())
   .catch(error => {
     console.error("Meeting routine execution failed:", error);
   });
+
+function endMeetingRoutine(): void {
+  try {
+    // CRITICAL DOM DEPENDENCY: Capture user click on the "end meeting" button
+    const meetingEndButton = getMeetingEndButton(CONFIG.meetingEndIcon);
+
+    if (!meetingEndButton) {
+      throw new Error("Meeting end button not found in DOM.");
+    }
+
+    meetingEndButton.addEventListener("click", handleMeetingEnd);
+  } catch (err) {
+    console.error("Error setting up meeting end listener:", err);
+  }
+}
 
 /** Locates the appropriate transcript container and sets the flag. */
 function findTranscriptContainer(): HTMLElement | null {
@@ -198,19 +214,6 @@ function flushTranscriptBuffer(): void {
   });
 
   //overWriteChromeStorage(["transcript"], false);
-}
-
-try {
-  // CRITICAL DOM DEPENDENCY: Capture user click on the "end meeting" button
-  const meetingEndButton = getMeetingEndButton(CONFIG.meetingEndIcon);
-
-  if (!meetingEndButton) {
-    throw new Error("Meeting end button not found in DOM.");
-  }
-
-  meetingEndButton.addEventListener("click", handleMeetingEnd);
-} catch (err) {
-  console.error("Error setting up meeting end listener:", err);
 }
 
 /**
