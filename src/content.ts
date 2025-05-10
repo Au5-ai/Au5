@@ -199,3 +199,42 @@ function flushTranscriptBuffer(): void {
 
   //overWriteChromeStorage(["transcript"], false);
 }
+
+try {
+  // CRITICAL DOM DEPENDENCY: Capture user click on the "end meeting" button
+  const meetingEndButton = getMeetingEndButton(CONFIG.meetingEndIcon);
+
+  if (!meetingEndButton) {
+    throw new Error("Meeting end button not found in DOM.");
+  }
+
+  meetingEndButton.addEventListener("click", handleMeetingEnd);
+} catch (err) {
+  console.error("Error setting up meeting end listener:", err);
+}
+
+/**
+ * Safely retrieves the end meeting button element.
+ */
+function getMeetingEndButton(data: {selector: string; text: string}): HTMLElement | null {
+  const elements = selectElements(data.selector, data.text);
+  return elements?.[0]?.parentElement?.parentElement ?? null;
+}
+
+/**
+ * Handles logic to clean up and persist data when the meeting ends.
+ */
+function handleMeetingEnd(): void {
+  hasMeetingEnded = true;
+
+  // Disconnect observers
+  transcriptObserver?.disconnect();
+  //chatMessagesObserver?.disconnect();
+
+  // Flush transcript buffer if valid
+  if (currentSpeakerName && currentTranscript) {
+    flushTranscriptBuffer();
+  }
+
+  console.log("Meeting ended. Transcript data:", JSON.stringify(transcript));
+}
