@@ -14,9 +14,9 @@
   },
   "host_permissions": ["*://meet.google.com/*-*-*"],
   "icons": {
-    "16": "assets/icons/icon16.png",
-    "48": "assets/icons/icon48.png",
-    "128": "assets/icons/icon128.png"
+    "16": "assets/icons/16x.png",
+    "48": "assets/icons/48x.png",
+    "128": "assets/icons/128x.png"
   },
   "name": "Au5.ai",
   "permissions": [
