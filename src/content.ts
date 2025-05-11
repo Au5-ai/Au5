@@ -1,31 +1,20 @@
 //https://meet.google.com/uir-miof-cby
+import {pipeAsync} from "./core/pieline";
 import {ChromeBrowserService} from "./services/browser.service";
-import {ConfigurationService} from "./services/config.service";
+import {AppConfiguration, ConfigurationService} from "./services/config.service";
 import {StorageService} from "./services/storage.service";
-import {ExtensionMessageType, IBrowserService, IconData, TranscriptBlock} from "./types";
+import {ExtensionMessageType, IBrowserService, TranscriptBlock} from "./types";
 import {selectElements, waitForElement} from "./utils/dom.utils";
-import {Logger} from "./utils/logger";
+import {getMeetingTitleFromUrl} from "./utils/urlHelper";
 
-const AppConfig = await new ConfigurationService(new StorageService()).getConfig();
-let userName = "Mohammad Karimi"; // Get from config.service.ts and local storage.
-let hasMeetingStarted = false;
-let meetingTitle = "";
+let AppConfig: AppConfiguration;
 let hasMeetingEnded = false;
+let meetingTitle: string = "No meeting title found yet!";
+let transcript: TranscriptBlock[] = [];
+let currentSpeakerName = "",
+  currentTranscript = "",
+  currentTimestamp = "";
 
-const meetingEndIcon: IconData = AppConfig.Extension.meetingEndIcon;
-const captionsIcon: IconData = AppConfig.Extension.captionsIcon;
-
-export async function meetingRoutines(browserService: IBrowserService): Promise<void> {
-  try {
-    await waitForElement(meetingEndIcon.selector, meetingEndIcon.text);
-    browserService.sendMessage({type: ExtensionMessageType.MEETING_STARTED});
-    hasMeetingStarted = true;
-  } catch (error) {
-    console.error("Failed to detect meeting start:", error);
-  }
-}
-
-declare const extensionStatusJSON_bug: string;
 const mutationConfig: MutationObserverInit = {
   childList: true,
   attributes: true,
@@ -34,42 +23,98 @@ const mutationConfig: MutationObserverInit = {
 };
 
 // DOM state flags
-let canUseAriaBasedTranscriptSelector = true;
 let isTranscriptDomErrorCaptured = false;
 
 // Observers
 let transcriptObserver: MutationObserver;
-let chatMessagesObserver: MutationObserver;
+let hasMeetingStarted = false;
 
-meetingRoutines(new ChromeBrowserService())
-  .then(() => {
-    Logger.info(getMeetingTitleFromUrl() ?? "No meeting title found", "meetingRoutines");
+interface MeetingPipelineContext {
+  browserService: ChromeBrowserService;
+  configService: ConfigurationService;
+  AppConfig?: any;
+  meetingTitle?: string;
+  captionsButton?: HTMLElement | null;
+  transcriptContainer?: HTMLElement | null;
+}
 
-    try {
-      const captionsButton = selectElements(captionsIcon.selector, captionsIcon.text)[0];
-      captionsButton?.click();
+const initServices = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
+  AppConfig = await new ConfigurationService(new StorageService()).getConfig();
+  ctx.AppConfig = AppConfig;
+  ctx.meetingTitle = getMeetingTitleFromUrl();
+  return ctx;
+};
 
-      const transcriptContainer = findTranscriptContainer();
-      if (!transcriptContainer) {
-        throw new Error("Transcript container not found in DOM");
-      }
+const activateCaptions = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
+  const captionsIcon = ctx.AppConfig.Extension.captionsIcon;
+  ctx.captionsButton = selectElements(captionsIcon.selector, captionsIcon.text)[0];
+  ctx.captionsButton?.click();
+  return ctx;
+};
 
-      applyTranscriptStyle(transcriptContainer);
-      observeTranscript(transcriptContainer);
-      endMeetingRoutine();
-    } catch (error) {
-      console.error("Transcript initialization error:", error);
-      isTranscriptDomErrorCaptured = true;
-    }
+const findTranscript = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
+  const container = findTranscriptContainer();
+  if (!container) throw new Error("Transcript container not found in DOM");
+  ctx.transcriptContainer = container;
+  return ctx;
+};
+
+const styleTranscript = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
+  if (ctx.transcriptContainer) {
+    applyTranscriptStyle(ctx.transcriptContainer);
+  }
+  return ctx;
+};
+
+const observeTranscriptContainer = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
+  if (ctx.transcriptContainer) {
+    observeTranscript(ctx.transcriptContainer);
+  }
+  return ctx;
+};
+
+const finalize = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
+  endMeetingRoutines();
+  return ctx;
+};
+
+startMeetingRoutines(new ChromeBrowserService())
+  .then(async () => {
+    return pipeAsync<MeetingPipelineContext>(
+      {
+        browserService: new ChromeBrowserService(),
+        configService: new ConfigurationService(new StorageService())
+      },
+      initServices,
+      activateCaptions,
+      findTranscript,
+      styleTranscript,
+      observeTranscriptContainer,
+      finalize
+    );
   })
   .catch(error => {
     console.error("Meeting routine execution failed:", error);
+    isTranscriptDomErrorCaptured = true;
   });
 
-function endMeetingRoutine(): void {
+async function startMeetingRoutines(browserService: IBrowserService): Promise<void> {
   try {
-    // CRITICAL DOM DEPENDENCY: Capture user click on the "end meeting" button
-    const meetingEndButton = getMeetingEndButton(AppConfig.Extension.meetingEndIcon);
+    await waitForElement(AppConfig.Extension.meetingEndIcon.selector, AppConfig.Extension.meetingEndIcon.text);
+    browserService.sendMessage({type: ExtensionMessageType.MEETING_STARTED});
+    hasMeetingStarted = true;
+  } catch (error) {
+    console.error("Failed to detect meeting start:", error);
+  }
+}
+
+function endMeetingRoutines(): void {
+  try {
+    const elements = selectElements(
+      AppConfig.Extension.meetingEndIcon.selector,
+      AppConfig.Extension.meetingEndIcon.text
+    );
+    const meetingEndButton = elements?.[0]?.parentElement?.parentElement ?? null;
 
     if (!meetingEndButton) {
       throw new Error("Meeting end button not found in DOM.");
@@ -95,7 +140,7 @@ function findTranscriptContainer(): HTMLElement | null {
 
 /** Applies visual styles to the transcript container for debugging/user clarity. */
 function applyTranscriptStyle(container: HTMLElement): void {
-  if (canUseAriaBasedTranscriptSelector) {
+  if (AppConfig.Extension.canUseAriaBasedTranscriptSelector) {
     container.style.opacity = AppConfig.Extension.transcriptStyles.opacity;
   } else {
     const innerElement = container.children[1] as HTMLElement | undefined;
@@ -108,17 +153,6 @@ function observeTranscript(container: HTMLElement): void {
   transcriptObserver = new MutationObserver(handleTranscriptMutations);
   transcriptObserver.observe(container, mutationConfig);
 }
-
-function getMeetingTitleFromUrl(): string | null {
-  const url = new URL(window.location.href);
-  const pathSegments = url.pathname.split("/").filter(Boolean);
-  const meetingId = pathSegments.length > 0 ? pathSegments[pathSegments.length - 1] : null;
-  return meetingId;
-}
-
-let currentSpeakerName = "",
-  currentTranscript = "",
-  currentTimestamp = "";
 
 function handleTranscriptMutations(mutations: MutationRecord[]): void {
   for (const _ of mutations) {
@@ -201,13 +235,10 @@ function handleTranscriptMutations(mutations: MutationRecord[]): void {
   }
 }
 
-// Transcript array that holds one or more transcript blocks
-let transcript: TranscriptBlock[] = [];
-
 function flushTranscriptBuffer(): void {
   if (!currentTranscript || !currentTimestamp) return;
 
-  const name = currentSpeakerName === "You" ? userName : currentSpeakerName;
+  const name = currentSpeakerName === "You" ? AppConfig.Service.fullName : currentSpeakerName;
 
   transcript.push({
     personName: name,
@@ -216,14 +247,6 @@ function flushTranscriptBuffer(): void {
   });
 
   //overWriteChromeStorage(["transcript"], false);
-}
-
-/**
- * Safely retrieves the end meeting button element.
- */
-function getMeetingEndButton(data: {selector: string; text: string}): HTMLElement | null {
-  const elements = selectElements(data.selector, data.text);
-  return elements?.[0]?.parentElement?.parentElement ?? null;
 }
 
 /**

@@ -32,9 +32,10 @@ interface ExtensionConfiguration {
   };
   maxTranscriptLength: number;
   transcriptTrimThreshold: number;
+  canUseAriaBasedTranscriptSelector: boolean;
 }
 
-interface AppConfiguration {
+export interface AppConfiguration {
   Service: ServiceConfiguration;
   Extension: ExtensionConfiguration;
 }
@@ -115,7 +116,8 @@ const ExtensionConfig: ExtensionConfiguration = {
     opacity: "0.2"
   },
   maxTranscriptLength: 250,
-  transcriptTrimThreshold: 125
+  transcriptTrimThreshold: 125,
+  canUseAriaBasedTranscriptSelector: true
 };
 
 const AppConfig: AppConfiguration = {
