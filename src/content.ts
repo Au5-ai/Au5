@@ -3,15 +3,14 @@ import {ChromeBrowserService} from "./services/browser.service";
 import {ExtensionMessageType, IBrowserService, IconData, TranscriptBlock} from "./types";
 import {selectElements, waitForElement} from "./utils/dom.utils";
 import {Logger} from "./utils/logger";
-import {CONFIG} from "./constants";
 
-let userName = CONFIG.userName;
+let userName = "Mohammad Karimi"; // Get from config.service.ts and local storage.
 let hasMeetingStarted = false;
 let meetingTitle = "";
 let hasMeetingEnded = false;
 
-const meetingEndIcon: IconData = CONFIG.meetingEndIcon;
-const captionsIcon: IconData = CONFIG.captionsIcon;
+const meetingEndIcon: IconData = ExtensionConfig.meetingEndIcon;
+const captionsIcon: IconData = ExtensionConfig.captionsIcon;
 
 export async function meetingRoutines(browserService: IBrowserService): Promise<void> {
   try {
@@ -67,7 +66,7 @@ meetingRoutines(new ChromeBrowserService())
 function endMeetingRoutine(): void {
   try {
     // CRITICAL DOM DEPENDENCY: Capture user click on the "end meeting" button
-    const meetingEndButton = getMeetingEndButton(CONFIG.meetingEndIcon);
+    const meetingEndButton = getMeetingEndButton(ExtensionConfig.meetingEndIcon);
 
     if (!meetingEndButton) {
       throw new Error("Meeting end button not found in DOM.");
@@ -81,11 +80,11 @@ function endMeetingRoutine(): void {
 
 /** Locates the appropriate transcript container and sets the flag. */
 function findTranscriptContainer(): HTMLElement | null {
-  let container = document.querySelector<HTMLElement>(CONFIG.transcriptSelectors.ariaBased);
+  let container = document.querySelector<HTMLElement>(ExtensionConfig.transcriptSelectors.ariaBased);
   canUseAriaBasedTranscriptSelector = Boolean(container);
 
   if (!container) {
-    container = document.querySelector<HTMLElement>(CONFIG.transcriptSelectors.fallback);
+    container = document.querySelector<HTMLElement>(ExtensionConfig.transcriptSelectors.fallback);
   }
 
   return container;
@@ -94,10 +93,10 @@ function findTranscriptContainer(): HTMLElement | null {
 /** Applies visual styles to the transcript container for debugging/user clarity. */
 function applyTranscriptStyle(container: HTMLElement): void {
   if (canUseAriaBasedTranscriptSelector) {
-    container.style.opacity = CONFIG.transcriptStyles.opacity;
+    container.style.opacity = ExtensionConfig.transcriptStyles.opacity;
   } else {
     const innerElement = container.children[1] as HTMLElement | undefined;
-    innerElement?.setAttribute("style", `opacity: ${CONFIG.transcriptStyles.opacity};`);
+    innerElement?.setAttribute("style", `opacity: ${ExtensionConfig.transcriptStyles.opacity};`);
   }
 }
 
@@ -122,8 +121,8 @@ function handleTranscriptMutations(mutations: MutationRecord[]): void {
   for (const _ of mutations) {
     try {
       const transcriptContainer = canUseAriaBasedTranscriptSelector
-        ? document.querySelector<HTMLElement>(CONFIG.transcriptSelectors.ariaBased)
-        : document.querySelector<HTMLElement>(CONFIG.transcriptSelectors.fallback);
+        ? document.querySelector<HTMLElement>(ExtensionConfig.transcriptSelectors.ariaBased)
+        : document.querySelector<HTMLElement>(ExtensionConfig.transcriptSelectors.fallback);
 
       const speakerElements = canUseAriaBasedTranscriptSelector
         ? transcriptContainer?.children
@@ -170,14 +169,14 @@ function handleTranscriptMutations(mutations: MutationRecord[]): void {
         // Same speaker continuing
         if (canUseAriaBasedTranscriptSelector) {
           const textDiff = transcriptText.length - currentTranscript.length;
-          if (textDiff < -CONFIG.maxTranscriptLength) {
+          if (textDiff < -ExtensionConfig.maxTranscriptLength) {
             flushTranscriptBuffer(); // Transcript reset fallback
           }
         }
 
         currentTranscript = transcriptText;
 
-        if (!canUseAriaBasedTranscriptSelector && transcriptText.length > CONFIG.maxTranscriptLength) {
+        if (!canUseAriaBasedTranscriptSelector && transcriptText.length > ExtensionConfig.maxTranscriptLength) {
           console.log("Transcript text too long, trimming...");
           latestSpeakerElement.remove(); // Google Meet UI workaround
         }
@@ -185,14 +184,14 @@ function handleTranscriptMutations(mutations: MutationRecord[]): void {
 
       // Debug log
       console.log(
-        currentTranscript.length > CONFIG.transcriptTrimThreshold
+        currentTranscript.length > ExtensionConfig.transcriptTrimThreshold
           ? `${currentTranscript.slice(0, 50)} ... ${currentTranscript.slice(-50)}`
           : currentTranscript
       );
     } catch (err) {
       console.error(err);
       if (!isTranscriptDomErrorCaptured && !hasMeetingEnded) {
-        console.log(CONFIG.reportErrorMessage);
+        console.log(ExtensionConfig.reportErrorMessage);
       }
       isTranscriptDomErrorCaptured = true;
     }

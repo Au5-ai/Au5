@@ -1,6 +1,3 @@
-import {HEADERS} from "../constants/http.constants";
-import {ConfigurationService} from "../services/config.service";
-
 export interface LogPayload {
   level: "info" | "warn" | "error";
   message: string;

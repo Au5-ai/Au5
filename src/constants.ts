@@ -1,21 +1,11 @@
-export const CONFIG = {
-  userName: "Mohammad Karimi",
-  meetingEndIcon: {
-    selector: ".google-symbols",
-    text: "call_end"
+export const MESSAGES = {
+  Error: {
+    NO_WEBHOOK_URL: "No webhook URL configured",
+    NO_MEETING_FOUND: "No meetings found. Maybe attend one?",
+    EMPTY_MEETING_DATA: "Empty transcript and chatMessages",
+    WEBHOOK_FAILED: "Webhook failed"
   },
-  captionsIcon: {
-    selector: ".google-symbols",
-    text: "closed_caption_off"
-  },
-  transcriptSelectors: {
-    ariaBased: 'div[role="region"][tabindex="0"]',
-    fallback: ".a4cQT"
-  },
-  transcriptStyles: {
-    opacity: "0.2"
-  },
-  reportErrorMessage: "There is a bug in TranscripTonic. Please report it.",
-  maxTranscriptLength: 250,
-  transcriptTrimThreshold: 125
+  Info: {
+    WEBHOOK_POSTED: "Webhook posted"
+  }
 };

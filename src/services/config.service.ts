@@ -1,17 +1,37 @@
-import {STORAGE_KEYS} from "../constants/storage.constants";
 import {IStorageService} from "../types";
+
+const CONFIGURATION_KEY: string = "configuration";
 
 /**
  * Represents the synced structure stored in Chrome's local storage.
  */
 export interface Configuration {
-  env: string;
-
   /** Webhook endpoint URL */
   webhookUrl: string;
-
   /** Authentication token for the webhook */
   token: string;
+  userId: string;
+  fullName: string;
+}
+
+export interface ExtensionConfiguration {
+  meetingEndIcon: {
+    selector: string;
+    text: string;
+  };
+  captionsIcon: {
+    selector: string;
+    text: string;
+  };
+  transcriptSelectors: {
+    ariaBased: string;
+    fallback: string;
+  };
+  transcriptStyles: {
+    opacity: string;
+  };
+  maxTranscriptLength: number;
+  transcriptTrimThreshold: number;
 }
 
 export class ConfigurationService {
@@ -22,7 +42,7 @@ export class ConfigurationService {
    */
   async getConfig(): Promise<Configuration | null> {
     try {
-      const config = await this.storageService.get<Configuration>(STORAGE_KEYS.CONFIG);
+      const config = await this.storageService.get<Configuration>(CONFIGURATION_KEY);
       return config ?? null;
     } catch (error) {
       console.error("Failed to load configuration:", error);
@@ -35,7 +55,7 @@ export class ConfigurationService {
    */
   async setConfig(config: Configuration): Promise<void> {
     try {
-      await this.storageService.set<Configuration>(STORAGE_KEYS.CONFIG, config);
+      await this.storageService.set<Configuration>(CONFIGURATION_KEY, config);
     } catch (error) {
       console.error("Failed to save configuration:", error);
     }
@@ -63,9 +83,36 @@ export class ConfigurationService {
    */
   async clearConfig(): Promise<void> {
     try {
-      await this.storageService.remove(STORAGE_KEYS.CONFIG);
+      await this.storageService.remove(CONFIGURATION_KEY);
     } catch (error) {
       console.error("Failed to clear configuration:", error);
     }
   }
 }
+
+// sample data for testing
+// Get these values from API or config.service.ts
+export const ExtensionConfig: ExtensionConfiguration = {
+  meetingEndIcon: {
+    selector: ".google-symbols",
+    text: "call_end"
+  },
+  captionsIcon: {
+    selector: ".google-symbols",
+    text: "closed_caption_off"
+  },
+  transcriptSelectors: {
+    ariaBased: 'div[role="region"][tabindex="0"]',
+    fallback: ".a4cQT"
+  },
+  transcriptStyles: {
+    opacity: "0.2"
+  },
+  maxTranscriptLength: 250,
+  transcriptTrimThreshold: 125
+};
+
+export const AppConfig = {
+  User: {webhookUrl: "", token: "", userId: "", fullName: ""} as Configuration,
+  Extension: ExtensionConfig as ExtensionConfiguration
+};

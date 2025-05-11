@@ -1,6 +1,6 @@
 import {IStorageService} from "../types";
 
-export class ChromeStorageService implements IStorageService {
+export class StorageService implements IStorageService {
   async remove(keys: string | string[]): Promise<void> {
     return new Promise((resolve, reject) => {
       chrome.storage.local.remove(keys, () => {

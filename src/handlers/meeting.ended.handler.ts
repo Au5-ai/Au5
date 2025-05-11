@@ -1,5 +1,5 @@
 import {ExtensionMessage, IMessageHandler, IStorageService} from "../types";
-import {WebhookService} from "../services/webhook.service";
+import {WebhookService} from "../services/API";
 
 /**
  * Handles the "meeting_ended" message type.
