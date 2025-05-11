@@ -21,6 +21,10 @@ export async function waitForElement(selector: string, text?: string): Promise<H
   }
 }
 
+export function selectElement(selector: string): HTMLElement | null {
+  return document.querySelector<HTMLElement>(selector);
+}
+
 export function selectElements(selector: string, text?: string): HTMLElement[] {
   const elements = document.querySelectorAll<HTMLElement>(selector);
   if (!text) {

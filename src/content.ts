@@ -3,12 +3,12 @@ import {pipeAsync} from "./core/pipeline";
 import {ChromeBrowserService} from "./services/browser.service";
 import {AppConfiguration, ConfigurationService} from "./services/config.service";
 import {StorageService} from "./services/storage.service";
-import {ExtensionMessageType, IBrowserService, MeetingPipelineContext, TranscriptBlock} from "./types";
-import {applyDomStyle, findDom, selectElements, waitForElement} from "./utils/dom.utils";
+import {ExtensionMessageType, IBrowserService, PipelineContext, TranscriptBlock} from "./types";
+import {applyDomStyle, findDom, selectElement, selectElements, waitForElement} from "./utils/dom.utils";
 import {getMeetingTitleFromUrl} from "./utils/urlHelper";
 
 let appConfig: AppConfiguration;
-const broserService = new ChromeBrowserService();
+const browserService = new ChromeBrowserService();
 const configService = new ConfigurationService(new StorageService());
 
 let hasMeetingEnded = false;
@@ -17,27 +17,25 @@ let currentSpeakerName = "",
   currentTranscript = "",
   currentTimestamp = "";
 
-// DOM state flags
 let isTranscriptDomErrorCaptured = false;
 
 // Observers
 let transcriptObserver: MutationObserver;
-let hasMeetingStarted = false;
 
-const initServices = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
+const initServices = async (ctx: PipelineContext): Promise<PipelineContext> => {
   appConfig = await configService.getConfig();
   ctx.meetingTitle = getMeetingTitleFromUrl();
   return ctx;
 };
 
-const activateCaptions = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
+const activateCaptions = async (ctx: PipelineContext): Promise<PipelineContext> => {
   const captionsIcon = appConfig.Extension.captionsIcon;
   ctx.captionsButton = selectElements(captionsIcon.selector, captionsIcon.text)[0];
   ctx.captionsButton?.click();
   return ctx;
 };
 
-const findTranscriptContainer = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
+const findTranscriptContainer = async (ctx: PipelineContext): Promise<PipelineContext> => {
   const dom = findDom(appConfig.Extension.transcriptSelectors.aria, appConfig.Extension.transcriptSelectors.fallback);
   if (!dom) throw new Error("Transcript container not found in DOM");
   ctx.transcriptContainer = dom.container;
@@ -45,7 +43,7 @@ const findTranscriptContainer = async (ctx: MeetingPipelineContext): Promise<Mee
   return ctx;
 };
 
-const applyTranscriptStyle = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
+const applyTranscriptStyle = async (ctx: PipelineContext): Promise<PipelineContext> => {
   if (ctx.transcriptContainer) {
     applyDomStyle(
       ctx.transcriptContainer,
@@ -56,7 +54,7 @@ const applyTranscriptStyle = async (ctx: MeetingPipelineContext): Promise<Meetin
   return ctx;
 };
 
-const observeTranscriptContainer = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
+const observeTranscriptContainer = async (ctx: PipelineContext): Promise<PipelineContext> => {
   if (ctx.transcriptContainer) {
     transcriptObserver = new MutationObserver(createMutationHandler(ctx));
     transcriptObserver.observe(ctx.transcriptContainer, {
@@ -69,7 +67,7 @@ const observeTranscriptContainer = async (ctx: MeetingPipelineContext): Promise<
   return ctx;
 };
 
-const finalize = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
+const finalize = async (ctx: PipelineContext): Promise<PipelineContext> => {
   endMeetingRoutines();
   return ctx;
 };
@@ -78,16 +76,17 @@ async function startMeetingRoutines(browserService: IBrowserService): Promise<vo
   try {
     await waitForElement(appConfig.Extension.meetingEndIcon.selector, appConfig.Extension.meetingEndIcon.text);
     browserService.sendMessage({type: ExtensionMessageType.MEETING_STARTED});
-    hasMeetingStarted = true;
   } catch (error) {
     console.error("Failed to detect meeting start:", error);
   }
 }
 
-startMeetingRoutines(broserService)
+startMeetingRoutines(browserService)
   .then(async () => {
-    return pipeAsync<MeetingPipelineContext>(
-      {} as MeetingPipelineContext,
+    return pipeAsync<PipelineContext>(
+      {
+        hasMeetingStarted: true
+      } as PipelineContext,
       initServices,
       activateCaptions,
       findTranscriptContainer,
@@ -101,18 +100,18 @@ startMeetingRoutines(broserService)
     isTranscriptDomErrorCaptured = true;
   });
 
-function createMutationHandler(ctx: MeetingPipelineContext) {
+function createMutationHandler(ctx: PipelineContext) {
   return function (mutations: MutationRecord[], observer: MutationObserver) {
     handleTranscriptMutations(mutations, ctx);
   };
 }
 
-function handleTranscriptMutations(mutations: MutationRecord[], ctx: MeetingPipelineContext): void {
+function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineContext): void {
   for (const _ of mutations) {
     try {
       const transcriptContainer = ctx.canUseAriaBasedTranscriptSelector
-        ? document.querySelector<HTMLElement>(appConfig.Extension.transcriptSelectors.aria)
-        : document.querySelector<HTMLElement>(appConfig.Extension.transcriptSelectors.fallback);
+        ? selectElement(appConfig.Extension.transcriptSelectors.aria)
+        : selectElement(appConfig.Extension.transcriptSelectors.fallback);
 
       const speakerElements = ctx.canUseAriaBasedTranscriptSelector
         ? transcriptContainer?.children
@@ -217,10 +216,10 @@ function endMeetingRoutines(): void {
       transcriptObserver?.disconnect();
       //chatMessagesObserver?.disconnect();
       if (currentSpeakerName && currentTranscript) {
-        flushTranscriptBuffer();
+        flushTranscriptBuffer(currentSpeakerName, currentTranscript, currentTimestamp);
       }
 
-      console.log("Meeting ended. Transcript data:", JSON.stringify(transcript));
+      console.log("Meeting ended. Transcript data:", JSON.stringify(transcriptBlock));
     });
   } catch (err) {
     console.error("Error setting up meeting end listener:", err);

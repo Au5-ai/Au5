@@ -149,9 +149,10 @@ export interface IconData {
   text: string;
 }
 
-export interface MeetingPipelineContext {
+export interface PipelineContext {
   meetingTitle?: string;
   captionsButton?: HTMLElement | null;
   transcriptContainer?: HTMLElement | null;
   canUseAriaBasedTranscriptSelector: boolean;
+  hasMeetingStarted: boolean;
 }
