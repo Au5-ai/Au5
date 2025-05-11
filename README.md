@@ -64,17 +64,14 @@ Before installing the extension, ensure you have the following:
 
 ```
 /
-├── src/
-│   ├── extension/           # Chrome Extension
-│   │   ├── src/             # Source code for the extension
-│   │   │   ├── content.ts   # Content script for meeting interactions
-│   │   │   ├── background.ts # Background script for handling events
-│   │   │   ├── services/    # Service classes (e.g., storage, browser)
-│   │   │   ├── utils/       # Utility functions (e.g., DOM manipulation, logging)
-│   │   │   ├── types/       # TypeScript type definitions
-│   │   │   └── constants.ts # Configuration and constants
-│   │   └── dist/            # Compiled extension files
-├── dist/                    # Project documentation
+├── src/          # Source code for the extension
+│   │── content.ts   # Content script for meeting interactions
+│   │── background.ts # Background script for handling events
+│   │── services/    # Service classes (e.g., storage, browser)
+│   │── utils/       # Utility functions (e.g., DOM manipulation, logging)
+│   │── types/       # TypeScript type definitions
+│   │   └── constants.ts # Configuration and constants
+│── dist/            # Compiled extension files
 └── .github/                 # GitHub-specific files
 ```
 
