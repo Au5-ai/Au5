@@ -1,26 +1,21 @@
 //https://meet.google.com/uir-miof-cby
-import {pipeAsync} from "./core/pieline";
+import {pipeAsync} from "./core/pipeline";
 import {ChromeBrowserService} from "./services/browser.service";
 import {AppConfiguration, ConfigurationService} from "./services/config.service";
 import {StorageService} from "./services/storage.service";
-import {ExtensionMessageType, IBrowserService, TranscriptBlock} from "./types";
-import {selectElements, waitForElement} from "./utils/dom.utils";
+import {ExtensionMessageType, IBrowserService, MeetingPipelineContext, TranscriptBlock} from "./types";
+import {applyDomStyle, findDom, selectElements, waitForElement} from "./utils/dom.utils";
 import {getMeetingTitleFromUrl} from "./utils/urlHelper";
 
-let AppConfig: AppConfiguration;
+let appConfig: AppConfiguration;
+const broserService = new ChromeBrowserService();
+const configService = new ConfigurationService(new StorageService());
+
 let hasMeetingEnded = false;
-let meetingTitle: string = "No meeting title found yet!";
-let transcript: TranscriptBlock[] = [];
+let transcriptBlock: TranscriptBlock[] = [];
 let currentSpeakerName = "",
   currentTranscript = "",
   currentTimestamp = "";
-
-const mutationConfig: MutationObserverInit = {
-  childList: true,
-  attributes: true,
-  subtree: true,
-  characterData: true
-};
 
 // DOM state flags
 let isTranscriptDomErrorCaptured = false;
@@ -29,46 +24,47 @@ let isTranscriptDomErrorCaptured = false;
 let transcriptObserver: MutationObserver;
 let hasMeetingStarted = false;
 
-interface MeetingPipelineContext {
-  browserService: ChromeBrowserService;
-  configService: ConfigurationService;
-  AppConfig?: any;
-  meetingTitle?: string;
-  captionsButton?: HTMLElement | null;
-  transcriptContainer?: HTMLElement | null;
-}
-
 const initServices = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
-  AppConfig = await new ConfigurationService(new StorageService()).getConfig();
-  ctx.AppConfig = AppConfig;
+  appConfig = await configService.getConfig();
   ctx.meetingTitle = getMeetingTitleFromUrl();
   return ctx;
 };
 
 const activateCaptions = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
-  const captionsIcon = ctx.AppConfig.Extension.captionsIcon;
+  const captionsIcon = appConfig.Extension.captionsIcon;
   ctx.captionsButton = selectElements(captionsIcon.selector, captionsIcon.text)[0];
   ctx.captionsButton?.click();
   return ctx;
 };
 
-const findTranscript = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
-  const container = findTranscriptContainer();
-  if (!container) throw new Error("Transcript container not found in DOM");
-  ctx.transcriptContainer = container;
+const findTranscriptContainer = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
+  const dom = findDom(appConfig.Extension.transcriptSelectors.aria, appConfig.Extension.transcriptSelectors.fallback);
+  if (!dom) throw new Error("Transcript container not found in DOM");
+  ctx.transcriptContainer = dom.container;
+  ctx.canUseAriaBasedTranscriptSelector = dom.useAria;
   return ctx;
 };
 
-const styleTranscript = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
+const applyTranscriptStyle = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
   if (ctx.transcriptContainer) {
-    applyTranscriptStyle(ctx.transcriptContainer);
+    applyDomStyle(
+      ctx.transcriptContainer,
+      ctx.canUseAriaBasedTranscriptSelector,
+      appConfig.Extension.transcriptStyles.opacity
+    );
   }
   return ctx;
 };
 
 const observeTranscriptContainer = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineContext> => {
   if (ctx.transcriptContainer) {
-    observeTranscript(ctx.transcriptContainer);
+    transcriptObserver = new MutationObserver(createMutationHandler(ctx));
+    transcriptObserver.observe(ctx.transcriptContainer, {
+      childList: true,
+      attributes: true,
+      subtree: true,
+      characterData: true
+    });
   }
   return ctx;
 };
@@ -78,17 +74,24 @@ const finalize = async (ctx: MeetingPipelineContext): Promise<MeetingPipelineCon
   return ctx;
 };
 
-startMeetingRoutines(new ChromeBrowserService())
+async function startMeetingRoutines(browserService: IBrowserService): Promise<void> {
+  try {
+    await waitForElement(appConfig.Extension.meetingEndIcon.selector, appConfig.Extension.meetingEndIcon.text);
+    browserService.sendMessage({type: ExtensionMessageType.MEETING_STARTED});
+    hasMeetingStarted = true;
+  } catch (error) {
+    console.error("Failed to detect meeting start:", error);
+  }
+}
+
+startMeetingRoutines(broserService)
   .then(async () => {
     return pipeAsync<MeetingPipelineContext>(
-      {
-        browserService: new ChromeBrowserService(),
-        configService: new ConfigurationService(new StorageService())
-      },
+      {} as MeetingPipelineContext,
       initServices,
       activateCaptions,
-      findTranscript,
-      styleTranscript,
+      findTranscriptContainer,
+      applyTranscriptStyle,
       observeTranscriptContainer,
       finalize
     );
@@ -98,88 +101,39 @@ startMeetingRoutines(new ChromeBrowserService())
     isTranscriptDomErrorCaptured = true;
   });
 
-async function startMeetingRoutines(browserService: IBrowserService): Promise<void> {
-  try {
-    await waitForElement(AppConfig.Extension.meetingEndIcon.selector, AppConfig.Extension.meetingEndIcon.text);
-    browserService.sendMessage({type: ExtensionMessageType.MEETING_STARTED});
-    hasMeetingStarted = true;
-  } catch (error) {
-    console.error("Failed to detect meeting start:", error);
-  }
+function createMutationHandler(ctx: MeetingPipelineContext) {
+  return function (mutations: MutationRecord[], observer: MutationObserver) {
+    handleTranscriptMutations(mutations, ctx);
+  };
 }
 
-function endMeetingRoutines(): void {
-  try {
-    const elements = selectElements(
-      AppConfig.Extension.meetingEndIcon.selector,
-      AppConfig.Extension.meetingEndIcon.text
-    );
-    const meetingEndButton = elements?.[0]?.parentElement?.parentElement ?? null;
-
-    if (!meetingEndButton) {
-      throw new Error("Meeting end button not found in DOM.");
-    }
-
-    meetingEndButton.addEventListener("click", handleMeetingEnd);
-  } catch (err) {
-    console.error("Error setting up meeting end listener:", err);
-  }
-}
-
-/** Locates the appropriate transcript container and sets the flag. */
-function findTranscriptContainer(): HTMLElement | null {
-  let container = document.querySelector<HTMLElement>(AppConfig.Extension.transcriptSelectors.ariaBased);
-  canUseAriaBasedTranscriptSelector = Boolean(container);
-
-  if (!container) {
-    container = document.querySelector<HTMLElement>(AppConfig.Extension.transcriptSelectors.fallback);
-  }
-
-  return container;
-}
-
-/** Applies visual styles to the transcript container for debugging/user clarity. */
-function applyTranscriptStyle(container: HTMLElement): void {
-  if (AppConfig.Extension.canUseAriaBasedTranscriptSelector) {
-    container.style.opacity = AppConfig.Extension.transcriptStyles.opacity;
-  } else {
-    const innerElement = container.children[1] as HTMLElement | undefined;
-    innerElement?.setAttribute("style", `opacity: ${AppConfig.Extension.transcriptStyles.opacity};`);
-  }
-}
-
-/** Starts observing the transcript container for mutation changes. */
-function observeTranscript(container: HTMLElement): void {
-  transcriptObserver = new MutationObserver(handleTranscriptMutations);
-  transcriptObserver.observe(container, mutationConfig);
-}
-
-function handleTranscriptMutations(mutations: MutationRecord[]): void {
+function handleTranscriptMutations(mutations: MutationRecord[], ctx: MeetingPipelineContext): void {
   for (const _ of mutations) {
     try {
-      const transcriptContainer = canUseAriaBasedTranscriptSelector
-        ? document.querySelector<HTMLElement>(AppConfig.Extension.transcriptSelectors.ariaBased)
-        : document.querySelector<HTMLElement>(AppConfig.Extension.transcriptSelectors.fallback);
+      const transcriptContainer = ctx.canUseAriaBasedTranscriptSelector
+        ? document.querySelector<HTMLElement>(appConfig.Extension.transcriptSelectors.aria)
+        : document.querySelector<HTMLElement>(appConfig.Extension.transcriptSelectors.fallback);
 
-      const speakerElements = canUseAriaBasedTranscriptSelector
+      const speakerElements = ctx.canUseAriaBasedTranscriptSelector
         ? transcriptContainer?.children
         : transcriptContainer?.childNodes[1]?.firstChild?.childNodes;
 
       if (!speakerElements) return;
 
-      const hasSpeakers = canUseAriaBasedTranscriptSelector ? speakerElements.length > 1 : speakerElements.length > 0;
+      const hasSpeakers = ctx.canUseAriaBasedTranscriptSelector
+        ? speakerElements.length > 1
+        : speakerElements.length > 0;
 
       if (!hasSpeakers) {
-        console.log("No active transcript");
         if (currentSpeakerName && currentTranscript) {
-          flushTranscriptBuffer();
+          flushTranscriptBuffer(currentSpeakerName, currentTranscript, currentTimestamp);
         }
         currentSpeakerName = "";
         currentTranscript = "";
         continue;
       }
 
-      const latestSpeakerElement = canUseAriaBasedTranscriptSelector
+      const latestSpeakerElement = ctx.canUseAriaBasedTranscriptSelector
         ? (speakerElements[speakerElements.length - 2] as HTMLElement)
         : (speakerElements[speakerElements.length - 1] as HTMLElement);
 
@@ -198,30 +152,29 @@ function handleTranscriptMutations(mutations: MutationRecord[]): void {
         currentTranscript = transcriptText;
       } else if (currentSpeakerName !== speakerName) {
         // New speaker
-        flushTranscriptBuffer();
+        flushTranscriptBuffer(currentSpeakerName, currentTranscript, currentTimestamp);
         currentSpeakerName = speakerName;
         currentTimestamp = new Date().toISOString();
         currentTranscript = transcriptText;
       } else {
         // Same speaker continuing
-        if (canUseAriaBasedTranscriptSelector) {
+        if (ctx.canUseAriaBasedTranscriptSelector) {
           const textDiff = transcriptText.length - currentTranscript.length;
-          if (textDiff < -AppConfig.Extension.maxTranscriptLength) {
-            flushTranscriptBuffer(); // Transcript reset fallback
+          if (textDiff < -appConfig.Extension.maxTranscriptLength) {
+            flushTranscriptBuffer(currentSpeakerName, currentTranscript, currentTimestamp);
           }
         }
 
         currentTranscript = transcriptText;
 
-        if (!canUseAriaBasedTranscriptSelector && transcriptText.length > AppConfig.Extension.maxTranscriptLength) {
-          console.log("Transcript text too long, trimming...");
-          latestSpeakerElement.remove(); // Google Meet UI workaround
+        if (!ctx.canUseAriaBasedTranscriptSelector && transcriptText.length > appConfig.Extension.maxTranscriptLength) {
+          latestSpeakerElement.remove();
         }
       }
 
       // Debug log
       console.log(
-        currentTranscript.length > AppConfig.Extension.transcriptTrimThreshold
+        currentTranscript.length > appConfig.Extension.transcriptTrimThreshold
           ? `${currentTranscript.slice(0, 50)} ... ${currentTranscript.slice(-50)}`
           : currentTranscript
       );
@@ -235,34 +188,41 @@ function handleTranscriptMutations(mutations: MutationRecord[]): void {
   }
 }
 
-function flushTranscriptBuffer(): void {
+function flushTranscriptBuffer(speakerName: string, transcript: string, timestamp: string): void {
   if (!currentTranscript || !currentTimestamp) return;
-
-  const name = currentSpeakerName === "You" ? AppConfig.Service.fullName : currentSpeakerName;
-
-  transcript.push({
-    personName: name,
+  const name = speakerName === "You" ? appConfig.Service.fullName : speakerName;
+  transcriptBlock.push({
+    speaker: name,
     timestamp: currentTimestamp,
-    text: currentTranscript
+    transcript: transcript
   });
 
   //overWriteChromeStorage(["transcript"], false);
 }
 
-/**
- * Handles logic to clean up and persist data when the meeting ends.
- */
-function handleMeetingEnd(): void {
-  hasMeetingEnded = true;
+function endMeetingRoutines(): void {
+  try {
+    const elements = selectElements(
+      appConfig.Extension.meetingEndIcon.selector,
+      appConfig.Extension.meetingEndIcon.text
+    );
+    const meetingEndButton = elements?.[0]?.parentElement?.parentElement ?? null;
 
-  // Disconnect observers
-  transcriptObserver?.disconnect();
-  //chatMessagesObserver?.disconnect();
+    if (!meetingEndButton) {
+      throw new Error("Meeting end button not found in DOM.");
+    }
 
-  // Flush transcript buffer if valid
-  if (currentSpeakerName && currentTranscript) {
-    flushTranscriptBuffer();
+    meetingEndButton.addEventListener("click", () => {
+      hasMeetingEnded = true;
+      transcriptObserver?.disconnect();
+      //chatMessagesObserver?.disconnect();
+      if (currentSpeakerName && currentTranscript) {
+        flushTranscriptBuffer();
+      }
+
+      console.log("Meeting ended. Transcript data:", JSON.stringify(transcript));
+    });
+  } catch (err) {
+    console.error("Error setting up meeting end listener:", err);
   }
-
-  console.log("Meeting ended. Transcript data:", JSON.stringify(transcript));
 }

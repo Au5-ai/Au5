@@ -9,13 +9,13 @@ import {AppConfiguration} from "../services/config.service";
  */
 export interface TranscriptBlock {
   /** Name of the person who spoke */
-  personName: string;
+  speaker: string;
 
   /** ISO timestamp of when the words were spoken */
   timestamp: string;
 
   /** The transcribed text spoken by the person */
-  text: string;
+  transcript: string;
 }
 
 /**
@@ -147,4 +147,11 @@ export interface IStorageService {
 export interface IconData {
   selector: string;
   text: string;
+}
+
+export interface MeetingPipelineContext {
+  meetingTitle?: string;
+  captionsButton?: HTMLElement | null;
+  transcriptContainer?: HTMLElement | null;
+  canUseAriaBasedTranscriptSelector: boolean;
 }

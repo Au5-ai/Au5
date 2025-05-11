@@ -24,7 +24,7 @@ interface ExtensionConfiguration {
     text: string;
   };
   transcriptSelectors: {
-    ariaBased: string;
+    aria: string;
     fallback: string;
   };
   transcriptStyles: {
@@ -32,7 +32,6 @@ interface ExtensionConfiguration {
   };
   maxTranscriptLength: number;
   transcriptTrimThreshold: number;
-  canUseAriaBasedTranscriptSelector: boolean;
 }
 
 export interface AppConfiguration {

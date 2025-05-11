@@ -30,3 +30,27 @@ export function selectElements(selector: string, text?: string): HTMLElement[] {
   const regex = new RegExp(text);
   return Array.from(elements).filter(element => regex.test(element.textContent || ""));
 }
+
+export function applyDomStyle(
+  container: HTMLElement,
+  canUseAriaBasedTranscriptSelector: boolean,
+  opacity: string
+): void {
+  if (canUseAriaBasedTranscriptSelector) {
+    container.style.opacity = opacity;
+  } else {
+    const innerElement = container.children[1] as HTMLElement | undefined;
+    innerElement?.setAttribute("style", `opacity: ${opacity};`);
+  }
+}
+
+export function findDom(aria: string, fallback: string): {container: HTMLElement | null; useAria: boolean} {
+  let container = document.querySelector<HTMLElement>(aria);
+  const useAria = Boolean(container);
+
+  if (!container) {
+    container = document.querySelector<HTMLElement>(fallback);
+  }
+
+  return {container, useAria};
+}
