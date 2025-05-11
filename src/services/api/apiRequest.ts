@@ -7,7 +7,7 @@ interface RequestOptions<TBody> {
   authToken?: string;
 }
 
-export async function API<TResponse, TBody = unknown>(
+export async function apiRequest<TResponse, TBody = unknown>(
   url: string,
   options: RequestOptions<TBody> = {}
 ): Promise<TResponse> {

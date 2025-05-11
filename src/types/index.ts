@@ -1,3 +1,5 @@
+import {AppConfiguration} from "../services/config.service";
+
 // =====================================================================================
 // ------------------------------ ** TRANSCRIPT & CHAT STRUCTURES ** -------------------
 // =====================================================================================
@@ -64,26 +66,12 @@ export interface Meeting {
 /**
  * Represents the structure of local Chrome extension storage.
  */
-export interface LocalStorageState {
-  /** Current status of the extension as a structured JSON object */
-  extensionStatus: ExtensionStatus;
-
+export interface LocalStorageModel {
   /** Configuration settings for the extension */
-  config: Configuration;
+  appConfig: AppConfiguration; //TODO : remove this and use the config service instead
 
   /** History of recorded or processed meetings */
   meeting: Meeting;
-}
-
-/**
- * Represents the current status of the extension.
- */
-export interface ExtensionStatus {
-  /** Numeric status code representing the extension's state */
-  code: number;
-
-  /** Human-readable message describing the current status */
-  message: string;
 }
 
 // =====================================================================================

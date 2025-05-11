@@ -5,7 +5,7 @@ const CONFIGURATION_KEY: string = "configuration";
 /**
  * Represents the synced structure stored in Chrome's local storage.
  */
-export interface Configuration {
+interface ServiceConfiguration {
   /** Webhook endpoint URL */
   webhookUrl: string;
   /** Authentication token for the webhook */
@@ -14,7 +14,7 @@ export interface Configuration {
   fullName: string;
 }
 
-export interface ExtensionConfiguration {
+interface ExtensionConfiguration {
   meetingEndIcon: {
     selector: string;
     text: string;
@@ -34,28 +34,34 @@ export interface ExtensionConfiguration {
   transcriptTrimThreshold: number;
 }
 
+interface AppConfiguration {
+  Service: ServiceConfiguration;
+  Extension: ExtensionConfiguration;
+}
+
 export class ConfigurationService {
   constructor(private storageService: IStorageService) {}
 
   /**
    * Retrieves the entire configuration object from storage.
    */
-  async getConfig(): Promise<Configuration | null> {
+  async getConfig(): Promise<AppConfiguration> {
     try {
-      const config = await this.storageService.get<Configuration>(CONFIGURATION_KEY);
+      return AppConfig as AppConfiguration;
+      const config = await this.storageService.get<AppConfiguration>(CONFIGURATION_KEY);
       return config ?? null;
     } catch (error) {
       console.error("Failed to load configuration:", error);
-      return null;
+      throw new Error("Configuration not found.");
     }
   }
 
   /**
    * Updates the entire configuration object in storage.
    */
-  async setConfig(config: Configuration): Promise<void> {
+  async setConfig(config: AppConfiguration): Promise<void> {
     try {
-      await this.storageService.set<Configuration>(CONFIGURATION_KEY, config);
+      await this.storageService.set<AppConfiguration>(CONFIGURATION_KEY, config);
     } catch (error) {
       console.error("Failed to save configuration:", error);
     }
@@ -64,7 +70,7 @@ export class ConfigurationService {
   /**
    * Gets a single config field like webhookUrl or token.
    */
-  async getValue<K extends keyof Configuration>(key: K): Promise<Configuration[K] | null> {
+  async getValue<K extends keyof AppConfiguration>(key: K): Promise<AppConfiguration[K] | null> {
     const config = await this.getConfig();
     return config ? config[key] : null;
   }
@@ -72,8 +78,8 @@ export class ConfigurationService {
   /**
    * Updates only one key of the configuration.
    */
-  async setValue<K extends keyof Configuration>(key: K, value: Configuration[K]): Promise<void> {
-    const config = (await this.getConfig()) || ({} as Configuration);
+  async setValue<K extends keyof AppConfiguration>(key: K, value: AppConfiguration[K]): Promise<void> {
+    const config = (await this.getConfig()) || ({} as AppConfiguration);
     config[key] = value;
     await this.setConfig(config);
   }
@@ -92,7 +98,7 @@ export class ConfigurationService {
 
 // sample data for testing
 // Get these values from API or config.service.ts
-export const ExtensionConfig: ExtensionConfiguration = {
+const ExtensionConfig: ExtensionConfiguration = {
   meetingEndIcon: {
     selector: ".google-symbols",
     text: "call_end"
@@ -112,7 +118,12 @@ export const ExtensionConfig: ExtensionConfiguration = {
   transcriptTrimThreshold: 125
 };
 
-export const AppConfig = {
-  User: {webhookUrl: "", token: "", userId: "", fullName: ""} as Configuration,
+const AppConfig: AppConfiguration = {
+  Service: {
+    webhookUrl: "https://au5.ai/api/v1/",
+    token: "",
+    userId: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
+    fullName: "Mohammad Karimi"
+  } as ServiceConfiguration,
   Extension: ExtensionConfig as ExtensionConfiguration
 };
