@@ -6,7 +6,8 @@
   "content_scripts": [
     {
       "js": ["content.js"],
-      "matches": ["*://meet.google.com/*-*-*"]
+      "matches": ["*://meet.google.com/*-*-*"],
+      "run_at": "document_end"
     }
   ],
   "content_security_policy": {

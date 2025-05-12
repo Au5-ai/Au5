@@ -24,24 +24,29 @@ export default class ChatPanel {
       right: "16px",
       top: "16px",
       transform: "none",
+      zIndex: "9999",
       transition: "transform .5s cubic-bezier(.4,0,.2,1), bottom .5s cubic-bezier(0.4,0,0.2,1)",
       width: "360px"
     });
 
     document.body.appendChild(this.chatPanel);
 
-    const elementsToStyle = [
-      {className: "fJsklc ZmuLbd Didmac G03iKb", styles: {top: "0px", right: "376px", left: "0px"}},
-      {className: "axUSnc cZXVke P9KVBf", styles: {inset: "72px 392px 80px 16px"}},
-      {className: "dkjMxf i8wGAe iPFm3e", styles: {width: "376px"}}
-    ];
+    // const elementsToStyle = [
+    //   {className: "fJsklc ZmuLbd Didmac G03iKb", styles: {top: "0px", right: "376px", left: "0px"}},
+    //   {className: "axUSnc cZXVke  P9KVBf", styles: {inset: "72px 392px 80px 16px"}}
+    // ];
 
-    elementsToStyle.forEach(({className, styles}) => {
-      const elements = document.getElementsByClassName(className);
-      Array.from(elements).forEach(element => {
-        Object.assign((element as HTMLElement).style, styles);
-      });
-    });
+    // elementsToStyle.forEach(({className, styles}) => {
+    //   const elements = document.getElementsByClassName(className);
+    //   Array.from(elements).forEach(element => {
+    //     Object.assign((element as HTMLElement).style, styles);
+    //   });
+    // });
+
+    // const element = document.getElementsByClassName("dkjMxf i8wGAe iPFm3e")[0] as HTMLElement;
+    // if (element) {
+    //   element.style.width = parseInt(element.style.width, 10) - 376 + "px";
+    // }
   }
 
   public static destroy(): void {

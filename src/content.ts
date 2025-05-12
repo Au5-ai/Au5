@@ -66,6 +66,7 @@ const observeTranscriptContainer = async (ctx: PipelineContext): Promise<Pipelin
 };
 
 const addChatPanelToUI = async (ctx: PipelineContext): Promise<PipelineContext> => {
+  // await new Promise(resolve => setTimeout(resolve, 5000));
   ChatPanel.create();
   return ctx;
 };
