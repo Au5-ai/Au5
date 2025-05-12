@@ -4,6 +4,7 @@ import {ChromeBrowserService} from "./services/browser.service";
 import {AppConfiguration, ConfigurationService} from "./services/config.service";
 import {StorageService} from "./services/storage.service";
 import {ExtensionMessageType, IBrowserService, PipelineContext, TranscriptBlock} from "./types";
+import ChatPanel from "./ui/chatPanel";
 import {applyDomStyle, findDomContainer, selectElement, selectElements, waitForElement} from "./utils/dom.utils";
 import {getMeetingTitleFromUrl} from "./utils/urlHelper";
 
@@ -64,6 +65,11 @@ const observeTranscriptContainer = async (ctx: PipelineContext): Promise<Pipelin
   return ctx;
 };
 
+const addChatPanelToUI = async (ctx: PipelineContext): Promise<PipelineContext> => {
+  ChatPanel.create();
+  return ctx;
+};
+
 const finalizeMeetingRoutines = async (ctx: PipelineContext): Promise<PipelineContext> => {
   endMeetingRoutines();
   return ctx;
@@ -90,6 +96,7 @@ startMeetingRoutines(browserService)
       findTranscriptContainer,
       applyTranscriptStyle,
       observeTranscriptContainer,
+      addChatPanelToUI,
       finalizeMeetingRoutines
     );
   })
