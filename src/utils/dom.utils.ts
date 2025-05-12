@@ -1,59 +1,81 @@
 /**
- * Waits until a DOM element matching the selector (and optionally, text content) appears.
- * Uses animation frame loop for responsiveness.
+ * Waits for an HTMLElement matching the given selector and optional text content.
+ * Uses `requestAnimationFrame` for responsiveness.
  *
- * @param selector - CSS selector string to match DOM elements
- * @param text - Optional text content to match
- * @returns A Promise that resolves with the found HTMLElement
+ * @param selector - CSS selector string
+ * @param text - Optional exact text content to match
+ * @returns Promise that resolves with the matching HTMLElement
  */
 export async function waitForElement(selector: string, text?: string): Promise<HTMLElement> {
-  const matchesText = (element: Element) => (text ? element.textContent?.trim() === text : true);
+  const matchesText = (el: Element): boolean => (text ? el.textContent?.trim() === text : true);
 
   while (true) {
     const elements = Array.from(document.querySelectorAll(selector));
-    const found = elements.find(matchesText);
+    const matched = elements.find(matchesText);
 
-    if (found instanceof HTMLElement) {
-      return found;
-    }
+    if (matched instanceof HTMLElement) return matched;
 
     await new Promise(requestAnimationFrame);
   }
 }
 
+/**
+ * Selects a single HTMLElement matching the selector.
+ *
+ * @param selector - CSS selector string
+ * @returns The matching HTMLElement or null
+ */
 export function selectElement(selector: string): HTMLElement | null {
   return document.querySelector<HTMLElement>(selector);
 }
 
+/**
+ * Selects all HTMLElements matching the selector and optional regex text match.
+ *
+ * @param selector - CSS selector string
+ * @param text - Optional regex string to match text content
+ * @returns Array of matching HTMLElements
+ */
 export function selectElements(selector: string, text?: string): HTMLElement[] {
-  const elements = document.querySelectorAll<HTMLElement>(selector);
-  if (!text) {
-    return Array.from(elements);
-  }
+  const elements = Array.from(document.querySelectorAll<HTMLElement>(selector));
+  if (!text) return elements;
 
   const regex = new RegExp(text);
-  return Array.from(elements).filter(element => regex.test(element.textContent || ""));
+  return elements.filter(el => regex.test(el.textContent ?? ""));
 }
 
-export function applyDomStyle(
-  container: HTMLElement,
-  canUseAriaBasedTranscriptSelector: boolean,
-  opacity: string
-): void {
-  if (canUseAriaBasedTranscriptSelector) {
+/**
+ * Applies opacity styling to a container, either directly or to its second child.
+ *
+ * @param container - The target container HTMLElement
+ * @param useAriaSelector - Flag to decide whether to style the container or a child
+ * @param opacity - Opacity value (e.g. "0.5")
+ */
+export function applyDomStyle(container: HTMLElement, useAriaSelector: boolean, opacity: string): void {
+  if (useAriaSelector) {
     container.style.opacity = opacity;
   } else {
-    const innerElement = container.children[1] as HTMLElement | undefined;
-    innerElement?.setAttribute("style", `opacity: ${opacity};`);
+    const secondChild = container.children[1] as HTMLElement | undefined;
+    secondChild?.setAttribute("style", `opacity: ${opacity};`);
   }
 }
 
-export function findDom(aria: string, fallback: string): {container: HTMLElement | null; useAria: boolean} {
-  let container = document.querySelector<HTMLElement>(aria);
-  const useAria = Boolean(container);
+/**
+ * Attempts to find a DOM container using aria selector first, then fallback.
+ *
+ * @param ariaSelector - ARIA-based CSS selector
+ * @param fallbackSelector - Fallback CSS selector
+ * @returns Object containing the container and whether ARIA selector was used
+ */
+export function findDomContainer(
+  ariaSelector: string,
+  fallbackSelector: string
+): {container: HTMLElement | null; useAria: boolean} {
+  let container = document.querySelector<HTMLElement>(ariaSelector);
+  const useAria = !!container;
 
   if (!container) {
-    container = document.querySelector<HTMLElement>(fallback);
+    container = document.querySelector<HTMLElement>(fallbackSelector);
   }
 
   return {container, useAria};

@@ -93,8 +93,8 @@ export interface ExtensionMessage {
   /** Type of the message indicating the action to perform */
   type: ExtensionMessageType;
 
-  /** Optional index of the meeting to act upon, used in actions like retry or download */
-  index?: number;
+  /** Optional data associated with the message */
+  value?: any;
 }
 
 /**

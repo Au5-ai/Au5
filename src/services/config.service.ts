@@ -47,7 +47,7 @@ export class ConfigurationService {
    */
   async getConfig(): Promise<AppConfiguration> {
     try {
-      return AppConfig as AppConfiguration;
+      return DefaultAppConfig as AppConfiguration;
       const config = await this.storageService.get<AppConfiguration>(CONFIGURATION_KEY);
       return config ?? null;
     } catch (error) {
@@ -96,8 +96,7 @@ export class ConfigurationService {
   }
 }
 
-// sample data for testing
-// Get these values from API or config.service.ts
+// Default configuration for the extension
 const ExtensionConfig: ExtensionConfiguration = {
   meetingEndIcon: {
     selector: ".google-symbols",
@@ -108,18 +107,17 @@ const ExtensionConfig: ExtensionConfiguration = {
     text: "closed_caption_off"
   },
   transcriptSelectors: {
-    ariaBased: 'div[role="region"][tabindex="0"]',
+    aria: 'div[role="region"][tabindex="0"]',
     fallback: ".a4cQT"
   },
   transcriptStyles: {
     opacity: "0.2"
   },
   maxTranscriptLength: 250,
-  transcriptTrimThreshold: 125,
-  canUseAriaBasedTranscriptSelector: true
+  transcriptTrimThreshold: 125
 };
 
-const AppConfig: AppConfiguration = {
+const DefaultAppConfig: AppConfiguration = {
   Service: {
     webhookUrl: "https://au5.ai/api/v1/",
     token: "",

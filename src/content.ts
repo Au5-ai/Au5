@@ -4,7 +4,7 @@ import {ChromeBrowserService} from "./services/browser.service";
 import {AppConfiguration, ConfigurationService} from "./services/config.service";
 import {StorageService} from "./services/storage.service";
 import {ExtensionMessageType, IBrowserService, PipelineContext, TranscriptBlock} from "./types";
-import {applyDomStyle, findDom, selectElement, selectElements, waitForElement} from "./utils/dom.utils";
+import {applyDomStyle, findDomContainer, selectElement, selectElements, waitForElement} from "./utils/dom.utils";
 import {getMeetingTitleFromUrl} from "./utils/urlHelper";
 
 let appConfig: AppConfiguration;
@@ -22,12 +22,6 @@ let isTranscriptDomErrorCaptured = false;
 // Observers
 let transcriptObserver: MutationObserver;
 
-const initServices = async (ctx: PipelineContext): Promise<PipelineContext> => {
-  appConfig = await configService.getConfig();
-  ctx.meetingTitle = getMeetingTitleFromUrl();
-  return ctx;
-};
-
 const activateCaptions = async (ctx: PipelineContext): Promise<PipelineContext> => {
   const captionsIcon = appConfig.Extension.captionsIcon;
   ctx.captionsButton = selectElements(captionsIcon.selector, captionsIcon.text)[0];
@@ -36,7 +30,10 @@ const activateCaptions = async (ctx: PipelineContext): Promise<PipelineContext> 
 };
 
 const findTranscriptContainer = async (ctx: PipelineContext): Promise<PipelineContext> => {
-  const dom = findDom(appConfig.Extension.transcriptSelectors.aria, appConfig.Extension.transcriptSelectors.fallback);
+  const dom = findDomContainer(
+    appConfig.Extension.transcriptSelectors.aria,
+    appConfig.Extension.transcriptSelectors.fallback
+  );
   if (!dom) throw new Error("Transcript container not found in DOM");
   ctx.transcriptContainer = dom.container;
   ctx.canUseAriaBasedTranscriptSelector = dom.useAria;
@@ -67,15 +64,17 @@ const observeTranscriptContainer = async (ctx: PipelineContext): Promise<Pipelin
   return ctx;
 };
 
-const finalize = async (ctx: PipelineContext): Promise<PipelineContext> => {
+const finalizeMeetingRoutines = async (ctx: PipelineContext): Promise<PipelineContext> => {
   endMeetingRoutines();
   return ctx;
 };
 
 async function startMeetingRoutines(browserService: IBrowserService): Promise<void> {
   try {
+    appConfig = await configService.getConfig();
+    const meetingTitle = getMeetingTitleFromUrl();
     await waitForElement(appConfig.Extension.meetingEndIcon.selector, appConfig.Extension.meetingEndIcon.text);
-    browserService.sendMessage({type: ExtensionMessageType.MEETING_STARTED});
+    browserService.sendMessage({type: ExtensionMessageType.MEETING_STARTED, value: {meetingTitle}});
   } catch (error) {
     console.error("Failed to detect meeting start:", error);
   }
@@ -87,12 +86,11 @@ startMeetingRoutines(browserService)
       {
         hasMeetingStarted: true
       } as PipelineContext,
-      initServices,
       activateCaptions,
       findTranscriptContainer,
       applyTranscriptStyle,
       observeTranscriptContainer,
-      finalize
+      finalizeMeetingRoutines
     );
   })
   .catch(error => {
