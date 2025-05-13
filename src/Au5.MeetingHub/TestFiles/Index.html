@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Meeting Chat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 600px;
+            margin: auto;
+            padding: 2rem;
+        }
+
+        #chat {
+            border: 1px solid #ccc;
+            padding: 1rem;
+            height: 300px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+
+        .message {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            background: #f4f4f4;
+        }
+
+            .message .sender {
+                font-weight: bold;
+            }
+
+            .message .time {
+                font-size: 0.8rem;
+                color: gray;
+                float: right;
+            }
+    </style>
+</head>
+<body>
+
+    <h2>Join Meeting Chat</h2>
+
+    <label>
+        Meeting ID:
+        <input type="text" id="meetingIdInput" value="meeting-123" />
+    </label>
+    <br><br>
+
+    <label>
+        Your Name:
+        <input type="text" id="nameInput" value="Mu" />
+    </label>
+    <br><br>
+
+    <button onclick="connect()">Join Meeting</button>
+
+    <div id="chat"></div>
+
+    <br>
+    <input type="text" id="messageInput" placeholder="Type a message..." style="width: 80%;" />
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        let connection;
+        let meetingId;
+
+        function connect() {
+            const name = document.getElementById("nameInput").value;
+            meetingId = document.getElementById("meetingIdInput").value;
+
+            connection = new signalR.HubConnectionBuilder()
+                .withUrl("https://localhost:7061/meetinghub")
+                .build();
+
+            connection.on("ReceiveMessage", (msg) => {
+                addMessage(msg.sender, msg.text, msg.timestamp);
+            });
+
+            connection.start().then(() => {
+                connection.invoke("JoinMeeting", meetingId);
+                console.log(`Joined ${meetingId} as ${name}`);
+            });
+        }
+
+        function sendMessage() {
+            const text = document.getElementById("messageInput").value;
+            const name = document.getElementById("nameInput").value;
+            if (!text || !meetingId) return;
+            connection.invoke("SendMessage", meetingId, name, text);
+            document.getElementById("messageInput").value = "";
+        }
+
+        function addMessage(sender, text, time) {
+            const chat = document.getElementById("chat");
+            const div = document.createElement("div");
+            div.className = "message";
+            div.innerHTML = `
+            <div><span class="sender">${sender}</span> <span class="time">${new Date(time).toLocaleTimeString()}</span></div>
+            <div>${text}</div>
+          `;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+    </script>
+
+</body>
+</html>
