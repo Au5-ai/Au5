@@ -141,11 +141,9 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
         currentSpeakerId = "";
         currentSpeakerName = "";
         currentTranscript = "";
-
-        console.log("No speakers found in transcript container.");
         continue;
       }
-
+      console.log(speakerElements);
       const latestSpeakerElement = ctx.canUseAriaBasedTranscriptSelector
         ? (speakerElements[speakerElements.length - 2] as HTMLElement)
         : (speakerElements[speakerElements.length - 1] as HTMLElement);
@@ -157,12 +155,6 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
       const transcriptText = textNode?.textContent?.trim() ?? "";
 
       if (!speakerName || !transcriptText) {
-        ChatPanel.addLiveMessage({
-          id: currentSpeakerId,
-          speaker: currentSpeakerName,
-          transcript: currentTranscript,
-          timestamp: currentTimestamp
-        });
         continue;
       }
 
@@ -172,13 +164,6 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
         currentSpeakerName = speakerName;
         currentTimestamp = new Date().toISOString();
         currentTranscript = transcriptText;
-
-        ChatPanel.addLiveMessage({
-          id: currentSpeakerId,
-          speaker: currentSpeakerName,
-          transcript: currentTranscript,
-          timestamp: currentTimestamp
-        });
       } else if (currentSpeakerName !== speakerName) {
         // New speaker
         flushTranscriptBuffer({
@@ -191,12 +176,6 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
         currentSpeakerName = speakerName;
         currentTimestamp = new Date().toISOString();
         currentTranscript = transcriptText;
-        ChatPanel.addLiveMessage({
-          id: currentSpeakerId,
-          speaker: currentSpeakerName,
-          transcript: currentTranscript,
-          timestamp: currentTimestamp
-        });
       } else {
         // Same speaker continuing
         if (ctx.canUseAriaBasedTranscriptSelector) {
@@ -208,22 +187,21 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
               transcript: currentTranscript,
               timestamp: currentTimestamp
             } as TranscriptBlock);
-
-            ChatPanel.addLiveMessage({
-              id: currentSpeakerId,
-              speaker: currentSpeakerName,
-              transcript: currentTranscript,
-              timestamp: currentTimestamp
-            });
           }
         }
 
         currentTranscript = transcriptText;
-
         if (!ctx.canUseAriaBasedTranscriptSelector && transcriptText.length > appConfig.Extension.maxTranscriptLength) {
           latestSpeakerElement.remove();
         }
       }
+
+      ChatPanel.addLiveMessage({
+        id: currentSpeakerId,
+        speaker: currentSpeakerName,
+        transcript: currentTranscript,
+        timestamp: currentTimestamp
+      });
     } catch (err) {
       console.error(err);
       if (!isTranscriptDomErrorCaptured && !hasMeetingEnded) {
@@ -243,7 +221,6 @@ function flushTranscriptBuffer(item: TranscriptBlock): void {
     timestamp: item.timestamp,
     transcript: item.transcript
   });
-  console.log("Transcript block:", JSON.stringify(transcriptBlocks));
   //overWriteChromeStorage(["transcript"], false);
 }
 
