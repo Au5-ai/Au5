@@ -12,6 +12,7 @@ interface ServiceConfiguration {
   token: string;
   userId: string;
   fullName: string;
+  direction: string;
 }
 
 interface ExtensionConfiguration {
@@ -122,7 +123,8 @@ const DefaultAppConfig: AppConfiguration = {
     webhookUrl: "https://au5.ai/api/v1/",
     token: "",
     userId: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
-    fullName: "Mohammad Karimi"
+    fullName: "Mohammad Karimi",
+    direction: "rtl"
   } as ServiceConfiguration,
   Extension: ExtensionConfig as ExtensionConfiguration
 };

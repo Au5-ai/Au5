@@ -13,8 +13,9 @@ const browserService = new ChromeBrowserService();
 const configService = new ConfigurationService(new StorageService());
 
 let hasMeetingEnded = false;
-let transcriptBlock: TranscriptBlock[] = [];
-let currentSpeakerName = "",
+let transcriptBlocks: TranscriptBlock[] = [];
+let currentSpeakerId = "",
+  currentSpeakerName = "",
   currentTranscript = "",
   currentTimestamp = "";
 
@@ -67,7 +68,7 @@ const observeTranscriptContainer = async (ctx: PipelineContext): Promise<Pipelin
 
 const addChatPanelToUI = async (ctx: PipelineContext): Promise<PipelineContext> => {
   // await new Promise(resolve => setTimeout(resolve, 5000));
-  ChatPanel.create();
+  ChatPanel.addPanel(appConfig.Service.direction);
   return ctx;
 };
 
@@ -131,10 +132,17 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
 
       if (!hasSpeakers) {
         if (currentSpeakerName && currentTranscript) {
-          flushTranscriptBuffer(currentSpeakerName, currentTranscript, currentTimestamp);
+          flushTranscriptBuffer({
+            speaker: currentSpeakerName,
+            transcript: currentTranscript,
+            timestamp: currentTimestamp
+          } as TranscriptBlock);
         }
+        currentSpeakerId = "";
         currentSpeakerName = "";
         currentTranscript = "";
+
+        console.log("No speakers found in transcript container.");
         continue;
       }
 
@@ -148,25 +156,65 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
       const speakerName = nameNode?.textContent?.trim() ?? "";
       const transcriptText = textNode?.textContent?.trim() ?? "";
 
-      if (!speakerName || !transcriptText) continue;
+      if (!speakerName || !transcriptText) {
+        ChatPanel.addLiveMessage({
+          id: currentSpeakerId,
+          speaker: currentSpeakerName,
+          transcript: currentTranscript,
+          timestamp: currentTimestamp
+        });
+        continue;
+      }
 
       if (currentTranscript === "") {
         // New conversation start
+        currentSpeakerId = crypto.randomUUID();
         currentSpeakerName = speakerName;
         currentTimestamp = new Date().toISOString();
         currentTranscript = transcriptText;
+
+        ChatPanel.addLiveMessage({
+          id: currentSpeakerId,
+          speaker: currentSpeakerName,
+          transcript: currentTranscript,
+          timestamp: currentTimestamp
+        });
       } else if (currentSpeakerName !== speakerName) {
         // New speaker
-        flushTranscriptBuffer(currentSpeakerName, currentTranscript, currentTimestamp);
+        flushTranscriptBuffer({
+          id: currentSpeakerId,
+          speaker: currentSpeakerName,
+          transcript: currentTranscript,
+          timestamp: currentTimestamp
+        } as TranscriptBlock);
+        currentSpeakerId = crypto.randomUUID();
         currentSpeakerName = speakerName;
         currentTimestamp = new Date().toISOString();
         currentTranscript = transcriptText;
+        ChatPanel.addLiveMessage({
+          id: currentSpeakerId,
+          speaker: currentSpeakerName,
+          transcript: currentTranscript,
+          timestamp: currentTimestamp
+        });
       } else {
         // Same speaker continuing
         if (ctx.canUseAriaBasedTranscriptSelector) {
           const textDiff = transcriptText.length - currentTranscript.length;
           if (textDiff < -appConfig.Extension.maxTranscriptLength) {
-            flushTranscriptBuffer(currentSpeakerName, currentTranscript, currentTimestamp);
+            flushTranscriptBuffer({
+              id: currentSpeakerId,
+              speaker: currentSpeakerName,
+              transcript: currentTranscript,
+              timestamp: currentTimestamp
+            } as TranscriptBlock);
+
+            ChatPanel.addLiveMessage({
+              id: currentSpeakerId,
+              speaker: currentSpeakerName,
+              transcript: currentTranscript,
+              timestamp: currentTimestamp
+            });
           }
         }
 
@@ -176,13 +224,6 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
           latestSpeakerElement.remove();
         }
       }
-
-      // Debug log
-      console.log(
-        currentTranscript.length > appConfig.Extension.transcriptTrimThreshold
-          ? `${currentTranscript.slice(0, 50)} ... ${currentTranscript.slice(-50)}`
-          : currentTranscript
-      );
     } catch (err) {
       console.error(err);
       if (!isTranscriptDomErrorCaptured && !hasMeetingEnded) {
@@ -193,15 +234,16 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
   }
 }
 
-function flushTranscriptBuffer(speakerName: string, transcript: string, timestamp: string): void {
+function flushTranscriptBuffer(item: TranscriptBlock): void {
   if (!currentTranscript || !currentTimestamp) return;
-  const name = speakerName === "You" ? appConfig.Service.fullName : speakerName;
-  transcriptBlock.push({
+  const name = item.speaker === "You" ? appConfig.Service.fullName : item.speaker;
+  transcriptBlocks.push({
+    id: item.id,
     speaker: name,
-    timestamp: currentTimestamp,
-    transcript: transcript
+    timestamp: item.timestamp,
+    transcript: item.transcript
   });
-
+  console.log("Transcript block:", JSON.stringify(transcriptBlocks));
   //overWriteChromeStorage(["transcript"], false);
 }
 
@@ -222,10 +264,14 @@ function endMeetingRoutines(): void {
       transcriptObserver?.disconnect();
       //chatMessagesObserver?.disconnect();
       if (currentSpeakerName && currentTranscript) {
-        flushTranscriptBuffer(currentSpeakerName, currentTranscript, currentTimestamp);
+        flushTranscriptBuffer({
+          speaker: currentSpeakerName,
+          transcript: currentTranscript,
+          timestamp: currentTimestamp
+        } as TranscriptBlock);
       }
-
-      console.log("Meeting ended. Transcript data:", JSON.stringify(transcriptBlock));
+      ChatPanel.destroy();
+      console.log("Meeting ended. Transcript data:", JSON.stringify(transcriptBlocks));
     });
   } catch (err) {
     console.error("Error setting up meeting end listener:", err);

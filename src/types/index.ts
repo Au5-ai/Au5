@@ -8,6 +8,8 @@ import {AppConfiguration} from "../services/config.service";
  * Represents a single spoken block in a meeting transcript.
  */
 export interface TranscriptBlock {
+  /** Unique identifier for the transcript block */
+  id: string;
   /** Name of the person who spoke */
   speaker: string;
 
