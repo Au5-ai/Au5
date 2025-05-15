@@ -1,4 +1,5 @@
 //https://meet.google.com/uir-miof-cby
+import {HubConnectionConfig} from "./core/constants";
 import {pipeAsync} from "./core/pipeline";
 import {ChromeBrowserService} from "./services/browser.service";
 import {AppConfiguration, ConfigurationService} from "./services/config.service";
@@ -74,9 +75,8 @@ const finalizeMeetingRoutines = async (ctx: PipelineContext): Promise<PipelineCo
 async function startMeetingRoutines(browserService: IBrowserService): Promise<void> {
   try {
     appConfig = await configService.getConfig();
-    const meetingTitle = getMeetingTitleFromUrl();
+
     await waitForElement(appConfig.Extension.meetingEndIcon.selector, appConfig.Extension.meetingEndIcon.text);
-    browserService.sendMessage({type: ExtensionMessageType.MEETING_STARTED, value: {meetingTitle}});
   } catch (error) {
     console.error("Failed to detect meeting start:", error);
   }
@@ -104,7 +104,7 @@ startMeetingRoutines(browserService)
       startPipeline();
     });
 
-    injectLocalScript("injected.js");
+    injectLocalScript("injected.js", () => {});
   })
   .catch(error => {
     console.error("Meeting routine execution failed:", error);
@@ -270,8 +270,16 @@ function endMeetingRoutines(): void {
 window.addEventListener("message", event => {
   if (event.source !== window) return;
 
-  if (event.data?.source === "my-extension" && event.data?.action === "doSomethingInContentScript") {
-    console.log("Received in content script:", event.data.payload);
+  if (event.data?.source !== HubConnectionConfig.toContentScript.source) {
+    return;
+  }
+
+  if (event.data?.action === HubConnectionConfig.toContentScript.actions.realTimeTranscription) {
     ChatPanel.addLiveMessage(event.data.payload);
+  } else if (event.data?.action === HubConnectionConfig.toContentScript.actions.someoneIsJoining) {
+    ChatPanel.addOthers(event.data.payload);
+  } else if (event.data?.action === HubConnectionConfig.toContentScript.actions.startTranscription) {
+    // move to start transcription view
+    console.log("Start transcription view");
   }
 });

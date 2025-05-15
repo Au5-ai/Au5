@@ -1,5 +1,6 @@
 import * as signalR from "@microsoft/signalr";
 import {HubConnectionConfig} from "./core/constants";
+import {getMeetingTitleFromUrl} from "./utils/urlHelper";
 
 (function () {
   let connection: signalR.HubConnection;
@@ -8,15 +9,42 @@ import {HubConnectionConfig} from "./core/constants";
     connection = new signalR.HubConnectionBuilder().withUrl(HubConnectionConfig.hubUrl).build();
     connection.on(
       HubConnectionConfig.methodName,
-      (msg: {id: string; speaker: string; transcript: string; timestamp: string}) => {
-        window.postMessage(
-          {
-            source: HubConnectionConfig.toContentScript.source,
-            action: HubConnectionConfig.toContentScript.actions.realTimeTranscription,
-            payload: msg
-          },
-          "*"
-        );
+      (msg: {
+        header: {messageType: string};
+        payload: {id: string; speaker: string; transcript: string; timestamp: string};
+      }) => {
+        if (msg.header.messageType === "SomeoneIsJoining") {
+          window.postMessage(
+            {
+              source: HubConnectionConfig.toContentScript.source,
+              action: HubConnectionConfig.toContentScript.actions.someoneIsJoining,
+              payload: msg.payload
+            },
+            "*"
+          );
+          return;
+        }
+        if (msg.header.messageType === "RealTimeTranscription") {
+          window.postMessage(
+            {
+              source: HubConnectionConfig.toContentScript.source,
+              action: HubConnectionConfig.toContentScript.actions.realTimeTranscription,
+              payload: msg.payload
+            },
+            "*"
+          );
+        }
+
+        if (msg.header.messageType === "StartTranscription") {
+          window.postMessage(
+            {
+              source: HubConnectionConfig.toContentScript.source,
+              action: HubConnectionConfig.toContentScript.actions.startTranscription,
+              payload: msg.payload
+            },
+            "*"
+          );
+        }
       }
     );
 
@@ -43,15 +71,20 @@ import {HubConnectionConfig} from "./core/constants";
       return;
     }
 
-    if (event.data.action === HubConnectionConfig.fromContentScropt.actions.meetingTitle) {
-      HubConnectionConfig.meetingId = event.data.payload;
-      if (connection) {
-        connection.stop().then(() => initializeConnection(HubConnectionConfig.meetingId));
-      } else {
-        initializeConnection(HubConnectionConfig.meetingId);
-      }
-    } else if (event.data.action === HubConnectionConfig.fromContentScropt.actions.startTranscription) {
+    // if (event.data.action === HubConnectionConfig.fromContentScropt.actions.meetingTitle) {
+    //   HubConnectionConfig.meetingId = event.data.payload;
+    //   if (connection) {
+    //     connection.stop().then(() => initializeConnection(HubConnectionConfig.meetingId));
+    //   } else {
+    //     initializeConnection(HubConnectionConfig.meetingId);
+    //   }
+    // } else
+
+    if (event.data.action === HubConnectionConfig.fromContentScropt.actions.startTranscription) {
       connection.invoke(HubConnectionConfig.fromContentScropt.actions.startTranscription, event.data.payload);
     }
   });
+
+  HubConnectionConfig.meetingId = getMeetingTitleFromUrl();
+  initializeConnection(HubConnectionConfig.meetingId);
 })();

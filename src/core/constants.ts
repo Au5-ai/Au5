@@ -10,14 +10,15 @@ export const MESSAGES = {
   }
 };
 
-export const HubConnectionConfig = {
+export let HubConnectionConfig = {
   hubUrl: "https://localhost:7061/meetinghub",
   methodName: "ReceiveMessage",
   toContentScript: {
     source: "Au5-InjectedScript",
     actions: {
       realTimeTranscription: "RealTimeTranscription",
-      someoneIsJoining: "SomeoneIsJoining"
+      someoneIsJoining: "SomeoneIsJoining",
+      startTranscription: "StartTranscription"
     }
   },
   fromContentScropt: {
