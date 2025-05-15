@@ -1,36 +1,64 @@
 import * as signalR from "@microsoft/signalr";
+import {HubConnectionConfig} from "./core/constants";
 
 (function () {
-  const meetingId = getMeetingTitleFromUrl();
+  let connection: signalR.HubConnection;
 
-  const connection: signalR.HubConnection = new signalR.HubConnectionBuilder()
-    .withUrl("https://localhost:7061/meetinghub")
-    .build();
-
-  connection.on("ReceiveMessage", (msg: {id: string; speaker: string; transcript: string; timestamp: string}) => {
-    window.postMessage(
-      {
-        source: "Au5-Extension",
-        action: "Transcript",
-        payload: msg
-      },
-      "*"
+  function initializeConnection(meetingId: string) {
+    connection = new signalR.HubConnectionBuilder().withUrl(HubConnectionConfig.hubUrl).build();
+    connection.on(
+      HubConnectionConfig.methodName,
+      (msg: {id: string; speaker: string; transcript: string; timestamp: string}) => {
+        window.postMessage(
+          {
+            source: HubConnectionConfig.toContentScript.source,
+            action: HubConnectionConfig.toContentScript.actions.realTimeTranscription,
+            payload: msg
+          },
+          "*"
+        );
+      }
     );
-  });
 
-  connection
-    .start()
-    .then(() => {
-      connection.invoke("JoinMeeting", meetingId);
-    })
-    .catch(err => {
-      console.error("Connection failed:", err);
+    function startConnection() {
+      connection
+        .start()
+        .then(() => {
+          connection.invoke("JoinMeeting", meetingId);
+        })
+        .catch(err => {
+          setTimeout(startConnection, 3000);
+        });
+    }
+
+    connection.onclose(() => {
+      startConnection();
     });
-})();
 
-function getMeetingTitleFromUrl(): string {
-  const url = new URL(window.location.href);
-  const pathSegments = url.pathname.split("/").filter(Boolean);
-  const meetingId = pathSegments.length > 0 ? pathSegments[pathSegments.length - 1] : "N/A";
-  return meetingId;
-}
+    startConnection();
+  }
+
+  window.addEventListener("message", event => {
+    if (event.source !== window || event.data.source !== HubConnectionConfig.fromContentScropt.source) {
+      return;
+    }
+
+    if (event.data.action === HubConnectionConfig.fromContentScropt.actions.meetingTitle) {
+      HubConnectionConfig.meetingId = event.data.payload;
+      if (connection) {
+        connection.stop().then(() => initializeConnection(HubConnectionConfig.meetingId));
+      } else {
+        initializeConnection(HubConnectionConfig.meetingId);
+      }
+    } else if (event.data.action === HubConnectionConfig.fromContentScropt.actions.startTranscript) {
+      window.postMessage(
+        {
+          source: HubConnectionConfig.toContentScript.source,
+          action: HubConnectionConfig.toContentScript.actions.startMeeting,
+          payload: event.data.payload
+        },
+        "*"
+      );
+    }
+  });
+})();
