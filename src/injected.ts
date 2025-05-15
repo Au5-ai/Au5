@@ -50,15 +50,8 @@ import {HubConnectionConfig} from "./core/constants";
       } else {
         initializeConnection(HubConnectionConfig.meetingId);
       }
-    } else if (event.data.action === HubConnectionConfig.fromContentScropt.actions.startTranscript) {
-      window.postMessage(
-        {
-          source: HubConnectionConfig.toContentScript.source,
-          action: HubConnectionConfig.toContentScript.actions.startMeeting,
-          payload: event.data.payload
-        },
-        "*"
-      );
+    } else if (event.data.action === HubConnectionConfig.fromContentScropt.actions.startTranscription) {
+      connection.invoke(HubConnectionConfig.fromContentScropt.actions.startTranscription, event.data.payload);
     }
   });
 })();

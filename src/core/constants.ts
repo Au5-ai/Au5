@@ -22,7 +22,7 @@ export const HubConnectionConfig = {
   },
   fromContentScropt: {
     source: "Au5-ContentScript",
-    actions: {meetingTitle: "MeetingTitle", startTranscript: "StartTranscript"}
+    actions: {meetingTitle: "MeetingTitle", startTranscription: "StartTranscription"}
   },
   meetingId: "NA"
 };
