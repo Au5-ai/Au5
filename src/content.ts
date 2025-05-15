@@ -66,12 +66,6 @@ const observeTranscriptContainer = async (ctx: PipelineContext): Promise<Pipelin
   return ctx;
 };
 
-const addChatPanelToUI = async (ctx: PipelineContext): Promise<PipelineContext> => {
-  // await new Promise(resolve => setTimeout(resolve, 5000));
-  ChatPanel.addPanel(appConfig.Service.direction);
-  return ctx;
-};
-
 const finalizeMeetingRoutines = async (ctx: PipelineContext): Promise<PipelineContext> => {
   endMeetingRoutines();
   return ctx;
@@ -88,24 +82,42 @@ async function startMeetingRoutines(browserService: IBrowserService): Promise<vo
   }
 }
 
+export function startPipeline() {
+  return pipeAsync<PipelineContext>(
+    {
+      hasMeetingStarted: true
+    } as PipelineContext,
+    activateCaptions,
+    findTranscriptContainer,
+    applyTranscriptStyle,
+    observeTranscriptContainer,
+    finalizeMeetingRoutines
+  );
+}
+
 startMeetingRoutines(browserService)
   .then(async () => {
-    return pipeAsync<PipelineContext>(
-      {
-        hasMeetingStarted: true
-      } as PipelineContext,
-      activateCaptions,
-      findTranscriptContainer,
-      applyTranscriptStyle,
-      observeTranscriptContainer,
-      addChatPanelToUI,
-      finalizeMeetingRoutines
-    );
+    ChatPanel.addPanel(appConfig.Service.direction);
+    ChatPanel.addYou(appConfig.Service.fullName);
+
+    document.getElementById("au5-start-button")?.addEventListener("click", () => {
+      startPipeline();
+    });
+
+    injectLocalScript("signalr.min.js");
+    injectLocalScript("injected.js");
   })
   .catch(error => {
     console.error("Meeting routine execution failed:", error);
     isTranscriptDomErrorCaptured = true;
   });
+
+function injectLocalScript(fileName: string): void {
+  const script = document.createElement("script");
+  script.src = chrome.runtime.getURL(fileName);
+  script.type = "text/javascript";
+  (document.head || document.documentElement).appendChild(script);
+}
 
 function createMutationHandler(ctx: PipelineContext) {
   return function (mutations: MutationRecord[], observer: MutationObserver) {
@@ -125,7 +137,6 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
         : transcriptContainer?.childNodes[1]?.firstChild?.childNodes;
 
       if (!speakerElements) return;
-
       const hasSpeakers = ctx.canUseAriaBasedTranscriptSelector
         ? speakerElements.length > 1
         : speakerElements.length > 0;
@@ -143,18 +154,17 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
         currentTranscript = "";
         continue;
       }
-      console.log(speakerElements);
       const latestSpeakerElement = ctx.canUseAriaBasedTranscriptSelector
         ? (speakerElements[speakerElements.length - 2] as HTMLElement)
         : (speakerElements[speakerElements.length - 1] as HTMLElement);
-
       const nameNode = latestSpeakerElement.childNodes[0] as HTMLElement;
-      const textNode = latestSpeakerElement.childNodes[1]?.lastChild as HTMLElement;
+      const textNode = latestSpeakerElement.childNodes[1] as HTMLElement;
 
       const speakerName = nameNode?.textContent?.trim() ?? "";
       const transcriptText = textNode?.textContent?.trim() ?? "";
 
       if (!speakerName || !transcriptText) {
+        // Send Error to Admin of Repo
         continue;
       }
 

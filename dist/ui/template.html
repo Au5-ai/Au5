@@ -4,15 +4,7 @@
     <title>Au5.ai</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
-      body {
-        font-family: "system-ui";
-      }
-    </style>
-  </head>
-  <body style="background-color: black">
-    <div
-      id="au5-chat-panel"
-      style="
+      .au5-chat-panel {
         border: 1px solid transparent;
         align-items: center;
         background-color: #fff;
@@ -29,113 +21,63 @@
         width: 360px;
         padding: 16px;
         overflow-x: auto;
-      "
-    >
-      <div style="background-color: #f1f2f3; padding: 16px; border-radius: 16px; max-width: 500px; margin-bottom: 8px">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px">
-          <span style="font-weight: bold; font-size: 13px">Saina</span>
-          <span style="color: #333; font-size: 13px">16:54</span>
-        </div>
-        <div style="font-size: 13px; line-height: 1.6; color: #000; margin-bottom: 8px; direction: rtl">
-          من میگم که این روش خیلی بهتره تا اینکه بریم سمت سرویس‌های جدید برای این حرفم هم دلیل دارم چون تجربه نشون داده
-          که ما نمیتونیم به این زودی ها دیتا رو بگیریم و بریم روی عملیات پس بهتره که دنبال راهکار جدیدتر و بهتری باشیم
-        </div>
+        font-family: system-ui;
+      }
+
+      #au5-start-button {
+        background-color: rgb(0, 0, 0);
+        color: white; 
+        border-radius: 8px; 
+        padding: 8px; 
+        border: none; 
+        cursor: pointer;
+      }
+
+      .au5-message {
+        background-color: #f1f2f3;
+        padding: 16px;
+        border-radius: 16px;
+        max-width: 500px;
+        margin-bottom: 8px;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #000;
+      }
+
+      .au5-message-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .au5-message-sender {
+        font-weight: bold;
+        font-size: 13px;
+      }
+
+      .au5-message-time {
+        color: #333;
+        font-size: 13px;
+      }
+
+      .au5-message-text {
+        margin-bottom: 8px;
+      }
+    </style>
+  </head>
+  <body style="background-color: black">
+    <div class="au5-chat-panel">
+      
+      <div class="au5-participant">
+        <ul>
+          <li>Mohammad Karimi</li>
+          <li>Participant 2</li>
+          <li>Participant 3</li>
+        </ul>
       </div>
-      <div
-        style="
-          direction: rtl;
-          background-color: #f1f2f3;
-          padding: 16px;
-          border-radius: 16px;
-          max-width: 500px;
-          margin-bottom: 8px;
-        "
-      >
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px">
-          <span style="font-weight: bold; font-size: 13px">Saina</span>
-          <span style="color: #333; font-size: 13px">16:54</span>
-        </div>
-        <div style="font-size: 13px; line-height: 1.6; color: #000; margin-bottom: 8px">
-          من میگم که این روش خیلی بهتره تا اینکه بریم سمت سرویس‌های جدید برای این حرفم هم دلیل دارم چون تجربه نشون داده
-          که ما نمیتونیم به این زودی ها دیتا رو بگیریم و بریم روی عملیات پس بهتره که دنبال راهکار جدیدتر و بهتری باشیم
-        </div>
-      </div>
-      <div
-        style="
-          direction: rtl;
-          background-color: #f1f2f3;
-          padding: 16px;
-          border-radius: 16px;
-          max-width: 500px;
-          margin-bottom: 8px;
-        "
-      >
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px">
-          <span style="font-weight: bold; font-size: 13px">Saina</span>
-          <span style="color: #333; font-size: 13px">16:54</span>
-        </div>
-        <div style="font-size: 13px; line-height: 1.6; color: #000; margin-bottom: 8px">
-          من میگم که این روش خیلی بهتره تا اینکه بریم سمت سرویس‌های جدید برای این حرفم هم دلیل دارم چون تجربه نشون داده
-          که ما نمیتونیم به این زودی ها دیتا رو بگیریم و بریم روی عملیات پس بهتره که دنبال راهکار جدیدتر و بهتری باشیم
-        </div>
-      </div>
-      <div
-        style="
-          direction: rtl;
-          background-color: #f1f2f3;
-          padding: 16px;
-          border-radius: 16px;
-          max-width: 500px;
-          margin-bottom: 8px;
-        "
-      >
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px">
-          <span style="font-weight: bold; font-size: 13px">Saina</span>
-          <span style="color: #333; font-size: 13px">16:54</span>
-        </div>
-        <div style="font-size: 13px; line-height: 1.6; color: #000; margin-bottom: 8px">
-          من میگم که این روش خیلی بهتره تا اینکه بریم سمت سرویس‌های جدید برای این حرفم هم دلیل دارم چون تجربه نشون داده
-          که ما نمیتونیم به این زودی ها دیتا رو بگیریم و بریم روی عملیات پس بهتره که دنبال راهکار جدیدتر و بهتری باشیم
-        </div>
-      </div>
-      <div
-        style="
-          direction: rtl;
-          background-color: #f1f2f3;
-          padding: 16px;
-          border-radius: 16px;
-          max-width: 500px;
-          margin-bottom: 8px;
-        "
-      >
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px">
-          <span style="font-weight: bold; font-size: 13px">Saina</span>
-          <span style="color: #333; font-size: 13px">16:54</span>
-        </div>
-        <div style="font-size: 13px; line-height: 1.6; color: #000; margin-bottom: 8px">
-          من میگم که این روش خیلی بهتره تا اینکه بریم سمت سرویس‌های جدید برای این حرفم هم دلیل دارم چون تجربه نشون داده
-          که ما نمیتونیم به این زودی ها دیتا رو بگیریم و بریم روی عملیات پس بهتره که دنبال راهکار جدیدتر و بهتری باشیم
-        </div>
-      </div>
-      <div
-        style="
-          direction: rtl;
-          background-color: #f1f2f3;
-          padding: 16px;
-          border-radius: 16px;
-          max-width: 500px;
-          margin-bottom: 8px;
-        "
-      >
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px">
-          <span style="font-weight: bold; font-size: 13px">Saina</span>
-          <span style="color: #333; font-size: 13px">16:54</span>
-        </div>
-        <div style="font-size: 13px; line-height: 1.6; color: #000; margin-bottom: 8px">
-          من میگم که این روش خیلی بهتره تا اینکه بریم سمت سرویس‌های جدید برای این حرفم هم دلیل دارم چون تجربه نشون داده
-          که ما نمیتونیم به این زودی ها دیتا رو بگیریم و بریم روی عملیات پس بهتره که دنبال راهکار جدیدتر و بهتری باشیم
-        </div>
-      </div>
-    </div>
+
+      <button id="au5-close-button">Start Transcription</button>
+
   </body>
 </html>

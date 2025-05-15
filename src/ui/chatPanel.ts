@@ -3,6 +3,7 @@ import {toHoursAndMinutes} from "../utils/datetime";
 
 export default class ChatPanel {
   private static chatPanel: HTMLDivElement | null = null;
+  private static participants: HTMLDivElement | null = null;
 
   public static addPanel(direction: string): void {
     if (this.chatPanel) {
@@ -24,8 +25,44 @@ export default class ChatPanel {
     document.body.appendChild(this.chatPanel);
   }
 
+  public static addYou(name: string): void {
+    if (!this.chatPanel) {
+      console.warn("ChatPanel does not exist.");
+      return;
+    }
+
+    this.participants = document.createElement("div");
+    this.participants.className = "au5-participant";
+
+    this.participants.innerHTML = `
+        <ul class="au5-participant-list">
+          <li>${{name}}</li>
+        </ul>
+
+      <button id="au5-start-button">Start Transcription</button>
+`;
+
+    this.chatPanel.appendChild(this.participants);
+  }
+
+  public static addOthers(name: string): void {
+    if (!this.chatPanel) {
+      console.warn("ChatPanel does not exist.");
+      return;
+    }
+
+    const participantList = this.participants?.getElementsByClassName(`au5-participant-list"`)[0] as HTMLElement;
+    if (participantList) {
+      const other = document.createElement("li");
+      other.innerText = name;
+      participantList.appendChild(other);
+    }
+  }
+
   public static addMessage(item: TranscriptBlock): void {
-    if (!this.chatPanel) return;
+    if (!this.chatPanel) {
+      return;
+    }
 
     const direction = this.chatPanel.getAttribute("data-direction") || "ltr";
 
@@ -45,11 +82,11 @@ export default class ChatPanel {
   }
 
   public static addLiveMessage(item: TranscriptBlock): void {
-    if (!this.chatPanel) return;
-
+    if (!this.chatPanel) {
+      console.warn("ChatPanel does not exist.");
+      return;
+    }
     const existingMessage = this.chatPanel.querySelector(`[data-id="${item.id}"]`) as HTMLElement;
-    console.log("existingMessage", existingMessage);
-    console.log("item", item);
     if (existingMessage) {
       const textDiv = existingMessage.querySelector(".au5-message-text") as HTMLElement;
       if (textDiv) {
@@ -91,6 +128,15 @@ const chatPanelStyle = `
     font-family: system-ui;
   }
 
+  #au5-start-button {
+    background-color: rgb(0, 0, 0);
+    color: white; 
+    border-radius: 8px; 
+    padding: 8px; 
+    border: none; 
+    cursor: pointer;
+  }
+
   .au5-message {
     background-color: #f1f2f3;
     padding: 16px;
@@ -122,22 +168,4 @@ const chatPanelStyle = `
   .au5-message-text {
     margin-bottom: 8px;
   }
-
 `;
-
-// const elementsToStyle = [
-//   {className: "fJsklc ZmuLbd Didmac G03iKb", styles: {top: "0px", right: "376px", left: "0px"}},
-//   {className: "axUSnc cZXVke  P9KVBf", styles: {inset: "72px 392px 80px 16px"}}
-// ];
-
-// elementsToStyle.forEach(({className, styles}) => {
-//   const elements = document.getElementsByClassName(className);
-//   Array.from(elements).forEach(element => {
-//     Object.assign((element as HTMLElement).style, styles);
-//   });
-// });
-
-// const element = document.getElementsByClassName("dkjMxf i8wGAe iPFm3e")[0] as HTMLElement;
-// if (element) {
-//   element.style.width = parseInt(element.style.width, 10) - 376 + "px";
-// }

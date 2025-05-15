@@ -4,12 +4,26 @@ import {AppConfiguration} from "../services/config.service";
 // ------------------------------ ** TRANSCRIPT & CHAT STRUCTURES ** -------------------
 // =====================================================================================
 
+export interface Participant {
+  /** Unique identifier for the participant */
+  id: string;
+
+  /** Name of the participant */
+  name: string;
+
+  /** Timestamp of when the participant joined the meeting */
+  joinedAt: string;
+
+  isRecording?: boolean;
+}
+
 /**
  * Represents a single spoken block in a meeting transcript.
  */
 export interface TranscriptBlock {
   /** Unique identifier for the transcript block */
   id: string;
+
   /** Name of the person who spoke */
   speaker: string;
 
@@ -18,6 +32,8 @@ export interface TranscriptBlock {
 
   /** The transcribed text spoken by the person */
   transcript: string;
+
+  reactions?: [key: string];
 }
 
 /**
@@ -41,9 +57,8 @@ export interface ChatMessage {
 /**
  * Represents a meeting and its related details.
  */
-export interface Meeting {
-  /** ID of the Chrome tab where the meeting is running */
-  tabId: number;
+export interface Meet {
+  id: string;
 
   /** Title of the meeting (can be optional or fallback to older key `title`) */
   title?: string;
@@ -59,6 +74,8 @@ export interface Meeting {
 
   /** Array of chat messages exchanged during the meeting */
   chatMessages: ChatMessage[];
+
+  participants: Participant[];
 }
 
 // =====================================================================================
@@ -73,7 +90,7 @@ export interface LocalStorageModel {
   appConfig: AppConfiguration; //TODO : remove this and use the config service instead
 
   /** History of recorded or processed meetings */
-  meeting: Meeting;
+  meet: Meet;
 }
 
 // =====================================================================================

@@ -21,6 +21,8 @@ export default defineConfig({
   plugins: [
     copy({
       targets: [
+        { src: "src/signalr.min.js", dest: "dist" },
+        { src: "src/injected.js", dest: "dist" },
         { src: "manifest.json", dest: "dist" },
         { src: "src/ui/template.html", dest: "dist/ui/" },
         { src: "src/assets/*", dest: "dist/assets/" },
