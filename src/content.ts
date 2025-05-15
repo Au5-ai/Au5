@@ -104,7 +104,6 @@ startMeetingRoutines(browserService)
       startPipeline();
     });
 
-    injectLocalScript("signalr.min.js");
     injectLocalScript("injected.js");
   })
   .catch(error => {
@@ -112,10 +111,13 @@ startMeetingRoutines(browserService)
     isTranscriptDomErrorCaptured = true;
   });
 
-function injectLocalScript(fileName: string): void {
+function injectLocalScript(fileName: string, callback: () => void = () => {}): void {
   const script = document.createElement("script");
   script.src = chrome.runtime.getURL(fileName);
   script.type = "text/javascript";
+  script.onload = function () {
+    if (callback) callback();
+  };
   (document.head || document.documentElement).appendChild(script);
 }
 
@@ -264,3 +266,12 @@ function endMeetingRoutines(): void {
     console.error("Error setting up meeting end listener:", err);
   }
 }
+
+window.addEventListener("message", event => {
+  if (event.source !== window) return;
+
+  if (event.data?.source === "my-extension" && event.data?.action === "doSomethingInContentScript") {
+    console.log("Received in content script:", event.data.payload);
+    ChatPanel.addLiveMessage(event.data.payload);
+  }
+});

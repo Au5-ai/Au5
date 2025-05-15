@@ -8,6 +8,7 @@ export default defineConfig({
       input: {
         background: resolve(__dirname, "src/background.ts"),
         content: resolve(__dirname, "src/content.ts"),
+        injected: resolve(__dirname, "src/injected.ts"),
       },
       output: {
         entryFileNames: "[name].js",
@@ -21,8 +22,6 @@ export default defineConfig({
   plugins: [
     copy({
       targets: [
-        { src: "src/signalr.min.js", dest: "dist" },
-        { src: "src/injected.js", dest: "dist" },
         { src: "manifest.json", dest: "dist" },
         { src: "src/ui/template.html", dest: "dist/ui/" },
         { src: "src/assets/*", dest: "dist/assets/" },
