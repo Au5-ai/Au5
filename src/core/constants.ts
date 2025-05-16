@@ -10,7 +10,7 @@ export const MESSAGES = {
   }
 };
 
-export let HubConnectionConfig = {
+export const HubConnectionConfig = {
   hubUrl: "https://localhost:7061/meetinghub",
   methodName: "ReceiveMessage",
   toContentScript: {

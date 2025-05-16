@@ -1,6 +1,23 @@
 import * as signalR from "@microsoft/signalr";
-import {HubConnectionConfig} from "./core/constants";
 import {getMeetingTitleFromUrl} from "./utils/urlHelper";
+
+export const HubConnectionConfig = {
+  hubUrl: "https://localhost:7061/meetinghub",
+  methodName: "ReceiveMessage",
+  toContentScript: {
+    source: "Au5-InjectedScript",
+    actions: {
+      realTimeTranscription: "RealTimeTranscription",
+      someoneIsJoining: "SomeoneIsJoining",
+      startTranscription: "StartTranscription"
+    }
+  },
+  fromContentScropt: {
+    source: "Au5-ContentScript",
+    actions: {meetingTitle: "MeetingTitle", startTranscription: "StartTranscription"}
+  },
+  meetingId: "NA"
+};
 
 (function () {
   let connection: signalR.HubConnection;
@@ -52,7 +69,7 @@ import {getMeetingTitleFromUrl} from "./utils/urlHelper";
       connection
         .start()
         .then(() => {
-          connection.invoke("JoinMeeting", meetingId);
+          connection.invoke("JoinMeeting", meetingId, "123456", "John Doe");
         })
         .catch(err => {
           setTimeout(startConnection, 3000);

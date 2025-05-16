@@ -4,6 +4,7 @@ import copy from "rollup-plugin-copy";
 
 export default defineConfig({
   build: {
+    minify: false,
     rollupOptions: {
       input: {
         background: resolve(__dirname, "src/background.ts"),
@@ -11,9 +12,10 @@ export default defineConfig({
         injected: resolve(__dirname, "src/injected.ts"),
       },
       output: {
+        manualChunks: () => null,
         entryFileNames: "[name].js",
-        chunkFileNames: "chunks/[name]-[hash].js",
-        assetFileNames: "assets/[name]-[hash][extname]",
+        chunkFileNames: "[name].js",
+        assetFileNames: "[name].[ext]",
       },
     },
     outDir: "dist",

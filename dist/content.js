@@ -1,16 +1,237 @@
-var I=Object.defineProperty;var D=(t,e,n)=>e in t?I(t,e,{enumerable:!0,configurable:!0,writable:!0,value:n}):t[e]=n;var b=(t,e,n)=>D(t,typeof e!="symbol"?e+"":e,n);class N{reload(){chrome.runtime.reload()}sendMessage(e,n=()=>{}){chrome.runtime.sendMessage(e,n)}}class U{async remove(e){return new Promise((n,r)=>{chrome.storage.local.remove(e,()=>{if(chrome.runtime.lastError)return r(chrome.runtime.lastError);n()})})}async set(e,n){return new Promise((r,a)=>{chrome.storage.local.set({[e]:n},()=>{if(chrome.runtime.lastError)return a(chrome.runtime.lastError);r(n)})})}async get(e){const n=Array.isArray(e)?e:[e];return new Promise((r,a)=>{chrome.storage.local.get(n,f=>{if(chrome.runtime.lastError)return a(chrome.runtime.lastError);r(f)})})}async getSync(e){return new Promise((n,r)=>{chrome.storage.sync.get([e],a=>{if(chrome.runtime.lastError)return r(chrome.runtime.lastError);n(a)})})}}async function B(t,...e){let n=t;for(const r of e)n=await r(n);return n}const T="configuration";class L{constructor(e){this.storageService=e}async getConfig(){try{return $}catch(e){throw console.error("Failed to load configuration:",e),new Error("Configuration not found.")}}async setConfig(e){try{await this.storageService.set(T,e)}catch(n){console.error("Failed to save configuration:",n)}}async getValue(e){const n=await this.getConfig();return n?n[e]:null}async setValue(e,n){const r=await this.getConfig()||{};r[e]=n,await this.setConfig(r)}async clearConfig(){try{await this.storageService.remove(T)}catch(e){console.error("Failed to clear configuration:",e)}}}const R={meetingEndIcon:{selector:".google-symbols",text:"call_end"},captionsIcon:{selector:".google-symbols",text:"closed_caption_off"},transcriptSelectors:{aria:'div[role="region"][tabindex="0"]',fallback:".a4cQT"},transcriptStyles:{opacity:"0.2"},maxTranscriptLength:250,transcriptTrimThreshold:125},$={Service:{webhookUrl:"https://au5.ai/api/v1/",token:"",userId:"23f45e89-8b5a-5c55-9df7-240d78a3ce15",fullName:"Mohammad Karimi",direction:"rtl"},Extension:R};var M=(t=>(t.MEETING_STARTED="meetingStarted",t.MEETING_ENDED="meetingEnded",t))(M||{});function q(t){const e=new Date(t),n=e.getUTCHours().toString().padStart(2,"0"),r=e.getUTCMinutes().toString().padStart(2,"0");return`${n}:${r}`}const g=class g{static addPanel(e){if(this.chatPanel){console.warn("ChatPanel already exists.");return}const n=document.createElement("style");n.textContent=z,document.head.appendChild(n),!document.getElementById("au5-chat-panel")&&(this.chatPanel=document.createElement("div"),this.chatPanel.id="au5-chat-panel",this.chatPanel.className="au5-chat-panel",this.chatPanel.setAttribute("data-direction",e),document.body.appendChild(this.chatPanel))}static addYou(e){if(!this.chatPanel){console.warn("ChatPanel does not exist.");return}this.participants=document.createElement("div"),this.participants.className="au5-participant",this.participants.innerHTML=`
+var __defProp = Object.defineProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+class StorageService {
+  async remove(keys) {
+    return new Promise((resolve, reject) => {
+      chrome.storage.local.remove(keys, () => {
+        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
+        resolve();
+      });
+    });
+  }
+  async set(key, value) {
+    return new Promise((resolve, reject) => {
+      chrome.storage.local.set({ [key]: value }, () => {
+        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
+        resolve(value);
+      });
+    });
+  }
+  async get(keys) {
+    const keyArray = Array.isArray(keys) ? keys : [keys];
+    return new Promise((resolve, reject) => {
+      chrome.storage.local.get(keyArray, (result) => {
+        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
+        resolve(result);
+      });
+    });
+  }
+  async getSync(key) {
+    return new Promise((resolve, reject) => {
+      chrome.storage.sync.get([key], (result) => {
+        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
+        resolve(result);
+      });
+    });
+  }
+}
+const HubConnectionConfig = {
+  toContentScript: {
+    source: "Au5-InjectedScript",
+    actions: {
+      realTimeTranscription: "RealTimeTranscription",
+      someoneIsJoining: "SomeoneIsJoining",
+      startTranscription: "StartTranscription"
+    }
+  }
+};
+async function pipeAsync(input, ...fns) {
+  let result = input;
+  for (const fn of fns) {
+    result = await fn(result);
+  }
+  return result;
+}
+const CONFIGURATION_KEY = "configuration";
+class ConfigurationService {
+  constructor(storageService) {
+    this.storageService = storageService;
+  }
+  /**
+   * Retrieves the entire configuration object from storage.
+   */
+  async getConfig() {
+    try {
+      return DefaultAppConfig;
+      const config = await this.storageService.get(CONFIGURATION_KEY);
+      return config ?? null;
+    } catch (error) {
+      console.error("Failed to load configuration:", error);
+      throw new Error("Configuration not found.");
+    }
+  }
+  /**
+   * Updates the entire configuration object in storage.
+   */
+  async setConfig(config) {
+    try {
+      await this.storageService.set(CONFIGURATION_KEY, config);
+    } catch (error) {
+      console.error("Failed to save configuration:", error);
+    }
+  }
+  /**
+   * Gets a single config field like webhookUrl or token.
+   */
+  async getValue(key) {
+    const config = await this.getConfig();
+    return config ? config[key] : null;
+  }
+  /**
+   * Updates only one key of the configuration.
+   */
+  async setValue(key, value) {
+    const config = await this.getConfig() || {};
+    config[key] = value;
+    await this.setConfig(config);
+  }
+  /**
+   * Removes the entire configuration.
+   */
+  async clearConfig() {
+    try {
+      await this.storageService.remove(CONFIGURATION_KEY);
+    } catch (error) {
+      console.error("Failed to clear configuration:", error);
+    }
+  }
+}
+const ExtensionConfig = {
+  meetingEndIcon: {
+    selector: ".google-symbols",
+    text: "call_end"
+  },
+  captionsIcon: {
+    selector: ".google-symbols",
+    text: "closed_caption_off"
+  },
+  transcriptSelectors: {
+    aria: 'div[role="region"][tabindex="0"]',
+    fallback: ".a4cQT"
+  },
+  transcriptStyles: {
+    opacity: "0.2"
+  },
+  maxTranscriptLength: 250,
+  transcriptTrimThreshold: 125
+};
+const DefaultAppConfig = {
+  Service: {
+    webhookUrl: "https://au5.ai/api/v1/",
+    token: "",
+    userId: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
+    fullName: "Mohammad Karimi",
+    direction: "rtl"
+  },
+  Extension: ExtensionConfig
+};
+function toHoursAndMinutes(isoString) {
+  const date = new Date(isoString);
+  const hh = date.getUTCHours().toString().padStart(2, "0");
+  const mm = date.getUTCMinutes().toString().padStart(2, "0");
+  return `${hh}:${mm}`;
+}
+const _ChatPanel = class _ChatPanel {
+  static addPanel(direction) {
+    if (this.chatPanel) {
+      console.warn("ChatPanel already exists.");
+      return;
+    }
+    const style = document.createElement("style");
+    style.textContent = chatPanelStyle;
+    document.head.appendChild(style);
+    if (document.getElementById("au5-chat-panel")) return;
+    this.chatPanel = document.createElement("div");
+    this.chatPanel.id = "au5-chat-panel";
+    this.chatPanel.className = "au5-chat-panel";
+    this.chatPanel.setAttribute("data-direction", direction);
+    document.body.appendChild(this.chatPanel);
+  }
+  static addYou(name) {
+    if (!this.chatPanel) {
+      console.warn("ChatPanel does not exist.");
+      return;
+    }
+    this.participants = document.createElement("div");
+    this.participants.className = "au5-participant";
+    this.participants.innerHTML = `
         <ul class="au5-participant-list">
-          <li>${{name:e}}</li>
+          <li>${{ name }}</li>
         </ul>
 
       <button id="au5-start-button">Start Transcription</button>
-`,this.chatPanel.appendChild(this.participants)}static addOthers(e){var r;if(!this.chatPanel){console.warn("ChatPanel does not exist.");return}const n=(r=this.participants)==null?void 0:r.getElementsByClassName('au5-participant-list"')[0];if(n){const a=document.createElement("li");a.innerText=e,n.appendChild(a)}}static addMessage(e){if(!this.chatPanel)return;const n=this.chatPanel.getAttribute("data-direction")||"ltr",r=document.createElement("div");r.className="au5-message",r.setAttribute("data-id",e.id),r.innerHTML=`
+`;
+    this.chatPanel.appendChild(this.participants);
+  }
+  static addOthers(name) {
+    var _a;
+    if (!this.chatPanel) {
+      console.warn("ChatPanel does not exist.");
+      return;
+    }
+    const participantList = (_a = this.participants) == null ? void 0 : _a.getElementsByClassName(`au5-participant-list"`)[0];
+    if (participantList) {
+      const other = document.createElement("li");
+      other.innerText = name;
+      participantList.appendChild(other);
+    }
+  }
+  static addMessage(item) {
+    if (!this.chatPanel) {
+      return;
+    }
+    const direction = this.chatPanel.getAttribute("data-direction") || "ltr";
+    const message = document.createElement("div");
+    message.className = "au5-message";
+    message.setAttribute("data-id", item.id);
+    message.innerHTML = `
     <div class="au5-message-header">
-      <span class="au5-message-sender">${e.speaker}</span>
-      <span class="au5-message-time">${q(e.timestamp)}</span>
+      <span class="au5-message-sender">${item.speaker}</span>
+      <span class="au5-message-time">${toHoursAndMinutes(item.timestamp)}</span>
     </div>
-    <div class="au5-message-text" style="direction: ${n};">${e.transcript}</div>
-  `,this.chatPanel.appendChild(r)}static addLiveMessage(e){if(!this.chatPanel){console.warn("ChatPanel does not exist.");return}const n=this.chatPanel.querySelector(`[data-id="${e.id}"]`);if(n){const r=n.querySelector(".au5-message-text");r&&(r.innerText=e.transcript)}else g.addMessage(e)}static destroy(){this.chatPanel?(document.body.removeChild(this.chatPanel),this.chatPanel=null):console.warn("ChatPanel does not exist.")}};b(g,"chatPanel",null),b(g,"participants",null);let u=g;const z=`
+    <div class="au5-message-text" style="direction: ${direction};">${item.transcript}</div>
+  `;
+    this.chatPanel.appendChild(message);
+  }
+  static addLiveMessage(item) {
+    if (!this.chatPanel) {
+      console.warn("ChatPanel does not exist.");
+      return;
+    }
+    const existingMessage = this.chatPanel.querySelector(`[data-id="${item.id}"]`);
+    if (existingMessage) {
+      const textDiv = existingMessage.querySelector(".au5-message-text");
+      if (textDiv) {
+        textDiv.innerText = item.transcript;
+      }
+    } else {
+      _ChatPanel.addMessage(item);
+    }
+  }
+  static destroy() {
+    if (this.chatPanel) {
+      document.body.removeChild(this.chatPanel);
+      this.chatPanel = null;
+    } else {
+      console.warn("ChatPanel does not exist.");
+    }
+  }
+};
+__publicField(_ChatPanel, "chatPanel", null);
+__publicField(_ChatPanel, "participants", null);
+let ChatPanel = _ChatPanel;
+const chatPanelStyle = `
   .au5-chat-panel {
     border: 1px solid transparent;
     align-items: center;
@@ -71,4 +292,268 @@ var I=Object.defineProperty;var D=(t,e,n)=>e in t?I(t,e,{enumerable:!0,configura
   .au5-message-text {
     margin-bottom: 8px;
   }
-`;async function F(t,e){const n=r=>{var a;return e?((a=r.textContent)==null?void 0:a.trim())===e:!0};for(;;){const a=Array.from(document.querySelectorAll(t)).find(n);if(a instanceof HTMLElement)return a;await new Promise(requestAnimationFrame)}}function C(t){return document.querySelector(t)}function A(t,e){const n=Array.from(document.querySelectorAll(t));if(!e)return n;const r=new RegExp(e);return n.filter(a=>r.test(a.textContent??""))}function O(t,e,n){if(e)t.style.opacity=n;else{const r=t.children[1];r==null||r.setAttribute("style",`opacity: ${n};`)}}function H(t,e){let n=document.querySelector(t);const r=!!n;return n||(n=document.querySelector(e)),{container:n,useAria:r}}function j(){const e=new URL(window.location.href).pathname.split("/").filter(Boolean);return e.length>0?e[e.length-1]:"N/A"}let i;const _=new N,G=new L(new U);let P=!1,k=[],m="",o="",s="",l="",v=!1,h;const Y=async t=>{var n;const e=i.Extension.captionsIcon;return t.captionsButton=A(e.selector,e.text)[0],(n=t.captionsButton)==null||n.click(),t},K=async t=>{const e=H(i.Extension.transcriptSelectors.aria,i.Extension.transcriptSelectors.fallback);if(!e)throw new Error("Transcript container not found in DOM");return t.transcriptContainer=e.container,t.canUseAriaBasedTranscriptSelector=e.useAria,t},V=async t=>(t.transcriptContainer&&O(t.transcriptContainer,t.canUseAriaBasedTranscriptSelector,i.Extension.transcriptStyles.opacity),t),J=async t=>(t.transcriptContainer&&(h=new MutationObserver(ee(t)),h.observe(t.transcriptContainer,{childList:!0,attributes:!0,subtree:!0,characterData:!0})),t),Q=async t=>(ne(),t);async function W(t){try{i=await G.getConfig();const e=j();await F(i.Extension.meetingEndIcon.selector,i.Extension.meetingEndIcon.text),t.sendMessage({type:M.MEETING_STARTED,value:{meetingTitle:e}})}catch(e){console.error("Failed to detect meeting start:",e)}}function X(){return B({hasMeetingStarted:!0},Y,K,V,J,Q)}W(_).then(async()=>{var t;u.addPanel(i.Service.direction),u.addYou(i.Service.fullName),(t=document.getElementById("au5-start-button"))==null||t.addEventListener("click",()=>{X()}),Z("injected.js")}).catch(t=>{console.error("Meeting routine execution failed:",t),v=!0});function Z(t,e=()=>{}){const n=document.createElement("script");n.src=chrome.runtime.getURL(t),n.type="text/javascript",n.onload=function(){e&&e()},(document.head||document.documentElement).appendChild(n)}function ee(t){return function(e,n){te(e,t)}}function te(t,e){var n,r,a,f;for(const re of t)try{const c=e.canUseAriaBasedTranscriptSelector?C(i.Extension.transcriptSelectors.aria):C(i.Extension.transcriptSelectors.fallback),d=e.canUseAriaBasedTranscriptSelector?c==null?void 0:c.children:(r=(n=c==null?void 0:c.childNodes[1])==null?void 0:n.firstChild)==null?void 0:r.childNodes;if(!d)return;if(!(e.canUseAriaBasedTranscriptSelector?d.length>1:d.length>0)){o&&s&&E({speaker:o,transcript:s,timestamp:l}),m="",o="",s="";continue}const S=e.canUseAriaBasedTranscriptSelector?d[d.length-2]:d[d.length-1],x=S.childNodes[0],w=S.childNodes[1],y=((a=x==null?void 0:x.textContent)==null?void 0:a.trim())??"",p=((f=w==null?void 0:w.textContent)==null?void 0:f.trim())??"";if(!y||!p)continue;s===""?(m=crypto.randomUUID(),o=y,l=new Date().toISOString(),s=p):o!==y?(E({id:m,speaker:o,transcript:s,timestamp:l}),m=crypto.randomUUID(),o=y,l=new Date().toISOString(),s=p):(e.canUseAriaBasedTranscriptSelector&&p.length-s.length<-i.Extension.maxTranscriptLength&&E({id:m,speaker:o,transcript:s,timestamp:l}),s=p,!e.canUseAriaBasedTranscriptSelector&&p.length>i.Extension.maxTranscriptLength&&S.remove()),u.addLiveMessage({id:m,speaker:o,transcript:s,timestamp:l})}catch(c){console.error(c),!v&&!P&&console.log("Error in transcript mutation observer:",c),v=!0}}function E(t){if(!s||!l)return;const e=t.speaker==="You"?i.Service.fullName:t.speaker;k.push({id:t.id,speaker:e,timestamp:t.timestamp,transcript:t.transcript})}function ne(){var t,e;try{const n=A(i.Extension.meetingEndIcon.selector,i.Extension.meetingEndIcon.text),r=((e=(t=n==null?void 0:n[0])==null?void 0:t.parentElement)==null?void 0:e.parentElement)??null;if(!r)throw new Error("Meeting end button not found in DOM.");r.addEventListener("click",()=>{P=!0,h==null||h.disconnect(),o&&s&&E({speaker:o,transcript:s,timestamp:l}),u.destroy(),console.log("Meeting ended. Transcript data:",JSON.stringify(k))})}catch(n){console.error("Error setting up meeting end listener:",n)}}window.addEventListener("message",t=>{var e,n;t.source===window&&((e=t.data)==null?void 0:e.source)==="my-extension"&&((n=t.data)==null?void 0:n.action)==="doSomethingInContentScript"&&(console.log("Received in content script:",t.data.payload),u.addLiveMessage(t.data.payload))});
+`;
+async function waitForElement(selector, text) {
+  const matchesText = (el) => {
+    var _a;
+    return text ? ((_a = el.textContent) == null ? void 0 : _a.trim()) === text : true;
+  };
+  while (true) {
+    const elements = Array.from(document.querySelectorAll(selector));
+    const matched = elements.find(matchesText);
+    if (matched instanceof HTMLElement) return matched;
+    await new Promise(requestAnimationFrame);
+  }
+}
+function selectElement(selector) {
+  return document.querySelector(selector);
+}
+function selectElements(selector, text) {
+  const elements = Array.from(document.querySelectorAll(selector));
+  if (!text) return elements;
+  const regex = new RegExp(text);
+  return elements.filter((el) => regex.test(el.textContent ?? ""));
+}
+function applyDomStyle(container, useAriaSelector, opacity) {
+  if (useAriaSelector) {
+    container.style.opacity = opacity;
+  } else {
+    const secondChild = container.children[1];
+    secondChild == null ? void 0 : secondChild.setAttribute("style", `opacity: ${opacity};`);
+  }
+}
+function findDomContainer(ariaSelector, fallbackSelector) {
+  let container = document.querySelector(ariaSelector);
+  const useAria = !!container;
+  if (!container) {
+    container = document.querySelector(fallbackSelector);
+  }
+  return { container, useAria };
+}
+let appConfig;
+const configService = new ConfigurationService(new StorageService());
+let hasMeetingEnded = false;
+let transcriptBlocks = [];
+let currentSpeakerId = "", currentSpeakerName = "", currentTranscript = "", currentTimestamp = "";
+let isTranscriptDomErrorCaptured = false;
+let transcriptObserver;
+const activateCaptions = async (ctx) => {
+  var _a;
+  const captionsIcon = appConfig.Extension.captionsIcon;
+  ctx.captionsButton = selectElements(captionsIcon.selector, captionsIcon.text)[0];
+  (_a = ctx.captionsButton) == null ? void 0 : _a.click();
+  return ctx;
+};
+const findTranscriptContainer = async (ctx) => {
+  const dom = findDomContainer(
+    appConfig.Extension.transcriptSelectors.aria,
+    appConfig.Extension.transcriptSelectors.fallback
+  );
+  if (!dom) throw new Error("Transcript container not found in DOM");
+  ctx.transcriptContainer = dom.container;
+  ctx.canUseAriaBasedTranscriptSelector = dom.useAria;
+  return ctx;
+};
+const applyTranscriptStyle = async (ctx) => {
+  if (ctx.transcriptContainer) {
+    applyDomStyle(
+      ctx.transcriptContainer,
+      ctx.canUseAriaBasedTranscriptSelector,
+      appConfig.Extension.transcriptStyles.opacity
+    );
+  }
+  return ctx;
+};
+const observeTranscriptContainer = async (ctx) => {
+  if (ctx.transcriptContainer) {
+    transcriptObserver = new MutationObserver(createMutationHandler(ctx));
+    transcriptObserver.observe(ctx.transcriptContainer, {
+      childList: true,
+      attributes: true,
+      subtree: true,
+      characterData: true
+    });
+  }
+  return ctx;
+};
+const finalizeMeetingRoutines = async (ctx) => {
+  endMeetingRoutines();
+  return ctx;
+};
+async function startMeetingRoutines(browserService2) {
+  try {
+    appConfig = await configService.getConfig();
+    await waitForElement(appConfig.Extension.meetingEndIcon.selector, appConfig.Extension.meetingEndIcon.text);
+  } catch (error) {
+    console.error("Failed to detect meeting start:", error);
+  }
+}
+function startPipeline() {
+  return pipeAsync(
+    {
+      hasMeetingStarted: true
+    },
+    activateCaptions,
+    findTranscriptContainer,
+    applyTranscriptStyle,
+    observeTranscriptContainer,
+    finalizeMeetingRoutines
+  );
+}
+startMeetingRoutines().then(async () => {
+  var _a;
+  ChatPanel.addPanel(appConfig.Service.direction);
+  ChatPanel.addYou(appConfig.Service.fullName);
+  (_a = document.getElementById("au5-start-button")) == null ? void 0 : _a.addEventListener("click", () => {
+    startPipeline();
+  });
+  injectLocalScript("injected.js", () => {
+  });
+}).catch((error) => {
+  console.error("Meeting routine execution failed:", error);
+  isTranscriptDomErrorCaptured = true;
+});
+function injectLocalScript(fileName, callback = () => {
+}) {
+  const script = document.createElement("script");
+  script.src = chrome.runtime.getURL(fileName);
+  script.type = "text/javascript";
+  script.onload = function() {
+    if (callback) callback();
+  };
+  (document.head || document.documentElement).appendChild(script);
+}
+function createMutationHandler(ctx) {
+  return function(mutations, observer) {
+    handleTranscriptMutations(mutations, ctx);
+  };
+}
+function handleTranscriptMutations(mutations, ctx) {
+  var _a, _b, _c, _d;
+  for (const _ of mutations) {
+    try {
+      const transcriptContainer = ctx.canUseAriaBasedTranscriptSelector ? selectElement(appConfig.Extension.transcriptSelectors.aria) : selectElement(appConfig.Extension.transcriptSelectors.fallback);
+      const speakerElements = ctx.canUseAriaBasedTranscriptSelector ? transcriptContainer == null ? void 0 : transcriptContainer.children : (_b = (_a = transcriptContainer == null ? void 0 : transcriptContainer.childNodes[1]) == null ? void 0 : _a.firstChild) == null ? void 0 : _b.childNodes;
+      if (!speakerElements) return;
+      const hasSpeakers = ctx.canUseAriaBasedTranscriptSelector ? speakerElements.length > 1 : speakerElements.length > 0;
+      if (!hasSpeakers) {
+        if (currentSpeakerName && currentTranscript) {
+          flushTranscriptBuffer({
+            speaker: currentSpeakerName,
+            transcript: currentTranscript,
+            timestamp: currentTimestamp
+          });
+        }
+        currentSpeakerId = "";
+        currentSpeakerName = "";
+        currentTranscript = "";
+        continue;
+      }
+      const latestSpeakerElement = ctx.canUseAriaBasedTranscriptSelector ? speakerElements[speakerElements.length - 2] : speakerElements[speakerElements.length - 1];
+      const nameNode = latestSpeakerElement.childNodes[0];
+      const textNode = latestSpeakerElement.childNodes[1];
+      const speakerName = ((_c = nameNode == null ? void 0 : nameNode.textContent) == null ? void 0 : _c.trim()) ?? "";
+      const transcriptText = ((_d = textNode == null ? void 0 : textNode.textContent) == null ? void 0 : _d.trim()) ?? "";
+      if (!speakerName || !transcriptText) {
+        continue;
+      }
+      if (currentTranscript === "") {
+        currentSpeakerId = crypto.randomUUID();
+        currentSpeakerName = speakerName;
+        currentTimestamp = (/* @__PURE__ */ new Date()).toISOString();
+        currentTranscript = transcriptText;
+      } else if (currentSpeakerName !== speakerName) {
+        flushTranscriptBuffer({
+          id: currentSpeakerId,
+          speaker: currentSpeakerName,
+          transcript: currentTranscript,
+          timestamp: currentTimestamp
+        });
+        currentSpeakerId = crypto.randomUUID();
+        currentSpeakerName = speakerName;
+        currentTimestamp = (/* @__PURE__ */ new Date()).toISOString();
+        currentTranscript = transcriptText;
+      } else {
+        if (ctx.canUseAriaBasedTranscriptSelector) {
+          const textDiff = transcriptText.length - currentTranscript.length;
+          if (textDiff < -appConfig.Extension.maxTranscriptLength) {
+            flushTranscriptBuffer({
+              id: currentSpeakerId,
+              speaker: currentSpeakerName,
+              transcript: currentTranscript,
+              timestamp: currentTimestamp
+            });
+          }
+        }
+        currentTranscript = transcriptText;
+        if (!ctx.canUseAriaBasedTranscriptSelector && transcriptText.length > appConfig.Extension.maxTranscriptLength) {
+          latestSpeakerElement.remove();
+        }
+      }
+      ChatPanel.addLiveMessage({
+        id: currentSpeakerId,
+        speaker: currentSpeakerName,
+        transcript: currentTranscript,
+        timestamp: currentTimestamp
+      });
+    } catch (err) {
+      console.error(err);
+      if (!isTranscriptDomErrorCaptured && !hasMeetingEnded) {
+        console.log("Error in transcript mutation observer:", err);
+      }
+      isTranscriptDomErrorCaptured = true;
+    }
+  }
+}
+function flushTranscriptBuffer(item) {
+  if (!currentTranscript || !currentTimestamp) return;
+  const name = item.speaker === "You" ? appConfig.Service.fullName : item.speaker;
+  transcriptBlocks.push({
+    id: item.id,
+    speaker: name,
+    timestamp: item.timestamp,
+    transcript: item.transcript
+  });
+}
+function endMeetingRoutines() {
+  var _a, _b;
+  try {
+    const elements = selectElements(
+      appConfig.Extension.meetingEndIcon.selector,
+      appConfig.Extension.meetingEndIcon.text
+    );
+    const meetingEndButton = ((_b = (_a = elements == null ? void 0 : elements[0]) == null ? void 0 : _a.parentElement) == null ? void 0 : _b.parentElement) ?? null;
+    if (!meetingEndButton) {
+      throw new Error("Meeting end button not found in DOM.");
+    }
+    meetingEndButton.addEventListener("click", () => {
+      hasMeetingEnded = true;
+      transcriptObserver == null ? void 0 : transcriptObserver.disconnect();
+      if (currentSpeakerName && currentTranscript) {
+        flushTranscriptBuffer({
+          speaker: currentSpeakerName,
+          transcript: currentTranscript,
+          timestamp: currentTimestamp
+        });
+      }
+      ChatPanel.destroy();
+      console.log("Meeting ended. Transcript data:", JSON.stringify(transcriptBlocks));
+    });
+  } catch (err) {
+    console.error("Error setting up meeting end listener:", err);
+  }
+}
+window.addEventListener("message", (event) => {
+  var _a, _b, _c, _d;
+  if (event.source !== window) return;
+  if (((_a = event.data) == null ? void 0 : _a.source) !== HubConnectionConfig.toContentScript.source) {
+    return;
+  }
+  if (((_b = event.data) == null ? void 0 : _b.action) === HubConnectionConfig.toContentScript.actions.realTimeTranscription) {
+    ChatPanel.addLiveMessage(event.data.payload);
+  } else if (((_c = event.data) == null ? void 0 : _c.action) === HubConnectionConfig.toContentScript.actions.someoneIsJoining) {
+    ChatPanel.addOthers(event.data.payload);
+  } else if (((_d = event.data) == null ? void 0 : _d.action) === HubConnectionConfig.toContentScript.actions.startTranscription) {
+    console.log("Start transcription view");
+  }
+});
