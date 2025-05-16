@@ -74,10 +74,6 @@
                 .withUrl("https://localhost:7061/meetinghub")
                 .build();
 
-            connection.on("ReceiveMessage", (msg) => {
-                addMessage(msg.sender, msg.text, msg.timestamp);
-            });
-
             connection.start().then(() => {
                 connection.invoke("JoinMeeting", meetingId);
                 console.log(`Joined ${meetingId} as ${name}`);
@@ -88,22 +84,9 @@
             const text = document.getElementById("messageInput").value;
             const name = document.getElementById("nameInput").value;
             if (!text || !meetingId) return;
-            connection.invoke("SendMessage", meetingId, name, text);
+            connection.invoke("SendMessage", meetingId,"3f2504e0-4f89-11d3-9a0c-0305e82c3301", name, text);
             document.getElementById("messageInput").value = "";
         }
-
-        function addMessage(sender, text, time) {
-            const chat = document.getElementById("chat");
-            const div = document.createElement("div");
-            div.className = "message";
-            div.innerHTML = `
-            <div><span class="sender">${sender}</span> <span class="time">${new Date(time).toLocaleTimeString()}</span></div>
-            <div>${text}</div>
-          `;
-            chat.appendChild(div);
-            chat.scrollTop = chat.scrollHeight;
-        }
     </script>
-
 </body>
 </html>
