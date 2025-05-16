@@ -169,6 +169,10 @@ const _ChatPanel = class _ChatPanel {
     this.chatPanel.setAttribute("data-direction", direction);
     document.body.appendChild(this.chatPanel);
   }
+  static HideParticipantList() {
+    var _a;
+    (_a = this.participants) == null ? void 0 : _a.classList.add("au5-hidden");
+  }
   static addYou(name) {
     if (!this.chatPanel) {
       console.warn("ChatPanel does not exist.");
@@ -303,6 +307,10 @@ const chatPanelStyle = `
   .au5-message-text {
     margin-bottom: 8px;
   }
+  
+  .au5-hidden {
+    display: none;
+  }
 `;
 async function waitForElement(selector, text) {
   const matchesText = (el) => {
@@ -416,6 +424,7 @@ startMeetingRoutines().then(async () => {
   ChatPanel.addPanel(appConfig.Service.direction);
   ChatPanel.addYou(appConfig.Service.fullName);
   (_a = document.getElementById("au5-start-button")) == null ? void 0 : _a.addEventListener("click", () => {
+    ChatPanel.HideParticipantList();
     startPipeline();
     window.postMessage(
       {
@@ -588,6 +597,6 @@ window.addEventListener("message", (event) => {
   } else if (((_c = event.data) == null ? void 0 : _c.action) === HubConnectionConfig.toContentScript.actions.someoneIsJoining) {
     ChatPanel.addOthers(event.data.payload);
   } else if (((_d = event.data) == null ? void 0 : _d.action) === HubConnectionConfig.toContentScript.actions.startTranscription) {
-    console.log("Start transcription view");
+    ChatPanel.HideParticipantList();
   }
 });

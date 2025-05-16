@@ -302,7 +302,6 @@ window.addEventListener("message", event => {
   } else if (event.data?.action === HubConnectionConfig.toContentScript.actions.someoneIsJoining) {
     ChatPanel.addOthers(event.data.payload);
   } else if (event.data?.action === HubConnectionConfig.toContentScript.actions.startTranscription) {
-    // move to start transcription view
-    console.log("Start transcription view");
+    ChatPanel.HideParticipantList();
   }
 });
