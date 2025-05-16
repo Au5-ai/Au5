@@ -519,8 +519,8 @@ function handleTranscriptMutations(mutations, ctx) {
       });
       window.postMessage(
         {
-          source: HubConnectionConfig.toContentScript.source,
-          action: HubConnectionConfig.toContentScript.actions.realTimeTranscription,
+          source: HubConnectionConfig.fromContentScropt.source,
+          action: HubConnectionConfig.fromContentScropt.actions.realTimeTranscription,
           payload: {
             id: currentSpeakerId,
             speaker: currentSpeakerName,

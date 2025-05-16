@@ -100,6 +100,7 @@ startMeetingRoutines(browserService)
     ChatPanel.addYou(appConfig.Service.fullName);
 
     document.getElementById("au5-start-button")?.addEventListener("click", () => {
+      ChatPanel.HideParticipantList();
       startPipeline();
       window.postMessage(
         {
@@ -225,8 +226,8 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
       });
       window.postMessage(
         {
-          source: HubConnectionConfig.toContentScript.source,
-          action: HubConnectionConfig.toContentScript.actions.realTimeTranscription,
+          source: HubConnectionConfig.fromContentScropt.source,
+          action: HubConnectionConfig.fromContentScropt.actions.realTimeTranscription,
           payload: {
             id: currentSpeakerId,
             speaker: currentSpeakerName,

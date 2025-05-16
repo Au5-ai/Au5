@@ -2885,7 +2885,13 @@ const HubConnectionConfig = {
       );
     }
     if (event.data.action === HubConnectionConfig.fromContentScropt.actions.realTimeTranscription) {
-      connection.invoke(HubConnectionConfig.fromContentScropt.actions.realTimeTranscription, event.data.payload);
+      connection.invoke(
+        HubConnectionConfig.fromContentScropt.actions.realTimeTranscription,
+        HubConnectionConfig.meetingId,
+        event.data.payload.id,
+        event.data.payload.speaker,
+        event.data.payload.transcript
+      );
     }
   });
   HubConnectionConfig.meetingId = getMeetingTitleFromUrl();

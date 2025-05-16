@@ -24,6 +24,9 @@ export default class ChatPanel {
     this.chatPanel.setAttribute("data-direction", direction);
     document.body.appendChild(this.chatPanel);
   }
+  public static HideParticipantList(): void {
+    this.participants?.classList.add("au5-hidden");
+  }
 
   public static addYou(name: string): void {
     if (!this.chatPanel) {
@@ -167,5 +170,9 @@ const chatPanelStyle = `
 
   .au5-message-text {
     margin-bottom: 8px;
+  }
+  
+  .au5-hidden {
+    display: none;
   }
 `;
