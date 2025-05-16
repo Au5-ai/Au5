@@ -39,7 +39,6 @@
     </style>
 </head>
 <body>
-
     <h2>Join Meeting Chat</h2>
 
     <label>
@@ -54,39 +53,79 @@
     </label>
     <br><br>
 
+    <label>
+        User ID (UUID):
+        <input type="text" id="userIdInput" style="width: 300px;" />
+        <button onclick="generateUUID()">Generate</button>
+    </label>
+    <br><br>
+
     <button onclick="connect()">Join Meeting</button>
 
-    <div id="chat"></div>
+    <div id="chat" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px;"></div>
 
     <br>
     <input type="text" id="messageInput" placeholder="Type a message..." style="width: 80%;" />
     <button onclick="sendMessage()">Send</button>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
     <script>
         let connection;
         let meetingId;
 
+        function generateUUID() {
+            const uuid = crypto.randomUUID();
+            document.getElementById("userIdInput").value = uuid;
+        }
+
         function connect() {
-            const name = document.getElementById("nameInput").value;
+            const fullname = document.getElementById("nameInput").value;
+            const userId = document.getElementById("userIdInput").value;
             meetingId = document.getElementById("meetingIdInput").value;
+
+            if (!userId) {
+                alert("Please generate or enter a userId (UUID) before joining.");
+                return;
+            }
 
             connection = new signalR.HubConnectionBuilder()
                 .withUrl("https://localhost:7061/meetinghub")
+                .configureLogging(signalR.LogLevel.Information)
                 .build();
 
+            connection.on("ReceiveMessage", (message) => {
+                const chatDiv = document.getElementById("chat");
+                const msgType = message.header?.messageType;
+
+                if (msgType === "JoinMeeting") {
+                    chatDiv.innerHTML += `<div><strong>${message.payload.fullname}</strong> joined the meeting.</div>`;
+                } else if (msgType === "RealTimeTranscription") {
+                    chatDiv.innerHTML += `<div><strong>${message.payload.speaker}:</strong> ${message.payload.transcript}</div>`;
+                } else if (msgType === "StartTranscription") {
+                    chatDiv.innerHTML += `<div><em>User ${message.payload.userId} started transcription.</em></div>`;
+                }
+            });
+
             connection.start().then(() => {
-                connection.invoke("JoinMeeting", meetingId);
-                console.log(`Joined ${meetingId} as ${name}`);
+                connection.invoke("JoinMeeting", meetingId, userId, fullname);
+                console.log(`Joined ${meetingId} as ${fullname} (${userId})`);
             });
         }
 
         function sendMessage() {
-            const text = document.getElementById("messageInput").value;
-            const name = document.getElementById("nameInput").value;
-            if (!text || !meetingId) return;
-            connection.invoke("SendMessage", meetingId,"3f2504e0-4f89-11d3-9a0c-0305e82c3301", name, text);
+            const transcript = document.getElementById("messageInput").value;
+            const speaker = document.getElementById("nameInput").value;
+            const userId = document.getElementById("userIdInput").value;
+            if (!transcript || !meetingId || !userId) return;
+
+            connection.invoke("RealTimeTranscription", meetingId, userId, speaker, transcript);
             document.getElementById("messageInput").value = "";
         }
+
+        // Auto-generate a UUID on page load
+        window.onload = generateUUID;
     </script>
 </body>
+
+
 </html>
