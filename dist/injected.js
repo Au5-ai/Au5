@@ -2814,7 +2814,10 @@ const HubConnectionConfig = {
   },
   fromContentScropt: {
     source: "Au5-ContentScript",
-    actions: { startTranscription: "StartTranscription" }
+    actions: {
+      startTranscription: "StartTranscription",
+      realTimeTranscription: "RealTimeTranscription"
+    }
   },
   meetingId: "NA"
 };
@@ -2875,7 +2878,14 @@ const HubConnectionConfig = {
       return;
     }
     if (event.data.action === HubConnectionConfig.fromContentScropt.actions.startTranscription) {
-      connection.invoke(HubConnectionConfig.fromContentScropt.actions.startTranscription, event.data.payload);
+      connection.invoke(
+        HubConnectionConfig.fromContentScropt.actions.startTranscription,
+        HubConnectionConfig.meetingId,
+        event.data.payload.userId
+      );
+    }
+    if (event.data.action === HubConnectionConfig.fromContentScropt.actions.realTimeTranscription) {
+      connection.invoke(HubConnectionConfig.fromContentScropt.actions.realTimeTranscription, event.data.payload);
     }
   });
   HubConnectionConfig.meetingId = getMeetingTitleFromUrl();

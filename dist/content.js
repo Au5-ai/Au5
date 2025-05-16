@@ -37,6 +37,8 @@ class StorageService {
   }
 }
 const HubConnectionConfig = {
+  hubUrl: "https://localhost:7061/meetinghub",
+  methodName: "ReceiveMessage",
   toContentScript: {
     source: "Au5-InjectedScript",
     actions: {
@@ -44,7 +46,16 @@ const HubConnectionConfig = {
       someoneIsJoining: "SomeoneIsJoining",
       startTranscription: "StartTranscription"
     }
-  }
+  },
+  fromContentScropt: {
+    source: "Au5-ContentScript",
+    actions: {
+      meetingTitle: "MeetingTitle",
+      startTranscription: "StartTranscription",
+      realTimeTranscription: "RealTimeTranscription"
+    }
+  },
+  meetingId: "NA"
 };
 async function pipeAsync(input, ...fns) {
   let result = input;
@@ -406,6 +417,16 @@ startMeetingRoutines().then(async () => {
   ChatPanel.addYou(appConfig.Service.fullName);
   (_a = document.getElementById("au5-start-button")) == null ? void 0 : _a.addEventListener("click", () => {
     startPipeline();
+    window.postMessage(
+      {
+        source: HubConnectionConfig.fromContentScropt.source,
+        action: HubConnectionConfig.fromContentScropt.actions.startTranscription,
+        payload: {
+          userid: appConfig.Service.userId
+        }
+      },
+      "*"
+    );
   });
   injectLocalScript("injected.js", () => {
   });
@@ -496,6 +517,19 @@ function handleTranscriptMutations(mutations, ctx) {
         transcript: currentTranscript,
         timestamp: currentTimestamp
       });
+      window.postMessage(
+        {
+          source: HubConnectionConfig.toContentScript.source,
+          action: HubConnectionConfig.toContentScript.actions.realTimeTranscription,
+          payload: {
+            id: currentSpeakerId,
+            speaker: currentSpeakerName,
+            transcript: currentTranscript,
+            timestamp: currentTimestamp
+          }
+        },
+        "*"
+      );
     } catch (err) {
       console.error(err);
       if (!isTranscriptDomErrorCaptured && !hasMeetingEnded) {
@@ -545,7 +579,7 @@ function endMeetingRoutines() {
 }
 window.addEventListener("message", (event) => {
   var _a, _b, _c, _d;
-  if (event.source !== window) return;
+  if (event.source !== window && event.data.source !== HubConnectionConfig.toContentScript.source) return;
   if (((_a = event.data) == null ? void 0 : _a.source) !== HubConnectionConfig.toContentScript.source) {
     return;
   }

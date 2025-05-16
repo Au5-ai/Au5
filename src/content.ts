@@ -101,6 +101,16 @@ startMeetingRoutines(browserService)
 
     document.getElementById("au5-start-button")?.addEventListener("click", () => {
       startPipeline();
+      window.postMessage(
+        {
+          source: HubConnectionConfig.fromContentScropt.source,
+          action: HubConnectionConfig.fromContentScropt.actions.startTranscription,
+          payload: {
+            userid: appConfig.Service.userId
+          }
+        },
+        "*"
+      );
     });
 
     injectLocalScript("injected.js", () => {});
@@ -213,6 +223,19 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
         transcript: currentTranscript,
         timestamp: currentTimestamp
       });
+      window.postMessage(
+        {
+          source: HubConnectionConfig.toContentScript.source,
+          action: HubConnectionConfig.toContentScript.actions.realTimeTranscription,
+          payload: {
+            id: currentSpeakerId,
+            speaker: currentSpeakerName,
+            transcript: currentTranscript,
+            timestamp: currentTimestamp
+          }
+        },
+        "*"
+      );
     } catch (err) {
       console.error(err);
       if (!isTranscriptDomErrorCaptured && !hasMeetingEnded) {
@@ -267,7 +290,7 @@ function endMeetingRoutines(): void {
 }
 
 window.addEventListener("message", event => {
-  if (event.source !== window) return;
+  if (event.source !== window && event.data.source !== HubConnectionConfig.toContentScript.source) return;
 
   if (event.data?.source !== HubConnectionConfig.toContentScript.source) {
     return;
