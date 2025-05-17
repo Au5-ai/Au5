@@ -312,7 +312,7 @@ const chatPanelStyle = `
     display: none;
   }
 `;
-async function waitForElement(selector, text) {
+async function waitForMatch(selector, text) {
   const matchesText = (el) => {
     var _a;
     return text ? ((_a = el.textContent) == null ? void 0 : _a.trim()) === text : true;
@@ -324,30 +324,35 @@ async function waitForElement(selector, text) {
     await new Promise(requestAnimationFrame);
   }
 }
-function selectElement(selector) {
-  return document.querySelector(selector);
-}
-function selectElements(selector, text) {
+function selectAll(selector, textPattern) {
   const elements = Array.from(document.querySelectorAll(selector));
-  if (!text) return elements;
-  const regex = new RegExp(text);
+  if (!textPattern) return elements;
+  const regex = new RegExp(textPattern);
   return elements.filter((el) => regex.test(el.textContent ?? ""));
 }
-function applyDomStyle(container, useAriaSelector, opacity) {
-  if (useAriaSelector) {
+function setOpacity(container, applyToSelf, opacity) {
+  if (applyToSelf) {
     container.style.opacity = opacity;
   } else {
-    const secondChild = container.children[1];
-    secondChild == null ? void 0 : secondChild.setAttribute("style", `opacity: ${opacity};`);
+    const target = container.children[1];
+    target == null ? void 0 : target.style.setProperty("opacity", opacity);
   }
 }
-function findDomContainer(ariaSelector, fallbackSelector) {
-  let container = document.querySelector(ariaSelector);
-  const useAria = !!container;
-  if (!container) {
-    container = document.querySelector(fallbackSelector);
-  }
-  return { container, useAria };
+function getDomContainer(ariaSelector, fallbackSelector) {
+  const container = document.querySelector(ariaSelector);
+  if (container) return { container, usedAria: true };
+  return {
+    container: document.querySelector(fallbackSelector),
+    usedAria: false
+  };
+}
+function injectScript(fileName, onLoad = () => {
+}) {
+  const script = document.createElement("script");
+  script.src = chrome.runtime.getURL(fileName);
+  script.type = "text/javascript";
+  script.onload = onLoad;
+  (document.head || document.documentElement).appendChild(script);
 }
 let appConfig;
 const configService = new ConfigurationService(new StorageService());
@@ -358,23 +363,23 @@ let transcriptObserver;
 const activateCaptions = async (ctx) => {
   var _a;
   const captionsIcon = appConfig.Extension.captionsIcon;
-  ctx.captionsButton = selectElements(captionsIcon.selector, captionsIcon.text)[0];
+  ctx.captionsButton = selectAll(captionsIcon.selector, captionsIcon.text)[0];
   (_a = ctx.captionsButton) == null ? void 0 : _a.click();
   return ctx;
 };
 const findTranscriptContainer = async (ctx) => {
-  const dom = findDomContainer(
+  const dom = getDomContainer(
     appConfig.Extension.transcriptSelectors.aria,
     appConfig.Extension.transcriptSelectors.fallback
   );
   if (!dom) throw new Error("Transcript container not found in DOM");
   ctx.transcriptContainer = dom.container;
-  ctx.canUseAriaBasedTranscriptSelector = dom.useAria;
+  ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
   return ctx;
 };
 const applyTranscriptStyle = async (ctx) => {
   if (ctx.transcriptContainer) {
-    applyDomStyle(
+    setOpacity(
       ctx.transcriptContainer,
       ctx.canUseAriaBasedTranscriptSelector,
       appConfig.Extension.transcriptStyles.opacity
@@ -401,7 +406,7 @@ const finalizeMeetingRoutines = async (ctx) => {
 async function startMeetingRoutines() {
   try {
     appConfig = await configService.getConfig();
-    await waitForElement(appConfig.Extension.meetingEndIcon.selector, appConfig.Extension.meetingEndIcon.text);
+    await waitForMatch(appConfig.Extension.meetingEndIcon.selector, appConfig.Extension.meetingEndIcon.text);
   } catch (error) {
     console.error("Failed to detect meeting start:", error);
   }
@@ -436,21 +441,10 @@ startMeetingRoutines().then(async () => {
       "*"
     );
   });
-  injectLocalScript("injected.js", () => {
-  });
+  injectScript("injected.js");
 }).catch((error) => {
   console.error("Meeting routine execution failed:", error);
 });
-function injectLocalScript(fileName, callback = () => {
-}) {
-  const script = document.createElement("script");
-  script.src = chrome.runtime.getURL(fileName);
-  script.type = "text/javascript";
-  script.onload = function() {
-    if (callback) callback();
-  };
-  (document.head || document.documentElement).appendChild(script);
-}
 function createMutationHandler(ctx) {
   return function(mutations, observer) {
     handleTranscriptMutations(mutations, ctx);

@@ -5,7 +5,7 @@ import {AppConfiguration, ConfigurationService} from "./services/config.service"
 import {StorageService} from "./services/storage.service";
 import {PipelineContext, TranscriptBlock} from "./types";
 import ChatPanel from "./ui/chatPanel";
-import {applyDomStyle, findDomContainer, selectElement, selectElements, waitForElement} from "./utils/dom.utils";
+import {setOpacity, getDomContainer, injectScript, selectAll, selectSingle, waitForMatch} from "./utils/dom.utils";
 
 let appConfig: AppConfiguration;
 const configService = new ConfigurationService(new StorageService());
@@ -22,25 +22,25 @@ let transcriptObserver: MutationObserver;
 
 const activateCaptions = async (ctx: PipelineContext): Promise<PipelineContext> => {
   const captionsIcon = appConfig.Extension.captionsIcon;
-  ctx.captionsButton = selectElements(captionsIcon.selector, captionsIcon.text)[0];
+  ctx.captionsButton = selectAll(captionsIcon.selector, captionsIcon.text)[0];
   ctx.captionsButton?.click();
   return ctx;
 };
 
 const findTranscriptContainer = async (ctx: PipelineContext): Promise<PipelineContext> => {
-  const dom = findDomContainer(
+  const dom = getDomContainer(
     appConfig.Extension.transcriptSelectors.aria,
     appConfig.Extension.transcriptSelectors.fallback
   );
   if (!dom) throw new Error("Transcript container not found in DOM");
   ctx.transcriptContainer = dom.container;
-  ctx.canUseAriaBasedTranscriptSelector = dom.useAria;
+  ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
   return ctx;
 };
 
 const applyTranscriptStyle = async (ctx: PipelineContext): Promise<PipelineContext> => {
   if (ctx.transcriptContainer) {
-    applyDomStyle(
+    setOpacity(
       ctx.transcriptContainer,
       ctx.canUseAriaBasedTranscriptSelector,
       appConfig.Extension.transcriptStyles.opacity
@@ -70,7 +70,7 @@ const finalizeMeetingRoutines = async (ctx: PipelineContext): Promise<PipelineCo
 async function startMeetingRoutines(): Promise<void> {
   try {
     appConfig = await configService.getConfig();
-    await waitForElement(appConfig.Extension.meetingEndIcon.selector, appConfig.Extension.meetingEndIcon.text);
+    await waitForMatch(appConfig.Extension.meetingEndIcon.selector, appConfig.Extension.meetingEndIcon.text);
   } catch (error) {
     console.error("Failed to detect meeting start:", error);
   }
@@ -109,21 +109,11 @@ startMeetingRoutines()
       );
     });
 
-    injectLocalScript("injected.js", () => {});
+    injectScript("injected.js");
   })
   .catch(error => {
     console.error("Meeting routine execution failed:", error);
   });
-
-function injectLocalScript(fileName: string, callback: () => void = () => {}): void {
-  const script = document.createElement("script");
-  script.src = chrome.runtime.getURL(fileName);
-  script.type = "text/javascript";
-  script.onload = function () {
-    if (callback) callback();
-  };
-  (document.head || document.documentElement).appendChild(script);
-}
 
 function createMutationHandler(ctx: PipelineContext) {
   return function (mutations: MutationRecord[], observer: MutationObserver) {
@@ -293,6 +283,7 @@ window.addEventListener("message", event => {
   if (event.data?.action === HubConnectionConfig.toContentScript.actions.realTimeTranscription) {
     ChatPanel.addLiveMessage(event.data.payload);
   } else if (event.data?.action === HubConnectionConfig.toContentScript.actions.someoneIsJoining) {
+    //add user to participant list object
     ChatPanel.addOthers(event.data.payload);
   } else if (event.data?.action === HubConnectionConfig.toContentScript.actions.startTranscription) {
     ChatPanel.HideParticipantList();

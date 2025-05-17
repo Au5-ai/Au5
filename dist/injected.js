@@ -1,3 +1,6 @@
+var __defProp = Object.defineProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 class HttpError extends Error {
   /** Constructs a new instance of {@link @microsoft/signalr.HttpError}.
    *
@@ -2804,96 +2807,65 @@ function getMeetingTitleFromUrl() {
 const HubConnectionConfig = {
   hubUrl: "https://localhost:7061/meetinghub",
   methodName: "ReceiveMessage",
-  toContentScript: {
-    source: "Au5-InjectedScript",
-    actions: {
-      realTimeTranscription: "RealTimeTranscription",
-      someoneIsJoining: "SomeoneIsJoining",
-      startTranscription: "StartTranscription"
-    }
-  },
-  fromContentScropt: {
-    source: "Au5-ContentScript",
-    actions: {
-      startTranscription: "StartTranscription",
-      realTimeTranscription: "RealTimeTranscription"
-    }
-  },
   meetingId: "NA"
 };
-(function() {
-  let connection;
-  function initializeConnection(meetingId) {
-    connection = new HubConnectionBuilder().withUrl(HubConnectionConfig.hubUrl).build();
-    connection.on(
-      HubConnectionConfig.methodName,
-      (msg) => {
-        if (msg.header.messageType === "SomeoneIsJoining") {
-          window.postMessage(
-            {
-              source: HubConnectionConfig.toContentScript.source,
-              action: HubConnectionConfig.toContentScript.actions.someoneIsJoining,
-              payload: msg.payload
-            },
-            "*"
-          );
-          return;
-        }
-        if (msg.header.messageType === "RealTimeTranscription") {
-          window.postMessage(
-            {
-              source: HubConnectionConfig.toContentScript.source,
-              action: HubConnectionConfig.toContentScript.actions.realTimeTranscription,
-              payload: msg.payload
-            },
-            "*"
-          );
-        }
-        if (msg.header.messageType === "StartTranscription") {
-          window.postMessage(
-            {
-              source: HubConnectionConfig.toContentScript.source,
-              action: HubConnectionConfig.toContentScript.actions.startTranscription,
-              payload: msg.payload
-            },
-            "*"
-          );
-        }
-      }
-    );
-    function startConnection() {
-      connection.start().then(() => {
-        connection.invoke("JoinMeeting", meetingId, "123456", "John Doe");
-      }).catch((err) => {
-        setTimeout(startConnection, 3e3);
-      });
-    }
-    connection.onclose(() => {
-      startConnection();
-    });
-    startConnection();
+class MeetingHubClient {
+  constructor(meetingId) {
+    __publicField(this, "connection");
+    __publicField(this, "meetingId");
+    this.meetingId = meetingId;
+    this.connection = new HubConnectionBuilder().withUrl(HubConnectionConfig.hubUrl).build();
+    this.setupHandlers();
+    this.setupWindowMessageListener();
+    this.startConnection();
   }
-  window.addEventListener("message", (event) => {
-    if (event.source !== window || event.data.source !== HubConnectionConfig.fromContentScropt.source) {
-      return;
-    }
-    if (event.data.action === HubConnectionConfig.fromContentScropt.actions.startTranscription) {
-      connection.invoke(
-        HubConnectionConfig.fromContentScropt.actions.startTranscription,
-        HubConnectionConfig.meetingId,
-        event.data.payload.userId
-      );
-    }
-    if (event.data.action === HubConnectionConfig.fromContentScropt.actions.realTimeTranscription) {
-      connection.invoke(
-        HubConnectionConfig.fromContentScropt.actions.realTimeTranscription,
-        HubConnectionConfig.meetingId,
-        event.data.payload.id,
-        event.data.payload.speaker,
-        event.data.payload.transcript
-      );
-    }
-  });
+  setupHandlers() {
+    this.connection.on(HubConnectionConfig.methodName, (msg) => {
+      switch (msg.header.messageType) {
+        case "SomeoneIsJoining":
+        case "RealTimeTranscription":
+        case "StartTranscription":
+          this.postToWindow(msg.header.messageType, msg.payload);
+          break;
+      }
+    });
+    this.connection.onclose(() => {
+      this.startConnection();
+    });
+  }
+  postToWindow(action, payload) {
+    window.postMessage(
+      {
+        source: "Au5-InjectedScript",
+        action,
+        payload
+      },
+      "*"
+    );
+  }
+  startConnection() {
+    this.connection.start().then(() => {
+      this.connection.invoke("JoinMeeting", this.meetingId, "123456", "John Doe");
+    }).catch(() => {
+      setTimeout(() => this.startConnection(), 3e3);
+    });
+  }
+  setupWindowMessageListener() {
+    window.addEventListener("message", (event) => {
+      if (event.source !== window || event.data.source !== "Au5-ContentScript") return;
+      const { action, payload } = event.data;
+      switch (action) {
+        case "StartTranscription":
+          this.connection.invoke(action, this.meetingId, payload.userId);
+          break;
+        case "RealTimeTranscription":
+          this.connection.invoke(action, this.meetingId, payload.id, payload.speaker, payload.transcript);
+          break;
+      }
+    });
+  }
+}
+(function() {
   HubConnectionConfig.meetingId = getMeetingTitleFromUrl();
-  initializeConnection(HubConnectionConfig.meetingId);
+  new MeetingHubClient(HubConnectionConfig.meetingId);
 })();
