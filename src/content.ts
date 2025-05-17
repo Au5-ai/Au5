@@ -1,15 +1,13 @@
 //https://meet.google.com/uir-miof-cby
 import {HubConnectionConfig} from "./core/constants";
 import {pipeAsync} from "./core/pipeline";
-import {ChromeBrowserService} from "./services/browser.service";
 import {AppConfiguration, ConfigurationService} from "./services/config.service";
 import {StorageService} from "./services/storage.service";
-import {IBrowserService, PipelineContext, TranscriptBlock} from "./types";
+import {PipelineContext, TranscriptBlock} from "./types";
 import ChatPanel from "./ui/chatPanel";
 import {applyDomStyle, findDomContainer, selectElement, selectElements, waitForElement} from "./utils/dom.utils";
 
 let appConfig: AppConfiguration;
-const browserService = new ChromeBrowserService();
 const configService = new ConfigurationService(new StorageService());
 
 let hasMeetingEnded = false;
@@ -18,8 +16,6 @@ let currentSpeakerId = "",
   currentSpeakerName = "",
   currentTranscript = "",
   currentTimestamp = "";
-
-let isTranscriptDomErrorCaptured = false;
 
 // Observers
 let transcriptObserver: MutationObserver;
@@ -117,7 +113,6 @@ startMeetingRoutines()
   })
   .catch(error => {
     console.error("Meeting routine execution failed:", error);
-    isTranscriptDomErrorCaptured = true;
   });
 
 function injectLocalScript(fileName: string, callback: () => void = () => {}): void {
@@ -238,10 +233,9 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
       );
     } catch (err) {
       console.error(err);
-      if (!isTranscriptDomErrorCaptured && !hasMeetingEnded) {
+      if (!hasMeetingEnded) {
         console.log("Error in transcript mutation observer:", err);
       }
-      isTranscriptDomErrorCaptured = true;
     }
   }
 }

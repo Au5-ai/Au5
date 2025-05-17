@@ -354,7 +354,6 @@ const configService = new ConfigurationService(new StorageService());
 let hasMeetingEnded = false;
 let transcriptBlocks = [];
 let currentSpeakerId = "", currentSpeakerName = "", currentTranscript = "", currentTimestamp = "";
-let isTranscriptDomErrorCaptured = false;
 let transcriptObserver;
 const activateCaptions = async (ctx) => {
   var _a;
@@ -399,7 +398,7 @@ const finalizeMeetingRoutines = async (ctx) => {
   endMeetingRoutines();
   return ctx;
 };
-async function startMeetingRoutines(browserService2) {
+async function startMeetingRoutines() {
   try {
     appConfig = await configService.getConfig();
     await waitForElement(appConfig.Extension.meetingEndIcon.selector, appConfig.Extension.meetingEndIcon.text);
@@ -441,7 +440,6 @@ startMeetingRoutines().then(async () => {
   });
 }).catch((error) => {
   console.error("Meeting routine execution failed:", error);
-  isTranscriptDomErrorCaptured = true;
 });
 function injectLocalScript(fileName, callback = () => {
 }) {
@@ -541,10 +539,9 @@ function handleTranscriptMutations(mutations, ctx) {
       );
     } catch (err) {
       console.error(err);
-      if (!isTranscriptDomErrorCaptured && !hasMeetingEnded) {
+      if (!hasMeetingEnded) {
         console.log("Error in transcript mutation observer:", err);
       }
-      isTranscriptDomErrorCaptured = true;
     }
   }
 }

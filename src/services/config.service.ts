@@ -6,9 +6,7 @@ const CONFIGURATION_KEY: string = "configuration";
  * Represents the synced structure stored in Chrome's local storage.
  */
 interface ServiceConfiguration {
-  /** Webhook endpoint URL */
   webhookUrl: string;
-  /** Authentication token for the webhook */
   token: string;
   userId: string;
   fullName: string;
