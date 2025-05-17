@@ -71,10 +71,9 @@ const finalizeMeetingRoutines = async (ctx: PipelineContext): Promise<PipelineCo
   return ctx;
 };
 
-async function startMeetingRoutines(browserService: IBrowserService): Promise<void> {
+async function startMeetingRoutines(): Promise<void> {
   try {
     appConfig = await configService.getConfig();
-
     await waitForElement(appConfig.Extension.meetingEndIcon.selector, appConfig.Extension.meetingEndIcon.text);
   } catch (error) {
     console.error("Failed to detect meeting start:", error);
@@ -94,7 +93,7 @@ export function startPipeline() {
   );
 }
 
-startMeetingRoutines(browserService)
+startMeetingRoutines()
   .then(async () => {
     ChatPanel.addPanel(appConfig.Service.direction);
     ChatPanel.addYou(appConfig.Service.fullName);
