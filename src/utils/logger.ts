@@ -17,11 +17,6 @@ export class Logger {
         userId: "23f45e89-8b5a-5c55-9df7-240d78a3ce15" // This should be replaced with actual user ID logic
       };
       console.log(fullPayload);
-      //   await fetch(this.endpoint, {
-      //     method: "POST",
-      //     headers: HEADERS.JSON,
-      //     body: JSON.stringify(fullPayload)
-      //   });
     } catch (error) {
       console.warn("[RemoteLogger] Failed to send log", error);
     }
