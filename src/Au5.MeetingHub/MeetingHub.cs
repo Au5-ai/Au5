@@ -5,59 +5,69 @@ namespace Au5.MeetingHub;
 
 public class MeetingHub : Hub
 {
-    public async Task JoinMeeting(string meetingId, string userId, string fullname)
+    static MeetingHub()
+    {
+        Console.OutputEncoding = Encoding.UTF8;
+    }
+
+    public async Task JoinMeeting(string meetingId, string userId, string fullName)
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, meetingId);
-        await Clients.OthersInGroup(meetingId).SendAsync("ReceiveMessage", new
+        await SendToOthersInGroupAsync(meetingId, "JoinMeeting", new
         {
-            header = new { messageType = "JoinMeeting" },
-            payload = new
-            {
-                userId,
-                fullname
-            }
+            userId,
+            fullName
         });
-        Console.OutputEncoding = Encoding.UTF8;
-        Console.WriteLine($"User {userId} joined meeting {meetingId}");
-        // send the others data to this connection.
+
+        LogInfo($"User {userId} joined meeting {meetingId}");
+        // send existing participants back to this user if needed
     }
 
     public async Task RealTimeTranscription(string meetingId, string id, string speaker, string transcript)
     {
         var timestamp = DateTime.UtcNow.ToString("o");
 
-        await Clients.OthersInGroup(meetingId).SendAsync("ReceiveMessage", new
+        await SendToOthersInGroupAsync(meetingId, "RealTimeTranscription", new
         {
-            header = new { messageType = "RealTimeTranscription" },
-            payload = new
-            {
-                id,
-                speaker,
-                transcript,
-                timestamp
-            }
-
+            id,
+            speaker,
+            transcript,
+            timestamp
         });
-        Console.OutputEncoding = Encoding.UTF8;
-        Console.WriteLine($"{meetingId}, {id}, {speaker},{transcript}");
+
+        LogInfo($"[{meetingId}] {id} | {speaker}: {transcript}");
     }
 
     public async Task StartTranscription(string meetingId, string userId)
     {
-        await Clients.OthersInGroup(meetingId).SendAsync("ReceiveMessage", new
+        await SendToOthersInGroupAsync(meetingId, "StartTranscription", new
         {
-            header = new { messageType = "StartTranscription" },
-            payload = new
-            {
-                userId,
-            }
+            userId
         });
-        Console.OutputEncoding = Encoding.UTF8;
-        Console.WriteLine($"User {userId} started transcription in meeting {meetingId}");
+
+        LogInfo($"User {userId} started transcription in meeting {meetingId}");
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
+        // broadcast disconnection info here if needed.
         await base.OnDisconnectedAsync(exception);
+    }
+
+    /// <summary>
+    /// Helper to send message to others in the same meeting group.
+    /// </summary>
+    private Task SendToOthersInGroupAsync(string groupName, string messageType, object payload)
+    {
+        return Clients.OthersInGroup(groupName).SendAsync("ReceiveMessage", new
+        {
+            header = new { messageType },
+            payload
+        });
+    }
+
+    private static void LogInfo(string message)
+    {
+        Console.WriteLine(message);
     }
 }
