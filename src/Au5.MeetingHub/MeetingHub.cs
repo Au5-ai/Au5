@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Au5.MeetingHub.Models;
+using Microsoft.AspNetCore.SignalR;
 using System.Text;
 
 namespace Au5.MeetingHub;
@@ -10,43 +11,43 @@ public class MeetingHub : Hub
         Console.OutputEncoding = Encoding.UTF8;
     }
 
-    public async Task JoinMeeting(string meetingId, string userId, string fullName)
+    public async Task JoinMeeting(JoinMeetingDto data)
     {
-        await Groups.AddToGroupAsync(Context.ConnectionId, meetingId);
-        await SendToOthersInGroupAsync(meetingId, "JoinMeeting", new
+        await Groups.AddToGroupAsync(Context.ConnectionId, data.MeetingId);
+        await SendToOthersInGroupAsync(data.MeetingId, "JoinMeeting", new
         {
-            userId,
-            fullName
+            data.UserId,
+            data.FullName
         });
 
-        LogInfo($"User {userId} joined meeting {meetingId}");
-        // send existing participants back to this user if needed
+        LogInfo($"User {data.UserId} joined meeting {data.MeetingId}");
     }
 
-    public async Task RealTimeTranscription(string meetingId, string id, string speaker, string transcript)
+    public async Task RealTimeTranscription(TranscriptionDto data)
     {
         var timestamp = DateTime.UtcNow.ToString("o");
 
-        await SendToOthersInGroupAsync(meetingId, "RealTimeTranscription", new
+        await SendToOthersInGroupAsync(data.MeetingId, "RealTimeTranscription", new
         {
-            id,
-            speaker,
-            transcript,
+            data.Id,
+            data.Speaker,
+            data.Transcript,
             timestamp
         });
 
-        LogInfo($"[{meetingId}] {id} | {speaker}: {transcript}");
+        LogInfo($"[{data.MeetingId}] {data.Id} | {data.Speaker}: {data.Transcript}");
     }
 
-    public async Task StartTranscription(string meetingId, string userId)
+    public async Task StartTranscription(StartTranscriptionDto data)
     {
-        await SendToOthersInGroupAsync(meetingId, "StartTranscription", new
+        await SendToOthersInGroupAsync(data.MeetingId, "StartTranscription", new
         {
-            userId
+            data.UserId
         });
 
-        LogInfo($"User {userId} started transcription in meeting {meetingId}");
+        LogInfo($"User {data.UserId} started transcription in meeting {data.MeetingId}");
     }
+
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {

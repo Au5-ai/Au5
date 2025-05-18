@@ -1,15 +1,22 @@
 ﻿using Au5.MeetingHub;
+using MessagePack;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR()
+    .AddMessagePackProtocol(options =>
+    {
+        options.SerializerOptions = MessagePackSerializerOptions.Standard
+        .WithSecurity(MessagePackSecurity.UntrustedData);
+    });
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
         policy
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowAnyOrigin() 
+            .AllowAnyOrigin()
     );
 });
 
