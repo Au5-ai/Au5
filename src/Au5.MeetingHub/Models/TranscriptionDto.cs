@@ -1,9 +1,10 @@
 ﻿namespace Au5.MeetingHub.Models;
 
+[MessagePackObject(keyAsPropertyName: true)]
 public class TranscriptionDto
 {
-    public string Id { get; set; } = default!;
-    public string MeetingId { get; set; } = default!;
-    public string Speaker { get; set; } = default!;
-    public string Transcript { get; set; } = default!;
+    public string Id { get; set; }
+    public string MeetingId { get; set; }
+    public string Speaker { get; set; }
+    public string Transcript { get; set; }
 }

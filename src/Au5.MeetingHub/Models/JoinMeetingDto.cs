@@ -1,8 +1,11 @@
 ﻿namespace Au5.MeetingHub.Models;
 
+[MessagePackObject(keyAsPropertyName: true)]
 public class JoinMeetingDto
 {
-    public string MeetingId { get; set; } = default!;
-    public string UserId { get; set; } = default!;
-    public string FullName { get; set; } = default!;
+    public string MeetingId { get; set; }
+
+    public string UserId { get; set; }
+
+    public string FullName { get; set; }
 }
