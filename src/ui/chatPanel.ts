@@ -2,110 +2,107 @@ import {TranscriptBlock} from "../types";
 import {toHoursAndMinutes} from "../utils/datetime";
 
 export default class ChatPanel {
-  private static chatPanel: HTMLDivElement | null = null;
-  private static participants: HTMLDivElement | null = null;
+  private static panel: HTMLDivElement | null = null;
+  private static participantContainer: HTMLDivElement | null = null;
 
-  public static addPanel(direction: string): void {
-    if (this.chatPanel) {
+  public static createPanel(direction: "ltr" | "rtl" = "ltr"): void {
+    if (this.panel) {
       console.warn("ChatPanel already exists.");
       return;
     }
 
-    // Inject style
     const style = document.createElement("style");
     style.textContent = chatPanelStyle;
     document.head.appendChild(style);
 
     if (document.getElementById("au5-chat-panel")) return;
 
-    this.chatPanel = document.createElement("div");
-    this.chatPanel.id = "au5-chat-panel";
-    this.chatPanel.className = "au5-chat-panel";
-    this.chatPanel.setAttribute("data-direction", direction);
-    document.body.appendChild(this.chatPanel);
-  }
-  public static HideParticipantList(): void {
-    this.participants?.classList.add("au5-hidden");
+    this.panel = document.createElement("div");
+    this.panel.id = "au5-chat-panel";
+    this.panel.className = "au5-chat-panel";
+    this.panel.setAttribute("data-direction", direction);
+    document.body.appendChild(this.panel);
   }
 
-  public static addYou(name: string): void {
-    if (!this.chatPanel) {
-      console.warn("ChatPanel does not exist.");
+  public static hideParticipantList(): void {
+    this.participantContainer?.classList.add("au5-hidden");
+  }
+
+  public static addCurrentUser(name: string): void {
+    if (!this.panel) {
+      console.warn("ChatPanel not initialized.");
       return;
     }
 
-    this.participants = document.createElement("div");
-    this.participants.className = "au5-participant";
+    this.participantContainer = document.createElement("div");
+    this.participantContainer.className = "au5-participant";
 
-    this.participants.innerHTML = `
-        <ul class="au5-participant-list">
-          <li>${{name}}</li>
-        </ul>
-
+    this.participantContainer.innerHTML = `
+      <ul class="au5-participant-list">
+        <li>${name}</li>
+      </ul>
       <button id="au5-start-button">Start Transcription</button>
-`;
+    `;
 
-    this.chatPanel.appendChild(this.participants);
+    this.panel.appendChild(this.participantContainer);
   }
 
-  public static addOthers(name: string): void {
-    if (!this.chatPanel) {
-      console.warn("ChatPanel does not exist.");
+  public static addParticipant(name: string): void {
+    if (!this.panel || !this.participantContainer) {
+      console.warn("ChatPanel or participant container not initialized.");
       return;
     }
 
-    const participantList = this.participants?.getElementsByClassName(`au5-participant-list"`)[0] as HTMLElement;
-    if (participantList) {
-      const other = document.createElement("li");
-      other.innerText = name;
-      participantList.appendChild(other);
+    const list = this.participantContainer.querySelector(".au5-participant-list") as HTMLUListElement;
+    if (list) {
+      const li = document.createElement("li");
+      li.innerText = name;
+      list.appendChild(li);
     }
   }
 
-  public static addMessage(item: TranscriptBlock): void {
-    if (!this.chatPanel) {
-      return;
-    }
+  public static addMessage({id, speaker, transcript, timestamp}: TranscriptBlock): void {
+    if (!this.panel) return;
 
-    const direction = this.chatPanel.getAttribute("data-direction") || "ltr";
+    const direction = this.panel.getAttribute("data-direction") || "ltr";
 
     const message = document.createElement("div");
     message.className = "au5-message";
-    message.setAttribute("data-id", item.id);
+    message.setAttribute("data-id", id);
 
     message.innerHTML = `
-    <div class="au5-message-header">
-      <span class="au5-message-sender">${item.speaker}</span>
-      <span class="au5-message-time">${toHoursAndMinutes(item.timestamp)}</span>
-    </div>
-    <div class="au5-message-text" style="direction: ${direction};">${item.transcript}</div>
-  `;
+      <div class="au5-message-header">
+        <span class="au5-message-sender">${speaker}</span>
+        <span class="au5-message-time">${toHoursAndMinutes(timestamp)}</span>
+      </div>
+      <div class="au5-message-text" style="direction: ${direction};">${transcript}</div>
+    `;
 
-    this.chatPanel.appendChild(message);
+    this.panel.appendChild(message);
   }
 
-  public static addLiveMessage(item: TranscriptBlock): void {
-    if (!this.chatPanel) {
-      console.warn("ChatPanel does not exist.");
+  public static updateLiveMessage(item: TranscriptBlock): void {
+    if (!this.panel) {
+      console.warn("ChatPanel not initialized.");
       return;
     }
-    const existingMessage = this.chatPanel.querySelector(`[data-id="${item.id}"]`) as HTMLElement;
-    if (existingMessage) {
-      const textDiv = existingMessage.querySelector(".au5-message-text") as HTMLElement;
-      if (textDiv) {
-        textDiv.innerText = item.transcript;
-      }
+
+    const existing = this.panel.querySelector(`[data-id="${item.id}"]`) as HTMLDivElement;
+    if (existing) {
+      const textEl = existing.querySelector(".au5-message-text") as HTMLDivElement;
+      if (textEl) textEl.innerText = item.transcript;
     } else {
-      ChatPanel.addMessage(item);
+      this.addMessage(item);
     }
   }
 
   public static destroy(): void {
-    if (this.chatPanel) {
-      document.body.removeChild(this.chatPanel);
-      this.chatPanel = null;
+    if (this.panel) {
+      document.body.removeChild(this.panel);
+      this.panel = null;
+      this.participantContainer = null;
     } else {
-      console.warn("ChatPanel does not exist.");
+      console.warn("ChatPanel not found.");
     }
   }
 }
@@ -171,7 +168,7 @@ const chatPanelStyle = `
   .au5-message-text {
     margin-bottom: 8px;
   }
-  
+
   .au5-hidden {
     display: none;
   }

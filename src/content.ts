@@ -91,11 +91,11 @@ export function startPipeline() {
 
 startMeetingRoutines()
   .then(async () => {
-    ChatPanel.addPanel(appConfig.Service.direction);
-    ChatPanel.addYou(appConfig.Service.fullName);
+    ChatPanel.createPanel(appConfig.Service.direction);
+    ChatPanel.addParticipant(appConfig.Service.fullName);
 
     document.getElementById("au5-start-button")?.addEventListener("click", () => {
-      ChatPanel.HideParticipantList();
+      ChatPanel.hideParticipantList();
       startPipeline();
       window.postMessage(
         {
@@ -202,7 +202,7 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
         }
       }
 
-      ChatPanel.addLiveMessage({
+      ChatPanel.updateLiveMessage({
         id: currentSpeakerId,
         speaker: currentSpeakerName,
         transcript: currentTranscript,
@@ -282,15 +282,15 @@ window.addEventListener("message", event => {
 
   switch (action) {
     case MeetingHubConfig.contentScriptActions.TRANSCRIPTION_UPDATE:
-      ChatPanel.addLiveMessage(payload);
+      ChatPanel.updateLiveMessage(payload);
       break;
 
     case MeetingHubConfig.contentScriptActions.PARTICIPANT_JOINED:
-      ChatPanel.addOthers(payload);
+      ChatPanel.addParticipant(payload);
       break;
 
     case MeetingHubConfig.contentScriptActions.TRANSCRIPTION_STARTED:
-      ChatPanel.HideParticipantList();
+      ChatPanel.hideParticipantList();
       break;
 
     default:

@@ -10,7 +10,7 @@ interface ServiceConfiguration {
   token: string;
   userId: string;
   fullName: string;
-  direction: string;
+  direction: "ltr" | "rtl";
 }
 
 interface ExtensionConfiguration {
