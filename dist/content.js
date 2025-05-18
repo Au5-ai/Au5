@@ -36,26 +36,24 @@ class StorageService {
     });
   }
 }
-const HubConnectionConfig = {
+const MeetingHubConfig = {
   hubUrl: "https://localhost:7061/meetinghub",
-  methodName: "ReceiveMessage",
-  toContentScript: {
-    source: "Au5-InjectedScript",
-    actions: {
-      realTimeTranscription: "RealTimeTranscription",
-      someoneIsJoining: "SomeoneIsJoining",
-      startTranscription: "StartTranscription"
-    }
+  receiveMethod: "ReceiveMessage",
+  messageSources: {
+    injectedScript: "Au5-InjectedScript",
+    contentScript: "Au5-ContentScript"
   },
-  fromContentScropt: {
-    source: "Au5-ContentScript",
-    actions: {
-      meetingTitle: "MeetingTitle",
-      startTranscription: "StartTranscription",
-      realTimeTranscription: "RealTimeTranscription"
-    }
+  contentScriptActions: {
+    TRANSCRIPTION_UPDATE: "RealTimeTranscription",
+    PARTICIPANT_JOINED: "SomeoneIsJoining",
+    TRANSCRIPTION_STARTED: "StartTranscription"
   },
-  meetingId: "NA"
+  injectedScriptActions: {
+    SET_MEETING_TITLE: "MeetingTitle",
+    REQUEST_TRANSCRIPTION: "StartTranscription",
+    SEND_TRANSCRIPTION: "RealTimeTranscription"
+  },
+  defaultMeetingId: "NA"
 };
 async function pipeAsync(input, ...fns) {
   let result = input;
@@ -153,9 +151,9 @@ function toHoursAndMinutes(isoString) {
   const mm = date.getUTCMinutes().toString().padStart(2, "0");
   return `${hh}:${mm}`;
 }
-const _ChatPanel = class _ChatPanel {
-  static addPanel(direction) {
-    if (this.chatPanel) {
+class ChatPanel {
+  static createPanel(direction = "ltr") {
+    if (this.panel) {
       console.warn("ChatPanel already exists.");
       return;
     }
@@ -163,89 +161,83 @@ const _ChatPanel = class _ChatPanel {
     style.textContent = chatPanelStyle;
     document.head.appendChild(style);
     if (document.getElementById("au5-chat-panel")) return;
-    this.chatPanel = document.createElement("div");
-    this.chatPanel.id = "au5-chat-panel";
-    this.chatPanel.className = "au5-chat-panel";
-    this.chatPanel.setAttribute("data-direction", direction);
-    document.body.appendChild(this.chatPanel);
+    this.panel = document.createElement("div");
+    this.panel.id = "au5-chat-panel";
+    this.panel.className = "au5-chat-panel";
+    this.panel.setAttribute("data-direction", direction);
+    document.body.appendChild(this.panel);
   }
-  static HideParticipantList() {
+  static hideParticipantList() {
     var _a;
-    (_a = this.participants) == null ? void 0 : _a.classList.add("au5-hidden");
+    (_a = this.participantContainer) == null ? void 0 : _a.classList.add("au5-hidden");
   }
-  static addYou(name) {
-    if (!this.chatPanel) {
-      console.warn("ChatPanel does not exist.");
+  static addCurrentUser(name) {
+    if (!this.panel) {
+      console.warn("ChatPanel not initialized.");
       return;
     }
-    this.participants = document.createElement("div");
-    this.participants.className = "au5-participant";
-    this.participants.innerHTML = `
-        <ul class="au5-participant-list">
-          <li>${{ name }}</li>
-        </ul>
-
+    this.participantContainer = document.createElement("div");
+    this.participantContainer.className = "au5-participant";
+    this.participantContainer.innerHTML = `
+      <ul class="au5-participant-list">
+        <li>${name}</li>
+      </ul>
       <button id="au5-start-button">Start Transcription</button>
-`;
-    this.chatPanel.appendChild(this.participants);
+    `;
+    this.panel.appendChild(this.participantContainer);
   }
-  static addOthers(name) {
-    var _a;
-    if (!this.chatPanel) {
-      console.warn("ChatPanel does not exist.");
+  static addParticipant(name) {
+    if (!this.panel || !this.participantContainer) {
+      console.warn("ChatPanel or participant container not initialized.");
       return;
     }
-    const participantList = (_a = this.participants) == null ? void 0 : _a.getElementsByClassName(`au5-participant-list"`)[0];
-    if (participantList) {
-      const other = document.createElement("li");
-      other.innerText = name;
-      participantList.appendChild(other);
+    const list = this.participantContainer.querySelector(".au5-participant-list");
+    if (list) {
+      const li = document.createElement("li");
+      li.innerText = name;
+      list.appendChild(li);
     }
   }
-  static addMessage(item) {
-    if (!this.chatPanel) {
-      return;
-    }
-    const direction = this.chatPanel.getAttribute("data-direction") || "ltr";
+  static addMessage({ id, speaker, transcript, timestamp }) {
+    if (!this.panel) return;
+    const direction = this.panel.getAttribute("data-direction") || "ltr";
     const message = document.createElement("div");
     message.className = "au5-message";
-    message.setAttribute("data-id", item.id);
+    message.setAttribute("data-id", id);
     message.innerHTML = `
-    <div class="au5-message-header">
-      <span class="au5-message-sender">${item.speaker}</span>
-      <span class="au5-message-time">${toHoursAndMinutes(item.timestamp)}</span>
-    </div>
-    <div class="au5-message-text" style="direction: ${direction};">${item.transcript}</div>
-  `;
-    this.chatPanel.appendChild(message);
+      <div class="au5-message-header">
+        <span class="au5-message-sender">${speaker}</span>
+        <span class="au5-message-time">${toHoursAndMinutes(timestamp)}</span>
+      </div>
+      <div class="au5-message-text" style="direction: ${direction};">${transcript}</div>
+    `;
+    this.panel.appendChild(message);
   }
-  static addLiveMessage(item) {
-    if (!this.chatPanel) {
-      console.warn("ChatPanel does not exist.");
+  static updateLiveMessage(item) {
+    if (!this.panel) {
+      console.warn("ChatPanel not initialized.");
       return;
     }
-    const existingMessage = this.chatPanel.querySelector(`[data-id="${item.id}"]`);
-    if (existingMessage) {
-      const textDiv = existingMessage.querySelector(".au5-message-text");
-      if (textDiv) {
-        textDiv.innerText = item.transcript;
-      }
+    const existing = this.panel.querySelector(`[data-id="${item.id}"]`);
+    if (existing) {
+      const textEl = existing.querySelector(".au5-message-text");
+      if (textEl) textEl.innerText = item.transcript;
     } else {
-      _ChatPanel.addMessage(item);
+      this.addMessage(item);
     }
   }
   static destroy() {
-    if (this.chatPanel) {
-      document.body.removeChild(this.chatPanel);
-      this.chatPanel = null;
+    if (this.panel) {
+      document.body.removeChild(this.panel);
+      this.panel = null;
+      this.participantContainer = null;
     } else {
-      console.warn("ChatPanel does not exist.");
+      console.warn("ChatPanel not found.");
     }
   }
-};
-__publicField(_ChatPanel, "chatPanel", null);
-__publicField(_ChatPanel, "participants", null);
-let ChatPanel = _ChatPanel;
+}
+__publicField(ChatPanel, "panel", null);
+__publicField(ChatPanel, "participantContainer", null);
 const chatPanelStyle = `
   .au5-chat-panel {
     border: 1px solid transparent;
@@ -307,7 +299,7 @@ const chatPanelStyle = `
   .au5-message-text {
     margin-bottom: 8px;
   }
-  
+
   .au5-hidden {
     display: none;
   }
@@ -323,6 +315,9 @@ async function waitForMatch(selector, text) {
     if (matched instanceof HTMLElement) return matched;
     await new Promise(requestAnimationFrame);
   }
+}
+function selectSingle(selector) {
+  return document.querySelector(selector);
 }
 function selectAll(selector, textPattern) {
   const elements = Array.from(document.querySelectorAll(selector));
@@ -425,15 +420,15 @@ function startPipeline() {
 }
 startMeetingRoutines().then(async () => {
   var _a;
-  ChatPanel.addPanel(appConfig.Service.direction);
-  ChatPanel.addYou(appConfig.Service.fullName);
+  ChatPanel.createPanel(appConfig.Service.direction);
+  ChatPanel.addParticipant(appConfig.Service.fullName);
   (_a = document.getElementById("au5-start-button")) == null ? void 0 : _a.addEventListener("click", () => {
-    ChatPanel.HideParticipantList();
+    ChatPanel.hideParticipantList();
     startPipeline();
     window.postMessage(
       {
-        source: HubConnectionConfig.fromContentScropt.source,
-        action: HubConnectionConfig.fromContentScropt.actions.startTranscription,
+        source: MeetingHubConfig.messageSources.contentScript,
+        action: MeetingHubConfig.contentScriptActions.TRANSCRIPTION_STARTED,
         payload: {
           userid: appConfig.Service.userId
         }
@@ -454,7 +449,7 @@ function handleTranscriptMutations(mutations, ctx) {
   var _a, _b, _c, _d;
   for (const _ of mutations) {
     try {
-      const transcriptContainer = ctx.canUseAriaBasedTranscriptSelector ? selectElement(appConfig.Extension.transcriptSelectors.aria) : selectElement(appConfig.Extension.transcriptSelectors.fallback);
+      const transcriptContainer = ctx.canUseAriaBasedTranscriptSelector ? selectSingle(appConfig.Extension.transcriptSelectors.aria) : selectSingle(appConfig.Extension.transcriptSelectors.fallback);
       const speakerElements = ctx.canUseAriaBasedTranscriptSelector ? transcriptContainer == null ? void 0 : transcriptContainer.children : (_b = (_a = transcriptContainer == null ? void 0 : transcriptContainer.childNodes[1]) == null ? void 0 : _a.firstChild) == null ? void 0 : _b.childNodes;
       if (!speakerElements) return;
       const hasSpeakers = ctx.canUseAriaBasedTranscriptSelector ? speakerElements.length > 1 : speakerElements.length > 0;
@@ -512,7 +507,7 @@ function handleTranscriptMutations(mutations, ctx) {
           latestSpeakerElement.remove();
         }
       }
-      ChatPanel.addLiveMessage({
+      ChatPanel.updateLiveMessage({
         id: currentSpeakerId,
         speaker: currentSpeakerName,
         transcript: currentTranscript,
@@ -520,8 +515,8 @@ function handleTranscriptMutations(mutations, ctx) {
       });
       window.postMessage(
         {
-          source: HubConnectionConfig.fromContentScropt.source,
-          action: HubConnectionConfig.fromContentScropt.actions.realTimeTranscription,
+          source: MeetingHubConfig.messageSources.contentScript,
+          action: MeetingHubConfig.contentScriptActions.TRANSCRIPTION_UPDATE,
           payload: {
             id: currentSpeakerId,
             speaker: currentSpeakerName,
@@ -552,10 +547,7 @@ function flushTranscriptBuffer(item) {
 function endMeetingRoutines() {
   var _a, _b;
   try {
-    const elements = selectElements(
-      appConfig.Extension.meetingEndIcon.selector,
-      appConfig.Extension.meetingEndIcon.text
-    );
+    const elements = selectAll(appConfig.Extension.meetingEndIcon.selector, appConfig.Extension.meetingEndIcon.text);
     const meetingEndButton = ((_b = (_a = elements == null ? void 0 : elements[0]) == null ? void 0 : _a.parentElement) == null ? void 0 : _b.parentElement) ?? null;
     if (!meetingEndButton) {
       throw new Error("Meeting end button not found in DOM.");
@@ -578,16 +570,22 @@ function endMeetingRoutines() {
   }
 }
 window.addEventListener("message", (event) => {
-  var _a, _b, _c, _d;
-  if (event.source !== window && event.data.source !== HubConnectionConfig.toContentScript.source) return;
-  if (((_a = event.data) == null ? void 0 : _a.source) !== HubConnectionConfig.toContentScript.source) {
+  const { data, source } = event;
+  if (source !== window || (data == null ? void 0 : data.source) !== MeetingHubConfig.messageSources.injectedScript) {
     return;
   }
-  if (((_b = event.data) == null ? void 0 : _b.action) === HubConnectionConfig.toContentScript.actions.realTimeTranscription) {
-    ChatPanel.addLiveMessage(event.data.payload);
-  } else if (((_c = event.data) == null ? void 0 : _c.action) === HubConnectionConfig.toContentScript.actions.someoneIsJoining) {
-    ChatPanel.addOthers(event.data.payload);
-  } else if (((_d = event.data) == null ? void 0 : _d.action) === HubConnectionConfig.toContentScript.actions.startTranscription) {
-    ChatPanel.HideParticipantList();
+  const { action, payload } = data;
+  switch (action) {
+    case MeetingHubConfig.contentScriptActions.TRANSCRIPTION_UPDATE:
+      ChatPanel.updateLiveMessage(payload);
+      break;
+    case MeetingHubConfig.contentScriptActions.PARTICIPANT_JOINED:
+      ChatPanel.addParticipant(payload);
+      break;
+    case MeetingHubConfig.contentScriptActions.TRANSCRIPTION_STARTED:
+      ChatPanel.hideParticipantList();
+      break;
+    default:
+      console.warn("Unknown message action received:", action);
   }
 });

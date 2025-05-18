@@ -115,6 +115,7 @@
 //   initializeConnection(HubConnectionConfig.meetingId);
 // })();
 import * as signalR from "@microsoft/signalr";
+import {MessagePackHubProtocol} from "@microsoft/signalr-protocol-msgpack";
 import {getMeetingTitleFromUrl} from "./utils/urlHelper";
 
 // Enums for message actions
@@ -160,7 +161,12 @@ class MeetingHubClient {
 
   constructor(meetingId: string) {
     this.meetingId = meetingId;
-    this.connection = new signalR.HubConnectionBuilder().withUrl(HubConnectionConfig.hubUrl).build();
+    this.connection = new signalR.HubConnectionBuilder()
+      .withUrl(HubConnectionConfig.hubUrl)
+      .withAutomaticReconnect()
+      .withHubProtocol(new MessagePackHubProtocol())
+      .build();
+
     this.setupHandlers();
     this.setupWindowMessageListener();
     this.startConnection();
@@ -197,11 +203,14 @@ class MeetingHubClient {
     this.connection
       .start()
       .then(() => {
-        this.connection.invoke("JoinMeeting", this.meetingId, "123456", "John Doe");
+        console.log("Connection started", this.meetingId);
+        this.connection.invoke("JoinMeeting", {
+          MeetingId: this.meetingId,
+          UserId: "123456",
+          FullName: "Mohammad Karimi"
+        } as JoinMeetingDto);
       })
-      .catch(() => {
-        setTimeout(() => this.startConnection(), 3000);
-      });
+      .catch(() => {});
   }
 
   private setupWindowMessageListener() {
@@ -212,15 +221,15 @@ class MeetingHubClient {
 
       switch (action) {
         case ContentScriptActions.StartTranscription:
-          this.connection.invoke(action, {meetingId: this.meetingId, userId: payload.userId} as StartTranscriptionDto);
+          this.connection.invoke(action, {MeetingId: this.meetingId, UserId: payload.userId} as StartTranscriptionDto);
           break;
 
         case ContentScriptActions.RealTimeTranscription:
           this.connection.invoke(action, {
-            meetingId: this.meetingId,
-            id: payload.id,
-            speaker: payload.speaker,
-            transcript: payload.transcript
+            Id: payload.id,
+            MeetingId: this.meetingId,
+            Speaker: payload.speaker,
+            Transcript: payload.transcript
           } as RealTimeTranscriptionDto);
           break;
       }
@@ -235,13 +244,19 @@ class MeetingHubClient {
 })();
 
 interface StartTranscriptionDto {
-  meetingId: string;
-  userId: string;
+  MeetingId: string;
+  UserId: string;
 }
 
 interface RealTimeTranscriptionDto {
-  meetingId: string;
-  id: string;
-  speaker: string;
-  transcript: string;
+  MeetingId: string;
+  Id: string;
+  Speaker: string;
+  Transcript: string;
+}
+
+interface JoinMeetingDto {
+  MeetingId: string;
+  UserId: string;
+  FullName: string;
 }
