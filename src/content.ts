@@ -1,5 +1,5 @@
 //https://meet.google.com/uir-miof-cby
-import {HubConnectionConfig} from "./core/constants";
+import {MeetingHubConfig} from "./core/constants";
 import {pipeAsync} from "./core/pipeline";
 import {AppConfiguration, ConfigurationService} from "./services/config.service";
 import {StorageService} from "./services/storage.service";
@@ -99,8 +99,8 @@ startMeetingRoutines()
       startPipeline();
       window.postMessage(
         {
-          source: HubConnectionConfig.fromContentScropt.source,
-          action: HubConnectionConfig.fromContentScropt.actions.startTranscription,
+          source: MeetingHubConfig.messageSources.contentScript,
+          action: MeetingHubConfig.contentScriptActions.TRANSCRIPTION_STARTED,
           payload: {
             userid: appConfig.Service.userId
           }
@@ -210,8 +210,8 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
       });
       window.postMessage(
         {
-          source: HubConnectionConfig.fromContentScropt.source,
-          action: HubConnectionConfig.fromContentScropt.actions.realTimeTranscription,
+          source: MeetingHubConfig.messageSources.contentScript,
+          action: MeetingHubConfig.contentScriptActions.TRANSCRIPTION_UPDATE,
           payload: {
             id: currentSpeakerId,
             speaker: currentSpeakerName,
@@ -271,18 +271,29 @@ function endMeetingRoutines(): void {
 }
 
 window.addEventListener("message", event => {
-  if (event.source !== window && event.data.source !== HubConnectionConfig.toContentScript.source) return;
+  const {data, source} = event;
 
-  if (event.data?.source !== HubConnectionConfig.toContentScript.source) {
+  // Validate source
+  if (source !== window || data?.source !== MeetingHubConfig.messageSources.injectedScript) {
     return;
   }
 
-  if (event.data?.action === HubConnectionConfig.toContentScript.actions.realTimeTranscription) {
-    ChatPanel.addLiveMessage(event.data.payload);
-  } else if (event.data?.action === HubConnectionConfig.toContentScript.actions.someoneIsJoining) {
-    //add user to participant list object
-    ChatPanel.addOthers(event.data.payload);
-  } else if (event.data?.action === HubConnectionConfig.toContentScript.actions.startTranscription) {
-    ChatPanel.HideParticipantList();
+  const {action, payload} = data;
+
+  switch (action) {
+    case MeetingHubConfig.contentScriptActions.TRANSCRIPTION_UPDATE:
+      ChatPanel.addLiveMessage(payload);
+      break;
+
+    case MeetingHubConfig.contentScriptActions.PARTICIPANT_JOINED:
+      ChatPanel.addOthers(payload);
+      break;
+
+    case MeetingHubConfig.contentScriptActions.TRANSCRIPTION_STARTED:
+      ChatPanel.HideParticipantList();
+      break;
+
+    default:
+      console.warn("Unknown message action received:", action);
   }
 });

@@ -1,21 +1,19 @@
-export const HubConnectionConfig = {
+export const MeetingHubConfig = {
   hubUrl: "https://localhost:7061/meetinghub",
-  methodName: "ReceiveMessage",
-  toContentScript: {
-    source: "Au5-InjectedScript",
-    actions: {
-      realTimeTranscription: "RealTimeTranscription",
-      someoneIsJoining: "SomeoneIsJoining",
-      startTranscription: "StartTranscription"
-    }
+  receiveMethod: "ReceiveMessage",
+  messageSources: {
+    injectedScript: "Au5-InjectedScript",
+    contentScript: "Au5-ContentScript"
   },
-  fromContentScropt: {
-    source: "Au5-ContentScript",
-    actions: {
-      meetingTitle: "MeetingTitle",
-      startTranscription: "StartTranscription",
-      realTimeTranscription: "RealTimeTranscription"
-    }
+  contentScriptActions: {
+    TRANSCRIPTION_UPDATE: "RealTimeTranscription",
+    PARTICIPANT_JOINED: "SomeoneIsJoining",
+    TRANSCRIPTION_STARTED: "StartTranscription"
   },
-  meetingId: "NA"
+  injectedScriptActions: {
+    SET_MEETING_TITLE: "MeetingTitle",
+    REQUEST_TRANSCRIPTION: "StartTranscription",
+    SEND_TRANSCRIPTION: "RealTimeTranscription"
+  },
+  defaultMeetingId: "NA"
 };

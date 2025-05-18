@@ -212,11 +212,16 @@ class MeetingHubClient {
 
       switch (action) {
         case ContentScriptActions.StartTranscription:
-          this.connection.invoke(action, this.meetingId, payload.userId);
+          this.connection.invoke(action, {meetingId: this.meetingId, userId: payload.userId} as StartTranscriptionDto);
           break;
 
         case ContentScriptActions.RealTimeTranscription:
-          this.connection.invoke(action, this.meetingId, payload.id, payload.speaker, payload.transcript);
+          this.connection.invoke(action, {
+            meetingId: this.meetingId,
+            id: payload.id,
+            speaker: payload.speaker,
+            transcript: payload.transcript
+          } as RealTimeTranscriptionDto);
           break;
       }
     });
@@ -228,3 +233,15 @@ class MeetingHubClient {
   HubConnectionConfig.meetingId = getMeetingTitleFromUrl();
   new MeetingHubClient(HubConnectionConfig.meetingId);
 })();
+
+interface StartTranscriptionDto {
+  meetingId: string;
+  userId: string;
+}
+
+interface RealTimeTranscriptionDto {
+  meetingId: string;
+  id: string;
+  speaker: string;
+  transcript: string;
+}
