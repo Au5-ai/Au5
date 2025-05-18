@@ -125,8 +125,8 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
   for (const _ of mutations) {
     try {
       const transcriptContainer = ctx.canUseAriaBasedTranscriptSelector
-        ? selectElement(appConfig.Extension.transcriptSelectors.aria)
-        : selectElement(appConfig.Extension.transcriptSelectors.fallback);
+        ? selectSingle(appConfig.Extension.transcriptSelectors.aria)
+        : selectSingle(appConfig.Extension.transcriptSelectors.fallback);
 
       const speakerElements = ctx.canUseAriaBasedTranscriptSelector
         ? transcriptContainer?.children
@@ -244,10 +244,7 @@ function flushTranscriptBuffer(item: TranscriptBlock): void {
 
 function endMeetingRoutines(): void {
   try {
-    const elements = selectElements(
-      appConfig.Extension.meetingEndIcon.selector,
-      appConfig.Extension.meetingEndIcon.text
-    );
+    const elements = selectAll(appConfig.Extension.meetingEndIcon.selector, appConfig.Extension.meetingEndIcon.text);
     const meetingEndButton = elements?.[0]?.parentElement?.parentElement ?? null;
 
     if (!meetingEndButton) {
