@@ -25,7 +25,7 @@ export default defineConfig({
     copy({
       targets: [
         { src: "manifest.json", dest: "dist" },
-        { src: "src/ui/template.html", dest: "dist/ui/" },
+        { src: "src/ui/sidepanel.html", dest: "dist/" },
         { src: "src/assets/*", dest: "dist/assets/" },
       ],
       hook: "writeBundle",
