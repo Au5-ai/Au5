@@ -5,6 +5,7 @@
     <style>
       body {
         background-color: #333;
+        font-family: system-ui;
       }
       .au5-panel {
         background-color: #fff;
@@ -17,17 +18,15 @@
         top: 16px;
         transform: none;
         z-index: 9999;
-        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         width: 360px;
-        padding: 16px;
-        overflow-x: auto;
         font-family: system-ui;
       }
+
       .au5-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 30px;
+        padding: 16px;
       }
 
       .au5-header-left {
@@ -43,6 +42,12 @@
         object-fit: cover;
       }
 
+      .au5-avatar img {
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+      }
+
       .au5-room-name {
         font-weight: bold;
         font-size: 14px;
@@ -53,16 +58,33 @@
         color: #888;
       }
 
+      .au5-header-icons {
+        display: flex;
+        gap: 8px;
+      }
+
       .au5-header-icons .au5-icon {
         font-size: 16px;
-        margin-left: 8px;
+        display: flex;
         cursor: pointer;
+        border-radius: 4px;
+        width: 28px;
+        background-color: #f4f4f4f4;
+        height: 28px;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .au5-messages-container {
+        max-height: calc(100vh - 224px);
+        overflow-y: auto;
+        padding: 16px;
       }
 
       .au5-message {
         display: flex;
         align-items: flex-start;
-        gap: 8px;
+        gap: 4px;
         margin-bottom: 12px;
         position: relative;
       }
@@ -75,6 +97,13 @@
       }
 
       .au5-sender {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .au5-sender-title {
         font-weight: bold;
         font-size: 13px;
         margin-bottom: 4px;
@@ -86,7 +115,7 @@
         direction: rtl;
       }
 
-      .au5-time {
+      .au5-sender-time {
         font-size: 11px;
         color: #888;
         text-align: right;
@@ -108,7 +137,6 @@
 
       .au5-reactions .reaction {
         display: flex;
-        align-items: center;
         gap: 4px;
         padding: 1px;
         border-radius: 100px;
@@ -116,11 +144,16 @@
         border: 1px solid #e5e5e5;
         transition: background-color 0.2s;
         background-color: #e4e4e4;
+        align-items: center;
+        align-content: center;
+        min-width: 16px;
+        max-height: 16px;
       }
 
       .au5-reactions .reaction-emoji {
         font-size: 12px;
-        margin-left: 2px;
+        width: 16px;
+        height: 16px;
       }
 
       .au5-reactions .reaction-users {
@@ -134,27 +167,15 @@
         border-radius: 50%;
         border: 1px solid white;
         margin-left: -4px;
+        display: flex;
       }
 
-      .au5-reactions .reaction-user-blue {
-        background-color: #2196f3;
+      .au5-reactions .reaction-user img {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
       }
 
-      .au5-reactions .reaction-user-green {
-        background-color: #4caf50;
-      }
-
-      .au5-reactions .reaction-user-purple {
-        background-color: #9c27b0;
-      }
-
-      .au5-reactions .reaction-user-yellow {
-        background-color: #ffc107;
-      }
-
-      .au5-reactions .reaction-user-pink {
-        background-color: #e91e63;
-      }
       .au5-btn {
         width: 20px;
         height: 20px;
@@ -185,26 +206,40 @@
 
       .au5-input-wrapper {
         display: flex;
-        padding-top: 12px;
-        margin-top: 8px;
+        background-color: #fff;
+        border-radius: 12px;
+        padding: 16px;
+      }
+
+      .au5-input-container {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        border: 1px solid #f4f4f4;
+        padding: 6px;
+        border-radius: 8px;
       }
 
       .au5-input {
         flex: 1;
-        padding: 8px;
+        border: none;
         font-size: 14px;
-        border: 1px solid #ddd;
+        padding: 8px;
         border-radius: 8px;
         outline: none;
+        font-family: system-ui;
       }
 
       .au5-send-btn {
-        background: none;
+        background: #2196f3;
         border: none;
-        font-size: 18px;
-        padding: 0 8px;
+        color: white;
+        font-size: 13px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        margin-left: 8px;
         cursor: pointer;
-        color: #333;
+        font-family: system-ui;
       }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -220,7 +255,7 @@
         </div>
         <div class="au5-header-icons">
           <span class="au5-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M10.65 19.11V4.89C10.65 3.54 10.08 3 8.64 3H5.01C3.57 3 3 3.54 3 4.89V19.11C3 20.46 3.57 21 5.01 21H8.64C10.08 21 10.65 20.46 10.65 19.11Z"
                 stroke="#292D32"
@@ -238,7 +273,7 @@
             </svg>
           </span>
           <span class="au5-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M16 2V22M18 22H6C3.79086 22 2 20.2091 2 18V6C2 3.79086 3.79086 2 6 2H18C20.2091 2 22 3.79086 22 6V18C22 20.2091 20.2091 22 18 22Z"
                 stroke="#28303F"
@@ -250,116 +285,178 @@
           </span>
         </div>
       </div>
-
-      <div class="au5-message">
-        <div class="au5-avatar"></div>
-        <div class="au5-bubble">
-          <div class="au5-sender">Mohammad Karimi</div>
-          <div class="au5-text">
-            سلام به همه من دیروز با توجه به ورک فلویی که از بقیه بچه ها دیدم به این نتیجه رسیدم که میتونایم
+      <div class="au5-messages-container">
+        <div class="au5-message">
+          <div class="au5-avatar">
+            <img
+              src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+            />
           </div>
+          <div class="au5-bubble">
+            <div class="au5-sender">
+              <div class="au5-sender-title">Mohammad Karimi</div>
+              <div class="au5-sender-time">10:23</div>
+            </div>
+            <div class="au5-text">
+              سلام به همه من دیروز با توجه به ورک فلویی که از بقیه بچه ها دیدم به این نتیجه رسیدم که میتونایم
+            </div>
 
-          <div class="au5-message-reactions">
-            <div class="au5-reactions">
-              <div class="reaction reaction-highlight">
-                <span class="reaction-emoji">⚡</span>
-                <div class="reaction-users">
-                  <div class="reaction-user reaction-user-blue"></div>
-                  <div class="reaction-user reaction-user-green"></div>
+            <div class="au5-message-reactions">
+              <div class="au5-reactions">
+                <div class="reaction reaction-highlight">
+                  <span class="reaction-emoji">⚡</span>
+                </div>
+                <div class="reaction reaction-mute">
+                  <span class="reaction-emoji">🎯</span>
                 </div>
               </div>
-              <div class="reaction reaction-mute">
-                <span class="reaction-emoji">🎯</span>
-                <div class="reaction-users">
-                  <div class="reaction-user reaction-user-purple"></div>
-                  <div class="reaction-user reaction-user-yellow"></div>
-                  <div class="reaction-user reaction-user-pink"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="au5-message">
+          <div class="au5-avatar">
+            <img
+              src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+            />
+          </div>
+          <div class="au5-bubble">
+            <div class="au5-sender">
+              <div class="au5-sender-title">Mohammad Karimi</div>
+              <div class="au5-sender-time">10:23</div>
+            </div>
+            <div class="au5-text">
+              سلام به همه من دیروز با توجه به ورک فلویی که از بقیه بچه ها دیدم به این نتیجه رسیدم که میتونایم
+            </div>
+            <div class="au5-message-reactions">
+              <div class="au5-reactions">
+                <div class="reaction reaction-highlight">
+                  <span class="reaction-emoji">⚡</span>
+                </div>
+                <div class="reaction reaction-mute">
+                  <span class="reaction-emoji">🎯</span>
                 </div>
               </div>
             </div>
-            <div class="au5-time">10:23</div>
+          </div>
+        </div>
+
+        <div class="au5-join-time">Alireza Joined at 10:25</div>
+
+        <div class="au5-message">
+          <div class="au5-avatar">
+            <img src="https://randomuser.me/api/portraits/men/75.jpg" />
+          </div>
+          <div class="au5-bubble">
+            <div class="au5-sender">
+              <div class="au5-sender-title">Mohammad Karimi</div>
+              <div class="au5-sender-time">10:23</div>
+            </div>
+            <div class="au5-text">
+              سلام به همه من دیروز با توجه به ورک فلویی که از بقیه بچه ها دیدم به این نتیجه رسیدم که میتونایم
+            </div>
+            <div class="au5-message-reactions">
+              <div class="au5-reactions">
+                <div class="reaction reaction-highlight">
+                  <span class="reaction-emoji">⚡</span>
+                </div>
+                <div class="reaction reaction-mute">
+                  <span class="reaction-emoji">🎯</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="au5-message">
+          <div class="au5-avatar">
+            <img
+              src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+            />
+          </div>
+          <div class="au5-bubble">
+            <div class="au5-sender">
+              <div class="au5-sender-title">Mohammad Karimi</div>
+              <div class="au5-sender-time">10:23</div>
+            </div>
+            <div class="au5-text">
+              سلام به همه من دیروز با توجه به ورک فلویی که از بقیه بچه ها دیدم به این نتیجه رسیدم که میتونایم
+            </div>
+            <div class="au5-message-reactions">
+              <div class="au5-reactions">
+                <div class="reaction reaction-highlight">
+                  <span class="reaction-emoji">⚡</span>
+                  <div class="reaction-users">
+                    <div class="reaction-user">
+                      <img
+                        src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+                      />
+                    </div>
+                    <div class="reaction-user">
+                      <img
+                        src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="reaction reaction-mute">
+                  <span class="reaction-emoji">🎯</span>
+                  <div class="reaction-users">
+                    <div class="reaction-user">
+                      <img
+                        src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+                      />
+                    </div>
+                    <div class="reaction-user">
+                      <img
+                        src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+                      />
+                    </div>
+                    <div class="reaction-user">
+                      <img
+                        src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="au5-join-time">Alireza Joined at 10:25</div>
+
+        <div class="au5-message">
+          <div class="au5-avatar">
+            <img src="https://randomuser.me/api/portraits/men/75.jpg" />
+          </div>
+          <div class="au5-bubble">
+            <div class="au5-sender">
+              <div class="au5-sender-title">Mohammad Karimi</div>
+              <div class="au5-sender-time">10:23</div>
+            </div>
+            <div class="au5-text">
+              سلام به همه من دیروز با توجه به ورک فلویی که از بقیه بچه ها دیدم به این نتیجه رسیدم که میتونایم
+            </div>
+            <div class="au5-message-reactions">
+              <div class="au5-reactions">
+                <div class="reaction reaction-highlight">
+                  <span class="reaction-emoji">⚡</span>
+                </div>
+                <div class="reaction reaction-mute">
+                  <span class="reaction-emoji">🎯</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-
-      <div class="au5-message">
-        <svg viewbox="0 0 200 200" width="48" height="48" class="au5-avatar">
-          <path
-            d="M 0, 75 C 0, 18.75 18.75, 0 75, 0 S 150, 18.75 150, 75 131.25, 150 75, 150 0, 131.25 0, 75"
-            transform="rotate(0, 100, 100) translate(25 25)"
-            fill="#FEE25D"
-          ></path>
-        </svg>
-        <div class="au5-bubble">
-          <div class="au5-sender">Mohammad Karimi</div>
-          <div class="au5-text">
-            سلام به همه من دیروز با توجه به ورک فلویی که از بقیه بچه ها دیدم به این نتیجه رسیدم که میتونایم
-          </div>
-          <div class="au5-time">10:23</div>
-        </div>
-        <div class="au5-reactions">
-          <!-- Lightning/Highlight Reaction -->
-          <div class="reaction reaction-highlight">
-            <span class="reaction-emoji">⚡</span>
-            <div class="reaction-users">
-              <div class="reaction-user reaction-user-blue"></div>
-              <div class="reaction-user reaction-user-green"></div>
-            </div>
-          </div>
-
-          <!-- Mute Reaction -->
-          <div class="reaction reaction-mute">
-            <span class="reaction-emoji">‼️</span>
-            <div class="reaction-users">
-              <div class="reaction-user reaction-user-purple"></div>
-              <div class="reaction-user reaction-user-yellow"></div>
-              <div class="reaction-user reaction-user-pink"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="au5-join-time">Alireza Joined at 10:25</div>
-
-      <div class="au5-message">
-        <svg viewbox="0 0 200 200" width="48" height="48" class="au5-avatar">
-          <path
-            d="M 0, 75 C 0, 18.75 18.75, 0 75, 0 S 150, 18.75 150, 75 131.25, 150 75, 150 0, 131.25 0, 75"
-            transform="rotate(0, 100, 100) translate(25 25)"
-            fill="#FEE25D"
-          ></path>
-        </svg>
-        <div class="au5-bubble">
-          <div class="au5-sender">Mohammad Karimi</div>
-          <div class="au5-text">
-            سلام به همه من دیروز با توجه به ورک فلویی که از بقیه بچه ها دیدم به این نتیجه رسیدم که میتونایم
-          </div>
-          <div class="au5-time">10:23</div>
-        </div>
-        <div class="au5-reactions">
-          <!-- Lightning/Highlight Reaction -->
-          <div class="reaction reaction-highlight">
-            <span class="reaction-emoji">⚡</span>
-            <div class="reaction-users">
-              <div class="reaction-user reaction-user-blue"></div>
-              <div class="reaction-user reaction-user-green"></div>
-            </div>
-          </div>
-
-          <!-- Mute Reaction -->
-          <div class="reaction reaction-mute">
-            <span class="reaction-emoji">‼️</span>
-            <div class="reaction-users">
-              <div class="reaction-user reaction-user-purple"></div>
-              <div class="reaction-user reaction-user-yellow"></div>
-              <div class="reaction-user reaction-user-pink"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <!-- Input -->
       <div class="au5-input-wrapper">
-        <input type="text" placeholder="send message then enter" class="au5-input" />
+        <div class="au5-input-container">
+          <input type="text" class="au5-input" placeholder="پیام خود را بنویسید..." />
+          <button class="au5-send-btn">ارسال</button>
+        </div>
       </div>
     </div>
   </body>
