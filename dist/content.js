@@ -1,41 +1,6 @@
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-class StorageService {
-  async remove(keys) {
-    return new Promise((resolve, reject) => {
-      chrome.storage.local.remove(keys, () => {
-        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
-        resolve();
-      });
-    });
-  }
-  async set(key, value) {
-    return new Promise((resolve, reject) => {
-      chrome.storage.local.set({ [key]: value }, () => {
-        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
-        resolve(value);
-      });
-    });
-  }
-  async get(keys) {
-    const keyArray = Array.isArray(keys) ? keys : [keys];
-    return new Promise((resolve, reject) => {
-      chrome.storage.local.get(keyArray, (result) => {
-        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
-        resolve(result);
-      });
-    });
-  }
-  async getSync(key) {
-    return new Promise((resolve, reject) => {
-      chrome.storage.sync.get([key], (result) => {
-        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
-        resolve(result);
-      });
-    });
-  }
-}
 const MeetingHubConfig = {
   hubUrl: "https://localhost:7061/meetinghub",
   receiveMethod: "ReceiveMessage",
@@ -145,6 +110,41 @@ const DefaultAppConfig = {
   },
   Extension: ExtensionConfig
 };
+class StorageService {
+  async remove(keys) {
+    return new Promise((resolve, reject) => {
+      chrome.storage.local.remove(keys, () => {
+        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
+        resolve();
+      });
+    });
+  }
+  async set(key, value) {
+    return new Promise((resolve, reject) => {
+      chrome.storage.local.set({ [key]: value }, () => {
+        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
+        resolve(value);
+      });
+    });
+  }
+  async get(keys) {
+    const keyArray = Array.isArray(keys) ? keys : [keys];
+    return new Promise((resolve, reject) => {
+      chrome.storage.local.get(keyArray, (result) => {
+        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
+        resolve(result);
+      });
+    });
+  }
+  async getSync(key) {
+    return new Promise((resolve, reject) => {
+      chrome.storage.sync.get([key], (result) => {
+        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
+        resolve(result);
+      });
+    });
+  }
+}
 function toHoursAndMinutes(isoString) {
   const date = new Date(isoString);
   const hh = date.getUTCHours().toString().padStart(2, "0");
@@ -421,7 +421,7 @@ function startPipeline() {
 startMeetingRoutines().then(async () => {
   var _a;
   ChatPanel.createPanel(appConfig.Service.direction);
-  ChatPanel.addParticipant(appConfig.Service.fullName);
+  ChatPanel.addCurrentUser(appConfig.Service.fullName);
   (_a = document.getElementById("au5-start-button")) == null ? void 0 : _a.addEventListener("click", () => {
     ChatPanel.hideParticipantList();
     startPipeline();

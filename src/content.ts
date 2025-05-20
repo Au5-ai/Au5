@@ -92,7 +92,7 @@ export function startPipeline() {
 startMeetingRoutines()
   .then(async () => {
     ChatPanel.createPanel(appConfig.Service.direction);
-    ChatPanel.addParticipant(appConfig.Service.fullName);
+    ChatPanel.addCurrentUser(appConfig.Service.fullName);
 
     document.getElementById("au5-start-button")?.addEventListener("click", () => {
       ChatPanel.hideParticipantList();
