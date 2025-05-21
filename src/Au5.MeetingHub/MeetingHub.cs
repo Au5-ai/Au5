@@ -4,15 +4,6 @@ using System.Text;
 
 namespace Au5.MeetingHub;
 
-
-public class User
-{
-    public string Id { get; set; }
-    public string FullName { get; set; }
-
-    public string ProfileImage { get; set; }
-}
-
 public class MeetingHub : Hub
 {
     private static readonly HashSet<string> _startedMeetings = [];
@@ -20,6 +11,8 @@ public class MeetingHub : Hub
 
     static MeetingHub()
     {
+        // _startedMeetings.Add("dzc-awqw-ioi");
+        _activeUsers.Add("dzc-awqw-ioi", [new User { Id = "Id", FullName = "ahmad", ProfileImage = "site" }]);
         Console.OutputEncoding = Encoding.UTF8;
     }
 
@@ -27,28 +20,47 @@ public class MeetingHub : Hub
     {
         LogInfo($"User {data.UserId} joined meeting {data.MeetingId}");
         await Groups.AddToGroupAsync(Context.ConnectionId, data.MeetingId);
+        var currentUser = new User()
+        {
+            FullName = data.FullName,
+            Id = data.UserId,
+            ProfileImage = data.ProfileImage
+        };
 
         var existingMettingId = _activeUsers.TryGetValue(data.MeetingId, out HashSet<User> users);
         if (!existingMettingId)
         {
+            users = [currentUser];
             _activeUsers.TryAdd(data.MeetingId, users);
+        }
+        else
+        {
+            var existingUser = users.FirstOrDefault(x => x.Id == data.UserId);
+            if (existingUser is null)
+            {
+                users.Add(currentUser);
+            }
         }
 
         var meetStarted = _startedMeetings.FirstOrDefault(x => x == data.MeetingId);
 
         if (meetStarted is not null)
         {
-            await SendToYourselfInGroupAsync(data.MeetingId, "MeetHasBeenStarted", new
-            {
-                ActiveUsers = "N/A"
-            });
+            await SendToYourselfInGroupAsync(data.MeetingId, "MeetHasBeenStarted", "N/A");
         }
 
         await SendToOthersInGroupAsync(data.MeetingId, "JoinMeeting", new
         {
             data.UserId,
-            data.FullName
+            data.FullName,
+            data.ProfileImage
         });
+
+        await SendToYourselfInGroupAsync(data.MeetingId, "ListOfParticipants", new
+        {
+            Participants = users
+        });
+
     }
 
     public async Task RealTimeTranscription(TranscriptionDto data)
