@@ -4,8 +4,17 @@ using System.Text;
 
 namespace Au5.MeetingHub;
 
+
+public class User
+{
+    public string Id { get; set; }
+    public string FullName { get; set; }
+}
+
 public class MeetingHub : Hub
 {
+    private static readonly Dictionary<string, HashSet<User>> _activeUsers = [];
+
     static MeetingHub()
     {
         Console.OutputEncoding = Encoding.UTF8;
@@ -13,14 +22,30 @@ public class MeetingHub : Hub
 
     public async Task JoinMeeting(JoinMeetingDto data)
     {
+        LogInfo($"User {data.UserId} joined meeting {data.MeetingId}");
         await Groups.AddToGroupAsync(Context.ConnectionId, data.MeetingId);
+
+        var existingMettingId = _activeUsers.TryGetValue(data.MeetingId, out HashSet<User> users);
+        if (existingMettingId)
+        {
+            await SendToYourselfInGroupAsync(data.MeetingId, "MeetHasBeenStarted", new
+            {
+                ActiveUsers = users
+            });
+
+            users.Add(new User() { Id = data.UserId, FullName = data.FullName });
+        }
+        else
+        {
+            users = [new User() { Id = data.UserId, FullName = data.FullName }];
+            _activeUsers.Add(data.MeetingId, users);
+        }
+
         await SendToOthersInGroupAsync(data.MeetingId, "JoinMeeting", new
         {
             data.UserId,
             data.FullName
         });
-
-        LogInfo($"User {data.UserId} joined meeting {data.MeetingId}");
     }
 
     public async Task RealTimeTranscription(TranscriptionDto data)
@@ -67,6 +92,17 @@ public class MeetingHub : Hub
         });
     }
 
+    /// <summary>
+    /// Helper to send message to others in the same meeting group.
+    /// </summary>
+    private Task SendToYourselfInGroupAsync(string groupName, string messageType, object payload)
+    {
+        return Clients.Caller.SendAsync("ReceiveMessage", new
+        {
+            header = new { messageType },
+            payload
+        });
+    }
     private static void LogInfo(string message)
     {
         Console.WriteLine(message);
