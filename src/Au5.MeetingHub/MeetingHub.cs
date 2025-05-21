@@ -9,10 +9,13 @@ public class User
 {
     public string Id { get; set; }
     public string FullName { get; set; }
+
+    public string ProfileImage { get; set; }
 }
 
 public class MeetingHub : Hub
 {
+    private static readonly HashSet<string> _startedMeetings = [];
     private static readonly Dictionary<string, HashSet<User>> _activeUsers = [];
 
     static MeetingHub()
@@ -26,19 +29,19 @@ public class MeetingHub : Hub
         await Groups.AddToGroupAsync(Context.ConnectionId, data.MeetingId);
 
         var existingMettingId = _activeUsers.TryGetValue(data.MeetingId, out HashSet<User> users);
-        if (existingMettingId)
+        if (!existingMettingId)
+        {
+            _activeUsers.TryAdd(data.MeetingId, users);
+        }
+
+        var meetStarted = _startedMeetings.FirstOrDefault(x => x == data.MeetingId);
+
+        if (meetStarted is not null)
         {
             await SendToYourselfInGroupAsync(data.MeetingId, "MeetHasBeenStarted", new
             {
-                ActiveUsers = users
+                ActiveUsers = "N/A"
             });
-
-            users.Add(new User() { Id = data.UserId, FullName = data.FullName });
-        }
-        else
-        {
-            users = [new User() { Id = data.UserId, FullName = data.FullName }];
-            _activeUsers.Add(data.MeetingId, users);
         }
 
         await SendToOthersInGroupAsync(data.MeetingId, "JoinMeeting", new
@@ -65,6 +68,7 @@ public class MeetingHub : Hub
 
     public async Task StartTranscription(StartTranscriptionDto data)
     {
+        _startedMeetings.Add(data.MeetingId);
         await SendToOthersInGroupAsync(data.MeetingId, "StartTranscription", new
         {
             data.UserId
