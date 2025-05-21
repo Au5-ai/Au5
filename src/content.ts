@@ -4,7 +4,7 @@ import {pipeAsync} from "./core/pipeline";
 import {AppConfiguration, ConfigurationService} from "./services/config.service";
 import {StorageService} from "./services/storage.service";
 import {PipelineContext, TranscriptBlock} from "./types";
-import ChatPanel from "./ui/chatPanel";
+import SidePanel from "./ui/sidePanel";
 import {setOpacity, getDomContainer, injectScript, selectAll, selectSingle, waitForMatch} from "./utils/dom.utils";
 
 let appConfig: AppConfiguration;
@@ -89,13 +89,21 @@ export function startPipeline() {
   );
 }
 
+export function getMeetingTitleFromUrl(): string {
+  const url = new URL(window.location.href);
+  const pathSegments = url.pathname.split("/").filter(Boolean);
+  const meetingId = pathSegments.length > 0 ? pathSegments[pathSegments.length - 1] : "N/A";
+  return meetingId;
+}
+
 startMeetingRoutines()
   .then(async () => {
-    ChatPanel.createPanel(appConfig.Service.direction);
-    ChatPanel.addCurrentUser(appConfig.Service.fullName);
+    SidePanel.createSidePanel("Asax Co", getMeetingTitleFromUrl(), appConfig.Service.direction);
+    // SidePanel.addCurrentUser(appConfig.Service.fullName);
+    injectScript("injected.js");
 
     document.getElementById("au5-start-button")?.addEventListener("click", () => {
-      ChatPanel.hideParticipantList();
+      //  SidePanel.hideParticipantList();
       startPipeline();
       window.postMessage(
         {
@@ -108,8 +116,6 @@ startMeetingRoutines()
         "*"
       );
     });
-
-    injectScript("injected.js");
   })
   .catch(error => {
     console.error("Meeting routine execution failed:", error);
@@ -202,12 +208,12 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
         }
       }
 
-      ChatPanel.updateLiveMessage({
-        id: currentSpeakerId,
-        speaker: currentSpeakerName,
-        transcript: currentTranscript,
-        timestamp: currentTimestamp
-      });
+      // SidePanel.updateLiveMessage({
+      //   id: currentSpeakerId,
+      //   speaker: currentSpeakerName,
+      //   transcript: currentTranscript,
+      //   timestamp: currentTimestamp
+      // });
       window.postMessage(
         {
           source: MeetingHubConfig.messageSources.contentScript,
@@ -262,7 +268,7 @@ function endMeetingRoutines(): void {
           timestamp: currentTimestamp
         } as TranscriptBlock);
       }
-      ChatPanel.destroy();
+      SidePanel.destroy();
       console.log("Meeting ended. Transcript data:", JSON.stringify(transcriptBlocks));
     });
   } catch (err) {
@@ -282,17 +288,21 @@ window.addEventListener("message", event => {
 
   switch (action) {
     case MeetingHubConfig.contentScriptActions.TRANSCRIPTION_UPDATE:
-      ChatPanel.updateLiveMessage(payload);
+      //  SidePanel.updateLiveMessage(payload);
       break;
 
     case MeetingHubConfig.contentScriptActions.PARTICIPANT_JOINED:
-      ChatPanel.addParticipant(payload);
+      // SidePanel.addParticipant(payload);
       break;
 
     case MeetingHubConfig.contentScriptActions.TRANSCRIPTION_STARTED:
-      ChatPanel.hideParticipantList();
+      //  SidePanel.hideParticipantList();
       break;
 
+    case MeetingHubConfig.contentScriptActions.MeedHasBeenStarted:
+      console.log("Meeting has started");
+      SidePanel.showMessagesContainer();
+      break;
     default:
       console.warn("Unknown message action received:", action);
   }

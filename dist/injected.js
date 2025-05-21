@@ -4695,10 +4695,12 @@ class MeetingHubClient {
   }
   setupHandlers() {
     this.connection.on(HubConnectionConfig.methodName, (msg) => {
+      console.log("Received message from server", msg);
       switch (msg.header.messageType) {
         case "SomeoneIsJoining":
         case "RealTimeTranscription":
         case "StartTranscription":
+        case "MeetHasBeenStarted":
           this.postToWindow(msg.header.messageType, msg.payload);
           break;
       }
@@ -4723,7 +4725,8 @@ class MeetingHubClient {
       this.connection.invoke("JoinMeeting", {
         MeetingId: this.meetingId,
         UserId: "123456",
-        FullName: "Mohammad Karimi"
+        FullName: "Mohammad Karimi",
+        ProfileImage: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
       });
     }).catch(() => {
     });

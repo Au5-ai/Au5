@@ -123,7 +123,7 @@ enum ContentScriptActions {
   RealTimeTranscription = "RealTimeTranscription",
   SomeoneIsJoining = "SomeoneIsJoining",
   StartTranscription = "StartTranscription",
-  MeetingTitle = "MeetingTitle"
+  MeetHasBeenStarted = "MeetHasBeenStarted"
 }
 
 enum MessageSource {
@@ -174,10 +174,12 @@ class MeetingHubClient {
 
   private setupHandlers() {
     this.connection.on(HubConnectionConfig.methodName, (msg: Message) => {
+      console.log("Received message from server", msg);
       switch (msg.header.messageType) {
         case ContentScriptActions.SomeoneIsJoining:
         case ContentScriptActions.RealTimeTranscription:
         case ContentScriptActions.StartTranscription:
+        case ContentScriptActions.MeetHasBeenStarted:
           this.postToWindow(msg.header.messageType, msg.payload);
           break;
       }
@@ -207,7 +209,9 @@ class MeetingHubClient {
         this.connection.invoke("JoinMeeting", {
           MeetingId: this.meetingId,
           UserId: "123456",
-          FullName: "Mohammad Karimi"
+          FullName: "Mohammad Karimi",
+          ProfileImage:
+            "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
         } as JoinMeetingDto);
       })
       .catch(() => {});
@@ -259,4 +263,5 @@ interface JoinMeetingDto {
   MeetingId: string;
   UserId: string;
   FullName: string;
+  ProfileImage: string;
 }
