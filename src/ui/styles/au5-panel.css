@@ -1,8 +1,3 @@
-/* Additional styles can be added here */
-body {
-  background-color: #333;
-  font-family: system-ui;
-}
 .au5-panel {
   background-color: #fff;
   border-radius: 16px;
@@ -72,7 +67,7 @@ body {
 }
 
 .au5-container {
-  height: calc(100vh - 249px);
+  height: calc(100vh - 255px);
   overflow-y: auto;
   padding: 16px;
 }
@@ -186,6 +181,11 @@ body {
   width: -webkit-fill-available;
 }
 
+.au5-send-btn {
+  height: auto;
+  width: auto;
+}
+
 .au5-join-time {
   text-align: center;
   font-size: 12px;
@@ -195,18 +195,18 @@ body {
 
 .au5-input-wrapper {
   display: flex;
-  background-color: #fff;
   border-radius: 12px;
-  padding: 16px;
+  width: -webkit-fill-available;
 }
 
 .au5-input-container {
   display: flex;
   align-items: center;
   flex: 1;
-  border: 1px solid #f4f4f4;
-  padding: 6px;
+  border: 1px solid #c2bdbd;
+  padding: 4px;
   border-radius: 8px;
+  width: -webkit-fill-available;
 }
 
 .au5-input {

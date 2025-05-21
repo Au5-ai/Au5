@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
 import copy from "rollup-plugin-copy";
+import stringPlugin from "vite-plugin-string";
 
 export default defineConfig({
   build: {
@@ -22,6 +23,9 @@ export default defineConfig({
     emptyOutDir: true,
   },
   plugins: [
+    stringPlugin({
+      include: ["**/*.raw.css"],
+    }),
     copy({
       targets: [
         { src: "manifest.json", dest: "dist" },

@@ -12,7 +12,7 @@ const MeetingHubConfig = {
     TRANSCRIPTION_UPDATE: "RealTimeTranscription",
     PARTICIPANT_JOINED: "SomeoneIsJoining",
     TRANSCRIPTION_STARTED: "StartTranscription",
-    MeedHasBeenStarted: "MeetingHasStarted"
+    MeedHasBeenStarted: "MeetHasBeenStarted"
   },
   injectedScriptActions: {
     SET_MEETING_TITLE: "MeetingTitle",
@@ -146,12 +146,13 @@ class StorageService {
     });
   }
 }
+const css = ".au5-panel {\r\n  background-color: #fff;\r\n  border-radius: 16px;\r\n  bottom: 80px;\r\n  box-sizing: border-box;\r\n  max-width: 100%;\r\n  position: absolute;\r\n  right: 16px;\r\n  top: 16px;\r\n  transform: none;\r\n  z-index: 9999;\r\n  width: 360px;\r\n  font-family: system-ui;\r\n}\r\n\r\n.au5-header {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 16px;\r\n}\r\n\r\n.au5-header-left {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n}\r\n\r\n.au5-avatar {\r\n  width: 40px;\r\n  height: 40px;\r\n  border-radius: 50%;\r\n  object-fit: cover;\r\n}\r\n\r\n.au5-avatar img {\r\n  border-radius: 50%;\r\n  width: 36px;\r\n  height: 36px;\r\n}\r\n\r\n.au5-room-name {\r\n  font-weight: bold;\r\n  font-size: 14px;\r\n}\r\n\r\n.au5-member-count {\r\n  font-size: 12px;\r\n  color: #888;\r\n}\r\n\r\n.au5-header-icons {\r\n  display: flex;\r\n  gap: 8px;\r\n}\r\n\r\n.au5-header-icons .au5-icon {\r\n  font-size: 16px;\r\n  display: flex;\r\n  cursor: pointer;\r\n  border-radius: 4px;\r\n  width: 28px;\r\n  background-color: #f4f4f4f4;\r\n  height: 28px;\r\n  align-items: center;\r\n  justify-content: center;\r\n}\r\n\r\n.au5-container {\r\n  height: calc(100vh - 255px);\r\n  overflow-y: auto;\r\n  padding: 16px;\r\n}\r\n\r\n.au5-message {\r\n  display: flex;\r\n  align-items: flex-start;\r\n  gap: 4px;\r\n  margin-bottom: 12px;\r\n  position: relative;\r\n}\r\n\r\n.au5-bubble {\r\n  background: #f8f8f8;\r\n  border-radius: 12px;\r\n  padding: 8px 12px;\r\n  flex: 1;\r\n}\r\n\r\n.au5-sender {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.au5-sender-title {\r\n  font-weight: bold;\r\n  font-size: 13px;\r\n  margin-bottom: 4px;\r\n}\r\n\r\n.au5-text {\r\n  font-size: 13px;\r\n  margin-bottom: 16px;\r\n  direction: rtl;\r\n}\r\n\r\n.au5-sender-time {\r\n  font-size: 11px;\r\n  color: #888;\r\n  text-align: right;\r\n}\r\n\r\n.au5-message-reactions {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  margin-top: 8px;\r\n}\r\n\r\n.au5-reactions {\r\n  display: flex;\r\n  gap: 4px;\r\n  left: 48px;\r\n  bottom: 8px;\r\n}\r\n\r\n.au5-reactions .reaction {\r\n  display: flex;\r\n  gap: 4px;\r\n  padding: 1px;\r\n  border-radius: 100px;\r\n  cursor: pointer;\r\n  border: 1px solid #e5e5e5;\r\n  transition: background-color 0.2s;\r\n  background-color: #e4e4e4;\r\n  align-items: center;\r\n  align-content: center;\r\n  min-width: 16px;\r\n  max-height: 16px;\r\n}\r\n\r\n.au5-reactions .reaction-emoji {\r\n  font-size: 12px;\r\n  width: 16px;\r\n  height: 16px;\r\n}\r\n\r\n.au5-reactions .reaction-users {\r\n  display: flex;\r\n  margin-left: 2px;\r\n}\r\n\r\n.au5-reactions .reaction-user {\r\n  width: 16px;\r\n  height: 16px;\r\n  border-radius: 50%;\r\n  border: 1px solid white;\r\n  margin-left: -4px;\r\n  display: flex;\r\n}\r\n\r\n.au5-reactions .reaction-user img {\r\n  width: 16px;\r\n  height: 16px;\r\n  border-radius: 50%;\r\n}\r\n\r\n.au5-btn {\r\n  background: #2196f3;\r\n  border: none;\r\n  color: white;\r\n  font-size: 13px;\r\n  padding: 8px 12px;\r\n  border-radius: 8px;\r\n  height: 38px;\r\n  margin-left: 8px;\r\n  cursor: pointer;\r\n  font-family: system-ui;\r\n  width: -webkit-fill-available;\r\n}\r\n\r\n.au5-send-btn {\r\n  height: auto;\r\n  width: auto;\r\n}\r\n\r\n.au5-join-time {\r\n  text-align: center;\r\n  font-size: 12px;\r\n  color: #666;\r\n  margin: 16px 0;\r\n}\r\n\r\n.au5-input-wrapper {\r\n  display: flex;\r\n  border-radius: 12px;\r\n  width: -webkit-fill-available;\r\n}\r\n\r\n.au5-input-container {\r\n  display: flex;\r\n  align-items: center;\r\n  flex: 1;\r\n  border: 1px solid #c2bdbd;\r\n  padding: 4px;\r\n  border-radius: 8px;\r\n  width: -webkit-fill-available;\r\n}\r\n\r\n.au5-input {\r\n  flex: 1;\r\n  border: none;\r\n  font-size: 14px;\r\n  padding: 8px;\r\n  border-radius: 8px;\r\n  outline: none;\r\n  font-family: system-ui;\r\n}\r\n\r\n.au5-hidden {\r\n  display: none;\r\n}\r\n\r\n.au5-footer {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 0 16px 16px 16px;\r\n}\r\n";
 class SidePanel {
   static createSidePanel(roomName, meetingId, direction = "ltr") {
     this.direction = direction;
-    const style = document.createElement("style");
-    style.textContent = chatPanelStyle;
-    document.head.appendChild(style);
+    const tag = document.createElement("style");
+    tag.textContent = css;
+    document.head.appendChild(tag);
     const html = `
         <div class="au5-panel">
           <div class="au5-header">
@@ -181,16 +182,15 @@ class SidePanel {
       
           <div class="au5-participants-container au5-container"></div>
           <div class="au5-messages-container au5-container au5-hidden"></div>
-          <div class="au5-footer">
-            <button class="au5-start-btn au5-btn">Start Transcription</button>
-
-            <div class="au5-input-wrapper au5-hidden">
-              <div class="au5-input-container">
-                <input type="text" class="au5-input" placeholder="پیام خود را بنویسید..." />
-                <button class="au5-send-btn">ارسال</button>
+           <div class="au5-footer">
+              <button class="au5-start-btn au5-btn">Start Transcription</button>
+              <div class="au5-input-wrapper au5-hidden">
+                <div class="au5-input-container">
+                  <input type="text" class="au5-input" placeholder="Write your message ..." />
+                  <button class="au5-send-btn au5-btn">Send</button>
+                </div>
               </div>
             </div>
-          </div>
         </div>
       `;
     const container = document.createElement("div");
@@ -239,240 +239,6 @@ __publicField(SidePanel, "participantsContainer", null);
 __publicField(SidePanel, "btnStartTranscription", null);
 __publicField(SidePanel, "inputWrapper", null);
 __publicField(SidePanel, "direction", "ltr");
-const chatPanelStyle = `
-   /* Additional styles can be added here */
-body {
-  background-color: #333;
-  font-family: system-ui;
-}
-.au5-panel {
-  background-color: #fff;
-  border-radius: 16px;
-  bottom: 80px;
-  box-sizing: border-box;
-  max-width: 100%;
-  position: absolute;
-  right: 16px;
-  top: 16px;
-  transform: none;
-  z-index: 9999;
-  width: 360px;
-  font-family: system-ui;
-}
-
-.au5-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-}
-
-.au5-header-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.au5-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.au5-avatar img {
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-}
-
-.au5-room-name {
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.au5-member-count {
-  font-size: 12px;
-  color: #888;
-}
-
-.au5-header-icons {
-  display: flex;
-  gap: 8px;
-}
-
-.au5-header-icons .au5-icon {
-  font-size: 16px;
-  display: flex;
-  cursor: pointer;
-  border-radius: 4px;
-  width: 28px;
-  background-color: #f4f4f4f4;
-  height: 28px;
-  align-items: center;
-  justify-content: center;
-}
-
-.au5-container {
-  height: calc(100vh - 249px);
-  overflow-y: auto;
-  padding: 16px;
-}
-
-.au5-message {
-  display: flex;
-  align-items: flex-start;
-  gap: 4px;
-  margin-bottom: 12px;
-  position: relative;
-}
-
-.au5-bubble {
-  background: #f8f8f8;
-  border-radius: 12px;
-  padding: 8px 12px;
-  flex: 1;
-}
-
-.au5-sender {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.au5-sender-title {
-  font-weight: bold;
-  font-size: 13px;
-  margin-bottom: 4px;
-}
-
-.au5-text {
-  font-size: 13px;
-  margin-bottom: 16px;
-  direction: rtl;
-}
-
-.au5-sender-time {
-  font-size: 11px;
-  color: #888;
-  text-align: right;
-}
-
-.au5-message-reactions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 8px;
-}
-
-.au5-reactions {
-  display: flex;
-  gap: 4px;
-  left: 48px;
-  bottom: 8px;
-}
-
-.au5-reactions .reaction {
-  display: flex;
-  gap: 4px;
-  padding: 1px;
-  border-radius: 100px;
-  cursor: pointer;
-  border: 1px solid #e5e5e5;
-  transition: background-color 0.2s;
-  background-color: #e4e4e4;
-  align-items: center;
-  align-content: center;
-  min-width: 16px;
-  max-height: 16px;
-}
-
-.au5-reactions .reaction-emoji {
-  font-size: 12px;
-  width: 16px;
-  height: 16px;
-}
-
-.au5-reactions .reaction-users {
-  display: flex;
-  margin-left: 2px;
-}
-
-.au5-reactions .reaction-user {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 1px solid white;
-  margin-left: -4px;
-  display: flex;
-}
-
-.au5-reactions .reaction-user img {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-}
-
-.au5-btn {
-  background: #2196f3;
-  border: none;
-  color: white;
-  font-size: 13px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  height: 38px;
-  margin-left: 8px;
-  cursor: pointer;
-  font-family: system-ui;
-  width: -webkit-fill-available;
-}
-
-.au5-join-time {
-  text-align: center;
-  font-size: 12px;
-  color: #666;
-  margin: 16px 0;
-}
-
-.au5-input-wrapper {
-  display: flex;
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 16px;
-}
-
-.au5-input-container {
-  display: flex;
-  align-items: center;
-  flex: 1;
-  border: 1px solid #f4f4f4;
-  padding: 6px;
-  border-radius: 8px;
-}
-
-.au5-input {
-  flex: 1;
-  border: none;
-  font-size: 14px;
-  padding: 8px;
-  border-radius: 8px;
-  outline: none;
-  font-family: system-ui;
-}
-
-.au5-hidden {
-  display: none;
-}
-
-.au5-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 16px 16px 16px;
-}
-
-`;
 async function waitForMatch(selector, text) {
   const matchesText = (el) => {
     var _a;

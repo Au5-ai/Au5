@@ -10,6 +10,6 @@
     "outDir": "dist",
     "types": ["vite/client", "chrome"]
   },
-  "include": ["src/**/*.ts", "src/content.تس"],
+  "include": ["src/**/*.ts", "src/content.ts", "vite-env.d.ts", "src/**/*"],
   "exclude": ["node_modules"]
 }

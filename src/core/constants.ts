@@ -9,7 +9,7 @@ export const MeetingHubConfig = {
     TRANSCRIPTION_UPDATE: "RealTimeTranscription",
     PARTICIPANT_JOINED: "SomeoneIsJoining",
     TRANSCRIPTION_STARTED: "StartTranscription",
-    MeedHasBeenStarted: "MeetingHasStarted"
+    MeedHasBeenStarted: "MeetHasBeenStarted"
   },
   injectedScriptActions: {
     SET_MEETING_TITLE: "MeetingTitle",

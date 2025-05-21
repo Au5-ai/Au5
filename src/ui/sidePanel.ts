@@ -1,5 +1,6 @@
 import {TranscriptBlock} from "../types";
 import {toHoursAndMinutes} from "../utils/datetime";
+import css from "./styles/au5-panel.css?raw";
 
 export default class SidePanel {
   private static panelElement: HTMLDivElement | null = null;
@@ -11,9 +12,10 @@ export default class SidePanel {
 
   static createSidePanel(roomName: string, meetingId: string, direction: "ltr" | "rtl" = "ltr"): void {
     this.direction = direction;
-    const style = document.createElement("style");
-    style.textContent = chatPanelStyle;
-    document.head.appendChild(style);
+
+    const tag = document.createElement("style");
+    tag.textContent = css;
+    document.head.appendChild(tag);
 
     const html = `
         <div class="au5-panel">
@@ -44,16 +46,15 @@ export default class SidePanel {
       
           <div class="au5-participants-container au5-container"></div>
           <div class="au5-messages-container au5-container au5-hidden"></div>
-          <div class="au5-footer">
-            <button class="au5-start-btn au5-btn">Start Transcription</button>
-
-            <div class="au5-input-wrapper au5-hidden">
-              <div class="au5-input-container">
-                <input type="text" class="au5-input" placeholder="پیام خود را بنویسید..." />
-                <button class="au5-send-btn">ارسال</button>
+           <div class="au5-footer">
+              <button class="au5-start-btn au5-btn">Start Transcription</button>
+              <div class="au5-input-wrapper au5-hidden">
+                <div class="au5-input-container">
+                  <input type="text" class="au5-input" placeholder="Write your message ..." />
+                  <button class="au5-send-btn au5-btn">Send</button>
+                </div>
               </div>
             </div>
-          </div>
         </div>
       `;
 
@@ -105,240 +106,6 @@ export default class SidePanel {
   }
 }
 
-const chatPanelStyle = `
-   /* Additional styles can be added here */
-body {
-  background-color: #333;
-  font-family: system-ui;
-}
-.au5-panel {
-  background-color: #fff;
-  border-radius: 16px;
-  bottom: 80px;
-  box-sizing: border-box;
-  max-width: 100%;
-  position: absolute;
-  right: 16px;
-  top: 16px;
-  transform: none;
-  z-index: 9999;
-  width: 360px;
-  font-family: system-ui;
-}
-
-.au5-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-}
-
-.au5-header-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.au5-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.au5-avatar img {
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-}
-
-.au5-room-name {
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.au5-member-count {
-  font-size: 12px;
-  color: #888;
-}
-
-.au5-header-icons {
-  display: flex;
-  gap: 8px;
-}
-
-.au5-header-icons .au5-icon {
-  font-size: 16px;
-  display: flex;
-  cursor: pointer;
-  border-radius: 4px;
-  width: 28px;
-  background-color: #f4f4f4f4;
-  height: 28px;
-  align-items: center;
-  justify-content: center;
-}
-
-.au5-container {
-  height: calc(100vh - 249px);
-  overflow-y: auto;
-  padding: 16px;
-}
-
-.au5-message {
-  display: flex;
-  align-items: flex-start;
-  gap: 4px;
-  margin-bottom: 12px;
-  position: relative;
-}
-
-.au5-bubble {
-  background: #f8f8f8;
-  border-radius: 12px;
-  padding: 8px 12px;
-  flex: 1;
-}
-
-.au5-sender {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.au5-sender-title {
-  font-weight: bold;
-  font-size: 13px;
-  margin-bottom: 4px;
-}
-
-.au5-text {
-  font-size: 13px;
-  margin-bottom: 16px;
-  direction: rtl;
-}
-
-.au5-sender-time {
-  font-size: 11px;
-  color: #888;
-  text-align: right;
-}
-
-.au5-message-reactions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 8px;
-}
-
-.au5-reactions {
-  display: flex;
-  gap: 4px;
-  left: 48px;
-  bottom: 8px;
-}
-
-.au5-reactions .reaction {
-  display: flex;
-  gap: 4px;
-  padding: 1px;
-  border-radius: 100px;
-  cursor: pointer;
-  border: 1px solid #e5e5e5;
-  transition: background-color 0.2s;
-  background-color: #e4e4e4;
-  align-items: center;
-  align-content: center;
-  min-width: 16px;
-  max-height: 16px;
-}
-
-.au5-reactions .reaction-emoji {
-  font-size: 12px;
-  width: 16px;
-  height: 16px;
-}
-
-.au5-reactions .reaction-users {
-  display: flex;
-  margin-left: 2px;
-}
-
-.au5-reactions .reaction-user {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 1px solid white;
-  margin-left: -4px;
-  display: flex;
-}
-
-.au5-reactions .reaction-user img {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-}
-
-.au5-btn {
-  background: #2196f3;
-  border: none;
-  color: white;
-  font-size: 13px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  height: 38px;
-  margin-left: 8px;
-  cursor: pointer;
-  font-family: system-ui;
-  width: -webkit-fill-available;
-}
-
-.au5-join-time {
-  text-align: center;
-  font-size: 12px;
-  color: #666;
-  margin: 16px 0;
-}
-
-.au5-input-wrapper {
-  display: flex;
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 16px;
-}
-
-.au5-input-container {
-  display: flex;
-  align-items: center;
-  flex: 1;
-  border: 1px solid #f4f4f4;
-  padding: 6px;
-  border-radius: 8px;
-}
-
-.au5-input {
-  flex: 1;
-  border: none;
-  font-size: 14px;
-  padding: 8px;
-  border-radius: 8px;
-  outline: none;
-  font-family: system-ui;
-}
-
-.au5-hidden {
-  display: none;
-}
-
-.au5-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 16px 16px 16px;
-}
-
-`;
 // public static createPanel(direction: "ltr" | "rtl" = "ltr"): void {
 //   if (this.panel) {
 //     console.warn("ChatPanel already exists.");
