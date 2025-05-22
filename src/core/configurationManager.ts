@@ -1,5 +1,5 @@
 import {StorageWrapper} from "./browser/storageWrapper";
-import {AppConfiguration, ExtensionConfiguration, ServiceConfiguration, UserConfiguration} from "./types";
+import {AppConfiguration, ExtensionConfiguration, ServiceConfiguration, UserConfiguration} from "./types/configuration";
 
 const CONFIGURATION_KEY: string = "configuration";
 
