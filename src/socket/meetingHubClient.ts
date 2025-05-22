@@ -1,15 +1,21 @@
 import * as signalR from "@microsoft/signalr";
 import {MessagePackHubProtocol} from "@microsoft/signalr-protocol-msgpack";
 import {createMeetingPlatformInstance} from "../core/meetingPlatform";
+import {ConfigurationManager} from "../core/configurationManager";
+import {AppConfiguration} from "../core/types/configuration";
+import {StorageWrapper} from "../core/browser/storageWrapper";
+import {detectBrowser} from "../core/browser/browserDetector";
 
 class MeetingHubClient {
   private connection: signalR.HubConnection;
   private meetingId: string;
+  private config: AppConfiguration;
 
-  constructor(meetingId: string) {
+  constructor(config: AppConfiguration, meetingId: string) {
+    this.config = config;
     this.meetingId = meetingId;
     this.connection = new signalR.HubConnectionBuilder()
-      .withUrl(HubConnectionConfig.hubUrl)
+      .withUrl(this.config.service.hubUrl)
       .withAutomaticReconnect()
       .withHubProtocol(new MessagePackHubProtocol())
       .build();
@@ -89,7 +95,10 @@ class MeetingHubClient {
 }
 
 // Initialize
-(function () {
+(async function () {
+  const browser = detectBrowser();
+  configurationManager = new ConfigurationManager(new StorageWrapper());
+  const config = await configurationManager.getConfig();
   createMeetingPlatformInstance(window.location.href);
   const meetingId = getMeetingTitleFromUrl(window.location.href);
   new MeetingHubClient(meetingId);
