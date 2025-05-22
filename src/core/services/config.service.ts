@@ -1,56 +1,51 @@
-import {ExtensionConfiguration, IStorageService, ServiceConfiguration, UserConfiguration} from "../types";
+import {StorageService} from "../browser/storage.service";
+import {AppConfiguration, ExtensionConfiguration, ServiceConfiguration, UserConfiguration} from "../types";
 
 const CONFIGURATION_KEY: string = "configuration";
 
-export interface AppConfiguration {
-  User: UserConfiguration;
-  Service: ServiceConfiguration;
-  Extension: ExtensionConfiguration;
-}
-
 export class ConfigurationService {
-  constructor(private storageService: IStorageService) {}
+  constructor(private storageService: StorageService) {
+    // TODO: Remove this in production
+    this.setConfig({
+      User: {
+        token: "",
+        userId: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
+        fullName: "Mohammad Karimi",
+        pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+      } as UserConfiguration,
+
+      Service: {
+        webhookUrl: "https://au5.ai/api/v1/",
+        direction: "rtl"
+      } as ServiceConfiguration,
+
+      Extension: {
+        meetingEndIcon: {
+          selector: ".google-symbols",
+          text: "call_end"
+        },
+        captionsIcon: {
+          selector: ".google-symbols",
+          text: "closed_caption_off"
+        },
+        transcriptSelectors: {
+          aria: 'div[role="region"][tabindex="0"]',
+          fallback: ".a4cQT"
+        },
+        transcriptStyles: {
+          opacity: "0.2"
+        },
+        maxTranscriptLength: 250,
+        transcriptTrimThreshold: 125
+      } as ExtensionConfiguration
+    } as AppConfiguration);
+  }
 
   /**
    * Retrieves the entire configuration object from storage.
    */
   async getConfig(): Promise<AppConfiguration> {
     try {
-      return {
-        User: {
-          token: "",
-          userId: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
-          fullName: "Mohammad Karimi",
-          pictureUrl:
-            "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-        } as UserConfiguration,
-
-        Service: {
-          webhookUrl: "https://au5.ai/api/v1/",
-          direction: "rtl"
-        } as ServiceConfiguration,
-
-        Extension: {
-          meetingEndIcon: {
-            selector: ".google-symbols",
-            text: "call_end"
-          },
-          captionsIcon: {
-            selector: ".google-symbols",
-            text: "closed_caption_off"
-          },
-          transcriptSelectors: {
-            aria: 'div[role="region"][tabindex="0"]',
-            fallback: ".a4cQT"
-          },
-          transcriptStyles: {
-            opacity: "0.2"
-          },
-          maxTranscriptLength: 250,
-          transcriptTrimThreshold: 125
-        } as ExtensionConfiguration
-      } as AppConfiguration;
-
       const config = await this.storageService.get<AppConfiguration>(CONFIGURATION_KEY);
       return config ?? null;
     } catch (error) {

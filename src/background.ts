@@ -1,7 +1,7 @@
 import {MessageDispatcher} from "./backgroundHandlers/message.dispatcher";
 import {MeetingEndedHandler} from "./backgroundHandlers/meeting.ended.handler";
 import {MeetingStartedHandler} from "./backgroundHandlers/meeting.started.handler";
-import {StorageService} from "./services/storage.service";
+import {StorageService} from "./core/browser/storage.service";
 
 // /**
 //  * List of all available message handlers using the strategy pattern.

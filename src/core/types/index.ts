@@ -1,9 +1,3 @@
-import {AppConfiguration} from "../services/config.service";
-
-/**
- * Represents the synced structure stored in Chrome's local storage.
- */
-
 export interface UserConfiguration {
   token: string;
   userId: string;
@@ -34,6 +28,20 @@ export interface ExtensionConfiguration {
   };
   maxTranscriptLength: number;
   transcriptTrimThreshold: number;
+}
+
+export interface AppConfiguration {
+  User: UserConfiguration;
+  Service: ServiceConfiguration;
+  Extension: ExtensionConfiguration;
+}
+
+export interface IBrowser {
+  get(keys: string[] | string, area?: "local" | "sync"): Promise<any>;
+  set(items: Record<string, any>, area?: "local" | "sync"): Promise<void>;
+  remove(keys: string[] | string, area?: "local" | "sync"): Promise<void>;
+  // Add any other browser-specific methods you need
+  // For example, you might want to add methods for notifications, tabs, etc.
 }
 
 // =====================================================================================
@@ -186,13 +194,6 @@ export interface IMessageHandler {
 // =====================================================================================
 // ------------------------------ ** Browser Service ** ----------------------------------
 // =====================================================================================
-
-export interface IStorageService {
-  set<T>(key: string, value: T): Promise<void>;
-  get<T>(key: string | string[]): Promise<T>;
-  remove(keys: string | string[]): Promise<void>;
-  getSync<T>(key: string): Promise<T>;
-}
 
 export interface IconData {
   selector: string;
