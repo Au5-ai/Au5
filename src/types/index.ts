@@ -1,5 +1,41 @@
 import {AppConfiguration} from "../services/config.service";
 
+/**
+ * Represents the synced structure stored in Chrome's local storage.
+ */
+
+export interface UserConfiguration {
+  token: string;
+  userId: string;
+  fullName: string;
+  pictureUrl: string;
+}
+
+export interface ServiceConfiguration {
+  webhookUrl: string;
+  direction: "ltr" | "rtl";
+}
+
+export interface ExtensionConfiguration {
+  meetingEndIcon: {
+    selector: string;
+    text: string;
+  };
+  captionsIcon: {
+    selector: string;
+    text: string;
+  };
+  transcriptSelectors: {
+    aria: string;
+    fallback: string;
+  };
+  transcriptStyles: {
+    opacity: string;
+  };
+  maxTranscriptLength: number;
+  transcriptTrimThreshold: number;
+}
+
 // =====================================================================================
 // ------------------------------ ** TRANSCRIPT & CHAT STRUCTURES ** -------------------
 // =====================================================================================
@@ -150,11 +186,6 @@ export interface IMessageHandler {
 // =====================================================================================
 // ------------------------------ ** Browser Service ** ----------------------------------
 // =====================================================================================
-
-export interface IBrowserService {
-  reload(): void;
-  sendMessage(message: ExtensionMessage, responseCallback?: (response: ExtensionResponse) => void): void;
-}
 
 export interface IStorageService {
   set<T>(key: string, value: T): Promise<void>;

@@ -1,6 +1,9 @@
 export const MeetingHubConfig = {
   hubUrl: "https://localhost:7061/meetinghub",
-  receiveMethod: "ReceiveMessage",
+  receiveMethod: "ReceiveMessage"
+};
+
+export const PostMessageConfig = {
   messageSources: {
     injectedScript: "Au5-InjectedScript",
     contentScript: "Au5-ContentScript"
@@ -9,12 +12,10 @@ export const MeetingHubConfig = {
     TRANSCRIPTION_UPDATE: "RealTimeTranscription",
     PARTICIPANT_JOINED: "SomeoneIsJoining",
     TRANSCRIPTION_STARTED: "StartTranscription",
-    MeedHasBeenStarted: "MeetHasBeenStarted"
+    MEET_HASBEEN_STARTED: "MeetHasBeenStarted"
   },
   injectedScriptActions: {
-    SET_MEETING_TITLE: "MeetingTitle",
     REQUEST_TRANSCRIPTION: "StartTranscription",
     SEND_TRANSCRIPTION: "RealTimeTranscription"
-  },
-  defaultMeetingId: "NA"
+  }
 };

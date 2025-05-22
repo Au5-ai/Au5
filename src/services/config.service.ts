@@ -1,39 +1,9 @@
-import {IStorageService} from "../types";
+import {ExtensionConfiguration, IStorageService, ServiceConfiguration, UserConfiguration} from "../types";
 
 const CONFIGURATION_KEY: string = "configuration";
 
-/**
- * Represents the synced structure stored in Chrome's local storage.
- */
-interface ServiceConfiguration {
-  webhookUrl: string;
-  token: string;
-  userId: string;
-  fullName: string;
-  direction: "ltr" | "rtl";
-}
-
-interface ExtensionConfiguration {
-  meetingEndIcon: {
-    selector: string;
-    text: string;
-  };
-  captionsIcon: {
-    selector: string;
-    text: string;
-  };
-  transcriptSelectors: {
-    aria: string;
-    fallback: string;
-  };
-  transcriptStyles: {
-    opacity: string;
-  };
-  maxTranscriptLength: number;
-  transcriptTrimThreshold: number;
-}
-
 export interface AppConfiguration {
+  User: UserConfiguration;
   Service: ServiceConfiguration;
   Extension: ExtensionConfiguration;
 }
@@ -46,7 +16,41 @@ export class ConfigurationService {
    */
   async getConfig(): Promise<AppConfiguration> {
     try {
-      return DefaultAppConfig as AppConfiguration;
+      return {
+        User: {
+          token: "",
+          userId: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
+          fullName: "Mohammad Karimi",
+          pictureUrl:
+            "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+        } as UserConfiguration,
+
+        Service: {
+          webhookUrl: "https://au5.ai/api/v1/",
+          direction: "rtl"
+        } as ServiceConfiguration,
+
+        Extension: {
+          meetingEndIcon: {
+            selector: ".google-symbols",
+            text: "call_end"
+          },
+          captionsIcon: {
+            selector: ".google-symbols",
+            text: "closed_caption_off"
+          },
+          transcriptSelectors: {
+            aria: 'div[role="region"][tabindex="0"]',
+            fallback: ".a4cQT"
+          },
+          transcriptStyles: {
+            opacity: "0.2"
+          },
+          maxTranscriptLength: 250,
+          transcriptTrimThreshold: 125
+        } as ExtensionConfiguration
+      } as AppConfiguration;
+
       const config = await this.storageService.get<AppConfiguration>(CONFIGURATION_KEY);
       return config ?? null;
     } catch (error) {
@@ -94,35 +98,3 @@ export class ConfigurationService {
     }
   }
 }
-
-// Default configuration for the extension
-const ExtensionConfig: ExtensionConfiguration = {
-  meetingEndIcon: {
-    selector: ".google-symbols",
-    text: "call_end"
-  },
-  captionsIcon: {
-    selector: ".google-symbols",
-    text: "closed_caption_off"
-  },
-  transcriptSelectors: {
-    aria: 'div[role="region"][tabindex="0"]',
-    fallback: ".a4cQT"
-  },
-  transcriptStyles: {
-    opacity: "0.2"
-  },
-  maxTranscriptLength: 250,
-  transcriptTrimThreshold: 125
-};
-
-const DefaultAppConfig: AppConfiguration = {
-  Service: {
-    webhookUrl: "https://au5.ai/api/v1/",
-    token: "",
-    userId: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
-    fullName: "Mohammad Karimi",
-    direction: "rtl"
-  } as ServiceConfiguration,
-  Extension: ExtensionConfig as ExtensionConfiguration
-};
