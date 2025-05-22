@@ -16,7 +16,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["injected.js", "signalr.min.js"],
+      "resources": ["meetingHubClient.js", "signalr.min.js"],
       "matches": ["<all_urls>"]
     }
   ],
@@ -27,9 +27,6 @@
     "16": "assets/icons/16x.png",
     "48": "assets/icons/48x.png",
     "128": "assets/icons/128x.png"
-  },
-  "side_panel": {
-    "default_path": "sidepanel.html"
   },
   "permissions": [
     "declarativeContent",
