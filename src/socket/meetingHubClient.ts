@@ -3,8 +3,8 @@ import {MessagePackHubProtocol} from "@microsoft/signalr-protocol-msgpack";
 import {createMeetingPlatformInstance} from "../core/meetingPlatform";
 import {ConfigurationManager} from "../core/configurationManager";
 import {AppConfiguration} from "../core/types/configuration";
-import {StorageWrapper} from "../core/browser/storageWrapper";
 import {detectBrowser} from "../core/browser/browserDetector";
+import {InjectedScriptAllowedActions, Message} from "./types";
 
 class MeetingHubClient {
   private connection: signalR.HubConnection;
@@ -26,14 +26,13 @@ class MeetingHubClient {
   }
 
   private setupHandlers() {
-    this.connection.on(HubConnectionConfig.methodName, (msg: Message) => {
-      console.log("Received message from server", msg);
-      switch (msg.header.messageType) {
-        case ContentScriptActions.SomeoneIsJoining:
-        case ContentScriptActions.RealTimeTranscription:
-        case ContentScriptActions.StartTranscription:
-        case ContentScriptActions.MeetHasBeenStarted:
-          this.postToWindow(msg.header.messageType, msg.payload);
+    this.connection.on("ReceiveMessage", (msg: Message) => {
+      switch (msg.header.type) {
+        case InjectedScriptAllowedActions.NotifyUserJoining:
+        case InjectedScriptAllowedActions.NotifyMeetHasBeenStarted:
+        case InjectedScriptAllowedActions.TriggerTranscriptionStart:
+        case InjectedScriptAllowedActions.NotifyRealTimeTranscription:
+          this.postToWindow(msg);
           break;
       }
     });
@@ -43,12 +42,12 @@ class MeetingHubClient {
     });
   }
 
-  private postToWindow(action: string, payload: MessagePayload) {
+  private postToWindow(msg: Message) {
     window.postMessage(
       {
-        source: MessageSource.InjectedScript,
-        action,
-        payload
+        source: "Au5-InjectedScript",
+        action: msg.header.type,
+        payload: msg.payload
       },
       "*"
     );
@@ -58,36 +57,45 @@ class MeetingHubClient {
     this.connection
       .start()
       .then(() => {
-        console.log("Connection started", this.meetingId);
         this.connection.invoke("JoinMeeting", {
           MeetingId: this.meetingId,
-          UserId: "123456",
-          FullName: "Mohammad Karimi",
-          ProfileImage:
-            "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-        } as JoinMeetingDto);
+          User: {
+            UserId: this.config.user.userId,
+            FullName: this.config.user.fullName,
+            PictureUrl: this.config.user.pictureUrl
+          }
+        });
       })
       .catch(() => {});
   }
 
   private setupWindowMessageListener() {
     window.addEventListener("message", event => {
-      if (event.source !== window || event.data.source !== MessageSource.ContentScript) return;
+      if (event.source !== window || event.data.source !== "Au5-ContentScript") return;
 
       const {action, payload} = event.data;
 
       switch (action) {
-        case ContentScriptActions.StartTranscription:
-          this.connection.invoke(action, {MeetingId: this.meetingId, UserId: payload.userId} as StartTranscriptionDto);
+        case InjectedScriptAllowedActions.TriggerTranscriptionStart:
+          this.connection.invoke(action, {
+            MeetingId: this.meetingId,
+            User: {
+              UserId: this.config.user.userId,
+              FullName: this.config.user.fullName,
+              PictureUrl: this.config.user.pictureUrl
+            }
+          });
           break;
 
-        case ContentScriptActions.RealTimeTranscription:
+        case InjectedScriptAllowedActions.NotifyRealTimeTranscription:
           this.connection.invoke(action, {
-            Id: payload.id,
             MeetingId: this.meetingId,
-            Speaker: payload.speaker,
+            Speaker: {
+              FullName: payload.fullName,
+              PictureUrl: payload.pictureUrl
+            },
             Transcript: payload.transcript
-          } as RealTimeTranscriptionDto);
+          });
           break;
       }
     });
@@ -97,9 +105,14 @@ class MeetingHubClient {
 // Initialize
 (async function () {
   const browser = detectBrowser();
-  configurationManager = new ConfigurationManager(new StorageWrapper());
+  const configurationManager = new ConfigurationManager(browser);
   const config = await configurationManager.getConfig();
-  createMeetingPlatformInstance(window.location.href);
-  const meetingId = getMeetingTitleFromUrl(window.location.href);
-  new MeetingHubClient(meetingId);
+
+  const platform = createMeetingPlatformInstance(window.location.href);
+  if (!platform) {
+    console.error("Unsupported meeting platform");
+    return;
+  }
+  const meetingId = platform.getMeetingTitle();
+  new MeetingHubClient(config, meetingId);
 })();

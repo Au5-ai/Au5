@@ -1,6 +1,6 @@
-import {Browser, IBrowserInjector, IBrowserStorage} from "../types/browser";
+import {IBrowser, IBrowserInjector, IBrowserStorage} from "../types/browser";
 
-export class Chrome extends Browser implements IBrowserStorage, IBrowserInjector {
+export class Chrome implements IBrowser {
   name = "Chrome";
 
   get(keys: string[] | string, area: "local" | "sync" = "local"): Promise<any> {

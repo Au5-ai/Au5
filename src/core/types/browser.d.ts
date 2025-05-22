@@ -1,5 +1,5 @@
-export abstract class Browser {
-  abstract name: string;
+export interface IBrowser extends IBrowserInjector, IBrowserStorage {
+  name: string;
 }
 
 export interface IBrowserStorage {

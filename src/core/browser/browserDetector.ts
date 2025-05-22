@@ -1,11 +1,7 @@
-import {Browser} from "../types/browser";
+import {IBrowser} from "../types/browser";
 import {Chrome} from "./chromeBrowser";
 
-export class UnknownBrowser extends Browser {
-  name = "Unknown";
-}
-
-export function detectBrowser(): Browser {
+export function detectBrowser(): IBrowser {
   const userAgent = navigator.userAgent;
 
   // if (/Edg\//.test(userAgent)) {
@@ -23,5 +19,5 @@ export function detectBrowser(): Browser {
   // if (/Safari\//.test(userAgent)) {
   //     return new Safari();
   // }
-  return new UnknownBrowser();
+  return new Chrome();
 }

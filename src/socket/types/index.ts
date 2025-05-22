@@ -7,19 +7,17 @@ export interface Message {
   payload: any;
 }
 
-//---------------------------------------
-// Enums for message actions
-enum ContentScriptActions {
-  RealTimeTranscription = "RealTimeTranscription",
-  SomeoneIsJoining = "SomeoneIsJoining",
-  StartTranscription = "StartTranscription",
-  MeetHasBeenStarted = "MeetHasBeenStarted"
+/**
+ * Actions that can be triggered by the content script.
+ */
+export enum InjectedScriptAllowedActions {
+  NotifyRealTimeTranscription = "NotifyRealTimeTranscription",
+  NotifyUserJoining = "NotifyUserJoining",
+  TriggerTranscriptionStart = "TriggerTranscriptionStart",
+  NotifyMeetHasBeenStarted = "NotifyMeetHasBeenStarted"
 }
 
-enum MessageSource {
-  InjectedScript = "Au5-InjectedScript",
-  ContentScript = "Au5-ContentScript"
-}
+//---------------------------------------
 
 interface StartTranscriptionDto {
   MeetingId: string;
