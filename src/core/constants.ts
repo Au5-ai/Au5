@@ -1,8 +1,3 @@
-export const MeetingHubConfig = {
-  hubUrl: "https://localhost:7061/meetinghub",
-  receiveMethod: "ReceiveMessage"
-};
-
 export const PostMessageConfig = {
   messageSources: {
     injectedScript: "Au5-InjectedScript",

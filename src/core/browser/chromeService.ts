@@ -1,4 +1,4 @@
-import {IBrowserStorage} from "../types/browser";
+import {IBrowserInjector, IBrowserStorage} from "../types/browser";
 
 export namespace Chrome {
   export class Storage implements IBrowserStorage {
@@ -27,6 +27,25 @@ export namespace Chrome {
           resolve();
         });
       });
+    }
+  }
+
+  export class Runtime {}
+
+  export class ScriptInjector implements IBrowserInjector {
+    /**
+     * Injects a local script from the extension into the DOM.
+     *
+     * @param fileName - The filename of the script in the extension
+     * @param onLoad - Optional callback executed after the script is loaded
+     */
+    inject(fileName: string, onLoad: () => void = () => {}): void {
+      const script = document.createElement("script");
+      script.src = chrome.runtime.getURL(fileName);
+      script.type = "text/javascript";
+      script.onload = onLoad;
+
+      (document.head || document.documentElement).appendChild(script);
     }
   }
 }

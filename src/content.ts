@@ -1,11 +1,4 @@
 //https://meet.google.com/uir-miof-cby
-import {MeetingHubConfig} from "./core/constants";
-import {pipeAsync} from "./core/pipeline";
-import {AppConfiguration, ConfigurationService} from "./core/configurationManager";
-import {StorageService} from "./core/storage.service";
-import {PipelineContext, TranscriptBlock} from "./types";
-import SidePanel from "./ui/sidePanel";
-import {setOpacity, getDomContainer, injectScript, selectAll, selectSingle, waitForMatch} from "./utils/dom.utils";
 
 let appConfig: AppConfiguration;
 const configService = new ConfigurationService(new StorageService());

@@ -116,7 +116,7 @@
 // })();
 import * as signalR from "@microsoft/signalr";
 import {MessagePackHubProtocol} from "@microsoft/signalr-protocol-msgpack";
-import {getMeetingTitleFromUrl} from "./utils/urlHelper";
+import {getMeetingTitleFromUrl} from "./core/utils/urlHelper";
 
 // Enums for message actions
 enum ContentScriptActions {

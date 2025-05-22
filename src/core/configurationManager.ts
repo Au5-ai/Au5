@@ -7,19 +7,20 @@ export class ConfigurationManager {
   constructor(private storageWrapper: StorageWrapper) {
     // TODO: Remove this in production
     this.setConfig({
-      User: {
+      user: {
         token: "",
         userId: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
         fullName: "Mohammad Karimi",
         pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
       } as UserConfiguration,
 
-      Service: {
+      service: {
         webhookUrl: "https://au5.ai/api/v1/",
-        direction: "rtl"
+        direction: "rtl",
+        hubUrl: "https://localhost:7061/meetinghub"
       } as ServiceConfiguration,
 
-      Extension: {
+      extension: {
         meetingEndIcon: {
           selector: ".google-symbols",
           text: "call_end"

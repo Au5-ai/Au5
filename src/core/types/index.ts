@@ -8,6 +8,7 @@ export interface UserConfiguration {
 export interface ServiceConfiguration {
   webhookUrl: string;
   direction: "ltr" | "rtl";
+  hubUrl: string;
 }
 
 export interface ExtensionConfiguration {
@@ -31,9 +32,9 @@ export interface ExtensionConfiguration {
 }
 
 export interface AppConfiguration {
-  User: UserConfiguration;
-  Service: ServiceConfiguration;
-  Extension: ExtensionConfiguration;
+  user: UserConfiguration;
+  service: ServiceConfiguration;
+  extension: ExtensionConfiguration;
 }
 
 // =====================================================================================
