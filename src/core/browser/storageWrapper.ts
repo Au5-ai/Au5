@@ -1,7 +1,7 @@
-import {IBrowser} from "../types";
+import {IBrowserStorage} from "../types/browser";
 
-export class StorageService {
-  constructor(private browser: IBrowser) {}
+export class StorageWrapper {
+  constructor(private browser: IBrowserStorage) {}
 
   async remove(keys: string | string[]): Promise<void> {
     return this.browser.remove(keys, "local");

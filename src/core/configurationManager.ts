@@ -1,10 +1,10 @@
-import {StorageService} from "../browser/storage.service";
-import {AppConfiguration, ExtensionConfiguration, ServiceConfiguration, UserConfiguration} from "../types";
+import {StorageWrapper} from "./browser/storageWrapper";
+import {AppConfiguration, ExtensionConfiguration, ServiceConfiguration, UserConfiguration} from "./types";
 
 const CONFIGURATION_KEY: string = "configuration";
 
-export class ConfigurationService {
-  constructor(private storageService: StorageService) {
+export class ConfigurationManager {
+  constructor(private storageWrapper: StorageWrapper) {
     // TODO: Remove this in production
     this.setConfig({
       User: {
@@ -46,7 +46,7 @@ export class ConfigurationService {
    */
   async getConfig(): Promise<AppConfiguration> {
     try {
-      const config = await this.storageService.get<AppConfiguration>(CONFIGURATION_KEY);
+      const config = await this.storageWrapper.get<AppConfiguration>(CONFIGURATION_KEY);
       return config ?? null;
     } catch (error) {
       console.error("Failed to load configuration:", error);
@@ -59,7 +59,7 @@ export class ConfigurationService {
    */
   async setConfig(config: AppConfiguration): Promise<void> {
     try {
-      await this.storageService.set<AppConfiguration>(CONFIGURATION_KEY, config);
+      await this.storageWrapper.set<AppConfiguration>(CONFIGURATION_KEY, config);
     } catch (error) {
       console.error("Failed to save configuration:", error);
     }
@@ -87,7 +87,7 @@ export class ConfigurationService {
    */
   async clearConfig(): Promise<void> {
     try {
-      await this.storageService.remove(CONFIGURATION_KEY);
+      await this.storageWrapper.remove(CONFIGURATION_KEY);
     } catch (error) {
       console.error("Failed to clear configuration:", error);
     }

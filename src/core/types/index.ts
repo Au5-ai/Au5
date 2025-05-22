@@ -36,14 +36,6 @@ export interface AppConfiguration {
   Extension: ExtensionConfiguration;
 }
 
-export interface IBrowser {
-  get(keys: string[] | string, area?: "local" | "sync"): Promise<any>;
-  set(items: Record<string, any>, area?: "local" | "sync"): Promise<void>;
-  remove(keys: string[] | string, area?: "local" | "sync"): Promise<void>;
-  // Add any other browser-specific methods you need
-  // For example, you might want to add methods for notifications, tabs, etc.
-}
-
 // =====================================================================================
 // ------------------------------ ** TRANSCRIPT & CHAT STRUCTURES ** -------------------
 // =====================================================================================

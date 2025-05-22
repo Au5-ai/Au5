@@ -1,4 +1,4 @@
-import {TranscriptBlock} from "../types";
+import {TranscriptBlock} from "../core/types";
 import {toHoursAndMinutes} from "../utils/datetime";
 import css from "./styles/au5-panel.css?raw";
 
