@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "Au5.ai",
+  "short_name": "Au5",
+  "update_url": "https://clients2.google.com/service/update2/crx",
+  "version": "0.1.1",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "js": ["content.js"],
+      "matches": ["*://meet.google.com/*-*-*"],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["meetingHubClient.js", "signalr.min.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self';"
+  },
+  "icons": {
+    "16": "assets/icons/16x.png",
+    "48": "assets/icons/48x.png",
+    "128": "assets/icons/128x.png"
+  },
+  "permissions": [
+    "declarativeContent",
+    "activeTab",
+    "storage",
+    "alarms",
+    "scripting",
+    "unlimitedStorage",
+    "declarativeNetRequest",
+    "sidePanel",
+    "tabs"
+  ],
+  "host_permissions": ["*://meet.google.com/*-*-*"]
+}

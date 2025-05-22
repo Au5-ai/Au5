@@ -5,11 +5,13 @@ import {ConfigurationManager} from "../core/configurationManager";
 import {AppConfiguration} from "../core/types/configuration";
 import {detectBrowser} from "../core/browser/browserDetector";
 import {InjectedScriptAllowedActions, Message} from "./types";
+import {WindowMessageHandler} from "./windowMessageHandler";
 
 class MeetingHubClient {
   private connection: signalR.HubConnection;
   private meetingId: string;
   private config: AppConfiguration;
+  private windowMessageHandler: WindowMessageHandler;
 
   constructor(config: AppConfiguration, meetingId: string) {
     this.config = config;
@@ -20,8 +22,8 @@ class MeetingHubClient {
       .withHubProtocol(new MessagePackHubProtocol())
       .build();
 
+    this.windowMessageHandler = new WindowMessageHandler(this.handleWindowMessage.bind(this));
     this.setupHandlers();
-    this.setupWindowMessageListener();
     this.startConnection();
   }
 
@@ -32,25 +34,10 @@ class MeetingHubClient {
         case InjectedScriptAllowedActions.NotifyMeetHasBeenStarted:
         case InjectedScriptAllowedActions.TriggerTranscriptionStart:
         case InjectedScriptAllowedActions.NotifyRealTimeTranscription:
-          this.postToWindow(msg);
+          this.windowMessageHandler.postToWindow(msg);
           break;
       }
     });
-
-    this.connection.onclose(() => {
-      this.startConnection();
-    });
-  }
-
-  private postToWindow(msg: Message) {
-    window.postMessage(
-      {
-        source: "Au5-InjectedScript",
-        action: msg.header.type,
-        payload: msg.payload
-      },
-      "*"
-    );
   }
 
   private startConnection() {
@@ -66,39 +53,35 @@ class MeetingHubClient {
           }
         });
       })
-      .catch(() => {});
+      .catch(err => {
+        console.error("SignalR connection failed:", err);
+      });
   }
 
-  private setupWindowMessageListener() {
-    window.addEventListener("message", event => {
-      if (event.source !== window || event.data.source !== "Au5-ContentScript") return;
+  private handleWindowMessage(action: string, payload: any) {
+    switch (action) {
+      case InjectedScriptAllowedActions.TriggerTranscriptionStart:
+        this.connection.invoke(action, {
+          MeetingId: this.meetingId,
+          User: {
+            UserId: this.config.user.userId,
+            FullName: this.config.user.fullName,
+            PictureUrl: this.config.user.pictureUrl
+          }
+        });
+        break;
 
-      const {action, payload} = event.data;
-
-      switch (action) {
-        case InjectedScriptAllowedActions.TriggerTranscriptionStart:
-          this.connection.invoke(action, {
-            MeetingId: this.meetingId,
-            User: {
-              UserId: this.config.user.userId,
-              FullName: this.config.user.fullName,
-              PictureUrl: this.config.user.pictureUrl
-            }
-          });
-          break;
-
-        case InjectedScriptAllowedActions.NotifyRealTimeTranscription:
-          this.connection.invoke(action, {
-            MeetingId: this.meetingId,
-            Speaker: {
-              FullName: payload.fullName,
-              PictureUrl: payload.pictureUrl
-            },
-            Transcript: payload.transcript
-          });
-          break;
-      }
-    });
+      case InjectedScriptAllowedActions.NotifyRealTimeTranscription:
+        this.connection.invoke(action, {
+          MeetingId: this.meetingId,
+          Speaker: {
+            FullName: payload.fullName,
+            PictureUrl: payload.pictureUrl
+          },
+          Transcript: payload.transcript
+        });
+        break;
+    }
   }
 }
 
