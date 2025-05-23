@@ -5,7 +5,6 @@ export interface IMeetingPlatform {
 export interface PipelineContext {
   transcriptContainer?: HTMLElement | null;
   canUseAriaBasedTranscriptSelector: boolean;
-  hasMeetingStarted: boolean;
 }
 
 // =====================================================================================

@@ -16,80 +16,19 @@ const browser = detectBrowser();
 const domUtils = new DomUtils(browser);
 const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5-ContentScript", handleWindowMessage);
 
-const activateCaptions = async (ctx: PipelineContext): Promise<PipelineContext> => {
-  const captionsIcon = config.extension.captionsIcon;
-  const captionsButton = domUtils.selectAll(captionsIcon.selector, captionsIcon.text)[0];
-  captionsButton?.click();
-  return ctx;
-};
-
-const findTranscriptContainer = async (ctx: PipelineContext): Promise<PipelineContext> => {
-  const dom = domUtils.getDomContainer(
-    config.extension.transcriptSelectors.aria,
-    config.extension.transcriptSelectors.fallback
-  );
-  if (!dom) throw new Error("Transcript container not found in DOM");
-  ctx.transcriptContainer = dom.container;
-  ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
-  return ctx;
-};
-
-const applyTranscriptStyle = async (ctx: PipelineContext): Promise<PipelineContext> => {
-  if (ctx.transcriptContainer) {
-    setOpacity(
-      ctx.transcriptContainer,
-      ctx.canUseAriaBasedTranscriptSelector,
-      appConfig.Extension.transcriptStyles.opacity
-    );
-  }
-  return ctx;
-};
-
-const observeTranscriptContainer = async (ctx: PipelineContext): Promise<PipelineContext> => {
-  if (ctx.transcriptContainer) {
-    transcriptObserver = new MutationObserver(createMutationHandler(ctx));
-    transcriptObserver.observe(ctx.transcriptContainer, {
-      childList: true,
-      attributes: true,
-      subtree: true,
-      characterData: true
-    });
-  }
-  return ctx;
-};
-
-const finalizeMeetingRoutines = async (ctx: PipelineContext): Promise<PipelineContext> => {
-  endMeetingRoutines();
-  return ctx;
-};
-
-async function waitForStartingMeet(): Promise<void> {
+(async function initMeetingRoutine(): Promise<void> {
   try {
     const configurationManager = new ConfigurationManager(browser);
     config = await configurationManager.getConfig();
+
     await domUtils.waitForMatch(config.extension.meetingEndIcon.selector, config.extension.meetingEndIcon.text);
-  } catch (error) {
-    console.error("Failed to detect meeting start:", error);
-  }
-}
 
-export function startPipeline() {
-  return runPipesAsync(
-    activateCaptions,
-    findTranscriptContainer,
-    applyTranscriptStyle,
-    observeTranscriptContainer,
-    finalizeMeetingRoutines
-  );
-}
-
-waitForStartingMeet()
-  .then(async () => {
     const platform = createMeetingPlatformInstance(window.location.href);
     if (!platform) {
       console.error("Unsupported meeting platform");
       return;
     }
+
     const meetingId = platform.getMeetingTitle();
 
     SidePanel.createSidePanel("Asax Co", meetingId, config.service.direction);
@@ -98,7 +37,15 @@ waitForStartingMeet()
 
     document.getElementById("au5-startTranscription-btn")?.addEventListener("click", () => {
       SidePanel.showMessagesContainer();
-      startPipeline();
+
+      runPipesAsync(
+        {} as PipelineContext,
+        Pipelines.activateCaptionsPipe,
+        Pipelines.findTranscriptContainerPipe,
+        Pipelines.observeTranscriptContainerPipe,
+        Pipelines.addEndMeetingButtonListenerPipe
+      );
+
       windowMessageHandler.postToWindow({
         header: {type: MessageTypes.TriggerTranscriptionStart},
         payload: {
@@ -111,16 +58,87 @@ waitForStartingMeet()
         }
       });
     });
-  })
-  .catch(error => {
+  } catch (error) {
     console.error("Meeting routine execution failed:", error);
-  });
+  }
+})();
+
+namespace Pipelines {
+  export const activateCaptionsPipe = async (ctx: PipelineContext): Promise<PipelineContext> => {
+    const captionsIcon = config.extension.captionsIcon;
+    const captionsButton = domUtils.selectAll(captionsIcon.selector, captionsIcon.text)[0];
+    captionsButton?.click();
+    return ctx;
+  };
+
+  export const findTranscriptContainerPipe = async (ctx: PipelineContext): Promise<PipelineContext> => {
+    const dom = domUtils.getDomContainer(
+      config.extension.transcriptSelectors.aria,
+      config.extension.transcriptSelectors.fallback
+    );
+    if (!dom) throw new Error("Transcript container not found in DOM");
+    ctx.transcriptContainer = dom.container;
+    ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
+    return ctx;
+  };
+
+  export const observeTranscriptContainerPipe = async (ctx: PipelineContext): Promise<PipelineContext> => {
+    if (ctx.transcriptContainer) {
+      transcriptObserver = new MutationObserver(createMutationHandler(ctx));
+      transcriptObserver.observe(ctx.transcriptContainer, {
+        childList: true,
+        attributes: true,
+        subtree: true,
+        characterData: true
+      });
+    }
+    return ctx;
+  };
+
+  export const addEndMeetingButtonListenerPipe = async (ctx: PipelineContext): Promise<PipelineContext> => {
+    endMeetingRoutines();
+    return ctx;
+  };
+}
 
 function handleWindowMessage(action: string, payload: any) {
   console.log("Received action:", action);
   console.log("Received payload:", payload);
+
+  // window.addEventListener("message", event => {
+  //   const {data, source} = event;
+
+  //   // Validate source
+  //   if (source !== window || data?.source !== MeetingHubConfig.messageSources.injectedScript) {
+  //     return;
+  //   }
+
+  //   const {action, payload} = data;
+
+  //   switch (action) {
+  //     case MeetingHubConfig.contentScriptActions.TRANSCRIPTION_UPDATE:
+  //       //  SidePanel.updateLiveMessage(payload);
+  //       break;
+
+  //     case MeetingHubConfig.contentScriptActions.PARTICIPANT_JOINED:
+  //       // SidePanel.addParticipant(payload);
+  //       break;
+
+  //     case MeetingHubConfig.contentScriptActions.TRANSCRIPTION_STARTED:
+  //       //  SidePanel.hideParticipantList();
+  //       break;
+
+  //     case MeetingHubConfig.contentScriptActions.MeedHasBeenStarted:
+  //       console.log("Meeting has started");
+  //       SidePanel.showMessagesContainer();
+  //       break;
+  //     default:
+  //       console.warn("Unknown message action received:", action);
+  //   }
+  // });
 }
 
+//----------------
 function createMutationHandler(ctx: PipelineContext) {
   return function (mutations: MutationRecord[], observer: MutationObserver) {
     handleTranscriptMutations(mutations, ctx);
@@ -131,8 +149,8 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
   for (const _ of mutations) {
     try {
       const transcriptContainer = ctx.canUseAriaBasedTranscriptSelector
-        ? selectSingle(appConfig.Extension.transcriptSelectors.aria)
-        : selectSingle(appConfig.Extension.transcriptSelectors.fallback);
+        ? domUtils.selectSingle(config.extension.transcriptSelectors.aria)
+        : domUtils.selectSingle(config.extension.transcriptSelectors.fallback);
 
       const speakerElements = ctx.canUseAriaBasedTranscriptSelector
         ? transcriptContainer?.children
@@ -192,7 +210,7 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
         // Same speaker continuing
         if (ctx.canUseAriaBasedTranscriptSelector) {
           const textDiff = transcriptText.length - currentTranscript.length;
-          if (textDiff < -appConfig.Extension.maxTranscriptLength) {
+          if (textDiff < -config.extension.maxTranscriptLength) {
             flushTranscriptBuffer({
               id: currentSpeakerId,
               speaker: currentSpeakerName,
@@ -203,7 +221,7 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
         }
 
         currentTranscript = transcriptText;
-        if (!ctx.canUseAriaBasedTranscriptSelector && transcriptText.length > appConfig.Extension.maxTranscriptLength) {
+        if (!ctx.canUseAriaBasedTranscriptSelector && transcriptText.length > config.extension.maxTranscriptLength) {
           latestSpeakerElement.remove();
         }
       }
@@ -250,7 +268,7 @@ function flushTranscriptBuffer(item: TranscriptBlock): void {
 
 function endMeetingRoutines(): void {
   try {
-    const elements = selectAll(appConfig.Extension.meetingEndIcon.selector, appConfig.Extension.meetingEndIcon.text);
+    const elements = domUtils.selectAll(config.extension.meetingEndIcon.selector, config.extension.meetingEndIcon.text);
     const meetingEndButton = elements?.[0]?.parentElement?.parentElement ?? null;
 
     if (!meetingEndButton) {
@@ -260,7 +278,6 @@ function endMeetingRoutines(): void {
     meetingEndButton.addEventListener("click", () => {
       hasMeetingEnded = true;
       transcriptObserver?.disconnect();
-      //chatMessagesObserver?.disconnect();
       if (currentSpeakerName && currentTranscript) {
         flushTranscriptBuffer({
           speaker: currentSpeakerName,
@@ -275,38 +292,6 @@ function endMeetingRoutines(): void {
     console.error("Error setting up meeting end listener:", err);
   }
 }
-
-window.addEventListener("message", event => {
-  const {data, source} = event;
-
-  // Validate source
-  if (source !== window || data?.source !== MeetingHubConfig.messageSources.injectedScript) {
-    return;
-  }
-
-  const {action, payload} = data;
-
-  switch (action) {
-    case MeetingHubConfig.contentScriptActions.TRANSCRIPTION_UPDATE:
-      //  SidePanel.updateLiveMessage(payload);
-      break;
-
-    case MeetingHubConfig.contentScriptActions.PARTICIPANT_JOINED:
-      // SidePanel.addParticipant(payload);
-      break;
-
-    case MeetingHubConfig.contentScriptActions.TRANSCRIPTION_STARTED:
-      //  SidePanel.hideParticipantList();
-      break;
-
-    case MeetingHubConfig.contentScriptActions.MeedHasBeenStarted:
-      console.log("Meeting has started");
-      SidePanel.showMessagesContainer();
-      break;
-    default:
-      console.warn("Unknown message action received:", action);
-  }
-});
 
 let hasMeetingEnded = false;
 let transcriptBlocks: TranscriptBlock[] = [];
