@@ -36,7 +36,6 @@
     "scripting",
     "unlimitedStorage",
     "declarativeNetRequest",
-    "sidePanel",
     "tabs"
   ],
   "host_permissions": ["*://meet.google.com/*-*-*"]

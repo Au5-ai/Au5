@@ -2,6 +2,12 @@ export interface IMeetingPlatform {
   getMeetingTitle(): string;
 }
 
+export interface PipelineContext {
+  transcriptContainer?: HTMLElement | null;
+  canUseAriaBasedTranscriptSelector: boolean;
+  hasMeetingStarted: boolean;
+}
+
 // =====================================================================================
 // ------------------------------ ** TRANSCRIPT & CHAT STRUCTURES ** -------------------
 // =====================================================================================
@@ -141,12 +147,4 @@ export interface IMessageHandler {
 export interface IconData {
   selector: string;
   text: string;
-}
-
-export interface PipelineContext {
-  meetingTitle?: string;
-  captionsButton?: HTMLElement | null;
-  transcriptContainer?: HTMLElement | null;
-  canUseAriaBasedTranscriptSelector: boolean;
-  hasMeetingStarted: boolean;
 }

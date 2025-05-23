@@ -1,5 +1,3 @@
-import {TranscriptBlock} from "../core/types";
-import {toHoursAndMinutes} from "../core/utils/datetime";
 import css from "./styles/au5-panel.css?raw";
 
 export default class SidePanel {
@@ -47,7 +45,7 @@ export default class SidePanel {
           <div class="au5-participants-container au5-container"></div>
           <div class="au5-messages-container au5-container au5-hidden"></div>
            <div class="au5-footer">
-              <button class="au5-start-btn au5-btn">Start Transcription</button>
+              <button class="au5-startTranscription-btn au5-btn">Start Transcription</button>
               <div class="au5-input-wrapper au5-hidden">
                 <div class="au5-input-container">
                   <input type="text" class="au5-input" placeholder="Write your message ..." />

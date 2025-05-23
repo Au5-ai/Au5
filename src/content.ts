@@ -2,35 +2,31 @@
 
 import {detectBrowser} from "./core/browser/browserDetector";
 import {ConfigurationManager} from "./core/configurationManager";
+import {createMeetingPlatformInstance} from "./core/meetingPlatform";
+import {runPipesAsync} from "./core/pipeline";
 import {PipelineContext} from "./core/types";
 import {AppConfiguration} from "./core/types/configuration";
 import {DomUtils} from "./core/utils/dom.utils";
+import {MessageTypes} from "./socket/types";
+import {WindowMessageHandler} from "./socket/windowMessageHandler";
+import SidePanel from "./ui/sidePanel";
 
 let config: AppConfiguration;
 const browser = detectBrowser();
 const domUtils = new DomUtils(browser);
-
-let hasMeetingEnded = false;
-let transcriptBlocks: TranscriptBlock[] = [];
-let currentSpeakerId = "",
-  currentSpeakerName = "",
-  currentTranscript = "",
-  currentTimestamp = "";
-
-// Observers
-let transcriptObserver: MutationObserver;
+const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5-ContentScript", handleWindowMessage);
 
 const activateCaptions = async (ctx: PipelineContext): Promise<PipelineContext> => {
-  const captionsIcon = appConfig.Extension.captionsIcon;
-  ctx.captionsButton = selectAll(captionsIcon.selector, captionsIcon.text)[0];
-  ctx.captionsButton?.click();
+  const captionsIcon = config.extension.captionsIcon;
+  const captionsButton = domUtils.selectAll(captionsIcon.selector, captionsIcon.text)[0];
+  captionsButton?.click();
   return ctx;
 };
 
 const findTranscriptContainer = async (ctx: PipelineContext): Promise<PipelineContext> => {
-  const dom = getDomContainer(
-    appConfig.Extension.transcriptSelectors.aria,
-    appConfig.Extension.transcriptSelectors.fallback
+  const dom = domUtils.getDomContainer(
+    config.extension.transcriptSelectors.aria,
+    config.extension.transcriptSelectors.fallback
   );
   if (!dom) throw new Error("Transcript container not found in DOM");
   ctx.transcriptContainer = dom.container;
@@ -78,10 +74,7 @@ async function waitForStartingMeet(): Promise<void> {
 }
 
 export function startPipeline() {
-  return pipeAsync<PipelineContext>(
-    {
-      hasMeetingStarted: true
-    } as PipelineContext,
+  return runPipesAsync(
     activateCaptions,
     findTranscriptContainer,
     applyTranscriptStyle,
@@ -90,37 +83,43 @@ export function startPipeline() {
   );
 }
 
-export function getMeetingTitleFromUrl(): string {
-  const url = new URL(window.location.href);
-  const pathSegments = url.pathname.split("/").filter(Boolean);
-  const meetingId = pathSegments.length > 0 ? pathSegments[pathSegments.length - 1] : "N/A";
-  return meetingId;
-}
-
 waitForStartingMeet()
   .then(async () => {
-    SidePanel.createSidePanel("Asax Co", getMeetingTitleFromUrl(), appConfig.Service.direction);
-    // SidePanel.addCurrentUser(appConfig.Service.fullName);
-    injectScript("injected.js");
+    const platform = createMeetingPlatformInstance(window.location.href);
+    if (!platform) {
+      console.error("Unsupported meeting platform");
+      return;
+    }
+    const meetingId = platform.getMeetingTitle();
 
-    document.getElementById("au5-start-button")?.addEventListener("click", () => {
-      //  SidePanel.hideParticipantList();
+    SidePanel.createSidePanel("Asax Co", meetingId, config.service.direction);
+    // SidePanel.addCurrentUser(appConfig.Service.fullName);
+    domUtils.injectScript("meetingHubClient.js");
+
+    document.getElementById("au5-startTranscription-btn")?.addEventListener("click", () => {
+      SidePanel.showMessagesContainer();
       startPipeline();
-      window.postMessage(
-        {
-          source: MeetingHubConfig.messageSources.contentScript,
-          action: MeetingHubConfig.contentScriptActions.TRANSCRIPTION_STARTED,
-          payload: {
-            userid: appConfig.Service.userId
+      windowMessageHandler.postToWindow({
+        header: {type: MessageTypes.TriggerTranscriptionStart},
+        payload: {
+          MeetingId: meetingId,
+          User: {
+            Id: config.user.userId,
+            FullName: config.user.fullName,
+            PictureUrl: config.user.pictureUrl
           }
-        },
-        "*"
-      );
+        }
+      });
     });
   })
   .catch(error => {
     console.error("Meeting routine execution failed:", error);
   });
+
+function handleWindowMessage(action: string, payload: any) {
+  console.log("Received action:", action);
+  console.log("Received payload:", payload);
+}
 
 function createMutationHandler(ctx: PipelineContext) {
   return function (mutations: MutationRecord[], observer: MutationObserver) {
@@ -308,3 +307,13 @@ window.addEventListener("message", event => {
       console.warn("Unknown message action received:", action);
   }
 });
+
+let hasMeetingEnded = false;
+let transcriptBlocks: TranscriptBlock[] = [];
+let currentSpeakerId = "",
+  currentSpeakerName = "",
+  currentTranscript = "",
+  currentTimestamp = "";
+
+// Observers
+let transcriptObserver: MutationObserver;

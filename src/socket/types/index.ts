@@ -10,7 +10,7 @@ export interface Message {
 /**
  * Actions that can be triggered by the content script.
  */
-export enum InjectedScriptAllowedActions {
+export enum MessageTypes {
   NotifyRealTimeTranscription = "NotifyRealTimeTranscription",
   NotifyUserJoining = "NotifyUserJoining",
   TriggerTranscriptionStart = "TriggerTranscriptionStart",

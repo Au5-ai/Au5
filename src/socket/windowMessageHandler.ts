@@ -1,17 +1,20 @@
-import {InjectedScriptAllowedActions, Message} from "./types";
+import {Message} from "./types";
 
 type MessageCallback = (action: string, payload: any) => void;
 
 export class WindowMessageHandler {
   private callback: MessageCallback;
-
-  constructor(callback: MessageCallback) {
+  private sourceGet: string;
+  private sourcePost: string;
+  constructor(sourceGet: string, sourcePost: string, callback: MessageCallback) {
     this.callback = callback;
+    this.sourceGet = sourceGet;
+    this.sourcePost = sourcePost;
     window.addEventListener("message", this.handleMessage);
   }
 
   private handleMessage = (event: MessageEvent) => {
-    if (event.source !== window || event.data.source !== "Au5-ContentScript") return;
+    if (event.source !== window || event.data.source !== this.sourceGet) return;
     const {action, payload} = event.data;
     this.callback(action, payload);
   };
@@ -19,7 +22,7 @@ export class WindowMessageHandler {
   public postToWindow(msg: Message) {
     window.postMessage(
       {
-        source: "Au5-InjectedScript",
+        source: this.sourcePost,
         action: msg.header.type,
         payload: msg.payload
       },

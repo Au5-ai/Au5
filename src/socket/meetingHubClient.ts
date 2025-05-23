@@ -4,7 +4,7 @@ import {createMeetingPlatformInstance} from "../core/meetingPlatform";
 import {ConfigurationManager} from "../core/configurationManager";
 import {AppConfiguration} from "../core/types/configuration";
 import {detectBrowser} from "../core/browser/browserDetector";
-import {InjectedScriptAllowedActions, Message} from "./types";
+import {Message, MessageTypes} from "./types";
 import {WindowMessageHandler} from "./windowMessageHandler";
 
 class MeetingHubClient {
@@ -22,7 +22,11 @@ class MeetingHubClient {
       .withHubProtocol(new MessagePackHubProtocol())
       .build();
 
-    this.windowMessageHandler = new WindowMessageHandler(this.handleWindowMessage.bind(this));
+    this.windowMessageHandler = new WindowMessageHandler(
+      "Au5-ContentScript",
+      "Au5-InjectedScript",
+      this.handleWindowMessage.bind(this)
+    );
     this.setupHandlers();
     this.startConnection();
   }
@@ -30,12 +34,12 @@ class MeetingHubClient {
   private setupHandlers() {
     this.connection.on("ReceiveMessage", (msg: Message) => {
       switch (msg.header.type) {
-        case InjectedScriptAllowedActions.NotifyUserJoining:
-        case InjectedScriptAllowedActions.NotifyMeetHasBeenStarted:
-        case InjectedScriptAllowedActions.TriggerTranscriptionStart:
-        case InjectedScriptAllowedActions.NotifyRealTimeTranscription:
-        case InjectedScriptAllowedActions.ListOfUsersInMeeting:
-        case InjectedScriptAllowedActions.NotifyUserLeft:
+        case MessageTypes.NotifyUserJoining:
+        case MessageTypes.NotifyMeetHasBeenStarted:
+        case MessageTypes.TriggerTranscriptionStart:
+        case MessageTypes.NotifyRealTimeTranscription:
+        case MessageTypes.ListOfUsersInMeeting:
+        case MessageTypes.NotifyUserLeft:
           this.windowMessageHandler.postToWindow(msg);
           break;
       }
@@ -62,7 +66,7 @@ class MeetingHubClient {
 
   private handleWindowMessage(action: string, payload: any) {
     switch (action) {
-      case InjectedScriptAllowedActions.TriggerTranscriptionStart:
+      case MessageTypes.TriggerTranscriptionStart:
         this.connection.invoke(action, {
           MeetingId: this.meetingId,
           User: {
@@ -73,7 +77,7 @@ class MeetingHubClient {
         });
         break;
 
-      case InjectedScriptAllowedActions.NotifyRealTimeTranscription:
+      case MessageTypes.NotifyRealTimeTranscription:
         this.connection.invoke(action, {
           MeetingId: this.meetingId,
           Speaker: {
