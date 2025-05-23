@@ -142,24 +142,3 @@ public class MeetingHub(ILogger<MeetingHub> logger) : Hub
         return Clients.Caller.SendAsync("ReceiveMessage", msg);
     }
 }
-
-public class Message
-{
-    public Header Header { get; set; }
-    public object Payload { get; set; }
-}
-
-public class Header
-{
-    public string Type { get; set; }
-}
-
-public static class MessageTypes
-{
-    public const string NotifyUserJoining = "NotifyUserJoining";
-    public const string NotifyUserLeft = "NotifyUserLeft";
-    public const string ListOfUsersInMeeting = "ListOfUsersInMeeting";
-    public const string NotifyMeetHasBeenStarted = "NotifyMeetHasBeenStarted";
-    public const string TriggerTranscriptionStart = "TriggerTranscriptionStart";
-    public const string NotifyRealTimeTranscription = "NotifyRealTimeTranscription";
-}
