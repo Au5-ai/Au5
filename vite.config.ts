@@ -10,7 +10,7 @@ export default defineConfig({
       input: {
         background: resolve(__dirname, "src/background.ts"),
         content: resolve(__dirname, "src/content.ts"),
-        injected: resolve(__dirname, "src/socket/meetingHubClient.ts"),
+        meetingHubClient: resolve(__dirname, "src/socket/meetingHubClient.ts"),
       },
       output: {
         manualChunks: () => null,

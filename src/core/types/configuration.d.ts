@@ -29,6 +29,7 @@ export interface ExtensionConfiguration {
   };
   maxTranscriptLength: number;
   transcriptTrimThreshold: number;
+  btnTranscriptSelector: string;
 }
 
 export interface AppConfiguration {

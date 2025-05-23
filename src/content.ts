@@ -13,6 +13,7 @@ import SidePanel from "./ui/sidePanel";
 
 let meet: Meet;
 let transcriptBlocks: TranscriptBlock[] = [];
+let hasMeetingEnded = false;
 let transcriptObserver: MutationObserver;
 let config: AppConfiguration;
 const browser = detectBrowser();
@@ -38,13 +39,13 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
     // SidePanel.addCurrentUser(appConfig.Service.fullName);
     domUtils.injectScript("meetingHubClient.js");
 
-    document.getElementById("au5-startTranscription-btn")?.addEventListener("click", () => {
+    document.getElementById(config.extension.btnTranscriptSelector)?.addEventListener("click", () => {
       meet = {
         id: meetingId,
         platform: platform.getPlatformName(),
         startAt: new Date().toISOString(),
         endAt: "",
-        transcript: [],
+        transcripts: [],
         users: [
           {
             id: config.user.userId,
@@ -188,20 +189,8 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
       const hasSpeakers = ctx.canUseAriaBasedTranscriptSelector
         ? speakerElements.length > 1
         : speakerElements.length > 0;
+      if (!hasSpeakers) return;
 
-      if (!hasSpeakers) {
-        if (currentSpeakerName && currentTranscript) {
-          flushTranscriptBuffer({
-            speaker: currentSpeakerName,
-            transcript: currentTranscript,
-            timestamp: currentTimestamp
-          } as TranscriptBlock);
-        }
-        currentSpeakerId = "";
-        currentSpeakerName = "";
-        currentTranscript = "";
-        continue;
-      }
       const latestSpeakerElement = ctx.canUseAriaBasedTranscriptSelector
         ? (speakerElements[speakerElements.length - 2] as HTMLElement)
         : (speakerElements[speakerElements.length - 1] as HTMLElement);
@@ -218,19 +207,20 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
 
       if (currentTranscript === "") {
         // New conversation start
-        currentSpeakerId = crypto.randomUUID();
+        currentTransciptBlockId = crypto.randomUUID();
         currentSpeakerName = speakerName;
         currentTimestamp = new Date().toISOString();
         currentTranscript = transcriptText;
       } else if (currentSpeakerName !== speakerName) {
         // New speaker
         flushTranscriptBuffer({
-          id: currentSpeakerId,
-          speaker: currentSpeakerName,
+          id: currentTransciptBlockId,
+          user: {fullname: currentSpeakerName},
           transcript: currentTranscript,
           timestamp: currentTimestamp
         } as TranscriptBlock);
-        currentSpeakerId = crypto.randomUUID();
+
+        currentTransciptBlockId = crypto.randomUUID();
         currentSpeakerName = speakerName;
         currentTimestamp = new Date().toISOString();
         currentTranscript = transcriptText;
@@ -240,8 +230,8 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
           const textDiff = transcriptText.length - currentTranscript.length;
           if (textDiff < -config.extension.maxTranscriptLength) {
             flushTranscriptBuffer({
-              id: currentSpeakerId,
-              speaker: currentSpeakerName,
+              id: currentTransciptBlockId,
+              user: {fullname: currentSpeakerName},
               transcript: currentTranscript,
               timestamp: currentTimestamp
             } as TranscriptBlock);
@@ -260,19 +250,16 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
       //   transcript: currentTranscript,
       //   timestamp: currentTimestamp
       // });
-      window.postMessage(
-        {
-          source: MeetingHubConfig.messageSources.contentScript,
-          action: MeetingHubConfig.contentScriptActions.TRANSCRIPTION_UPDATE,
-          payload: {
-            id: currentSpeakerId,
-            speaker: currentSpeakerName,
-            transcript: currentTranscript,
-            timestamp: currentTimestamp
-          }
-        },
-        "*"
-      );
+
+      windowMessageHandler.postToWindow({
+        header: {type: MessageTypes.NotifyRealTimeTranscription},
+        payload: {
+          Id: currentTransciptBlockId,
+          Speaker: currentSpeakerName,
+          Transcript: currentTranscript,
+          Timestamp: currentTimestamp
+        }
+      });
     } catch (err) {
       console.error(err);
       if (!hasMeetingEnded) {
@@ -284,14 +271,10 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
 
 function flushTranscriptBuffer(item: TranscriptBlock): void {
   if (!currentTranscript || !currentTimestamp) return;
-  const name = item.speaker === "You" ? config.user.fullName : item.speaker;
-  transcriptBlocks.push({
-    id: item.id,
-    speaker: name,
-    timestamp: item.timestamp,
-    transcript: item.transcript
-  });
-  //overWriteChromeStorage(["transcript"], false);
+  item.user.fullname = item.user.fullname === "You" ? config.user.fullName : item.user.fullname;
+  item.type = "transcript";
+  transcriptBlocks.push(item);
+  meet.transcripts.push(item);
 }
 
 function endMeetingRoutines(): void {
@@ -305,10 +288,12 @@ function endMeetingRoutines(): void {
 
     meetingEndButton.addEventListener("click", () => {
       hasMeetingEnded = true;
+      meet.endAt = new Date().toISOString();
       transcriptObserver?.disconnect();
       if (currentSpeakerName && currentTranscript) {
         flushTranscriptBuffer({
-          speaker: currentSpeakerName,
+          id: currentTransciptBlockId,
+          user: {fullname: currentSpeakerName},
           transcript: currentTranscript,
           timestamp: currentTimestamp
         } as TranscriptBlock);
@@ -321,11 +306,7 @@ function endMeetingRoutines(): void {
   }
 }
 
-let hasMeetingEnded = false;
-
-let currentSpeakerId = "",
+let currentTransciptBlockId = "",
   currentSpeakerName = "",
   currentTranscript = "",
   currentTimestamp = "";
-
-// Observers

@@ -29,7 +29,7 @@ export interface TranscriptBlock {
 
   /** The transcribed text spoken by the person */
   transcript: string;
-  type: "chat" | "transcript";
+  type?: "chat" | "transcript";
   reactions?: Record<string, User[]>;
 }
 
@@ -48,7 +48,7 @@ export interface Meet {
   endAt: string;
 
   /** Transcript content as an array of structured transcript blocks */
-  transcript: TranscriptBlock[];
+  transcripts: TranscriptBlock[];
 
   users: User[];
 }

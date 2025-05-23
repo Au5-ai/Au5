@@ -85,7 +85,8 @@ class ConfigurationManager {
           opacity: "0.2"
         },
         maxTranscriptLength: 250,
-        transcriptTrimThreshold: 125
+        transcriptTrimThreshold: 125,
+        btnTranscriptSelector: "au5-startTranscription-btn"
       }
     });
   }
@@ -158,6 +159,9 @@ class GoogleMeet {
     const match = this.url.match(/meet\.google\.com\/([a-zA-Z0-9-]+)/);
     return match ? `Google Meet (${match[1]})` : "Google Meet";
   }
+  getPlatformName() {
+    return "Google Meet";
+  }
 }
 class Zoom {
   constructor(url) {
@@ -167,12 +171,18 @@ class Zoom {
     const match = this.url.match(/zoom\.us\/(j|my)\/([a-zA-Z0-9]+)/);
     return match ? `Zoom (${match[2]})` : "Zoom";
   }
+  getPlatformName() {
+    return "Zoom";
+  }
 }
 class MicrosoftTeams {
   constructor(url) {
     this.url = url;
   }
   getMeetingTitle() {
+    return "Microsoft Teams";
+  }
+  getPlatformName() {
     return "Microsoft Teams";
   }
 }
@@ -190,8 +200,48 @@ function createMeetingPlatformInstance(url) {
       return null;
   }
 }
+var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
+  MessageTypes2["NotifyRealTimeTranscription"] = "NotifyRealTimeTranscription";
+  MessageTypes2["NotifyUserJoining"] = "NotifyUserJoining";
+  MessageTypes2["TriggerTranscriptionStart"] = "TriggerTranscriptionStart";
+  MessageTypes2["NotifyMeetHasBeenStarted"] = "NotifyMeetHasBeenStarted";
+  MessageTypes2["ListOfUsersInMeeting"] = "ListOfUsersInMeeting";
+  MessageTypes2["NotifyUserLeft"] = "NotifyUserLeft";
+  return MessageTypes2;
+})(MessageTypes || {});
+class WindowMessageHandler {
+  constructor(sourceGet, sourcePost, callback) {
+    __publicField(this, "callback");
+    __publicField(this, "sourceGet");
+    __publicField(this, "sourcePost");
+    __publicField(this, "handleMessage", (event) => {
+      if (event.source !== window || event.data.source !== this.sourceGet) return;
+      const { action, payload } = event.data;
+      this.callback(action, payload);
+    });
+    this.callback = callback;
+    this.sourceGet = sourceGet;
+    this.sourcePost = sourcePost;
+    window.addEventListener("message", this.handleMessage);
+  }
+  postToWindow(msg) {
+    window.postMessage(
+      {
+        source: this.sourcePost,
+        action: msg.header.type,
+        payload: msg.payload
+      },
+      "*"
+    );
+  }
+  dispose() {
+    window.removeEventListener("message", this.handleMessage);
+  }
+}
 export {
   ConfigurationManager as C,
+  MessageTypes as M,
+  WindowMessageHandler as W,
   createMeetingPlatformInstance as c,
   detectBrowser as d
 };

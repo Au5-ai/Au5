@@ -37,7 +37,8 @@ export class ConfigurationManager {
           opacity: "0.2"
         },
         maxTranscriptLength: 250,
-        transcriptTrimThreshold: 125
+        transcriptTrimThreshold: 125,
+        btnTranscriptSelector: "au5-startTranscription-btn"
       } as ExtensionConfiguration
     } as AppConfiguration);
   }

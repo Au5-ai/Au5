@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-import { d as detectBrowser, C as ConfigurationManager, c as createMeetingPlatformInstance } from "./meetingPlatform.js";
+import { d as detectBrowser, C as ConfigurationManager, c as createMeetingPlatformInstance, W as WindowMessageHandler, M as MessageTypes } from "./windowMessageHandler.js";
 class HttpError extends Error {
   /** Constructs a new instance of {@link @microsoft/signalr.HttpError}.
    *
@@ -4673,40 +4673,6 @@ class MessagePackHubProtocol {
     return headers;
   }
 }
-var InjectedScriptAllowedActions = /* @__PURE__ */ ((InjectedScriptAllowedActions2) => {
-  InjectedScriptAllowedActions2["NotifyRealTimeTranscription"] = "NotifyRealTimeTranscription";
-  InjectedScriptAllowedActions2["NotifyUserJoining"] = "NotifyUserJoining";
-  InjectedScriptAllowedActions2["TriggerTranscriptionStart"] = "TriggerTranscriptionStart";
-  InjectedScriptAllowedActions2["NotifyMeetHasBeenStarted"] = "NotifyMeetHasBeenStarted";
-  InjectedScriptAllowedActions2["ListOfUsersInMeeting"] = "ListOfUsersInMeeting";
-  InjectedScriptAllowedActions2["NotifyUserLeft"] = "NotifyUserLeft";
-  return InjectedScriptAllowedActions2;
-})(InjectedScriptAllowedActions || {});
-class WindowMessageHandler {
-  constructor(callback) {
-    __publicField(this, "callback");
-    __publicField(this, "handleMessage", (event) => {
-      if (event.source !== window || event.data.source !== "Au5-ContentScript") return;
-      const { action, payload } = event.data;
-      this.callback(action, payload);
-    });
-    this.callback = callback;
-    window.addEventListener("message", this.handleMessage);
-  }
-  postToWindow(msg) {
-    window.postMessage(
-      {
-        source: "Au5-InjectedScript",
-        action: msg.header.type,
-        payload: msg.payload
-      },
-      "*"
-    );
-  }
-  dispose() {
-    window.removeEventListener("message", this.handleMessage);
-  }
-}
 class MeetingHubClient {
   constructor(config, meetingId) {
     __publicField(this, "connection");
@@ -4716,19 +4682,23 @@ class MeetingHubClient {
     this.config = config;
     this.meetingId = meetingId;
     this.connection = new HubConnectionBuilder().withUrl(this.config.service.hubUrl).withAutomaticReconnect().withHubProtocol(new MessagePackHubProtocol()).build();
-    this.windowMessageHandler = new WindowMessageHandler(this.handleWindowMessage.bind(this));
+    this.windowMessageHandler = new WindowMessageHandler(
+      "Au5-ContentScript",
+      "Au5-InjectedScript",
+      this.handleWindowMessage.bind(this)
+    );
     this.setupHandlers();
     this.startConnection();
   }
   setupHandlers() {
     this.connection.on("ReceiveMessage", (msg) => {
       switch (msg.header.type) {
-        case InjectedScriptAllowedActions.NotifyUserJoining:
-        case InjectedScriptAllowedActions.NotifyMeetHasBeenStarted:
-        case InjectedScriptAllowedActions.TriggerTranscriptionStart:
-        case InjectedScriptAllowedActions.NotifyRealTimeTranscription:
-        case InjectedScriptAllowedActions.ListOfUsersInMeeting:
-        case InjectedScriptAllowedActions.NotifyUserLeft:
+        case MessageTypes.NotifyUserJoining:
+        case MessageTypes.NotifyMeetHasBeenStarted:
+        case MessageTypes.TriggerTranscriptionStart:
+        case MessageTypes.NotifyRealTimeTranscription:
+        case MessageTypes.ListOfUsersInMeeting:
+        case MessageTypes.NotifyUserLeft:
           this.windowMessageHandler.postToWindow(msg);
           break;
       }
@@ -4750,7 +4720,7 @@ class MeetingHubClient {
   }
   handleWindowMessage(action, payload) {
     switch (action) {
-      case InjectedScriptAllowedActions.TriggerTranscriptionStart:
+      case MessageTypes.TriggerTranscriptionStart:
         this.connection.invoke(action, {
           MeetingId: this.meetingId,
           User: {
@@ -4760,7 +4730,7 @@ class MeetingHubClient {
           }
         });
         break;
-      case InjectedScriptAllowedActions.NotifyRealTimeTranscription:
+      case MessageTypes.NotifyRealTimeTranscription:
         this.connection.invoke(action, {
           MeetingId: this.meetingId,
           Speaker: {
