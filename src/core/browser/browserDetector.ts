@@ -2,6 +2,7 @@ import {IBrowser} from "../types/browser";
 import {Chrome} from "./chromeBrowser";
 
 export function detectBrowser(): IBrowser {
+  console.log("Detecting browser...");
   const userAgent = navigator.userAgent;
 
   // if (/Edg\//.test(userAgent)) {

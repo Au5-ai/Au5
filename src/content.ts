@@ -1,7 +1,14 @@
 //https://meet.google.com/uir-miof-cby
 
-let appConfig: AppConfiguration;
-const configService = new ConfigurationService(new StorageService());
+import {detectBrowser} from "./core/browser/browserDetector";
+import {ConfigurationManager} from "./core/configurationManager";
+import {PipelineContext} from "./core/types";
+import {AppConfiguration} from "./core/types/configuration";
+import {DomUtils} from "./core/utils/dom.utils";
+
+let config: AppConfiguration;
+const browser = detectBrowser();
+const domUtils = new DomUtils(browser);
 
 let hasMeetingEnded = false;
 let transcriptBlocks: TranscriptBlock[] = [];
@@ -60,10 +67,11 @@ const finalizeMeetingRoutines = async (ctx: PipelineContext): Promise<PipelineCo
   return ctx;
 };
 
-async function startMeetingRoutines(): Promise<void> {
+async function waitForStartingMeet(): Promise<void> {
   try {
-    appConfig = await configService.getConfig();
-    await waitForMatch(appConfig.Extension.meetingEndIcon.selector, appConfig.Extension.meetingEndIcon.text);
+    const configurationManager = new ConfigurationManager(browser);
+    config = await configurationManager.getConfig();
+    await domUtils.waitForMatch(config.extension.meetingEndIcon.selector, config.extension.meetingEndIcon.text);
   } catch (error) {
     console.error("Failed to detect meeting start:", error);
   }
@@ -89,7 +97,7 @@ export function getMeetingTitleFromUrl(): string {
   return meetingId;
 }
 
-startMeetingRoutines()
+waitForStartingMeet()
   .then(async () => {
     SidePanel.createSidePanel("Asax Co", getMeetingTitleFromUrl(), appConfig.Service.direction);
     // SidePanel.addCurrentUser(appConfig.Service.fullName);
