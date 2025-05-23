@@ -34,6 +34,8 @@ class MeetingHubClient {
         case InjectedScriptAllowedActions.NotifyMeetHasBeenStarted:
         case InjectedScriptAllowedActions.TriggerTranscriptionStart:
         case InjectedScriptAllowedActions.NotifyRealTimeTranscription:
+        case InjectedScriptAllowedActions.ListOfUsersInMeeting:
+        case InjectedScriptAllowedActions.NotifyUserLeft:
           this.windowMessageHandler.postToWindow(msg);
           break;
       }
@@ -47,7 +49,7 @@ class MeetingHubClient {
         this.connection.invoke("JoinMeeting", {
           MeetingId: this.meetingId,
           User: {
-            UserId: this.config.user.userId,
+            Id: this.config.user.userId,
             FullName: this.config.user.fullName,
             PictureUrl: this.config.user.pictureUrl
           }
@@ -64,7 +66,7 @@ class MeetingHubClient {
         this.connection.invoke(action, {
           MeetingId: this.meetingId,
           User: {
-            UserId: this.config.user.userId,
+            Id: this.config.user.userId,
             FullName: this.config.user.fullName,
             PictureUrl: this.config.user.pictureUrl
           }

@@ -14,26 +14,7 @@ export enum InjectedScriptAllowedActions {
   NotifyRealTimeTranscription = "NotifyRealTimeTranscription",
   NotifyUserJoining = "NotifyUserJoining",
   TriggerTranscriptionStart = "TriggerTranscriptionStart",
-  NotifyMeetHasBeenStarted = "NotifyMeetHasBeenStarted"
-}
-
-//---------------------------------------
-
-interface StartTranscriptionDto {
-  MeetingId: string;
-  UserId: string;
-}
-
-interface RealTimeTranscriptionDto {
-  MeetingId: string;
-  Id: string;
-  Speaker: string;
-  Transcript: string;
-}
-
-interface JoinMeetingDto {
-  MeetingId: string;
-  UserId: string;
-  FullName: string;
-  ProfileImage: string;
+  NotifyMeetHasBeenStarted = "NotifyMeetHasBeenStarted",
+  ListOfUsersInMeeting = "ListOfUsersInMeeting",
+  NotifyUserLeft = "NotifyUserLeft"
 }
