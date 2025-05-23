@@ -4,5 +4,5 @@
 public class StartTranscriptionDto
 {
     public string MeetingId { get; set; }
-    public string UserId { get; set; }
+    public User User { get; set; }
 }
