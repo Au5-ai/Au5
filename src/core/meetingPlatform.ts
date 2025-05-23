@@ -22,6 +22,10 @@ export class GoogleMeet implements IMeetingPlatform {
     const match = this.url.match(/meet\.google\.com\/([a-zA-Z0-9-]+)/);
     return match ? `Google Meet (${match[1]})` : "Google Meet";
   }
+
+  getPlatformName(): string {
+    return "Google Meet";
+  }
 }
 
 export class Zoom implements IMeetingPlatform {
@@ -31,12 +35,20 @@ export class Zoom implements IMeetingPlatform {
     const match = this.url.match(/zoom\.us\/(j|my)\/([a-zA-Z0-9]+)/);
     return match ? `Zoom (${match[2]})` : "Zoom";
   }
+
+  getPlatformName(): string {
+    return "Zoom";
+  }
 }
 
 export class MicrosoftTeams implements IMeetingPlatform {
   constructor(private url: string) {}
   getMeetingTitle(): string {
     // Example: https://teams.microsoft.com/l/meetup-join/...
+    return "Microsoft Teams";
+  }
+
+  getPlatformName(): string {
     return "Microsoft Teams";
   }
 }

@@ -4,13 +4,16 @@ import {detectBrowser} from "./core/browser/browserDetector";
 import {ConfigurationManager} from "./core/configurationManager";
 import {createMeetingPlatformInstance} from "./core/meetingPlatform";
 import {runPipesAsync} from "./core/pipeline";
-import {PipelineContext} from "./core/types";
+import {Meet, PipelineContext, TranscriptBlock, User} from "./core/types";
 import {AppConfiguration} from "./core/types/configuration";
 import {DomUtils} from "./core/utils/dom.utils";
 import {MessageTypes} from "./socket/types";
 import {WindowMessageHandler} from "./socket/windowMessageHandler";
 import SidePanel from "./ui/sidePanel";
 
+let meet: Meet;
+let transcriptBlocks: TranscriptBlock[] = [];
+let transcriptObserver: MutationObserver;
 let config: AppConfiguration;
 const browser = detectBrowser();
 const domUtils = new DomUtils(browser);
@@ -36,7 +39,23 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
     domUtils.injectScript("meetingHubClient.js");
 
     document.getElementById("au5-startTranscription-btn")?.addEventListener("click", () => {
-      SidePanel.showMessagesContainer();
+      meet = {
+        id: meetingId,
+        platform: platform.getPlatformName(),
+        startAt: new Date().toISOString(),
+        endAt: "",
+        transcript: [],
+        users: [
+          {
+            id: config.user.userId,
+            fullname: config.user.fullName,
+            pictureUrl: config.user.pictureUrl,
+            joinedAt: new Date().toISOString()
+          } as User
+        ]
+      };
+
+      SidePanel.showTranscriptionsContainer();
 
       runPipesAsync(
         {} as PipelineContext,
@@ -138,13 +157,22 @@ function handleWindowMessage(action: string, payload: any) {
   // });
 }
 
-//----------------
+/**
+ * Handles mutations observed in the transcript container and processes transcript updates.
+ *
+ * This function iterates over the list of mutations, extracts speaker and transcript information,
+ * manages the transcript buffer, and posts updates to the window for further processing.
+ * It distinguishes between new speakers, continuing speakers, and handles transcript flushing
+ * when necessary. It also manages transcript length and error handling.
+ *
+ * @param mutations - An array of MutationRecord objects representing changes to the transcript container.
+ * @param ctx - The pipeline context containing DOM references and configuration flags.
+ */
 function createMutationHandler(ctx: PipelineContext) {
   return function (mutations: MutationRecord[], observer: MutationObserver) {
     handleTranscriptMutations(mutations, ctx);
   };
 }
-
 function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineContext): void {
   for (const _ of mutations) {
     try {
@@ -256,7 +284,7 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
 
 function flushTranscriptBuffer(item: TranscriptBlock): void {
   if (!currentTranscript || !currentTimestamp) return;
-  const name = item.speaker === "You" ? appConfig.Service.fullName : item.speaker;
+  const name = item.speaker === "You" ? config.user.fullName : item.speaker;
   transcriptBlocks.push({
     id: item.id,
     speaker: name,
@@ -294,11 +322,10 @@ function endMeetingRoutines(): void {
 }
 
 let hasMeetingEnded = false;
-let transcriptBlocks: TranscriptBlock[] = [];
+
 let currentSpeakerId = "",
   currentSpeakerName = "",
   currentTranscript = "",
   currentTimestamp = "";
 
 // Observers
-let transcriptObserver: MutationObserver;

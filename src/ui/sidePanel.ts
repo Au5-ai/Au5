@@ -2,7 +2,7 @@ import css from "./styles/au5-panel.css?raw";
 
 export default class SidePanel {
   private static panelElement: HTMLDivElement | null = null;
-  private static messagesContainer: HTMLDivElement | null = null;
+  private static transcriptionsContainer: HTMLDivElement | null = null;
   private static participantsContainer: HTMLDivElement | null = null;
   private static btnStartTranscription: HTMLDivElement | null = null;
   private static inputWrapper: HTMLDivElement | null = null;
@@ -61,7 +61,7 @@ export default class SidePanel {
     document.body.appendChild(container);
 
     this.panelElement = container.querySelector(".au5-panel") as HTMLDivElement;
-    this.messagesContainer = container.querySelector(".au5-messages-container") as HTMLDivElement;
+    this.transcriptionsContainer = container.querySelector(".au5-transcriptions-container") as HTMLDivElement;
     this.participantsContainer = container.querySelector(".au5-participants-container") as HTMLDivElement;
     this.btnStartTranscription = container.querySelector(".au5-start-btn") as HTMLDivElement;
     this.inputWrapper = container.querySelector(".au5-input-wrapper") as HTMLDivElement;
@@ -84,9 +84,9 @@ export default class SidePanel {
     }
   }
 
-  public static showMessagesContainer(): void {
-    if (this.messagesContainer) {
-      this.messagesContainer.classList.remove("au5-hidden");
+  public static showTranscriptionsContainer(): void {
+    if (this.transcriptionsContainer) {
+      this.transcriptionsContainer.classList.remove("au5-hidden");
       this.participantsContainer?.classList.add("au5-hidden");
       this.inputWrapper?.classList.remove("au5-hidden");
       this.btnStartTranscription?.classList.add("au5-hidden");
@@ -97,7 +97,7 @@ export default class SidePanel {
     if (this.panelElement) {
       document.body.removeChild(this.panelElement);
       this.panelElement = null;
-      this.messagesContainer = null;
+      this.transcriptionsContainer = null;
     } else {
       console.warn("SidePanel not found.");
     }
