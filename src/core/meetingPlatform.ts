@@ -20,7 +20,7 @@ export class GoogleMeet implements IMeetingPlatform {
   getMeetingTitle(): string {
     // Example: https://meet.google.com/abc-defg-hij
     const match = this.url.match(/meet\.google\.com\/([a-zA-Z0-9-]+)/);
-    return match ? `Google Meet (${match[1]})` : "Google Meet";
+    return match ? `${match[1]}` : "Google Meet";
   }
 
   getPlatformName(): string {
@@ -33,7 +33,7 @@ export class Zoom implements IMeetingPlatform {
   getMeetingTitle(): string {
     // Example: https://zoom.us/j/123456789
     const match = this.url.match(/zoom\.us\/(j|my)\/([a-zA-Z0-9]+)/);
-    return match ? `Zoom (${match[2]})` : "Zoom";
+    return match ? `${match[2]}` : "Zoom";
   }
 
   getPlatformName(): string {
