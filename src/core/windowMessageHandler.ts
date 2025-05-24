@@ -1,4 +1,4 @@
-import {Message} from "./types";
+import {Message} from "../socket/types";
 
 type MessageCallback = (action: string, payload: any) => void;
 

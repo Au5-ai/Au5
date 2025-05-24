@@ -8,14 +8,19 @@ import {Meet, PipelineContext, TranscriptBlock, User} from "./core/types";
 import {AppConfiguration} from "./core/types/configuration";
 import {DomUtils} from "./core/utils/dom.utils";
 import {MessageTypes} from "./socket/types";
-import {WindowMessageHandler} from "./socket/windowMessageHandler";
+import {WindowMessageHandler} from "./core/windowMessageHandler";
 import SidePanel from "./ui/sidePanel";
+import {establishConnection, MeetingHubClient} from "./socket/meetingHubClient";
 
 let meet: Meet;
 let transcriptBlocks: TranscriptBlock[] = [];
 let hasMeetingEnded = false;
 let transcriptObserver: MutationObserver;
 let config: AppConfiguration;
+let currentTransciptBlockId = "",
+  currentSpeakerName = "",
+  currentTranscript = "",
+  currentTimestamp = "";
 const browser = detectBrowser();
 const domUtils = new DomUtils(browser);
 const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5-ContentScript", handleWindowMessage);
@@ -37,7 +42,7 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
 
     SidePanel.createSidePanel("Asax Co", meetingId, config.service.direction);
     // SidePanel.addCurrentUser(appConfig.Service.fullName);
-    domUtils.injectScript("meetingHubClient.js");
+    establishConnection(config, meetingId);
 
     document.getElementById(config.extension.btnTranscriptSelector)?.addEventListener("click", () => {
       meet = {
@@ -305,8 +310,3 @@ function endMeetingRoutines(): void {
     console.error("Error setting up meeting end listener:", err);
   }
 }
-
-let currentTransciptBlockId = "",
-  currentSpeakerName = "",
-  currentTranscript = "",
-  currentTimestamp = "";

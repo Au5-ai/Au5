@@ -1,13 +1,11 @@
 import * as signalR from "@microsoft/signalr";
 import {MessagePackHubProtocol} from "@microsoft/signalr-protocol-msgpack";
-import {createMeetingPlatformInstance} from "../core/meetingPlatform";
-import {ConfigurationManager} from "../core/configurationManager";
 import {AppConfiguration} from "../core/types/configuration";
-import {detectBrowser} from "../core/browser/browserDetector";
 import {Message, MessageTypes} from "./types";
-import {WindowMessageHandler} from "./windowMessageHandler";
+import {WindowMessageHandler} from "../core/windowMessageHandler";
+import {createMeetingPlatformInstance} from "../core/meetingPlatform";
 
-class MeetingHubClient {
+export class MeetingHubClient {
   private connection: signalR.HubConnection;
   private meetingId: string;
   private config: AppConfiguration;
@@ -91,17 +89,11 @@ class MeetingHubClient {
   }
 }
 
-// Initialize
-(async function () {
-  const browser = detectBrowser();
-  const configurationManager = new ConfigurationManager(browser);
-  const config = await configurationManager.getConfig();
-
+export async function establishConnection(config: AppConfiguration, meetingId: string) {
   const platform = createMeetingPlatformInstance(window.location.href);
   if (!platform) {
     console.error("Unsupported meeting platform");
     return;
   }
-  const meetingId = platform.getMeetingTitle();
   new MeetingHubClient(config, meetingId);
-})();
+}

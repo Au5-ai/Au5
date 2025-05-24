@@ -48,6 +48,43 @@ export class ConfigurationManager {
    */
   async getConfig(): Promise<AppConfiguration> {
     try {
+      return {
+        user: {
+          token: "",
+          userId: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
+          fullName: "Mohammad Karimi",
+          pictureUrl:
+            "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+        } as UserConfiguration,
+
+        service: {
+          webhookUrl: "https://au5.ai/api/v1/",
+          direction: "rtl",
+          hubUrl: "https://localhost:7061/meetinghub"
+        } as ServiceConfiguration,
+
+        extension: {
+          meetingEndIcon: {
+            selector: ".google-symbols",
+            text: "call_end"
+          },
+          captionsIcon: {
+            selector: ".google-symbols",
+            text: "closed_caption_off"
+          },
+          transcriptSelectors: {
+            aria: 'div[role="region"][tabindex="0"]',
+            fallback: ".a4cQT"
+          },
+          transcriptStyles: {
+            opacity: "0.2"
+          },
+          maxTranscriptLength: 250,
+          transcriptTrimThreshold: 125,
+          btnTranscriptSelector: "au5-startTranscription-btn"
+        } as ExtensionConfiguration
+      } as AppConfiguration;
+
       const config = (await this.browserStorage.get(CONFIGURATION_KEY)) as Promise<AppConfiguration>;
       return config ?? null;
     } catch (error) {

@@ -10,13 +10,13 @@ export default defineConfig({
       input: {
         background: resolve(__dirname, "src/background.ts"),
         content: resolve(__dirname, "src/content.ts"),
-        meetingHubClient: resolve(__dirname, "src/socket/meetingHubClient.ts"),
       },
       output: {
-        manualChunks: () => null,
+        manualChunks: () => undefined,
         entryFileNames: "[name].js",
         chunkFileNames: "[name].js",
         assetFileNames: "[name].[ext]",
+        preserveModules: false,
       },
     },
     outDir: "dist",
