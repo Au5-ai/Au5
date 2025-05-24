@@ -72,8 +72,8 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
       );
 
       windowMessageHandler.postToWindow({
-        header: {type: MessageTypes.TriggerTranscriptionStart},
-        payload: {
+        Header: {Type: MessageTypes.TriggerTranscriptionStart},
+        Payload: {
           MeetingId: meetingId,
           User: {
             Id: config.user.userId,
@@ -257,8 +257,8 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
       // });
 
       windowMessageHandler.postToWindow({
-        header: {type: MessageTypes.NotifyRealTimeTranscription},
-        payload: {
+        Header: {Type: MessageTypes.NotifyRealTimeTranscription},
+        Payload: {
           Id: currentTransciptBlockId,
           Speaker: currentSpeakerName,
           Transcript: currentTranscript,

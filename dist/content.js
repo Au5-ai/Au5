@@ -350,8 +350,8 @@ class WindowMessageHandler {
     window.postMessage(
       {
         source: this.sourcePost,
-        action: msg.header.type,
-        payload: msg.payload
+        action: msg.Header.Type,
+        payload: msg.Payload
       },
       "*"
     );
@@ -5138,12 +5138,12 @@ class MeetingHubClient {
       "Au5-InjectedScript",
       this.handleWindowMessage.bind(this)
     );
-    this.setupHandlers();
     this.startConnection();
   }
   setupHandlers() {
     this.connection.on("ReceiveMessage", (msg) => {
-      switch (msg.header.type) {
+      console.debug("Received message from server:", msg);
+      switch (msg.Header.Type) {
         case MessageTypes.NotifyUserJoining:
         case MessageTypes.NotifyMeetHasBeenStarted:
         case MessageTypes.TriggerTranscriptionStart:
@@ -5165,6 +5165,8 @@ class MeetingHubClient {
           PictureUrl: this.config.user.pictureUrl
         }
       });
+    }).then(() => {
+      this.setupHandlers();
     }).catch((err) => {
       console.error("SignalR connection failed:", err);
     });
@@ -5250,8 +5252,8 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
         Pipelines.addEndMeetingButtonListenerPipe
       );
       windowMessageHandler.postToWindow({
-        header: { type: MessageTypes.TriggerTranscriptionStart },
-        payload: {
+        Header: { Type: MessageTypes.TriggerTranscriptionStart },
+        Payload: {
           MeetingId: meetingId,
           User: {
             Id: config.user.userId,
@@ -5360,8 +5362,8 @@ function handleTranscriptMutations(mutations, ctx) {
         }
       }
       windowMessageHandler.postToWindow({
-        header: { type: MessageTypes.NotifyRealTimeTranscription },
-        payload: {
+        Header: { Type: MessageTypes.NotifyRealTimeTranscription },
+        Payload: {
           Id: currentTransciptBlockId,
           Speaker: currentSpeakerName,
           Transcript: currentTranscript,

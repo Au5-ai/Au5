@@ -24,8 +24,8 @@ export class WindowMessageHandler {
     window.postMessage(
       {
         source: this.sourcePost,
-        action: msg.header.type,
-        payload: msg.payload
+        action: msg.Header.Type,
+        payload: msg.Payload
       },
       "*"
     );

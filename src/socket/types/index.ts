@@ -1,10 +1,10 @@
 export interface Header {
-  type: string;
+  Type: string;
 }
 
 export interface Message {
-  header: Header;
-  payload: any;
+  Header: Header;
+  Payload: any;
 }
 
 /**

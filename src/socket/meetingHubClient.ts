@@ -25,13 +25,13 @@ export class MeetingHubClient {
       "Au5-InjectedScript",
       this.handleWindowMessage.bind(this)
     );
-    this.setupHandlers();
     this.startConnection();
   }
 
   private setupHandlers() {
     this.connection.on("ReceiveMessage", (msg: Message) => {
-      switch (msg.header.type) {
+      console.debug("Received message from server:", msg);
+      switch (msg.Header.Type) {
         case MessageTypes.NotifyUserJoining:
         case MessageTypes.NotifyMeetHasBeenStarted:
         case MessageTypes.TriggerTranscriptionStart:
@@ -56,6 +56,9 @@ export class MeetingHubClient {
             PictureUrl: this.config.user.pictureUrl
           }
         });
+      })
+      .then(() => {
+        this.setupHandlers();
       })
       .catch(err => {
         console.error("SignalR connection failed:", err);
