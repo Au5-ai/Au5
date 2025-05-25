@@ -67,9 +67,44 @@
 }
 
 .au5-container {
-  height: calc(100vh - 255px);
+  height: calc(100vh - 245px);
   overflow-y: auto;
   padding: 16px;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: flex-start;
+  justify-content: space-evenly;
+}
+
+.au5-participants-container {
+  height: calc(100vh - 245px);
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  flex-direction: row;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-content: flex-start;
+}
+.au5-participant {
+  width: fit-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 2px;
+  font-weight: 500;
+  min-width: 96px;
+}
+
+.au5-participant img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid;
 }
 
 .au5-message {

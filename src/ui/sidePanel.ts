@@ -1,3 +1,4 @@
+import {User} from "../core/types";
 import css from "./styles/au5-panel.css?raw";
 
 export default class SidePanel {
@@ -82,6 +83,33 @@ export default class SidePanel {
         // Collapse action logic here
       });
     }
+  }
+
+  public static addParticipant(user: User): void {
+    if (!this.participantsContainer) {
+      console.warn("Participants container not initialized.");
+      return;
+    }
+
+    const participantElement = document.createElement("div");
+    participantElement.className = "au5-participant";
+
+    const img = document.createElement("img");
+    img.src = user.pictureUrl;
+    img.alt = "Participant Avatar";
+
+    const infoDiv = document.createElement("div");
+    infoDiv.className = "au5-participant-info";
+
+    const nameDiv = document.createElement("div");
+    nameDiv.className = "au5-participant-name";
+    nameDiv.textContent = user.fullname.substring(0, 8) || "Unknown User";
+
+    infoDiv.appendChild(nameDiv);
+    participantElement.appendChild(img);
+    participantElement.appendChild(infoDiv);
+
+    this.participantsContainer.appendChild(participantElement);
   }
 
   public static showTranscriptionsContainer(): void {
