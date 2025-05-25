@@ -359,7 +359,7 @@ class WindowMessageHandler {
     window.removeEventListener("message", this.handleMessage);
   }
 }
-const css = ".au5-panel {\r\n  background-color: #fff;\r\n  border-radius: 16px;\r\n  bottom: 80px;\r\n  box-sizing: border-box;\r\n  max-width: 100%;\r\n  position: absolute;\r\n  right: 16px;\r\n  top: 16px;\r\n  transform: none;\r\n  z-index: 9999;\r\n  width: 360px;\r\n  font-family: system-ui;\r\n}\r\n\r\n.au5-header {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 16px;\r\n}\r\n\r\n.au5-header-left {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n}\r\n\r\n.au5-avatar {\r\n  width: 40px;\r\n  height: 40px;\r\n  border-radius: 50%;\r\n  object-fit: cover;\r\n}\r\n\r\n.au5-avatar img {\r\n  border-radius: 50%;\r\n  width: 36px;\r\n  height: 36px;\r\n}\r\n\r\n.au5-room-name {\r\n  font-weight: bold;\r\n  font-size: 14px;\r\n}\r\n\r\n.au5-member-count {\r\n  font-size: 12px;\r\n  color: #888;\r\n}\r\n\r\n.au5-header-icons {\r\n  display: flex;\r\n  gap: 8px;\r\n}\r\n\r\n.au5-header-icons .au5-icon {\r\n  font-size: 16px;\r\n  display: flex;\r\n  cursor: pointer;\r\n  border-radius: 4px;\r\n  width: 28px;\r\n  background-color: #f4f4f4f4;\r\n  height: 28px;\r\n  align-items: center;\r\n  justify-content: center;\r\n}\r\n\r\n.au5-container {\r\n  height: calc(100vh - 255px);\r\n  overflow-y: auto;\r\n  padding: 16px;\r\n}\r\n\r\n.au5-message {\r\n  display: flex;\r\n  align-items: flex-start;\r\n  gap: 4px;\r\n  margin-bottom: 12px;\r\n  position: relative;\r\n}\r\n\r\n.au5-bubble {\r\n  background: #f8f8f8;\r\n  border-radius: 12px;\r\n  padding: 8px 12px;\r\n  flex: 1;\r\n}\r\n\r\n.au5-sender {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.au5-sender-title {\r\n  font-weight: bold;\r\n  font-size: 13px;\r\n  margin-bottom: 4px;\r\n}\r\n\r\n.au5-text {\r\n  font-size: 13px;\r\n  margin-bottom: 16px;\r\n  direction: rtl;\r\n}\r\n\r\n.au5-sender-time {\r\n  font-size: 11px;\r\n  color: #888;\r\n  text-align: right;\r\n}\r\n\r\n.au5-message-reactions {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  margin-top: 8px;\r\n}\r\n\r\n.au5-reactions {\r\n  display: flex;\r\n  gap: 4px;\r\n  left: 48px;\r\n  bottom: 8px;\r\n}\r\n\r\n.au5-reactions .reaction {\r\n  display: flex;\r\n  gap: 4px;\r\n  padding: 1px;\r\n  border-radius: 100px;\r\n  cursor: pointer;\r\n  border: 1px solid #e5e5e5;\r\n  transition: background-color 0.2s;\r\n  background-color: #e4e4e4;\r\n  align-items: center;\r\n  align-content: center;\r\n  min-width: 16px;\r\n  max-height: 16px;\r\n}\r\n\r\n.au5-reactions .reaction-emoji {\r\n  font-size: 12px;\r\n  width: 16px;\r\n  height: 16px;\r\n}\r\n\r\n.au5-reactions .reaction-users {\r\n  display: flex;\r\n  margin-left: 2px;\r\n}\r\n\r\n.au5-reactions .reaction-user {\r\n  width: 16px;\r\n  height: 16px;\r\n  border-radius: 50%;\r\n  border: 1px solid white;\r\n  margin-left: -4px;\r\n  display: flex;\r\n}\r\n\r\n.au5-reactions .reaction-user img {\r\n  width: 16px;\r\n  height: 16px;\r\n  border-radius: 50%;\r\n}\r\n\r\n.au5-btn {\r\n  background: #2196f3;\r\n  border: none;\r\n  color: white;\r\n  font-size: 13px;\r\n  padding: 8px 12px;\r\n  border-radius: 8px;\r\n  height: 38px;\r\n  cursor: pointer;\r\n  font-family: system-ui;\r\n  width: -webkit-fill-available;\r\n}\r\n\r\n.au5-send-btn {\r\n  height: auto;\r\n  width: auto;\r\n}\r\n\r\n.au5-join-time {\r\n  text-align: center;\r\n  font-size: 12px;\r\n  color: #666;\r\n  margin: 16px 0;\r\n}\r\n\r\n.au5-input-wrapper {\r\n  display: flex;\r\n  border-radius: 12px;\r\n  width: -webkit-fill-available;\r\n}\r\n\r\n.au5-input-container {\r\n  display: flex;\r\n  align-items: center;\r\n  flex: 1;\r\n  border: 1px solid #c2bdbd;\r\n  padding: 4px;\r\n  border-radius: 8px;\r\n  width: -webkit-fill-available;\r\n}\r\n\r\n.au5-input {\r\n  flex: 1;\r\n  border: none;\r\n  font-size: 14px;\r\n  padding: 8px;\r\n  border-radius: 8px;\r\n  outline: none;\r\n  font-family: system-ui;\r\n}\r\n\r\n.au5-hidden {\r\n  display: none;\r\n}\r\n\r\n.au5-footer {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 0 16px 16px 16px;\r\n}\r\n";
+const css = ".au5-panel {\r\n  background-color: #fff;\r\n  border-radius: 16px;\r\n  bottom: 80px;\r\n  box-sizing: border-box;\r\n  max-width: 100%;\r\n  position: absolute;\r\n  right: 16px;\r\n  top: 16px;\r\n  transform: none;\r\n  z-index: 9999;\r\n  width: 360px;\r\n  font-family: system-ui;\r\n}\r\n\r\n.au5-header {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 16px;\r\n}\r\n\r\n.au5-header-left {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n}\r\n\r\n.au5-avatar {\r\n  width: 40px;\r\n  height: 40px;\r\n  border-radius: 50%;\r\n  object-fit: cover;\r\n}\r\n\r\n.au5-avatar img {\r\n  border-radius: 50%;\r\n  width: 36px;\r\n  height: 36px;\r\n}\r\n\r\n.au5-room-name {\r\n  font-weight: bold;\r\n  font-size: 14px;\r\n}\r\n\r\n.au5-member-count {\r\n  font-size: 12px;\r\n  color: #888;\r\n}\r\n\r\n.au5-header-icons {\r\n  display: flex;\r\n  gap: 8px;\r\n}\r\n\r\n.au5-header-icons .au5-icon {\r\n  font-size: 16px;\r\n  display: flex;\r\n  cursor: pointer;\r\n  border-radius: 4px;\r\n  width: 28px;\r\n  background-color: #f4f4f4f4;\r\n  height: 28px;\r\n  align-items: center;\r\n  justify-content: center;\r\n}\r\n\r\n.au5-container {\r\n  height: calc(100vh - 245px);\r\n  overflow-y: auto;\r\n  padding: 16px;\r\n  display: flex;\r\n  flex-direction: row;\r\n  gap: 8px;\r\n  align-items: flex-start;\r\n  justify-content: space-evenly;\r\n}\r\n\r\n.au5-participants-container {\r\n  overflow-y: auto;\r\n  padding: 16px;\r\n  display: flex;\r\n  gap: 12px;\r\n  flex-direction: row;\r\n  align-items: flex-start;\r\n  flex-wrap: wrap;\r\n  justify-content: flex-start;\r\n  align-content: flex-start;\r\n}\r\n.au5-participant {\r\n  width: fit-content;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  flex-direction: column;\r\n  gap: 2px;\r\n  font-weight: 500;\r\n  min-width: 96px;\r\n}\r\n\r\n.au5-participant img {\r\n  width: 48px;\r\n  height: 48px;\r\n  border-radius: 50%;\r\n  border: 2px solid;\r\n}\r\n\r\n.au5-message {\r\n  display: flex;\r\n  align-items: flex-start;\r\n  gap: 4px;\r\n  margin-bottom: 12px;\r\n  position: relative;\r\n}\r\n\r\n.au5-bubble {\r\n  background: #f8f8f8;\r\n  border-radius: 12px;\r\n  padding: 8px 12px;\r\n  flex: 1;\r\n}\r\n\r\n.au5-sender {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.au5-sender-title {\r\n  font-weight: bold;\r\n  font-size: 13px;\r\n  margin-bottom: 4px;\r\n}\r\n\r\n.au5-text {\r\n  font-size: 13px;\r\n  margin-bottom: 16px;\r\n  direction: rtl;\r\n}\r\n\r\n.au5-sender-time {\r\n  font-size: 11px;\r\n  color: #888;\r\n  text-align: right;\r\n}\r\n\r\n.au5-message-reactions {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  margin-top: 8px;\r\n}\r\n\r\n.au5-reactions {\r\n  display: flex;\r\n  gap: 4px;\r\n  left: 48px;\r\n  bottom: 8px;\r\n}\r\n\r\n.au5-reactions .reaction {\r\n  display: flex;\r\n  gap: 4px;\r\n  padding: 1px;\r\n  border-radius: 100px;\r\n  cursor: pointer;\r\n  border: 1px solid #e5e5e5;\r\n  transition: background-color 0.2s;\r\n  background-color: #e4e4e4;\r\n  align-items: center;\r\n  align-content: center;\r\n  min-width: 16px;\r\n  max-height: 16px;\r\n}\r\n\r\n.au5-reactions .reaction-emoji {\r\n  font-size: 12px;\r\n  width: 16px;\r\n  height: 16px;\r\n}\r\n\r\n.au5-reactions .reaction-users {\r\n  display: flex;\r\n  margin-left: 2px;\r\n}\r\n\r\n.au5-reactions .reaction-user {\r\n  width: 16px;\r\n  height: 16px;\r\n  border-radius: 50%;\r\n  border: 1px solid white;\r\n  margin-left: -4px;\r\n  display: flex;\r\n}\r\n\r\n.au5-reactions .reaction-user img {\r\n  width: 16px;\r\n  height: 16px;\r\n  border-radius: 50%;\r\n}\r\n\r\n.au5-btn {\r\n  background: #2196f3;\r\n  border: none;\r\n  color: white;\r\n  font-size: 13px;\r\n  padding: 8px 12px;\r\n  border-radius: 8px;\r\n  height: 38px;\r\n  cursor: pointer;\r\n  font-family: system-ui;\r\n  width: -webkit-fill-available;\r\n}\r\n\r\n.au5-send-btn {\r\n  height: auto;\r\n  width: auto;\r\n}\r\n\r\n.au5-join-time {\r\n  text-align: center;\r\n  font-size: 12px;\r\n  color: #666;\r\n  margin: 16px 0;\r\n}\r\n\r\n.au5-input-wrapper {\r\n  display: flex;\r\n  border-radius: 12px;\r\n  width: -webkit-fill-available;\r\n}\r\n\r\n.au5-input-container {\r\n  display: flex;\r\n  align-items: center;\r\n  flex: 1;\r\n  border: 1px solid #c2bdbd;\r\n  padding: 4px;\r\n  border-radius: 8px;\r\n  width: -webkit-fill-available;\r\n}\r\n\r\n.au5-input {\r\n  flex: 1;\r\n  border: none;\r\n  font-size: 14px;\r\n  padding: 8px;\r\n  border-radius: 8px;\r\n  outline: none;\r\n  font-family: system-ui;\r\n}\r\n\r\n.au5-hidden {\r\n  display: none;\r\n}\r\n\r\n.au5-footer {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 0 16px 16px 16px;\r\n}\r\n";
 class SidePanel {
   static createSidePanel(roomName, meetingId, direction = "ltr") {
     this.direction = direction;
@@ -426,6 +426,26 @@ class SidePanel {
         console.log("Collapse icon clicked");
       });
     }
+  }
+  static addParticipant(user) {
+    if (!this.participantsContainer) {
+      console.warn("Participants container not initialized.");
+      return;
+    }
+    const participantElement = document.createElement("div");
+    participantElement.className = "au5-participant";
+    const img = document.createElement("img");
+    img.src = user.pictureUrl;
+    img.alt = "Participant Avatar";
+    const infoDiv = document.createElement("div");
+    infoDiv.className = "au5-participant-info";
+    const nameDiv = document.createElement("div");
+    nameDiv.className = "au5-participant-name";
+    nameDiv.textContent = user.fullname.substring(0, 8) || "Unknown User";
+    infoDiv.appendChild(nameDiv);
+    participantElement.appendChild(img);
+    participantElement.appendChild(infoDiv);
+    this.participantsContainer.appendChild(participantElement);
   }
   static showTranscriptionsContainer() {
     var _a2, _b2, _c2;
@@ -5225,6 +5245,7 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
     }
     const meetingId = platform.getMeetingTitle();
     SidePanel.createSidePanel("Asax Co", meetingId, config.service.direction);
+    SidePanel.addParticipant({ fullname: config.user.fullName, pictureUrl: config.user.pictureUrl });
     establishConnection(config, meetingId);
     (_a2 = document.getElementById(config.extension.btnTranscriptSelector)) == null ? void 0 : _a2.addEventListener("click", () => {
       meet = {
@@ -5304,6 +5325,23 @@ var Pipelines;
 function handleWindowMessage(action, payload) {
   console.log("Received action:", action);
   console.log("Received payload:", payload);
+  switch (action) {
+    case MessageTypes.NotifyRealTimeTranscription:
+      break;
+    case MessageTypes.NotifyUserJoining:
+      break;
+    case MessageTypes.NotifyUserLeft:
+      break;
+    case MessageTypes.NotifyMeetHasBeenStarted:
+    case MessageTypes.TriggerTranscriptionStart:
+      SidePanel.showTranscriptionsContainer();
+      break;
+    case MessageTypes.ListOfUsersInMeeting:
+      console.log("Meeting has started");
+      break;
+    default:
+      console.warn("Unknown message action received:", action);
+  }
 }
 function createMutationHandler(ctx) {
   return function(mutations, observer) {

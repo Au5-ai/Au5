@@ -41,7 +41,7 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
     const meetingId = platform.getMeetingTitle();
 
     SidePanel.createSidePanel("Asax Co", meetingId, config.service.direction);
-    // SidePanel.addCurrentUser(appConfig.Service.fullName);
+    SidePanel.addParticipant({fullname: config.user.fullName, pictureUrl: config.user.pictureUrl} as User);
     establishConnection(config, meetingId);
 
     document.getElementById(config.extension.btnTranscriptSelector)?.addEventListener("click", () => {

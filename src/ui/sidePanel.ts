@@ -9,7 +9,7 @@ export default class SidePanel {
   private static inputWrapper: HTMLDivElement | null = null;
   private static direction: "ltr" | "rtl" = "ltr";
 
-  static createSidePanel(roomName: string, meetingId: string, direction: "ltr" | "rtl" = "ltr"): void {
+  static createSidePanel(companyName: string, meetingId: string, direction: "ltr" | "rtl" = "ltr"): void {
     this.direction = direction;
 
     const tag = document.createElement("style");
@@ -19,10 +19,10 @@ export default class SidePanel {
     const html = `
         <div class="au5-panel">
           <div class="au5-header">
-            <div class="au5-header-left">
+           <div class="au5-company-avatar">A</div>
               <div>
-                <div class="au5-room-name">${roomName}</div>
-                <div class="au5-member-count">${meetingId}</div>
+                <div class="au5-company-name">${companyName}</div>
+                <div class="au5-room-title">${meetingId}</div>
               </div>
             </div>
             <div class="au5-header-icons">

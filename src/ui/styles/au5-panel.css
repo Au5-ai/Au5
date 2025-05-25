@@ -39,12 +39,26 @@
   height: 36px;
 }
 
-.au5-room-name {
+.au5-company-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #353637;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  font-family: sans-serif;
+}
+
+.au5-company-name {
   font-weight: bold;
   font-size: 14px;
 }
 
-.au5-member-count {
+.au5-room-name {
   font-size: 12px;
   color: #888;
 }
@@ -78,7 +92,6 @@
 }
 
 .au5-participants-container {
-  height: calc(100vh - 245px);
   overflow-y: auto;
   padding: 16px;
   display: flex;
@@ -86,7 +99,7 @@
   flex-direction: row;
   align-items: flex-start;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: flex-start;
   align-content: flex-start;
 }
 .au5-participant {
