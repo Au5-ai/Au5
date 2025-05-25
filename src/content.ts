@@ -130,37 +130,30 @@ function handleWindowMessage(action: string, payload: any) {
   console.log("Received action:", action);
   console.log("Received payload:", payload);
 
-  // window.addEventListener("message", event => {
-  //   const {data, source} = event;
+  switch (action) {
+    case MessageTypes.NotifyRealTimeTranscription:
+      //  SidePanel.updateLiveMessage(payload);
+      break;
 
-  //   // Validate source
-  //   if (source !== window || data?.source !== MeetingHubConfig.messageSources.injectedScript) {
-  //     return;
-  //   }
+    case MessageTypes.NotifyUserJoining:
+      // SidePanel.addParticipant(payload);
+      break;
 
-  //   const {action, payload} = data;
+    case MessageTypes.NotifyUserLeft:
+      // SidePanel.addParticipant(payload);
+      break;
 
-  //   switch (action) {
-  //     case MeetingHubConfig.contentScriptActions.TRANSCRIPTION_UPDATE:
-  //       //  SidePanel.updateLiveMessage(payload);
-  //       break;
+    case MessageTypes.NotifyMeetHasBeenStarted:
+    case MessageTypes.TriggerTranscriptionStart:
+      SidePanel.showTranscriptionsContainer();
+      break;
 
-  //     case MeetingHubConfig.contentScriptActions.PARTICIPANT_JOINED:
-  //       // SidePanel.addParticipant(payload);
-  //       break;
-
-  //     case MeetingHubConfig.contentScriptActions.TRANSCRIPTION_STARTED:
-  //       //  SidePanel.hideParticipantList();
-  //       break;
-
-  //     case MeetingHubConfig.contentScriptActions.MeedHasBeenStarted:
-  //       console.log("Meeting has started");
-  //       SidePanel.showMessagesContainer();
-  //       break;
-  //     default:
-  //       console.warn("Unknown message action received:", action);
-  //   }
-  // });
+    case MessageTypes.ListOfUsersInMeeting:
+      console.log("Meeting has started");
+      break;
+    default:
+      console.warn("Unknown message action received:", action);
+  }
 }
 
 /**
