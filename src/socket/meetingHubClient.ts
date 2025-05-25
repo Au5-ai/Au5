@@ -30,7 +30,7 @@ export class MeetingHubClient {
 
   private setupHandlers() {
     this.connection.on("ReceiveMessage", (msg: Message) => {
-      console.debug("Received message from server:", msg);
+      console.info("Received message from server:", msg);
       switch (msg.Header.Type) {
         case MessageTypes.NotifyUserJoining:
         case MessageTypes.NotifyMeetHasBeenStarted:

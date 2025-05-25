@@ -346,7 +346,6 @@ class WindowMessageHandler {
     window.addEventListener("message", this.handleMessage);
   }
   postToWindow(msg) {
-    console.debug("Posting message to window:", msg, this.sourceGet, this.sourcePost);
     window.postMessage(
       {
         source: this.sourcePost,
@@ -5142,7 +5141,7 @@ class MeetingHubClient {
   }
   setupHandlers() {
     this.connection.on("ReceiveMessage", (msg) => {
-      console.debug("Received message from server:", msg);
+      console.info("Received message from server:", msg);
       switch (msg.Header.Type) {
         case MessageTypes.NotifyUserJoining:
         case MessageTypes.NotifyMeetHasBeenStarted:

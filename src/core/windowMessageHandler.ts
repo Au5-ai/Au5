@@ -20,7 +20,6 @@ export class WindowMessageHandler {
   };
 
   public postToWindow(msg: Message) {
-    console.debug("Posting message to window:", msg, this.sourceGet, this.sourcePost);
     window.postMessage(
       {
         source: this.sourcePost,
