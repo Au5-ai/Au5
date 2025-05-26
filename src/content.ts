@@ -50,14 +50,7 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
         startAt: new Date().toISOString(),
         endAt: "",
         transcripts: [],
-        users: [
-          {
-            id: config.user.userId,
-            fullname: config.user.fullName,
-            pictureUrl: config.user.pictureUrl,
-            joinedAt: new Date().toISOString()
-          } as User
-        ]
+        users: listOfUsersInMeeting
       };
 
       SidePanel.showTranscriptionsContainer();
@@ -75,9 +68,7 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
         Payload: {
           MeetingId: meetingId,
           User: {
-            Id: config.user.userId,
-            FullName: config.user.fullName,
-            PictureUrl: config.user.pictureUrl
+            Id: config.user.userId
           }
         }
       });
@@ -207,10 +198,14 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
         : (speakerElements[speakerElements.length - 1] as HTMLElement);
       const nameNode = latestSpeakerElement.childNodes[0] as HTMLElement;
       const textNode = latestSpeakerElement.childNodes[1] as HTMLElement;
-
-      const speakerName = nameNode?.textContent?.trim() ?? "";
+      let speakerName = nameNode?.textContent?.trim() ?? "";
       const transcriptText = textNode?.textContent?.trim() ?? "";
 
+      if (speakerName === "You") {
+        speakerName = config.user.fullName;
+      }
+
+      const currentSpeaker = listOfUsersInMeeting.find(user => user.fullname === speakerName);
       if (!speakerName || !transcriptText) {
         // Send Error to Admin of Repo
         continue;
@@ -255,18 +250,20 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
         }
       }
 
-      // SidePanel.updateLiveMessage({
-      //   id: currentSpeakerId,
-      //   speaker: currentSpeakerName,
-      //   transcript: currentTranscript,
-      //   timestamp: currentTimestamp
-      // });
+      SidePanel.addTranscription({
+        meetingId: meet.id,
+        transcriptionBlockId: currentTransciptBlockId,
+        speaker: currentSpeaker,
+        transcript: currentTranscript,
+        timestamp: currentTimestamp
+      });
 
       windowMessageHandler.postToWindow({
         Header: {Type: MessageTypes.NotifyRealTimeTranscription},
         Payload: {
-          Id: currentTransciptBlockId,
-          Speaker: currentSpeakerName,
+          MeetingId: meet.id,
+          TranscriptionBlockId: currentTransciptBlockId,
+          Speaker: {id: currentSpeaker?.id, fullName: currentSpeakerName},
           Transcript: currentTranscript,
           Timestamp: currentTimestamp
         }

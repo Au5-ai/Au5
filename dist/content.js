@@ -359,7 +359,17 @@ class WindowMessageHandler {
     window.removeEventListener("message", this.handleMessage);
   }
 }
-const css = ".au5-panel {\r\n  background-color: #fff;\r\n  border-radius: 16px;\r\n  box-sizing: border-box;\r\n  max-width: 100%;\r\n  position: absolute;\r\n  right: 16px;\r\n  top: 16px;\r\n  transform: none;\r\n  z-index: 9999;\r\n  width: 360px;\r\n  font-family: system-ui;\r\n}\r\n\r\n.au5-header {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 16px;\r\n  background-color: #f4f4f4f4;\r\n  border-top-left-radius: 16px;\r\n  border-top-right-radius: 16px;\r\n}\r\n\r\n.au5-header-left {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n}\r\n\r\n.au5-avatar {\r\n  width: 40px;\r\n  height: 40px;\r\n  border-radius: 50%;\r\n  object-fit: cover;\r\n}\r\n\r\n.au5-avatar img {\r\n  border-radius: 50%;\r\n  width: 36px;\r\n  height: 36px;\r\n}\r\n\r\n.au5-company-avatar {\r\n  width: 40px;\r\n  height: 40px;\r\n  border-radius: 50%;\r\n  background-color: #353637;\r\n  color: white;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  font-weight: bold;\r\n  font-size: 18px;\r\n  font-family: sans-serif;\r\n}\r\n\r\n.au5-company-name {\r\n  font-weight: bold;\r\n  font-size: 14px;\r\n}\r\n\r\n.au5-room-name {\r\n  font-size: 12px;\r\n  color: #888;\r\n}\r\n\r\n.au5-header-icons {\r\n  display: flex;\r\n  gap: 8px;\r\n}\r\n\r\n.au5-icon-selected {\r\n  border: 1px solid #2196f3;\r\n  box-shadow: 0px 0px 3px 0px #2196f3;\r\n}\r\n\r\n.au5-header-collapse {\r\n  border-bottom-left-radius: 16px;\r\n  border-bottom-right-radius: 16px;\r\n}\r\n\r\n.au5-header-icons .au5-icon {\r\n  font-size: 16px;\r\n  display: flex;\r\n  cursor: pointer;\r\n  border-radius: 4px;\r\n  width: 28px;\r\n  background-color: #f4f4f4f4;\r\n  height: 28px;\r\n  align-items: center;\r\n  justify-content: center;\r\n}\r\n\r\n.au5-container {\r\n  height: calc(100vh - 260px);\r\n  overflow-y: auto;\r\n  padding: 16px;\r\n}\r\n\r\n.au5-participants-container {\r\n  overflow-y: auto;\r\n  display: flex;\r\n  gap: 16px;\r\n  flex-direction: column;\r\n  flex-wrap: wrap;\r\n  justify-content: flex-start;\r\n  align-content: flex-start;\r\n  align-items: flex-start;\r\n  padding: 16px;\r\n}\r\n\r\n.au5-participant {\r\n  width: fit-content;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  flex-direction: row;\r\n  gap: 8px;\r\n  min-width: 96px;\r\n}\r\n\r\n.au5-participant img {\r\n  width: 48px;\r\n  height: 48px;\r\n  border-radius: 50%;\r\n  box-shadow: 0px 0px 8px 2px #eeee;\r\n  border: 2px solid #fff;\r\n}\r\n\r\n.au5-participant-info {\r\n  display: flex;\r\n  flex-direction: column;\r\n  justify-content: center;\r\n}\r\n\r\n.au5-participant-jointime {\r\n  font-size: 12px;\r\n  color: #929292;\r\n  font-weight: normal;\r\n}\r\n\r\n.au5-message {\r\n  display: flex;\r\n  align-items: flex-start;\r\n  gap: 4px;\r\n  margin-bottom: 12px;\r\n  position: relative;\r\n}\r\n\r\n.au5-bubble {\r\n  background: #f8f8f8;\r\n  border-radius: 12px;\r\n  padding: 8px 12px;\r\n  flex: 1;\r\n}\r\n\r\n.au5-sender {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.au5-sender-title {\r\n  font-weight: bold;\r\n  font-size: 13px;\r\n  margin-bottom: 4px;\r\n}\r\n\r\n.au5-text {\r\n  font-size: 13px;\r\n  margin-bottom: 16px;\r\n  direction: rtl;\r\n}\r\n\r\n.au5-sender-time {\r\n  font-size: 11px;\r\n  color: #888;\r\n  text-align: right;\r\n}\r\n\r\n.au5-message-reactions {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  margin-top: 8px;\r\n}\r\n\r\n.au5-reactions {\r\n  display: flex;\r\n  gap: 4px;\r\n  left: 48px;\r\n  bottom: 8px;\r\n}\r\n\r\n.au5-reactions .reaction {\r\n  display: flex;\r\n  gap: 4px;\r\n  padding: 1px;\r\n  border-radius: 100px;\r\n  cursor: pointer;\r\n  border: 1px solid #e5e5e5;\r\n  transition: background-color 0.2s;\r\n  background-color: #e4e4e4;\r\n  align-items: center;\r\n  align-content: center;\r\n  min-width: 16px;\r\n  max-height: 16px;\r\n}\r\n\r\n.au5-reactions .reaction-emoji {\r\n  font-size: 12px;\r\n  width: 16px;\r\n  height: 16px;\r\n}\r\n\r\n.au5-reactions .reaction-users {\r\n  display: flex;\r\n  margin-left: 2px;\r\n}\r\n\r\n.au5-reactions .reaction-user {\r\n  width: 16px;\r\n  height: 16px;\r\n  border-radius: 50%;\r\n  border: 1px solid white;\r\n  margin-left: -4px;\r\n  display: flex;\r\n}\r\n\r\n.au5-reactions .reaction-user img {\r\n  width: 16px;\r\n  height: 16px;\r\n  border-radius: 50%;\r\n}\r\n\r\n.au5-btn {\r\n  background: #2196f3;\r\n  border: none;\r\n  color: white;\r\n  font-size: 13px;\r\n  padding: 8px 12px;\r\n  border-radius: 8px;\r\n  height: 38px;\r\n  cursor: pointer;\r\n  font-family: system-ui;\r\n  width: -webkit-fill-available;\r\n}\r\n\r\n.au5-send-btn {\r\n  height: auto;\r\n  width: auto;\r\n}\r\n\r\n.au5-join-time {\r\n  text-align: center;\r\n  font-size: 12px;\r\n  color: #666;\r\n  margin: 16px 0;\r\n}\r\n\r\n.au5-input-wrapper {\r\n  display: flex;\r\n  border-radius: 12px;\r\n  width: -webkit-fill-available;\r\n}\r\n\r\n.au5-input-container {\r\n  display: flex;\r\n  align-items: center;\r\n  flex: 1;\r\n  border: 1px solid #c2bdbd;\r\n  padding: 4px;\r\n  border-radius: 8px;\r\n  width: -webkit-fill-available;\r\n}\r\n\r\n.au5-input {\r\n  flex: 1;\r\n  border: none;\r\n  font-size: 14px;\r\n  padding: 8px;\r\n  border-radius: 8px;\r\n  outline: none;\r\n  font-family: system-ui;\r\n}\r\n\r\n.au5-hidden {\r\n  display: none !important;\r\n}\r\n\r\n.au5-footer {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 0 16px 16px 16px;\r\n}\r\n";
+var DateTime;
+((DateTime2) => {
+  function toHoursAndMinutes(input) {
+    const date = typeof input === "string" ? new Date(input) : input;
+    const hh = date.getUTCHours().toString().padStart(2, "0");
+    const mm = date.getUTCMinutes().toString().padStart(2, "0");
+    return `${hh}:${mm}`;
+  }
+  DateTime2.toHoursAndMinutes = toHoursAndMinutes;
+})(DateTime || (DateTime = {}));
+const css = ".au5-panel {\r\n  background-color: #fff;\r\n  border-radius: 16px;\r\n  box-sizing: border-box;\r\n  max-width: 100%;\r\n  position: absolute;\r\n  right: 16px;\r\n  top: 16px;\r\n  transform: none;\r\n  z-index: 9999;\r\n  width: 360px;\r\n  font-family: system-ui;\r\n}\r\n\r\n.au5-header {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 16px;\r\n  background-color: #f4f4f4f4;\r\n  border-top-left-radius: 16px;\r\n  border-top-right-radius: 16px;\r\n}\r\n\r\n.au5-header-left {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n}\r\n\r\n.au5-avatar {\r\n  width: 40px;\r\n  height: 40px;\r\n  border-radius: 50%;\r\n  object-fit: cover;\r\n}\r\n\r\n.au5-avatar img {\r\n  border-radius: 50%;\r\n  width: 36px;\r\n  height: 36px;\r\n}\r\n\r\n.au5-company-avatar {\r\n  width: 40px;\r\n  height: 40px;\r\n  border-radius: 50%;\r\n  background-color: #353637;\r\n  color: white;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  font-weight: bold;\r\n  font-size: 18px;\r\n  font-family: sans-serif;\r\n}\r\n\r\n.au5-company-name {\r\n  font-weight: bold;\r\n  font-size: 14px;\r\n}\r\n\r\n.au5-room-name {\r\n  font-size: 12px;\r\n  color: #888;\r\n}\r\n\r\n.au5-header-icons {\r\n  display: flex;\r\n  gap: 8px;\r\n}\r\n\r\n.au5-icon-selected {\r\n  border: 1px solid #2196f3;\r\n  box-shadow: 0px 0px 3px 0px #2196f3;\r\n}\r\n\r\n.au5-header-collapse {\r\n  border-bottom-left-radius: 16px;\r\n  border-bottom-right-radius: 16px;\r\n}\r\n\r\n.au5-header-icons .au5-icon {\r\n  font-size: 16px;\r\n  display: flex;\r\n  cursor: pointer;\r\n  border-radius: 4px;\r\n  width: 28px;\r\n  background-color: #f4f4f4f4;\r\n  height: 28px;\r\n  align-items: center;\r\n  justify-content: center;\r\n}\r\n\r\n.au5-container {\r\n  height: calc(100vh - 260px);\r\n  overflow-y: auto;\r\n  padding: 16px;\r\n}\r\n\r\n.au5-participants-container {\r\n  overflow-y: auto;\r\n  display: flex;\r\n  gap: 16px;\r\n  flex-direction: column;\r\n  flex-wrap: wrap;\r\n  justify-content: flex-start;\r\n  align-content: flex-start;\r\n  align-items: flex-start;\r\n  padding: 16px;\r\n}\r\n\r\n.au5-participant {\r\n  width: fit-content;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  flex-direction: row;\r\n  gap: 8px;\r\n  min-width: 96px;\r\n}\r\n\r\n.au5-participant img {\r\n  width: 48px;\r\n  height: 48px;\r\n  border-radius: 50%;\r\n  box-shadow: 0px 0px 8px 2px #eeee;\r\n  border: 2px solid #fff;\r\n}\r\n\r\n.au5-participant-info {\r\n  display: flex;\r\n  flex-direction: column;\r\n  justify-content: center;\r\n}\r\n\r\n.au5-participant-joinedAt {\r\n  font-size: 12px;\r\n  color: #929292;\r\n  font-weight: normal;\r\n}\r\n\r\n.au5-transcription {\r\n  display: flex;\r\n  align-items: flex-start;\r\n  gap: 4px;\r\n  margin-bottom: 12px;\r\n  position: relative;\r\n}\r\n\r\n.au5-bubble {\r\n  background: #f8f8f8;\r\n  border-radius: 12px;\r\n  padding: 8px 12px;\r\n  flex: 1;\r\n}\r\n\r\n.au5-sender {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.au5-sender-title {\r\n  font-weight: bold;\r\n  font-size: 13px;\r\n  margin-bottom: 4px;\r\n}\r\n\r\n.au5-text {\r\n  font-size: 13px;\r\n  margin-bottom: 16px;\r\n  direction: rtl;\r\n}\r\n\r\n.au5-sender-time {\r\n  font-size: 11px;\r\n  color: #888;\r\n  text-align: right;\r\n}\r\n\r\n.au5-message-reactions {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  margin-top: 8px;\r\n}\r\n\r\n.au5-reactions {\r\n  display: flex;\r\n  gap: 4px;\r\n  left: 48px;\r\n  bottom: 8px;\r\n}\r\n\r\n.au5-reactions .reaction {\r\n  display: flex;\r\n  gap: 4px;\r\n  padding: 1px;\r\n  border-radius: 100px;\r\n  cursor: pointer;\r\n  border: 1px solid #e5e5e5;\r\n  transition: background-color 0.2s;\r\n  background-color: #e4e4e4;\r\n  align-items: center;\r\n  align-content: center;\r\n  min-width: 16px;\r\n  max-height: 16px;\r\n}\r\n\r\n.au5-reactions .reaction-emoji {\r\n  font-size: 12px;\r\n  width: 16px;\r\n  height: 16px;\r\n}\r\n\r\n.au5-reactions .reaction-users {\r\n  display: flex;\r\n  margin-left: 2px;\r\n}\r\n\r\n.au5-reactions .reaction-user {\r\n  width: 16px;\r\n  height: 16px;\r\n  border-radius: 50%;\r\n  border: 1px solid white;\r\n  margin-left: -4px;\r\n  display: flex;\r\n}\r\n\r\n.au5-reactions .reaction-user img {\r\n  width: 16px;\r\n  height: 16px;\r\n  border-radius: 50%;\r\n}\r\n\r\n.au5-btn {\r\n  background: #2196f3;\r\n  border: none;\r\n  color: white;\r\n  font-size: 13px;\r\n  padding: 8px 12px;\r\n  border-radius: 8px;\r\n  height: 38px;\r\n  cursor: pointer;\r\n  font-family: system-ui;\r\n  width: -webkit-fill-available;\r\n}\r\n\r\n.au5-send-btn {\r\n  height: auto;\r\n  width: auto;\r\n}\r\n\r\n.au5-join-time {\r\n  text-align: center;\r\n  font-size: 12px;\r\n  color: #666;\r\n  margin: 16px 0;\r\n}\r\n\r\n.au5-input-wrapper {\r\n  display: flex;\r\n  border-radius: 12px;\r\n  width: -webkit-fill-available;\r\n}\r\n\r\n.au5-input-container {\r\n  display: flex;\r\n  align-items: center;\r\n  flex: 1;\r\n  border: 1px solid #c2bdbd;\r\n  padding: 4px;\r\n  border-radius: 8px;\r\n  width: -webkit-fill-available;\r\n}\r\n\r\n.au5-input {\r\n  flex: 1;\r\n  border: none;\r\n  font-size: 14px;\r\n  padding: 8px;\r\n  border-radius: 8px;\r\n  outline: none;\r\n  font-family: system-ui;\r\n}\r\n\r\n.au5-hidden {\r\n  display: none !important;\r\n}\r\n\r\n.au5-footer {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 0 16px 16px 16px;\r\n}\r\n";
 class SidePanel {
   static createSidePanel(companyName, meetingId, direction = "ltr") {
     var _a2;
@@ -412,9 +422,9 @@ class SidePanel {
              
       
           <div class="au5-participants-container au5-container"></div>
-          <div class="au5-messages-container au5-container au5-hidden"></div>
+          <div class="au5-transcriptions-container au5-container au5-hidden"></div>
            <div class="au5-footer">
-              <button class="au5-startTranscription-btn au5-btn">Start Transcription</button>
+              <button id="au5-startTranscription-btn" class="au5-startTranscription-btn au5-btn">Start Transcription</button>
               <div class="au5-input-wrapper au5-hidden">
                 <div class="au5-input-container">
                   <input type="text" class="au5-input" placeholder="Write your message ..." />
@@ -430,7 +440,7 @@ class SidePanel {
     this.panelElement = container.querySelector(".au5-panel");
     this.transcriptionsContainer = container.querySelector(".au5-transcriptions-container");
     this.participantsContainer = container.querySelector(".au5-participants-container");
-    this.btnStartTranscription = container.querySelector(".au5-start-btn");
+    this.btnStartTranscription = container.querySelector(".au5-startTranscription-btn");
     this.inputWrapper = container.querySelector(".au5-input-wrapper");
     this.header = container.querySelector(".au5-header");
     this.footer = container.querySelector(".au5-footer");
@@ -462,7 +472,6 @@ class SidePanel {
   }
   static addParticipant(user) {
     if (!this.participantsContainer) {
-      console.warn("Participants container not initialized.");
       return;
     }
     const participantElement = document.createElement("div");
@@ -476,7 +485,7 @@ class SidePanel {
     nameDiv.className = "au5-participant-name";
     nameDiv.textContent = user.fullname || "Unknown User";
     const joinedAtDiv = document.createElement("div");
-    joinedAtDiv.className = "au5-participant-jointime";
+    joinedAtDiv.className = "au5-participant-joinedAt";
     joinedAtDiv.textContent = `Joined at: ${new Date(user.joinedAt).toLocaleTimeString()}`;
     infoDiv.appendChild(nameDiv);
     infoDiv.appendChild(joinedAtDiv);
@@ -484,19 +493,65 @@ class SidePanel {
     participantElement.appendChild(infoDiv);
     this.participantsContainer.appendChild(participantElement);
   }
+  static addTranscription(block) {
+    console.log("Adding transcription block:", block);
+    if (!this.transcriptionsContainer) {
+      return;
+    }
+    const existing = this.transcriptionsContainer.querySelector(
+      `[data-id="${block.transcriptionBlockId}"]`
+    );
+    if (existing) {
+      const textEl = existing.querySelector(".au5-text");
+      if (textEl) textEl.innerText = block.transcript;
+      return;
+    }
+    const transcriptBlock = document.createElement("div");
+    transcriptBlock.setAttribute("data-id", block.transcriptionBlockId);
+    transcriptBlock.className = "au5-transcription-header";
+    transcriptBlock.innerHTML = `<div class="au5-avatar">
+            <img
+              src="${block.speaker.pictureUrl || "https://via.placeholder.com/40"}"
+            />
+          </div>
+          <div class="au5-bubble">
+            <div class="au5-sender">
+              <div class="au5-sender-title">${block.speaker.fullName}</div>
+              <div class="au5-sender-time">${DateTime.toHoursAndMinutes(block.time)}</div>
+            </div>
+            <div class="au5-text" style="direction: ${this.direction};">
+              ${block.transcript}
+            </div>
+            <div class="au5-transcription-reactions">
+              <div class="au5-reactions">
+                <div class="reaction reaction-highlight">
+                  <span class="reaction-emoji">⚡</span>
+                </div>
+                <div class="reaction reaction-mute">
+                  <span class="reaction-emoji">🎯</span>
+                </div>
+              </div>
+            </div>
+          </div>`;
+    this.transcriptionsContainer.appendChild(transcriptBlock);
+  }
   static showTranscriptionsContainer() {
     var _a2, _b2, _c2;
     if (this.transcriptionsContainer) {
       this.transcriptionsContainer.classList.remove("au5-hidden");
-      (_a2 = this.participantsContainer) == null ? void 0 : _a2.remove();
+      (_a2 = this.inputWrapper) == null ? void 0 : _a2.classList.remove("au5-hidden");
+      (_b2 = this.participantsContainer) == null ? void 0 : _b2.remove();
       this.participantsContainer = null;
-      (_b2 = this.inputWrapper) == null ? void 0 : _b2.classList.remove("au5-hidden");
       (_c2 = this.btnStartTranscription) == null ? void 0 : _c2.classList.add("au5-hidden");
     }
   }
   static destroy() {
     if (this.panelElement) {
-      document.body.removeChild(this.panelElement);
+      if (document.body.contains(this.panelElement)) {
+        this.panelElement.remove();
+      } else {
+        console.warn("SidePanel exists but is not attached to document.body.");
+      }
       this.panelElement = null;
       this.transcriptionsContainer = null;
     } else {
@@ -5233,24 +5288,8 @@ class MeetingHubClient {
   handleWindowMessage(action, payload) {
     switch (action) {
       case MessageTypes.TriggerTranscriptionStart:
-        this.connection.invoke(action, {
-          MeetingId: this.meetingId,
-          User: {
-            Id: this.config.user.userId,
-            FullName: this.config.user.fullName,
-            PictureUrl: this.config.user.pictureUrl
-          }
-        });
-        break;
       case MessageTypes.NotifyRealTimeTranscription:
-        this.connection.invoke(action, {
-          MeetingId: this.meetingId,
-          Speaker: {
-            FullName: payload.fullName,
-            PictureUrl: payload.pictureUrl
-          },
-          Transcript: payload.transcript
-        });
+        this.connection.invoke(action, payload);
         break;
     }
   }
@@ -5293,14 +5332,7 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
         startAt: (/* @__PURE__ */ new Date()).toISOString(),
         endAt: "",
         transcripts: [],
-        users: [
-          {
-            id: config.user.userId,
-            fullname: config.user.fullName,
-            pictureUrl: config.user.pictureUrl,
-            joinedAt: (/* @__PURE__ */ new Date()).toISOString()
-          }
-        ]
+        users: listOfUsersInMeeting
       };
       SidePanel.showTranscriptionsContainer();
       runPipesAsync(
@@ -5315,9 +5347,7 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
         Payload: {
           MeetingId: meetingId,
           User: {
-            Id: config.user.userId,
-            FullName: config.user.fullName,
-            PictureUrl: config.user.pictureUrl
+            Id: config.user.userId
           }
         }
       });
@@ -5361,6 +5391,7 @@ var Pipelines;
     return ctx;
   };
 })(Pipelines || (Pipelines = {}));
+let listOfUsersInMeeting = [];
 function handleWindowMessage(action, payload) {
   switch (action) {
     case MessageTypes.NotifyRealTimeTranscription:
@@ -5372,6 +5403,7 @@ function handleWindowMessage(action, payload) {
         pictureUrl: payload.User.PictureUrl,
         joinedAt: payload.User.JoinedAt || (/* @__PURE__ */ new Date()).toISOString()
       };
+      listOfUsersInMeeting.push(item);
       SidePanel.addParticipant(item);
       break;
     case MessageTypes.NotifyUserLeft:
@@ -5388,6 +5420,7 @@ function handleWindowMessage(action, payload) {
           pictureUrl: user.PictureUrl,
           joinedAt: user.JoinedAt || (/* @__PURE__ */ new Date()).toISOString()
         };
+        listOfUsersInMeeting.push(item2);
         SidePanel.addParticipant(item2);
       });
       break;
@@ -5412,8 +5445,12 @@ function handleTranscriptMutations(mutations, ctx) {
       const latestSpeakerElement = ctx.canUseAriaBasedTranscriptSelector ? speakerElements[speakerElements.length - 2] : speakerElements[speakerElements.length - 1];
       const nameNode = latestSpeakerElement.childNodes[0];
       const textNode = latestSpeakerElement.childNodes[1];
-      const speakerName = ((_c2 = nameNode == null ? void 0 : nameNode.textContent) == null ? void 0 : _c2.trim()) ?? "";
+      let speakerName = ((_c2 = nameNode == null ? void 0 : nameNode.textContent) == null ? void 0 : _c2.trim()) ?? "";
       const transcriptText = ((_d = textNode == null ? void 0 : textNode.textContent) == null ? void 0 : _d.trim()) ?? "";
+      if (speakerName === "You") {
+        speakerName = config.user.fullName;
+      }
+      const currentSpeaker = listOfUsersInMeeting.find((user) => user.fullname === speakerName);
       if (!speakerName || !transcriptText) {
         continue;
       }
@@ -5450,11 +5487,20 @@ function handleTranscriptMutations(mutations, ctx) {
           latestSpeakerElement.remove();
         }
       }
+      console.log("Current speaker:", currentSpeaker);
+      SidePanel.addTranscription({
+        meetingId: meet.id,
+        transcriptionBlockId: currentTransciptBlockId,
+        speaker: currentSpeaker,
+        transcript: currentTranscript,
+        timestamp: currentTimestamp
+      });
       windowMessageHandler.postToWindow({
         Header: { Type: MessageTypes.NotifyRealTimeTranscription },
         Payload: {
-          Id: currentTransciptBlockId,
-          Speaker: currentSpeakerName,
+          MeetingId: meet.id,
+          TranscriptionBlockId: currentTransciptBlockId,
+          Speaker: { id: currentSpeaker == null ? void 0 : currentSpeaker.id, fullName: currentSpeakerName },
           Transcript: currentTranscript,
           Timestamp: currentTimestamp
         }

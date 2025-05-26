@@ -1,4 +1,5 @@
 import {User} from "../core/types";
+import {DateTime} from "../core/utils/datetime";
 import css from "./styles/au5-panel.css?raw";
 
 export default class SidePanel {
@@ -63,9 +64,9 @@ export default class SidePanel {
              
       
           <div class="au5-participants-container au5-container"></div>
-          <div class="au5-messages-container au5-container au5-hidden"></div>
+          <div class="au5-transcriptions-container au5-container au5-hidden"></div>
            <div class="au5-footer">
-              <button class="au5-startTranscription-btn au5-btn">Start Transcription</button>
+              <button id="au5-startTranscription-btn" class="au5-startTranscription-btn au5-btn">Start Transcription</button>
               <div class="au5-input-wrapper au5-hidden">
                 <div class="au5-input-container">
                   <input type="text" class="au5-input" placeholder="Write your message ..." />
@@ -83,7 +84,7 @@ export default class SidePanel {
     this.panelElement = container.querySelector(".au5-panel") as HTMLDivElement;
     this.transcriptionsContainer = container.querySelector(".au5-transcriptions-container") as HTMLDivElement;
     this.participantsContainer = container.querySelector(".au5-participants-container") as HTMLDivElement;
-    this.btnStartTranscription = container.querySelector(".au5-start-btn") as HTMLDivElement;
+    this.btnStartTranscription = container.querySelector(".au5-startTranscription-btn") as HTMLDivElement;
     this.inputWrapper = container.querySelector(".au5-input-wrapper") as HTMLDivElement;
     this.header = container.querySelector(".au5-header") as HTMLDivElement;
     this.footer = container.querySelector(".au5-footer") as HTMLDivElement;
@@ -120,7 +121,6 @@ export default class SidePanel {
 
   public static addParticipant(user: User): void {
     if (!this.participantsContainer) {
-      console.warn("Participants container not initialized.");
       return;
     }
 
@@ -150,19 +150,70 @@ export default class SidePanel {
     this.participantsContainer.appendChild(participantElement);
   }
 
+  public static addTranscription(block: any): void {
+    console.log("Adding transcription block:", block);
+    if (!this.transcriptionsContainer) {
+      return;
+    }
+
+    const existing = this.transcriptionsContainer.querySelector(
+      `[data-id="${block.transcriptionBlockId}"]`
+    ) as HTMLDivElement;
+    if (existing) {
+      const textEl = existing.querySelector(".au5-text") as HTMLDivElement;
+      if (textEl) textEl.innerText = block.transcript;
+      return;
+    }
+
+    const transcriptBlock = document.createElement("div");
+    transcriptBlock.setAttribute("data-id", block.transcriptionBlockId);
+    transcriptBlock.className = "au5-transcription-header";
+    transcriptBlock.innerHTML = `<div class="au5-avatar">
+            <img
+              src="${block.speaker.pictureUrl || "https://via.placeholder.com/40"}"
+            />
+          </div>
+          <div class="au5-bubble">
+            <div class="au5-sender">
+              <div class="au5-sender-title">${block.speaker.fullName}</div>
+              <div class="au5-sender-time">${DateTime.toHoursAndMinutes(block.time)}</div>
+            </div>
+            <div class="au5-text" style="direction: ${this.direction};">
+              ${block.transcript}
+            </div>
+            <div class="au5-transcription-reactions">
+              <div class="au5-reactions">
+                <div class="reaction reaction-highlight">
+                  <span class="reaction-emoji">⚡</span>
+                </div>
+                <div class="reaction reaction-mute">
+                  <span class="reaction-emoji">🎯</span>
+                </div>
+              </div>
+            </div>
+          </div>`;
+
+    this.transcriptionsContainer.appendChild(transcriptBlock);
+  }
+
   public static showTranscriptionsContainer(): void {
     if (this.transcriptionsContainer) {
       this.transcriptionsContainer.classList.remove("au5-hidden");
+      this.inputWrapper?.classList.remove("au5-hidden");
       this.participantsContainer?.remove();
       this.participantsContainer = null;
-      this.inputWrapper?.classList.remove("au5-hidden");
       this.btnStartTranscription?.classList.add("au5-hidden");
     }
   }
 
   public static destroy(): void {
     if (this.panelElement) {
-      document.body.removeChild(this.panelElement);
+      if (document.body.contains(this.panelElement)) {
+        this.panelElement.remove();
+      } else {
+        console.warn("SidePanel exists but is not attached to document.body.");
+      }
+
       this.panelElement = null;
       this.transcriptionsContainer = null;
     } else {

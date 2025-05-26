@@ -68,25 +68,8 @@ export class MeetingHubClient {
   private handleWindowMessage(action: string, payload: any) {
     switch (action) {
       case MessageTypes.TriggerTranscriptionStart:
-        this.connection.invoke(action, {
-          MeetingId: this.meetingId,
-          User: {
-            Id: this.config.user.userId,
-            FullName: this.config.user.fullName,
-            PictureUrl: this.config.user.pictureUrl
-          }
-        });
-        break;
-
       case MessageTypes.NotifyRealTimeTranscription:
-        this.connection.invoke(action, {
-          MeetingId: this.meetingId,
-          Speaker: {
-            FullName: payload.fullName,
-            PictureUrl: payload.pictureUrl
-          },
-          Transcript: payload.transcript
-        });
+        this.connection.invoke(action, payload);
         break;
     }
   }
