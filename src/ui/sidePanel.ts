@@ -167,7 +167,7 @@ export default class SidePanel {
 
     const transcriptBlock = document.createElement("div");
     transcriptBlock.setAttribute("data-id", block.transcriptionBlockId);
-    transcriptBlock.className = "au5-transcription-header";
+    transcriptBlock.className = "au5-transcription";
     transcriptBlock.innerHTML = `<div class="au5-avatar">
             <img
               src="${block.speaker.pictureUrl || "https://via.placeholder.com/40"}"
@@ -175,8 +175,8 @@ export default class SidePanel {
           </div>
           <div class="au5-bubble">
             <div class="au5-sender">
-              <div class="au5-sender-title">${block.speaker.fullName}</div>
-              <div class="au5-sender-time">${DateTime.toHoursAndMinutes(block.time)}</div>
+              <div class="au5-sender-title">${block.speaker.fullname}</div>
+              <div class="au5-sender-time">${DateTime.toHoursAndMinutes(block.timestamp)}</div>
             </div>
             <div class="au5-text" style="direction: ${this.direction};">
               ${block.transcript}

@@ -517,7 +517,7 @@ class SidePanel {
           <div class="au5-bubble">
             <div class="au5-sender">
               <div class="au5-sender-title">${block.speaker.fullName}</div>
-              <div class="au5-sender-time">${DateTime.toHoursAndMinutes(block.time)}</div>
+              <div class="au5-sender-time">${DateTime.toHoursAndMinutes(block.timestamp)}</div>
             </div>
             <div class="au5-text" style="direction: ${this.direction};">
               ${block.transcript}
@@ -5487,7 +5487,6 @@ function handleTranscriptMutations(mutations, ctx) {
           latestSpeakerElement.remove();
         }
       }
-      console.log("Current speaker:", currentSpeaker);
       SidePanel.addTranscription({
         meetingId: meet.id,
         transcriptionBlockId: currentTransciptBlockId,
