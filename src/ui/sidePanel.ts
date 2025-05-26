@@ -139,11 +139,11 @@ export default class SidePanel {
     nameDiv.textContent = user.fullname || "Unknown User";
 
     const joinedAtDiv = document.createElement("div");
-    joinedAtDiv.className = "au5-participant-jointime";
+    joinedAtDiv.className = "au5-participant-joinedAt";
     joinedAtDiv.textContent = `Joined at: ${new Date(user.joinedAt).toLocaleTimeString()}`;
-    infoDiv.appendChild(joinedAtDiv);
 
     infoDiv.appendChild(nameDiv);
+    infoDiv.appendChild(joinedAtDiv);
     participantElement.appendChild(img);
     participantElement.appendChild(infoDiv);
 
