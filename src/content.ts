@@ -41,7 +41,6 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
     const meetingId = platform.getMeetingTitle();
 
     SidePanel.createSidePanel("Asax Co", meetingId, config.service.direction);
-    SidePanel.addParticipant({fullname: config.user.fullName, pictureUrl: config.user.pictureUrl} as User);
     establishConnection(config, meetingId);
 
     document.getElementById(config.extension.btnTranscriptSelector)?.addEventListener("click", () => {
@@ -126,17 +125,22 @@ namespace Pipelines {
   };
 }
 
+let listOfUsersInMeeting: User[] = [];
 function handleWindowMessage(action: string, payload: any) {
-  console.log("Received action:", action);
-  console.log("Received payload:", payload);
-
   switch (action) {
     case MessageTypes.NotifyRealTimeTranscription:
       //  SidePanel.updateLiveMessage(payload);
       break;
 
     case MessageTypes.NotifyUserJoining:
-      // SidePanel.addParticipant(payload);
+      const item: User = {
+        id: payload.User.Id,
+        fullname: payload.User.FullName,
+        pictureUrl: payload.User.PictureUrl,
+        joinedAt: payload.User.JoinedAt || new Date().toISOString()
+      };
+      listOfUsersInMeeting.push(item);
+      SidePanel.addParticipant(item);
       break;
 
     case MessageTypes.NotifyUserLeft:
@@ -149,7 +153,16 @@ function handleWindowMessage(action: string, payload: any) {
       break;
 
     case MessageTypes.ListOfUsersInMeeting:
-      console.log("Meeting has started");
+      payload.Users.forEach((user: any) => {
+        const item: User = {
+          id: user.Id,
+          fullname: user.FullName,
+          pictureUrl: user.PictureUrl,
+          joinedAt: user.JoinedAt || new Date().toISOString()
+        };
+        listOfUsersInMeeting.push(item);
+        SidePanel.addParticipant(item);
+      });
       break;
     default:
       console.warn("Unknown message action received:", action);

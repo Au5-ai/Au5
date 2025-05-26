@@ -7,6 +7,8 @@ export default class SidePanel {
   private static participantsContainer: HTMLDivElement | null = null;
   private static btnStartTranscription: HTMLDivElement | null = null;
   private static inputWrapper: HTMLDivElement | null = null;
+  private static header: HTMLDivElement | null = null;
+  private static footer: HTMLDivElement | null = null;
   private static direction: "ltr" | "rtl" = "ltr";
 
   static createSidePanel(companyName: string, meetingId: string, direction: "ltr" | "rtl" = "ltr"): void {
@@ -18,30 +20,47 @@ export default class SidePanel {
 
     const html = `
         <div class="au5-panel">
-          <div class="au5-header">
-           <div class="au5-company-avatar">A</div>
-              <div>
-                <div class="au5-company-name">${companyName}</div>
-                <div class="au5-room-title">${meetingId}</div>
+            <div class="au5-header">
+              <div class="au5-header-left">
+                <div class="au5-company-avatar">${companyName.at(0)?.toUpperCase()}</div>
+                <div>
+                  <div class="au5-company-name">${companyName}</div>
+                  <div class="au5-room-title">${meetingId}</div>
+                </div>
               </div>
-            </div>
-            <div class="au5-header-icons">
-              <span class="au5-icon" id="au5-headerIcon-pause"> 
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M10.65 19.11V4.89C10.65 3.54 10.08 3 8.64 3H5.01C3.57 3 3 3.54 3 4.89V19.11C3 20.46 3.57 21 5.01 21H8.64C10.08 21 10.65 20.46 10.65 19.11Z"
-                    stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M21 19.11V4.89C21 3.54 20.43 3 18.99 3H15.36C13.93 3 13.35 3.54 13.35 4.89V19.11C13.35 20.46 13.92 21 15.36 21H18.99C20.43 21 21 20.46 21 19.11Z"
-                    stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </span>
-              <span class="au5-icon" id="au5-headerIcon-collapse"> 
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M16 2V22M18 22H6C3.79086 22 2 20.2091 2 18V6C2 3.79086 3.79086 2 6 2H18C20.2091 2 22 3.79086 22 6V18C22 20.2091 20.2091 22 18 22Z"
-                    stroke="#28303F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </span>
-            </div>
-          </div>
+              <div class="au5-header-icons">
+                <span class="au5-icon" id="au5-headerIcon-pause">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M10.65 19.11V4.89C10.65 3.54 10.08 3 8.64 3H5.01C3.57 3 3 3.54 3 4.89V19.11C3 20.46 3.57 21 5.01 21H8.64C10.08 21 10.65 20.46 10.65 19.11Z"
+                      stroke="#292D32"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M21 19.11V4.89C21 3.54 20.43 3 18.99 3H15.36C13.93 3 13.35 3.54 13.35 4.89V19.11C13.35 20.46 13.92 21 15.36 21H18.99C20.43 21 21 20.46 21 19.11Z"
+                      stroke="#292D32"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                <span class="au5-icon" id="au5-headerIcon-collapse">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M16 2V22M18 22H6C3.79086 22 2 20.2091 2 18V6C2 3.79086 3.79086 2 6 2H18C20.2091 2 22 3.79086 22 6V18C22 20.2091 20.2091 22 18 22Z"
+                      stroke="#28303F"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </div>
+           </div>
+             
       
           <div class="au5-participants-container au5-container"></div>
           <div class="au5-messages-container au5-container au5-hidden"></div>
@@ -66,6 +85,8 @@ export default class SidePanel {
     this.participantsContainer = container.querySelector(".au5-participants-container") as HTMLDivElement;
     this.btnStartTranscription = container.querySelector(".au5-start-btn") as HTMLDivElement;
     this.inputWrapper = container.querySelector(".au5-input-wrapper") as HTMLDivElement;
+    this.header = container.querySelector(".au5-header") as HTMLDivElement;
+    this.footer = container.querySelector(".au5-footer") as HTMLDivElement;
 
     const pauseButton = container.querySelector("#au5-headerIcon-pause");
     const collapseButton = container.querySelector("#au5-headerIcon-collapse");
@@ -79,8 +100,20 @@ export default class SidePanel {
 
     if (collapseButton) {
       collapseButton.addEventListener("click", () => {
-        console.log("Collapse icon clicked");
-        // Collapse action logic here
+        if (collapseButton.classList.contains("au5-icon-selected")) {
+          collapseButton.classList.remove("au5-icon-selected");
+          this.header?.classList.remove("au5-header-collapse");
+          this.participantsContainer?.classList.remove("au5-hidden");
+          this.transcriptionsContainer?.classList.remove("au5-hidden");
+          this.footer?.classList.remove("au5-hidden");
+          return;
+        }
+
+        collapseButton.classList.add("au5-icon-selected");
+        this.header?.classList.add("au5-header-collapse");
+        this.participantsContainer?.classList.add("au5-hidden");
+        this.transcriptionsContainer?.classList.add("au5-hidden");
+        this.footer?.classList.add("au5-hidden");
       });
     }
   }
@@ -103,7 +136,12 @@ export default class SidePanel {
 
     const nameDiv = document.createElement("div");
     nameDiv.className = "au5-participant-name";
-    nameDiv.textContent = user.fullname.substring(0, 8) || "Unknown User";
+    nameDiv.textContent = user.fullname || "Unknown User";
+
+    const joinedAtDiv = document.createElement("div");
+    joinedAtDiv.className = "au5-participant-jointime";
+    joinedAtDiv.textContent = `Joined at: ${new Date(user.joinedAt).toLocaleTimeString()}`;
+    infoDiv.appendChild(joinedAtDiv);
 
     infoDiv.appendChild(nameDiv);
     participantElement.appendChild(img);
@@ -115,7 +153,8 @@ export default class SidePanel {
   public static showTranscriptionsContainer(): void {
     if (this.transcriptionsContainer) {
       this.transcriptionsContainer.classList.remove("au5-hidden");
-      this.participantsContainer?.classList.add("au5-hidden");
+      this.participantsContainer?.remove();
+      this.participantsContainer = null;
       this.inputWrapper?.classList.remove("au5-hidden");
       this.btnStartTranscription?.classList.add("au5-hidden");
     }
