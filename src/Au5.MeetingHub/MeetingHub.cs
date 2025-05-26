@@ -16,12 +16,12 @@ public class MeetingHub(ILogger<MeetingHub> logger) : Hub
         // _startedMeetings.Add("dzc-awqw-ioi");
         var sampleUser = new User
         {
-            Id = "Id",
-            FullName = "Mohammad Karimi",
-            PictureUrl = "site"
+            Id = Guid.NewGuid().ToString(),
+            FullName = "Mehdi Emrani",
+            PictureUrl = "https://contacts.zoho.com/file?ID=769156534&exp=6000&t=user&fs=thumb"
         };
 
-        _activeUsers.TryAdd("dzc-awqw-ioi", [sampleUser]);
+        _activeUsers.TryAdd("uir-miof-cby", [sampleUser]);
     }
 
     public async Task JoinMeeting(JoinMeetingDto data)
@@ -32,7 +32,7 @@ public class MeetingHub(ILogger<MeetingHub> logger) : Hub
         {
             FullName = data.User.FullName,
             Id = data.User.Id,
-            PictureUrl = data.User.PictureUrl
+            PictureUrl = data.User.PictureUrl,
         };
         _connections[Context.ConnectionId] = (data.MeetingId, currentUser);
 
@@ -89,18 +89,19 @@ public class MeetingHub(ILogger<MeetingHub> logger) : Hub
         });
     }
 
-    public async Task RealTimeTranscription(TranscriptionDto data)
+    public async Task NotifyRealTimeTranscription(TranscriptionDto data)
     {
-        data.TimeStamp = DateTime.UtcNow.ToString("o");
-
         await SendToOthersInGroupAsync(data.MeetingId, new Message()
         {
             Header = new Header() { Type = MessageTypes.NotifyRealTimeTranscription },
             Payload = data
         });
+
+        _logger.LogInformation("User {UserId} speak {MeetingId} with {Transcript}", data.Speaker.Id, data.MeetingId, data.Transcript);
+
     }
 
-    public async Task StartTranscription(StartTranscriptionDto data)
+    public async Task TriggerTranscriptionStart(StartTranscriptionDto data)
     {
         _startedMeetings.Add(data.MeetingId);
         await SendToOthersInGroupAsync(data.MeetingId, new Message()
