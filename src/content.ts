@@ -125,7 +125,11 @@ function handleWindowMessage(action: string, payload: any) {
       SidePanel.addTranscription({
         meetingId: meet.id,
         transcriptionBlockId: payload.TranscriptionBlockId,
-        speaker: {id: payload.Speaker.Id, fullname: payload.Speaker.FullName} as User,
+        speaker: {
+          id: payload.Speaker.Id,
+          fullname: payload.Speaker.FullName,
+          pictureUrl: payload.Speaker.PictureUrl
+        } as User,
         transcript: payload.Transcript,
         timestamp: payload.Timestamp
       });

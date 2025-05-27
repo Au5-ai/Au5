@@ -5280,7 +5280,6 @@ class MeetingHubClient {
   }
   setupHandlers() {
     this.connection.on("ReceiveMessage", (msg) => {
-      console.info("Received message from server:", msg);
       switch (msg.Header.Type) {
         case MessageTypes.NotifyUserJoining:
         case MessageTypes.NotifyMeetHasBeenStarted:
@@ -5425,7 +5424,11 @@ function handleWindowMessage(action, payload) {
       SidePanel.addTranscription({
         meetingId: meet.id,
         transcriptionBlockId: payload.TranscriptionBlockId,
-        speaker: { id: payload.Speaker.Id, fullname: payload.Speaker.FullName },
+        speaker: {
+          id: payload.Speaker.Id,
+          fullname: payload.Speaker.FullName,
+          pictureUrl: payload.Speaker.PictureUrl
+        },
         transcript: payload.Transcript,
         timestamp: payload.Timestamp
       });
