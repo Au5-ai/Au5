@@ -14,14 +14,14 @@ public class MeetingHub(ILogger<MeetingHub> logger) : Hub
     static MeetingHub()
     {
         // _startedMeetings.Add("dzc-awqw-ioi");
-        var sampleUser = new User
-        {
-            Id = Guid.NewGuid().ToString(),
-            FullName = "Mehdi Emrani",
-            PictureUrl = "https://contacts.zoho.com/file?ID=769156534&exp=6000&t=user&fs=thumb"
-        };
+        //var sampleUser = new User
+        //{
+        //    Id = Guid.NewGuid().ToString(),
+        //    FullName = "Mehdi Emrani",
+        //    PictureUrl = "https://contacts.zoho.com/file?ID=769156534&exp=6000&t=user&fs=thumb"
+        //};
 
-        _activeUsers.TryAdd("uir-miof-cby", [sampleUser]);
+        //_activeUsers.TryAdd("uir-miof-cby", [sampleUser]);
     }
 
     public async Task JoinMeeting(JoinMeetingDto data)
