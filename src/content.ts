@@ -47,13 +47,14 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
       platform: platform.getPlatformName(),
       startAt: new Date().toISOString(),
       endAt: "",
+      isStarted: false,
       transcripts: [],
       users: []
     };
 
     document.getElementById(config.extension.btnTranscriptSelector)?.addEventListener("click", () => {
       meet.users = listOfUsersInMeeting;
-
+      meet.isStarted = true;
       SidePanel.showTranscriptionsContainer();
 
       runPipesAsync(
@@ -138,16 +139,17 @@ function handleWindowMessage(action: string, payload: any) {
         joinedAt: payload.User.JoinedAt || new Date().toISOString()
       };
       listOfUsersInMeeting.push(item);
-      SidePanel.addParticipant(item);
+      SidePanel.usersJoined(item, meet.isStarted);
       break;
 
     case MessageTypes.NotifyUserLeft:
-      // SidePanel.addParticipant(payload);
+      SidePanel.usersLeaved(payload, meet.isStarted);
       break;
 
     case MessageTypes.NotifyMeetHasBeenStarted:
     case MessageTypes.TriggerTranscriptionStart:
       SidePanel.showTranscriptionsContainer();
+      meet.isStarted = true;
       break;
 
     case MessageTypes.ListOfUsersInMeeting:

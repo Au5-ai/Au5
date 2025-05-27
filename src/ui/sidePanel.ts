@@ -150,12 +150,20 @@ export default class SidePanel {
     this.participantsContainer.appendChild(participantElement);
   }
 
-  public static usersJoined(user: User): void {
-    this.addUserJoinedOrLeaved(user, true);
+  public static usersJoined(user: User, isMeetStarted: boolean): void {
+    if (isMeetStarted) {
+      this.addUserJoinedOrLeaved(user, true);
+    } else {
+      this.addParticipant(user);
+    }
   }
 
-  public static usersLeaved(user: User): void {
-    this.addUserJoinedOrLeaved(user, false);
+  public static usersLeaved(user: User, isMeetStarted: boolean): void {
+    if (isMeetStarted) {
+      this.addUserJoinedOrLeaved(user, false);
+    } else {
+      this.addParticipant(user);
+    }
   }
 
   private static addUserJoinedOrLeaved(user: User, isJoined: boolean): void {

@@ -47,6 +47,7 @@ export interface Meet {
   /** ISO 8601 timestamp of when the meeting ended */
   endAt: string;
 
+  isStarted: boolean;
   /** Transcript content as an array of structured transcript blocks */
   transcripts: TranscriptBlock[];
 

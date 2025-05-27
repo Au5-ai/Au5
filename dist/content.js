@@ -493,8 +493,32 @@ class SidePanel {
     participantElement.appendChild(infoDiv);
     this.participantsContainer.appendChild(participantElement);
   }
+  static usersJoined(user, isMeetStarted) {
+    if (isMeetStarted) {
+      this.addUserJoinedOrLeaved(user, true);
+    } else {
+      this.addParticipant(user);
+    }
+  }
+  static usersLeaved(user, isMeetStarted) {
+    if (isMeetStarted) {
+      this.addUserJoinedOrLeaved(user, false);
+    } else {
+      this.addParticipant(user);
+    }
+  }
+  static addUserJoinedOrLeaved(user, isJoined) {
+    if (!this.transcriptionsContainer) {
+      return;
+    }
+    const usersJoined = document.createElement("div");
+    usersJoined.className = "au5-join-time";
+    usersJoined.innerText = `${user.fullname} ${isJoined ? "Joined" : "Leaved"} at ${DateTime.toHoursAndMinutes(
+      new Date(user.joinedAt)
+    )}`;
+    this.transcriptionsContainer.appendChild(usersJoined);
+  }
   static addTranscription(block) {
-    console.log("Adding transcription block:", block);
     if (!this.transcriptionsContainer) {
       return;
     }
@@ -508,7 +532,7 @@ class SidePanel {
     }
     const transcriptBlock = document.createElement("div");
     transcriptBlock.setAttribute("data-id", block.transcriptionBlockId);
-    transcriptBlock.className = "au5-transcription-header";
+    transcriptBlock.className = "au5-transcription";
     transcriptBlock.innerHTML = `<div class="au5-avatar">
             <img
               src="${block.speaker.pictureUrl || "https://via.placeholder.com/40"}"
@@ -516,7 +540,7 @@ class SidePanel {
           </div>
           <div class="au5-bubble">
             <div class="au5-sender">
-              <div class="au5-sender-title">${block.speaker.fullName}</div>
+              <div class="au5-sender-title">${block.speaker.fullname}</div>
               <div class="au5-sender-time">${DateTime.toHoursAndMinutes(block.timestamp)}</div>
             </div>
             <div class="au5-text" style="direction: ${this.direction};">
@@ -5325,15 +5349,18 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
     const meetingId = platform.getMeetingTitle();
     SidePanel.createSidePanel("Asax Co", meetingId, config.service.direction);
     establishConnection(config, meetingId);
+    meet = {
+      id: meetingId,
+      platform: platform.getPlatformName(),
+      startAt: (/* @__PURE__ */ new Date()).toISOString(),
+      endAt: "",
+      isStarted: false,
+      transcripts: [],
+      users: []
+    };
     (_a2 = document.getElementById(config.extension.btnTranscriptSelector)) == null ? void 0 : _a2.addEventListener("click", () => {
-      meet = {
-        id: meetingId,
-        platform: platform.getPlatformName(),
-        startAt: (/* @__PURE__ */ new Date()).toISOString(),
-        endAt: "",
-        transcripts: [],
-        users: listOfUsersInMeeting
-      };
+      meet.users = listOfUsersInMeeting;
+      meet.isStarted = true;
       SidePanel.showTranscriptionsContainer();
       runPipesAsync(
         {},
@@ -5395,6 +5422,13 @@ let listOfUsersInMeeting = [];
 function handleWindowMessage(action, payload) {
   switch (action) {
     case MessageTypes.NotifyRealTimeTranscription:
+      SidePanel.addTranscription({
+        meetingId: meet.id,
+        transcriptionBlockId: payload.TranscriptionBlockId,
+        speaker: { id: payload.Speaker.Id, fullname: payload.Speaker.FullName },
+        transcript: payload.Transcript,
+        timestamp: payload.Timestamp
+      });
       break;
     case MessageTypes.NotifyUserJoining:
       const item = {
@@ -5404,13 +5438,15 @@ function handleWindowMessage(action, payload) {
         joinedAt: payload.User.JoinedAt || (/* @__PURE__ */ new Date()).toISOString()
       };
       listOfUsersInMeeting.push(item);
-      SidePanel.addParticipant(item);
+      SidePanel.usersJoined(item, meet.isStarted);
       break;
     case MessageTypes.NotifyUserLeft:
+      SidePanel.usersLeaved(payload, meet.isStarted);
       break;
     case MessageTypes.NotifyMeetHasBeenStarted:
     case MessageTypes.TriggerTranscriptionStart:
       SidePanel.showTranscriptionsContainer();
+      meet.isStarted = true;
       break;
     case MessageTypes.ListOfUsersInMeeting:
       payload.Users.forEach((user) => {
