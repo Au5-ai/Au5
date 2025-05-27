@@ -42,16 +42,17 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
 
     SidePanel.createSidePanel("Asax Co", meetingId, config.service.direction);
     establishConnection(config, meetingId);
+    meet = {
+      id: meetingId,
+      platform: platform.getPlatformName(),
+      startAt: new Date().toISOString(),
+      endAt: "",
+      transcripts: [],
+      users: []
+    };
 
     document.getElementById(config.extension.btnTranscriptSelector)?.addEventListener("click", () => {
-      meet = {
-        id: meetingId,
-        platform: platform.getPlatformName(),
-        startAt: new Date().toISOString(),
-        endAt: "",
-        transcripts: [],
-        users: listOfUsersInMeeting
-      };
+      meet.users = listOfUsersInMeeting;
 
       SidePanel.showTranscriptionsContainer();
 
@@ -120,7 +121,13 @@ let listOfUsersInMeeting: User[] = [];
 function handleWindowMessage(action: string, payload: any) {
   switch (action) {
     case MessageTypes.NotifyRealTimeTranscription:
-      //  SidePanel.updateLiveMessage(payload);
+      SidePanel.addTranscription({
+        meetingId: meet.id,
+        transcriptionBlockId: payload.TranscriptionBlockId,
+        speaker: {id: payload.Speaker.Id, fullname: payload.Speaker.FullName} as User,
+        transcript: payload.Transcript,
+        timestamp: payload.Timestamp
+      });
       break;
 
     case MessageTypes.NotifyUserJoining:

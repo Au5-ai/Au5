@@ -150,8 +150,27 @@ export default class SidePanel {
     this.participantsContainer.appendChild(participantElement);
   }
 
+  public static usersJoined(user: User): void {
+    this.addUserJoinedOrLeaved(user, true);
+  }
+
+  public static usersLeaved(user: User): void {
+    this.addUserJoinedOrLeaved(user, false);
+  }
+
+  private static addUserJoinedOrLeaved(user: User, isJoined: boolean): void {
+    if (!this.transcriptionsContainer) {
+      return;
+    }
+    const usersJoined = document.createElement("div");
+    usersJoined.className = "au5-join-time";
+    usersJoined.innerText = `${user.fullname} ${isJoined ? "Joined" : "Leaved"} at ${DateTime.toHoursAndMinutes(
+      new Date(user.joinedAt)
+    )}`;
+    this.transcriptionsContainer.appendChild(usersJoined);
+  }
+
   public static addTranscription(block: any): void {
-    console.log("Adding transcription block:", block);
     if (!this.transcriptionsContainer) {
       return;
     }
