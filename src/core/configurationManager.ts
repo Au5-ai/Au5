@@ -73,7 +73,7 @@ export class ConfigurationManager {
             text: "closed_caption_off"
           },
           transcriptSelectors: {
-            aria: 'div[role="region"][tabindex="0"]',
+            aria: 'div[role="region"][aria-label="Captions"]',
             fallback: ".a4cQT"
           },
           transcriptStyles: {

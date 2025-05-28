@@ -17,6 +17,7 @@ let transcriptBlocks: TranscriptBlock[] = [];
 let hasMeetingEnded = false;
 let transcriptObserver: MutationObserver;
 let config: AppConfiguration;
+let transcriptContainer: HTMLElement | null;
 let currentTransciptBlockId = "",
   currentSpeakerName = "",
   currentTranscript = "",
@@ -95,6 +96,7 @@ namespace Pipelines {
     );
     if (!dom) throw new Error("Transcript container not found in DOM");
     ctx.transcriptContainer = dom.container;
+    transcriptContainer = dom.container;
     ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
     return ctx;
   };
@@ -104,9 +106,7 @@ namespace Pipelines {
       transcriptObserver = new MutationObserver(createMutationHandler(ctx));
       transcriptObserver.observe(ctx.transcriptContainer, {
         childList: true,
-        attributes: true,
-        subtree: true,
-        characterData: true
+        subtree: true
       });
     }
     return ctx;
@@ -189,108 +189,200 @@ function createMutationHandler(ctx: PipelineContext) {
     handleTranscriptMutations(mutations, ctx);
   };
 }
+
+const captionMap = new Map();
+
+const generateBlockId = () => `block_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+const extractCaptionData = (block: Element) => {
+  const blockId = block.getAttribute("data-blockid")!;
+  const img = block.querySelector("img");
+  const nameSpan = block.querySelector("span");
+  const textDiv = Array.from(block.querySelectorAll("div")).find(
+    d => d.childElementCount === 0 && d.textContent?.trim()
+  );
+
+  return {
+    blockId,
+    speaker: nameSpan?.textContent?.trim() ?? "",
+    image: img?.getAttribute("src") ?? "",
+    text: textDiv?.textContent?.trim() ?? ""
+  };
+};
+
+const isCaptionBlock = (el: Element): boolean => el.parentElement === transcriptContainer;
+
+const processBlock = (el: Element) => {
+  if (!el.hasAttribute("data-blockid")) {
+    el.setAttribute("data-blockid", generateBlockId());
+  }
+
+  const blockId = el.getAttribute("data-blockid")!;
+  const newData = extractCaptionData(el);
+  const oldData = captionMap.get(blockId);
+
+  if (!oldData || oldData.text !== newData.text || oldData.speaker !== newData.speaker) {
+    captionMap.set(blockId, newData);
+    console.log("🆕 Caption:", blockId, newData);
+  }
+};
+
+const findCaptionBlock = (el: Node): Element | null => {
+  let current = el.nodeType === Node.ELEMENT_NODE ? (el as Element) : el.parentElement;
+  while (current && current.parentElement !== transcriptContainer) {
+    current = current.parentElement;
+  }
+  return current?.parentElement === transcriptContainer ? current : null;
+};
+
 function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineContext): void {
-  for (const _ of mutations) {
+  for (const mutation of mutations) {
     try {
-      const transcriptContainer = ctx.canUseAriaBasedTranscriptSelector
-        ? domUtils.selectSingle(config.extension.transcriptSelectors.aria)
-        : domUtils.selectSingle(config.extension.transcriptSelectors.fallback);
+      console.log("Transcript mutation detected:", mutation);
 
-      const speakerElements = ctx.canUseAriaBasedTranscriptSelector
-        ? transcriptContainer?.children
-        : transcriptContainer?.childNodes[1]?.firstChild?.childNodes;
-
-      if (!speakerElements) return;
-      const hasSpeakers = ctx.canUseAriaBasedTranscriptSelector
-        ? speakerElements.length > 1
-        : speakerElements.length > 0;
-      if (!hasSpeakers) return;
-
-      const latestSpeakerElement = ctx.canUseAriaBasedTranscriptSelector
-        ? (speakerElements[speakerElements.length - 2] as HTMLElement)
-        : (speakerElements[speakerElements.length - 1] as HTMLElement);
-      const nameNode = latestSpeakerElement.childNodes[0] as HTMLElement;
-      const textNode = latestSpeakerElement.childNodes[1] as HTMLElement;
-      let speakerName = nameNode?.textContent?.trim() ?? "";
-      const transcriptText = textNode?.textContent?.trim() ?? "";
-
-      if (speakerName === "You") {
-        speakerName = config.user.fullName;
-      }
-
-      let currentSpeaker = listOfUsersInMeeting.find(user => user.fullname === speakerName);
-      if (!speakerName || !transcriptText) {
-        // Send Error to Admin of Repo
-        continue;
-      }
-      if (!currentSpeaker) {
-        // If speaker is not in the list, add them
-        currentSpeaker = {
-          id: crypto.randomUUID(),
-          fullname: speakerName,
-          pictureUrl: config.extension.defaultPictureUrl,
-          joinedAt: new Date().toISOString()
-        };
-        listOfUsersInMeeting.push(currentSpeaker);
-      }
-
-      if (currentTranscript === "") {
-        // New conversation start
-        currentTransciptBlockId = crypto.randomUUID();
-        currentSpeakerName = speakerName;
-        currentTimestamp = new Date().toISOString();
-        currentTranscript = transcriptText;
-      } else if (currentSpeakerName !== speakerName) {
-        // New speaker
-        flushTranscriptBuffer({
-          id: currentTransciptBlockId,
-          user: {fullname: currentSpeakerName},
-          transcript: currentTranscript,
-          timestamp: currentTimestamp
-        } as TranscriptBlock);
-
-        currentTransciptBlockId = crypto.randomUUID();
-        currentSpeakerName = speakerName;
-        currentTimestamp = new Date().toISOString();
-        currentTranscript = transcriptText;
-      } else {
-        // Same speaker continuing
-        if (ctx.canUseAriaBasedTranscriptSelector) {
-          const textDiff = transcriptText.length - currentTranscript.length;
-          if (textDiff < -config.extension.maxTranscriptLength) {
-            flushTranscriptBuffer({
-              id: currentTransciptBlockId,
-              user: {fullname: currentSpeakerName},
-              transcript: currentTranscript,
-              timestamp: currentTimestamp
-            } as TranscriptBlock);
+      for (const mutation of mutations) {
+        // Handle added blocks
+        mutation.addedNodes.forEach(node => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            const el = node as Element;
+            if (isCaptionBlock(el)) {
+              processBlock(el);
+            }
           }
-        }
+        });
 
-        currentTranscript = transcriptText;
-        if (!ctx.canUseAriaBasedTranscriptSelector && transcriptText.length > config.extension.maxTranscriptLength) {
-          latestSpeakerElement.remove();
+        // Handle changes in existing block's content
+        const rootBlock = findCaptionBlock(mutation.target);
+        if (rootBlock) {
+          processBlock(rootBlock);
         }
       }
 
-      SidePanel.addTranscription({
-        meetingId: meet.id,
-        transcriptionBlockId: currentTransciptBlockId,
-        speaker: currentSpeaker,
-        transcript: currentTranscript,
-        timestamp: currentTimestamp
-      });
+      // if (mut.type === "childList") {
+      //   let el: HTMLElement | null = mut.target as HTMLElement;
+      //   let foundBlockId = false;
 
-      windowMessageHandler.postToWindow({
-        Header: {Type: MessageTypes.NotifyRealTimeTranscription},
-        Payload: {
-          MeetingId: meet.id,
-          TranscriptionBlockId: currentTransciptBlockId,
-          Speaker: {id: currentSpeaker?.id, fullName: currentSpeakerName},
-          Transcript: currentTranscript,
-          Timestamp: currentTimestamp
-        }
-      });
+      //   while (el && el !== ctx.transcriptContainer) {
+      //     if (el.hasAttribute("data-blockId")) {
+      //       foundBlockId = true;
+      //       break;
+      //     }
+      //     el = el.parentElement;
+      //   }
+
+      //   if (!foundBlockId) {
+      //     const topEl = mut.target as HTMLElement;
+      //     const newId = crypto.randomUUID();
+      //     topEl.setAttribute("data-blockId", newId);
+      //     currentTransciptBlockId = newId;
+      //     console.log("Assigned blockId to top-level block:", newId);
+      //   }
+      // }
+
+      // const transcriptContainer = ctx.canUseAriaBasedTranscriptSelector
+      //   ? domUtils.selectSingle(config.extension.transcriptSelectors.aria)
+      //   : domUtils.selectSingle(config.extension.transcriptSelectors.fallback);
+
+      // const speakerElements = ctx.canUseAriaBasedTranscriptSelector
+      //   ? transcriptContainer?.children
+      //   : transcriptContainer?.childNodes[1]?.firstChild?.childNodes;
+
+      // if (!speakerElements) return;
+      // const hasSpeakers = ctx.canUseAriaBasedTranscriptSelector
+      //   ? speakerElements.length > 1
+      //   : speakerElements.length > 0;
+      // if (!hasSpeakers) return;
+
+      // const latestSpeakerElement = ctx.canUseAriaBasedTranscriptSelector
+      //   ? (speakerElements[speakerElements.length - 2] as HTMLElement)
+      //   : (speakerElements[speakerElements.length - 1] as HTMLElement);
+
+      // const nameNode = latestSpeakerElement.childNodes[0] as HTMLElement;
+      // const textNode = latestSpeakerElement.childNodes[1] as HTMLElement;
+      // let speakerName = nameNode?.textContent?.trim() ?? "";
+      // const transcriptText = textNode?.textContent?.trim() ?? "";
+
+      // if (speakerName === "You") {
+      //   speakerName = config.user.fullName;
+      // }
+
+      // if (!speakerName || !transcriptText) {
+      //   continue;
+      // }
+
+      // let currentSpeaker = listOfUsersInMeeting.find(user => user.fullname === speakerName);
+      // if (!currentSpeaker) {
+      //   console.log("current not found speaker:", speakerName, currentTransciptBlockId, currentTranscript);
+      //   // If speaker is not in the list, add them
+      //   currentSpeaker = {
+      //     id: crypto.randomUUID(),
+      //     fullname: speakerName,
+      //     pictureUrl: config.extension.defaultPictureUrl,
+      //     joinedAt: new Date().toISOString()
+      //   };
+      //   listOfUsersInMeeting.push(currentSpeaker);
+      // }
+
+      // if (currentTranscript === "") {
+      //   // New conversation start
+      //   console.log("New conversation started with speaker:", speakerName, currentTransciptBlockId, currentTranscript);
+
+      //   currentSpeakerName = speakerName;
+      //   currentTimestamp = new Date().toISOString();
+      //   currentTranscript = transcriptText;
+      // } else if (currentSpeakerName !== speakerName) {
+      //   // New speaker
+      //   console.log("New speaker detected:", speakerName, currentTransciptBlockId, currentTranscript);
+      //   flushTranscriptBuffer({
+      //     id: currentTransciptBlockId,
+      //     user: {fullname: currentSpeakerName},
+      //     transcript: currentTranscript,
+      //     timestamp: currentTimestamp
+      //   } as TranscriptBlock);
+
+      //   // currentTransciptBlockId = crypto.randomUUID();
+      //   currentSpeakerName = speakerName;
+      //   currentTimestamp = new Date().toISOString();
+      //   currentTranscript = transcriptText;
+      // } else {
+      //   // Same speaker continuing
+      //   console.log("Continuing conversation with speaker:", speakerName, currentTransciptBlockId, currentTranscript);
+      //   currentTranscript = transcriptText;
+      //   if (ctx.canUseAriaBasedTranscriptSelector) {
+      //     const textDiff = transcriptText.length - currentTranscript.length;
+      //     if (textDiff < -config.extension.maxTranscriptLength) {
+      //       flushTranscriptBuffer({
+      //         id: currentTransciptBlockId,
+      //         user: {fullname: currentSpeakerName},
+      //         transcript: currentTranscript,
+      //         timestamp: currentTimestamp
+      //       } as TranscriptBlock);
+      //     }
+      //   }
+
+      //   if (!ctx.canUseAriaBasedTranscriptSelector && transcriptText.length > config.extension.maxTranscriptLength) {
+      //     latestSpeakerElement.remove();
+      //   }
+      // }
+
+      // SidePanel.addTranscription({
+      //   meetingId: meet.id,
+      //   transcriptionBlockId: currentTransciptBlockId,
+      //   speaker: currentSpeaker,
+      //   transcript: currentTranscript,
+      //   timestamp: currentTimestamp
+      // });
+
+      // windowMessageHandler.postToWindow({
+      //   Header: {Type: MessageTypes.NotifyRealTimeTranscription},
+      //   Payload: {
+      //     MeetingId: meet.id,
+      //     TranscriptionBlockId: currentTransciptBlockId,
+      //     Speaker: {id: currentSpeaker?.id, fullName: currentSpeakerName},
+      //     Transcript: currentTranscript,
+      //     Timestamp: currentTimestamp
+      //   }
+      // });
     } catch (err) {
       console.error(err);
       if (!hasMeetingEnded) {
@@ -306,6 +398,7 @@ function flushTranscriptBuffer(item: TranscriptBlock): void {
   item.type = "transcript";
   transcriptBlocks.push(item);
   meet.transcripts.push(item);
+  console.log("Transcript flushed:", JSON.stringify(transcriptBlocks));
 }
 
 function endMeetingRoutines(): void {

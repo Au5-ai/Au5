@@ -117,7 +117,7 @@ class ConfigurationManager {
             text: "closed_caption_off"
           },
           transcriptSelectors: {
-            aria: 'div[role="region"][tabindex="0"]',
+            aria: 'div[role="region"][aria-label="Captions"]',
             fallback: ".a4cQT"
           },
           transcriptStyles: {
@@ -125,7 +125,8 @@ class ConfigurationManager {
           },
           maxTranscriptLength: 250,
           transcriptTrimThreshold: 125,
-          btnTranscriptSelector: "au5-startTranscription-btn"
+          btnTranscriptSelector: "au5-startTranscription-btn",
+          defaultPictureUrl: "https://static.vecteezy.com/system/resources/previews/013/360/247/large_2x/default-avatar-photo-icon-social-media-profile-sign-symbol-vector.jpg"
         }
       };
       const config2 = await this.browserStorage.get(CONFIGURATION_KEY);
@@ -5330,6 +5331,7 @@ let transcriptBlocks = [];
 let hasMeetingEnded = false;
 let transcriptObserver;
 let config;
+let transcriptContainer;
 let currentTransciptBlockId = "", currentSpeakerName = "", currentTranscript = "", currentTimestamp = "";
 const browser = detectBrowser();
 const domUtils = new DomUtils(browser);
@@ -5397,17 +5399,16 @@ var Pipelines;
     );
     if (!dom) throw new Error("Transcript container not found in DOM");
     ctx.transcriptContainer = dom.container;
+    transcriptContainer = dom.container;
     ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
     return ctx;
   };
   Pipelines2.observeTranscriptContainerPipe = async (ctx) => {
     if (ctx.transcriptContainer) {
-      transcriptObserver = new MutationObserver(createMutationHandler(ctx));
+      transcriptObserver = new MutationObserver(createMutationHandler());
       transcriptObserver.observe(ctx.transcriptContainer, {
         childList: true,
-        attributes: true,
-        subtree: true,
-        characterData: true
+        subtree: true
       });
     }
     return ctx;
@@ -5469,80 +5470,67 @@ function handleWindowMessage(action, payload) {
 }
 function createMutationHandler(ctx) {
   return function(mutations, observer) {
-    handleTranscriptMutations(mutations, ctx);
+    handleTranscriptMutations(mutations);
   };
 }
+const captionMap = /* @__PURE__ */ new Map();
+const generateBlockId = () => `block_${Date.now()}_${Math.floor(Math.random() * 1e3)}`;
+const extractCaptionData = (block) => {
+  var _a2, _b2;
+  const blockId = block.getAttribute("data-blockid");
+  const img = block.querySelector("img");
+  const nameSpan = block.querySelector("span");
+  const textDiv = Array.from(block.querySelectorAll("div")).find(
+    (d) => {
+      var _a3;
+      return d.childElementCount === 0 && ((_a3 = d.textContent) == null ? void 0 : _a3.trim());
+    }
+  );
+  return {
+    blockId,
+    speaker: ((_a2 = nameSpan == null ? void 0 : nameSpan.textContent) == null ? void 0 : _a2.trim()) ?? "",
+    image: (img == null ? void 0 : img.getAttribute("src")) ?? "",
+    text: ((_b2 = textDiv == null ? void 0 : textDiv.textContent) == null ? void 0 : _b2.trim()) ?? ""
+  };
+};
+const isCaptionBlock = (el) => el.parentElement === transcriptContainer;
+const processBlock = (el) => {
+  if (!el.hasAttribute("data-blockid")) {
+    el.setAttribute("data-blockid", generateBlockId());
+  }
+  const blockId = el.getAttribute("data-blockid");
+  const newData = extractCaptionData(el);
+  const oldData = captionMap.get(blockId);
+  if (!oldData || oldData.text !== newData.text || oldData.speaker !== newData.speaker) {
+    captionMap.set(blockId, newData);
+    console.log("🆕 Caption:", blockId, newData);
+  }
+};
+const findCaptionBlock = (el) => {
+  let current = el.nodeType === Node.ELEMENT_NODE ? el : el.parentElement;
+  while (current && current.parentElement !== transcriptContainer) {
+    current = current.parentElement;
+  }
+  return (current == null ? void 0 : current.parentElement) === transcriptContainer ? current : null;
+};
 function handleTranscriptMutations(mutations, ctx) {
-  var _a2, _b2, _c2, _d;
-  for (const _ of mutations) {
+  for (const mutation of mutations) {
     try {
-      const transcriptContainer = ctx.canUseAriaBasedTranscriptSelector ? domUtils.selectSingle(config.extension.transcriptSelectors.aria) : domUtils.selectSingle(config.extension.transcriptSelectors.fallback);
-      const speakerElements = ctx.canUseAriaBasedTranscriptSelector ? transcriptContainer == null ? void 0 : transcriptContainer.children : (_b2 = (_a2 = transcriptContainer == null ? void 0 : transcriptContainer.childNodes[1]) == null ? void 0 : _a2.firstChild) == null ? void 0 : _b2.childNodes;
-      if (!speakerElements) return;
-      const hasSpeakers = ctx.canUseAriaBasedTranscriptSelector ? speakerElements.length > 1 : speakerElements.length > 0;
-      if (!hasSpeakers) return;
-      const latestSpeakerElement = ctx.canUseAriaBasedTranscriptSelector ? speakerElements[speakerElements.length - 2] : speakerElements[speakerElements.length - 1];
-      const nameNode = latestSpeakerElement.childNodes[0];
-      const textNode = latestSpeakerElement.childNodes[1];
-      let speakerName = ((_c2 = nameNode == null ? void 0 : nameNode.textContent) == null ? void 0 : _c2.trim()) ?? "";
-      const transcriptText = ((_d = textNode == null ? void 0 : textNode.textContent) == null ? void 0 : _d.trim()) ?? "";
-      if (speakerName === "You") {
-        speakerName = config.user.fullName;
-      }
-      const currentSpeaker = listOfUsersInMeeting.find((user) => user.fullname === speakerName);
-      if (!speakerName || !transcriptText) {
-        continue;
-      }
-      if (currentTranscript === "") {
-        currentTransciptBlockId = crypto.randomUUID();
-        currentSpeakerName = speakerName;
-        currentTimestamp = (/* @__PURE__ */ new Date()).toISOString();
-        currentTranscript = transcriptText;
-      } else if (currentSpeakerName !== speakerName) {
-        flushTranscriptBuffer({
-          id: currentTransciptBlockId,
-          user: { fullname: currentSpeakerName },
-          transcript: currentTranscript,
-          timestamp: currentTimestamp
-        });
-        currentTransciptBlockId = crypto.randomUUID();
-        currentSpeakerName = speakerName;
-        currentTimestamp = (/* @__PURE__ */ new Date()).toISOString();
-        currentTranscript = transcriptText;
-      } else {
-        if (ctx.canUseAriaBasedTranscriptSelector) {
-          const textDiff = transcriptText.length - currentTranscript.length;
-          if (textDiff < -config.extension.maxTranscriptLength) {
-            flushTranscriptBuffer({
-              id: currentTransciptBlockId,
-              user: { fullname: currentSpeakerName },
-              transcript: currentTranscript,
-              timestamp: currentTimestamp
-            });
+      console.log("Transcript mutation detected:", mutation);
+      for (const mutation2 of mutations) {
+        mutation2.addedNodes.forEach((node) => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            const el = node;
+            if (isCaptionBlock(el)) {
+              processBlock(el);
+            }
           }
-        }
-        currentTranscript = transcriptText;
-        if (!ctx.canUseAriaBasedTranscriptSelector && transcriptText.length > config.extension.maxTranscriptLength) {
-          latestSpeakerElement.remove();
+        });
+        const rootBlock = findCaptionBlock(mutation2.target);
+        if (rootBlock) {
+          processBlock(rootBlock);
         }
       }
-      SidePanel.addTranscription({
-        meetingId: meet.id,
-        transcriptionBlockId: currentTransciptBlockId,
-        speaker: currentSpeaker,
-        transcript: currentTranscript,
-        timestamp: currentTimestamp
-      });
-      windowMessageHandler.postToWindow({
-        Header: { Type: MessageTypes.NotifyRealTimeTranscription },
-        Payload: {
-          MeetingId: meet.id,
-          TranscriptionBlockId: currentTransciptBlockId,
-          Speaker: { id: currentSpeaker == null ? void 0 : currentSpeaker.id, fullName: currentSpeakerName },
-          Transcript: currentTranscript,
-          Timestamp: currentTimestamp
-        }
-      });
     } catch (err) {
       console.error(err);
       if (!hasMeetingEnded) {
@@ -5552,11 +5540,7 @@ function handleTranscriptMutations(mutations, ctx) {
   }
 }
 function flushTranscriptBuffer(item) {
-  if (!currentTranscript || !currentTimestamp) return;
-  item.user.fullname = item.user.fullname === "You" ? config.user.fullName : item.user.fullname;
-  item.type = "transcript";
-  transcriptBlocks.push(item);
-  meet.transcripts.push(item);
+  return;
 }
 function endMeetingRoutines() {
   var _a2, _b2;
@@ -5570,14 +5554,7 @@ function endMeetingRoutines() {
       hasMeetingEnded = true;
       meet.endAt = (/* @__PURE__ */ new Date()).toISOString();
       transcriptObserver == null ? void 0 : transcriptObserver.disconnect();
-      if (currentSpeakerName && currentTranscript) {
-        flushTranscriptBuffer({
-          id: currentTransciptBlockId,
-          user: { fullname: currentSpeakerName },
-          transcript: currentTranscript,
-          timestamp: currentTimestamp
-        });
-      }
+      if (currentSpeakerName && currentTranscript) ;
       SidePanel.destroy();
       console.log("Meeting ended. Transcript data:", JSON.stringify(transcriptBlocks));
     });
