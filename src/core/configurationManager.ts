@@ -81,7 +81,9 @@ export class ConfigurationManager {
           },
           maxTranscriptLength: 250,
           transcriptTrimThreshold: 125,
-          btnTranscriptSelector: "au5-startTranscription-btn"
+          btnTranscriptSelector: "au5-startTranscription-btn",
+          defaultPictureUrl:
+            "https://static.vecteezy.com/system/resources/previews/013/360/247/large_2x/default-avatar-photo-icon-social-media-profile-sign-symbol-vector.jpg"
         } as ExtensionConfiguration
       } as AppConfiguration;
 

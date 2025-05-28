@@ -218,10 +218,20 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
         speakerName = config.user.fullName;
       }
 
-      const currentSpeaker = listOfUsersInMeeting.find(user => user.fullname === speakerName);
+      let currentSpeaker = listOfUsersInMeeting.find(user => user.fullname === speakerName);
       if (!speakerName || !transcriptText) {
         // Send Error to Admin of Repo
         continue;
+      }
+      if (!currentSpeaker) {
+        // If speaker is not in the list, add them
+        currentSpeaker = {
+          id: crypto.randomUUID(),
+          fullname: speakerName,
+          pictureUrl: config.extension.defaultPictureUrl,
+          joinedAt: new Date().toISOString()
+        };
+        listOfUsersInMeeting.push(currentSpeaker);
       }
 
       if (currentTranscript === "") {
