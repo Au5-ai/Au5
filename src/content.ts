@@ -30,7 +30,7 @@ let currentTransciptBlockId = "",
 let currentTimestamp: Date = new Date();
 const browser = detectBrowser();
 const domUtils = new DomUtils(browser);
-const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5-ContentScript", handleWindowMessage);
+const windowMessageHandler = new WindowMessageHandler("Au5-ContentScript", "Au5-MeetingHubClient", handleWindowMessage);
 
 (async function initMeetingRoutine(): Promise<void> {
   try {
@@ -48,7 +48,7 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
     const meetingId = platform.getMeetingTitle();
 
     SidePanel.createSidePanel("Asax Co", meetingId, config.service.direction);
-    establishConnection(config, meetingId, platform.getPlatformName());
+    establishConnection(config, meetingId);
     meet = {
       id: meetingId,
       platform: platform.getPlatformName(),

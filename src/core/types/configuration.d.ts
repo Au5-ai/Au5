@@ -30,7 +30,6 @@ export interface ExtensionConfiguration {
   maxTranscriptLength: number;
   transcriptTrimThreshold: number;
   btnTranscriptSelector: string;
-  defaultPictureUrl: string;
 }
 
 export interface AppConfiguration {

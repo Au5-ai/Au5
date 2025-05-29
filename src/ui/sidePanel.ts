@@ -197,7 +197,7 @@ export default class SidePanel {
     transcriptBlock.className = "au5-transcription";
     transcriptBlock.innerHTML = `<div class="au5-avatar">
             <img
-              src="${entry.speaker.pictureUrl || "https://via.placeholder.com/40"}"
+              src="${entry.speaker.pictureUrl || "https://i.sstatic.net/34AD2.jpg"}"
             />
           </div>
           <div class="au5-bubble">

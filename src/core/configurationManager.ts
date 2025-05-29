@@ -60,7 +60,7 @@ export class ConfigurationManager {
         service: {
           webhookUrl: "https://au5.ai/api/v1/",
           direction: "rtl",
-          hubUrl: "https://localhost:7061/meetinghub"
+          hubUrl: "https://localhost:1366/meetinghub"
         } as ServiceConfiguration,
 
         extension: {
@@ -81,9 +81,7 @@ export class ConfigurationManager {
           },
           maxTranscriptLength: 250,
           transcriptTrimThreshold: 125,
-          btnTranscriptSelector: "au5-startTranscription-btn",
-          defaultPictureUrl:
-            "https://static.vecteezy.com/system/resources/previews/013/360/247/large_2x/default-avatar-photo-icon-social-media-profile-sign-symbol-vector.jpg"
+          btnTranscriptSelector: "au5-startTranscription-btn"
         } as ExtensionConfiguration
       } as AppConfiguration;
 

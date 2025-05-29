@@ -105,7 +105,7 @@ class ConfigurationManager {
         service: {
           webhookUrl: "https://au5.ai/api/v1/",
           direction: "rtl",
-          hubUrl: "https://localhost:7061/meetinghub"
+          hubUrl: "https://localhost:1366/meetinghub"
         },
         extension: {
           meetingEndIcon: {
@@ -125,8 +125,7 @@ class ConfigurationManager {
           },
           maxTranscriptLength: 250,
           transcriptTrimThreshold: 125,
-          btnTranscriptSelector: "au5-startTranscription-btn",
-          defaultPictureUrl: "https://static.vecteezy.com/system/resources/previews/013/360/247/large_2x/default-avatar-photo-icon-social-media-profile-sign-symbol-vector.jpg"
+          btnTranscriptSelector: "au5-startTranscription-btn"
         }
       };
       const config2 = await this.browserStorage.get(CONFIGURATION_KEY);
@@ -194,7 +193,7 @@ class GoogleMeet {
     return match ? `${match[1]}` : "Google Meet";
   }
   getPlatformName() {
-    return "Google Meet";
+    return "GoogleMeet";
   }
 }
 class Zoom {
@@ -323,24 +322,24 @@ class DomUtils {
   }
 }
 class WindowMessageHandler {
-  constructor(sourceGet, sourcePost, callback) {
+  constructor(from, to, callback) {
     __publicField(this, "callback");
-    __publicField(this, "sourceGet");
-    __publicField(this, "sourcePost");
+    __publicField(this, "from");
+    __publicField(this, "to");
     __publicField(this, "handleMessage", (event) => {
-      if (event.source !== window || event.data.source !== this.sourceGet) return;
+      if (event.source !== window || event.data.source !== this.to) return;
       const { action, payload } = event.data;
       this.callback(action, payload);
     });
     this.callback = callback;
-    this.sourceGet = sourceGet;
-    this.sourcePost = sourcePost;
+    this.from = from;
+    this.to = to;
     window.addEventListener("message", this.handleMessage);
   }
   postToWindow(msg) {
     window.postMessage(
       {
-        source: this.sourcePost,
+        source: this.from,
         action: msg.type,
         payload: msg
       },
@@ -527,7 +526,7 @@ class SidePanel {
     transcriptBlock.className = "au5-transcription";
     transcriptBlock.innerHTML = `<div class="au5-avatar">
             <img
-              src="${entry.speaker.pictureUrl || "https://via.placeholder.com/40"}"
+              src="${entry.speaker.pictureUrl || "https://i.sstatic.net/34AD2.jpg"}"
             />
           </div>
           <div class="au5-bubble">
@@ -3388,19 +3387,17 @@ var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
   return MessageTypes2;
 })(MessageTypes || {});
 class MeetingHubClient {
-  constructor(config2, meetingId, platformName) {
+  constructor(config2, meetingId) {
     __publicField(this, "connection");
     __publicField(this, "meetingId");
-    __publicField(this, "platformName");
     __publicField(this, "config");
     __publicField(this, "windowMessageHandler");
     this.config = config2;
     this.meetingId = meetingId;
-    this.platformName = platformName;
     this.connection = new HubConnectionBuilder().withUrl(this.config.service.hubUrl).withAutomaticReconnect().build();
     this.windowMessageHandler = new WindowMessageHandler(
+      "Au5-MeetingHubClient",
       "Au5-ContentScript",
-      "Au5-InjectedScript",
       this.handleWindowMessage.bind(this)
     );
     this.startConnection();
@@ -3420,7 +3417,6 @@ class MeetingHubClient {
   startConnection() {
     this.connection.start().then(() => {
       this.connection.invoke("JoinMeeting", {
-        platform: this.platformName,
         meetingId: this.meetingId,
         user: {
           id: this.config.user.userId,
@@ -3444,13 +3440,13 @@ class MeetingHubClient {
     }
   }
 }
-async function establishConnection(config2, meetingId, platformName) {
+async function establishConnection(config2, meetingId) {
   const platform = createMeetingPlatformInstance(window.location.href);
   if (!platform) {
     console.error("Unsupported meeting platform");
     return;
   }
-  new MeetingHubClient(config2, meetingId, platformName);
+  new MeetingHubClient(config2, meetingId);
 }
 let meet;
 let transcriptBlocks = [];
@@ -3462,7 +3458,7 @@ let currentTransciptBlockId = "", currentTranscript = "";
 let currentTimestamp = /* @__PURE__ */ new Date();
 const browser = detectBrowser();
 const domUtils = new DomUtils(browser);
-const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5-ContentScript", handleWindowMessage);
+const windowMessageHandler = new WindowMessageHandler("Au5-ContentScript", "Au5-MeetingHubClient", handleWindowMessage);
 (async function initMeetingRoutine() {
   var _a;
   try {
@@ -3476,7 +3472,7 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
     }
     const meetingId = platform.getMeetingTitle();
     SidePanel.createSidePanel("Asax Co", meetingId, config.service.direction);
-    establishConnection(config, meetingId, platform.getPlatformName());
+    establishConnection(config, meetingId);
     meet = {
       id: meetingId,
       platform: platform.getPlatformName(),

@@ -24,7 +24,7 @@ export class GoogleMeet implements IMeetingPlatform {
   }
 
   getPlatformName(): string {
-    return "Google Meet";
+    return "GoogleMeet";
   }
 }
 

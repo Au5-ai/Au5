@@ -8,14 +8,12 @@ import {MessageTypes} from "./types/enums";
 export class MeetingHubClient {
   private connection: signalR.HubConnection;
   private meetingId: string;
-  private platformName: string;
   private config: AppConfiguration;
   private windowMessageHandler: WindowMessageHandler;
 
-  constructor(config: AppConfiguration, meetingId: string, platformName: string) {
+  constructor(config: AppConfiguration, meetingId: string) {
     this.config = config;
     this.meetingId = meetingId;
-    this.platformName = platformName;
     this.connection = new signalR.HubConnectionBuilder()
       .withUrl(this.config.service.hubUrl)
       .withAutomaticReconnect()
@@ -23,8 +21,8 @@ export class MeetingHubClient {
       .build();
 
     this.windowMessageHandler = new WindowMessageHandler(
+      "Au5-MeetingHubClient",
       "Au5-ContentScript",
-      "Au5-InjectedScript",
       this.handleWindowMessage.bind(this)
     );
     this.startConnection();
@@ -48,7 +46,6 @@ export class MeetingHubClient {
       .start()
       .then(() => {
         this.connection.invoke("JoinMeeting", {
-          platform: this.platformName,
           meetingId: this.meetingId,
           user: {
             id: this.config.user.userId,
@@ -76,11 +73,11 @@ export class MeetingHubClient {
   }
 }
 
-export async function establishConnection(config: AppConfiguration, meetingId: string, platformName: string) {
+export async function establishConnection(config: AppConfiguration, meetingId: string) {
   const platform = createMeetingPlatformInstance(window.location.href);
   if (!platform) {
     console.error("Unsupported meeting platform");
     return;
   }
-  new MeetingHubClient(config, meetingId, platformName);
+  new MeetingHubClient(config, meetingId);
 }

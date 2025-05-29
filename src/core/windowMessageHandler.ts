@@ -4,17 +4,17 @@ type MessageCallback = (action: string, payload: any) => void;
 
 export class WindowMessageHandler {
   private callback: MessageCallback;
-  private sourceGet: string;
-  private sourcePost: string;
-  constructor(sourceGet: string, sourcePost: string, callback: MessageCallback) {
+  private from: string;
+  private to: string;
+  constructor(from: string, to: string, callback: MessageCallback) {
     this.callback = callback;
-    this.sourceGet = sourceGet;
-    this.sourcePost = sourcePost;
+    this.from = from;
+    this.to = to;
     window.addEventListener("message", this.handleMessage);
   }
 
   private handleMessage = (event: MessageEvent) => {
-    if (event.source !== window || event.data.source !== this.sourceGet) return;
+    if (event.source !== window || event.data.source !== this.to) return;
     const {action, payload} = event.data;
     this.callback(action, payload);
   };
@@ -22,7 +22,7 @@ export class WindowMessageHandler {
   public postToWindow(msg: IMessage) {
     window.postMessage(
       {
-        source: this.sourcePost,
+        source: this.from,
         action: msg.type,
         payload: msg
       },
