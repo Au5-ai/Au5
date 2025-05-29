@@ -320,6 +320,30 @@ class DomUtils {
   }) {
     this.browserInjector.inject(fileName, onLoad);
   }
+  /**
+   * Extracts caption data from a given block element.
+   *
+   * @param block - The block element containing caption data.
+   * @returns An object containing the block ID, speaker name, image URL, and text content.
+   */
+  extractCaptionData(block) {
+    var _a, _b;
+    const blockId = block.getAttribute("data-blockid");
+    const img = block.querySelector("img");
+    const nameSpan = block.querySelector("span");
+    const textDiv = Array.from(block.querySelectorAll("div")).find(
+      (d) => {
+        var _a2;
+        return d.childElementCount === 0 && ((_a2 = d.textContent) == null ? void 0 : _a2.trim());
+      }
+    );
+    return {
+      blockId,
+      speakerName: ((_a = nameSpan == null ? void 0 : nameSpan.textContent) == null ? void 0 : _a.trim()) ?? "",
+      pictureUrl: (img == null ? void 0 : img.getAttribute("src")) ?? "",
+      transcript: ((_b = textDiv == null ? void 0 : textDiv.textContent) == null ? void 0 : _b.trim()) ?? ""
+    };
+  }
 }
 class WindowMessageHandler {
   constructor(from, to, callback) {
@@ -3594,30 +3618,12 @@ function createMutationHandler(ctx) {
     handleTranscriptMutations(mutations);
   };
 }
-const extractCaptionData = (block) => {
-  var _a, _b;
-  const blockId = block.getAttribute("data-blockid");
-  const img = block.querySelector("img");
-  const nameSpan = block.querySelector("span");
-  const textDiv = Array.from(block.querySelectorAll("div")).find(
-    (d) => {
-      var _a2;
-      return d.childElementCount === 0 && ((_a2 = d.textContent) == null ? void 0 : _a2.trim());
-    }
-  );
-  return {
-    blockId,
-    speakerName: ((_a = nameSpan == null ? void 0 : nameSpan.textContent) == null ? void 0 : _a.trim()) ?? "",
-    pictureUrl: (img == null ? void 0 : img.getAttribute("src")) ?? "",
-    transcript: ((_b = textDiv == null ? void 0 : textDiv.textContent) == null ? void 0 : _b.trim()) ?? ""
-  };
-};
 const isCaptionBlock = (el) => el.parentElement === transcriptContainer;
 const processBlock = (el) => {
   if (!el.hasAttribute("data-blockid")) {
     el.setAttribute("data-blockid", crypto.randomUUID());
   }
-  return extractCaptionData(el);
+  return domUtils.extractCaptionData(el);
 };
 const findCaptionBlock = (el) => {
   let current = el.nodeType === Node.ELEMENT_NODE ? el : el.parentElement;

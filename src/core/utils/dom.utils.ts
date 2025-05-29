@@ -84,4 +84,26 @@ export class DomUtils {
   injectScript(fileName: string, onLoad: () => void = () => {}): void {
     this.browserInjector.inject(fileName, onLoad);
   }
+
+  /**
+   * Extracts caption data from a given block element.
+   *
+   * @param block - The block element containing caption data.
+   * @returns An object containing the block ID, speaker name, image URL, and text content.
+   */
+  extractCaptionData(block: Element): any {
+    const blockId = block.getAttribute("data-blockid")!;
+    const img = block.querySelector("img");
+    const nameSpan = block.querySelector("span");
+    const textDiv = Array.from(block.querySelectorAll("div")).find(
+      d => d.childElementCount === 0 && d.textContent?.trim()
+    );
+
+    return {
+      blockId,
+      speakerName: nameSpan?.textContent?.trim() ?? "",
+      pictureUrl: img?.getAttribute("src") ?? "",
+      transcript: textDiv?.textContent?.trim() ?? ""
+    };
+  }
 }
