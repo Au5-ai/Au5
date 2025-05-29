@@ -33,7 +33,7 @@ public class MeetingHub(ILogger<MeetingHub> logger, IUserService userService, IM
             Speaker = transcription.Speaker,
             Timestamp = transcription.Timestamp,
             Transcript = transcription.Transcript,
-            TranscriptionBlockId = transcription.TranscriptionBlockId
+            TranscriptionBlockId = transcription.TranscriptBlockId
         });
     }
 

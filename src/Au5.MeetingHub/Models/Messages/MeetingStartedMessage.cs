@@ -2,5 +2,5 @@
 
 public record struct MeetingStartedMessage(bool IsStarted) : IMessage
 {
-    public readonly string Type => MessageTypes.NotifyMeetHasBeenStarted;
+    public readonly string Type => MessageTypes.TriggerTranscriptionStart;
 }

@@ -21,7 +21,7 @@ public class TranscriptionService : ITranscriptionService
 
         lock (_lock)
         {
-            meetingBlocks[entry.TranscriptionBlockId] = entry;
+            meetingBlocks[entry.TranscriptBlockId] = entry;
         }
     }
 
