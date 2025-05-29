@@ -5408,7 +5408,9 @@ var Pipelines;
       transcriptObserver = new MutationObserver(createMutationHandler());
       transcriptObserver.observe(ctx.transcriptContainer, {
         childList: true,
-        subtree: true
+        subtree: true,
+        attributes: true,
+        characterData: true
       });
     }
     return ctx;
@@ -5473,8 +5475,6 @@ function createMutationHandler(ctx) {
     handleTranscriptMutations(mutations);
   };
 }
-const captionMap = /* @__PURE__ */ new Map();
-const generateBlockId = () => `block_${Date.now()}_${Math.floor(Math.random() * 1e3)}`;
 const extractCaptionData = (block) => {
   var _a2, _b2;
   const blockId = block.getAttribute("data-blockid");
@@ -5488,23 +5488,17 @@ const extractCaptionData = (block) => {
   );
   return {
     blockId,
-    speaker: ((_a2 = nameSpan == null ? void 0 : nameSpan.textContent) == null ? void 0 : _a2.trim()) ?? "",
-    image: (img == null ? void 0 : img.getAttribute("src")) ?? "",
-    text: ((_b2 = textDiv == null ? void 0 : textDiv.textContent) == null ? void 0 : _b2.trim()) ?? ""
+    speakerName: ((_a2 = nameSpan == null ? void 0 : nameSpan.textContent) == null ? void 0 : _a2.trim()) ?? "",
+    pictureUrl: (img == null ? void 0 : img.getAttribute("src")) ?? "",
+    transcript: ((_b2 = textDiv == null ? void 0 : textDiv.textContent) == null ? void 0 : _b2.trim()) ?? ""
   };
 };
 const isCaptionBlock = (el) => el.parentElement === transcriptContainer;
 const processBlock = (el) => {
   if (!el.hasAttribute("data-blockid")) {
-    el.setAttribute("data-blockid", generateBlockId());
+    el.setAttribute("data-blockid", crypto.randomUUID());
   }
-  const blockId = el.getAttribute("data-blockid");
-  const newData = extractCaptionData(el);
-  const oldData = captionMap.get(blockId);
-  if (!oldData || oldData.text !== newData.text || oldData.speaker !== newData.speaker) {
-    captionMap.set(blockId, newData);
-    console.log("🆕 Caption:", blockId, newData);
-  }
+  return extractCaptionData(el);
 };
 const findCaptionBlock = (el) => {
   let current = el.nodeType === Node.ELEMENT_NODE ? el : el.parentElement;
@@ -5517,20 +5511,22 @@ function handleTranscriptMutations(mutations, ctx) {
   for (const mutation of mutations) {
     try {
       console.log("Transcript mutation detected:", mutation);
+      let blockTranscription = null;
       for (const mutation2 of mutations) {
         mutation2.addedNodes.forEach((node) => {
           if (node.nodeType === Node.ELEMENT_NODE) {
             const el = node;
             if (isCaptionBlock(el)) {
-              processBlock(el);
+              blockTranscription = processBlock(el);
             }
           }
         });
         const rootBlock = findCaptionBlock(mutation2.target);
         if (rootBlock) {
-          processBlock(rootBlock);
+          blockTranscription = processBlock(rootBlock);
         }
       }
+      console.log("Processed block transcription:", blockTranscription);
     } catch (err) {
       console.error(err);
       if (!hasMeetingEnded) {

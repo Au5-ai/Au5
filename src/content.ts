@@ -106,7 +106,9 @@ namespace Pipelines {
       transcriptObserver = new MutationObserver(createMutationHandler(ctx));
       transcriptObserver.observe(ctx.transcriptContainer, {
         childList: true,
-        subtree: true
+        subtree: true,
+        attributes: true,
+        characterData: true
       });
     }
     return ctx;
@@ -190,10 +192,12 @@ function createMutationHandler(ctx: PipelineContext) {
   };
 }
 
-const captionMap = new Map();
-
-const generateBlockId = () => `block_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-
+/**
+ * Extracts caption data from a given block element.
+ *
+ * @param block - The block element containing caption data.
+ * @returns An object containing the block ID, speaker name, image URL, and text content.
+ */
 const extractCaptionData = (block: Element) => {
   const blockId = block.getAttribute("data-blockid")!;
   const img = block.querySelector("img");
@@ -204,9 +208,9 @@ const extractCaptionData = (block: Element) => {
 
   return {
     blockId,
-    speaker: nameSpan?.textContent?.trim() ?? "",
-    image: img?.getAttribute("src") ?? "",
-    text: textDiv?.textContent?.trim() ?? ""
+    speakerName: nameSpan?.textContent?.trim() ?? "",
+    pictureUrl: img?.getAttribute("src") ?? "",
+    transcript: textDiv?.textContent?.trim() ?? ""
   };
 };
 
@@ -214,17 +218,9 @@ const isCaptionBlock = (el: Element): boolean => el.parentElement === transcript
 
 const processBlock = (el: Element) => {
   if (!el.hasAttribute("data-blockid")) {
-    el.setAttribute("data-blockid", generateBlockId());
+    el.setAttribute("data-blockid", crypto.randomUUID());
   }
-
-  const blockId = el.getAttribute("data-blockid")!;
-  const newData = extractCaptionData(el);
-  const oldData = captionMap.get(blockId);
-
-  if (!oldData || oldData.text !== newData.text || oldData.speaker !== newData.speaker) {
-    captionMap.set(blockId, newData);
-    console.log("🆕 Caption:", blockId, newData);
-  }
+  return extractCaptionData(el);
 };
 
 const findCaptionBlock = (el: Node): Element | null => {
@@ -239,14 +235,14 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
   for (const mutation of mutations) {
     try {
       console.log("Transcript mutation detected:", mutation);
-
+      let blockTranscription = null;
       for (const mutation of mutations) {
         // Handle added blocks
         mutation.addedNodes.forEach(node => {
           if (node.nodeType === Node.ELEMENT_NODE) {
             const el = node as Element;
             if (isCaptionBlock(el)) {
-              processBlock(el);
+              blockTranscription = processBlock(el);
             }
           }
         });
@@ -254,30 +250,11 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
         // Handle changes in existing block's content
         const rootBlock = findCaptionBlock(mutation.target);
         if (rootBlock) {
-          processBlock(rootBlock);
+          blockTranscription = processBlock(rootBlock);
         }
       }
 
-      // if (mut.type === "childList") {
-      //   let el: HTMLElement | null = mut.target as HTMLElement;
-      //   let foundBlockId = false;
-
-      //   while (el && el !== ctx.transcriptContainer) {
-      //     if (el.hasAttribute("data-blockId")) {
-      //       foundBlockId = true;
-      //       break;
-      //     }
-      //     el = el.parentElement;
-      //   }
-
-      //   if (!foundBlockId) {
-      //     const topEl = mut.target as HTMLElement;
-      //     const newId = crypto.randomUUID();
-      //     topEl.setAttribute("data-blockId", newId);
-      //     currentTransciptBlockId = newId;
-      //     console.log("Assigned blockId to top-level block:", newId);
-      //   }
-      // }
+      console.log("Processed block transcription:", blockTranscription);
 
       // const transcriptContainer = ctx.canUseAriaBasedTranscriptSelector
       //   ? domUtils.selectSingle(config.extension.transcriptSelectors.aria)
