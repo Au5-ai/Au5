@@ -3,18 +3,11 @@ using Au5.MeetingHub.Models.Messages;
 
 namespace Au5.MeetingHub;
 
-public class MeetingHub : Hub
+public class MeetingHub(ILogger<MeetingHub> logger, IUserService userService, IMeetingService meetingService) : Hub
 {
-    private readonly ILogger<MeetingHub> _logger;
-    private readonly IUserService _userService;
-    private readonly IMeetingService _meetingService;
-
-    public MeetingHub(ILogger<MeetingHub> logger)
-    {
-        _logger = logger;
-        _userService = new UserService();
-        _meetingService = new MeetingService();
-    }
+    private readonly ILogger<MeetingHub> _logger = logger;
+    private readonly IUserService _userService = userService;
+    private readonly IMeetingService _meetingService = meetingService;
 
     public async Task JoinMeeting(JoinMeeting joinMeeting)
     {
@@ -32,7 +25,9 @@ public class MeetingHub : Hub
     }
 
     public async Task NotifyRealTimeTranscription(RealTimeTranscription transcription)
-        => await SendToOthersInGroupAsync(transcription.MeetingId, new RealTimeTranscriptionMessage()
+    {
+        _meetingService.AddTranscription(transcription);
+        await SendToOthersInGroupAsync(transcription.MeetingId, new RealTimeTranscriptionMessage()
         {
             MeetingId = transcription.MeetingId,
             Speaker = transcription.Speaker,
@@ -40,6 +35,7 @@ public class MeetingHub : Hub
             Transcript = transcription.Transcript,
             TranscriptionBlockId = transcription.TranscriptionBlockId
         });
+    }
 
     public async Task TriggerTranscriptionStart(StartTranscription data)
     {

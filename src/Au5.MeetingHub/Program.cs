@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
     //    .WithSecurity(MessagePackSecurity.UntrustedData);
     //});
 
+    builder.Services.RegisterApplicationServices(builder.Configuration);
     builder.Services.AddCors(options =>
     {
         options.AddDefaultPolicy(policy =>

@@ -4,6 +4,7 @@ public interface IMeetingService
 {
     void Run(string meetingId, Guid userId);
     bool IsStarted(string meetingId);
+    void AddTranscription()
 }
 
 public class MeetingService : IMeetingService

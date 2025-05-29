@@ -1,6 +1,6 @@
 ﻿namespace Au5.MeetingHub.Models.Messages;
 
-public record struct RealTimeTranscriptionMessage : IMessage
+public record struct TranscriptionEntryMessage : IMessage
 {
     public string MeetingId { get; set; }
     public string TranscriptionBlockId { get; set; }
