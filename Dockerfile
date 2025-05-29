@@ -12,10 +12,11 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Au5.MeetingHub/Au5.MeetingHub.csproj", "Au5.MeetingHub/"]
-RUN dotnet restore "./Au5.MeetingHub/Au5.MeetingHub.csproj"
+COPY ["src/Au5.MeetingHub/Au5.MeetingHub.csproj", "src/Au5.MeetingHub/"]
+COPY ["src/Au5.Domain/Au5.Domain.csproj", "src/Au5.Domain/"]
+RUN dotnet restore "./src/Au5.MeetingHub/Au5.MeetingHub.csproj"
 COPY . .
-WORKDIR "/src/Au5.MeetingHub"
+WORKDIR "/src/src/Au5.MeetingHub"
 RUN dotnet build "./Au5.MeetingHub.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
