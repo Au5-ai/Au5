@@ -5526,7 +5526,28 @@ function handleTranscriptMutations(mutations, ctx) {
           blockTranscription = processBlock(rootBlock);
         }
       }
-      console.log("Processed block transcription:", blockTranscription);
+      if (blockTranscription) {
+        if (blockTranscription.speakerName == "You") {
+          blockTranscription.speakerName = config.user.fullName;
+        }
+        SidePanel.addTranscription({
+          meetingId: meet.id,
+          transcriptionBlockId: blockTranscription.blockId,
+          speaker: { fullname: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl },
+          transcript: blockTranscription.transcript,
+          timestamp: (/* @__PURE__ */ new Date()).toISOString()
+        });
+        windowMessageHandler.postToWindow({
+          Header: { Type: MessageTypes.NotifyRealTimeTranscription },
+          Payload: {
+            MeetingId: meet.id,
+            TranscriptionBlockId: currentTransciptBlockId,
+            Speaker: { fullname: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl },
+            Transcript: currentTranscript,
+            Timestamp: currentTimestamp
+          }
+        });
+      }
     } catch (err) {
       console.error(err);
       if (!hasMeetingEnded) {

@@ -1,4 +1,4 @@
-import {Message} from "../socket/types";
+import {IMessage} from "../socket/types";
 
 type MessageCallback = (action: string, payload: any) => void;
 
@@ -19,12 +19,12 @@ export class WindowMessageHandler {
     this.callback(action, payload);
   };
 
-  public postToWindow(msg: Message) {
+  public postToWindow(msg: IMessage) {
     window.postMessage(
       {
         source: this.sourcePost,
-        action: msg.Header.Type,
-        payload: msg.Payload
+        action: msg.type,
+        payload: msg
       },
       "*"
     );

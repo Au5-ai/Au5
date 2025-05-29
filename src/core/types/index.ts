@@ -10,9 +10,17 @@ export interface PipelineContext {
 
 export interface User {
   id: string;
-  fullname: string;
+  fullName: string;
   pictureUrl: string;
-  joinedAt: string;
+  joinedAt?: Date;
+}
+
+export interface TranscriptionEntry {
+  meetingId: string;
+  transcriptBlockId: string;
+  speaker: User;
+  transcript: string;
+  timestamp: Date;
 }
 
 /**

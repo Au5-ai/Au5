@@ -1,4 +1,4 @@
-import {User} from "../core/types";
+import {TranscriptionEntry, User} from "../core/types";
 import {DateTime} from "../core/utils/datetime";
 import css from "./styles/au5-panel.css?raw";
 
@@ -178,35 +178,35 @@ export default class SidePanel {
     this.transcriptionsContainer.appendChild(usersJoined);
   }
 
-  public static addTranscription(block: any): void {
+  public static addTranscription(entry: TranscriptionEntry): void {
     if (!this.transcriptionsContainer) {
       return;
     }
 
     const existing = this.transcriptionsContainer.querySelector(
-      `[data-id="${block.transcriptionBlockId}"]`
+      `[data-id="${entry.transcriptBlockId}"]`
     ) as HTMLDivElement;
     if (existing) {
       const textEl = existing.querySelector(".au5-text") as HTMLDivElement;
-      if (textEl) textEl.innerText = block.transcript;
+      if (textEl) textEl.innerText = entry.transcript;
       return;
     }
 
     const transcriptBlock = document.createElement("div");
-    transcriptBlock.setAttribute("data-id", block.transcriptionBlockId);
+    transcriptBlock.setAttribute("data-id", entry.transcriptBlockId);
     transcriptBlock.className = "au5-transcription";
     transcriptBlock.innerHTML = `<div class="au5-avatar">
             <img
-              src="${block.speaker.pictureUrl || "https://via.placeholder.com/40"}"
+              src="${entry.speaker.pictureUrl || "https://via.placeholder.com/40"}"
             />
           </div>
           <div class="au5-bubble">
             <div class="au5-sender">
-              <div class="au5-sender-title">${block.speaker.fullname}</div>
-              <div class="au5-sender-time">${DateTime.toHoursAndMinutes(block.timestamp)}</div>
+              <div class="au5-sender-title">${entry.speaker.fullName}</div>
+              <div class="au5-sender-time">${DateTime.toHoursAndMinutes(entry.timestamp)}</div>
             </div>
             <div class="au5-text" style="direction: ${this.direction};">
-              ${block.transcript}
+              ${entry.transcript}
             </div>
             <div class="au5-transcription-reactions">
               <div class="au5-reactions">

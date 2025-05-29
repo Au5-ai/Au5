@@ -1,20 +1,49 @@
-export interface Header {
-  Type: string;
+import {Platform} from "@microsoft/signalr/dist/esm/Utils";
+import {User} from "../../core/types";
+import {MessageTypes} from "./enums";
+
+export type HubMessage =
+  | UserJoinedInMeetingMessage
+  | ListOfUsersInMeetingMessage
+  | MeetingStartedMessage
+  | TranscriptionEntryMessage;
+
+export interface IMessage {
+  readonly type: string;
 }
 
-export interface Message {
-  Header: Header;
-  Payload: any;
+export interface MeetingStartedMessage extends IMessage {
+  readonly type: MessageTypes.NotifyMeetHasBeenStarted;
+  isStarted: boolean;
 }
 
-/**
- * Actions that can be triggered by the content script.
- */
-export enum MessageTypes {
-  NotifyRealTimeTranscription = "NotifyRealTimeTranscription",
-  NotifyUserJoining = "NotifyUserJoining",
-  TriggerTranscriptionStart = "TriggerTranscriptionStart",
-  NotifyMeetHasBeenStarted = "NotifyMeetHasBeenStarted",
-  ListOfUsersInMeeting = "ListOfUsersInMeeting",
-  NotifyUserLeft = "NotifyUserLeft"
+export interface ListOfUsersInMeetingMessage extends IMessage {
+  readonly type: MessageTypes.ListOfUsersInMeeting;
+  users: ReadonlyArray<User>;
+}
+
+export interface JoinMeeting {
+  platform: Platform;
+  meetingId: string;
+  user: User;
+}
+
+export interface StartTranscription extends IMessage {
+  readonly type: MessageTypes.TriggerTranscriptionStart;
+  meetingId: string;
+  userId: string;
+}
+
+export interface UserJoinedInMeetingMessage extends IMessage {
+  readonly type: MessageTypes.NotifyUserJoining;
+  user: User;
+}
+
+export interface TranscriptionEntryMessage extends IMessage {
+  meetingId: string;
+  transcriptionBlockId: string;
+  speaker: User;
+  transcript: string;
+  timestamp: Date;
+  readonly type: MessageTypes.NotifyRealTimeTranscription;
 }

@@ -4,13 +4,20 @@ import {detectBrowser} from "./core/browser/browserDetector";
 import {ConfigurationManager} from "./core/configurationManager";
 import {createMeetingPlatformInstance} from "./core/meetingPlatform";
 import {runPipesAsync} from "./core/pipeline";
-import {Meet, PipelineContext, TranscriptBlock, User} from "./core/types";
+import {Meet, PipelineContext, TranscriptBlock, TranscriptionEntry, User} from "./core/types";
 import {AppConfiguration} from "./core/types/configuration";
 import {DomUtils} from "./core/utils/dom.utils";
-import {MessageTypes} from "./socket/types";
 import {WindowMessageHandler} from "./core/windowMessageHandler";
 import SidePanel from "./ui/sidePanel";
-import {establishConnection, MeetingHubClient} from "./socket/meetingHubClient";
+import {establishConnection} from "./socket/meetingHubClient";
+import {MessageTypes} from "./socket/types/enums";
+import {
+  HubMessage,
+  ListOfUsersInMeetingMessage,
+  StartTranscription,
+  TranscriptionEntryMessage,
+  UserJoinedInMeetingMessage
+} from "./socket/types";
 
 let meet: Meet;
 let transcriptBlocks: TranscriptBlock[] = [];
@@ -42,7 +49,7 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
     const meetingId = platform.getMeetingTitle();
 
     SidePanel.createSidePanel("Asax Co", meetingId, config.service.direction);
-    establishConnection(config, meetingId);
+    establishConnection(config, meetingId, platform.getPlatformName());
     meet = {
       id: meetingId,
       platform: platform.getPlatformName(),
@@ -67,14 +74,9 @@ const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5
       );
 
       windowMessageHandler.postToWindow({
-        Header: {Type: MessageTypes.TriggerTranscriptionStart},
-        Payload: {
-          MeetingId: meetingId,
-          User: {
-            Id: config.user.userId
-          }
-        }
-      });
+        meetingId: meetingId,
+        userId: config.user.userId
+      } as StartTranscription);
     });
   } catch (error) {
     console.error("Meeting routine execution failed:", error);
@@ -121,35 +123,35 @@ namespace Pipelines {
 }
 
 let listOfUsersInMeeting: User[] = [];
-function handleWindowMessage(action: string, payload: any) {
+function handleWindowMessage(action: string, payload: HubMessage): void {
   switch (action) {
     case MessageTypes.NotifyRealTimeTranscription:
+      const transcriptEntry = payload as TranscriptionEntryMessage;
+
       SidePanel.addTranscription({
-        meetingId: meet.id,
-        transcriptionBlockId: payload.TranscriptionBlockId,
-        speaker: {
-          id: payload.Speaker.Id,
-          fullname: payload.Speaker.FullName,
-          pictureUrl: payload.Speaker.PictureUrl
-        } as User,
-        transcript: payload.Transcript,
-        timestamp: payload.Timestamp
-      });
+        meetingId: transcriptEntry.meetingId,
+        transcriptBlockId: transcriptEntry.transcriptionBlockId,
+        speaker: transcriptEntry.speaker,
+        transcript: transcriptEntry.transcript,
+        timestamp: transcriptEntry.timestamp
+      } as TranscriptionEntry);
       break;
 
     case MessageTypes.NotifyUserJoining:
+      const userJoinedMsg = payload as UserJoinedInMeetingMessage;
+
+      if (!userJoinedMsg.user) {
+        return;
+      }
+
       const item: User = {
-        id: payload.User.Id,
-        fullname: payload.User.FullName,
-        pictureUrl: payload.User.PictureUrl,
-        joinedAt: payload.User.JoinedAt || new Date().toISOString()
+        id: userJoinedMsg.user.id,
+        fullName: userJoinedMsg.user.fullName,
+        pictureUrl: userJoinedMsg.user.pictureUrl,
+        joinedAt: userJoinedMsg.user.joinedAt || new Date()
       };
       listOfUsersInMeeting.push(item);
       SidePanel.usersJoined(item, meet.isStarted);
-      break;
-
-    case MessageTypes.NotifyUserLeft:
-      SidePanel.usersLeaved(payload, meet.isStarted);
       break;
 
     case MessageTypes.NotifyMeetHasBeenStarted:
@@ -159,12 +161,17 @@ function handleWindowMessage(action: string, payload: any) {
       break;
 
     case MessageTypes.ListOfUsersInMeeting:
-      payload.Users.forEach((user: any) => {
+      const usersInMeeting = payload as ListOfUsersInMeetingMessage;
+
+      if (!usersInMeeting.users || !Array.isArray(usersInMeeting.users)) {
+        return;
+      }
+      usersInMeeting.users.forEach((user: User) => {
         const item: User = {
-          id: user.Id,
-          fullname: user.FullName,
-          pictureUrl: user.PictureUrl,
-          joinedAt: user.JoinedAt || new Date().toISOString()
+          id: user.id,
+          fullName: user.fullName,
+          pictureUrl: user.pictureUrl,
+          joinedAt: user.joinedAt || new Date()
         };
         listOfUsersInMeeting.push(item);
         SidePanel.addParticipant(item);
@@ -234,7 +241,6 @@ const findCaptionBlock = (el: Node): Element | null => {
 function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineContext): void {
   for (const mutation of mutations) {
     try {
-      console.log("Transcript mutation detected:", mutation);
       let blockTranscription = null;
       for (const mutation of mutations) {
         // Handle added blocks
@@ -254,112 +260,30 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
         }
       }
 
-      console.log("Processed block transcription:", blockTranscription);
+      if (blockTranscription) {
+        if (blockTranscription.speakerName == "You") {
+          blockTranscription.speakerName = config.user.fullName;
+        }
 
-      // const transcriptContainer = ctx.canUseAriaBasedTranscriptSelector
-      //   ? domUtils.selectSingle(config.extension.transcriptSelectors.aria)
-      //   : domUtils.selectSingle(config.extension.transcriptSelectors.fallback);
+        SidePanel.addTranscription({
+          meetingId: meet.id,
+          transcriptBlockId: blockTranscription.blockId,
+          speaker: {fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl} as User,
+          transcript: blockTranscription.transcript,
+          timestamp: new Date()
+        } as TranscriptionEntry);
 
-      // const speakerElements = ctx.canUseAriaBasedTranscriptSelector
-      //   ? transcriptContainer?.children
-      //   : transcriptContainer?.childNodes[1]?.firstChild?.childNodes;
-
-      // if (!speakerElements) return;
-      // const hasSpeakers = ctx.canUseAriaBasedTranscriptSelector
-      //   ? speakerElements.length > 1
-      //   : speakerElements.length > 0;
-      // if (!hasSpeakers) return;
-
-      // const latestSpeakerElement = ctx.canUseAriaBasedTranscriptSelector
-      //   ? (speakerElements[speakerElements.length - 2] as HTMLElement)
-      //   : (speakerElements[speakerElements.length - 1] as HTMLElement);
-
-      // const nameNode = latestSpeakerElement.childNodes[0] as HTMLElement;
-      // const textNode = latestSpeakerElement.childNodes[1] as HTMLElement;
-      // let speakerName = nameNode?.textContent?.trim() ?? "";
-      // const transcriptText = textNode?.textContent?.trim() ?? "";
-
-      // if (speakerName === "You") {
-      //   speakerName = config.user.fullName;
-      // }
-
-      // if (!speakerName || !transcriptText) {
-      //   continue;
-      // }
-
-      // let currentSpeaker = listOfUsersInMeeting.find(user => user.fullname === speakerName);
-      // if (!currentSpeaker) {
-      //   console.log("current not found speaker:", speakerName, currentTransciptBlockId, currentTranscript);
-      //   // If speaker is not in the list, add them
-      //   currentSpeaker = {
-      //     id: crypto.randomUUID(),
-      //     fullname: speakerName,
-      //     pictureUrl: config.extension.defaultPictureUrl,
-      //     joinedAt: new Date().toISOString()
-      //   };
-      //   listOfUsersInMeeting.push(currentSpeaker);
-      // }
-
-      // if (currentTranscript === "") {
-      //   // New conversation start
-      //   console.log("New conversation started with speaker:", speakerName, currentTransciptBlockId, currentTranscript);
-
-      //   currentSpeakerName = speakerName;
-      //   currentTimestamp = new Date().toISOString();
-      //   currentTranscript = transcriptText;
-      // } else if (currentSpeakerName !== speakerName) {
-      //   // New speaker
-      //   console.log("New speaker detected:", speakerName, currentTransciptBlockId, currentTranscript);
-      //   flushTranscriptBuffer({
-      //     id: currentTransciptBlockId,
-      //     user: {fullname: currentSpeakerName},
-      //     transcript: currentTranscript,
-      //     timestamp: currentTimestamp
-      //   } as TranscriptBlock);
-
-      //   // currentTransciptBlockId = crypto.randomUUID();
-      //   currentSpeakerName = speakerName;
-      //   currentTimestamp = new Date().toISOString();
-      //   currentTranscript = transcriptText;
-      // } else {
-      //   // Same speaker continuing
-      //   console.log("Continuing conversation with speaker:", speakerName, currentTransciptBlockId, currentTranscript);
-      //   currentTranscript = transcriptText;
-      //   if (ctx.canUseAriaBasedTranscriptSelector) {
-      //     const textDiff = transcriptText.length - currentTranscript.length;
-      //     if (textDiff < -config.extension.maxTranscriptLength) {
-      //       flushTranscriptBuffer({
-      //         id: currentTransciptBlockId,
-      //         user: {fullname: currentSpeakerName},
-      //         transcript: currentTranscript,
-      //         timestamp: currentTimestamp
-      //       } as TranscriptBlock);
-      //     }
-      //   }
-
-      //   if (!ctx.canUseAriaBasedTranscriptSelector && transcriptText.length > config.extension.maxTranscriptLength) {
-      //     latestSpeakerElement.remove();
-      //   }
-      // }
-
-      // SidePanel.addTranscription({
-      //   meetingId: meet.id,
-      //   transcriptionBlockId: currentTransciptBlockId,
-      //   speaker: currentSpeaker,
-      //   transcript: currentTranscript,
-      //   timestamp: currentTimestamp
-      // });
-
-      // windowMessageHandler.postToWindow({
-      //   Header: {Type: MessageTypes.NotifyRealTimeTranscription},
-      //   Payload: {
-      //     MeetingId: meet.id,
-      //     TranscriptionBlockId: currentTransciptBlockId,
-      //     Speaker: {id: currentSpeaker?.id, fullName: currentSpeakerName},
-      //     Transcript: currentTranscript,
-      //     Timestamp: currentTimestamp
-      //   }
-      // });
+        windowMessageHandler.postToWindow({
+          Header: {Type: MessageTypes.NotifyRealTimeTranscription},
+          Payload: {
+            MeetingId: meet.id,
+            TranscriptionBlockId: currentTransciptBlockId,
+            Speaker: {fullname: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl} as User,
+            Transcript: currentTranscript,
+            Timestamp: currentTimestamp
+          }
+        });
+      }
     } catch (err) {
       console.error(err);
       if (!hasMeetingEnded) {
@@ -367,15 +291,6 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
       }
     }
   }
-}
-
-function flushTranscriptBuffer(item: TranscriptBlock): void {
-  if (!currentTranscript || !currentTimestamp) return;
-  item.user.fullname = item.user.fullname === "You" ? config.user.fullName : item.user.fullname;
-  item.type = "transcript";
-  transcriptBlocks.push(item);
-  meet.transcripts.push(item);
-  console.log("Transcript flushed:", JSON.stringify(transcriptBlocks));
 }
 
 function endMeetingRoutines(): void {
@@ -391,14 +306,6 @@ function endMeetingRoutines(): void {
       hasMeetingEnded = true;
       meet.endAt = new Date().toISOString();
       transcriptObserver?.disconnect();
-      if (currentSpeakerName && currentTranscript) {
-        flushTranscriptBuffer({
-          id: currentTransciptBlockId,
-          user: {fullname: currentSpeakerName},
-          transcript: currentTranscript,
-          timestamp: currentTimestamp
-        } as TranscriptBlock);
-      }
       SidePanel.destroy();
       console.log("Meeting ended. Transcript data:", JSON.stringify(transcriptBlocks));
     });

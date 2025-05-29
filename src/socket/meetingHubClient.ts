@@ -1,23 +1,24 @@
 import * as signalR from "@microsoft/signalr";
-import {MessagePackHubProtocol} from "@microsoft/signalr-protocol-msgpack";
 import {AppConfiguration} from "../core/types/configuration";
-import {Message, MessageTypes} from "./types";
+import {IMessage, JoinMeeting, MessageTypes} from "./types";
 import {WindowMessageHandler} from "../core/windowMessageHandler";
 import {createMeetingPlatformInstance} from "../core/meetingPlatform";
 
 export class MeetingHubClient {
   private connection: signalR.HubConnection;
   private meetingId: string;
+  private platformName: string;
   private config: AppConfiguration;
   private windowMessageHandler: WindowMessageHandler;
 
-  constructor(config: AppConfiguration, meetingId: string) {
+  constructor(config: AppConfiguration, meetingId: string, platformName: string) {
     this.config = config;
     this.meetingId = meetingId;
+    this.platformName = platformName;
     this.connection = new signalR.HubConnectionBuilder()
       .withUrl(this.config.service.hubUrl)
       .withAutomaticReconnect()
-      .withHubProtocol(new MessagePackHubProtocol())
+      //.withHubProtocol(new MessagePackHubProtocol())
       .build();
 
     this.windowMessageHandler = new WindowMessageHandler(
@@ -29,8 +30,8 @@ export class MeetingHubClient {
   }
 
   private setupHandlers() {
-    this.connection.on("ReceiveMessage", (msg: Message) => {
-      switch (msg.Header.Type) {
+    this.connection.on("ReceiveMessage", (msg: IMessage) => {
+      switch (msg.type) {
         case MessageTypes.NotifyUserJoining:
         case MessageTypes.NotifyMeetHasBeenStarted:
         case MessageTypes.TriggerTranscriptionStart:
@@ -48,13 +49,15 @@ export class MeetingHubClient {
       .start()
       .then(() => {
         this.connection.invoke("JoinMeeting", {
-          MeetingId: this.meetingId,
-          User: {
-            Id: this.config.user.userId,
-            FullName: this.config.user.fullName,
-            PictureUrl: this.config.user.pictureUrl
+          platform: this.platformName,
+          meetingId: this.meetingId,
+          user: {
+            id: this.config.user.userId,
+            fullName: this.config.user.fullName,
+            pictureUrl: this.config.user.pictureUrl,
+            joinedAt: new Date()
           }
-        });
+        } as JoinMeeting);
       })
       .then(() => {
         this.setupHandlers();
@@ -74,11 +77,11 @@ export class MeetingHubClient {
   }
 }
 
-export async function establishConnection(config: AppConfiguration, meetingId: string) {
+export async function establishConnection(config: AppConfiguration, meetingId: string, platformName: string) {
   const platform = createMeetingPlatformInstance(window.location.href);
   if (!platform) {
     console.error("Unsupported meeting platform");
     return;
   }
-  new MeetingHubClient(config, meetingId);
+  new MeetingHubClient(config, meetingId, platformName);
 }
