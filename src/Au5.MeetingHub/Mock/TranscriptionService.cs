@@ -48,7 +48,7 @@ public class TranscriptionService : ITranscriptionService
 
     public void FinalizeMeeting(string meetingId)
     {
-        if (_meetingTranscriptions.TryRemove(meetingId, out var blocks))
+        if (_meetingTranscriptions.TryRemove(meetingId, out _))
         {
             string finalTranscript = GetFullTranscriptionAsJson(meetingId);
             File.WriteAllText($"transcription_{meetingId}.json", finalTranscript);

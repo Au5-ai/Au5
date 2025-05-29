@@ -2,6 +2,6 @@
 
 public enum Platform
 {
-    Google,
+    GoogleMeet,
     Zoom
 }
