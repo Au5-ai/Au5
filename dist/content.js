@@ -105,7 +105,8 @@ class ConfigurationManager {
         service: {
           webhookUrl: "https://au5.ai/api/v1/",
           direction: "rtl",
-          hubUrl: "https://localhost:1366/meetinghub"
+          hubUrl: "https://localhost:1366/meetinghub",
+          companyName: "Asax Co"
         },
         extension: {
           meetingEndIcon: {
@@ -171,68 +172,6 @@ class ConfigurationManager {
     }
   }
 }
-function getMeetingPlatform(url) {
-  const patterns = {
-    "Google Meet": /https?:\/\/meet\.google\.com\/[a-zA-Z0-9-]+/,
-    Zoom: /https?:\/\/([a-z0-9]+\.)?zoom\.us\/(j|my)\/[a-zA-Z0-9?&=]+/,
-    "Microsoft Teams": /https?:\/\/(teams\.microsoft\.com|teams\.live\.com)\/[a-zA-Z0-9/?&=._-]+/
-  };
-  for (const [platform, pattern] of Object.entries(patterns)) {
-    if (pattern.test(url)) {
-      return platform;
-    }
-  }
-  return null;
-}
-class GoogleMeet {
-  constructor(url) {
-    this.url = url;
-  }
-  getMeetingTitle() {
-    const match = this.url.match(/meet\.google\.com\/([a-zA-Z0-9-]+)/);
-    return match ? `${match[1]}` : "Google Meet";
-  }
-  getPlatformName() {
-    return "GoogleMeet";
-  }
-}
-class Zoom {
-  constructor(url) {
-    this.url = url;
-  }
-  getMeetingTitle() {
-    const match = this.url.match(/zoom\.us\/(j|my)\/([a-zA-Z0-9]+)/);
-    return match ? `${match[2]}` : "Zoom";
-  }
-  getPlatformName() {
-    return "Zoom";
-  }
-}
-class MicrosoftTeams {
-  constructor(url) {
-    this.url = url;
-  }
-  getMeetingTitle() {
-    return "Microsoft Teams";
-  }
-  getPlatformName() {
-    return "Microsoft Teams";
-  }
-}
-function createMeetingPlatformInstance(url) {
-  const platform = getMeetingPlatform(url);
-  if (!platform) return null;
-  switch (platform) {
-    case "Google Meet":
-      return new GoogleMeet(url);
-    case "Zoom":
-      return new Zoom(url);
-    case "Microsoft Teams":
-      return new MicrosoftTeams(url);
-    default:
-      return null;
-  }
-}
 async function runPipesAsync(input, ...fns) {
   let result = input;
   for (const fn of fns) {
@@ -287,21 +226,6 @@ class DomUtils {
     return elements.filter((el) => regex.test(el.textContent ?? ""));
   }
   /**
-   * Applies an opacity style to a target container or its second child.
-   *
-   * @param container - The parent HTMLElement
-   * @param applyToSelf - If true, applies style to container; otherwise, to second child
-   * @param opacity - Opacity value (e.g., "0.5")
-   */
-  setOpacity(container, applyToSelf, opacity) {
-    if (applyToSelf) {
-      container.style.opacity = opacity;
-    } else {
-      const target = container.children[1];
-      target == null ? void 0 : target.style.setProperty("opacity", opacity);
-    }
-  }
-  /**
    * Attempts to locate a DOM container using aria selector, falling back to a secondary selector.
    *
    * @param ariaSelector - ARIA-based CSS selector
@@ -319,30 +243,6 @@ class DomUtils {
   injectScript(fileName, onLoad = () => {
   }) {
     this.browserInjector.inject(fileName, onLoad);
-  }
-  /**
-   * Extracts caption data from a given block element.
-   *
-   * @param block - The block element containing caption data.
-   * @returns An object containing the block ID, speaker name, image URL, and text content.
-   */
-  extractCaptionData(block) {
-    var _a, _b;
-    const blockId = block.getAttribute("data-blockid");
-    const img = block.querySelector("img");
-    const nameSpan = block.querySelector("span");
-    const textDiv = Array.from(block.querySelectorAll("div")).find(
-      (d) => {
-        var _a2;
-        return d.childElementCount === 0 && ((_a2 = d.textContent) == null ? void 0 : _a2.trim());
-      }
-    );
-    return {
-      blockId,
-      speakerName: ((_a = nameSpan == null ? void 0 : nameSpan.textContent) == null ? void 0 : _a.trim()) ?? "",
-      pictureUrl: (img == null ? void 0 : img.getAttribute("src")) ?? "",
-      transcript: ((_b = textDiv == null ? void 0 : textDiv.textContent) == null ? void 0 : _b.trim()) ?? ""
-    };
   }
 }
 class WindowMessageHandler {
@@ -3403,6 +3303,59 @@ class HubConnectionBuilder {
 function isLogger(logger) {
   return logger.log !== void 0;
 }
+class GoogleMeet {
+  constructor(url) {
+    __publicField(this, "isCaptionBlock", (container, el) => el.parentElement === container);
+    __publicField(this, "findCaptionBlock", (container, el) => {
+      let current = el.nodeType === Node.ELEMENT_NODE ? el : el.parentElement;
+      while (current && current.parentElement !== container) {
+        current = current.parentElement;
+      }
+      return (current == null ? void 0 : current.parentElement) === container ? current : null;
+    });
+    __publicField(this, "processBlock", (el) => {
+      if (!el.hasAttribute("data-blockid")) {
+        el.setAttribute("data-blockid", crypto.randomUUID());
+      }
+      return this.extractCaptionData(el);
+    });
+    this.url = url;
+  }
+  getMeetingTitle() {
+    const match = this.url.match(/meet\.google\.com\/([a-zA-Z0-9-]+)/);
+    return match ? `${match[1]}` : "Google Meet";
+  }
+  getPlatformName() {
+    return "GoogleMeet";
+  }
+  /**
+   * Extracts caption data from a given block element.
+   *
+   * @param block - The block element containing caption data.
+   * @returns An object containing the block ID, speaker name, image URL, and text content.
+   */
+  extractCaptionData(block) {
+    var _a, _b;
+    const blockId = block.getAttribute("data-blockid");
+    const img = block.querySelector("img");
+    const nameSpan = block.querySelector("span");
+    const textDiv = Array.from(block.querySelectorAll("div")).find(
+      (d) => {
+        var _a2;
+        return d.childElementCount === 0 && ((_a2 = d.textContent) == null ? void 0 : _a2.trim());
+      }
+    );
+    return {
+      blockId,
+      speakerName: ((_a = nameSpan == null ? void 0 : nameSpan.textContent) == null ? void 0 : _a.trim()) ?? "",
+      pictureUrl: (img == null ? void 0 : img.getAttribute("src")) ?? "",
+      transcript: ((_b = textDiv == null ? void 0 : textDiv.textContent) == null ? void 0 : _b.trim()) ?? ""
+    };
+  }
+}
+function createMeetingPlatformInstance(url) {
+  return new GoogleMeet(url);
+}
 var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
   MessageTypes2["NotifyRealTimeTranscription"] = "NotifyRealTimeTranscription";
   MessageTypes2["NotifyUserJoining"] = "NotifyUserJoining";
@@ -3465,21 +3418,21 @@ class MeetingHubClient {
   }
 }
 async function establishConnection(config2, meetingId) {
-  const platform = createMeetingPlatformInstance(window.location.href);
-  if (!platform) {
+  const platform2 = createMeetingPlatformInstance(window.location.href);
+  if (!platform2) {
     console.error("Unsupported meeting platform");
     return;
   }
   new MeetingHubClient(config2, meetingId);
 }
-let meet;
+let meeting;
 let transcriptBlocks = [];
-let hasMeetingEnded = false;
 let transcriptObserver;
 let config;
 let transcriptContainer;
 let currentTransciptBlockId = "", currentTranscript = "";
 let currentTimestamp = /* @__PURE__ */ new Date();
+const platform = createMeetingPlatformInstance(window.location.href);
 const browser = detectBrowser();
 const domUtils = new DomUtils(browser);
 const windowMessageHandler = new WindowMessageHandler("Au5-ContentScript", "Au5-MeetingHubClient", handleWindowMessage);
@@ -3489,26 +3442,24 @@ const windowMessageHandler = new WindowMessageHandler("Au5-ContentScript", "Au5-
     const configurationManager = new ConfigurationManager(browser);
     config = await configurationManager.getConfig();
     await domUtils.waitForMatch(config.extension.meetingEndIcon.selector, config.extension.meetingEndIcon.text);
-    const platform = createMeetingPlatformInstance(window.location.href);
     if (!platform) {
       console.error("Unsupported meeting platform");
       return;
     }
-    const meetingId = platform.getMeetingTitle();
-    SidePanel.createSidePanel("Asax Co", meetingId, config.service.direction);
-    establishConnection(config, meetingId);
-    meet = {
-      id: meetingId,
+    meeting = {
+      id: platform.getMeetingTitle(),
       platform: platform.getPlatformName(),
-      startAt: (/* @__PURE__ */ new Date()).toISOString(),
-      endAt: "",
+      startAt: /* @__PURE__ */ new Date(),
+      endAt: null,
       isStarted: false,
+      isEnded: false,
       transcripts: [],
       users: []
     };
+    SidePanel.createSidePanel(config.service.companyName, meeting.id, config.service.direction);
+    establishConnection(config, meeting.id);
     (_a = document.getElementById(config.extension.btnTranscriptSelector)) == null ? void 0 : _a.addEventListener("click", () => {
-      meet.users = listOfUsersInMeeting;
-      meet.isStarted = true;
+      meeting.isStarted = true;
       SidePanel.showTranscriptionsContainer();
       runPipesAsync(
         {},
@@ -3518,7 +3469,7 @@ const windowMessageHandler = new WindowMessageHandler("Au5-ContentScript", "Au5-
         Pipelines.addEndMeetingButtonListenerPipe
       );
       windowMessageHandler.postToWindow({
-        meetingId,
+        meetingId: meeting.id,
         userId: config.user.userId
       });
     });
@@ -3558,11 +3509,29 @@ var Pipelines;
     return ctx;
   };
   Pipelines2.addEndMeetingButtonListenerPipe = async (ctx) => {
-    endMeetingRoutines();
+    var _a, _b;
+    try {
+      const elements = domUtils.selectAll(
+        config.extension.meetingEndIcon.selector,
+        config.extension.meetingEndIcon.text
+      );
+      const meetingEndButton = ((_b = (_a = elements == null ? void 0 : elements[0]) == null ? void 0 : _a.parentElement) == null ? void 0 : _b.parentElement) ?? null;
+      if (!meetingEndButton) {
+        throw new Error("Meeting end button not found in DOM.");
+      }
+      meetingEndButton.addEventListener("click", () => {
+        meeting.isEnded = true;
+        meeting.endAt = /* @__PURE__ */ new Date();
+        transcriptObserver == null ? void 0 : transcriptObserver.disconnect();
+        SidePanel.destroy();
+        console.log("Meeting ended. Transcript data:", JSON.stringify(transcriptBlocks));
+      });
+    } catch (err) {
+      console.error("Error setting up meeting end listener:", err);
+    }
     return ctx;
   };
 })(Pipelines || (Pipelines = {}));
-let listOfUsersInMeeting = [];
 function handleWindowMessage(action, payload) {
   switch (action) {
     case MessageTypes.NotifyRealTimeTranscription:
@@ -3586,12 +3555,12 @@ function handleWindowMessage(action, payload) {
         pictureUrl: userJoinedMsg.user.pictureUrl,
         joinedAt: userJoinedMsg.user.joinedAt || /* @__PURE__ */ new Date()
       };
-      listOfUsersInMeeting.push(item);
-      SidePanel.usersJoined(item, meet.isStarted);
+      meeting.users.push(item);
+      SidePanel.usersJoined(item, meeting.isStarted);
       break;
     case MessageTypes.TriggerTranscriptionStart:
       SidePanel.showTranscriptionsContainer();
-      meet.isStarted = true;
+      meeting.isStarted = true;
       break;
     case MessageTypes.ListOfUsersInMeeting:
       const usersInMeeting = payload;
@@ -3605,7 +3574,7 @@ function handleWindowMessage(action, payload) {
           pictureUrl: user.pictureUrl,
           joinedAt: user.joinedAt || /* @__PURE__ */ new Date()
         };
-        listOfUsersInMeeting.push(item2);
+        meeting.users.push(item2);
         SidePanel.addParticipant(item2);
       });
       break;
@@ -3618,20 +3587,6 @@ function createMutationHandler(ctx) {
     handleTranscriptMutations(mutations);
   };
 }
-const isCaptionBlock = (el) => el.parentElement === transcriptContainer;
-const processBlock = (el) => {
-  if (!el.hasAttribute("data-blockid")) {
-    el.setAttribute("data-blockid", crypto.randomUUID());
-  }
-  return domUtils.extractCaptionData(el);
-};
-const findCaptionBlock = (el) => {
-  let current = el.nodeType === Node.ELEMENT_NODE ? el : el.parentElement;
-  while (current && current.parentElement !== transcriptContainer) {
-    current = current.parentElement;
-  }
-  return (current == null ? void 0 : current.parentElement) === transcriptContainer ? current : null;
-};
 function handleTranscriptMutations(mutations, ctx) {
   for (const _ of mutations) {
     try {
@@ -3640,14 +3595,14 @@ function handleTranscriptMutations(mutations, ctx) {
         mutation.addedNodes.forEach((node) => {
           if (node.nodeType === Node.ELEMENT_NODE) {
             const el = node;
-            if (isCaptionBlock(el)) {
-              blockTranscription = processBlock(el);
+            if (platform.isCaptionBlock(transcriptContainer, el)) {
+              blockTranscription = platform.processBlock(el);
             }
           }
         });
-        const rootBlock = findCaptionBlock(mutation.target);
+        const rootBlock = platform.findCaptionBlock(transcriptContainer, mutation.target);
         if (rootBlock) {
-          blockTranscription = processBlock(rootBlock);
+          blockTranscription = platform.processBlock(rootBlock);
         }
       }
       if (blockTranscription) {
@@ -3655,7 +3610,7 @@ function handleTranscriptMutations(mutations, ctx) {
           blockTranscription.speakerName = config.user.fullName;
         }
         SidePanel.addTranscription({
-          meetingId: meet.id,
+          meetingId: meeting.id,
           transcriptBlockId: blockTranscription.blockId,
           speaker: { fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl },
           transcript: blockTranscription.transcript,
@@ -3663,7 +3618,7 @@ function handleTranscriptMutations(mutations, ctx) {
         });
         windowMessageHandler.postToWindow({
           type: MessageTypes.NotifyRealTimeTranscription,
-          meetingId: meet.id,
+          meetingId: meeting.id,
           transcriptionBlockId: currentTransciptBlockId,
           speaker: { fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl },
           transcript: currentTranscript,
@@ -3672,28 +3627,9 @@ function handleTranscriptMutations(mutations, ctx) {
       }
     } catch (err) {
       console.error(err);
-      if (!hasMeetingEnded) {
+      if (!meeting.isEnded) {
         console.log("Error in transcript mutation observer:", err);
       }
     }
-  }
-}
-function endMeetingRoutines() {
-  var _a, _b;
-  try {
-    const elements = domUtils.selectAll(config.extension.meetingEndIcon.selector, config.extension.meetingEndIcon.text);
-    const meetingEndButton = ((_b = (_a = elements == null ? void 0 : elements[0]) == null ? void 0 : _a.parentElement) == null ? void 0 : _b.parentElement) ?? null;
-    if (!meetingEndButton) {
-      throw new Error("Meeting end button not found in DOM.");
-    }
-    meetingEndButton.addEventListener("click", () => {
-      hasMeetingEnded = true;
-      meet.endAt = (/* @__PURE__ */ new Date()).toISOString();
-      transcriptObserver == null ? void 0 : transcriptObserver.disconnect();
-      SidePanel.destroy();
-      console.log("Meeting ended. Transcript data:", JSON.stringify(transcriptBlocks));
-    });
-  } catch (err) {
-    console.error("Error setting up meeting end listener:", err);
   }
 }

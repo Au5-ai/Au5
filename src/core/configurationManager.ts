@@ -60,7 +60,8 @@ export class ConfigurationManager {
         service: {
           webhookUrl: "https://au5.ai/api/v1/",
           direction: "rtl",
-          hubUrl: "https://localhost:1366/meetinghub"
+          hubUrl: "https://localhost:1366/meetinghub",
+          companyName: "Asax Co"
         } as ServiceConfiguration,
 
         extension: {

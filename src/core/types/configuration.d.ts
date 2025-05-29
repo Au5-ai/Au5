@@ -9,6 +9,7 @@ export interface ServiceConfiguration {
   webhookUrl: string;
   direction: "ltr" | "rtl";
   hubUrl: string;
+  companyName: string;
 }
 
 export interface ExtensionConfiguration {

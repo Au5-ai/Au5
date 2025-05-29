@@ -2,9 +2,8 @@
 
 import {detectBrowser} from "./core/browser/browserDetector";
 import {ConfigurationManager} from "./core/configurationManager";
-import {createMeetingPlatformInstance} from "./core/meetingPlatform";
 import {runPipesAsync} from "./core/pipeline";
-import {Meet, PipelineContext, TranscriptBlock, TranscriptionEntry, User} from "./core/types";
+import {IMeetingPlatform, Meeting, PipelineContext, TranscriptBlock, TranscriptionEntry, User} from "./core/types";
 import {AppConfiguration} from "./core/types/configuration";
 import {DomUtils} from "./core/utils/dom.utils";
 import {WindowMessageHandler} from "./core/windowMessageHandler";
@@ -18,16 +17,17 @@ import {
   TranscriptionEntryMessage,
   UserJoinedInMeetingMessage
 } from "./socket/types";
+import {createMeetingPlatformInstance} from "./core/platforms/meetingPlatform";
 
-let meet: Meet;
+let meeting: Meeting;
 let transcriptBlocks: TranscriptBlock[] = [];
-let hasMeetingEnded = false;
 let transcriptObserver: MutationObserver;
 let config: AppConfiguration;
 let transcriptContainer: HTMLElement | null;
 let currentTransciptBlockId = "",
   currentTranscript = "";
 let currentTimestamp: Date = new Date();
+const platform: IMeetingPlatform = createMeetingPlatformInstance(window.location.href);
 const browser = detectBrowser();
 const domUtils = new DomUtils(browser);
 const windowMessageHandler = new WindowMessageHandler("Au5-ContentScript", "Au5-MeetingHubClient", handleWindowMessage);
@@ -39,29 +39,27 @@ const windowMessageHandler = new WindowMessageHandler("Au5-ContentScript", "Au5-
 
     await domUtils.waitForMatch(config.extension.meetingEndIcon.selector, config.extension.meetingEndIcon.text);
 
-    const platform = createMeetingPlatformInstance(window.location.href);
     if (!platform) {
       console.error("Unsupported meeting platform");
       return;
     }
 
-    const meetingId = platform.getMeetingTitle();
-
-    SidePanel.createSidePanel("Asax Co", meetingId, config.service.direction);
-    establishConnection(config, meetingId);
-    meet = {
-      id: meetingId,
+    meeting = {
+      id: platform.getMeetingTitle(),
       platform: platform.getPlatformName(),
-      startAt: new Date().toISOString(),
-      endAt: "",
+      startAt: new Date(),
+      endAt: null,
       isStarted: false,
+      isEnded: false,
       transcripts: [],
       users: []
     };
 
+    SidePanel.createSidePanel(config.service.companyName, meeting.id, config.service.direction);
+    establishConnection(config, meeting.id);
+
     document.getElementById(config.extension.btnTranscriptSelector)?.addEventListener("click", () => {
-      meet.users = listOfUsersInMeeting;
-      meet.isStarted = true;
+      meeting.isStarted = true;
       SidePanel.showTranscriptionsContainer();
 
       runPipesAsync(
@@ -73,7 +71,7 @@ const windowMessageHandler = new WindowMessageHandler("Au5-ContentScript", "Au5-
       );
 
       windowMessageHandler.postToWindow({
-        meetingId: meetingId,
+        meetingId: meeting.id,
         userId: config.user.userId
       } as StartTranscription);
     });
@@ -116,12 +114,30 @@ namespace Pipelines {
   };
 
   export const addEndMeetingButtonListenerPipe = async (ctx: PipelineContext): Promise<PipelineContext> => {
-    endMeetingRoutines();
+    try {
+      const elements = domUtils.selectAll(
+        config.extension.meetingEndIcon.selector,
+        config.extension.meetingEndIcon.text
+      );
+      const meetingEndButton = elements?.[0]?.parentElement?.parentElement ?? null;
+
+      if (!meetingEndButton) {
+        throw new Error("Meeting end button not found in DOM.");
+      }
+      meetingEndButton.addEventListener("click", () => {
+        meeting.isEnded = true;
+        meeting.endAt = new Date();
+        transcriptObserver?.disconnect();
+        SidePanel.destroy();
+        console.log("Meeting ended. Transcript data:", JSON.stringify(transcriptBlocks));
+      });
+    } catch (err) {
+      console.error("Error setting up meeting end listener:", err);
+    }
     return ctx;
   };
 }
 
-let listOfUsersInMeeting: User[] = [];
 function handleWindowMessage(action: string, payload: HubMessage): void {
   switch (action) {
     case MessageTypes.NotifyRealTimeTranscription:
@@ -149,13 +165,13 @@ function handleWindowMessage(action: string, payload: HubMessage): void {
         pictureUrl: userJoinedMsg.user.pictureUrl,
         joinedAt: userJoinedMsg.user.joinedAt || new Date()
       };
-      listOfUsersInMeeting.push(item);
-      SidePanel.usersJoined(item, meet.isStarted);
+      meeting.users.push(item);
+      SidePanel.usersJoined(item, meeting.isStarted);
       break;
 
     case MessageTypes.TriggerTranscriptionStart:
       SidePanel.showTranscriptionsContainer();
-      meet.isStarted = true;
+      meeting.isStarted = true;
       break;
 
     case MessageTypes.ListOfUsersInMeeting:
@@ -171,7 +187,7 @@ function handleWindowMessage(action: string, payload: HubMessage): void {
           pictureUrl: user.pictureUrl,
           joinedAt: user.joinedAt || new Date()
         };
-        listOfUsersInMeeting.push(item);
+        meeting.users.push(item);
         SidePanel.addParticipant(item);
       });
       break;
@@ -197,23 +213,6 @@ function createMutationHandler(ctx: PipelineContext) {
   };
 }
 
-const isCaptionBlock = (el: Element): boolean => el.parentElement === transcriptContainer;
-
-const processBlock = (el: Element) => {
-  if (!el.hasAttribute("data-blockid")) {
-    el.setAttribute("data-blockid", crypto.randomUUID());
-  }
-  return domUtils.extractCaptionData(el);
-};
-
-const findCaptionBlock = (el: Node): Element | null => {
-  let current = el.nodeType === Node.ELEMENT_NODE ? (el as Element) : el.parentElement;
-  while (current && current.parentElement !== transcriptContainer) {
-    current = current.parentElement;
-  }
-  return current?.parentElement === transcriptContainer ? current : null;
-};
-
 function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineContext): void {
   for (const _ of mutations) {
     try {
@@ -223,16 +222,16 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
         mutation.addedNodes.forEach(node => {
           if (node.nodeType === Node.ELEMENT_NODE) {
             const el = node as Element;
-            if (isCaptionBlock(el)) {
-              blockTranscription = processBlock(el);
+            if (platform.isCaptionBlock(transcriptContainer, el)) {
+              blockTranscription = platform.processBlock(el);
             }
           }
         });
 
         // Handle changes in existing block's content
-        const rootBlock = findCaptionBlock(mutation.target);
+        const rootBlock = platform.findCaptionBlock(transcriptContainer, mutation.target);
         if (rootBlock) {
-          blockTranscription = processBlock(rootBlock);
+          blockTranscription = platform.processBlock(rootBlock);
         }
       }
 
@@ -242,7 +241,7 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
         }
 
         SidePanel.addTranscription({
-          meetingId: meet.id,
+          meetingId: meeting.id,
           transcriptBlockId: blockTranscription.blockId,
           speaker: {fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl} as User,
           transcript: blockTranscription.transcript,
@@ -251,7 +250,7 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
 
         windowMessageHandler.postToWindow({
           type: MessageTypes.NotifyRealTimeTranscription,
-          meetingId: meet.id,
+          meetingId: meeting.id,
           transcriptionBlockId: currentTransciptBlockId,
           speaker: {fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl} as User,
           transcript: currentTranscript,
@@ -260,30 +259,9 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
       }
     } catch (err) {
       console.error(err);
-      if (!hasMeetingEnded) {
+      if (!meeting.isEnded) {
         console.log("Error in transcript mutation observer:", err);
       }
     }
-  }
-}
-
-function endMeetingRoutines(): void {
-  try {
-    const elements = domUtils.selectAll(config.extension.meetingEndIcon.selector, config.extension.meetingEndIcon.text);
-    const meetingEndButton = elements?.[0]?.parentElement?.parentElement ?? null;
-
-    if (!meetingEndButton) {
-      throw new Error("Meeting end button not found in DOM.");
-    }
-
-    meetingEndButton.addEventListener("click", () => {
-      hasMeetingEnded = true;
-      meet.endAt = new Date().toISOString();
-      transcriptObserver?.disconnect();
-      SidePanel.destroy();
-      console.log("Meeting ended. Transcript data:", JSON.stringify(transcriptBlocks));
-    });
-  } catch (err) {
-    console.error("Error setting up meeting end listener:", err);
   }
 }

@@ -2,7 +2,7 @@ import * as signalR from "@microsoft/signalr";
 import {AppConfiguration} from "../core/types/configuration";
 import {IMessage, JoinMeeting} from "./types";
 import {WindowMessageHandler} from "../core/windowMessageHandler";
-import {createMeetingPlatformInstance} from "../core/meetingPlatform";
+import {createMeetingPlatformInstance} from "../core/platforms/meetingPlatform";
 import {MessageTypes} from "./types/enums";
 
 export class MeetingHubClient {

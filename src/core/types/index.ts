@@ -1,6 +1,10 @@
 export interface IMeetingPlatform {
   getPlatformName(): string;
   getMeetingTitle(): string;
+  extractCaptionData(block: Element): any;
+  isCaptionBlock(container: HTMLElement | null, el: Element): boolean;
+  findCaptionBlock(container: HTMLElement | null, el: Node): Element | null;
+  processBlock(el: Element): any;
 }
 
 export interface PipelineContext {
@@ -44,18 +48,19 @@ export interface TranscriptBlock {
 /**
  * Represents a meeting and its related details.
  */
-export interface Meet {
+export interface Meeting {
   id: string;
 
   platform: string;
 
   /** ISO 8601 timestamp of when the meeting started */
-  startAt: string;
+  startAt: Date;
 
   /** ISO 8601 timestamp of when the meeting ended */
-  endAt: string;
+  endAt: Date | null;
 
   isStarted: boolean;
+  isEnded: boolean;
   /** Transcript content as an array of structured transcript blocks */
   transcripts: TranscriptBlock[];
 
