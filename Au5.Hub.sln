@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1B9F5751-294
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Au5.MeetingHub", "src\Au5.MeetingHub\Au5.MeetingHub.csproj", "{EEAA0FDF-1261-41E1-9D78-F5C3CB044DE1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{7E2880E5-536D-4250-9A07-9D8104F43410}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Au5.Domain", "src\Au5.Domain\Au5.Domain.csproj", "{AE7BA764-9419-43A7-B76E-0012707E032B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,11 +21,17 @@ Global
 		{EEAA0FDF-1261-41E1-9D78-F5C3CB044DE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEAA0FDF-1261-41E1-9D78-F5C3CB044DE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EEAA0FDF-1261-41E1-9D78-F5C3CB044DE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE7BA764-9419-43A7-B76E-0012707E032B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE7BA764-9419-43A7-B76E-0012707E032B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE7BA764-9419-43A7-B76E-0012707E032B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE7BA764-9419-43A7-B76E-0012707E032B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{EEAA0FDF-1261-41E1-9D78-F5C3CB044DE1} = {1B9F5751-2942-4EFE-8B47-8E1B0447F928}
+		{7E2880E5-536D-4250-9A07-9D8104F43410} = {1B9F5751-2942-4EFE-8B47-8E1B0447F928}
+		{AE7BA764-9419-43A7-B76E-0012707E032B} = {7E2880E5-536D-4250-9A07-9D8104F43410}
 	EndGlobalSection
 EndGlobal

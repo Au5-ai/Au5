@@ -1,131 +1,66 @@
-﻿using Au5.MeetingHub.Models;
-using Microsoft.AspNetCore.SignalR;
-using System.Collections.Concurrent;
+﻿using Au5.MeetingHub.Mock;
+using Au5.MeetingHub.Models.Messages;
 
 namespace Au5.MeetingHub;
 
-public class MeetingHub(ILogger<MeetingHub> logger) : Hub
+public class MeetingHub : Hub
 {
-    private static readonly HashSet<string> _startedMeetings = [];
-    private static readonly ConcurrentDictionary<string, HashSet<User>> _activeUsers = [];
-    private static readonly ConcurrentDictionary<string, (string MeetingId, User User)> _connections = new();
-    private readonly ILogger<MeetingHub> _logger = logger;
+    private readonly ILogger<MeetingHub> _logger;
+    private readonly IUserService _userService;
+    private readonly IMeetingService _meetingService;
 
-    public async Task JoinMeeting(JoinMeetingDto data)
+    public MeetingHub(ILogger<MeetingHub> logger)
     {
-        await Groups.AddToGroupAsync(Context.ConnectionId, data.MeetingId);
-        var currentUser = new User()
-        {
-            FullName = data.User.FullName,
-            Id = data.User.Id,
-            PictureUrl = data.User.PictureUrl,
-        };
-        _connections[Context.ConnectionId] = (data.MeetingId, currentUser);
-
-        var existingMettingId = _activeUsers.TryGetValue(data.MeetingId, out HashSet<User> users);
-        if (!existingMettingId)
-        {
-            users = [currentUser];
-            _activeUsers.TryAdd(data.MeetingId, users);
-        }
-        else
-        {
-            var existingUser = users.FirstOrDefault(x => x.Id == data.User.Id);
-            if (existingUser is null)
-            {
-                users.Add(currentUser);
-            }
-        }
-
-        var meetStarted = _startedMeetings.FirstOrDefault(x => x == data.MeetingId);
-
-        if (meetStarted is not null)
-        {
-            await SendToYourselfAsync(new Message()
-            {
-                Header = new Header()
-                {
-                    Type = MessageTypes.NotifyMeetHasBeenStarted,
-                }
-            });
-        }
-
-        await SendToYourselfAsync(new Message()
-        {
-            Header = new Header()
-            {
-                Type = MessageTypes.ListOfUsersInMeeting,
-            },
-            Payload = new
-            {
-                Users = users
-            }
-        });
-
-        await SendToOthersInGroupAsync(data.MeetingId, new Message()
-        {
-            Header = new Header()
-            {
-                Type = MessageTypes.NotifyUserJoining,
-            },
-            Payload = new
-            {
-                User = currentUser
-            }
-        });
+        _logger = logger;
+        _userService = new UserService();
+        _meetingService = new MeetingService();
     }
 
-    public async Task NotifyRealTimeTranscription(TranscriptionDto data)
+    public async Task JoinMeeting(JoinMeeting joinMeeting)
     {
-        await SendToOthersInGroupAsync(data.MeetingId, new Message()
+        var users = _userService.AddUserToMeeting(joinMeeting.User, joinMeeting.MeetingId);
+        await Groups.AddToGroupAsync(Context.ConnectionId, joinMeeting.MeetingId);
+        var meetStarted = _meetingService.IsStarted(joinMeeting.MeetingId);
+
+        if (meetStarted)
         {
-            Header = new Header() { Type = MessageTypes.NotifyRealTimeTranscription },
-            Payload = data
-        });
+            await SendToYourselfAsync(new MeetingStartedMessage(IsStarted: true));
+        }
 
-        _logger.LogInformation("User {UserId} speak {MeetingId} with {Transcript}", data.Speaker.Id, data.MeetingId, data.Transcript);
-
+        await SendToYourselfAsync(new ListOfUsersInMeetingMessage(users));
+        await SendToOthersInGroupAsync(joinMeeting.MeetingId, new UserJoinedInMeetingMessage(joinMeeting.User));
     }
 
-    public async Task TriggerTranscriptionStart(StartTranscriptionDto data)
-    {
-        _startedMeetings.Add(data.MeetingId);
-        await SendToOthersInGroupAsync(data.MeetingId, new Message()
+    public async Task NotifyRealTimeTranscription(RealTimeTranscription transcription)
+        => await SendToOthersInGroupAsync(transcription.MeetingId, new RealTimeTranscriptionMessage()
         {
-            Header = new Header() { Type = MessageTypes.TriggerTranscriptionStart },
-            Payload = data
+            MeetingId = transcription.MeetingId,
+            Speaker = transcription.Speaker,
+            Timestamp = transcription.Timestamp,
+            Transcript = transcription.Transcript,
+            TranscriptionBlockId = transcription.TranscriptionBlockId
         });
+
+    public async Task TriggerTranscriptionStart(StartTranscription data)
+    {
+        _meetingService.Run(data.MeetingId, data.UserId);
+        await SendToOthersInGroupAsync(data.MeetingId, new TranscriptionStartedMessage(data.UserId));
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        if (_connections.TryRemove(Context.ConnectionId, out var info) && _activeUsers.TryGetValue(info.MeetingId, out var users))
-        {
-            users.Remove(info.User);
-
-            await SendToOthersInGroupAsync(info.MeetingId, new Message
-            {
-                Header = new Header { Type = MessageTypes.NotifyUserLeft },
-                Payload = new { info.User }
-            });
-        }
-
         await base.OnDisconnectedAsync(exception);
     }
 
     /// <summary>
     /// Helper to send message to others in the same meeting group.
     /// </summary>
-    private Task SendToOthersInGroupAsync(string groupName, Message msg)
-    {
-        return Clients.OthersInGroup(groupName).SendAsync("ReceiveMessage", msg);
-    }
+    private Task SendToOthersInGroupAsync(string groupName, IMessage msg)
+        => Clients.OthersInGroup(groupName).SendAsync("ReceiveMessage", msg);
 
     /// <summary>
     /// Helper to send message to others in the same meeting group.
     /// </summary>
-    private Task SendToYourselfAsync(Message msg)
-    {
-        return Clients.Caller.SendAsync("ReceiveMessage", msg);
-    }
+    private Task SendToYourselfAsync(IMessage msg)
+        => Clients.Caller.SendAsync("ReceiveMessage", msg);
 }

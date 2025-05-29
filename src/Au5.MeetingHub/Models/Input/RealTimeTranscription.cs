@@ -1,9 +1,8 @@
-﻿namespace Au5.MeetingHub.Models;
+﻿namespace Au5.MeetingHub.Models.Input;
 
-[MessagePackObject(keyAsPropertyName: true)]
-public class TranscriptionDto
+public record RealTimeTranscription
 {
-    public string MeetingId { get; set; }   
+    public string MeetingId { get; set; }
     public string TranscriptionBlockId { get; set; }
     public User Speaker { get; set; }
     public string Transcript { get; set; }
