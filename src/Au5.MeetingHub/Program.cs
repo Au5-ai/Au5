@@ -2,12 +2,12 @@
 
 var builder = WebApplication.CreateBuilder(args);
 {
-    builder.Services.AddSignalR()
-        .AddMessagePackProtocol(options =>
-        {
-            options.SerializerOptions = MessagePackSerializerOptions.Standard
-            .WithSecurity(MessagePackSecurity.UntrustedData);
-        });
+    builder.Services.AddSignalR();
+    //.AddMessagePackProtocol(options =>
+    //{
+    //    options.SerializerOptions = MessagePackSerializerOptions.Standard
+    //    .WithSecurity(MessagePackSecurity.UntrustedData);
+    //});
 
     builder.Services.AddCors(options =>
     {

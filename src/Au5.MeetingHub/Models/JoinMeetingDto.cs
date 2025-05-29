@@ -1,6 +1,5 @@
 ﻿namespace Au5.MeetingHub.Models;
 
-[MessagePackObject(keyAsPropertyName: true)]
 public class JoinMeetingDto
 {
     public string Platform { get; set; }

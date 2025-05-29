@@ -11,22 +11,8 @@ public class MeetingHub(ILogger<MeetingHub> logger) : Hub
     private static readonly ConcurrentDictionary<string, (string MeetingId, User User)> _connections = new();
     private readonly ILogger<MeetingHub> _logger = logger;
 
-    static MeetingHub()
-    {
-        // _startedMeetings.Add("dzc-awqw-ioi");
-        //var sampleUser = new User
-        //{
-        //    Id = Guid.NewGuid().ToString(),
-        //    FullName = "Mehdi Emrani",
-        //    PictureUrl = "https://contacts.zoho.com/file?ID=769156534&exp=6000&t=user&fs=thumb"
-        //};
-
-        //_activeUsers.TryAdd("uir-miof-cby", [sampleUser]);
-    }
-
     public async Task JoinMeeting(JoinMeetingDto data)
     {
-        _logger.LogInformation("User {UserId} joined meeting {MeetingId}", data.User.Id, data.MeetingId);
         await Groups.AddToGroupAsync(Context.ConnectionId, data.MeetingId);
         var currentUser = new User()
         {
