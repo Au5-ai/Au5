@@ -1,57 +1,6 @@
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-class Chrome {
-  constructor() {
-    __publicField(this, "name", "Chrome");
-  }
-  get(keys, area = "local") {
-    return new Promise((resolve, reject) => {
-      chrome.storage[area].get(keys, (result) => {
-        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
-        resolve(result);
-      });
-    });
-  }
-  set(items, area = "local") {
-    return new Promise((resolve, reject) => {
-      chrome.storage[area].set(items, () => {
-        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
-        resolve();
-      });
-    });
-  }
-  remove(keys, area = "local") {
-    return new Promise((resolve, reject) => {
-      chrome.storage[area].remove(keys, () => {
-        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
-        resolve();
-      });
-    });
-  }
-  /**
-   * Injects a local script from the extension into the DOM.
-   *
-   * @param fileName - The filename of the script in the extension
-   * @param onLoad - Optional callback executed after the script is loaded
-   */
-  inject(fileName, onLoad = () => {
-  }) {
-    const script = document.createElement("script");
-    script.src = chrome.runtime.getURL(fileName);
-    script.type = "text/javascript";
-    script.onload = onLoad;
-    (document.head || document.documentElement).appendChild(script);
-  }
-}
-function detectBrowser() {
-  console.log("Detecting browser...");
-  const userAgent = navigator.userAgent;
-  if (/Chrome\//.test(userAgent)) {
-    return new Chrome();
-  }
-  return new Chrome();
-}
 const CONFIGURATION_KEY = "configuration";
 class ConfigurationManager {
   constructor(browserStorage) {
@@ -506,6 +455,140 @@ __publicField(SidePanel, "inputWrapper", null);
 __publicField(SidePanel, "header", null);
 __publicField(SidePanel, "footer", null);
 __publicField(SidePanel, "direction", "ltr");
+var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
+  MessageTypes2["NotifyRealTimeTranscription"] = "NotifyRealTimeTranscription";
+  MessageTypes2["NotifyUserJoining"] = "NotifyUserJoining";
+  MessageTypes2["TriggerTranscriptionStart"] = "TriggerTranscriptionStart";
+  MessageTypes2["ListOfUsersInMeeting"] = "ListOfUsersInMeeting";
+  return MessageTypes2;
+})(MessageTypes || {});
+class Chrome {
+  constructor() {
+    __publicField(this, "name", "Chrome");
+  }
+  get(keys, area = "local") {
+    return new Promise((resolve, reject) => {
+      chrome.storage[area].get(keys, (result) => {
+        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
+        resolve(result);
+      });
+    });
+  }
+  set(items, area = "local") {
+    return new Promise((resolve, reject) => {
+      chrome.storage[area].set(items, () => {
+        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
+        resolve();
+      });
+    });
+  }
+  remove(keys, area = "local") {
+    return new Promise((resolve, reject) => {
+      chrome.storage[area].remove(keys, () => {
+        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
+        resolve();
+      });
+    });
+  }
+  /**
+   * Injects a local script from the extension into the DOM.
+   *
+   * @param fileName - The filename of the script in the extension
+   * @param onLoad - Optional callback executed after the script is loaded
+   */
+  inject(fileName, onLoad = () => {
+  }) {
+    const script = document.createElement("script");
+    script.src = chrome.runtime.getURL(fileName);
+    script.type = "text/javascript";
+    script.onload = onLoad;
+    (document.head || document.documentElement).appendChild(script);
+  }
+}
+class GoogleMeet {
+  constructor(url) {
+    __publicField(this, "isCaptionBlock", (container, el) => el.parentElement === container);
+    __publicField(this, "findCaptionBlock", (container, el) => {
+      let current = el.nodeType === Node.ELEMENT_NODE ? el : el.parentElement;
+      while (current && current.parentElement !== container) {
+        current = current.parentElement;
+      }
+      return (current == null ? void 0 : current.parentElement) === container ? current : null;
+    });
+    __publicField(this, "processBlock", (el) => {
+      if (!el.hasAttribute("data-blockid")) {
+        el.setAttribute("data-blockid", crypto.randomUUID());
+      }
+      return this.extractCaptionData(el);
+    });
+    this.url = url;
+  }
+  getMeetingTitle() {
+    const match = this.url.match(/meet\.google\.com\/([a-zA-Z0-9-]+)/);
+    return match ? `${match[1]}` : "Google Meet";
+  }
+  getPlatformName() {
+    return "GoogleMeet";
+  }
+  /**
+   * Extracts caption data from a given block element.
+   *
+   * @param block - The block element containing caption data.
+   * @returns An object containing the block ID, speaker name, image URL, and text content.
+   */
+  extractCaptionData(block) {
+    var _a, _b;
+    const blockId = block.getAttribute("data-blockid");
+    const img = block.querySelector("img");
+    const nameSpan = block.querySelector("span");
+    const textDiv = Array.from(block.querySelectorAll("div")).find(
+      (d) => {
+        var _a2;
+        return d.childElementCount === 0 && ((_a2 = d.textContent) == null ? void 0 : _a2.trim());
+      }
+    );
+    return {
+      blockId,
+      speakerName: ((_a = nameSpan == null ? void 0 : nameSpan.textContent) == null ? void 0 : _a.trim()) ?? "",
+      pictureUrl: (img == null ? void 0 : img.getAttribute("src")) ?? "",
+      transcript: ((_b = textDiv == null ? void 0 : textDiv.textContent) == null ? void 0 : _b.trim()) ?? ""
+    };
+  }
+}
+class MeetingPlatformFactory {
+  constructor(url) {
+    __publicField(this, "_url");
+    this._url = url;
+  }
+  /**
+   * Returns an instance of a meeting platform based on the URL.
+   * Currently supports Google Meet, Zoom, and Microsoft Teams.
+   * @returns {IMeetingPlatform | null} An instance of the meeting platform or null if not recognized.
+   */
+  getPlatform() {
+    let platformName = null;
+    const patterns = {
+      "Google Meet": /https?:\/\/meet\.google\.com\/[a-zA-Z0-9-]+/
+      //Zoom: /https?:\/\/([a-z0-9]+\.)?zoom\.us\/(j|my)\/[a-zA-Z0-9?&=]+/, // Zoom implementation not provided yet
+      //"Microsoft Teams": /https?:\/\/(teams\.microsoft\.com|teams\.live\.com)\/[a-zA-Z0-9/?&=._-]+/ // Microsoft Teams implementation not provided yet
+    };
+    for (const [platform2, pattern] of Object.entries(patterns)) {
+      if (pattern.test(this._url)) {
+        platformName = platform2;
+      }
+    }
+    switch (platformName) {
+      case "Google Meet":
+        return new GoogleMeet(this._url);
+      // case "Zoom":
+      //   return new Zoom(this._url); // Zoom implementation not provided
+      // case "Microsoft Teams":
+      //   return new MicrosoftTeams(this._url); // Microsoft Teams implementation not provided
+      default:
+        return new GoogleMeet(this._url);
+    }
+  }
+}
 class HttpError extends Error {
   /** Constructs a new instance of {@link @microsoft/signalr.HttpError}.
    *
@@ -3303,66 +3386,6 @@ class HubConnectionBuilder {
 function isLogger(logger) {
   return logger.log !== void 0;
 }
-class GoogleMeet {
-  constructor(url) {
-    __publicField(this, "isCaptionBlock", (container, el) => el.parentElement === container);
-    __publicField(this, "findCaptionBlock", (container, el) => {
-      let current = el.nodeType === Node.ELEMENT_NODE ? el : el.parentElement;
-      while (current && current.parentElement !== container) {
-        current = current.parentElement;
-      }
-      return (current == null ? void 0 : current.parentElement) === container ? current : null;
-    });
-    __publicField(this, "processBlock", (el) => {
-      if (!el.hasAttribute("data-blockid")) {
-        el.setAttribute("data-blockid", crypto.randomUUID());
-      }
-      return this.extractCaptionData(el);
-    });
-    this.url = url;
-  }
-  getMeetingTitle() {
-    const match = this.url.match(/meet\.google\.com\/([a-zA-Z0-9-]+)/);
-    return match ? `${match[1]}` : "Google Meet";
-  }
-  getPlatformName() {
-    return "GoogleMeet";
-  }
-  /**
-   * Extracts caption data from a given block element.
-   *
-   * @param block - The block element containing caption data.
-   * @returns An object containing the block ID, speaker name, image URL, and text content.
-   */
-  extractCaptionData(block) {
-    var _a, _b;
-    const blockId = block.getAttribute("data-blockid");
-    const img = block.querySelector("img");
-    const nameSpan = block.querySelector("span");
-    const textDiv = Array.from(block.querySelectorAll("div")).find(
-      (d) => {
-        var _a2;
-        return d.childElementCount === 0 && ((_a2 = d.textContent) == null ? void 0 : _a2.trim());
-      }
-    );
-    return {
-      blockId,
-      speakerName: ((_a = nameSpan == null ? void 0 : nameSpan.textContent) == null ? void 0 : _a.trim()) ?? "",
-      pictureUrl: (img == null ? void 0 : img.getAttribute("src")) ?? "",
-      transcript: ((_b = textDiv == null ? void 0 : textDiv.textContent) == null ? void 0 : _b.trim()) ?? ""
-    };
-  }
-}
-function createMeetingPlatformInstance(url) {
-  return new GoogleMeet(url);
-}
-var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
-  MessageTypes2["NotifyRealTimeTranscription"] = "NotifyRealTimeTranscription";
-  MessageTypes2["NotifyUserJoining"] = "NotifyUserJoining";
-  MessageTypes2["TriggerTranscriptionStart"] = "TriggerTranscriptionStart";
-  MessageTypes2["ListOfUsersInMeeting"] = "ListOfUsersInMeeting";
-  return MessageTypes2;
-})(MessageTypes || {});
 class MeetingHubClient {
   constructor(config2, meetingId) {
     __publicField(this, "connection");
@@ -3377,19 +3400,6 @@ class MeetingHubClient {
       "Au5-ContentScript",
       this.handleWindowMessage.bind(this)
     );
-    this.startConnection();
-  }
-  setupHandlers() {
-    this.connection.on("ReceiveMessage", (msg) => {
-      switch (msg.type) {
-        case MessageTypes.NotifyUserJoining:
-        case MessageTypes.TriggerTranscriptionStart:
-        case MessageTypes.NotifyRealTimeTranscription:
-        case MessageTypes.ListOfUsersInMeeting:
-          this.windowMessageHandler.postToWindow(msg);
-          break;
-      }
-    });
   }
   startConnection() {
     this.connection.start().then(() => {
@@ -3408,6 +3418,18 @@ class MeetingHubClient {
       console.error("SignalR connection failed:", err);
     });
   }
+  setupHandlers() {
+    this.connection.on("ReceiveMessage", (msg) => {
+      switch (msg.type) {
+        case MessageTypes.NotifyUserJoining:
+        case MessageTypes.TriggerTranscriptionStart:
+        case MessageTypes.NotifyRealTimeTranscription:
+        case MessageTypes.ListOfUsersInMeeting:
+          this.windowMessageHandler.postToWindow(msg);
+          break;
+      }
+    });
+  }
   handleWindowMessage(action, payload) {
     switch (action) {
       case MessageTypes.TriggerTranscriptionStart:
@@ -3417,14 +3439,7 @@ class MeetingHubClient {
     }
   }
 }
-async function establishConnection(config2, meetingId) {
-  const platform2 = createMeetingPlatformInstance(window.location.href);
-  if (!platform2) {
-    console.error("Unsupported meeting platform");
-    return;
-  }
-  new MeetingHubClient(config2, meetingId);
-}
+let meetingHubClient;
 let meeting;
 let transcriptBlocks = [];
 let transcriptObserver;
@@ -3432,8 +3447,8 @@ let config;
 let transcriptContainer;
 let currentTransciptBlockId = "", currentTranscript = "";
 let currentTimestamp = /* @__PURE__ */ new Date();
-const platform = createMeetingPlatformInstance(window.location.href);
-const browser = detectBrowser();
+const platform = new MeetingPlatformFactory(window.location.href).getPlatform();
+const browser = new Chrome();
 const domUtils = new DomUtils(browser);
 const windowMessageHandler = new WindowMessageHandler("Au5-ContentScript", "Au5-MeetingHubClient", handleWindowMessage);
 (async function initMeetingRoutine() {
@@ -3457,7 +3472,8 @@ const windowMessageHandler = new WindowMessageHandler("Au5-ContentScript", "Au5-
       users: []
     };
     SidePanel.createSidePanel(config.service.companyName, meeting.id, config.service.direction);
-    establishConnection(config, meeting.id);
+    meetingHubClient = new MeetingHubClient(config, meeting.id);
+    meetingHubClient.startConnection();
     (_a = document.getElementById(config.extension.btnTranscriptSelector)) == null ? void 0 : _a.addEventListener("click", () => {
       meeting.isStarted = true;
       SidePanel.showTranscriptionsContainer();

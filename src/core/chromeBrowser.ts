@@ -1,4 +1,4 @@
-import {IBrowser, IBrowserInjector, IBrowserStorage} from "../types/browser";
+import {IBrowser} from "./types/browser";
 
 export class Chrome implements IBrowser {
   name = "Chrome";

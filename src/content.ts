@@ -1,6 +1,5 @@
 //https://meet.google.com/uir-miof-cby
 
-import {detectBrowser} from "./core/browser/browserDetector";
 import {ConfigurationManager} from "./core/configurationManager";
 import {runPipesAsync} from "./core/pipeline";
 import {IMeetingPlatform, Meeting, PipelineContext, TranscriptBlock, TranscriptionEntry, User} from "./core/types";
@@ -8,7 +7,6 @@ import {AppConfiguration} from "./core/types/configuration";
 import {DomUtils} from "./core/utils/dom.utils";
 import {WindowMessageHandler} from "./core/windowMessageHandler";
 import SidePanel from "./ui/sidePanel";
-import {establishConnection} from "./socket/meetingHubClient";
 import {MessageTypes} from "./socket/types/enums";
 import {
   HubMessage,
@@ -17,8 +15,11 @@ import {
   TranscriptionEntryMessage,
   UserJoinedInMeetingMessage
 } from "./socket/types";
-import {createMeetingPlatformInstance} from "./core/platforms/meetingPlatform";
+import {Chrome} from "./core/chromeBrowser";
+import {MeetingPlatformFactory} from "./core/platforms/meetingPlatformFactory";
+import {MeetingHubClient} from "./socket/meetingHubClient";
 
+let meetingHubClient: MeetingHubClient;
 let meeting: Meeting;
 let transcriptBlocks: TranscriptBlock[] = [];
 let transcriptObserver: MutationObserver;
@@ -27,8 +28,8 @@ let transcriptContainer: HTMLElement | null;
 let currentTransciptBlockId = "",
   currentTranscript = "";
 let currentTimestamp: Date = new Date();
-const platform: IMeetingPlatform = createMeetingPlatformInstance(window.location.href);
-const browser = detectBrowser();
+const platform: IMeetingPlatform = new MeetingPlatformFactory(window.location.href).getPlatform();
+const browser = new Chrome();
 const domUtils = new DomUtils(browser);
 const windowMessageHandler = new WindowMessageHandler("Au5-ContentScript", "Au5-MeetingHubClient", handleWindowMessage);
 
@@ -56,7 +57,8 @@ const windowMessageHandler = new WindowMessageHandler("Au5-ContentScript", "Au5-
     };
 
     SidePanel.createSidePanel(config.service.companyName, meeting.id, config.service.direction);
-    establishConnection(config, meeting.id);
+    meetingHubClient = new MeetingHubClient(config, meeting.id);
+    meetingHubClient.startConnection(); // TODO: Handle when the user clicks to join the meeting
 
     document.getElementById(config.extension.btnTranscriptSelector)?.addEventListener("click", () => {
       meeting.isStarted = true;

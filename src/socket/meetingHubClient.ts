@@ -2,8 +2,8 @@ import * as signalR from "@microsoft/signalr";
 import {AppConfiguration} from "../core/types/configuration";
 import {IMessage, JoinMeeting} from "./types";
 import {WindowMessageHandler} from "../core/windowMessageHandler";
-import {createMeetingPlatformInstance} from "../core/platforms/meetingPlatform";
 import {MessageTypes} from "./types/enums";
+import {IMeetingPlatform} from "../core/types";
 
 export class MeetingHubClient {
   private connection: signalR.HubConnection;
@@ -25,23 +25,9 @@ export class MeetingHubClient {
       "Au5-ContentScript",
       this.handleWindowMessage.bind(this)
     );
-    this.startConnection();
   }
 
-  private setupHandlers() {
-    this.connection.on("ReceiveMessage", (msg: IMessage) => {
-      switch (msg.type) {
-        case MessageTypes.NotifyUserJoining:
-        case MessageTypes.TriggerTranscriptionStart:
-        case MessageTypes.NotifyRealTimeTranscription:
-        case MessageTypes.ListOfUsersInMeeting:
-          this.windowMessageHandler.postToWindow(msg);
-          break;
-      }
-    });
-  }
-
-  private startConnection() {
+  public startConnection() {
     this.connection
       .start()
       .then(() => {
@@ -63,6 +49,19 @@ export class MeetingHubClient {
       });
   }
 
+  private setupHandlers() {
+    this.connection.on("ReceiveMessage", (msg: IMessage) => {
+      switch (msg.type) {
+        case MessageTypes.NotifyUserJoining:
+        case MessageTypes.TriggerTranscriptionStart:
+        case MessageTypes.NotifyRealTimeTranscription:
+        case MessageTypes.ListOfUsersInMeeting:
+          this.windowMessageHandler.postToWindow(msg);
+          break;
+      }
+    });
+  }
+
   private handleWindowMessage(action: string, payload: any) {
     switch (action) {
       case MessageTypes.TriggerTranscriptionStart:
@@ -71,13 +70,4 @@ export class MeetingHubClient {
         break;
     }
   }
-}
-
-export async function establishConnection(config: AppConfiguration, meetingId: string) {
-  const platform = createMeetingPlatformInstance(window.location.href);
-  if (!platform) {
-    console.error("Unsupported meeting platform");
-    return;
-  }
-  new MeetingHubClient(config, meetingId);
 }
