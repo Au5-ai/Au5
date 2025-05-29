@@ -216,54 +216,52 @@ function createMutationHandler(ctx: PipelineContext) {
 }
 
 function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineContext): void {
-  for (const _ of mutations) {
-    try {
-      let blockTranscription = null;
-      for (const mutation of mutations) {
-        // Handle added blocks
-        mutation.addedNodes.forEach(node => {
-          if (node.nodeType === Node.ELEMENT_NODE) {
-            const el = node as Element;
-            if (platform.isCaptionBlock(transcriptContainer, el)) {
-              blockTranscription = platform.processBlock(el);
-            }
+  try {
+    let blockTranscription = null;
+    for (const mutation of mutations) {
+      // Handle added blocks
+      mutation.addedNodes.forEach(node => {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const el = node as Element;
+          if (platform.isCaptionBlock(transcriptContainer, el)) {
+            blockTranscription = platform.processBlock(el);
           }
-        });
-
-        // Handle changes in existing block's content
-        const rootBlock = platform.findCaptionBlock(transcriptContainer, mutation.target);
-        if (rootBlock) {
-          blockTranscription = platform.processBlock(rootBlock);
         }
+      });
+
+      // Handle changes in existing block's content
+      const rootBlock = platform.findCaptionBlock(transcriptContainer, mutation.target);
+      if (rootBlock) {
+        blockTranscription = platform.processBlock(rootBlock);
+      }
+    }
+
+    if (blockTranscription) {
+      if (blockTranscription.speakerName == "You") {
+        blockTranscription.speakerName = config.user.fullName;
       }
 
-      if (blockTranscription) {
-        if (blockTranscription.speakerName == "You") {
-          blockTranscription.speakerName = config.user.fullName;
-        }
+      SidePanel.addTranscription({
+        meetingId: meeting.id,
+        transcriptBlockId: blockTranscription.blockId,
+        speaker: {fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl} as User,
+        transcript: blockTranscription.transcript,
+        timestamp: new Date()
+      } as TranscriptionEntry);
 
-        SidePanel.addTranscription({
-          meetingId: meeting.id,
-          transcriptBlockId: blockTranscription.blockId,
-          speaker: {fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl} as User,
-          transcript: blockTranscription.transcript,
-          timestamp: new Date()
-        } as TranscriptionEntry);
-
-        windowMessageHandler.postToWindow({
-          type: MessageTypes.NotifyRealTimeTranscription,
-          meetingId: meeting.id,
-          transcriptionBlockId: currentTransciptBlockId,
-          speaker: {fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl} as User,
-          transcript: currentTranscript,
-          timestamp: currentTimestamp
-        } as TranscriptionEntryMessage);
-      }
-    } catch (err) {
-      console.error(err);
-      if (!meeting.isEnded) {
-        console.log("Error in transcript mutation observer:", err);
-      }
+      windowMessageHandler.postToWindow({
+        type: MessageTypes.NotifyRealTimeTranscription,
+        meetingId: meeting.id,
+        transcriptionBlockId: currentTransciptBlockId,
+        speaker: {fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl} as User,
+        transcript: currentTranscript,
+        timestamp: currentTimestamp
+      } as TranscriptionEntryMessage);
+    }
+  } catch (err) {
+    console.error(err);
+    if (!meeting.isEnded) {
+      console.log("Error in transcript mutation observer:", err);
     }
   }
 }
