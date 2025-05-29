@@ -1,11 +1,6 @@
-﻿namespace Au5.MeetingHub.Mock;
+﻿using Au5.MeetingHub.Mock.Interfaces;
 
-public interface IMeetingService
-{
-    void Run(string meetingId, Guid userId);
-    bool IsStarted(string meetingId);
-    void AddTranscription()
-}
+namespace Au5.MeetingHub.Mock;
 
 public class MeetingService : IMeetingService
 {

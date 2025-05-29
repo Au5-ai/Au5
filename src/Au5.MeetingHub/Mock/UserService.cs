@@ -1,9 +1,6 @@
-﻿namespace Au5.MeetingHub.Mock;
+﻿using Au5.MeetingHub.Mock.Interfaces;
 
-public interface IUserService
-{
-    IReadOnlyList<User> AddUserToMeeting(User user, string meetingId);
-}
+namespace Au5.MeetingHub.Mock;
 
 public class UserService : IUserService
 {

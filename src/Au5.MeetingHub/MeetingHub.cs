@@ -1,14 +1,14 @@
-﻿using Au5.MeetingHub.Mock;
+﻿using Au5.MeetingHub.Mock.Interfaces;
 using Au5.MeetingHub.Models.Messages;
 
 namespace Au5.MeetingHub;
 
-public class MeetingHub(ILogger<MeetingHub> logger, IUserService userService, IMeetingService meetingService) : Hub
+public class MeetingHub(ILogger<MeetingHub> logger, IUserService userService, IMeetingService meetingService, ITranscriptionService transcriptionService) : Hub
 {
     private readonly ILogger<MeetingHub> _logger = logger;
     private readonly IUserService _userService = userService;
     private readonly IMeetingService _meetingService = meetingService;
-
+    private readonly ITranscriptionService _transcriptionService = transcriptionService;
     public async Task JoinMeeting(JoinMeeting joinMeeting)
     {
         var users = _userService.AddUserToMeeting(joinMeeting.User, joinMeeting.MeetingId);
@@ -24,10 +24,10 @@ public class MeetingHub(ILogger<MeetingHub> logger, IUserService userService, IM
         await SendToOthersInGroupAsync(joinMeeting.MeetingId, new UserJoinedInMeetingMessage(joinMeeting.User));
     }
 
-    public async Task NotifyRealTimeTranscription(RealTimeTranscription transcription)
+    public async Task NotifyRealTimeTranscription(TranscriptionEntry transcription)
     {
-        _meetingService.AddTranscription(transcription);
-        await SendToOthersInGroupAsync(transcription.MeetingId, new RealTimeTranscriptionMessage()
+        _transcriptionService.UpsertBlock(transcription);
+        await SendToOthersInGroupAsync(transcription.MeetingId, new TranscriptionEntryMessage()
         {
             MeetingId = transcription.MeetingId,
             Speaker = transcription.Speaker,

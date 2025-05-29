@@ -1,8 +1,9 @@
-﻿using System.Text.Json;
+﻿using Au5.MeetingHub.Mock.Interfaces;
+using System.Text.Json;
 
 namespace Au5.MeetingHub.Mock;
 
-public class TranscriptionService
+public class TranscriptionService : ITranscriptionService
 {
     private static readonly ConcurrentDictionary<string, Dictionary<string, TranscriptionEntry>> _meetingTranscriptions = new();
     private static readonly Lock _lock = new();
