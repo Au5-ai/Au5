@@ -3445,8 +3445,6 @@ let transcriptBlocks = [];
 let transcriptObserver;
 let config;
 let transcriptContainer;
-let currentTransciptBlockId = "", currentTranscript = "";
-let currentTimestamp = /* @__PURE__ */ new Date();
 const platform = new MeetingPlatformFactory(window.location.href).getPlatform();
 const browser = new Chrome();
 const domUtils = new DomUtils(browser);
@@ -3604,48 +3602,46 @@ function createMutationHandler(ctx) {
   };
 }
 function handleTranscriptMutations(mutations, ctx) {
-  for (const _ of mutations) {
-    try {
-      let blockTranscription = null;
-      for (const mutation of mutations) {
-        mutation.addedNodes.forEach((node) => {
-          if (node.nodeType === Node.ELEMENT_NODE) {
-            const el = node;
-            if (platform.isCaptionBlock(transcriptContainer, el)) {
-              blockTranscription = platform.processBlock(el);
-            }
+  try {
+    let blockTranscription = null;
+    for (const mutation of mutations) {
+      mutation.addedNodes.forEach((node) => {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const el = node;
+          if (platform.isCaptionBlock(transcriptContainer, el)) {
+            blockTranscription = platform.processBlock(el);
           }
-        });
-        const rootBlock = platform.findCaptionBlock(transcriptContainer, mutation.target);
-        if (rootBlock) {
-          blockTranscription = platform.processBlock(rootBlock);
         }
+      });
+      const rootBlock = platform.findCaptionBlock(transcriptContainer, mutation.target);
+      if (rootBlock) {
+        blockTranscription = platform.processBlock(rootBlock);
       }
-      if (blockTranscription) {
-        if (blockTranscription.speakerName == "You") {
-          blockTranscription.speakerName = config.user.fullName;
-        }
-        SidePanel.addTranscription({
-          meetingId: meeting.id,
-          transcriptBlockId: blockTranscription.blockId,
-          speaker: { fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl },
-          transcript: blockTranscription.transcript,
-          timestamp: /* @__PURE__ */ new Date()
-        });
-        windowMessageHandler.postToWindow({
-          type: MessageTypes.NotifyRealTimeTranscription,
-          meetingId: meeting.id,
-          transcriptionBlockId: currentTransciptBlockId,
-          speaker: { fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl },
-          transcript: currentTranscript,
-          timestamp: currentTimestamp
-        });
+    }
+    if (blockTranscription) {
+      if (blockTranscription.speakerName == "You") {
+        blockTranscription.speakerName = config.user.fullName;
       }
-    } catch (err) {
-      console.error(err);
-      if (!meeting.isEnded) {
-        console.log("Error in transcript mutation observer:", err);
-      }
+      SidePanel.addTranscription({
+        meetingId: meeting.id,
+        transcriptBlockId: blockTranscription.blockId,
+        speaker: { fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl },
+        transcript: blockTranscription.transcript,
+        timestamp: /* @__PURE__ */ new Date()
+      });
+      windowMessageHandler.postToWindow({
+        type: MessageTypes.NotifyRealTimeTranscription,
+        meetingId: meeting.id,
+        transcriptionBlockId: blockTranscription.blockId,
+        speaker: { fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl },
+        transcript: blockTranscription.transcript,
+        timestamp: blockTranscription.timestamp || /* @__PURE__ */ new Date()
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    if (!meeting.isEnded) {
+      console.log("Error in transcript mutation observer:", err);
     }
   }
 }

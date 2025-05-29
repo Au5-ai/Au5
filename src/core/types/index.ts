@@ -4,7 +4,7 @@ export interface IMeetingPlatform {
   extractCaptionData(block: Element): any;
   isCaptionBlock(container: HTMLElement | null, el: Element): boolean;
   findCaptionBlock(container: HTMLElement | null, el: Node): Element | null;
-  processBlock(el: Element): any;
+  processBlock(el: Element): Caption;
 }
 
 export interface PipelineContext {
@@ -13,10 +13,17 @@ export interface PipelineContext {
 }
 
 export interface User {
-  id: string;
+  id?: string;
   fullName: string;
   pictureUrl: string;
   joinedAt?: Date;
+}
+
+export interface Caption {
+  blockId: string;
+  speakerName: string;
+  pictureUrl: string;
+  transcript: string;
 }
 
 export interface TranscriptionEntry {
@@ -37,7 +44,7 @@ export interface TranscriptBlock {
   user: User;
 
   /** ISO timestamp of when the words were spoken */
-  timestamp: string;
+  timestamp: Date;
 
   /** The transcribed text spoken by the person */
   transcript: string;

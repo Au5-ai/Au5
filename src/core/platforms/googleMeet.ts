@@ -1,4 +1,4 @@
-import {IMeetingPlatform} from "../types";
+import {Caption, IMeetingPlatform} from "../types";
 
 export class GoogleMeet implements IMeetingPlatform {
   constructor(private url: string) {}
@@ -17,7 +17,7 @@ export class GoogleMeet implements IMeetingPlatform {
    * @param block - The block element containing caption data.
    * @returns An object containing the block ID, speaker name, image URL, and text content.
    */
-  extractCaptionData(block: Element): any {
+  extractCaptionData(block: Element): Caption {
     const blockId = block.getAttribute("data-blockid")!;
     const img = block.querySelector("img");
     const nameSpan = block.querySelector("span");

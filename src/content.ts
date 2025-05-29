@@ -2,7 +2,15 @@
 
 import {ConfigurationManager} from "./core/configurationManager";
 import {runPipesAsync} from "./core/pipeline";
-import {IMeetingPlatform, Meeting, PipelineContext, TranscriptBlock, TranscriptionEntry, User} from "./core/types";
+import {
+  Caption,
+  IMeetingPlatform,
+  Meeting,
+  PipelineContext,
+  TranscriptBlock,
+  TranscriptionEntry,
+  User
+} from "./core/types";
 import {AppConfiguration} from "./core/types/configuration";
 import {DomUtils} from "./core/utils/dom.utils";
 import {WindowMessageHandler} from "./core/windowMessageHandler";
@@ -25,9 +33,6 @@ let transcriptBlocks: TranscriptBlock[] = [];
 let transcriptObserver: MutationObserver;
 let config: AppConfiguration;
 let transcriptContainer: HTMLElement | null;
-let currentTransciptBlockId = "",
-  currentTranscript = "";
-let currentTimestamp: Date = new Date();
 const platform: IMeetingPlatform = new MeetingPlatformFactory(window.location.href).getPlatform();
 const browser = new Chrome();
 const domUtils = new DomUtils(browser);
@@ -217,7 +222,7 @@ function createMutationHandler(ctx: PipelineContext) {
 
 function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineContext): void {
   try {
-    let blockTranscription = null;
+    let blockTranscription: Caption = {blockId: "", speakerName: "", pictureUrl: "", transcript: ""};
     for (const mutation of mutations) {
       // Handle added blocks
       mutation.addedNodes.forEach(node => {
@@ -237,25 +242,49 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
     }
 
     if (blockTranscription) {
+      if (blockTranscription.transcript.trim() === "") {
+        return;
+      }
+
       if (blockTranscription.speakerName == "You") {
         blockTranscription.speakerName = config.user.fullName;
+      }
+
+      const block = meeting.transcripts.find(t => t.id === blockTranscription.blockId);
+
+      if (block && blockTranscription.transcript.trim() == block.transcript.trim()) {
+        return; // No change in transcript, skip processing
+      }
+
+      if (!block) {
+        meeting.transcripts.push({
+          id: blockTranscription.blockId,
+          user: {
+            fullName: blockTranscription.speakerName,
+            pictureUrl: blockTranscription.pictureUrl
+          },
+          timestamp: new Date(),
+          transcript: blockTranscription.transcript
+        });
+      } else {
+        block.transcript = blockTranscription.transcript;
       }
 
       SidePanel.addTranscription({
         meetingId: meeting.id,
         transcriptBlockId: blockTranscription.blockId,
-        speaker: {fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl} as User,
+        speaker: {fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl},
         transcript: blockTranscription.transcript,
         timestamp: new Date()
-      } as TranscriptionEntry);
+      });
 
       windowMessageHandler.postToWindow({
         type: MessageTypes.NotifyRealTimeTranscription,
         meetingId: meeting.id,
-        transcriptionBlockId: currentTransciptBlockId,
-        speaker: {fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl} as User,
-        transcript: currentTranscript,
-        timestamp: currentTimestamp
+        transcriptionBlockId: blockTranscription.blockId,
+        speaker: {fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl},
+        transcript: blockTranscription.transcript,
+        timestamp: new Date()
       } as TranscriptionEntryMessage);
     }
   } catch (err) {
