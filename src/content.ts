@@ -26,9 +26,8 @@ let transcriptObserver: MutationObserver;
 let config: AppConfiguration;
 let transcriptContainer: HTMLElement | null;
 let currentTransciptBlockId = "",
-  currentSpeakerName = "",
-  currentTranscript = "",
-  currentTimestamp = "";
+  currentTranscript = "";
+let currentTimestamp: Date = new Date();
 const browser = detectBrowser();
 const domUtils = new DomUtils(browser);
 const windowMessageHandler = new WindowMessageHandler("Au5-InjectedScript", "Au5-ContentScript", handleWindowMessage);
@@ -154,7 +153,6 @@ function handleWindowMessage(action: string, payload: HubMessage): void {
       SidePanel.usersJoined(item, meet.isStarted);
       break;
 
-    case MessageTypes.NotifyMeetHasBeenStarted:
     case MessageTypes.TriggerTranscriptionStart:
       SidePanel.showTranscriptionsContainer();
       meet.isStarted = true;
@@ -239,7 +237,7 @@ const findCaptionBlock = (el: Node): Element | null => {
 };
 
 function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineContext): void {
-  for (const mutation of mutations) {
+  for (const _ of mutations) {
     try {
       let blockTranscription = null;
       for (const mutation of mutations) {
@@ -274,15 +272,13 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
         } as TranscriptionEntry);
 
         windowMessageHandler.postToWindow({
-          Header: {Type: MessageTypes.NotifyRealTimeTranscription},
-          Payload: {
-            MeetingId: meet.id,
-            TranscriptionBlockId: currentTransciptBlockId,
-            Speaker: {fullname: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl} as User,
-            Transcript: currentTranscript,
-            Timestamp: currentTimestamp
-          }
-        });
+          type: MessageTypes.NotifyRealTimeTranscription,
+          meetingId: meet.id,
+          transcriptionBlockId: currentTransciptBlockId,
+          speaker: {fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl} as User,
+          transcript: currentTranscript,
+          timestamp: currentTimestamp
+        } as TranscriptionEntryMessage);
       }
     } catch (err) {
       console.error(err);

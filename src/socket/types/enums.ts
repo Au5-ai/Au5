@@ -12,6 +12,5 @@ export enum MessageTypes {
   NotifyRealTimeTranscription = "NotifyRealTimeTranscription",
   NotifyUserJoining = "NotifyUserJoining",
   TriggerTranscriptionStart = "TriggerTranscriptionStart",
-  NotifyMeetHasBeenStarted = "NotifyMeetHasBeenStarted",
   ListOfUsersInMeeting = "ListOfUsersInMeeting"
 }

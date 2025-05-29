@@ -136,11 +136,11 @@ export default class SidePanel {
 
     const nameDiv = document.createElement("div");
     nameDiv.className = "au5-participant-name";
-    nameDiv.textContent = user.fullname || "Unknown User";
+    nameDiv.textContent = user.fullName || "Unknown User";
 
     const joinedAtDiv = document.createElement("div");
     joinedAtDiv.className = "au5-participant-joinedAt";
-    joinedAtDiv.textContent = `Joined at: ${new Date(user.joinedAt).toLocaleTimeString()}`;
+    joinedAtDiv.textContent = `Joined at: ${DateTime.toHoursAndMinutes(user.joinedAt || new Date())}`;
 
     infoDiv.appendChild(nameDiv);
     infoDiv.appendChild(joinedAtDiv);
@@ -172,8 +172,8 @@ export default class SidePanel {
     }
     const usersJoined = document.createElement("div");
     usersJoined.className = "au5-join-time";
-    usersJoined.innerText = `${user.fullname} ${isJoined ? "Joined" : "Leaved"} at ${DateTime.toHoursAndMinutes(
-      new Date(user.joinedAt)
+    usersJoined.innerText = `${user.fullName} ${isJoined ? "Joined" : "Leaved"} at ${DateTime.toHoursAndMinutes(
+      user.joinedAt || new Date()
     )}`;
     this.transcriptionsContainer.appendChild(usersJoined);
   }

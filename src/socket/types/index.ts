@@ -13,7 +13,7 @@ export interface IMessage {
 }
 
 export interface MeetingStartedMessage extends IMessage {
-  readonly type: MessageTypes.NotifyMeetHasBeenStarted;
+  readonly type: MessageTypes.TriggerTranscriptionStart;
   isStarted: boolean;
 }
 
