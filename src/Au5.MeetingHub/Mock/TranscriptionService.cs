@@ -17,7 +17,7 @@ public class TranscriptionService : ITranscriptionService
 
     public void UpsertBlock(TranscriptionEntry entry)
     {
-        var meetingBlocks = _meetingTranscriptions.GetOrAdd(entry.MeetingId, _ => new Dictionary<string, TranscriptionEntry>());
+        var meetingBlocks = _meetingTranscriptions.GetOrAdd(entry.MeetingId, _ => []);
 
         lock (_lock)
         {
