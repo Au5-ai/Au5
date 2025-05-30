@@ -37,6 +37,17 @@ public class MeetingHub(ILogger<MeetingHub> logger, IUserService userService, IM
         });
     }
 
+    public async Task ReactionApplied(ReactionApplied data)
+    {
+        await SendToOthersInGroupAsync(data.MeetingId, new ReactionAppliedMessage()
+        {
+            MeetingId = data.MeetingId,
+            Reaction = data.Reaction,
+            TrancriptBlockId = data.TrancriptBlockId,
+            User = data.User
+        });
+    }
+
     public async Task TriggerTranscriptionStart(StartTranscription data)
     {
         _meetingService.Run(data.MeetingId, data.UserId);

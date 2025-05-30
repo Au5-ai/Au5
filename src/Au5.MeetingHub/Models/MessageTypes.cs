@@ -6,4 +6,5 @@ public static class MessageTypes
     public const string ListOfUsersInMeeting = "ListOfUsersInMeeting";
     public const string TriggerTranscriptionStart = "TriggerTranscriptionStart";
     public const string NotifyRealTimeTranscription = "NotifyRealTimeTranscription";
+    public const string ReactionApplied = "ReactionApplied";
 }
