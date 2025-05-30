@@ -43,7 +43,7 @@ public class MeetingHub(ILogger<MeetingHub> logger, IUserService userService, IM
         {
             MeetingId = data.MeetingId,
             Reaction = data.Reaction,
-            TrancriptBlockId = data.TrancriptBlockId,
+            TranscriptBlockId = data.TranscriptBlockId,
             User = data.User
         });
     }
