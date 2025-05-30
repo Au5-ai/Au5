@@ -215,9 +215,8 @@
   height: 16px;
 }
 
-.au5-reactions .reaction-users {
-  display: flex;
-  margin-left: 2px;
+.reaction .reaction-user:first-of-type {
+  margin-left: 0px;
 }
 
 .au5-reactions .reaction-user {
@@ -225,7 +224,7 @@
   height: 16px;
   border-radius: 50%;
   border: 1px solid white;
-  margin-left: -4px;
+  margin-left: -10px;
   display: flex;
 }
 

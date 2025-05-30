@@ -27,9 +27,9 @@ export default class SidePanel {
         <div class="au5-panel">
             <div class="au5-header">
               <div class="au5-header-left">
-                <div class="au5-company-avatar">${companyName.at(0)?.toUpperCase()}</div>
+                <div class="au5-company-avatar">${config.service.companyName.at(0)?.toUpperCase()}</div>
                 <div>
-                  <div class="au5-company-name">${companyName}</div>
+                  <div class="au5-company-name">${config.service.companyName}</div>
                   <div class="au5-room-title">${meetingId}</div>
                 </div>
               </div>
@@ -65,8 +65,6 @@ export default class SidePanel {
                 </span>
               </div>
            </div>
-             
-      
           <div class="au5-participants-container au5-container"></div>
           <div class="au5-transcriptions-container au5-container au5-hidden"></div>
            <div class="au5-footer">
@@ -143,8 +141,7 @@ export default class SidePanel {
             pictureUrl: config.user.pictureUrl
           }
         };
-        console.log("Reaction clicked:", payload);
-
+        this.addReaction(payload);
         window.postMessage(
           {
             source: PostMessageTypes.ContentScript,
@@ -298,9 +295,7 @@ export default class SidePanel {
     if (existingReaction) {
       const userSpan = document.createElement("div");
       userSpan.className = "reaction-user";
-      userSpan.innerHTML = `<div class="reaction-user">
-                               <img src="${reaction.user.pictureUrl}" />
-                            </div>`;
+      userSpan.innerHTML = `<img src="${reaction.user.pictureUrl}" title="${reaction.user.fullName}" />`;
       existingReaction.appendChild(userSpan);
     }
   }

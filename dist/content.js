@@ -223,6 +223,12 @@ class WindowMessageHandler {
     window.removeEventListener("message", this.handleMessage);
   }
 }
+var PostMessageTypes = /* @__PURE__ */ ((PostMessageTypes2) => {
+  PostMessageTypes2["ContentScript"] = "Au5-ContentScript";
+  PostMessageTypes2["BackgroundScript"] = "Au5-BackgroundScript";
+  PostMessageTypes2["MeetingHubClient"] = "Au5-MeetingHubClient";
+  return PostMessageTypes2;
+})(PostMessageTypes || {});
 var DateTime;
 ((DateTime2) => {
   function toHoursAndMinutes(input) {
@@ -233,11 +239,19 @@ var DateTime;
   }
   DateTime2.toHoursAndMinutes = toHoursAndMinutes;
 })(DateTime || (DateTime = {}));
+var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
+  MessageTypes2["NotifyRealTimeTranscription"] = "NotifyRealTimeTranscription";
+  MessageTypes2["NotifyUserJoining"] = "NotifyUserJoining";
+  MessageTypes2["TriggerTranscriptionStart"] = "TriggerTranscriptionStart";
+  MessageTypes2["ListOfUsersInMeeting"] = "ListOfUsersInMeeting";
+  MessageTypes2["ReactionApplied"] = "ReactionApplied";
+  return MessageTypes2;
+})(MessageTypes || {});
 const css = ".au5-panel {\r\n  background-color: #fff;\r\n  border-radius: 16px;\r\n  box-sizing: border-box;\r\n  max-width: 100%;\r\n  position: absolute;\r\n  right: 16px;\r\n  top: 16px;\r\n  transform: none;\r\n  z-index: 9999;\r\n  width: 360px;\r\n  font-family: system-ui;\r\n}\r\n\r\n.au5-header {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 16px;\r\n  background-color: #f4f4f4f4;\r\n  border-top-left-radius: 16px;\r\n  border-top-right-radius: 16px;\r\n}\r\n\r\n.au5-header-left {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n}\r\n\r\n.au5-avatar {\r\n  width: 40px;\r\n  height: 40px;\r\n  border-radius: 50%;\r\n  object-fit: cover;\r\n}\r\n\r\n.au5-avatar img {\r\n  border-radius: 50%;\r\n  width: 36px;\r\n  height: 36px;\r\n}\r\n\r\n.au5-company-avatar {\r\n  width: 40px;\r\n  height: 40px;\r\n  border-radius: 50%;\r\n  background-color: #353637;\r\n  color: white;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  font-weight: bold;\r\n  font-size: 18px;\r\n  font-family: sans-serif;\r\n}\r\n\r\n.au5-company-name {\r\n  font-weight: bold;\r\n  font-size: 14px;\r\n}\r\n\r\n.au5-room-name {\r\n  font-size: 12px;\r\n  color: #888;\r\n}\r\n\r\n.au5-header-icons {\r\n  display: flex;\r\n  gap: 8px;\r\n}\r\n\r\n.au5-icon-selected {\r\n  border: 1px solid #2196f3;\r\n  box-shadow: 0px 0px 3px 0px #2196f3;\r\n}\r\n\r\n.au5-header-collapse {\r\n  border-bottom-left-radius: 16px;\r\n  border-bottom-right-radius: 16px;\r\n}\r\n\r\n.au5-header-icons .au5-icon {\r\n  font-size: 16px;\r\n  display: flex;\r\n  cursor: pointer;\r\n  border-radius: 4px;\r\n  width: 28px;\r\n  background-color: #f4f4f4f4;\r\n  height: 28px;\r\n  align-items: center;\r\n  justify-content: center;\r\n}\r\n\r\n.au5-container {\r\n  height: calc(100vh - 260px);\r\n  overflow-y: auto;\r\n  padding: 16px;\r\n}\r\n\r\n.au5-participants-container {\r\n  overflow-y: auto;\r\n  display: flex;\r\n  gap: 16px;\r\n  flex-direction: column;\r\n  flex-wrap: wrap;\r\n  justify-content: flex-start;\r\n  align-content: flex-start;\r\n  align-items: flex-start;\r\n  padding: 16px;\r\n}\r\n\r\n.au5-participant {\r\n  width: fit-content;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  flex-direction: row;\r\n  gap: 8px;\r\n  min-width: 96px;\r\n}\r\n\r\n.au5-participant img {\r\n  width: 48px;\r\n  height: 48px;\r\n  border-radius: 50%;\r\n  box-shadow: 0px 0px 8px 2px #eeee;\r\n  border: 2px solid #fff;\r\n}\r\n\r\n.au5-participant-info {\r\n  display: flex;\r\n  flex-direction: column;\r\n  justify-content: center;\r\n}\r\n\r\n.au5-participant-joinedAt {\r\n  font-size: 12px;\r\n  color: #929292;\r\n  font-weight: normal;\r\n}\r\n\r\n.au5-transcription {\r\n  display: flex;\r\n  align-items: flex-start;\r\n  gap: 4px;\r\n  margin-bottom: 12px;\r\n  position: relative;\r\n}\r\n\r\n.au5-bubble {\r\n  background: #f8f8f8;\r\n  border-radius: 12px;\r\n  padding: 8px 12px;\r\n  flex: 1;\r\n}\r\n\r\n.au5-sender {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.au5-sender-title {\r\n  font-weight: bold;\r\n  font-size: 13px;\r\n  margin-bottom: 4px;\r\n}\r\n\r\n.au5-text {\r\n  font-size: 13px;\r\n  margin-bottom: 16px;\r\n  direction: rtl;\r\n}\r\n\r\n.au5-sender-time {\r\n  font-size: 11px;\r\n  color: #888;\r\n  text-align: right;\r\n}\r\n\r\n.au5-message-reactions {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  margin-top: 8px;\r\n}\r\n\r\n.au5-reactions {\r\n  display: flex;\r\n  gap: 4px;\r\n  left: 48px;\r\n  bottom: 8px;\r\n}\r\n\r\n.au5-reactions .reaction {\r\n  display: flex;\r\n  gap: 4px;\r\n  padding: 1px;\r\n  border-radius: 100px;\r\n  cursor: pointer;\r\n  border: 1px solid #e5e5e5;\r\n  transition: background-color 0.2s;\r\n  background-color: #e4e4e4;\r\n  align-items: center;\r\n  align-content: center;\r\n  min-width: 16px;\r\n  max-height: 16px;\r\n}\r\n\r\n.au5-reactions .reaction-emoji {\r\n  font-size: 12px;\r\n  width: 16px;\r\n  height: 16px;\r\n}\r\n\r\n.au5-reactions .reaction-users {\r\n  display: flex;\r\n  margin-left: 2px;\r\n}\r\n\r\n.au5-reactions .reaction-user {\r\n  width: 16px;\r\n  height: 16px;\r\n  border-radius: 50%;\r\n  border: 1px solid white;\r\n  margin-left: -4px;\r\n  display: flex;\r\n}\r\n\r\n.au5-reactions .reaction-user img {\r\n  width: 16px;\r\n  height: 16px;\r\n  border-radius: 50%;\r\n}\r\n\r\n.au5-btn {\r\n  background: #2196f3;\r\n  border: none;\r\n  color: white;\r\n  font-size: 13px;\r\n  padding: 8px 12px;\r\n  border-radius: 8px;\r\n  height: 38px;\r\n  cursor: pointer;\r\n  font-family: system-ui;\r\n  width: -webkit-fill-available;\r\n}\r\n\r\n.au5-send-btn {\r\n  height: auto;\r\n  width: auto;\r\n}\r\n\r\n.au5-join-time {\r\n  text-align: center;\r\n  font-size: 12px;\r\n  color: #666;\r\n  margin: 16px 0;\r\n}\r\n\r\n.au5-input-wrapper {\r\n  display: flex;\r\n  border-radius: 12px;\r\n  width: -webkit-fill-available;\r\n}\r\n\r\n.au5-input-container {\r\n  display: flex;\r\n  align-items: center;\r\n  flex: 1;\r\n  border: 1px solid #c2bdbd;\r\n  padding: 4px;\r\n  border-radius: 8px;\r\n  width: -webkit-fill-available;\r\n}\r\n\r\n.au5-input {\r\n  flex: 1;\r\n  border: none;\r\n  font-size: 14px;\r\n  padding: 8px;\r\n  border-radius: 8px;\r\n  outline: none;\r\n  font-family: system-ui;\r\n}\r\n\r\n.au5-hidden {\r\n  display: none !important;\r\n}\r\n\r\n.au5-footer {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 0 16px 16px 16px;\r\n}\r\n";
 class SidePanel {
-  static createSidePanel(companyName, meetingId, direction = "ltr") {
+  static createSidePanel(config2, meetingId) {
     var _a;
-    this.direction = direction;
+    this.direction = config2.service.direction || "ltr";
     const tag = document.createElement("style");
     tag.textContent = css;
     document.head.appendChild(tag);
@@ -245,9 +259,9 @@ class SidePanel {
         <div class="au5-panel">
             <div class="au5-header">
               <div class="au5-header-left">
-                <div class="au5-company-avatar">${(_a = companyName.at(0)) == null ? void 0 : _a.toUpperCase()}</div>
+                <div class="au5-company-avatar">${(_a = config2.service.companyName.at(0)) == null ? void 0 : _a.toUpperCase()}</div>
                 <div>
-                  <div class="au5-company-name">${companyName}</div>
+                  <div class="au5-company-name">${config2.service.companyName}</div>
                   <div class="au5-room-title">${meetingId}</div>
                 </div>
               </div>
@@ -283,8 +297,6 @@ class SidePanel {
                 </span>
               </div>
            </div>
-             
-      
           <div class="au5-participants-container au5-container"></div>
           <div class="au5-transcriptions-container au5-container au5-hidden"></div>
            <div class="au5-footer">
@@ -338,14 +350,28 @@ class SidePanel {
       const reaction = target.closest(".reaction");
       if (!reaction) return;
       const blockId = reaction.getAttribute("data-blockId");
-      const reactionType = reaction.classList.contains("reaction-type");
+      const reactionType = reaction.getAttribute("reaction-type");
       if (blockId) {
         const payload = {
-          action: "reaction",
-          blockId,
-          type: reactionType
+          transcriptBlockId: blockId,
+          reaction: reactionType || "task",
+          meetingId,
+          type: MessageTypes.ReactionApplied,
+          user: {
+            id: config2.user.userId,
+            fullName: config2.user.fullName,
+            pictureUrl: config2.user.pictureUrl
+          }
         };
-        console.log("Reaction clicked:", payload);
+        this.addReaction(payload);
+        window.postMessage(
+          {
+            source: PostMessageTypes.ContentScript,
+            action: payload.type,
+            payload
+          },
+          "*"
+        );
       }
     });
   }
@@ -448,6 +474,34 @@ class SidePanel {
       (_c = this.btnStartTranscription) == null ? void 0 : _c.classList.add("au5-hidden");
     }
   }
+  static addReaction(reaction) {
+    if (!this.transcriptionsContainer) {
+      return;
+    }
+    const transcriptionBlock = this.transcriptionsContainer.querySelector(
+      `[data-id="${reaction.transcriptBlockId}"]`
+    );
+    if (!transcriptionBlock) {
+      console.warn("Transcription block not found for reaction:", reaction);
+      return;
+    }
+    const reactionsContainer = transcriptionBlock.querySelector(".au5-reactions");
+    if (!reactionsContainer) {
+      console.warn("Reactions container not found in transcription block.");
+      return;
+    }
+    const existingReaction = reactionsContainer.querySelector(
+      `.reaction[reaction-type="${reaction.reaction}"]`
+    );
+    if (existingReaction) {
+      const userSpan = document.createElement("div");
+      userSpan.className = "reaction-user";
+      userSpan.innerHTML = `<div class="reaction-user">
+                               <img src="${reaction.user.pictureUrl}" />
+                            </div>`;
+      existingReaction.appendChild(userSpan);
+    }
+  }
   static destroy() {
     if (this.panelElement) {
       if (document.body.contains(this.panelElement)) {
@@ -470,13 +524,6 @@ __publicField(SidePanel, "inputWrapper", null);
 __publicField(SidePanel, "header", null);
 __publicField(SidePanel, "footer", null);
 __publicField(SidePanel, "direction", "ltr");
-var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
-  MessageTypes2["NotifyRealTimeTranscription"] = "NotifyRealTimeTranscription";
-  MessageTypes2["NotifyUserJoining"] = "NotifyUserJoining";
-  MessageTypes2["TriggerTranscriptionStart"] = "TriggerTranscriptionStart";
-  MessageTypes2["ListOfUsersInMeeting"] = "ListOfUsersInMeeting";
-  return MessageTypes2;
-})(MessageTypes || {});
 class Chrome {
   constructor() {
     __publicField(this, "name", "Chrome");
@@ -3412,8 +3459,8 @@ class MeetingHubClient {
     this.meetingId = meetingId;
     this.connection = new HubConnectionBuilder().withUrl(this.config.service.hubUrl).withAutomaticReconnect().build();
     this.windowMessageHandler = new WindowMessageHandler(
-      "Au5-MeetingHubClient",
-      "Au5-ContentScript",
+      PostMessageTypes.MeetingHubClient,
+      PostMessageTypes.ContentScript,
       this.handleWindowMessage.bind(this)
     );
   }
@@ -3441,6 +3488,7 @@ class MeetingHubClient {
         case MessageTypes.TriggerTranscriptionStart:
         case MessageTypes.NotifyRealTimeTranscription:
         case MessageTypes.ListOfUsersInMeeting:
+        case MessageTypes.ReactionApplied:
           this.windowMessageHandler.postToWindow(msg);
           break;
       }
@@ -3450,6 +3498,7 @@ class MeetingHubClient {
     switch (action) {
       case MessageTypes.TriggerTranscriptionStart:
       case MessageTypes.NotifyRealTimeTranscription:
+      case MessageTypes.ReactionApplied:
         this.connection.invoke(action, payload);
         break;
     }
@@ -3464,7 +3513,11 @@ let transcriptContainer;
 const platform = new MeetingPlatformFactory(window.location.href).getPlatform();
 const browser = new Chrome();
 const domUtils = new DomUtils(browser);
-const windowMessageHandler = new WindowMessageHandler("Au5-ContentScript", "Au5-MeetingHubClient", handleWindowMessage);
+const windowMessageHandler = new WindowMessageHandler(
+  PostMessageTypes.ContentScript,
+  PostMessageTypes.MeetingHubClient,
+  handleWindowMessage
+);
 (async function initMeetingRoutine() {
   var _a;
   try {
@@ -3485,7 +3538,7 @@ const windowMessageHandler = new WindowMessageHandler("Au5-ContentScript", "Au5-
       transcripts: [],
       users: []
     };
-    SidePanel.createSidePanel(config.service.companyName, meeting.id, config.service.direction);
+    SidePanel.createSidePanel(config, meeting.id);
     meetingHubClient = new MeetingHubClient(config, meeting.id);
     meetingHubClient.startConnection();
     (_a = document.getElementById(config.extension.btnTranscriptSelector)) == null ? void 0 : _a.addEventListener("click", () => {
@@ -3562,56 +3615,6 @@ var Pipelines;
     return ctx;
   };
 })(Pipelines || (Pipelines = {}));
-function handleWindowMessage(action, payload) {
-  switch (action) {
-    case MessageTypes.NotifyRealTimeTranscription:
-      const transcriptEntry = payload;
-      SidePanel.addTranscription({
-        meetingId: transcriptEntry.meetingId,
-        transcriptBlockId: transcriptEntry.transcriptBlockId,
-        speaker: transcriptEntry.speaker,
-        transcript: transcriptEntry.transcript,
-        timestamp: transcriptEntry.timestamp
-      });
-      break;
-    case MessageTypes.NotifyUserJoining:
-      const userJoinedMsg = payload;
-      if (!userJoinedMsg.user) {
-        return;
-      }
-      const item = {
-        id: userJoinedMsg.user.id,
-        fullName: userJoinedMsg.user.fullName,
-        pictureUrl: userJoinedMsg.user.pictureUrl,
-        joinedAt: userJoinedMsg.user.joinedAt || /* @__PURE__ */ new Date()
-      };
-      meeting.users.push(item);
-      SidePanel.usersJoined(item, meeting.isStarted);
-      break;
-    case MessageTypes.TriggerTranscriptionStart:
-      SidePanel.showTranscriptionsContainer();
-      meeting.isStarted = true;
-      break;
-    case MessageTypes.ListOfUsersInMeeting:
-      const usersInMeeting = payload;
-      if (!usersInMeeting.users || !Array.isArray(usersInMeeting.users)) {
-        return;
-      }
-      usersInMeeting.users.forEach((user) => {
-        const item2 = {
-          id: user.id,
-          fullName: user.fullName,
-          pictureUrl: user.pictureUrl,
-          joinedAt: user.joinedAt || /* @__PURE__ */ new Date()
-        };
-        meeting.users.push(item2);
-        SidePanel.addParticipant(item2);
-      });
-      break;
-    default:
-      console.warn("Unknown message action received:", action);
-  }
-}
 function createMutationHandler(ctx) {
   return function(mutations, observer) {
     handleTranscriptMutations(mutations);
@@ -3679,5 +3682,72 @@ function handleTranscriptMutations(mutations, ctx) {
     if (!meeting.isEnded) {
       console.log("Error in transcript mutation observer:", err);
     }
+  }
+}
+function handleWindowMessage(action, payload) {
+  switch (action) {
+    case MessageTypes.NotifyRealTimeTranscription:
+      const transcriptEntry = payload;
+      SidePanel.addTranscription({
+        meetingId: transcriptEntry.meetingId,
+        transcriptBlockId: transcriptEntry.transcriptBlockId,
+        speaker: transcriptEntry.speaker,
+        transcript: transcriptEntry.transcript,
+        timestamp: transcriptEntry.timestamp
+      });
+      break;
+    case MessageTypes.NotifyUserJoining:
+      const userJoinedMsg = payload;
+      if (!userJoinedMsg.user) {
+        return;
+      }
+      const item = {
+        id: userJoinedMsg.user.id,
+        fullName: userJoinedMsg.user.fullName,
+        pictureUrl: userJoinedMsg.user.pictureUrl,
+        joinedAt: userJoinedMsg.user.joinedAt || /* @__PURE__ */ new Date()
+      };
+      meeting.users.push(item);
+      SidePanel.usersJoined(item, meeting.isStarted);
+      break;
+    case MessageTypes.TriggerTranscriptionStart:
+      SidePanel.showTranscriptionsContainer();
+      meeting.isStarted = true;
+      break;
+    case MessageTypes.ListOfUsersInMeeting:
+      const usersInMeeting = payload;
+      if (!usersInMeeting.users || !Array.isArray(usersInMeeting.users)) {
+        return;
+      }
+      usersInMeeting.users.forEach((user) => {
+        const item2 = {
+          id: user.id,
+          fullName: user.fullName,
+          pictureUrl: user.pictureUrl,
+          joinedAt: user.joinedAt || /* @__PURE__ */ new Date()
+        };
+        meeting.users.push(item2);
+        SidePanel.addParticipant(item2);
+      });
+      break;
+    case MessageTypes.ReactionApplied:
+      const reactionMsg = payload;
+      if (!reactionMsg.meetingId || !reactionMsg.transcriptBlockId || !reactionMsg.user || !reactionMsg.reaction) {
+        return;
+      }
+      const reactionBlock = meeting.transcripts.find((t) => t.id === reactionMsg.transcriptBlockId);
+      if (reactionBlock) {
+        if (!reactionBlock.reactions) {
+          reactionBlock.reactions = {};
+        }
+        if (!reactionBlock.reactions[reactionMsg.reaction]) {
+          reactionBlock.reactions[reactionMsg.reaction] = [];
+        }
+        reactionBlock.reactions[reactionMsg.reaction].push(reactionMsg.user);
+      }
+      SidePanel.addReaction(reactionMsg);
+      break;
+    default:
+      console.warn("Unknown message action received:", action);
   }
 }

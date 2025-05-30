@@ -68,6 +68,7 @@ export class MeetingHubClient {
     switch (action) {
       case MessageTypes.TriggerTranscriptionStart:
       case MessageTypes.NotifyRealTimeTranscription:
+      case MessageTypes.ReactionApplied:
         this.connection.invoke(action, payload);
         break;
     }

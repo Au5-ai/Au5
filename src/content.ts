@@ -41,7 +41,7 @@ const domUtils = new DomUtils(browser);
 const windowMessageHandler = new WindowMessageHandler(
   PostMessageTypes.ContentScript,
   PostMessageTypes.MeetingHubClient,
-  PostWindowMessagesHandler.handleWindowMessage
+  handleWindowMessage
 );
 
 (async function initMeetingRoutine(): Promise<void> {
@@ -243,80 +243,78 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
   }
 }
 
-namespace PostWindowMessagesHandler {
-  export function handleWindowMessage(action: string, payload: HubMessage): void {
-    switch (action) {
-      case MessageTypes.NotifyRealTimeTranscription:
-        const transcriptEntry = payload as TranscriptionEntryMessage;
+export function handleWindowMessage(action: string, payload: HubMessage): void {
+  switch (action) {
+    case MessageTypes.NotifyRealTimeTranscription:
+      const transcriptEntry = payload as TranscriptionEntryMessage;
 
-        SidePanel.addTranscription({
-          meetingId: transcriptEntry.meetingId,
-          transcriptBlockId: transcriptEntry.transcriptBlockId,
-          speaker: transcriptEntry.speaker,
-          transcript: transcriptEntry.transcript,
-          timestamp: transcriptEntry.timestamp
-        } as TranscriptionEntry);
-        break;
+      SidePanel.addTranscription({
+        meetingId: transcriptEntry.meetingId,
+        transcriptBlockId: transcriptEntry.transcriptBlockId,
+        speaker: transcriptEntry.speaker,
+        transcript: transcriptEntry.transcript,
+        timestamp: transcriptEntry.timestamp
+      } as TranscriptionEntry);
+      break;
 
-      case MessageTypes.NotifyUserJoining:
-        const userJoinedMsg = payload as UserJoinedInMeetingMessage;
+    case MessageTypes.NotifyUserJoining:
+      const userJoinedMsg = payload as UserJoinedInMeetingMessage;
 
-        if (!userJoinedMsg.user) {
-          return;
-        }
+      if (!userJoinedMsg.user) {
+        return;
+      }
 
+      const item: User = {
+        id: userJoinedMsg.user.id,
+        fullName: userJoinedMsg.user.fullName,
+        pictureUrl: userJoinedMsg.user.pictureUrl,
+        joinedAt: userJoinedMsg.user.joinedAt || new Date()
+      };
+      meeting.users.push(item);
+      SidePanel.usersJoined(item, meeting.isStarted);
+      break;
+
+    case MessageTypes.TriggerTranscriptionStart:
+      SidePanel.showTranscriptionsContainer();
+      meeting.isStarted = true;
+      break;
+
+    case MessageTypes.ListOfUsersInMeeting:
+      const usersInMeeting = payload as ListOfUsersInMeetingMessage;
+
+      if (!usersInMeeting.users || !Array.isArray(usersInMeeting.users)) {
+        return;
+      }
+      usersInMeeting.users.forEach((user: User) => {
         const item: User = {
-          id: userJoinedMsg.user.id,
-          fullName: userJoinedMsg.user.fullName,
-          pictureUrl: userJoinedMsg.user.pictureUrl,
-          joinedAt: userJoinedMsg.user.joinedAt || new Date()
+          id: user.id,
+          fullName: user.fullName,
+          pictureUrl: user.pictureUrl,
+          joinedAt: user.joinedAt || new Date()
         };
         meeting.users.push(item);
-        SidePanel.usersJoined(item, meeting.isStarted);
-        break;
+        SidePanel.addParticipant(item);
+      });
+      break;
 
-      case MessageTypes.TriggerTranscriptionStart:
-        SidePanel.showTranscriptionsContainer();
-        meeting.isStarted = true;
-        break;
-
-      case MessageTypes.ListOfUsersInMeeting:
-        const usersInMeeting = payload as ListOfUsersInMeetingMessage;
-
-        if (!usersInMeeting.users || !Array.isArray(usersInMeeting.users)) {
-          return;
+    case MessageTypes.ReactionApplied:
+      const reactionMsg = payload as ReactionAppliedMessage;
+      if (!reactionMsg.meetingId || !reactionMsg.transcriptBlockId || !reactionMsg.user || !reactionMsg.reaction) {
+        return;
+      }
+      const reactionBlock = meeting.transcripts.find(t => t.id === reactionMsg.transcriptBlockId);
+      if (reactionBlock) {
+        if (!reactionBlock.reactions) {
+          reactionBlock.reactions = {};
         }
-        usersInMeeting.users.forEach((user: User) => {
-          const item: User = {
-            id: user.id,
-            fullName: user.fullName,
-            pictureUrl: user.pictureUrl,
-            joinedAt: user.joinedAt || new Date()
-          };
-          meeting.users.push(item);
-          SidePanel.addParticipant(item);
-        });
-        break;
-
-      case MessageTypes.ReactionApplied:
-        const reactionMsg = payload as ReactionAppliedMessage;
-        if (!reactionMsg.meetingId || !reactionMsg.transcriptBlockId || !reactionMsg.user || !reactionMsg.reaction) {
-          return;
+        if (!reactionBlock.reactions[reactionMsg.reaction]) {
+          reactionBlock.reactions[reactionMsg.reaction] = [];
         }
-        const reactionBlock = meeting.transcripts.find(t => t.id === reactionMsg.transcriptBlockId);
-        if (reactionBlock) {
-          if (!reactionBlock.reactions) {
-            reactionBlock.reactions = {};
-          }
-          if (!reactionBlock.reactions[reactionMsg.reaction]) {
-            reactionBlock.reactions[reactionMsg.reaction] = [];
-          }
-          reactionBlock.reactions[reactionMsg.reaction].push(reactionMsg.user);
-        }
-        SidePanel.addReaction(reactionMsg);
-        break;
-      default:
-        console.warn("Unknown message action received:", action);
-    }
+        reactionBlock.reactions[reactionMsg.reaction].push(reactionMsg.user);
+      }
+      SidePanel.addReaction(reactionMsg);
+      break;
+    default:
+      console.warn("Unknown message action received:", action);
   }
 }
