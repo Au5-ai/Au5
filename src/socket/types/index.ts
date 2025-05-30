@@ -41,7 +41,7 @@ export interface UserJoinedInMeetingMessage extends IMessage {
 
 export interface TranscriptionEntryMessage extends IMessage {
   meetingId: string;
-  transcriptionBlockId: string;
+  transcriptBlockId: string;
   speaker: User;
   transcript: string;
   timestamp: Date;

@@ -152,7 +152,7 @@ function handleWindowMessage(action: string, payload: HubMessage): void {
 
       SidePanel.addTranscription({
         meetingId: transcriptEntry.meetingId,
-        transcriptBlockId: transcriptEntry.transcriptionBlockId,
+        transcriptBlockId: transcriptEntry.transcriptBlockId,
         speaker: transcriptEntry.speaker,
         transcript: transcriptEntry.transcript,
         timestamp: transcriptEntry.timestamp
@@ -281,7 +281,7 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
       windowMessageHandler.postToWindow({
         type: MessageTypes.NotifyRealTimeTranscription,
         meetingId: meeting.id,
-        transcriptionBlockId: blockTranscription.blockId,
+        transcriptBlockId: blockTranscription.blockId,
         speaker: {fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl},
         transcript: blockTranscription.transcript,
         timestamp: new Date()

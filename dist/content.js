@@ -3552,7 +3552,7 @@ function handleWindowMessage(action, payload) {
       const transcriptEntry = payload;
       SidePanel.addTranscription({
         meetingId: transcriptEntry.meetingId,
-        transcriptBlockId: transcriptEntry.transcriptionBlockId,
+        transcriptBlockId: transcriptEntry.transcriptBlockId,
         speaker: transcriptEntry.speaker,
         transcript: transcriptEntry.transcript,
         timestamp: transcriptEntry.timestamp
@@ -3603,7 +3603,7 @@ function createMutationHandler(ctx) {
 }
 function handleTranscriptMutations(mutations, ctx) {
   try {
-    let blockTranscription = null;
+    let blockTranscription = { blockId: "", speakerName: "", pictureUrl: "", transcript: "" };
     for (const mutation of mutations) {
       mutation.addedNodes.forEach((node) => {
         if (node.nodeType === Node.ELEMENT_NODE) {
@@ -3619,8 +3619,28 @@ function handleTranscriptMutations(mutations, ctx) {
       }
     }
     if (blockTranscription) {
+      if (blockTranscription.transcript.trim() === "") {
+        return;
+      }
       if (blockTranscription.speakerName == "You") {
         blockTranscription.speakerName = config.user.fullName;
+      }
+      const block = meeting.transcripts.find((t) => t.id === blockTranscription.blockId);
+      if (block && blockTranscription.transcript.trim() == block.transcript.trim()) {
+        return;
+      }
+      if (!block) {
+        meeting.transcripts.push({
+          id: blockTranscription.blockId,
+          user: {
+            fullName: blockTranscription.speakerName,
+            pictureUrl: blockTranscription.pictureUrl
+          },
+          timestamp: /* @__PURE__ */ new Date(),
+          transcript: blockTranscription.transcript
+        });
+      } else {
+        block.transcript = blockTranscription.transcript;
       }
       SidePanel.addTranscription({
         meetingId: meeting.id,
@@ -3632,10 +3652,10 @@ function handleTranscriptMutations(mutations, ctx) {
       windowMessageHandler.postToWindow({
         type: MessageTypes.NotifyRealTimeTranscription,
         meetingId: meeting.id,
-        transcriptionBlockId: blockTranscription.blockId,
+        transcriptBlockId: blockTranscription.blockId,
         speaker: { fullName: blockTranscription.speakerName, pictureUrl: blockTranscription.pictureUrl },
         transcript: blockTranscription.transcript,
-        timestamp: blockTranscription.timestamp || /* @__PURE__ */ new Date()
+        timestamp: /* @__PURE__ */ new Date()
       });
     }
   } catch (err) {
