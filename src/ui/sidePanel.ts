@@ -1,5 +1,9 @@
+import {PostMessageTypes} from "../core/constants";
 import {TranscriptionEntry, User} from "../core/types";
+import {AppConfiguration} from "../core/types/configuration";
 import {DateTime} from "../core/utils/datetime";
+import {ReactionAppliedMessage} from "../socket/types";
+import {MessageTypes} from "../socket/types/enums";
 import css from "./styles/au5-panel.css?raw";
 
 export default class SidePanel {
@@ -12,8 +16,8 @@ export default class SidePanel {
   private static footer: HTMLDivElement | null = null;
   private static direction: "ltr" | "rtl" = "ltr";
 
-  static createSidePanel(companyName: string, meetingId: string, direction: "ltr" | "rtl" = "ltr"): void {
-    this.direction = direction;
+  static createSidePanel(config: AppConfiguration, meetingId: string): void {
+    this.direction = config.service.direction || "ltr";
 
     const tag = document.createElement("style");
     tag.textContent = css;
@@ -117,6 +121,40 @@ export default class SidePanel {
         this.footer?.classList.add("au5-hidden");
       });
     }
+
+    this.transcriptionsContainer.addEventListener("click", (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+
+      // Traverse up if span is clicked instead of the div
+      const reaction = target.closest(".reaction") as HTMLElement;
+      if (!reaction) return;
+
+      const blockId = reaction.getAttribute("data-blockId");
+      const reactionType = reaction.getAttribute("reaction-type");
+      if (blockId) {
+        const payload: ReactionAppliedMessage = {
+          transcriptBlockId: blockId,
+          reaction: reactionType || "task",
+          meetingId: meetingId,
+          type: MessageTypes.ReactionApplied,
+          user: {
+            id: config.user.userId,
+            fullName: config.user.fullName,
+            pictureUrl: config.user.pictureUrl
+          }
+        };
+        console.log("Reaction clicked:", payload);
+
+        window.postMessage(
+          {
+            source: PostMessageTypes.ContentScript,
+            action: payload.type,
+            payload: payload
+          },
+          "*"
+        );
+      }
+    });
   }
 
   public static addParticipant(user: User): void {
@@ -210,10 +248,10 @@ export default class SidePanel {
             </div>
             <div class="au5-transcription-reactions">
               <div class="au5-reactions">
-                <div class="reaction reaction-highlight">
+                <div class="reaction" reaction-type="task" data-blockId="${entry.transcriptBlockId}">
                   <span class="reaction-emoji">⚡</span>
                 </div>
-                <div class="reaction reaction-mute">
+                <div class="reaction" reaction-type="important" data-blockId="${entry.transcriptBlockId}">
                   <span class="reaction-emoji">🎯</span>
                 </div>
               </div>
@@ -233,6 +271,39 @@ export default class SidePanel {
     }
   }
 
+  public static addReaction(reaction: ReactionAppliedMessage): void {
+    if (!this.transcriptionsContainer) {
+      return;
+    }
+
+    const transcriptionBlock = this.transcriptionsContainer.querySelector(
+      `[data-id="${reaction.transcriptBlockId}"]`
+    ) as HTMLDivElement;
+
+    if (!transcriptionBlock) {
+      console.warn("Transcription block not found for reaction:", reaction);
+      return;
+    }
+
+    const reactionsContainer = transcriptionBlock.querySelector(".au5-reactions") as HTMLDivElement;
+    if (!reactionsContainer) {
+      console.warn("Reactions container not found in transcription block.");
+      return;
+    }
+
+    const existingReaction = reactionsContainer.querySelector(
+      `.reaction[reaction-type="${reaction.reaction}"]`
+    ) as HTMLDivElement;
+
+    if (existingReaction) {
+      const userSpan = document.createElement("div");
+      userSpan.className = "reaction-user";
+      userSpan.innerHTML = `<div class="reaction-user">
+                               <img src="${reaction.user.pictureUrl}" />
+                            </div>`;
+      existingReaction.appendChild(userSpan);
+    }
+  }
   public static destroy(): void {
     if (this.panelElement) {
       if (document.body.contains(this.panelElement)) {
@@ -248,101 +319,3 @@ export default class SidePanel {
     }
   }
 }
-
-// public static createPanel(direction: "ltr" | "rtl" = "ltr"): void {
-//   if (this.panel) {
-//     console.warn("ChatPanel already exists.");
-//     return;
-//   }
-
-//   const style = document.createElement("style");
-//   style.textContent = chatPanelStyle;
-//   document.head.appendChild(style);
-
-//   if (document.getElementById("au5-chat-panel")) return;
-
-//   this.panel = document.createElement("div");
-//   this.panel.id = "au5-chat-panel";
-//   this.panel.className = "au5-chat-panel";
-//   this.panel.setAttribute("data-direction", direction);
-//   document.body.appendChild(this.panel);
-// }
-
-// public static hideParticipantList(): void {
-//   this.participantContainer?.classList.add("au5-hidden");
-// }
-
-// public static addCurrentUser(name: string): void {
-//   if (!this.panel) {
-//     console.warn("ChatPanel not initialized.");
-//     return;
-//   }
-
-//   this.participantContainer = document.createElement("div");
-//   this.participantContainer.className = "au5-participant";
-
-//   this.participantContainer.innerHTML = `
-//     <ul class="au5-participant-list">
-//       <li>${name}</li>
-//     </ul>
-//     <button id="au5-start-button">Start Transcription</button>
-//   `;
-
-//   this.panel.appendChild(this.participantContainer);
-// }
-
-// public static addParticipant(name: string): void {
-//   if (!this.panel || !this.participantContainer) {
-//     console.warn("ChatPanel or participant container not initialized.");
-//     return;
-//   }
-
-//   const list = this.participantContainer.querySelector(".au5-participant-list") as HTMLUListElement;
-//   if (list) {
-//     const li = document.createElement("li");
-//     li.innerText = name;
-//     list.appendChild(li);
-//   }
-// }
-
-// public static addMessage({id, speaker, transcript, timestamp}: TranscriptBlock): void {
-//   if (!this.panel) return;
-
-//   const direction = this.panel.getAttribute("data-direction") || "ltr";
-
-//   const message = document.createElement("div");
-//   message.className = "au5-message";
-//   message.setAttribute("data-id", id);
-
-//   message.innerHTML = `
-//     <div class="au5-message-header">
-//       <span class="au5-message-sender">${speaker}</span>
-//       <span class="au5-message-time">${toHoursAndMinutes(timestamp)}</span>
-//     </div>
-//     <div class="au5-message-text" style="direction: ${direction};">${transcript}</div>
-//   `;
-
-//   this.panel.appendChild(message);
-// }
-
-// public static updateLiveMessage(item: TranscriptBlock): void {
-//   if (!this.panel) {
-//     console.warn("ChatPanel not initialized.");
-//     return;
-//   }
-
-//   const existing = this.panel.querySelector(`[data-id="${item.id}"]`) as HTMLDivElement;
-//   if (existing) {
-//     const textEl = existing.querySelector(".au5-message-text") as HTMLDivElement;
-//     if (textEl) textEl.innerText = item.transcript;
-//   } else {
-//     this.addMessage(item);
-//   }
-// }
-
-// <div class="au5-input-wrapper">
-//   <div class="au5-input-container">
-//     <input type="text" class="au5-input" placeholder="پیام خود را بنویسید..." />
-//     <button class="au5-send-btn">ارسال</button>
-//   </div>
-// </div>;

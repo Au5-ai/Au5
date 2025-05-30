@@ -4,6 +4,7 @@ import {IMessage, JoinMeeting} from "./types";
 import {WindowMessageHandler} from "../core/windowMessageHandler";
 import {MessageTypes} from "./types/enums";
 import {IMeetingPlatform} from "../core/types";
+import {PostMessageTypes} from "../core/constants";
 
 export class MeetingHubClient {
   private connection: signalR.HubConnection;
@@ -21,8 +22,8 @@ export class MeetingHubClient {
       .build();
 
     this.windowMessageHandler = new WindowMessageHandler(
-      "Au5-MeetingHubClient",
-      "Au5-ContentScript",
+      PostMessageTypes.MeetingHubClient,
+      PostMessageTypes.ContentScript,
       this.handleWindowMessage.bind(this)
     );
   }
@@ -56,6 +57,7 @@ export class MeetingHubClient {
         case MessageTypes.TriggerTranscriptionStart:
         case MessageTypes.NotifyRealTimeTranscription:
         case MessageTypes.ListOfUsersInMeeting:
+        case MessageTypes.ReactionApplied:
           this.windowMessageHandler.postToWindow(msg);
           break;
       }

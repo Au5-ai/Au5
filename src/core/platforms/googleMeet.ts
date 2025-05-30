@@ -19,6 +19,7 @@ export class GoogleMeet implements IMeetingPlatform {
    */
   extractCaptionData(block: Element): Caption {
     const blockId = block.getAttribute("data-blockid")!;
+    console.log("Extracting caption data from block:", blockId);
     const img = block.querySelector("img");
     const nameSpan = block.querySelector("span");
     const textDiv = Array.from(block.querySelectorAll("div")).find(

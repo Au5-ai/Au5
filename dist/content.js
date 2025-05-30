@@ -333,6 +333,21 @@ class SidePanel {
         (_h = this.footer) == null ? void 0 : _h.classList.add("au5-hidden");
       });
     }
+    this.transcriptionsContainer.addEventListener("click", (event) => {
+      const target = event.target;
+      const reaction = target.closest(".reaction");
+      if (!reaction) return;
+      const blockId = reaction.getAttribute("data-blockId");
+      const reactionType = reaction.classList.contains("reaction-type");
+      if (blockId) {
+        const payload = {
+          action: "reaction",
+          blockId,
+          type: reactionType
+        };
+        console.log("Reaction clicked:", payload);
+      }
+    });
   }
   static addParticipant(user) {
     if (!this.participantsContainer) {
@@ -412,10 +427,10 @@ class SidePanel {
             </div>
             <div class="au5-transcription-reactions">
               <div class="au5-reactions">
-                <div class="reaction reaction-highlight">
+                <div class="reaction" reaction-type="task" data-blockId="${entry.transcriptBlockId}">
                   <span class="reaction-emoji">⚡</span>
                 </div>
-                <div class="reaction reaction-mute">
+                <div class="reaction" reaction-type="important" data-blockId="${entry.transcriptBlockId}">
                   <span class="reaction-emoji">🎯</span>
                 </div>
               </div>
@@ -539,6 +554,7 @@ class GoogleMeet {
   extractCaptionData(block) {
     var _a, _b;
     const blockId = block.getAttribute("data-blockid");
+    console.log("Extracting caption data from block:", blockId);
     const img = block.querySelector("img");
     const nameSpan = block.querySelector("span");
     const textDiv = Array.from(block.querySelectorAll("div")).find(

@@ -19,6 +19,7 @@ import {MessageTypes} from "./socket/types/enums";
 import {
   HubMessage,
   ListOfUsersInMeetingMessage,
+  ReactionAppliedMessage,
   StartTranscription,
   TranscriptionEntryMessage,
   UserJoinedInMeetingMessage
@@ -26,6 +27,7 @@ import {
 import {Chrome} from "./core/chromeBrowser";
 import {MeetingPlatformFactory} from "./core/platforms/meetingPlatformFactory";
 import {MeetingHubClient} from "./socket/meetingHubClient";
+import {PostMessageTypes} from "./core/constants";
 
 let meetingHubClient: MeetingHubClient;
 let meeting: Meeting;
@@ -36,7 +38,11 @@ let transcriptContainer: HTMLElement | null;
 const platform: IMeetingPlatform = new MeetingPlatformFactory(window.location.href).getPlatform();
 const browser = new Chrome();
 const domUtils = new DomUtils(browser);
-const windowMessageHandler = new WindowMessageHandler("Au5-ContentScript", "Au5-MeetingHubClient", handleWindowMessage);
+const windowMessageHandler = new WindowMessageHandler(
+  PostMessageTypes.ContentScript,
+  PostMessageTypes.MeetingHubClient,
+  PostWindowMessagesHandler.handleWindowMessage
+);
 
 (async function initMeetingRoutine(): Promise<void> {
   try {
@@ -61,7 +67,7 @@ const windowMessageHandler = new WindowMessageHandler("Au5-ContentScript", "Au5-
       users: []
     };
 
-    SidePanel.createSidePanel(config.service.companyName, meeting.id, config.service.direction);
+    SidePanel.createSidePanel(config, meeting.id);
     meetingHubClient = new MeetingHubClient(config, meeting.id);
     meetingHubClient.startConnection(); // TODO: Handle when the user clicks to join the meeting
 
@@ -143,64 +149,6 @@ namespace Pipelines {
     }
     return ctx;
   };
-}
-
-function handleWindowMessage(action: string, payload: HubMessage): void {
-  switch (action) {
-    case MessageTypes.NotifyRealTimeTranscription:
-      const transcriptEntry = payload as TranscriptionEntryMessage;
-
-      SidePanel.addTranscription({
-        meetingId: transcriptEntry.meetingId,
-        transcriptBlockId: transcriptEntry.transcriptBlockId,
-        speaker: transcriptEntry.speaker,
-        transcript: transcriptEntry.transcript,
-        timestamp: transcriptEntry.timestamp
-      } as TranscriptionEntry);
-      break;
-
-    case MessageTypes.NotifyUserJoining:
-      const userJoinedMsg = payload as UserJoinedInMeetingMessage;
-
-      if (!userJoinedMsg.user) {
-        return;
-      }
-
-      const item: User = {
-        id: userJoinedMsg.user.id,
-        fullName: userJoinedMsg.user.fullName,
-        pictureUrl: userJoinedMsg.user.pictureUrl,
-        joinedAt: userJoinedMsg.user.joinedAt || new Date()
-      };
-      meeting.users.push(item);
-      SidePanel.usersJoined(item, meeting.isStarted);
-      break;
-
-    case MessageTypes.TriggerTranscriptionStart:
-      SidePanel.showTranscriptionsContainer();
-      meeting.isStarted = true;
-      break;
-
-    case MessageTypes.ListOfUsersInMeeting:
-      const usersInMeeting = payload as ListOfUsersInMeetingMessage;
-
-      if (!usersInMeeting.users || !Array.isArray(usersInMeeting.users)) {
-        return;
-      }
-      usersInMeeting.users.forEach((user: User) => {
-        const item: User = {
-          id: user.id,
-          fullName: user.fullName,
-          pictureUrl: user.pictureUrl,
-          joinedAt: user.joinedAt || new Date()
-        };
-        meeting.users.push(item);
-        SidePanel.addParticipant(item);
-      });
-      break;
-    default:
-      console.warn("Unknown message action received:", action);
-  }
 }
 
 /**
@@ -291,6 +239,84 @@ function handleTranscriptMutations(mutations: MutationRecord[], ctx: PipelineCon
     console.error(err);
     if (!meeting.isEnded) {
       console.log("Error in transcript mutation observer:", err);
+    }
+  }
+}
+
+namespace PostWindowMessagesHandler {
+  export function handleWindowMessage(action: string, payload: HubMessage): void {
+    switch (action) {
+      case MessageTypes.NotifyRealTimeTranscription:
+        const transcriptEntry = payload as TranscriptionEntryMessage;
+
+        SidePanel.addTranscription({
+          meetingId: transcriptEntry.meetingId,
+          transcriptBlockId: transcriptEntry.transcriptBlockId,
+          speaker: transcriptEntry.speaker,
+          transcript: transcriptEntry.transcript,
+          timestamp: transcriptEntry.timestamp
+        } as TranscriptionEntry);
+        break;
+
+      case MessageTypes.NotifyUserJoining:
+        const userJoinedMsg = payload as UserJoinedInMeetingMessage;
+
+        if (!userJoinedMsg.user) {
+          return;
+        }
+
+        const item: User = {
+          id: userJoinedMsg.user.id,
+          fullName: userJoinedMsg.user.fullName,
+          pictureUrl: userJoinedMsg.user.pictureUrl,
+          joinedAt: userJoinedMsg.user.joinedAt || new Date()
+        };
+        meeting.users.push(item);
+        SidePanel.usersJoined(item, meeting.isStarted);
+        break;
+
+      case MessageTypes.TriggerTranscriptionStart:
+        SidePanel.showTranscriptionsContainer();
+        meeting.isStarted = true;
+        break;
+
+      case MessageTypes.ListOfUsersInMeeting:
+        const usersInMeeting = payload as ListOfUsersInMeetingMessage;
+
+        if (!usersInMeeting.users || !Array.isArray(usersInMeeting.users)) {
+          return;
+        }
+        usersInMeeting.users.forEach((user: User) => {
+          const item: User = {
+            id: user.id,
+            fullName: user.fullName,
+            pictureUrl: user.pictureUrl,
+            joinedAt: user.joinedAt || new Date()
+          };
+          meeting.users.push(item);
+          SidePanel.addParticipant(item);
+        });
+        break;
+
+      case MessageTypes.ReactionApplied:
+        const reactionMsg = payload as ReactionAppliedMessage;
+        if (!reactionMsg.meetingId || !reactionMsg.transcriptBlockId || !reactionMsg.user || !reactionMsg.reaction) {
+          return;
+        }
+        const reactionBlock = meeting.transcripts.find(t => t.id === reactionMsg.transcriptBlockId);
+        if (reactionBlock) {
+          if (!reactionBlock.reactions) {
+            reactionBlock.reactions = {};
+          }
+          if (!reactionBlock.reactions[reactionMsg.reaction]) {
+            reactionBlock.reactions[reactionMsg.reaction] = [];
+          }
+          reactionBlock.reactions[reactionMsg.reaction].push(reactionMsg.user);
+        }
+        SidePanel.addReaction(reactionMsg);
+        break;
+      default:
+        console.warn("Unknown message action received:", action);
     }
   }
 }

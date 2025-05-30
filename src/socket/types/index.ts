@@ -6,7 +6,8 @@ export type HubMessage =
   | UserJoinedInMeetingMessage
   | ListOfUsersInMeetingMessage
   | MeetingStartedMessage
-  | TranscriptionEntryMessage;
+  | TranscriptionEntryMessage
+  | ReactionAppliedMessage;
 
 export interface IMessage {
   readonly type: string;
@@ -46,4 +47,12 @@ export interface TranscriptionEntryMessage extends IMessage {
   transcript: string;
   timestamp: Date;
   readonly type: MessageTypes.NotifyRealTimeTranscription;
+}
+
+export interface ReactionAppliedMessage extends IMessage {
+  readonly type: MessageTypes.ReactionApplied;
+  meetingId: string;
+  transcriptBlockId: string;
+  user: User;
+  reaction: string;
 }
