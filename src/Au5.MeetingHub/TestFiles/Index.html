@@ -1,0 +1,211 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Meeting Chat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 600px;
+            margin: auto;
+            padding: 2rem;
+        }
+
+        #chat {
+            border: 1px solid #ccc;
+            padding: 1rem;
+            height: 300px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+
+        .message {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            background: #f4f4f4;
+        }
+
+            .message .sender {
+                font-weight: bold;
+            }
+
+            .message .time {
+                font-size: 0.8rem;
+                color: gray;
+                float: right;
+            }
+    </style>
+</head>
+<body>
+    <h2>Join Meeting Chat</h2>
+
+    <label>
+        Meeting ID:
+        <input type="text" id="meetingIdInput" value="dzc-awqw-ioi" />
+    </label>
+    <br><br>
+
+    <label>
+        Your Name:
+        <input type="text" id="nameInput" value="Mehdi Emrani" />
+    </label>
+    <br><br>
+
+    <label>
+        User ID (UUID):
+        <input type="text" id="userIdInput" style="width: 300px;" />
+        <button id="generateBtn">Generate</button>
+    </label>
+    <br><br>
+    <label>
+        Block ID (UUID):
+        <input type="text" id="blockId" style="width: 300px;" />
+        <button id="generateBlockIdBtn">Generate</button>
+    </label>
+    <br><br><br><br>
+    <label>
+        Picture URL:
+        <input type="text" id="pictureUrlInput" style="width: 300px;" value="https://contacts.zoho.com/file?ID=769156534&exp=6000&t=user&fs=thumb" />
+    </label>
+    <br><br>
+
+    <button id="joinBtn">Join Meeting</button>
+
+    <div id="chat" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px;"></div>
+
+    <br>
+    <input type="text" id="messageInput" placeholder="Type a message..." style="width: 80%;" disabled />
+    <button id="sendBtn" disabled>Send</button>
+
+    <script>
+        let connection;
+        let meetingId;
+
+        function generateUUID() {
+            const uuid = crypto.randomUUID();
+            document.getElementById("userIdInput").value = uuid;
+        }
+        function generateBlockUUID() {
+            const uuid = crypto.randomUUID();
+            document.getElementById("blockId").value = uuid;
+        }
+
+        document.getElementById("generateBtn").onclick = generateUUID;
+        document.getElementById("generateBlockIdBtn").onclick = generateBlockUUID;
+
+        document.getElementById("joinBtn").onclick = async function () {
+            const fullName = document.getElementById("nameInput").value.trim();
+            const userId = document.getElementById("userIdInput").value.trim();
+            const pictureUrl = document.getElementById("pictureUrlInput").value.trim();
+            meetingId = document.getElementById("meetingIdInput").value.trim();
+
+            if (!userId) {
+                alert("Please generate or enter a userId (UUID) before joining.");
+                return;
+            }
+            if (!fullName) {
+                alert("Please enter your name.");
+                return;
+            }
+            if (!meetingId) {
+                alert("Please enter a meeting ID.");
+                return;
+            }
+
+            document.getElementById("joinBtn").disabled = true;
+
+            connection = new signalR.HubConnectionBuilder()
+                .withUrl("https://localhost:7061/meetinghub")
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+
+            connection.on("ReceiveMessage", (message) => {
+                const chatDiv = document.getElementById("chat");
+                const type = message.header?.type;
+                const payload = message.payload;
+
+                if (type === "NotifyUserJoining") {
+                    chatDiv.innerHTML += `<div><em><strong>${payload.user.fullName}</strong> joined the meeting.</em></div>`;
+                } else if (type === "NotifyUserLeft") {
+                    chatDiv.innerHTML += `<div><em><strong>${payload.user.fullName}</strong> left the meeting.</em></div>`;
+                } else if (type === "NotifyRealTimeTranscription") {
+                    chatDiv.innerHTML += `<div class="message"><span class="sender">${payload.speaker.fullName}:</span> ${payload.transcript}</div>`;
+                } else if (type === "ListOfUsersInMeeting") {
+                    // Optionally show user list
+                    // payload.users is an array of User
+                } else if (type === "NotifyMeetHasBeenStarted") {
+                    chatDiv.innerHTML += `<div><em>Meeting has already started.</em></div>`;
+                } else if (type === "TriggerTranscriptionStart") {
+                    chatDiv.innerHTML += `<div><em>Transcription started.</em></div>`;
+                }
+                chatDiv.scrollTop = chatDiv.scrollHeight;
+            });
+
+            connection.onclose(() => {
+                document.getElementById("sendBtn").disabled = true;
+                document.getElementById("messageInput").disabled = true;
+                document.getElementById("joinBtn").disabled = false;
+            });
+
+            try {
+                await connection.start();
+                // Compose JoinMeetingDto with correct case-sensitive properties
+                await connection.invoke("JoinMeeting", {
+                    MeetingId: meetingId,
+                    Platform: "Google Meet",
+                    User: {
+                        id: userId,
+                        fullName: fullName,
+                        pictureUrl: pictureUrl
+                    }
+                });
+                document.getElementById("sendBtn").disabled = false;
+                document.getElementById("messageInput").disabled = false;
+                document.getElementById("messageInput").focus();
+            } catch (err) {
+                alert("Could not connect: " + err);
+                document.getElementById("joinBtn").disabled = false;
+            }
+        };
+
+        document.getElementById("sendBtn").onclick = async function () {
+            const transcript = document.getElementById("messageInput").value.trim();
+            const fullName = document.getElementById("nameInput").value.trim();
+            const userId = document.getElementById("userIdInput").value.trim();
+            const pictureUrl = document.getElementById("pictureUrlInput").value.trim();
+            const blockId = document.getElementById("blockId").value.trim();
+            if (!transcript || !meetingId || !userId) return;
+
+            try {
+                // Compose TranscriptionDto with correct case-sensitive properties
+                await connection.invoke("NotifyRealTimeTranscription", {
+                    MeetingId: meetingId,
+                    TranscriptionBlockId: blockId,
+                    Speaker: {
+                        Id: userId,
+                        FullName: fullName,
+                        PictureUrl: pictureUrl
+                    },
+                    Transcript: transcript,
+                    Timestamp: new Date().toISOString()
+                });
+                document.getElementById("messageInput").value = "";
+            } catch (err) {
+                alert("Send failed: " + err);
+            }
+        };
+
+        // Allow pressing Enter to send message
+        document.getElementById("messageInput").addEventListener("keydown", function (e) {
+            if (e.key === "Enter" && !document.getElementById("sendBtn").disabled) {
+                document.getElementById("sendBtn").click();
+            }
+        });
+
+        // Auto-generate a UUID on page load
+        window.onload = generateUUID;
+    </script>
+</body>
+</html>
