@@ -299,6 +299,7 @@ export default class SidePanel {
       existingReaction.appendChild(userSpan);
     }
   }
+
   public static destroy(): void {
     if (this.panelElement) {
       if (document.body.contains(this.panelElement)) {
