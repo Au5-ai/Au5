@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Au5 Chrome Extension
 
 Au5 is an open-source project that consists of three main components:
@@ -136,3 +137,6 @@ We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+=======
+HI
+>>>>>>> 04a5d6c807997bf0077e2cc4831795b47c6c6d2f
