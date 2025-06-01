@@ -5,6 +5,17 @@ export class ErrorMessages {
     "Invalid JSON in MeetingConfiguration environment variable.";
   static readonly RUNNING_BOT =
     "Error running the bot with the provided configuration.";
+  static browserCloseError: (
+    err: unknown
+  ) => `[Program] Error closing browser: ${err}`;
+}
+
+export namespace LogMessages {
+  export const Program = {
+    browserRequested: "[Program] Browser requested graceful shutdown.",
+    shutdownAlreadyInProgress: "[Program] Shutdown already in progress.",
+    closingBrowserInstance: "[Program] Closing browser instance.",
+  } as const;
 }
 
 export const USER_AGENT =

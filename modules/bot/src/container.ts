@@ -3,7 +3,7 @@ import { startMeetingBot } from "./program";
 import { MeetingConfiguration } from "./types";
 
 async function main() {
-  const rawConfig = process.env.BOT_CONFIG;
+  const rawConfig = process.env.MEETING_CONFIG;
   if (!rawConfig) {
     console.error(ErrorMessages.MEETING_CONFIG_NOT_SET);
     process.exit(1);

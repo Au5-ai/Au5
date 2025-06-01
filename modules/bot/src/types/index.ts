@@ -10,6 +10,7 @@ export type MeetingConfiguration = {
   hubUrl: string;
   platform: MeetingPlatform;
   meetingUrl: string | null;
+  model: "liveVoice" | "liveCaption";
   botDisplayName: string;
   meetingId: string;
   language?: string | null;

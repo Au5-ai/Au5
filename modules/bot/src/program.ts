@@ -3,11 +3,17 @@ import { logger } from "./utils/logger";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { chromium } from "playwright-extra";
 import { Browser, Page } from "playwright-core";
-import { BROWSER_ARGS, USER_AGENT } from "./constants";
-import { GoogleMeet } from "./platforms/googleMeet";
+import {
+  BROWSER_ARGS,
+  ErrorMessages,
+  LogMessages,
+  USER_AGENT,
+} from "./constants";
+import { GoogleMeet, IMeetingPlatform } from "./platforms/googleMeet";
 
 let shuttingDown = false;
 let browser: Browser | null = null;
+let meetingPlatform: IMeetingPlatform;
 
 /**
  * Starts the meeting bot with the specified configuration.
@@ -30,7 +36,7 @@ let browser: Browser | null = null;
 export async function startMeetingBot(
   config: MeetingConfiguration
 ): Promise<void> {
-  logger.info(`Launching meeting bot with configuration:`, {
+  logger.info(`[Program] Launching meeting bot with configuration:`, {
     platform: config.platform,
     meetingUrl: config.meetingUrl,
     botDisplayName: config.botDisplayName,
@@ -55,14 +61,13 @@ export async function startMeetingBot(
   });
 
   const page = await context.newPage();
-
-  await exposeGracefulLeave(page);
-
+  await registerGracefulShutdownHandler(page);
   await applyAntiDetection(page);
 
   switch (config.platform) {
     case "google_meet":
-      await new GoogleMeet(config, page).hanlde();
+      meetingPlatform = new GoogleMeet(config, page);
+      await meetingPlatform.hanlde();
       break;
     case "zoom":
       // await handleZoom(config, page);
@@ -71,34 +76,34 @@ export async function startMeetingBot(
       // await handleTeams(config, page);
       break;
     default:
-      logger.info(`Error: Unsupported platform received: ${config.platform}`);
-      throw new Error(`Unsupported platform: ${config.platform}`);
+      logger.info(
+        `[Program] Error: Unsupported platform received: ${config.platform}`
+      );
+      throw new Error(`[Program] Unsupported platform: ${config.platform}`);
   }
 
-  logger.info("Bot execution finished or awaiting external command.");
+  logger.info("[Program] Bot execution finished or awaiting external command.");
 }
 
 /**
- * Exposes a function named `triggerNodeGracefulLeave` to the browser context via the provided Playwright {@link Page}.
- * When invoked from the browser, this function triggers a graceful shutdown sequence on the Node.js side,
- * unless a shutdown is already in progress.
+ * Registers a function named `triggerNodeGracefulLeave` in the browser context,
+ * allowing the browser to request a graceful shutdown of the Node.js process.
+ *
+ * If a shutdown is already in progress, the request is ignored.
  *
  * @param page - The Playwright {@link Page} instance to which the function will be exposed.
- * @returns A promise that resolves when the function has been successfully exposed.
  */
-async function exposeGracefulLeave(page: Page): Promise<void> {
+
+async function registerGracefulShutdownHandler(page: Page): Promise<void> {
   await page.exposeFunction("triggerNodeGracefulLeave", async () => {
-    logger.info(
-      "[GracefulLeave] Browser context requested graceful shutdown via triggerNodeGracefulLeave."
-    );
-    if (!shuttingDown) {
-      logger.info("[GracefulLeave] Initiating graceful leave sequence...");
-      await performGracefulLeave(page);
-    } else {
-      logger.info(
-        "[GracefulLeave] Shutdown already in progress. Ignoring duplicate trigger."
-      );
+    logger.info(`${LogMessages.Program.browserRequested}`);
+
+    if (shuttingDown) {
+      logger.info(`${LogMessages.Program.shutdownAlreadyInProgress}`);
+      return;
     }
+
+    await performGracefulLeave();
   });
 }
 
@@ -130,3 +135,77 @@ async function applyAntiDetection(page: Page): Promise<void> {
     Object.defineProperty(window, "outerHeight", { get: () => 1080 });
   });
 }
+
+/**
+ * Handles graceful shutdown of the bot process and browser.
+ * This function is compatible with other shutdown methods and ensures
+ * only one shutdown sequence runs at a time.
+ *
+ * @param signal - The signal that triggered the shutdown (e.g., "SIGINT", "SIGTERM").
+ */
+const gracefulShutdown = async (signal: string) => {
+  if (shuttingDown) {
+    logger.info(LogMessages.Program.shutdownAlreadyInProgress);
+    return;
+  }
+
+  shuttingDown = true;
+
+  try {
+    if (browser && browser.isConnected()) {
+      logger.info(LogMessages.Program.closingBrowserInstance);
+      await browser.close();
+    }
+  } catch (err) {
+    logger.error(ErrorMessages.browserCloseError(err));
+  } finally {
+    process.exit(signal === "SIGINT" ? 130 : 143);
+  }
+};
+
+async function performGracefulLeave(): Promise<void> {
+  if (shuttingDown) {
+    logger.info("[Program] Already in progress, ignoring duplicate call.");
+    return;
+  }
+  shuttingDown = true;
+
+  let leaveSuccess = false;
+  try {
+    leaveSuccess = await meetingPlatform.leave();
+  } catch (error) {
+    logger.error(
+      `[Program] Error during leave: ${
+        error instanceof Error ? error.message : error
+      }`
+    );
+  }
+
+  try {
+    if (browser && browser.isConnected()) {
+      await browser.close();
+    } else {
+      logger.info(
+        "[Program] Browser instance already closed or not available."
+      );
+    }
+  } catch (error) {
+    logger.error(
+      `[Program] Error closing browser: ${
+        error instanceof Error ? error.message : error
+      }`
+    );
+  }
+
+  if (leaveSuccess) {
+    process.exit(0);
+  } else {
+    logger.info(
+      "[Program] Leave attempt failed or button not found. Exiting process with code 1 (Failure). Waiting for external termination."
+    );
+    process.exit(1);
+  }
+}
+
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
