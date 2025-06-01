@@ -1,4 +1,5 @@
 import { ErrorMessages } from "./constants";
+import { startMeetingBot } from "./program";
 import { MeetingConfiguration } from "./types";
 
 async function main() {
@@ -17,7 +18,7 @@ async function main() {
   }
 
   try {
-    await runBot(parsedConfig);
+    await startMeetingBot(parsedConfig);
   } catch (error) {
     console.error(ErrorMessages.RUNNING_BOT, error);
     process.exit(1);
