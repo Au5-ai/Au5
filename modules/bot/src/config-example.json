@@ -1,0 +1,21 @@
+{
+  "hubUrl": "https://hub.example.com",
+  "platform": "googleMeet",
+  "meetingUrl": "https://meet.google.com/abc-defg-hij",
+  "model": "liveVoice",
+  "botDisplayName": "AutoBot",
+  "meetingId": "meeting-12345",
+  "language": "en-US",
+  "autoLeave": {
+    "waitingEnter": 30000,
+    "noParticipant": 60000,
+    "allParticipantsLeft": 120000
+  },
+  "meetingDom": {
+    "leaveButton": "[aria-label=\"Leave call\"]",
+    "enterNameField": "input[type=\"text\"][aria-label=\"Your name\"]",
+    "joinButton": "//button[.//span[text()=\"Ask to join\"]]",
+    "muteButton": "[aria-label*=\"Turn off microphone\"]",
+    "cameraOffButton": "[aria-label*=\"Turn off camera\"]"
+  }
+}
