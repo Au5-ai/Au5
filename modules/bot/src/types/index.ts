@@ -16,3 +16,8 @@ export type MeetingConfiguration = {
   language?: string | null;
   autoLeave: AutoLeaveTimeouts;
 };
+
+export interface IMeetingPlatform {
+  hanlde(): Promise<void>;
+  leave(): Promise<boolean>;
+}

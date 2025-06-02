@@ -1,4 +1,4 @@
-import { MeetingConfiguration } from "./types";
+import { IMeetingPlatform, MeetingConfiguration } from "./types";
 import { logger } from "./utils/logger";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { chromium } from "playwright-extra";
@@ -9,7 +9,7 @@ import {
   LogMessages,
   USER_AGENT,
 } from "./constants";
-import { GoogleMeet, IMeetingPlatform } from "./platforms/googleMeet";
+import { GoogleMeet } from "./platforms/googleMeet";
 
 let shuttingDown = false;
 let browser: Browser | null = null;
