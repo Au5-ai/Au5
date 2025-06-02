@@ -65,9 +65,9 @@ export async function startMeetingBot(
   await applyAntiDetection(page);
 
   switch (config.platform) {
-    case "google_meet":
+    case "googleMeet":
       meetingPlatform = new GoogleMeet(config, page);
-      await meetingPlatform.hanlde();
+      await meetingPlatform.join();
       break;
     case "zoom":
       // await handleZoom(config, page);
