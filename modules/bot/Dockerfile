@@ -50,13 +50,13 @@
     RUN mkdir -p /root/ms-playwright && chmod -R 777 /root/ms-playwright
     
     # Copy an entrypoint script that will start Xvfb and run our bot
-    COPY entrypoint.sh /app/entrypoint.sh
+    COPY runner.sh /app/runner.sh
     RUN chmod +x /app/entrypoint.sh
     
     # Expose DISPLAY port for headful browser operations (adjust as needed)
     ENV DISPLAY=:99
     
     # Set the command to run our entrypoint script
-    CMD ["bash", "/app/entrypoint.sh"]
+    CMD ["bash", "/app/runner.sh"]
     
     

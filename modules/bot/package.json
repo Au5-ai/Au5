@@ -2,17 +2,13 @@
   "name": "au5-bot",
   "version": "1.0.0",
   "description": "",
-  "type": "commonjs",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/program.js",
+  "types": "dist/program.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "dev": "tsx src/index.ts"
+    "build": "npx tsc && vite build --mode production",
+    "dev": "npx tsc && vite build --mode development"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "pino": "^9.7.0",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
