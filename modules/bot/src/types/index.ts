@@ -48,6 +48,24 @@ export type MeetingConfiguration = {
  * @returns Promise that resolves to true if the bot left successfully, false otherwise.
  */
 export interface IMeetingPlatform {
-  join(): Promise<void>;
+  join(): Promise<boolean>;
   leave(): Promise<boolean>;
+}
+
+export interface Speaker {
+  fullName: string;
+  pictureUrl: string;
+}
+
+export interface JoinMeeting {
+  meetingId: string;
+}
+
+export interface TranscriptionEntryMessage {
+  meetingId: string;
+  transcriptBlockId: string;
+  speaker: Speaker;
+  transcript: string;
+  timestamp: Date;
+  readonly type: "NotifyRealTimeTranscription";
 }

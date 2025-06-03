@@ -5,135 +5,128 @@ import { randomDelay } from "../utils";
 
 export class GoogleMeet implements IMeetingPlatform {
   constructor(private config: MeetingConfiguration, private page: Page) {}
-  leaveButton = `//button[@aria-label="Leave call"]`;
-  enterNameField = 'input[type="text"][aria-label="Your name"]';
-  joinButton = '//button[.//span[text()="Ask to join"]]';
-  muteButton = '[aria-label*="Turn off microphone"]';
-  cameraOffButton = '[aria-label*="Turn off camera"]';
 
-  async join(): Promise<void> {
-    if (!this.config.meetingUrl) {
-      logger.info(
-        "[GoogleMeet Error]: Meeting URL is required for Google Meet but is null."
+  private selectors = {
+    leaveButton: `//button[@aria-label="Leave call"]`,
+    enterNameField: 'input[type="text"][aria-label="Your name"]',
+    joinButton: '//button[.//span[text()="Ask to join"]]',
+    muteButton: '[aria-label*="Turn off microphone"]',
+    cameraOffButton: '[aria-label*="Turn off camera"]',
+  };
+
+  async join(): Promise<boolean> {
+    const { meetingUrl, botDisplayName } = this.config;
+
+    if (!meetingUrl) {
+      logger.error(
+        "[GoogleMeet][Join] Meeting URL is missing in the configuration."
       );
-      return;
+      return false;
     }
 
     try {
-      await this.joinMeeting(
-        this.page,
-        this.config.meetingUrl,
-        this.config.botDisplayName
-      );
-    } catch (error: any) {
-      console.error(error.message);
-      return;
-    }
-
-    try {
-      const [isAdmitted] = await Promise.all([
-        this.waitForMeetingAdmission().catch((error) => {
-          logger.info(error.message);
-          return false;
-        }),
-      ]);
-
+      await this.navigateAndPrepare(meetingUrl, botDisplayName);
+      const isAdmitted = await this.waitForMeetingAdmission();
       if (!isAdmitted) {
-        console.error("Bot was not admitted into the meeting");
-        return;
+        logger.warn(
+          `[GoogleMeet][Join] Bot "${botDisplayName}" was not admitted to the meeting.`
+        );
+        return false;
       }
 
-      //join the meeting
+      return true;
     } catch (error: any) {
-      console.error(error.message);
-      return;
+      logger.error(
+        `[GoogleMeet][Join] Failed to join meeting: ${error.message}`
+      );
+    }
+    return false;
+  }
+
+  async leave(): Promise<boolean> {
+    if (!this.page || this.page.isClosed()) {
+      logger.warn(
+        "[GoogleMeet][Leave] Page context is unavailable or already closed."
+      );
+      return false;
+    }
+
+    try {
+      const result = await this.page.evaluate(() => {
+        const leaveFn = (window as any).performLeaveAction;
+        if (typeof leaveFn === "function") {
+          return leaveFn();
+        }
+        console.error(
+          "[GoogleMeet][Leave] performLeaveAction function not found on window."
+        );
+        return false;
+      });
+
+      return result;
+    } catch (error: any) {
+      logger.error(
+        `[GoogleMeet][Leave] Failed to trigger leave action: ${error.message}`
+      );
+      return false;
     }
   }
 
-  waitForMeetingAdmission = async (): Promise<boolean> => {
+  private async waitForMeetingAdmission(): Promise<boolean> {
     try {
-      await this.page.waitForSelector(this.leaveButton, {
+      await this.page.waitForSelector(this.selectors.leaveButton, {
         timeout: this.config.autoLeave.waitingEnter,
       });
       return true;
     } catch {
-      throw new Error(
-        "[GoogleMeet Error] Bot was not admitted into the meeting within the timeout period"
+      logger.warn(
+        "[GoogleMeet][Admission] Bot was not admitted within the timeout period."
       );
+      return false;
     }
-  };
+  }
 
-  joinMeeting = async (page: Page, meetingUrl: string, botName: string) => {
-    // const enterNameField = 'input[type="text"][aria-label="Your name"]';
-    // const joinButton = '//button[.//span[text()="Ask to join"]]';
-    // const muteButton = '[aria-label*="Turn off microphone"]';
-    // const cameraOffButton = '[aria-label*="Turn off camera"]';
+  private async navigateAndPrepare(
+    meetingUrl: string,
+    botName: string
+  ): Promise<void> {
+    await this.page.goto(meetingUrl, { waitUntil: "networkidle" });
+    await this.page.bringToFront();
+    await this.page.waitForTimeout(5000 + randomDelay(1000));
 
-    await page.goto(meetingUrl, { waitUntil: "networkidle" });
-    await page.bringToFront();
-    await page.waitForTimeout(5000);
-    await page.waitForTimeout(randomDelay(1000));
-    await page.waitForSelector(this.enterNameField, {
+    await this.page.waitForSelector(this.selectors.enterNameField, {
       timeout: 120000,
     });
-    await page.waitForTimeout(randomDelay(1000));
-    await page.fill(this.enterNameField, botName);
+    await this.page.fill(this.selectors.enterNameField, botName);
 
-    try {
-      await page.waitForTimeout(randomDelay(500));
-      await page.click(this.muteButton, { timeout: 200 });
-      await page.waitForTimeout(200);
-    } catch (e) {
-      logger.info("Microphone already muted or not found.");
-    }
+    await this.muteMic();
+    await this.turnOffCamera();
 
-    try {
-      await page.waitForTimeout(randomDelay(500));
-      await page.click(this.cameraOffButton, {
-        timeout: 200,
-      });
-      await page.waitForTimeout(200);
-    } catch (e) {
-      logger.info("Camera already off or not found.");
-    }
-
-    await page.waitForSelector(this.joinButton, {
+    await this.page.waitForSelector(this.selectors.joinButton, {
       timeout: 60000,
     });
-    await page.click(this.joinButton);
-    logger.info(`${botName} joined the Meeting.`);
-  };
+    await this.page.click(this.selectors.joinButton);
+  }
 
-  async leave(): Promise<boolean> {
-    logger.info(
-      "[leaveGoogleMeet] Triggering leave action in browser context..."
-    );
-    if (!this.page || this.page.isClosed()) {
-      logger.info("[leaveGoogleMeet] Page is not available or closed.");
-      return false;
-    }
+  private async muteMic(): Promise<void> {
     try {
-      // Call the function exposed within the page's evaluate context
-      const result = await this.page.evaluate(async () => {
-        if (typeof (window as any).performLeaveAction === "function") {
-          return await (window as any).performLeaveAction();
-        } else {
-          (window as any).logger.infoBot?.(
-            "[Node Eval Error] performLeaveAction function not found on window."
-          );
-          console.error(
-            "[Node Eval Error] performLeaveAction function not found on window."
-          );
-          return false;
-        }
-      });
-      logger.info(`[leaveGoogleMeet] Browser leave action result: ${result}`);
-      return result;
-    } catch (error: any) {
-      logger.info(
-        `[leaveGoogleMeet] Error calling performLeaveAction in browser: ${error.message}`
+      await this.page.waitForTimeout(randomDelay(500));
+      await this.page.click(this.selectors.muteButton, { timeout: 200 });
+    } catch {
+      logger.warn(
+        "[GoogleMeet][Prepare] Microphone was already muted or mute button not found."
       );
-      return false;
+    }
+  }
+
+  private async turnOffCamera(): Promise<void> {
+    try {
+      await this.page.waitForTimeout(randomDelay(500));
+      await this.page.click(this.selectors.cameraOffButton, { timeout: 200 });
+    } catch {
+      logger.warn(
+        "[GoogleMeet][Prepare] Camera was already off or button not found."
+      );
     }
   }
 }

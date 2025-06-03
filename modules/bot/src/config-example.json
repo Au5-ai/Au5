@@ -10,12 +10,5 @@
     "waitingEnter": 30000,
     "noParticipant": 60000,
     "allParticipantsLeft": 120000
-  },
-  "meetingDom": {
-    "leaveButton": "[aria-label=\"Leave call\"]",
-    "enterNameField": "input[type=\"text\"][aria-label=\"Your name\"]",
-    "joinButton": "//button[.//span[text()=\"Ask to join\"]]",
-    "muteButton": "[aria-label*=\"Turn off microphone\"]",
-    "cameraOffButton": "[aria-label*=\"Turn off camera\"]"
   }
 }

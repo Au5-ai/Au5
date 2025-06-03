@@ -10,10 +10,11 @@
     "dev": "npx tsc"
   },
   "dependencies": {
+    "@microsoft/signalr": "^8.0.7",
     "pino": "^9.7.0",
-    "puppeteer-extra-plugin-stealth": "^2.11.2",
     "playwright": "^1.51.1",
-    "playwright-extra": "^4.3.6"
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   },
   "devDependencies": {
     "@types/node": "^22.13.13",

@@ -67,7 +67,10 @@ export async function startMeetingBot(
   switch (config.platform) {
     case "googleMeet":
       meetingPlatform = new GoogleMeet(config, page);
-      await meetingPlatform.join();
+      const isJoined = await meetingPlatform.join();
+      if (isJoined) {
+        connectToHub();
+      }
       break;
     case "zoom":
       // await handleZoom(config, page);
