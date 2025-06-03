@@ -1,12 +1,20 @@
-import { logger } from "../utils/logger";
-import { randomDelay } from "../utils";
-export class GoogleMeet {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GoogleMeet = void 0;
+const logger_1 = require("../utils/logger");
+const utils_1 = require("../utils");
+class GoogleMeet {
     constructor(config, page) {
         this.config = config;
         this.page = page;
+        this.leaveButton = `//button[@aria-label="Leave call"]`;
+        this.enterNameField = 'input[type="text"][aria-label="Your name"]';
+        this.joinButton = '//button[.//span[text()="Ask to join"]]';
+        this.muteButton = '[aria-label*="Turn off microphone"]';
+        this.cameraOffButton = '[aria-label*="Turn off camera"]';
         this.waitForMeetingAdmission = async () => {
             try {
-                await this.page.waitForSelector(this.config.meetingDom.leaveButton, {
+                await this.page.waitForSelector(this.leaveButton, {
                     timeout: this.config.autoLeave.waitingEnter,
                 });
                 return true;
@@ -23,41 +31,40 @@ export class GoogleMeet {
             await page.goto(meetingUrl, { waitUntil: "networkidle" });
             await page.bringToFront();
             await page.waitForTimeout(5000);
-            await page.waitForTimeout(randomDelay(1000));
-            await page.waitForSelector(this.config.meetingDom.enterNameField, {
+            await page.waitForTimeout((0, utils_1.randomDelay)(1000));
+            await page.waitForSelector(this.enterNameField, {
                 timeout: 120000,
             });
-            await page.waitForTimeout(randomDelay(1000));
-            await page.fill(this.config.meetingDom.enterNameField, botName);
+            await page.waitForTimeout((0, utils_1.randomDelay)(1000));
+            await page.fill(this.enterNameField, botName);
             try {
-                await page.waitForTimeout(randomDelay(500));
-                await page.click(this.config.meetingDom.muteButton, { timeout: 200 });
+                await page.waitForTimeout((0, utils_1.randomDelay)(500));
+                await page.click(this.muteButton, { timeout: 200 });
                 await page.waitForTimeout(200);
             }
             catch (e) {
-                logger.info("Microphone already muted or not found.");
+                logger_1.logger.info("Microphone already muted or not found.");
             }
             try {
-                await page.waitForTimeout(randomDelay(500));
-                await page.click(this.config.meetingDom.cameraOffButton, {
+                await page.waitForTimeout((0, utils_1.randomDelay)(500));
+                await page.click(this.cameraOffButton, {
                     timeout: 200,
                 });
                 await page.waitForTimeout(200);
             }
             catch (e) {
-                logger.info("Camera already off or not found.");
+                logger_1.logger.info("Camera already off or not found.");
             }
-            await page.waitForSelector(this.config.meetingDom.joinButton, {
+            await page.waitForSelector(this.joinButton, {
                 timeout: 60000,
             });
-            await page.click(this.config.meetingDom.joinButton);
-            logger.info(`${botName} joined the Meeting.`);
+            await page.click(this.joinButton);
+            logger_1.logger.info(`${botName} joined the Meeting.`);
         };
     }
     async join() {
-        //const leaveButton = `//button[@aria-label="Leave call"]`;
         if (!this.config.meetingUrl) {
-            logger.info("[GoogleMeet Error]: Meeting URL is required for Google Meet but is null.");
+            logger_1.logger.info("[GoogleMeet Error]: Meeting URL is required for Google Meet but is null.");
             return;
         }
         try {
@@ -70,7 +77,7 @@ export class GoogleMeet {
         try {
             const [isAdmitted] = await Promise.all([
                 this.waitForMeetingAdmission().catch((error) => {
-                    logger.info(error.message);
+                    logger_1.logger.info(error.message);
                     return false;
                 }),
             ]);
@@ -86,9 +93,9 @@ export class GoogleMeet {
         }
     }
     async leave() {
-        logger.info("[leaveGoogleMeet] Triggering leave action in browser context...");
+        logger_1.logger.info("[leaveGoogleMeet] Triggering leave action in browser context...");
         if (!this.page || this.page.isClosed()) {
-            logger.info("[leaveGoogleMeet] Page is not available or closed.");
+            logger_1.logger.info("[leaveGoogleMeet] Page is not available or closed.");
             return false;
         }
         try {
@@ -103,12 +110,13 @@ export class GoogleMeet {
                     return false;
                 }
             });
-            logger.info(`[leaveGoogleMeet] Browser leave action result: ${result}`);
+            logger_1.logger.info(`[leaveGoogleMeet] Browser leave action result: ${result}`);
             return result;
         }
         catch (error) {
-            logger.info(`[leaveGoogleMeet] Error calling performLeaveAction in browser: ${error.message}`);
+            logger_1.logger.info(`[leaveGoogleMeet] Error calling performLeaveAction in browser: ${error.message}`);
             return false;
         }
     }
 }
+exports.GoogleMeet = GoogleMeet;

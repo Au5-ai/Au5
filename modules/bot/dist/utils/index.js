@@ -1,8 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.randomDelay = randomDelay;
 /**
  * Returns a random delay within +/- 10% of the given amount.
  * Ensures the result is always positive and at least 0.
  */
-export function randomDelay(amount) {
+function randomDelay(amount) {
     const variation = amount * 0.1;
     const min = Math.max(0, amount - variation);
     const max = amount + variation;

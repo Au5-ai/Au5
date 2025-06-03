@@ -5,10 +5,13 @@ import { randomDelay } from "../utils";
 
 export class GoogleMeet implements IMeetingPlatform {
   constructor(private config: MeetingConfiguration, private page: Page) {}
+  leaveButton = `//button[@aria-label="Leave call"]`;
+  enterNameField = 'input[type="text"][aria-label="Your name"]';
+  joinButton = '//button[.//span[text()="Ask to join"]]';
+  muteButton = '[aria-label*="Turn off microphone"]';
+  cameraOffButton = '[aria-label*="Turn off camera"]';
 
   async join(): Promise<void> {
-    //const leaveButton = `//button[@aria-label="Leave call"]`;
-
     if (!this.config.meetingUrl) {
       logger.info(
         "[GoogleMeet Error]: Meeting URL is required for Google Meet but is null."
@@ -49,7 +52,7 @@ export class GoogleMeet implements IMeetingPlatform {
 
   waitForMeetingAdmission = async (): Promise<boolean> => {
     try {
-      await this.page.waitForSelector(this.config.meetingDom.leaveButton, {
+      await this.page.waitForSelector(this.leaveButton, {
         timeout: this.config.autoLeave.waitingEnter,
       });
       return true;
@@ -70,15 +73,15 @@ export class GoogleMeet implements IMeetingPlatform {
     await page.bringToFront();
     await page.waitForTimeout(5000);
     await page.waitForTimeout(randomDelay(1000));
-    await page.waitForSelector(this.config.meetingDom.enterNameField, {
+    await page.waitForSelector(this.enterNameField, {
       timeout: 120000,
     });
     await page.waitForTimeout(randomDelay(1000));
-    await page.fill(this.config.meetingDom.enterNameField, botName);
+    await page.fill(this.enterNameField, botName);
 
     try {
       await page.waitForTimeout(randomDelay(500));
-      await page.click(this.config.meetingDom.muteButton, { timeout: 200 });
+      await page.click(this.muteButton, { timeout: 200 });
       await page.waitForTimeout(200);
     } catch (e) {
       logger.info("Microphone already muted or not found.");
@@ -86,7 +89,7 @@ export class GoogleMeet implements IMeetingPlatform {
 
     try {
       await page.waitForTimeout(randomDelay(500));
-      await page.click(this.config.meetingDom.cameraOffButton, {
+      await page.click(this.cameraOffButton, {
         timeout: 200,
       });
       await page.waitForTimeout(200);
@@ -94,10 +97,10 @@ export class GoogleMeet implements IMeetingPlatform {
       logger.info("Camera already off or not found.");
     }
 
-    await page.waitForSelector(this.config.meetingDom.joinButton, {
+    await page.waitForSelector(this.joinButton, {
       timeout: 60000,
     });
-    await page.click(this.config.meetingDom.joinButton);
+    await page.click(this.joinButton);
     logger.info(`${botName} joined the Meeting.`);
   };
 

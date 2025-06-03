@@ -1,8 +1,14 @@
-import { logger } from "./utils/logger";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import { chromium } from "playwright-extra";
-import { BROWSER_ARGS, ErrorMessages, LogMessages, USER_AGENT, } from "./constants";
-import { GoogleMeet } from "./platforms/googleMeet";
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.startMeetingBot = startMeetingBot;
+const logger_1 = require("./utils/logger");
+const puppeteer_extra_plugin_stealth_1 = __importDefault(require("puppeteer-extra-plugin-stealth"));
+const playwright_extra_1 = require("playwright-extra");
+const constants_1 = require("./constants");
+const googleMeet_1 = require("./platforms/googleMeet");
 let shuttingDown = false;
 let browser = null;
 let meetingPlatform;
@@ -24,25 +30,25 @@ let meetingPlatform;
  *   further commands.
  * @throws {Error} If an unsupported platform is specified in the configuration.
  */
-export async function startMeetingBot(config) {
-    logger.info(`[Program] Launching meeting bot with configuration:`, {
+async function startMeetingBot(config) {
+    logger_1.logger.info(`[Program] Launching meeting bot with configuration:`, {
         platform: config.platform,
         meetingUrl: config.meetingUrl,
         botDisplayName: config.botDisplayName,
         language: config.language,
         meetingId: config.meetingId,
     });
-    const stealth = StealthPlugin();
+    const stealth = (0, puppeteer_extra_plugin_stealth_1.default)();
     stealth.enabledEvasions.delete("iframe.contentWindow");
     stealth.enabledEvasions.delete("media.codecs");
-    chromium.use(stealth);
-    browser = await chromium.launch({
+    playwright_extra_1.chromium.use(stealth);
+    browser = await playwright_extra_1.chromium.launch({
         headless: false,
-        args: BROWSER_ARGS,
+        args: constants_1.BROWSER_ARGS,
     });
     const context = await browser.newContext({
         permissions: ["camera", "microphone"],
-        userAgent: USER_AGENT,
+        userAgent: constants_1.USER_AGENT,
         viewport: { width: 1280, height: 720 },
     });
     const page = await context.newPage();
@@ -50,7 +56,7 @@ export async function startMeetingBot(config) {
     await applyAntiDetection(page);
     switch (config.platform) {
         case "googleMeet":
-            meetingPlatform = new GoogleMeet(config, page);
+            meetingPlatform = new googleMeet_1.GoogleMeet(config, page);
             await meetingPlatform.join();
             break;
         case "zoom":
@@ -60,10 +66,10 @@ export async function startMeetingBot(config) {
             // await handleTeams(config, page);
             break;
         default:
-            logger.info(`[Program] Error: Unsupported platform received: ${config.platform}`);
+            logger_1.logger.info(`[Program] Error: Unsupported platform received: ${config.platform}`);
             throw new Error(`[Program] Unsupported platform: ${config.platform}`);
     }
-    logger.info("[Program] Bot execution finished or awaiting external command.");
+    logger_1.logger.info("[Program] Bot execution finished or awaiting external command.");
 }
 /**
  * Registers a function named `triggerNodeGracefulLeave` in the browser context,
@@ -75,9 +81,9 @@ export async function startMeetingBot(config) {
  */
 async function registerGracefulShutdownHandler(page) {
     await page.exposeFunction("triggerNodeGracefulLeave", async () => {
-        logger.info(`${LogMessages.Program.browserRequested}`);
+        logger_1.logger.info(`${constants_1.LogMessages.Program.browserRequested}`);
         if (shuttingDown) {
-            logger.info(`${LogMessages.Program.shutdownAlreadyInProgress}`);
+            logger_1.logger.info(`${constants_1.LogMessages.Program.shutdownAlreadyInProgress}`);
             return;
         }
         await performGracefulLeave();
@@ -120,18 +126,18 @@ async function applyAntiDetection(page) {
  */
 const gracefulShutdown = async (signal) => {
     if (shuttingDown) {
-        logger.info(LogMessages.Program.shutdownAlreadyInProgress);
+        logger_1.logger.info(constants_1.LogMessages.Program.shutdownAlreadyInProgress);
         return;
     }
     shuttingDown = true;
     try {
         if (browser && browser.isConnected()) {
-            logger.info(LogMessages.Program.closingBrowserInstance);
+            logger_1.logger.info(constants_1.LogMessages.Program.closingBrowserInstance);
             await browser.close();
         }
     }
     catch (err) {
-        logger.error(ErrorMessages.browserCloseError(err));
+        logger_1.logger.error(constants_1.ErrorMessages.browserCloseError(err));
     }
     finally {
         process.exit(signal === "SIGINT" ? 130 : 143);
@@ -139,7 +145,7 @@ const gracefulShutdown = async (signal) => {
 };
 async function performGracefulLeave() {
     if (shuttingDown) {
-        logger.info("[Program] Already in progress, ignoring duplicate call.");
+        logger_1.logger.info("[Program] Already in progress, ignoring duplicate call.");
         return;
     }
     shuttingDown = true;
@@ -148,24 +154,24 @@ async function performGracefulLeave() {
         leaveSuccess = await meetingPlatform.leave();
     }
     catch (error) {
-        logger.error(`[Program] Error during leave: ${error instanceof Error ? error.message : error}`);
+        logger_1.logger.error(`[Program] Error during leave: ${error instanceof Error ? error.message : error}`);
     }
     try {
         if (browser && browser.isConnected()) {
             await browser.close();
         }
         else {
-            logger.info("[Program] Browser instance already closed or not available.");
+            logger_1.logger.info("[Program] Browser instance already closed or not available.");
         }
     }
     catch (error) {
-        logger.error(`[Program] Error closing browser: ${error instanceof Error ? error.message : error}`);
+        logger_1.logger.error(`[Program] Error closing browser: ${error instanceof Error ? error.message : error}`);
     }
     if (leaveSuccess) {
         process.exit(0);
     }
     else {
-        logger.info("[Program] Leave attempt failed or button not found. Exiting process with code 1 (Failure). Waiting for external termination.");
+        logger_1.logger.info("[Program] Leave attempt failed or button not found. Exiting process with code 1 (Failure). Waiting for external termination.");
         process.exit(1);
     }
 }

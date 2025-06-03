@@ -32,3 +32,18 @@ export const BROWSER_ARGS: string[] = [
   "--use-file-for-fake-audio-capture=/dev/null",
   "--allow-running-insecure-content",
 ];
+
+export const MEETING_CONFIG = `{
+  "hubUrl": "https://hub.example.com",
+  "platform": "googleMeet",
+  "meetingUrl": "https://meet.google.com/kqt-byur-jya",
+  "model": "liveCaption",
+  "botDisplayName": "Au5Bot",
+  "meetingId": "kqt-byur-jya",
+  "language": "fa-IR",
+  "autoLeave": {
+    "waitingEnter": 30000,
+    "noParticipant": 60000,
+    "allParticipantsLeft": 120000
+  }
+}`;

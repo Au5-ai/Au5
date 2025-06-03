@@ -19,22 +19,6 @@ export type AutoLeaveTimeouts = {
 };
 
 /**
- * Contains DOM selectors for meeting controls.
- * @property leaveButton - Selector for the leave button.
- * @property enterNameField - Selector for the name input field. Example: 'input[type="text"][aria-label="Your name"]'
- * @property joinButton - Selector for the join button. Example: '//button[.//span[text()="Ask to join"]]'
- * @property muteButton - Selector for the mute button. Example: '[aria-label*="Turn off microphone"]'
- * @property cameraOffButton - Selector for the camera off button. Example: '[aria-label*="Turn off camera"]'
- */
-export type MeetingDom = {
-  leaveButton: string;
-  enterNameField: string;
-  joinButton: string;
-  muteButton: string;
-  cameraOffButton: string;
-};
-
-/**
  * Configuration options for a meeting session.
  * @property hubUrl - The URL of the hub service.
  * @property platform - The meeting platform in use.
@@ -44,7 +28,6 @@ export type MeetingDom = {
  * @property meetingId - The unique identifier for the meeting.
  * @property language - The language code for the meeting (optional).
  * @property autoLeave - Auto-leave timeout settings.
- * @property meetingDom - DOM selectors for meeting controls.
  */
 export type MeetingConfiguration = {
   hubUrl: string;
@@ -55,7 +38,6 @@ export type MeetingConfiguration = {
   meetingId: string;
   language?: string | null;
   autoLeave: AutoLeaveTimeouts;
-  meetingDom: MeetingDom;
 };
 
 /**
