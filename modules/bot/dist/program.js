@@ -9,9 +9,11 @@ const puppeteer_extra_plugin_stealth_1 = __importDefault(require("puppeteer-extr
 const playwright_extra_1 = require("playwright-extra");
 const constants_1 = require("./constants");
 const googleMeet_1 = require("./platforms/googleMeet");
+const meetingHubClient_1 = require("./socket/meetingHubClient");
 let shuttingDown = false;
 let browser = null;
 let meetingPlatform;
+let hubClient;
 /**
  * Starts the meeting bot with the specified configuration.
  *
@@ -57,7 +59,11 @@ async function startMeetingBot(config) {
     switch (config.platform) {
         case "googleMeet":
             meetingPlatform = new googleMeet_1.GoogleMeet(config, page);
-            await meetingPlatform.join();
+            const isJoined = await meetingPlatform.join();
+            if (isJoined) {
+                hubClient = new meetingHubClient_1.MeetingHubClient(config);
+                await hubClient.startConnection();
+            }
             break;
         case "zoom":
             // await handleZoom(config, page);

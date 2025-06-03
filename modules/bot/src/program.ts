@@ -10,10 +10,12 @@ import {
   USER_AGENT,
 } from "./constants";
 import { GoogleMeet } from "./platforms/googleMeet";
+import { MeetingHubClient } from "./socket/meetingHubClient";
 
 let shuttingDown = false;
 let browser: Browser | null = null;
 let meetingPlatform: IMeetingPlatform;
+let hubClient: MeetingHubClient;
 
 /**
  * Starts the meeting bot with the specified configuration.
@@ -69,7 +71,8 @@ export async function startMeetingBot(
       meetingPlatform = new GoogleMeet(config, page);
       const isJoined = await meetingPlatform.join();
       if (isJoined) {
-        connectToHub();
+        hubClient = new MeetingHubClient(config);
+        await hubClient.startConnection();
       }
       break;
     case "zoom":
