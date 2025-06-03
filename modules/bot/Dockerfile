@@ -4,10 +4,8 @@
     # Install required OS dependencies (e.g., for Xvfb and other utilities)
     RUN apt-get update && apt-get install -y \
         xvfb \
-        ffmpeg \
-        x11-utils \
-        x11-xserver-utils \
-        fluxbox \
+        pulseaudio \
+        xserver-xephyr \
         && rm -rf /var/lib/apt/lists/*
 
     # Set working directory
@@ -16,7 +14,7 @@
     # Copy package files and install dependencies with npm
     COPY package.json package-lock.json ./
     
-    RUN npm install
+    RUN npm ci
     # Copy the rest of the application source code
     COPY . .
     
@@ -27,6 +25,9 @@
     # Compile TypeScript directly
     RUN npx tsc
     
+    # Make sure playwright CLI is executable
+    RUN chmod +x ./node_modules/.bin/playwright
+
     # Install Playwright dependencies (if not already installed via npm)
     RUN npx playwright install-deps && npx playwright install --with-deps
     
@@ -51,7 +52,7 @@
     
     # Copy an entrypoint script that will start Xvfb and run our bot
     COPY runner.sh /app/runner.sh
-    RUN chmod +x /app/entrypoint.sh
+    RUN chmod +x /app/runner.sh
     
     # Expose DISPLAY port for headful browser operations (adjust as needed)
     ENV DISPLAY=:99
