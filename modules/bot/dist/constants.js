@@ -30,7 +30,7 @@ exports.BROWSER_ARGS = [
     "--allow-running-insecure-content",
 ];
 exports.MEETING_CONFIG = `{
-  "hubUrl": "https://hub.example.com",
+  "hubUrl": "https://localhost:1366/meetinghub",
   "platform": "googleMeet",
   "meetingUrl": "https://meet.google.com/kqt-byur-jya",
   "model": "liveCaption",

@@ -9,8 +9,29 @@ public class MeetingHub(ILogger<MeetingHub> logger, IUserService userService, IM
     private readonly IUserService _userService = userService;
     private readonly IMeetingService _meetingService = meetingService;
     private readonly ITranscriptionService _transcriptionService = transcriptionService;
+
+    public async Task BotJoinMeeting(JoinMeeting joinMeeting)
+    {
+        if (string.IsNullOrWhiteSpace(joinMeeting.MeetingId))
+        {
+            _logger.LogError("JoinMeeting called with empty MeetingId");
+            throw new ArgumentException("MeetingId cannot be empty", nameof(joinMeeting.MeetingId));
+        }
+        await Groups.AddToGroupAsync(Context.ConnectionId, joinMeeting.MeetingId);
+    }
+
     public async Task JoinMeeting(JoinMeeting joinMeeting)
     {
+        if (string.IsNullOrWhiteSpace(joinMeeting.MeetingId))
+        {
+            _logger.LogError("JoinMeeting called with empty MeetingId");
+            throw new ArgumentException("MeetingId cannot be empty", nameof(joinMeeting.MeetingId));
+        }
+        if (joinMeeting.User is not null)
+        {
+            _logger.LogError("JoinMeeting called with null User");
+            throw new ArgumentNullException(nameof(joinMeeting.User), "User cannot be null");
+        }
         var users = _userService.AddUserToMeeting(joinMeeting.User, joinMeeting.MeetingId);
         await Groups.AddToGroupAsync(Context.ConnectionId, joinMeeting.MeetingId);
         var meetStarted = _meetingService.IsStarted(joinMeeting.MeetingId);

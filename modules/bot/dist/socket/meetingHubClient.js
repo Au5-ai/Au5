@@ -39,14 +39,14 @@ class MeetingHubClient {
     constructor(config) {
         this.config = config;
         this.connection = new signalR.HubConnectionBuilder()
-            .withUrl(config.hubUrl)
+            .withUrl(this.config.hubUrl)
             .withAutomaticReconnect()
             .build();
     }
     async startConnection() {
         try {
             await this.connection.start();
-            await this.connection.invoke("JoinMeeting", {
+            await this.connection.invoke("BotJoinMeeting", {
                 meetingId: this.config.meetingId,
             });
         }
