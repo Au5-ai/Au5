@@ -71,7 +71,7 @@ export async function startMeetingBot(
       meetingPlatform = new GoogleMeet(config, page);
       const isJoined = await meetingPlatform.join();
       if (isJoined) {
-        hubClient = new MeetingHubClient(config);
+        const hubClient = new MeetingHubClient(config);
         await hubClient.startConnection();
       }
       break;

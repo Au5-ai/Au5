@@ -5,8 +5,6 @@ import { MeetingConfiguration } from "./types";
 
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 import fetch, { Headers, Request, Response } from "node-fetch";
-
-// Add to global object for SignalR internals to use
 (global as any).fetch = fetch;
 (global as any).Headers = Headers;
 (global as any).Request = Request;
@@ -28,15 +26,16 @@ async function main() {
     console.error(ErrorMessages.INVALID_MEETING_CONFIG_JSON, error);
     process.exit(1);
   }
-  console.log("Parsed Config:", parsedConfig);
-  const meetin = new MeetingHubClient(parsedConfig);
-  await meetin.startConnection();
-  // try {
-  //   await startMeetingBot(parsedConfig);
-  // } catch (error) {
-  //   console.error(ErrorMessages.RUNNING_BOT, error);
-  //   process.exit(1);
-  // }
+
+  const hubClient = new MeetingHubClient(parsedConfig);
+  await hubClient.startConnection();
+
+  //   try {
+  //     await startMeetingBot(parsedConfig);
+  //   } catch (error) {
+  //     console.error(ErrorMessages.RUNNING_BOT, error);
+  //     process.exit(1);
+  //   }
 }
 
 main();

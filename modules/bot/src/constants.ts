@@ -34,7 +34,7 @@ export const BROWSER_ARGS: string[] = [
 ];
 
 export const MEETING_CONFIG = `{
-  "hubUrl": "https://localhost:1366/meetinghub",
+  "hubUrl": "https://host.containers.internal:1366/meetinghub",
   "platform": "googleMeet",
   "meetingUrl": "https://meet.google.com/kqt-byur-jya",
   "model": "liveCaption",

@@ -34,10 +34,9 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const constants_1 = require("./constants");
-const meetingHubClient_1 = require("./socket/meetingHubClient");
+const program_1 = require("./program");
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 const node_fetch_1 = __importStar(require("node-fetch"));
-// Add to global object for SignalR internals to use
 global.fetch = node_fetch_1.default;
 global.Headers = node_fetch_1.Headers;
 global.Request = node_fetch_1.Request;
@@ -57,14 +56,12 @@ async function main() {
         console.error(constants_1.ErrorMessages.INVALID_MEETING_CONFIG_JSON, error);
         process.exit(1);
     }
-    console.log("Parsed Config:", parsedConfig);
-    const meetin = new meetingHubClient_1.MeetingHubClient(parsedConfig);
-    await meetin.startConnection();
-    // try {
-    //   await startMeetingBot(parsedConfig);
-    // } catch (error) {
-    //   console.error(ErrorMessages.RUNNING_BOT, error);
-    //   process.exit(1);
-    // }
+    try {
+        await (0, program_1.startMeetingBot)(parsedConfig);
+    }
+    catch (error) {
+        console.error(constants_1.ErrorMessages.RUNNING_BOT, error);
+        process.exit(1);
+    }
 }
 main();

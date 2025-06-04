@@ -35,6 +35,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Logging.AddConsole();
     builder.Logging.SetMinimumLevel(LogLevel.Information);
 }
+
 var app = builder.Build();
 {
     app.UseCors("AllowAllWithCredentials");
