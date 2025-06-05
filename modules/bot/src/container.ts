@@ -11,7 +11,7 @@ import fetch, { Headers, Request, Response } from "node-fetch";
 (global as any).Response = Response;
 
 async function main() {
-  const rawConfig = process.env.MEETING_CONFIG;
+  const rawConfig = MEETING_CONFIG; //process.env.MEETING_CONFIG;
   if (!rawConfig) {
     console.error(ErrorMessages.MEETING_CONFIG_NOT_SET);
     process.exit(1);
@@ -26,12 +26,14 @@ async function main() {
     process.exit(1);
   }
 
-  try {
-    await startMeetingBot(parsedConfig);
-  } catch (error) {
-    console.error(ErrorMessages.RUNNING_BOT, error);
-    process.exit(1);
-  }
+  const hubClient = new MeetingHubClient(parsedConfig);
+  await hubClient.startConnection();
+  //   try {
+  //     await startMeetingBot(parsedConfig);
+  //   } catch (error) {
+  //     console.error(ErrorMessages.RUNNING_BOT, error);
+  //     process.exit(1);
+  //   }
 }
 
 main();

@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  meetinghub:
+    build:
+      context: .
+      dockerfile: hub/hub.Dockerfile # Or use the path to your .NET Dockerfile
+    container_name: meetinghub
+    ports:
+      - "8080:8080" # exposed by your app
+      - "8081:8081"
+    networks:
+      - appnet
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    restart: unless-stopped
+
+  playwrightbot:
+    build:
+      context: .
+      dockerfile: bot/bot.Dockerfile # Or use the path to your Playwright Dockerfile
+    container_name: playwrightbot
+    depends_on:
+      - meetinghub
+    networks:
+      - appnet
+    environment:
+      - DISPLAY=:99
+    restart: unless-stopped
+    # Optional: expose a port if you want to access the bot externally
+    # ports:
+    #   - "3000:3000"
+
+networks:
+  appnet:
+    driver: bridge
