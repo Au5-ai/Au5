@@ -19467,3 +19467,13 @@ html {
 .ant-app {
   height: 100%;
 }
+
+.chat-input {
+  padding: 2px 12px 2px 2px;
+  line-height: 20px !important;
+  overflow-y: hidden;
+  resize: none !important;
+  height: 64px !important;
+  min-height: 64px !important;
+  max-height: 324px;
+}
