@@ -1,7 +1,7 @@
 import { ElementHandle } from "playwright";
 
 export interface MutationContext {
-  transcriptContainer?: ElementHandle<HTMLElement> | null;
+  transcriptContainer: ElementHandle<HTMLElement> | null;
   canUseAriaBasedTranscriptSelector: boolean;
 }
 

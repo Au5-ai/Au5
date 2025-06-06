@@ -20,7 +20,7 @@ let shuttingDown = false;
 let browser: Browser | null = null;
 let meetingPlatform: IMeetingPlatform;
 let hubClient: MeetingHubClient;
-
+let meetingConfig: MeetingConfiguration;
 /**
  * Starts the meeting bot with the specified configuration.
  *
@@ -42,6 +42,7 @@ let hubClient: MeetingHubClient;
 export async function startMeetingBot(
   config: MeetingConfiguration
 ): Promise<void> {
+  meetingConfig = config;
   logger.info(`[Program] Launching meeting bot with configuration:`, {
     platform: config.platform,
     meetingUrl: config.meetingUrl,
@@ -238,7 +239,7 @@ async function handleTranscription(
     logger.error("[Program] Hub client is not initialized.");
     return;
   }
-
+  message.meetingId = meetingConfig.meetingId;
   await hubClient.sendMessage(message);
 }
 

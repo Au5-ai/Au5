@@ -52,14 +52,16 @@ class MeetingHubClient {
         }
         catch (err) {
             console.error("[SignalR] Connection failed:", err);
+            return false;
         }
+        return true;
     }
-    async sendMessage(action, payload) {
+    async sendMessage(payload) {
         try {
-            await this.connection.invoke(action, payload);
+            await this.connection.invoke(payload.type, payload);
         }
         catch (err) {
-            console.error(`[SignalR] Failed to send message (${action}):`, err);
+            console.error(`[SignalR] Failed to send message (${payload.type}):`, err);
         }
     }
 }

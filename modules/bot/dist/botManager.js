@@ -7,13 +7,14 @@ exports.startMeetingBot = startMeetingBot;
 const logger_1 = require("./utils/logger");
 const puppeteer_extra_plugin_stealth_1 = __importDefault(require("puppeteer-extra-plugin-stealth"));
 const playwright_extra_1 = require("playwright-extra");
-const constants_1 = require("./constants");
-const googleMeet_1 = require("./platforms/googleMeet");
+const constants_1 = require("./common/constants");
+const google_1 = require("./platforms/google");
 const meetingHubClient_1 = require("./socket/meetingHubClient");
 let shuttingDown = false;
 let browser = null;
 let meetingPlatform;
 let hubClient;
+let meetingConfig;
 /**
  * Starts the meeting bot with the specified configuration.
  *
@@ -33,6 +34,7 @@ let hubClient;
  * @throws {Error} If an unsupported platform is specified in the configuration.
  */
 async function startMeetingBot(config) {
+    meetingConfig = config;
     logger_1.logger.info(`[Program] Launching meeting bot with configuration:`, {
         platform: config.platform,
         meetingUrl: config.meetingUrl,
@@ -56,14 +58,11 @@ async function startMeetingBot(config) {
     const page = await context.newPage();
     await registerGracefulShutdownHandler(page);
     await applyAntiDetection(page);
+    let isJoined = false;
     switch (config.platform) {
         case "googleMeet":
-            meetingPlatform = new googleMeet_1.GoogleMeet(config, page);
-            const isJoined = await meetingPlatform.join();
-            if (isJoined) {
-                const hubClient = new meetingHubClient_1.MeetingHubClient(config);
-                await hubClient.startConnection();
-            }
+            meetingPlatform = new google_1.GoogleMeet(config, page);
+            isJoined = await meetingPlatform.joinMeeting();
             break;
         case "zoom":
             // await handleZoom(config, page);
@@ -75,7 +74,18 @@ async function startMeetingBot(config) {
             logger_1.logger.info(`[Program] Error: Unsupported platform received: ${config.platform}`);
             throw new Error(`[Program] Unsupported platform: ${config.platform}`);
     }
-    logger_1.logger.info("[Program] Bot execution finished or awaiting external command.");
+    if (isJoined) {
+        logger_1.logger.info(`[Program] Bot successfully joined the meeting on platform: ${config.platform}`);
+        hubClient = new meetingHubClient_1.MeetingHubClient(config);
+        const isConnected = await hubClient.startConnection();
+        if (!isConnected) {
+            logger_1.logger.error(`[Program] Failed to connect to the hub service at ${config.hubUrl}`);
+            meetingPlatform.leaveMeeting();
+            process.exit(1);
+            return;
+        }
+        await meetingPlatform.startTranscription(handleTranscription);
+    }
 }
 /**
  * Registers a function named `triggerNodeGracefulLeave` in the browser context,
@@ -157,7 +167,7 @@ async function performGracefulLeave() {
     shuttingDown = true;
     let leaveSuccess = false;
     try {
-        leaveSuccess = await meetingPlatform.leave();
+        leaveSuccess = await meetingPlatform.leaveMeeting();
     }
     catch (error) {
         logger_1.logger.error(`[Program] Error during leave: ${error instanceof Error ? error.message : error}`);
@@ -180,6 +190,14 @@ async function performGracefulLeave() {
         logger_1.logger.info("[Program] Leave attempt failed or button not found. Exiting process with code 1 (Failure). Waiting for external termination.");
         process.exit(1);
     }
+}
+async function handleTranscription(message) {
+    if (!hubClient) {
+        logger_1.logger.error("[Program] Hub client is not initialized.");
+        return;
+    }
+    message.meetingId = meetingConfig.meetingId;
+    await hubClient.sendMessage(message);
 }
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 process.on("SIGINT", () => gracefulShutdown("SIGINT"));

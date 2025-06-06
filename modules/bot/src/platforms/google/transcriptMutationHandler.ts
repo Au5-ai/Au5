@@ -43,7 +43,6 @@ export class TranscriptMutationHandler {
 
     if (!dom) throw new Error("Transcript container not found in DOM");
     ctx.transcriptContainer = dom.container;
-    transcriptContainer = dom.container;
     ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
     return ctx;
   }
@@ -55,7 +54,7 @@ export class TranscriptMutationHandler {
     if (ctx.transcriptContainer) {
       await this.page.evaluate((element) => {
         const observer = new MutationObserver((mutations) => {
-          this.handleMutations(mutations)
+          this.handleMutations(ctx.transcriptContainer, mutations)
             .then((result: TranscriptionEntryMessage | null) => {
               if (result) {
                 handler(result);
@@ -77,10 +76,11 @@ export class TranscriptMutationHandler {
   }
 
   private async handleMutations(
+    transcriptContainer: ElementHandle<HTMLElement> | null,
     mutations: MutationRecord[]
   ): Promise<TranscriptionEntryMessage | null> {
     try {
-      let blockTranscription: Caption = {
+      let captionBlock: Caption = {
         blockId: "",
         speakerName: "",
         pictureUrl: "",
@@ -88,43 +88,79 @@ export class TranscriptMutationHandler {
       };
 
       for (const mutation of mutations) {
+        // Handle added blocks
         for (const node of mutation.addedNodes) {
           if (node.nodeType === Node.ELEMENT_NODE) {
-            const elHandle = (await page.evaluateHandle(
+            const elHandle = (await this.page.evaluateHandle(
               (n) => n,
-              node as Element
+              node as unknown
             )) as unknown as ElementHandle<Element>;
 
-            const isCaption = await domUtils.isCaptionBlock(
+            const isBlock = await this.domUtility.isCaptionBlock(
               transcriptContainer,
               elHandle
             );
-            if (isCaption) {
-              blockTranscription = await domUtils.processBlock(elHandle);
+            if (isBlock) {
+              captionBlock = await this.domUtility.processBlock(elHandle);
             }
           }
         }
 
-        const rootBlockHandle = await domUtils.findCaptionBlock(
+        // Handle changes in existing block's content
+        const nodeHandle = (await this.page.evaluateHandle(
+          (n) => n,
+          mutation.target as unknown
+        )) as unknown as ElementHandle<Node>;
+
+        const rootBlock = await this.domUtility.findCaptionBlock(
           transcriptContainer,
-          mutation.target
+          nodeHandle
         );
 
-        if (rootBlockHandle) {
-          blockTranscription = await domUtils.processBlock(rootBlockHandle);
+        if (rootBlock) {
+          captionBlock = await this.domUtility.processBlock(rootBlock);
         }
       }
 
-      if (blockTranscription && blockTranscription.transcript.trim() !== "") {
-        console.log({
+      // if (blockTranscription) {
+      //   if (blockTranscription.transcript.trim() === "") {
+      //     return;
+      //   }
+
+      //   if (blockTranscription.speakerName == "You") {
+      //     blockTranscription.speakerName = config.user.fullName;
+      //   }
+
+      //   const block = meeting.transcripts.find(t => t.id === blockTranscription.blockId);
+
+      //   if (block && blockTranscription.transcript.trim() == block.transcript.trim()) {
+      //     return; // No change in transcript, skip processing
+      //   }
+
+      //   if (!block) {
+      //     meeting.transcripts.push({
+      //       id: blockTranscription.blockId,
+      //       user: {
+      //         fullName: blockTranscription.speakerName,
+      //         pictureUrl: blockTranscription.pictureUrl
+      //       },
+      //       timestamp: new Date(),
+      //       transcript: blockTranscription.transcript
+      //     });
+      //   } else {
+      //     block.transcript = blockTranscription.transcript;
+      //   }
+
+      if (captionBlock && captionBlock.transcript.trim() !== "") {
+        logger.info({
           type: "NotifyRealTimeTranscription",
-          meetingId: "kqt-byur-jya",
-          transcriptBlockId: blockTranscription.blockId,
+          meetingId: "",
+          transcriptBlockId: captionBlock.blockId,
           speaker: {
-            fullName: blockTranscription.speakerName,
-            pictureUrl: blockTranscription.pictureUrl,
+            fullName: captionBlock.speakerName,
+            pictureUrl: captionBlock.pictureUrl,
           },
-          transcript: blockTranscription.transcript,
+          transcript: captionBlock.transcript,
           timestamp: new Date(),
         } as TranscriptionEntryMessage);
       }
