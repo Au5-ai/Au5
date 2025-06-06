@@ -85,10 +85,12 @@ export class GoogleMeet implements IMeetingPlatform {
   async startTranscription(
     handler: (message: TranscriptionEntryMessage) => void
   ): Promise<void> {
-    new TranscriptMutationHandler(
-      this.page,
-      Google_Dom_Configuration
-    ).initialize();
+    if (this.config.model == "liveCaption") {
+      new TranscriptMutationHandler(
+        this.page,
+        Google_Dom_Configuration
+      ).initialize(handler);
+    }
   }
 
   /**

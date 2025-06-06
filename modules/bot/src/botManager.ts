@@ -101,6 +101,7 @@ export async function startMeetingBot(
         `[Program] Failed to connect to the hub service at ${config.hubUrl}`
       );
       meetingPlatform.leaveMeeting();
+      process.exit(1);
       return;
     }
 
@@ -240,5 +241,6 @@ async function handleTranscription(
 
   await hubClient.sendMessage(message);
 }
+
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 process.on("SIGINT", () => gracefulShutdown("SIGINT"));
