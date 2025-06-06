@@ -3,7 +3,7 @@ import { startMeetingBot } from "./program";
 import { MeetingHubClient } from "./socket/meetingHubClient";
 import { MeetingConfiguration } from "./types";
 
-process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
+//process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 import fetch, { Headers, Request, Response } from "node-fetch";
 (global as any).fetch = fetch;
 (global as any).Headers = Headers;
@@ -28,6 +28,7 @@ async function main() {
 
   const hubClient = new MeetingHubClient(parsedConfig);
   await hubClient.startConnection();
+  console.log("[SignalR] Connection established successfully.");
   //   try {
   //     await startMeetingBot(parsedConfig);
   //   } catch (error) {

@@ -39,8 +39,10 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 {
     app.UseCors("AllowAllWithCredentials");
+    app.UseRouting();
 
     app.UseCors();
-    app.MapHub<MeetingHub>("/meetinghub");
+    app.MapHub<MeetingHub>("/meetinghub").AllowAnonymous(); ;
+ 
     app.Run();
 }
