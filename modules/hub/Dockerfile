@@ -4,8 +4,8 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 USER $APP_UID
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 1366
+EXPOSE 1367
 
 
 # This stage is used to build the service project
@@ -28,4 +28,4 @@ RUN dotnet publish "./Au5.MeetingHub.csproj" -c $BUILD_CONFIGURATION -o /app/pub
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Au5.MeetingHub.dll"]
+ENTRYPOINT ["dotnet", "Au5.MeetingHub.dll", "--urls=http://0.0.0.0:1366"]

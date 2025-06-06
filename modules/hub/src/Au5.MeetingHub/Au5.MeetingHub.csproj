@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Au5.Domain\Au5.Domain.csproj" />
+    <ProjectReference Include="..\Au5.Hub.ServiceDefaults\Au5.Hub.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>

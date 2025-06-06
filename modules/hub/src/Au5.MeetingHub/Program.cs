@@ -1,6 +1,8 @@
-﻿using Au5.MeetingHub;
+using Au5.MeetingHub;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddServiceDefaults();
 {
     builder.Services.AddSignalR();
     //.AddMessagePackProtocol(options =>
@@ -37,12 +39,15 @@ var builder = WebApplication.CreateBuilder(args);
 }
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 {
     app.UseCors("AllowAllWithCredentials");
     app.UseRouting();
 
     app.UseCors();
-    app.MapHub<MeetingHub>("/meetinghub").AllowAnonymous(); ;
- 
+    app.MapHub<MeetingHub>("/meetinghub").AllowAnonymous();
+    app.MapGet("/liveness", () => Results.Ok("Healthy"));
+
     app.Run();
 }
