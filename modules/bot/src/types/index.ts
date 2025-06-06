@@ -37,6 +37,7 @@ export type MeetingConfiguration = {
   botDisplayName: string;
   meetingId: string;
   language?: string | null;
+  delayBeforeInteraction: number;
   autoLeave: AutoLeaveTimeouts;
 };
 
@@ -46,10 +47,14 @@ export type MeetingConfiguration = {
  * @returns Promise that resolves when handling is complete.
  * @method leave - Leaves the meeting.
  * @returns Promise that resolves to true if the bot left successfully, false otherwise.
+ * onJoined: () => void = () => {}
  */
 export interface IMeetingPlatform {
-  join(): Promise<boolean>;
-  leave(): Promise<boolean>;
+  joinMeeting(): Promise<boolean>;
+  leaveMeeting(): Promise<boolean>;
+  startTranscription(
+    handler: (message: TranscriptionEntryMessage) => void
+  ): Promise<void>;
 }
 
 export interface Speaker {

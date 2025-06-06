@@ -1,4 +1,8 @@
-import { IMeetingPlatform, MeetingConfiguration } from "./types";
+import {
+  IMeetingPlatform,
+  MeetingConfiguration,
+  TranscriptionEntryMessage,
+} from "./types";
 import { logger } from "./utils/logger";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { chromium } from "playwright-extra";
@@ -8,7 +12,7 @@ import {
   ErrorMessages,
   LogMessages,
   USER_AGENT,
-} from "./constants";
+} from "./common/constants";
 import { GoogleMeet } from "./platforms/googleMeet";
 import { MeetingHubClient } from "./socket/meetingHubClient";
 
@@ -66,14 +70,11 @@ export async function startMeetingBot(
   await registerGracefulShutdownHandler(page);
   await applyAntiDetection(page);
 
+  let isJoined = false;
   switch (config.platform) {
     case "googleMeet":
       meetingPlatform = new GoogleMeet(config, page);
-      const isJoined = await meetingPlatform.join();
-      if (isJoined) {
-        const hubClient = new MeetingHubClient(config);
-        await hubClient.startConnection();
-      }
+      isJoined = await meetingPlatform.joinMeeting();
       break;
     case "zoom":
       // await handleZoom(config, page);
@@ -88,7 +89,23 @@ export async function startMeetingBot(
       throw new Error(`[Program] Unsupported platform: ${config.platform}`);
   }
 
-  logger.info("[Program] Bot execution finished or awaiting external command.");
+  if (isJoined) {
+    logger.info(
+      `[Program] Bot successfully joined the meeting on platform: ${config.platform}`
+    );
+    hubClient = new MeetingHubClient(config);
+    const isConnected = await hubClient.startConnection();
+
+    if (!isConnected) {
+      logger.error(
+        `[Program] Failed to connect to the hub service at ${config.hubUrl}`
+      );
+      meetingPlatform.leaveMeeting();
+      return;
+    }
+
+    await meetingPlatform.startTranscription(handleTranscription);
+  }
 }
 
 /**
@@ -178,7 +195,7 @@ async function performGracefulLeave(): Promise<void> {
 
   let leaveSuccess = false;
   try {
-    leaveSuccess = await meetingPlatform.leave();
+    leaveSuccess = await meetingPlatform.leaveMeeting();
   } catch (error) {
     logger.error(
       `[Program] Error during leave: ${
@@ -213,5 +230,15 @@ async function performGracefulLeave(): Promise<void> {
   }
 }
 
+async function handleTranscription(
+  message: TranscriptionEntryMessage
+): Promise<void> {
+  if (!hubClient) {
+    logger.error("[Program] Hub client is not initialized.");
+    return;
+  }
+
+  await hubClient.sendMessage(message);
+}
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 process.on("SIGINT", () => gracefulShutdown("SIGINT"));

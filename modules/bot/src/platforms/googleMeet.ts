@@ -6,6 +6,11 @@ import { randomDelay } from "../utils";
 export class GoogleMeet implements IMeetingPlatform {
   constructor(private config: MeetingConfiguration, private page: Page) {}
 
+  PREPARE_DELAY_MS = this.config.delayBeforeInteraction ?? 5000;
+  private static readonly WAIT_FOR_NAME_FIELD_TIMEOUT = 120_000;
+  private static readonly WAIT_FOR_JOIN_BUTTON_TIMEOUT = 60_000;
+  private static readonly RANDOM_DELAY_MAX = 1_000;
+
   private selectors = {
     leaveButton: `//button[@aria-label="Leave call"]`,
     enterNameField: 'input[type="text"][aria-label="Your name"]',
@@ -14,7 +19,7 @@ export class GoogleMeet implements IMeetingPlatform {
     cameraOffButton: '[aria-label*="Turn off camera"]',
   };
 
-  async join(): Promise<boolean> {
+  async joinMeeting(): Promise<boolean> {
     const { meetingUrl, botDisplayName } = this.config;
 
     if (!meetingUrl) {
@@ -25,7 +30,7 @@ export class GoogleMeet implements IMeetingPlatform {
     }
 
     try {
-      await this.navigateAndPrepare(meetingUrl, botDisplayName);
+      await this.navigateAndPrepareToJoin(meetingUrl, botDisplayName);
       const isAdmitted = await this.waitForMeetingAdmission();
       if (!isAdmitted) {
         logger.warn(
@@ -33,7 +38,6 @@ export class GoogleMeet implements IMeetingPlatform {
         );
         return false;
       }
-
       return true;
     } catch (error: any) {
       logger.error(
@@ -43,7 +47,7 @@ export class GoogleMeet implements IMeetingPlatform {
     return false;
   }
 
-  async leave(): Promise<boolean> {
+  async leaveMeeting(): Promise<boolean> {
     if (!this.page || this.page.isClosed()) {
       logger.warn(
         "[GoogleMeet][Leave] Page context is unavailable or already closed."
@@ -72,6 +76,35 @@ export class GoogleMeet implements IMeetingPlatform {
     }
   }
 
+  /**
+   * Navigates to the Google Meet URL and prepares the bot for joining.
+   * @param meetingUrl - The URL of the Google Meet session.
+   * @param botName - The display name for the bot.
+   */
+  private async navigateAndPrepareToJoin(
+    meetingUrl: string,
+    botName: string
+  ): Promise<void> {
+    await this.page.goto(meetingUrl, { waitUntil: "networkidle" });
+    await this.page.bringToFront();
+    await this.page.waitForTimeout(
+      this.PREPARE_DELAY_MS + randomDelay(GoogleMeet.RANDOM_DELAY_MAX)
+    );
+
+    await this.page.waitForSelector(this.selectors.enterNameField, {
+      timeout: GoogleMeet.WAIT_FOR_NAME_FIELD_TIMEOUT,
+    });
+    await this.page.fill(this.selectors.enterNameField, botName);
+
+    await this.muteMic();
+    await this.turnOffCamera();
+
+    await this.page.waitForSelector(this.selectors.joinButton, {
+      timeout: GoogleMeet.WAIT_FOR_JOIN_BUTTON_TIMEOUT,
+    });
+    await this.page.click(this.selectors.joinButton);
+  }
+
   private async waitForMeetingAdmission(): Promise<boolean> {
     try {
       await this.page.waitForSelector(this.selectors.leaveButton, {
@@ -84,28 +117,6 @@ export class GoogleMeet implements IMeetingPlatform {
       );
       return false;
     }
-  }
-
-  private async navigateAndPrepare(
-    meetingUrl: string,
-    botName: string
-  ): Promise<void> {
-    await this.page.goto(meetingUrl, { waitUntil: "networkidle" });
-    await this.page.bringToFront();
-    await this.page.waitForTimeout(5000 + randomDelay(1000));
-
-    await this.page.waitForSelector(this.selectors.enterNameField, {
-      timeout: 120000,
-    });
-    await this.page.fill(this.selectors.enterNameField, botName);
-
-    await this.muteMic();
-    await this.turnOffCamera();
-
-    await this.page.waitForSelector(this.selectors.joinButton, {
-      timeout: 60000,
-    });
-    await this.page.click(this.selectors.joinButton);
   }
 
   private async muteMic(): Promise<void> {

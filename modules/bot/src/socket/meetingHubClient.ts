@@ -15,7 +15,7 @@ export class MeetingHubClient {
       .build();
   }
 
-  public async startConnection(): Promise<void> {
+  public async startConnection(): Promise<boolean> {
     try {
       await this.connection.start();
       await this.connection.invoke("BotJoinMeeting", {
@@ -23,17 +23,16 @@ export class MeetingHubClient {
       } as JoinMeeting);
     } catch (err) {
       console.error("[SignalR] Connection failed:", err);
+      return false;
     }
+    return true;
   }
 
-  public async sendMessage(
-    action: string,
-    payload: TranscriptionEntryMessage
-  ): Promise<void> {
+  public async sendMessage(payload: TranscriptionEntryMessage): Promise<void> {
     try {
-      await this.connection.invoke(action, payload);
+      await this.connection.invoke(payload.type, payload);
     } catch (err) {
-      console.error(`[SignalR] Failed to send message (${action}):`, err);
+      console.error(`[SignalR] Failed to send message (${payload.type}):`, err);
     }
   }
 }
