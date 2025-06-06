@@ -1,7 +1,13 @@
 import { Page } from "playwright-core";
-import { IMeetingPlatform, MeetingConfiguration } from "../types";
-import { logger } from "../utils/logger";
-import { randomDelay } from "../utils";
+import {
+  IMeetingPlatform,
+  MeetingConfiguration,
+  TranscriptionEntryMessage,
+} from "../../types";
+import { logger } from "../../utils/logger";
+import { randomDelay } from "../../utils";
+import { TranscriptMutationHandler } from "./transcriptMutationHandler";
+import { Google_Dom_Configuration } from "./constants";
 
 export class GoogleMeet implements IMeetingPlatform {
   constructor(private config: MeetingConfiguration, private page: Page) {}
@@ -74,6 +80,15 @@ export class GoogleMeet implements IMeetingPlatform {
       );
       return false;
     }
+  }
+
+  async startTranscription(
+    handler: (message: TranscriptionEntryMessage) => void
+  ): Promise<void> {
+    new TranscriptMutationHandler(
+      this.page,
+      Google_Dom_Configuration
+    ).initialize();
   }
 
   /**

@@ -13,7 +13,7 @@ import {
   LogMessages,
   USER_AGENT,
 } from "./common/constants";
-import { GoogleMeet } from "./platforms/googleMeet";
+import { GoogleMeet } from "./platforms/google";
 import { MeetingHubClient } from "./socket/meetingHubClient";
 
 let shuttingDown = false;
