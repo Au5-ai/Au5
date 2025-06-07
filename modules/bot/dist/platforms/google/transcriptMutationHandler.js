@@ -42,41 +42,135 @@ class TranscriptMutationHandler {
             return;
         }
         // Step 1: Expose a function to the browser context
-        await this.page.exposeFunction("handleTranscriptionMutation", async (rawMutations) => {
-            logger_1.logger.info("[GoogleMeet][Transcription] Mutation handler invoked with raw mutations.");
-            try {
-                const mutations = rawMutations;
-                const result = await this.handleMutations(ctx.transcriptContainer, mutations);
-                if (result) {
-                    callback(result);
-                }
-            }
-            catch (err) {
-                logger_1.logger.error(`[GoogleMeet][Transcription] Error in exposed mutation handler: ${err.message}`);
-            }
+        await this.page.exposeFunction("handleTranscription", async (caption) => {
+            callback({
+                transcriptBlockId: caption.blockId,
+                speaker: {
+                    fullName: caption.speakerName,
+                    pictureUrl: caption.pictureUrl,
+                },
+                transcript: caption.transcript,
+                timestamp: new Date(),
+                meetingId: "",
+                type: "NotifyRealTimeTranscription",
+            });
         });
         // Step 2: Attach MutationObserver in browser context
         await this.page.evaluate((element) => {
+            function findClosedCaptionTab() {
+                const icon = Array.from(document.querySelectorAll("[role=tab] i.google-material-icons[aria-hidden=true]")).find((el) => el.textContent === "closed_caption");
+                return icon?.closest("[role=tab]") instanceof HTMLElement
+                    ? icon.closest("[role=tab]")
+                    : null;
+            }
+            function findLanguageSelectorOption(value) {
+                return (document.querySelector(`[role=radio][data-value="${value}"]`) ||
+                    document.querySelector(`[type=radio][name=languageRadioGroup][value="${value}"]`) ||
+                    document.querySelector(`[role=option][data-value="${value}"]`) ||
+                    null);
+            }
+            function findVisibleTabPanelCombobox() {
+                const visiblePanel = Array.from(document.querySelectorAll("div[role=tabpanel]")).find((el) => el instanceof HTMLElement &&
+                    (el.offsetWidth > 0 ||
+                        el.offsetHeight > 0 ||
+                        el.getClientRects().length > 0));
+                if (!visiblePanel)
+                    return null;
+                const combobox = visiblePanel.querySelector("[role=combobox]");
+                return combobox instanceof HTMLElement ? combobox : null;
+            }
+            function findCaptionsTab() {
+                const match = Array.from(document.querySelectorAll("[role=tab]")).find((el) => el.textContent?.includes("Captions")) ?? null;
+                return match instanceof HTMLElement ? match : null;
+            }
+            const findSetting = (label) => {
+                const match = Array.from(document.querySelectorAll('[role*="menuitem"], [role*="button"]')).find((el) => el.textContent?.includes(label));
+                return match instanceof HTMLElement ? match : null;
+            };
+            const findMoreOptionsButton = () => {
+                const buttons = findMoreOptions("More options");
+                if (buttons.length === 1)
+                    return buttons[0];
+                for (const button of buttons) {
+                    const noParticipant = !button.closest("div[data-participant-id]");
+                    const hasAutoRejoin = button.closest("div[data-is-auto-rejoin]");
+                    if (noParticipant && hasAutoRejoin) {
+                        return button;
+                    }
+                }
+                return null;
+            };
+            const findMoreOptions = (menuLabel) => {
+                const matches = document.querySelectorAll(`button[aria-label*="${menuLabel}"]`);
+                if (matches.length) {
+                    return Array.from(matches);
+                }
+                const icons = [
+                    ...Array.from(document.querySelectorAll("button i.google-symbols")),
+                    ...Array.from(document.querySelectorAll("button i.google-material-icons")),
+                ];
+                return icons
+                    .filter((el) => el.textContent?.trim() === "more_vert")
+                    .map((el) => el.parentElement instanceof HTMLElement ? el.parentElement : el);
+            };
+            const isCaptionBlock = (container, el) => {
+                return el.parentElement === container;
+            };
+            const findCaptionBlock = (container, node) => {
+                let current = node.nodeType === Node.ELEMENT_NODE
+                    ? node
+                    : node.parentElement;
+                while (current && current.parentElement !== container) {
+                    current = current.parentElement;
+                }
+                return current?.parentElement === container ? current : null;
+            };
+            const extractCaptionData = (block) => {
+                const blockId = block.getAttribute("data-blockid");
+                const img = block.querySelector("img");
+                const nameSpan = block.querySelector("span");
+                const textDiv = Array.from(block.querySelectorAll("div")).find((d) => d.childElementCount === 0 && d.textContent?.trim());
+                return {
+                    blockId,
+                    speakerName: nameSpan?.textContent?.trim() ?? "",
+                    pictureUrl: img?.getAttribute("src") ?? "",
+                    transcript: textDiv?.textContent?.trim() ?? "",
+                };
+            };
+            const processBlock = (el) => {
+                if (!el.hasAttribute("data-blockid")) {
+                    el.setAttribute("data-blockid", crypto.randomUUID());
+                }
+                return extractCaptionData(el);
+            };
             const observer = new MutationObserver((mutations) => {
-                const serializedMutations = mutations.map((m) => ({
-                    type: m.type,
-                    addedNodes: Array.from(m.addedNodes).map((n) => {
-                        if (n.nodeType === Node.ELEMENT_NODE) {
-                            return n.outerHTML;
+                for (const mutation of mutations) {
+                    // Handle added blocks
+                    for (const node of mutation.addedNodes) {
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            const el = node;
+                            if (isCaptionBlock(element, el)) {
+                                const captionBlock = processBlock(el);
+                                if (captionBlock.transcript.trim() !== "") {
+                                    // @ts-ignore
+                                    window.handleTranscription(captionBlock);
+                                }
+                            }
                         }
-                        else if (n.nodeType === Node.TEXT_NODE) {
-                            return n.textContent;
+                    }
+                    // Handle updated blocks
+                    const target = mutation.target;
+                    if (target.nodeType === Node.ELEMENT_NODE) {
+                        const block = findCaptionBlock(element, target);
+                        if (block && isCaptionBlock(element, block)) {
+                            const captionBlock = processBlock(block);
+                            if (captionBlock.transcript.trim() !== "") {
+                                // @ts-ignore
+                                window.handleTranscription(captionBlock);
+                            }
                         }
-                        return null;
-                    }),
-                    target: m.target.nodeType === Node.ELEMENT_NODE
-                        ? m.target.outerHTML
-                        : m.target.nodeName,
-                    oldValue: m.oldValue,
-                    attributeName: m.attributeName,
-                }));
-                // @ts-ignore – exposed function on Node side
-                window.handleTranscriptionMutation(serializedMutations);
+                    }
+                }
             });
             observer.observe(element, {
                 childList: true,
@@ -86,78 +180,6 @@ class TranscriptMutationHandler {
             });
         }, ctx.transcriptContainer);
         logger_1.logger.info("[GoogleMeet][Transcription] Mutation observer initialized.");
-    }
-    async handleMutations(transcriptContainer, mutations) {
-        try {
-            let captionBlock = {
-                blockId: "",
-                speakerName: "",
-                pictureUrl: "",
-                transcript: "",
-            };
-            logger_1.logger.info(`[GoogleMeet][Transcription] Processing ${mutations.length} mutations`);
-            for (const mutation of mutations) {
-                logger_1.logger.info(`[GoogleMeet][Transcription] Mutation detected: ${mutation.type}`);
-                // Handle added blocks
-                for (const node of mutation.addedNodes) {
-                    if (node.nodeType === Node.ELEMENT_NODE) {
-                        const elHandle = (await this.page.evaluateHandle((n) => n, node));
-                        const isBlock = await this.domUtility.isCaptionBlock(transcriptContainer, elHandle);
-                        if (isBlock) {
-                            captionBlock = await this.domUtility.processBlock(elHandle);
-                            logger_1.logger.info("[GoogleMeet][Transcription] New caption block processed:", captionBlock);
-                        }
-                    }
-                }
-                // Handle changes in existing block's content
-                const nodeHandle = (await this.page.evaluateHandle((n) => n, mutation.target));
-                const rootBlock = await this.domUtility.findCaptionBlock(transcriptContainer, nodeHandle);
-                if (rootBlock) {
-                    captionBlock = await this.domUtility.processBlock(rootBlock);
-                    logger_1.logger.info("[GoogleMeet][Transcription] Existing caption block updated:", captionBlock);
-                }
-            }
-            if (captionBlock) {
-                if (captionBlock.transcript.trim() === "") {
-                    logger_1.logger.info("[GoogleMeet][Transcription] Skipping empty transcript block.");
-                    return null; // Skip empty transcripts
-                }
-            }
-            //   const block = meeting.transcripts.find(t => t.id === blockTranscription.blockId);
-            //   if (block && blockTranscription.transcript.trim() == block.transcript.trim()) {
-            //     return; // No change in transcript, skip processing
-            //   }
-            //   if (!block) {
-            //     meeting.transcripts.push({
-            //       id: blockTranscription.blockId,
-            //       user: {
-            //         fullName: blockTranscription.speakerName,
-            //         pictureUrl: blockTranscription.pictureUrl
-            //       },
-            //       timestamp: new Date(),
-            //       transcript: blockTranscription.transcript
-            //     });
-            //   } else {
-            //     block.transcript = blockTranscription.transcript;
-            //   }
-            if (captionBlock && captionBlock.transcript.trim() !== "") {
-                logger_1.logger.info({
-                    type: "NotifyRealTimeTranscription",
-                    meetingId: "",
-                    transcriptBlockId: captionBlock.blockId,
-                    speaker: {
-                        fullName: captionBlock.speakerName,
-                        pictureUrl: captionBlock.pictureUrl,
-                    },
-                    transcript: captionBlock.transcript,
-                    timestamp: new Date(),
-                });
-            }
-        }
-        catch (err) {
-            console.error(err);
-        }
-        return null;
     }
 }
 exports.TranscriptMutationHandler = TranscriptMutationHandler;
