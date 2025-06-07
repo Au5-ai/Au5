@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DomUtility = void 0;
+const logger_1 = require("../../utils/logger");
 class DomUtility {
     constructor(page) {
         this.page = page;
@@ -54,6 +55,7 @@ class DomUtility {
     async isCaptionBlock(container, el) {
         if (!container)
             return false;
+        logger_1.logger.info(`[DomUtility][isCaptionBlock] Checking if element is a caption block: ${await el.evaluate((e) => e.outerHTML)}`);
         const parent = await el.evaluateHandle((e) => e.parentElement);
         return await this.page.evaluate(({ parentEl, containerEl }) => parentEl === containerEl, {
             parentEl: parent,

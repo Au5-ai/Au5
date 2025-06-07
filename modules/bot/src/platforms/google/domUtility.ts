@@ -1,5 +1,6 @@
 import { ElementHandle, Page } from "playwright";
 import { Caption } from "./types";
+import { logger } from "../../utils/logger";
 
 export class DomUtility {
   constructor(private page: Page) {}
@@ -71,6 +72,12 @@ export class DomUtility {
     el: ElementHandle<Element>
   ): Promise<boolean> {
     if (!container) return false;
+
+    logger.info(
+      `[DomUtility][isCaptionBlock] Checking if element is a caption block: ${await el.evaluate(
+        (e) => e.outerHTML
+      )}`
+    );
 
     const parent = await el.evaluateHandle((e) => e.parentElement);
 

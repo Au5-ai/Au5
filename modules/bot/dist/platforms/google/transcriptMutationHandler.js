@@ -9,16 +9,17 @@ class TranscriptMutationHandler {
         this.config = config;
         this.domUtility = new domUtility_1.DomUtility(page);
     }
-    async initialize(handler) {
+    async initialize(callback) {
         await this.activateCaptions();
         let ctx = await this.findTranscriptContainer();
-        await this.observeTranscriptContainer(ctx, handler);
+        await this.observeTranscriptContainer(ctx, callback);
     }
     async activateCaptions() {
         const { selector, text } = this.config.captionsIcon;
         const allCaptionsButtons = await this.domUtility.selectAllElements(selector, text);
         const captionsButton = allCaptionsButtons[0];
         if (captionsButton) {
+            logger_1.logger.info(`[GoogleMeet][Transcription] Activating captions using selector: ${selector}`);
             await captionsButton.click();
         }
     }
@@ -32,30 +33,59 @@ class TranscriptMutationHandler {
             throw new Error("Transcript container not found in DOM");
         ctx.transcriptContainer = dom.container;
         ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
+        logger_1.logger.info(`[GoogleMeet][Transcription] Transcript container found: ${ctx.transcriptContainer || "unknown"}`);
         return ctx;
     }
-    async observeTranscriptContainer(ctx, handler) {
-        if (ctx.transcriptContainer) {
-            await this.page.evaluate((element) => {
-                const observer = new MutationObserver((mutations) => {
-                    this.handleMutations(ctx.transcriptContainer, mutations)
-                        .then((result) => {
-                        if (result) {
-                            handler(result);
-                        }
-                    })
-                        .catch((err) => {
-                        console.error("Error processing mutation:", err);
-                    });
-                });
-                observer.observe(element, {
-                    childList: true,
-                    subtree: true,
-                    attributes: true,
-                    characterData: true,
-                });
-            }, ctx.transcriptContainer);
+    async observeTranscriptContainer(ctx, callback) {
+        if (!ctx.transcriptContainer) {
+            logger_1.logger.error("[GoogleMeet][Transcription] Transcript container is not available.");
+            return;
         }
+        // Step 1: Expose a function to the browser context
+        await this.page.exposeFunction("handleTranscriptionMutation", async (rawMutations) => {
+            logger_1.logger.info("[GoogleMeet][Transcription] Mutation handler invoked with raw mutations.");
+            try {
+                const mutations = rawMutations;
+                const result = await this.handleMutations(ctx.transcriptContainer, mutations);
+                if (result) {
+                    callback(result);
+                }
+            }
+            catch (err) {
+                logger_1.logger.error(`[GoogleMeet][Transcription] Error in exposed mutation handler: ${err.message}`);
+            }
+        });
+        // Step 2: Attach MutationObserver in browser context
+        await this.page.evaluate((element) => {
+            const observer = new MutationObserver((mutations) => {
+                const serializedMutations = mutations.map((m) => ({
+                    type: m.type,
+                    addedNodes: Array.from(m.addedNodes).map((n) => {
+                        if (n.nodeType === Node.ELEMENT_NODE) {
+                            return n.outerHTML;
+                        }
+                        else if (n.nodeType === Node.TEXT_NODE) {
+                            return n.textContent;
+                        }
+                        return null;
+                    }),
+                    target: m.target.nodeType === Node.ELEMENT_NODE
+                        ? m.target.outerHTML
+                        : m.target.nodeName,
+                    oldValue: m.oldValue,
+                    attributeName: m.attributeName,
+                }));
+                // @ts-ignore – exposed function on Node side
+                window.handleTranscriptionMutation(serializedMutations);
+            });
+            observer.observe(element, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                characterData: true,
+            });
+        }, ctx.transcriptContainer);
+        logger_1.logger.info("[GoogleMeet][Transcription] Mutation observer initialized.");
     }
     async handleMutations(transcriptContainer, mutations) {
         try {
@@ -65,7 +95,9 @@ class TranscriptMutationHandler {
                 pictureUrl: "",
                 transcript: "",
             };
+            logger_1.logger.info(`[GoogleMeet][Transcription] Processing ${mutations.length} mutations`);
             for (const mutation of mutations) {
+                logger_1.logger.info(`[GoogleMeet][Transcription] Mutation detected: ${mutation.type}`);
                 // Handle added blocks
                 for (const node of mutation.addedNodes) {
                     if (node.nodeType === Node.ELEMENT_NODE) {
@@ -73,6 +105,7 @@ class TranscriptMutationHandler {
                         const isBlock = await this.domUtility.isCaptionBlock(transcriptContainer, elHandle);
                         if (isBlock) {
                             captionBlock = await this.domUtility.processBlock(elHandle);
+                            logger_1.logger.info("[GoogleMeet][Transcription] New caption block processed:", captionBlock);
                         }
                     }
                 }
@@ -81,15 +114,15 @@ class TranscriptMutationHandler {
                 const rootBlock = await this.domUtility.findCaptionBlock(transcriptContainer, nodeHandle);
                 if (rootBlock) {
                     captionBlock = await this.domUtility.processBlock(rootBlock);
+                    logger_1.logger.info("[GoogleMeet][Transcription] Existing caption block updated:", captionBlock);
                 }
             }
-            // if (blockTranscription) {
-            //   if (blockTranscription.transcript.trim() === "") {
-            //     return;
-            //   }
-            //   if (blockTranscription.speakerName == "You") {
-            //     blockTranscription.speakerName = config.user.fullName;
-            //   }
+            if (captionBlock) {
+                if (captionBlock.transcript.trim() === "") {
+                    logger_1.logger.info("[GoogleMeet][Transcription] Skipping empty transcript block.");
+                    return null; // Skip empty transcripts
+                }
+            }
             //   const block = meeting.transcripts.find(t => t.id === blockTranscription.blockId);
             //   if (block && blockTranscription.transcript.trim() == block.transcript.trim()) {
             //     return; // No change in transcript, skip processing

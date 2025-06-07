@@ -239,6 +239,8 @@ async function handleTranscription(
     logger.error("[Program] Hub client is not initialized.");
     return;
   }
+
+  logger.info(message);
   message.meetingId = meetingConfig.meetingId;
   await hubClient.sendMessage(message);
 }
