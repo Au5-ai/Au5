@@ -10,10 +10,10 @@ export class TranscriptMutationHandler {
     this.domUtility = new DomUtility(page);
   }
 
-  async initialize(handler: (message: TranscriptionEntryMessage) => void) {
+  async initialize(callback: (message: TranscriptionEntryMessage) => void) {
     await this.activateCaptions();
     let ctx = await this.findTranscriptContainer();
-    await this.observeTranscriptContainer(ctx, handler);
+    await this.observeTranscriptContainer(ctx, callback);
   }
 
   private async activateCaptions(): Promise<void> {
@@ -26,6 +26,10 @@ export class TranscriptMutationHandler {
     const captionsButton = allCaptionsButtons[0];
 
     if (captionsButton) {
+      logger.info(
+        `[GoogleMeet][Transcription] Activating captions using selector: ${selector}`
+      );
+
       await captionsButton.click();
     }
   }
@@ -44,35 +48,86 @@ export class TranscriptMutationHandler {
     if (!dom) throw new Error("Transcript container not found in DOM");
     ctx.transcriptContainer = dom.container;
     ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
+    logger.info(
+      `[GoogleMeet][Transcription] Transcript container found: ${
+        ctx.transcriptContainer || "unknown"
+      }`
+    );
+
     return ctx;
   }
 
   private async observeTranscriptContainer(
     ctx: MutationContext,
-    handler: (message: TranscriptionEntryMessage) => void
+    callback: (message: TranscriptionEntryMessage) => void
   ): Promise<void> {
-    if (ctx.transcriptContainer) {
-      await this.page.evaluate((element) => {
-        const observer = new MutationObserver((mutations) => {
-          this.handleMutations(ctx.transcriptContainer, mutations)
-            .then((result: TranscriptionEntryMessage | null) => {
-              if (result) {
-                handler(result);
-              }
-            })
-            .catch((err: any) => {
-              console.error("Error processing mutation:", err);
-            });
-        });
-
-        observer.observe(element, {
-          childList: true,
-          subtree: true,
-          attributes: true,
-          characterData: true,
-        });
-      }, ctx.transcriptContainer);
+    if (!ctx.transcriptContainer) {
+      logger.error(
+        "[GoogleMeet][Transcription] Transcript container is not available."
+      );
+      return;
     }
+
+    // Step 1: Expose a function to the browser context
+    await this.page.exposeFunction(
+      "handleTranscriptionMutation",
+      async (rawMutations: any[]) => {
+        logger.info(
+          "[GoogleMeet][Transcription] Mutation handler invoked with raw mutations."
+        );
+
+        try {
+          const mutations = rawMutations as MutationRecord[];
+
+          const result = await this.handleMutations(
+            ctx.transcriptContainer,
+            mutations
+          );
+          if (result) {
+            callback(result);
+          }
+        } catch (err: any) {
+          logger.error(
+            `[GoogleMeet][Transcription] Error in exposed mutation handler: ${err.message}`
+          );
+        }
+      }
+    );
+
+    // Step 2: Attach MutationObserver in browser context
+    await this.page.evaluate((element) => {
+      const observer = new MutationObserver((mutations) => {
+        const serializedMutations = mutations.map((m) => ({
+          type: m.type,
+          addedNodes: Array.from(m.addedNodes).map((n) => {
+            if (n.nodeType === Node.ELEMENT_NODE) {
+              return (n as Element).outerHTML;
+            } else if (n.nodeType === Node.TEXT_NODE) {
+              return n.textContent;
+            }
+            return null;
+          }),
+          target:
+            m.target.nodeType === Node.ELEMENT_NODE
+              ? (m.target as Element).outerHTML
+              : m.target.nodeName,
+          oldValue: m.oldValue,
+          attributeName: m.attributeName,
+        }));
+
+        // @ts-ignore – exposed function on Node side
+        window.handleTranscriptionMutation(serializedMutations);
+      });
+
+      observer.observe(element, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        characterData: true,
+      });
+    }, ctx.transcriptContainer);
+
+    logger.info("[GoogleMeet][Transcription] Mutation observer initialized.");
   }
 
   private async handleMutations(
@@ -87,7 +142,15 @@ export class TranscriptMutationHandler {
         transcript: "",
       };
 
+      logger.info(
+        `[GoogleMeet][Transcription] Processing ${mutations.length} mutations`
+      );
+
       for (const mutation of mutations) {
+        logger.info(
+          `[GoogleMeet][Transcription] Mutation detected: ${mutation.type} on ${mutation.target.nodeName}`
+        );
+
         // Handle added blocks
         for (const node of mutation.addedNodes) {
           if (node.nodeType === Node.ELEMENT_NODE) {
@@ -102,6 +165,10 @@ export class TranscriptMutationHandler {
             );
             if (isBlock) {
               captionBlock = await this.domUtility.processBlock(elHandle);
+              logger.info(
+                "[GoogleMeet][Transcription] New caption block processed:",
+                captionBlock
+              );
             }
           }
         }
@@ -119,18 +186,21 @@ export class TranscriptMutationHandler {
 
         if (rootBlock) {
           captionBlock = await this.domUtility.processBlock(rootBlock);
+          logger.info(
+            "[GoogleMeet][Transcription] Existing caption block updated:",
+            captionBlock
+          );
         }
       }
 
-      // if (blockTranscription) {
-      //   if (blockTranscription.transcript.trim() === "") {
-      //     return;
-      //   }
-
-      //   if (blockTranscription.speakerName == "You") {
-      //     blockTranscription.speakerName = config.user.fullName;
-      //   }
-
+      if (captionBlock) {
+        if (captionBlock.transcript.trim() === "") {
+          logger.info(
+            "[GoogleMeet][Transcription] Skipping empty transcript block."
+          );
+          return null; // Skip empty transcripts
+        }
+      }
       //   const block = meeting.transcripts.find(t => t.id === blockTranscription.blockId);
 
       //   if (block && blockTranscription.transcript.trim() == block.transcript.trim()) {
