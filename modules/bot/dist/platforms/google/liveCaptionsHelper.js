@@ -112,10 +112,8 @@ class LiveCaptionsHelper {
         return radio;
     }
     findClosedCaptionTab() {
-        const icon = Array.from(document.querySelectorAll("[role=tab]")).find((el) => el.textContent === "closed_caption");
-        return icon?.closest("[role=tab]") instanceof HTMLElement
-            ? icon.closest("[role=tab]")
-            : null;
+        const button = document.querySelector("[data-mdc-dialog-action=close]");
+        return button instanceof HTMLElement ? button : null;
     }
 }
 exports.LiveCaptionsHelper = LiveCaptionsHelper;
