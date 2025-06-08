@@ -63,6 +63,15 @@ class TranscriptMutationHandler {
                     ? icon.closest("[role=tab]")
                     : null;
             }
+            function selectLiveCaptionsRadio() {
+                const radioGroup = document.querySelector("div[role=radiogroup]");
+                if (!radioGroup)
+                    return;
+                const liveRadio = radioGroup.querySelector('input[type="radio"][value="live"]');
+                if (liveRadio) {
+                    liveRadio.click();
+                }
+            }
             function findLanguageSelectorOption(value) {
                 return (document.querySelector(`[role=radio][data-value="${value}"]`) ||
                     document.querySelector(`[type=radio][name=languageRadioGroup][value="${value}"]`) ||
