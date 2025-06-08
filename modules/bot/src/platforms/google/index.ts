@@ -7,15 +7,17 @@ import {
 import { logger } from "../../utils/logger";
 import { randomDelay } from "../../utils";
 import { TranscriptMutationHandler } from "./transcriptMutationHandler";
-import { Google_Dom_Configuration } from "./constants";
+import {
+  Google_Caption_Configuration,
+  RANDOM_DELAY_MAX,
+  WAIT_FOR_JOIN_BUTTON_TIMEOUT,
+  WAIT_FOR_NAME_FIELD_TIMEOUT,
+} from "./constants";
 
 export class GoogleMeet implements IMeetingPlatform {
   constructor(private config: MeetingConfiguration, private page: Page) {}
 
   PREPARE_DELAY_MS = this.config.delayBeforeInteraction ?? 5000;
-  private static readonly WAIT_FOR_NAME_FIELD_TIMEOUT = 120_000;
-  private static readonly WAIT_FOR_JOIN_BUTTON_TIMEOUT = 60_000;
-  private static readonly RANDOM_DELAY_MAX = 1_000;
 
   private selectors = {
     leaveButton: `//button[@aria-label="Leave call"]`,
@@ -86,9 +88,10 @@ export class GoogleMeet implements IMeetingPlatform {
     handler: (message: TranscriptionEntryMessage) => void
   ): Promise<void> {
     if (this.config.model == "liveCaption") {
+      Google_Caption_Configuration.language = this.config.language || "en-US";
       new TranscriptMutationHandler(
         this.page,
-        Google_Dom_Configuration
+        Google_Caption_Configuration
       ).initialize(handler);
     }
   }
@@ -105,11 +108,11 @@ export class GoogleMeet implements IMeetingPlatform {
     await this.page.goto(meetingUrl, { waitUntil: "networkidle" });
     await this.page.bringToFront();
     await this.page.waitForTimeout(
-      this.PREPARE_DELAY_MS + randomDelay(GoogleMeet.RANDOM_DELAY_MAX)
+      this.PREPARE_DELAY_MS + randomDelay(RANDOM_DELAY_MAX)
     );
 
     await this.page.waitForSelector(this.selectors.enterNameField, {
-      timeout: GoogleMeet.WAIT_FOR_NAME_FIELD_TIMEOUT,
+      timeout: WAIT_FOR_NAME_FIELD_TIMEOUT,
     });
     await this.page.fill(this.selectors.enterNameField, botName);
 
@@ -117,7 +120,7 @@ export class GoogleMeet implements IMeetingPlatform {
     await this.turnOffCamera();
 
     await this.page.waitForSelector(this.selectors.joinButton, {
-      timeout: GoogleMeet.WAIT_FOR_JOIN_BUTTON_TIMEOUT,
+      timeout: WAIT_FOR_JOIN_BUTTON_TIMEOUT,
     });
     await this.page.click(this.selectors.joinButton);
   }

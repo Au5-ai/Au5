@@ -61,7 +61,8 @@ class GoogleMeet {
     }
     async startTranscription(handler) {
         if (this.config.model == "liveCaption") {
-            new transcriptMutationHandler_1.TranscriptMutationHandler(this.page, constants_1.Google_Dom_Configuration).initialize(handler);
+            constants_1.Google_Caption_Configuration.language = this.config.language || "en-US";
+            new transcriptMutationHandler_1.TranscriptMutationHandler(this.page, constants_1.Google_Caption_Configuration).initialize(handler);
         }
     }
     /**
@@ -72,15 +73,15 @@ class GoogleMeet {
     async navigateAndPrepareToJoin(meetingUrl, botName) {
         await this.page.goto(meetingUrl, { waitUntil: "networkidle" });
         await this.page.bringToFront();
-        await this.page.waitForTimeout(this.PREPARE_DELAY_MS + (0, utils_1.randomDelay)(GoogleMeet.RANDOM_DELAY_MAX));
+        await this.page.waitForTimeout(this.PREPARE_DELAY_MS + (0, utils_1.randomDelay)(constants_1.RANDOM_DELAY_MAX));
         await this.page.waitForSelector(this.selectors.enterNameField, {
-            timeout: GoogleMeet.WAIT_FOR_NAME_FIELD_TIMEOUT,
+            timeout: constants_1.WAIT_FOR_NAME_FIELD_TIMEOUT,
         });
         await this.page.fill(this.selectors.enterNameField, botName);
         await this.muteMic();
         await this.turnOffCamera();
         await this.page.waitForSelector(this.selectors.joinButton, {
-            timeout: GoogleMeet.WAIT_FOR_JOIN_BUTTON_TIMEOUT,
+            timeout: constants_1.WAIT_FOR_JOIN_BUTTON_TIMEOUT,
         });
         await this.page.click(this.selectors.joinButton);
     }
@@ -116,6 +117,3 @@ class GoogleMeet {
     }
 }
 exports.GoogleMeet = GoogleMeet;
-GoogleMeet.WAIT_FOR_NAME_FIELD_TIMEOUT = 120000;
-GoogleMeet.WAIT_FOR_JOIN_BUTTON_TIMEOUT = 60000;
-GoogleMeet.RANDOM_DELAY_MAX = 1000;

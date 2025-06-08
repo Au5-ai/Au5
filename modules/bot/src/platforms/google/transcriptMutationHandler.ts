@@ -1,12 +1,13 @@
 import { TranscriptionEntryMessage } from "../../types";
-import { ElementHandle, Page } from "playwright-core";
-import { Caption, GoogleDomConfiguration, MutationContext } from "./types";
+import { Page } from "playwright-core";
+import { Caption, GoogleCaptionConfiguration, MutationContext } from "./types";
 import { DomUtility } from "./domUtility";
 import { logger } from "../../utils/logger";
+import { LiveCaptionsHelper } from "./liveCaptionsHelper";
 
 export class TranscriptMutationHandler {
   private domUtility: DomUtility;
-  constructor(private page: Page, private config: GoogleDomConfiguration) {
+  constructor(private page: Page, private config: GoogleCaptionConfiguration) {
     this.domUtility = new DomUtility(page);
   }
 
@@ -17,21 +18,22 @@ export class TranscriptMutationHandler {
   }
 
   private async activateCaptions(): Promise<void> {
-    const { selector, text } = this.config.captionsIcon;
-
-    const allCaptionsButtons = await this.domUtility.selectAllElements(
-      selector,
-      text
+    // const { selector, text } = this.config.captionsIcon;
+    // const allCaptionsButtons = await this.domUtility.selectAllElements(
+    //   selector,
+    //   text
+    // );
+    // const captionsButton = allCaptionsButtons[0];
+    // if (captionsButton) {
+    //   logger.info(
+    //     `[GoogleMeet][Transcription] Activating captions using selector: ${selector}`
+    //   );
+    //   await captionsButton.click();
+    // }
+    logger.info(
+      `[GoogleMeet][Transcription] Activating live captions for language: ${this.config.language}`
     );
-    const captionsButton = allCaptionsButtons[0];
-
-    if (captionsButton) {
-      logger.info(
-        `[GoogleMeet][Transcription] Activating captions using selector: ${selector}`
-      );
-
-      await captionsButton.click();
-    }
+    await new LiveCaptionsHelper().configureCaptions(this.config.language);
   }
 
   private async findTranscriptContainer(): Promise<MutationContext> {

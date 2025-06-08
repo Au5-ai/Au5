@@ -12,15 +12,8 @@ export interface Caption {
   transcript: string;
 }
 
-export interface GoogleDomConfiguration {
-  meetingEndIcon: {
-    selector: string;
-    text: string;
-  };
-  captionsIcon: {
-    selector: string;
-    text: string;
-  };
+export interface GoogleCaptionConfiguration {
+  language: string;
   transcriptSelectors: {
     aria: string;
     fallback: string;

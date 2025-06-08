@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TranscriptMutationHandler = void 0;
 const domUtility_1 = require("./domUtility");
 const logger_1 = require("../../utils/logger");
+const liveCaptionsHelper_1 = require("./liveCaptionsHelper");
 class TranscriptMutationHandler {
     constructor(page, config) {
         this.page = page;
@@ -15,13 +16,20 @@ class TranscriptMutationHandler {
         await this.observeTranscriptContainer(ctx, callback);
     }
     async activateCaptions() {
-        const { selector, text } = this.config.captionsIcon;
-        const allCaptionsButtons = await this.domUtility.selectAllElements(selector, text);
-        const captionsButton = allCaptionsButtons[0];
-        if (captionsButton) {
-            logger_1.logger.info(`[GoogleMeet][Transcription] Activating captions using selector: ${selector}`);
-            await captionsButton.click();
-        }
+        // const { selector, text } = this.config.captionsIcon;
+        // const allCaptionsButtons = await this.domUtility.selectAllElements(
+        //   selector,
+        //   text
+        // );
+        // const captionsButton = allCaptionsButtons[0];
+        // if (captionsButton) {
+        //   logger.info(
+        //     `[GoogleMeet][Transcription] Activating captions using selector: ${selector}`
+        //   );
+        //   await captionsButton.click();
+        // }
+        logger_1.logger.info(`[GoogleMeet][Transcription] Activating live captions for language: ${this.config.language}`);
+        await new liveCaptionsHelper_1.LiveCaptionsHelper().configureCaptions(this.config.language);
     }
     async findTranscriptContainer() {
         const ctx = {
@@ -57,71 +65,6 @@ class TranscriptMutationHandler {
         });
         // Step 2: Attach MutationObserver in browser context
         await this.page.evaluate((element) => {
-            function findClosedCaptionTab() {
-                const icon = Array.from(document.querySelectorAll("[role=tab]")).find((el) => el.textContent === "closed_caption");
-                return icon?.closest("[role=tab]") instanceof HTMLElement
-                    ? icon.closest("[role=tab]")
-                    : null;
-            }
-            function selectLiveCaptionsRadio() {
-                const radioGroup = document.querySelector("div[role=radiogroup]");
-                if (!radioGroup)
-                    return;
-                const liveRadio = radioGroup.querySelector('input[type="radio"][value="live"]');
-                if (liveRadio) {
-                    liveRadio.click();
-                }
-            }
-            function findLanguageSelectorOption(value) {
-                return (document.querySelector(`[role=radio][data-value="${value}"]`) ||
-                    document.querySelector(`[type=radio][name=languageRadioGroup][value="${value}"]`) ||
-                    document.querySelector(`[role=option][data-value="${value}"]`) ||
-                    null);
-            }
-            function findVisibleTabPanelCombobox() {
-                const visiblePanel = Array.from(document.querySelectorAll("div[role=tabpanel]")).find((el) => el instanceof HTMLElement &&
-                    (el.offsetWidth > 0 ||
-                        el.offsetHeight > 0 ||
-                        el.getClientRects().length > 0));
-                if (!visiblePanel)
-                    return null;
-                const combobox = visiblePanel.querySelector("[role=combobox]");
-                return combobox instanceof HTMLElement ? combobox : null;
-            }
-            function findCaptionsTab() {
-                const match = Array.from(document.querySelectorAll("[role=tab]")).find((el) => el.textContent?.includes("Captions")) ?? null;
-                return match instanceof HTMLElement ? match : null;
-            }
-            const findSetting = (label) => {
-                const match = Array.from(document.querySelectorAll('[role*="menuitem"], [role*="button"]')).find((el) => el.textContent?.includes(label));
-                return match instanceof HTMLElement ? match : null;
-            };
-            const findMoreOptionsButton = () => {
-                const buttons = findMoreOptions("More options");
-                if (buttons.length === 1)
-                    return buttons[0];
-                for (const button of buttons) {
-                    const noParticipant = !button.closest("div[data-participant-id]");
-                    const hasAutoRejoin = button.closest("div[data-is-auto-rejoin]");
-                    if (noParticipant && hasAutoRejoin) {
-                        return button;
-                    }
-                }
-                return null;
-            };
-            const findMoreOptions = (menuLabel) => {
-                const matches = document.querySelectorAll(`button[aria-label*="${menuLabel}"]`);
-                if (matches.length) {
-                    return Array.from(matches);
-                }
-                const icons = [
-                    ...Array.from(document.querySelectorAll("button i.google-symbols")),
-                    ...Array.from(document.querySelectorAll("button i.google-material-icons")),
-                ];
-                return icons
-                    .filter((el) => el.textContent?.trim() === "more_vert")
-                    .map((el) => el.parentElement instanceof HTMLElement ? el.parentElement : el);
-            };
             const isCaptionBlock = (container, el) => {
                 return el.parentElement === container;
             };

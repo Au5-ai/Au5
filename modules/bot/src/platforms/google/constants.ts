@@ -1,16 +1,12 @@
-import { GoogleDomConfiguration } from "./types";
+import { GoogleCaptionConfiguration } from "./types";
 
-export const Google_Dom_Configuration = {
-  meetingEndIcon: {
-    selector: ".google-symbols",
-    text: "call_end",
-  },
-  captionsIcon: {
-    selector: ".google-symbols",
-    text: "closed_caption_off",
-  },
+export const WAIT_FOR_NAME_FIELD_TIMEOUT = 120_000;
+export const WAIT_FOR_JOIN_BUTTON_TIMEOUT = 60_000;
+export const RANDOM_DELAY_MAX = 1_000;
+
+export const Google_Caption_Configuration = {
   transcriptSelectors: {
     aria: 'div[role="region"][tabindex="0"]',
     fallback: ".a4cQT",
   },
-} as GoogleDomConfiguration;
+} as GoogleCaptionConfiguration;

@@ -53,6 +53,13 @@ export class LiveCaptionsHelper {
     } else {
       logger.warn("Live captions radio not found");
     }
+
+    const closeButton = this.findClosedCaptionTab();
+    if (closeButton) {
+      (closeButton as HTMLElement).click();
+    } else {
+      logger.warn("Close Button not found");
+    }
   }
 
   private getMoreOptionsButtons(menuLabel: string): HTMLElement[] {
