@@ -89,15 +89,25 @@ export class TranscriptMutationHandler {
     // Step 2: Attach MutationObserver in browser context
     await this.page.evaluate((element) => {
       function findClosedCaptionTab(): HTMLElement | null {
-        const icon = Array.from(
-          document.querySelectorAll(
-            "[role=tab] i.google-material-icons[aria-hidden=true]"
-          )
-        ).find((el) => el.textContent === "closed_caption");
+        const icon = Array.from(document.querySelectorAll("[role=tab]")).find(
+          (el) => el.textContent === "closed_caption"
+        );
 
         return icon?.closest("[role=tab]") instanceof HTMLElement
           ? icon.closest("[role=tab]")
           : null;
+      }
+
+      function selectLiveCaptionsRadio(): void {
+        const radioGroup = document.querySelector("div[role=radiogroup]");
+        if (!radioGroup) return;
+
+        const liveRadio = radioGroup.querySelector<HTMLInputElement>(
+          'input[type="radio"][value="live"]'
+        );
+        if (liveRadio) {
+          liveRadio.click();
+        }
       }
 
       function findLanguageSelectorOption(value: string): HTMLElement | null {
