@@ -1,6 +1,7 @@
 import { ElementHandle, Page } from "playwright";
 import { logger } from "../../utils/logger";
 import { RANDOM_DELAY_MAX } from "./constants";
+import { delay } from "../../common/task";
 
 /**
  * Helper class to manage live captions in Google Meet.
