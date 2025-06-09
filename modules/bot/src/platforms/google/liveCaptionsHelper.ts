@@ -1,4 +1,5 @@
 import { logger } from "../../utils/logger";
+import { RANDOM_DELAY_MAX } from "./constants";
 
 export class LiveCaptionsHelper {
   public async configureCaptions(languageValue: string): Promise<void> {
@@ -10,7 +11,7 @@ export class LiveCaptionsHelper {
       return;
     }
 
-    await delay(200);
+    await delay(RANDOM_DELAY_MAX);
     const settingsBtn = this.findSettingsMenuItem("Settings");
     if (settingsBtn) {
       settingsBtn.click();
@@ -19,12 +20,18 @@ export class LiveCaptionsHelper {
       return;
     }
 
-    await delay(300);
-    const captionsTab = this.findCaptionsTabButton();
+    await delay(RANDOM_DELAY_MAX);
+    let captionsTab = this.findCaptionsTabButton();
+    let retries = 3;
+    while (!captionsTab && retries > 0) {
+      await delay(300);
+      captionsTab = this.findCaptionsTabButton();
+      retries--;
+    }
     if (captionsTab) {
       captionsTab.click();
     } else {
-      logger.warn("Captions tab not found");
+      logger.warn("Captions tab not found after retries");
       return;
     }
 
@@ -37,7 +44,7 @@ export class LiveCaptionsHelper {
       return;
     }
 
-    await delay(300);
+    await delay(RANDOM_DELAY_MAX);
     const languageOption = this.findLanguageOptionByValue(languageValue);
     if (languageOption) {
       languageOption.click();
@@ -46,7 +53,7 @@ export class LiveCaptionsHelper {
       return;
     }
 
-    await delay(200);
+    await delay(RANDOM_DELAY_MAX);
     const liveRadio = this.getLiveCaptionsRadioButton();
     if (liveRadio) {
       (liveRadio as HTMLElement).click();
