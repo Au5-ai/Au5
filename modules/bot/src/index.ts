@@ -1,6 +1,5 @@
 import { ErrorMessages, MEETING_CONFIG } from "./common/constants";
 import { startMeetingBot } from "./botManager";
-import { MeetingHubClient } from "./socket/meetingHubClient";
 import { MeetingConfiguration } from "./types";
 
 //process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
@@ -27,9 +26,6 @@ async function main() {
     process.exit(1);
   }
 
-  // const hubClient = new MeetingHubClient(parsedConfig);
-  // await hubClient.startConnection();
-  // console.log("[SignalR] Connection established successfully.");
   try {
     await startMeetingBot(parsedConfig);
   } catch (error) {

@@ -35,7 +35,9 @@ export class TranscriptMutationHandler {
     logger.info(
       `[GoogleMeet][Transcription] Activating live captions for language: ${this.config.language}`
     );
-    await new LiveCaptionsHelper().enableCaptions(this.config.language);
+    await new LiveCaptionsHelper(this.page).enableCaptions(
+      this.config.language
+    );
   }
 
   private async findTranscriptContainer(): Promise<MutationContext> {

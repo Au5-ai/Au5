@@ -30,7 +30,7 @@ class TranscriptMutationHandler {
         //   await captionsButton.click();
         // }
         logger_1.logger.info(`[GoogleMeet][Transcription] Activating live captions for language: ${this.config.language}`);
-        await new liveCaptionsHelper_1.LiveCaptionsHelper().enableCaptions(this.config.language);
+        await new liveCaptionsHelper_1.LiveCaptionsHelper(this.page).enableCaptions(this.config.language);
     }
     async findTranscriptContainer() {
         const ctx = {

@@ -1,159 +1,210 @@
+import { ElementHandle, Page } from "playwright";
 import { logger } from "../../utils/logger";
 import { RANDOM_DELAY_MAX } from "./constants";
 
+/**
+ * Helper class to manage live captions in Google Meet.
+ * It provides methods to enable captions, select language, and handle UI interactions.
+ */
 export class LiveCaptionsHelper {
+  constructor(private page: Page) {}
+
   public async enableCaptions(languageValue: string): Promise<void> {
-    const moreOptionsBtn = this.findMainMoreOptionsButton();
+    const moreOptionsBtn = await this.findMainMoreOptionsButton();
     if (moreOptionsBtn) {
-      moreOptionsBtn.click();
+      await moreOptionsBtn.click();
     } else {
       logger.warn("More Options button not found");
       return;
     }
 
     await delay(RANDOM_DELAY_MAX);
-    const settingsBtn = this.findSettingsMenuItem("Settings");
+    const settingsBtn = await this.findSettingsMenuItem("Settings");
     if (settingsBtn) {
-      settingsBtn.click();
+      await settingsBtn.click();
     } else {
       logger.warn("Settings menu item not found");
       return;
     }
 
     await delay(RANDOM_DELAY_MAX);
-    let captionsTab = this.findCaptionsTabButton();
+    let captionsTab = await this.findCaptionsTabButton();
     let retries = 3;
     while (!captionsTab && retries > 0) {
       await delay(300);
-      captionsTab = this.findCaptionsTabButton();
+      captionsTab = await this.findCaptionsTabButton();
       retries--;
     }
     if (captionsTab) {
-      captionsTab.click();
+      await captionsTab.click();
     } else {
       logger.warn("Captions tab not found after retries");
       return;
     }
 
     await delay(300);
-    const comboBox = this.getVisibleCaptionsLanguageDropdown();
+    const comboBox = await this.getVisibleCaptionsLanguageDropdown();
     if (comboBox) {
-      comboBox.click();
+      await comboBox.click();
     } else {
       logger.warn("Combobox not found in visible tab panel");
       return;
     }
 
     await delay(RANDOM_DELAY_MAX);
-    const languageOption = this.findLanguageOptionByValue(languageValue);
+    const languageOption = await this.findLanguageOptionByValue(languageValue);
     if (languageOption) {
-      languageOption.click();
+      await languageOption.click();
     } else {
       logger.warn(`Language option '${languageValue}' not found`);
       return;
     }
 
     await delay(RANDOM_DELAY_MAX);
-    const liveRadio = this.getLiveCaptionsRadioButton();
+    const liveRadio = await this.getLiveCaptionsRadioButton();
     if (liveRadio) {
-      (liveRadio as HTMLElement).click();
+      await liveRadio.click();
     } else {
       logger.warn("Live captions radio not found");
     }
 
-    const closeButton = this.findClosedCaptionTab();
+    const closeButton = await this.findClosedCaptionTab();
     if (closeButton) {
-      (closeButton as HTMLElement).click();
+      await closeButton.click();
     } else {
       logger.warn("Close Button not found");
     }
   }
 
-  private getMoreOptionsButtons(menuLabel: string): HTMLElement[] {
-    const labeledButtons = document.querySelectorAll<HTMLButtonElement>(
-      `button[aria-label*="${menuLabel}"]`
-    );
-    if (labeledButtons.length) return Array.from(labeledButtons);
-
-    const icons = [
-      ...document.querySelectorAll<HTMLElement>("button i.google-symbols"),
-      ...document.querySelectorAll<HTMLElement>(
-        "button i.google-material-icons"
-      ),
-    ];
-
-    return icons
-      .filter((el) => el.textContent?.trim() === "more_vert")
-      .map((el) =>
-        el.parentElement instanceof HTMLElement ? el.parentElement : el
-      );
-  }
-
-  private findMainMoreOptionsButton(): HTMLElement | null {
-    const buttons = this.getMoreOptionsButtons("More options");
+  private async findMainMoreOptionsButton(): Promise<ElementHandle<HTMLElement> | null> {
+    const buttons = await this.getMoreOptionsButtons("More options");
     if (buttons.length === 1) return buttons[0];
 
-    return (
-      buttons.find(
-        (btn) =>
-          !btn.closest("div[data-participant-id]") &&
-          btn.closest("div[data-is-auto-rejoin]")
-      ) || null
-    );
+    for (const btn of buttons) {
+      const isNotParticipant = await btn.evaluate(
+        (el) => !el.closest("div[data-participant-id]")
+      );
+      const isAutoRejoin = await btn.evaluate(
+        (el) => !!el.closest("div[data-is-auto-rejoin]")
+      );
+      if (isNotParticipant && isAutoRejoin) return btn;
+    }
+    return null;
   }
 
-  private findSettingsMenuItem(label = "Settings"): HTMLElement | null {
-    return (
-      (Array.from(
-        document.querySelectorAll('[role*="menuitem"], [role*="button"]')
-      ).find((el) => el.textContent?.includes(label)) as HTMLElement) ?? null
-    );
+  private async getMoreOptionsButtons(
+    menuLabel: string
+  ): Promise<ElementHandle<HTMLElement>[]> {
+    const all = await this.page.$$(`button[aria-label*="${menuLabel}"]`);
+    const labeledButtons: ElementHandle<HTMLElement>[] = [];
+
+    for (const handle of all) {
+      const isHTMLElement = await handle.evaluate(
+        (el) => el instanceof HTMLElement
+      );
+      if (isHTMLElement)
+        labeledButtons.push(handle as ElementHandle<HTMLElement>);
+    }
+
+    if (labeledButtons.length) return labeledButtons;
+
+    const icons = [
+      ...(await this.page.$$("button i.google-symbols")),
+      ...(await this.page.$$("button i.google-material-icons")),
+    ];
+
+    const filtered: ElementHandle<HTMLElement>[] = [];
+    for (const icon of icons) {
+      const text = await icon.evaluate((el) => el.textContent?.trim());
+      if (text === "more_vert") {
+        const parentHandle = await icon.evaluateHandle(
+          (el) => el.parentElement
+        );
+        const parentElement = parentHandle.asElement();
+        if (parentElement) {
+          const isHtml = await parentElement.evaluate(
+            (el) => el instanceof HTMLElement
+          );
+          if (isHtml) {
+            filtered.push(parentElement as ElementHandle<HTMLElement>);
+          }
+        }
+      }
+    }
+
+    return filtered;
   }
 
-  private findCaptionsTabButton(): HTMLElement | null {
-    return (
-      (Array.from(document.querySelectorAll("[role=tab]")).find((el) =>
-        el.textContent?.includes("Captions")
-      ) as HTMLElement) ?? null
-    );
+  private async findSettingsMenuItem(
+    label = "Settings"
+  ): Promise<ElementHandle<HTMLElement> | null> {
+    const elements = await this.page.$$('[role*="menuitem"], [role*="button"]');
+    for (const el of elements) {
+      const text = await el.evaluate((e) => e.textContent || "");
+      if (text.includes(label)) return el as ElementHandle<HTMLElement>;
+    }
+    return null;
   }
 
-  private getVisibleCaptionsLanguageDropdown(): HTMLElement | null {
-    const panel =
-      (Array.from(document.querySelectorAll("div[role=tabpanel]")).find(
-        (el) =>
-          el instanceof HTMLElement &&
-          (el.offsetWidth > 0 ||
+  private async findCaptionsTabButton(): Promise<ElementHandle<HTMLElement> | null> {
+    const tabs = await this.page.$$("[role=tab]");
+    for (const tab of tabs) {
+      const text = await tab.evaluate((e) => e.textContent || "");
+      if (text.includes("Captions")) return tab as ElementHandle<HTMLElement>;
+    }
+    return null;
+  }
+
+  private async getVisibleCaptionsLanguageDropdown(): Promise<ElementHandle<HTMLElement> | null> {
+    const panels = await this.page.$$("div[role=tabpanel]");
+    for (const panel of panels) {
+      const visible = await panel.evaluate((el) => {
+        if (el instanceof HTMLElement) {
+          return (
+            el.offsetWidth > 0 ||
             el.offsetHeight > 0 ||
-            el.getClientRects().length > 0)
-      ) as HTMLElement) ?? null;
+            el.getClientRects().length > 0
+          );
+        }
+        return false;
+      });
 
-    if (!panel) return null;
-    const dropdown = panel.querySelector("[role=combobox]");
-    return dropdown instanceof HTMLElement ? dropdown : null;
+      if (visible) {
+        const dropdown = await panel.$("[role=combobox]");
+        if (
+          dropdown &&
+          (await dropdown.evaluate((d) => d instanceof HTMLElement))
+        ) {
+          return dropdown as ElementHandle<HTMLElement>;
+        }
+      }
+    }
+    return null;
   }
 
-  private findLanguageOptionByValue(value: string): HTMLElement | null {
-    return (document.querySelector(`[role=radio][data-value="${value}"]`) ??
-      document.querySelector(
-        `[type=radio][name=languageRadioGroup][value="${value}"]`
-      ) ??
-      document.querySelector(
-        `[role=option][data-value="${value}"]`
-      )) as HTMLElement | null;
-  }
-
-  private getLiveCaptionsRadioButton(): HTMLElement | null {
-    const radioGroup = document.querySelector("div[role=radiogroup]");
-    if (!radioGroup) return null;
-    const radio = radioGroup.querySelector<HTMLInputElement>(
-      'input[type="radio"][value="live"]'
+  private async findLanguageOptionByValue(
+    value: string
+  ): Promise<ElementHandle<HTMLElement> | null> {
+    let el = await this.page.$(`[role=radio][data-value="${value}"]`);
+    if (el) return el as ElementHandle<HTMLElement>;
+    el = await this.page.$(
+      `[type=radio][name=languageRadioGroup][value="${value}"]`
     );
-    return radio;
+    if (el) return el as ElementHandle<HTMLElement>;
+    el = await this.page.$(`[role=option][data-value="${value}"]`);
+    if (el) return el as ElementHandle<HTMLElement>;
+    return null;
   }
 
-  private findClosedCaptionTab(): HTMLElement | null {
-    const button = document.querySelector("[data-mdc-dialog-action=close]");
-    return button instanceof HTMLElement ? button : null;
+  private async getLiveCaptionsRadioButton(): Promise<ElementHandle<HTMLElement> | null> {
+    const radioGroup = await this.page.$("div[role=radiogroup]");
+    if (!radioGroup) return null;
+    const radio = await radioGroup.$('input[type="radio"][value="live"]');
+    return radio as ElementHandle<HTMLElement> | null;
+  }
+
+  private async findClosedCaptionTab(): Promise<ElementHandle<HTMLElement> | null> {
+    const button = await this.page.$("[data-mdc-dialog-action=close]");
+    return button as ElementHandle<HTMLElement> | null;
   }
 }

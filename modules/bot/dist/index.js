@@ -56,9 +56,6 @@ async function main() {
         console.error(constants_1.ErrorMessages.INVALID_MEETING_CONFIG_JSON, error);
         process.exit(1);
     }
-    // const hubClient = new MeetingHubClient(parsedConfig);
-    // await hubClient.startConnection();
-    // console.log("[SignalR] Connection established successfully.");
     try {
         await (0, botManager_1.startMeetingBot)(parsedConfig);
     }
