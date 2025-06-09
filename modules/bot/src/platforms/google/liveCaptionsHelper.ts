@@ -2,7 +2,7 @@ import { logger } from "../../utils/logger";
 import { RANDOM_DELAY_MAX } from "./constants";
 
 export class LiveCaptionsHelper {
-  public async configureCaptions(languageValue: string): Promise<void> {
+  public async enableCaptions(languageValue: string): Promise<void> {
     const moreOptionsBtn = this.findMainMoreOptionsButton();
     if (moreOptionsBtn) {
       moreOptionsBtn.click();
