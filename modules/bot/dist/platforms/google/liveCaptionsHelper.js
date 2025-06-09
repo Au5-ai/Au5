@@ -4,7 +4,7 @@ exports.LiveCaptionsHelper = void 0;
 const logger_1 = require("../../utils/logger");
 const constants_1 = require("./constants");
 class LiveCaptionsHelper {
-    async configureCaptions(languageValue) {
+    async enableCaptions(languageValue) {
         const moreOptionsBtn = this.findMainMoreOptionsButton();
         if (moreOptionsBtn) {
             moreOptionsBtn.click();
