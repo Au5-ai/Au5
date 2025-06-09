@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LiveCaptionsHelper = void 0;
 const logger_1 = require("../../utils/logger");
+const constants_1 = require("./constants");
 class LiveCaptionsHelper {
     async configureCaptions(languageValue) {
         const moreOptionsBtn = this.findMainMoreOptionsButton();
@@ -12,7 +13,7 @@ class LiveCaptionsHelper {
             logger_1.logger.warn("More Options button not found");
             return;
         }
-        await delay(200);
+        await delay(constants_1.RANDOM_DELAY_MAX);
         const settingsBtn = this.findSettingsMenuItem("Settings");
         if (settingsBtn) {
             settingsBtn.click();
@@ -21,13 +22,19 @@ class LiveCaptionsHelper {
             logger_1.logger.warn("Settings menu item not found");
             return;
         }
-        await delay(300);
-        const captionsTab = this.findCaptionsTabButton();
+        await delay(constants_1.RANDOM_DELAY_MAX);
+        let captionsTab = this.findCaptionsTabButton();
+        let retries = 3;
+        while (!captionsTab && retries > 0) {
+            await delay(300);
+            captionsTab = this.findCaptionsTabButton();
+            retries--;
+        }
         if (captionsTab) {
             captionsTab.click();
         }
         else {
-            logger_1.logger.warn("Captions tab not found");
+            logger_1.logger.warn("Captions tab not found after retries");
             return;
         }
         await delay(300);
@@ -39,7 +46,7 @@ class LiveCaptionsHelper {
             logger_1.logger.warn("Combobox not found in visible tab panel");
             return;
         }
-        await delay(300);
+        await delay(constants_1.RANDOM_DELAY_MAX);
         const languageOption = this.findLanguageOptionByValue(languageValue);
         if (languageOption) {
             languageOption.click();
@@ -48,7 +55,7 @@ class LiveCaptionsHelper {
             logger_1.logger.warn(`Language option '${languageValue}' not found`);
             return;
         }
-        await delay(200);
+        await delay(constants_1.RANDOM_DELAY_MAX);
         const liveRadio = this.getLiveCaptionsRadioButton();
         if (liveRadio) {
             liveRadio.click();

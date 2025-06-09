@@ -8,6 +8,7 @@ class TranscriptMutationHandler {
     constructor(page, config) {
         this.page = page;
         this.config = config;
+        this.previousTranscripts = {};
         this.domUtility = new domUtility_1.DomUtility(page);
     }
     async initialize(callback) {
@@ -49,8 +50,12 @@ class TranscriptMutationHandler {
             logger_1.logger.error("[GoogleMeet][Transcription] Transcript container is not available.");
             return;
         }
-        // Step 1: Expose a function to the browser context
         await this.page.exposeFunction("handleTranscription", async (caption) => {
+            if (!caption.transcript || !caption.transcript.trim())
+                return;
+            if (this.previousTranscripts[caption.blockId] === caption.transcript)
+                return;
+            this.previousTranscripts[caption.blockId] = caption.transcript;
             callback({
                 transcriptBlockId: caption.blockId,
                 speaker: {

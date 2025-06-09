@@ -7,6 +7,8 @@ import { LiveCaptionsHelper } from "./liveCaptionsHelper";
 
 export class TranscriptMutationHandler {
   private domUtility: DomUtility;
+  private previousTranscripts: Record<string, string> = {};
+
   constructor(private page: Page, private config: GoogleCaptionConfiguration) {
     this.domUtility = new DomUtility(page);
   }
@@ -70,10 +72,14 @@ export class TranscriptMutationHandler {
       return;
     }
 
-    // Step 1: Expose a function to the browser context
     await this.page.exposeFunction(
       "handleTranscription",
       async (caption: Caption) => {
+        if (!caption.transcript || !caption.transcript.trim()) return;
+        if (this.previousTranscripts[caption.blockId] === caption.transcript)
+          return;
+        this.previousTranscripts[caption.blockId] = caption.transcript;
+
         callback({
           transcriptBlockId: caption.blockId,
           speaker: {
