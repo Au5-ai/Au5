@@ -7,7 +7,9 @@ import {
   IMessage,
   ReactionAppliedMessage,
   TranscriptionEntry,
-  User
+  TranscriptionEntryMessage,
+  User,
+  UserJoinedInMeetingMessage
 } from "./core/types";
 import {ChromeStorage} from "./core/utils/chromeStorage";
 import {DomUtils} from "./core/utils/dom.utils";
@@ -49,7 +51,7 @@ const meetingEndIcon = {
 
 export function handleWindowMessage(action: string, payload: IMessage): void {
   switch (action) {
-    case MessageTypes.NotifyRealTimeTranscription:
+    case MessageTypes.TranscriptionEntryMessage:
       const transcriptEntry = payload as TranscriptionEntryMessage;
 
       SidePanel.addTranscription({
@@ -71,11 +73,9 @@ export function handleWindowMessage(action: string, payload: IMessage): void {
       const item: User = {
         id: userJoinedMsg.user.id,
         fullName: userJoinedMsg.user.fullName,
-        pictureUrl: userJoinedMsg.user.pictureUrl,
-        joinedAt: userJoinedMsg.user.joinedAt || new Date()
+        pictureUrl: userJoinedMsg.user.pictureUrl
       };
-      meeting.users.push(item);
-      SidePanel.usersJoined(item, meeting.isStarted);
+      SidePanel.usersJoined(item);
       break;
 
     case MessageTypes.ReactionApplied:

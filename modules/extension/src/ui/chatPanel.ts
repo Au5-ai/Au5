@@ -151,51 +151,12 @@ export default class ChatPanel {
     });
   }
 
-  public static addParticipant(user: User): void {
-    if (!this.participantsContainer) {
-      return;
-    }
-
-    const participantElement = document.createElement("div");
-    participantElement.className = "au5-participant";
-
-    const img = document.createElement("img");
-    img.src = user.pictureUrl;
-    img.alt = "Participant Avatar";
-
-    const infoDiv = document.createElement("div");
-    infoDiv.className = "au5-participant-info";
-
-    const nameDiv = document.createElement("div");
-    nameDiv.className = "au5-participant-name";
-    nameDiv.textContent = user.fullName || "Unknown User";
-
-    const joinedAtDiv = document.createElement("div");
-    joinedAtDiv.className = "au5-participant-joinedAt";
-    joinedAtDiv.textContent = `Joined at: ${DateTime.toHoursAndMinutes(new Date())}`;
-
-    infoDiv.appendChild(nameDiv);
-    infoDiv.appendChild(joinedAtDiv);
-    participantElement.appendChild(img);
-    participantElement.appendChild(infoDiv);
-
-    this.participantsContainer.appendChild(participantElement);
+  public static usersJoined(user: User): void {
+    this.addUserJoinedOrLeaved(user, true);
   }
 
-  public static usersJoined(user: User, isMeetStarted: boolean): void {
-    if (isMeetStarted) {
-      this.addUserJoinedOrLeaved(user, true);
-    } else {
-      this.addParticipant(user);
-    }
-  }
-
-  public static usersLeaved(user: User, isMeetStarted: boolean): void {
-    if (isMeetStarted) {
-      this.addUserJoinedOrLeaved(user, false);
-    } else {
-      this.addParticipant(user);
-    }
+  public static usersLeaved(user: User): void {
+    this.addUserJoinedOrLeaved(user, false);
   }
 
   private static addUserJoinedOrLeaved(user: User, isJoined: boolean): void {

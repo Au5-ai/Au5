@@ -65,5 +65,5 @@ export interface TranscriptionEntryMessage extends IMessage {
   speaker: User;
   transcript: string;
   timestamp: Date;
-  readonly type: MessageTypes.NotifyRealTimeTranscription;
+  readonly type: MessageTypes.TranscriptionEntryMessage;
 }
