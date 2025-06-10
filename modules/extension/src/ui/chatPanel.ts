@@ -1,12 +1,9 @@
-import {PostMessageTypes} from "../core/constants";
-import {TranscriptionEntry, User} from "../core/types";
-import {AppConfiguration} from "../core/types/configuration";
+import {MessageTypes, PostMessageSource} from "../core/constants";
+import {AppConfiguration, ReactionAppliedMessage, TranscriptionEntry, User} from "../core/types";
 import {DateTime} from "../core/utils/datetime";
-import {ReactionAppliedMessage} from "../hub/types";
-import {MessageTypes} from "../hub/types/enums";
 import css from "./styles/au5-panel.css?raw";
 
-export default class SidePanel {
+export default class ChatPanel {
   private static panelElement: HTMLDivElement | null = null;
   private static transcriptionsContainer: HTMLDivElement | null = null;
   private static participantsContainer: HTMLDivElement | null = null;
@@ -136,7 +133,7 @@ export default class SidePanel {
           meetingId: meetingId,
           type: MessageTypes.ReactionApplied,
           user: {
-            id: config.user.userId,
+            id: config.user.id,
             fullName: config.user.fullName,
             pictureUrl: config.user.pictureUrl
           }
@@ -144,7 +141,7 @@ export default class SidePanel {
         this.addReaction(payload);
         window.postMessage(
           {
-            source: PostMessageTypes.ContentScript,
+            source: PostMessageSource.ContentScript,
             action: payload.type,
             payload: payload
           },
@@ -175,7 +172,7 @@ export default class SidePanel {
 
     const joinedAtDiv = document.createElement("div");
     joinedAtDiv.className = "au5-participant-joinedAt";
-    joinedAtDiv.textContent = `Joined at: ${DateTime.toHoursAndMinutes(user.joinedAt || new Date())}`;
+    joinedAtDiv.textContent = `Joined at: ${DateTime.toHoursAndMinutes(new Date())}`;
 
     infoDiv.appendChild(nameDiv);
     infoDiv.appendChild(joinedAtDiv);
@@ -208,7 +205,7 @@ export default class SidePanel {
     const usersJoined = document.createElement("div");
     usersJoined.className = "au5-join-time";
     usersJoined.innerText = `${user.fullName} ${isJoined ? "Joined" : "Leaved"} at ${DateTime.toHoursAndMinutes(
-      user.joinedAt || new Date()
+      new Date()
     )}`;
     this.transcriptionsContainer.appendChild(usersJoined);
   }

@@ -18,13 +18,13 @@ export class MeetingHubClient {
       .build();
 
     this.windowMessageHandler = new WindowMessageHandler(
-      PostMessageSource.MeetingHubClient,
+      PostMessageSource.BackgroundScript,
       PostMessageSource.ContentScript,
       this.handleWindowMessage.bind(this)
     );
   }
 
-  public startConnection() {
+  public startConnection(): boolean {
     this.connection
       .start()
       .then(() => {
@@ -43,7 +43,9 @@ export class MeetingHubClient {
       })
       .catch(err => {
         console.error("SignalR connection failed:", err);
+        return false;
       });
+    return true;
   }
 
   private setupHandlers() {
