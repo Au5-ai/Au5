@@ -1,5 +1,5 @@
 import {ConfigurationManager} from "./core/configurationManager";
-import {MessageTypes} from "./core/types/index";
+import {MessageTypes, PostMessageSource} from "./core/types/index";
 import {MeetingPlatformFactory} from "./core/platforms/meetingPlatformFactory";
 import {
   AppConfiguration,
@@ -15,6 +15,7 @@ import {ChromeStorage} from "./core/utils/chromeStorage";
 import {DomUtils} from "./core/utils/dom.utils";
 import {MeetingHubClient} from "./hub/meetingHubClient";
 import SidePanel from "./ui/chatPanel";
+import {WindowMessageHandler} from "./core/windowMessageHandler";
 
 const platform: IMeetingPlatform = new MeetingPlatformFactory(window.location.href).getPlatform();
 let domUtils = new DomUtils();
@@ -24,6 +25,11 @@ const meetingEndIcon = {
   selector: ".google-symbols",
   text: "call_end"
 };
+const windowMessageHandler = new WindowMessageHandler(
+  PostMessageSource.ContentScript,
+  PostMessageSource.BackgroundScript,
+  handleWindowMessage
+);
 
 (async function main(): Promise<void> {
   try {
@@ -50,6 +56,7 @@ const meetingEndIcon = {
 })();
 
 export function handleWindowMessage(action: string, payload: IMessage): void {
+  console.log("Received message from background script:", action, payload);
   switch (action) {
     case MessageTypes.TranscriptionEntry:
       const transcriptEntry = payload as TranscriptionEntryMessage;

@@ -240,8 +240,8 @@ async function handleTranscription(
     return;
   }
 
-  logger.info(message);
   message.meetingId = meetingConfig.meetingId;
+  logger.info(message);
   await hubClient.sendMessage(message);
 }
 

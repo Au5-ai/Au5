@@ -38,7 +38,7 @@ export const MEETING_CONFIG = `{
   "platform": "googleMeet",
   "meetingUrl": "https://meet.google.com/kqt-byur-jya",
   "model": "liveCaption",
-  "botDisplayName": "Au5Bot",
+  "botDisplayName": "Au5",
   "meetingId": "kqt-byur-jya",
   "language": "fa-IR",
   "autoLeave": {

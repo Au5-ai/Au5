@@ -91,7 +91,7 @@ export class TranscriptMutationHandler {
           transcript: caption.transcript,
           timestamp: new Date(),
           meetingId: "",
-          type: "NotifyRealTimeTranscription",
+          type: "TranscriptionEntry",
         } as TranscriptionEntryMessage);
       }
     );
@@ -159,6 +159,13 @@ export class TranscriptMutationHandler {
       };
 
       const observer = new MutationObserver((mutations) => {
+        let blockTranscription: Caption = {
+          blockId: "",
+          speakerName: "",
+          pictureUrl: "",
+          transcript: "",
+        };
+
         for (const mutation of mutations) {
           // Handle added blocks
           for (const node of mutation.addedNodes) {
@@ -167,25 +174,24 @@ export class TranscriptMutationHandler {
               if (isCaptionBlock(element, el)) {
                 const captionBlock = processBlock(el);
                 if (captionBlock.transcript.trim() !== "") {
-                  // @ts-ignore
-                  window.handleTranscription(captionBlock);
+                  blockTranscription = captionBlock;
                 }
               }
             }
           }
 
           // Handle updated blocks
-          const target = mutation.target;
-          if (target.nodeType === Node.ELEMENT_NODE) {
-            const block = findCaptionBlock(element, target);
-            if (block && isCaptionBlock(element, block)) {
-              const captionBlock = processBlock(block);
-              if (captionBlock.transcript.trim() !== "") {
-                // @ts-ignore
-                window.handleTranscription(captionBlock);
-              }
-            }
+          const block = findCaptionBlock(element, mutation.target);
+          if (block) {
+            blockTranscription = processBlock(block);
           }
+
+          if (blockTranscription.transcript.trim() == "") {
+            return;
+          }
+
+          // @ts-ignore
+          window.handleTranscription(blockTranscription);
         }
       });
 

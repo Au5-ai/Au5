@@ -21,7 +21,7 @@ class ConfigurationManager {
         service: {
           webhookUrl: "https://au5.ai/api/v1/",
           direction: "rtl",
-          hubUrl: "https://localhost:1366/meetinghub",
+          hubUrl: "http://localhost:1366/meetinghub",
           companyName: "Asax Co"
         }
       };
@@ -3367,6 +3367,11 @@ const meetingEndIcon = {
   selector: ".google-symbols",
   text: "call_end"
 };
+new WindowMessageHandler(
+  PostMessageSource.ContentScript,
+  PostMessageSource.BackgroundScript,
+  handleWindowMessage
+);
 (async function main() {
   var _a;
   try {
@@ -3387,3 +3392,38 @@ const meetingEndIcon = {
     console.error("Meeting routine execution failed:", error);
   }
 })();
+function handleWindowMessage(action, payload) {
+  console.log("Received message from background script:", action, payload);
+  switch (action) {
+    case MessageTypes.TranscriptionEntry:
+      const transcriptEntry = payload;
+      ChatPanel.addTranscription({
+        meetingId: transcriptEntry.meetingId,
+        transcriptBlockId: transcriptEntry.transcriptBlockId,
+        speaker: transcriptEntry.speaker,
+        transcript: transcriptEntry.transcript,
+        timestamp: transcriptEntry.timestamp
+      });
+      break;
+    case MessageTypes.NotifyUserJoining:
+      const userJoinedMsg = payload;
+      if (!userJoinedMsg.user) {
+        return;
+      }
+      ChatPanel.usersJoined({
+        id: userJoinedMsg.user.id,
+        fullName: userJoinedMsg.user.fullName,
+        pictureUrl: userJoinedMsg.user.pictureUrl
+      });
+      break;
+    case MessageTypes.ReactionApplied:
+      const reactionMsg = payload;
+      if (!reactionMsg.meetingId || !reactionMsg.transcriptBlockId || !reactionMsg.user || !reactionMsg.reaction) {
+        return;
+      }
+      ChatPanel.addReaction(reactionMsg);
+      break;
+    default:
+      console.warn("Unknown message action received:", action);
+  }
+}
