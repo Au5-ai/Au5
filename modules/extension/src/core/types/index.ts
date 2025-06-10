@@ -1,5 +1,3 @@
-import {MessageTypes} from "../constants";
-
 export interface Speaker {
   fullName: string;
   pictureUrl: string;
@@ -66,4 +64,18 @@ export interface TranscriptionEntryMessage extends IMessage {
   transcript: string;
   timestamp: Date;
   readonly type: MessageTypes.TranscriptionEntryMessage;
+}
+
+export enum PostMessageSource {
+  ContentScript = "Au5-ContentScript",
+  BackgroundScript = "Au5-BackgroundScript"
+}
+
+/**
+ * Actions that can be triggered by the content script.
+ */
+export enum MessageTypes {
+  TranscriptionEntryMessage = "TranscriptionEntryMessage",
+  NotifyUserJoining = "NotifyUserJoining",
+  ReactionApplied = "ReactionApplied"
 }

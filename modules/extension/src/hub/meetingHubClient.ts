@@ -1,7 +1,7 @@
 import * as signalR from "@microsoft/signalr";
 import {WindowMessageHandler} from "../core/windowMessageHandler";
 import {AppConfiguration, IMessage, JoinMeeting} from "../core/types";
-import {MessageTypes, PostMessageSource} from "../core/constants";
+import {MessageTypes, PostMessageSource} from "../core/types/index";
 
 export class MeetingHubClient {
   private connection: signalR.HubConnection;

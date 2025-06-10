@@ -1,4 +1,4 @@
-import {MessageTypes, PostMessageSource} from "../core/constants";
+import {MessageTypes, PostMessageSource} from "../core/types/index";
 import {AppConfiguration, ReactionAppliedMessage, TranscriptionEntry, User} from "../core/types";
 import {DateTime} from "../core/utils/datetime";
 import css from "./styles/au5-panel.css?raw";
@@ -6,7 +6,7 @@ import css from "./styles/au5-panel.css?raw";
 export default class ChatPanel {
   private static panelElement: HTMLDivElement | null = null;
   private static transcriptionsContainer: HTMLDivElement | null = null;
-  private static participantsContainer: HTMLDivElement | null = null;
+  private static joiningContainer: HTMLDivElement | null = null;
   private static btnStartTranscription: HTMLDivElement | null = null;
   private static inputWrapper: HTMLDivElement | null = null;
   private static header: HTMLDivElement | null = null;
@@ -62,10 +62,10 @@ export default class ChatPanel {
                 </span>
               </div>
            </div>
-          <div class="au5-participants-container au5-container"></div>
+          <div class="au5-joining-container au5-container"></div>
           <div class="au5-transcriptions-container au5-container au5-hidden"></div>
            <div class="au5-footer">
-              <button id="au5-startTranscription-btn" class="au5-startTranscription-btn au5-btn">Start Transcription</button>
+              <button id="au5-joinMeeting-btn" class="au5-startTranscription-btn au5-btn">Join Transcription</button>
               <div class="au5-input-wrapper au5-hidden">
                 <div class="au5-input-container">
                   <input type="text" class="au5-input" placeholder="Write your message ..." />
@@ -82,7 +82,7 @@ export default class ChatPanel {
 
     this.panelElement = container.querySelector(".au5-panel") as HTMLDivElement;
     this.transcriptionsContainer = container.querySelector(".au5-transcriptions-container") as HTMLDivElement;
-    this.participantsContainer = container.querySelector(".au5-participants-container") as HTMLDivElement;
+    this.joiningContainer = container.querySelector(".au5-joining-container") as HTMLDivElement;
     this.btnStartTranscription = container.querySelector(".au5-startTranscription-btn") as HTMLDivElement;
     this.inputWrapper = container.querySelector(".au5-input-wrapper") as HTMLDivElement;
     this.header = container.querySelector(".au5-header") as HTMLDivElement;
@@ -103,7 +103,7 @@ export default class ChatPanel {
         if (collapseButton.classList.contains("au5-icon-selected")) {
           collapseButton.classList.remove("au5-icon-selected");
           this.header?.classList.remove("au5-header-collapse");
-          this.participantsContainer?.classList.remove("au5-hidden");
+          this.joiningContainer?.classList.remove("au5-hidden");
           this.transcriptionsContainer?.classList.remove("au5-hidden");
           this.footer?.classList.remove("au5-hidden");
           return;
@@ -111,7 +111,7 @@ export default class ChatPanel {
 
         collapseButton.classList.add("au5-icon-selected");
         this.header?.classList.add("au5-header-collapse");
-        this.participantsContainer?.classList.add("au5-hidden");
+        this.joiningContainer?.classList.add("au5-hidden");
         this.transcriptionsContainer?.classList.add("au5-hidden");
         this.footer?.classList.add("au5-hidden");
       });
@@ -219,9 +219,9 @@ export default class ChatPanel {
   public static showTranscriptionsContainer(): void {
     if (this.transcriptionsContainer) {
       this.transcriptionsContainer.classList.remove("au5-hidden");
-      this.inputWrapper?.classList.remove("au5-hidden");
-      this.participantsContainer?.remove();
-      this.participantsContainer = null;
+      //  this.inputWrapper?.classList.remove("au5-hidden");
+      this.joiningContainer?.remove();
+      this.joiningContainer = null;
       this.btnStartTranscription?.classList.add("au5-hidden");
     }
   }

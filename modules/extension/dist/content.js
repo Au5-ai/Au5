@@ -3166,10 +3166,10 @@ class ChatPanel {
                 </span>
               </div>
            </div>
-          <div class="au5-participants-container au5-container"></div>
+          <div class="au5-joining-container au5-container"></div>
           <div class="au5-transcriptions-container au5-container au5-hidden"></div>
            <div class="au5-footer">
-              <button id="au5-startTranscription-btn" class="au5-startTranscription-btn au5-btn">Start Transcription</button>
+              <button id="au5-joinMeeting-btn" class="au5-startTranscription-btn au5-btn">Join Transcription</button>
               <div class="au5-input-wrapper au5-hidden">
                 <div class="au5-input-container">
                   <input type="text" class="au5-input" placeholder="Write your message ..." />
@@ -3184,7 +3184,7 @@ class ChatPanel {
     document.body.appendChild(container);
     this.panelElement = container.querySelector(".au5-panel");
     this.transcriptionsContainer = container.querySelector(".au5-transcriptions-container");
-    this.participantsContainer = container.querySelector(".au5-participants-container");
+    this.joiningContainer = container.querySelector(".au5-joining-container");
     this.btnStartTranscription = container.querySelector(".au5-startTranscription-btn");
     this.inputWrapper = container.querySelector(".au5-input-wrapper");
     this.header = container.querySelector(".au5-header");
@@ -3202,14 +3202,14 @@ class ChatPanel {
         if (collapseButton.classList.contains("au5-icon-selected")) {
           collapseButton.classList.remove("au5-icon-selected");
           (_a2 = this.header) == null ? void 0 : _a2.classList.remove("au5-header-collapse");
-          (_b = this.participantsContainer) == null ? void 0 : _b.classList.remove("au5-hidden");
+          (_b = this.joiningContainer) == null ? void 0 : _b.classList.remove("au5-hidden");
           (_c = this.transcriptionsContainer) == null ? void 0 : _c.classList.remove("au5-hidden");
           (_d = this.footer) == null ? void 0 : _d.classList.remove("au5-hidden");
           return;
         }
         collapseButton.classList.add("au5-icon-selected");
         (_e = this.header) == null ? void 0 : _e.classList.add("au5-header-collapse");
-        (_f = this.participantsContainer) == null ? void 0 : _f.classList.add("au5-hidden");
+        (_f = this.joiningContainer) == null ? void 0 : _f.classList.add("au5-hidden");
         (_g = this.transcriptionsContainer) == null ? void 0 : _g.classList.add("au5-hidden");
         (_h = this.footer) == null ? void 0 : _h.classList.add("au5-hidden");
       });
@@ -3303,13 +3303,12 @@ class ChatPanel {
     this.transcriptionsContainer.appendChild(transcriptBlock);
   }
   static showTranscriptionsContainer() {
-    var _a, _b, _c;
+    var _a, _b;
     if (this.transcriptionsContainer) {
       this.transcriptionsContainer.classList.remove("au5-hidden");
-      (_a = this.inputWrapper) == null ? void 0 : _a.classList.remove("au5-hidden");
-      (_b = this.participantsContainer) == null ? void 0 : _b.remove();
-      this.participantsContainer = null;
-      (_c = this.btnStartTranscription) == null ? void 0 : _c.classList.add("au5-hidden");
+      (_a = this.joiningContainer) == null ? void 0 : _a.remove();
+      this.joiningContainer = null;
+      (_b = this.btnStartTranscription) == null ? void 0 : _b.classList.add("au5-hidden");
     }
   }
   static addReaction(reaction) {
@@ -3354,7 +3353,7 @@ class ChatPanel {
 }
 __publicField(ChatPanel, "panelElement", null);
 __publicField(ChatPanel, "transcriptionsContainer", null);
-__publicField(ChatPanel, "participantsContainer", null);
+__publicField(ChatPanel, "joiningContainer", null);
 __publicField(ChatPanel, "btnStartTranscription", null);
 __publicField(ChatPanel, "inputWrapper", null);
 __publicField(ChatPanel, "header", null);
@@ -3368,14 +3367,14 @@ const meetingEndIcon = {
   selector: ".google-symbols",
   text: "call_end"
 };
-(async function initMeetingRoutine() {
+(async function main() {
   var _a;
   try {
     const configurationManager = new ConfigurationManager(new ChromeStorage());
     config = await configurationManager.getConfig();
     await domUtils.waitForMatch(meetingEndIcon.selector, meetingEndIcon.text);
     ChatPanel.createSidePanel(config, platform.getMeetingId());
-    (_a = document.getElementById("")) == null ? void 0 : _a.addEventListener("click", () => {
+    (_a = document.getElementById("au5-joinMeeting-btn")) == null ? void 0 : _a.addEventListener("click", () => {
       meetingHubClient = new MeetingHubClient(config, platform.getMeetingId());
       const isConnected = meetingHubClient.startConnection();
       if (!isConnected) {

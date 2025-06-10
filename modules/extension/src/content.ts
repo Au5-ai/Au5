@@ -1,5 +1,5 @@
 import {ConfigurationManager} from "./core/configurationManager";
-import {MessageTypes} from "./core/constants";
+import {MessageTypes} from "./core/types/index";
 import {MeetingPlatformFactory} from "./core/platforms/meetingPlatformFactory";
 import {
   AppConfiguration,
@@ -25,7 +25,7 @@ const meetingEndIcon = {
   text: "call_end"
 };
 
-(async function initMeetingRoutine(): Promise<void> {
+(async function main(): Promise<void> {
   try {
     const configurationManager = new ConfigurationManager(new ChromeStorage());
     config = await configurationManager.getConfig();
@@ -33,7 +33,7 @@ const meetingEndIcon = {
 
     SidePanel.createSidePanel(config, platform.getMeetingId());
 
-    document.getElementById("")?.addEventListener("click", () => {
+    document.getElementById("au5-joinMeeting-btn")?.addEventListener("click", () => {
       meetingHubClient = new MeetingHubClient(config, platform.getMeetingId());
       const isConnected = meetingHubClient.startConnection(); // TODO: Handle when the user clicks to join the meeting
 
