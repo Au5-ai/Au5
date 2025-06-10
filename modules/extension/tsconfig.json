@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "dist",
+    "types": ["vite/client", "chrome"]
+  },
+  "include": ["src/**/*.ts", "src/content.ts", "vite-env.d.ts", "src/**/*"],
+  "exclude": ["node_modules"]
+}

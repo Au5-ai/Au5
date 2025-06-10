@@ -1,0 +1,26 @@
+{
+  "scripts": {
+    "dev": "vite build --watch --mode development",
+    "build": "npx tsc && vite build --mode production",
+    "preview": "vite preview",
+    "lint": "eslint src/**/*.{ts,tsx,js}"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.27.0",
+    "@types/chrome": "^0.0.200",
+    "@typescript-eslint/eslint-plugin": "^8.32.0",
+    "@typescript-eslint/parser": "^8.32.0",
+    "eslint": "^9.27.0",
+    "eslint-plugin-unicorn": "^59.0.1",
+    "globals": "^16.1.0",
+    "rollup-plugin-copy": "^3.5.0",
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.32.1",
+    "vite": "^6.3.5",
+    "vite-plugin-string": "^1.2.3"
+  },
+  "dependencies": {
+    "@microsoft/signalr": "^8.0.7",
+    "@microsoft/signalr-protocol-msgpack": "^8.0.7"
+  }
+}
