@@ -51,7 +51,7 @@ const meetingEndIcon = {
 
 export function handleWindowMessage(action: string, payload: IMessage): void {
   switch (action) {
-    case MessageTypes.TranscriptionEntryMessage:
+    case MessageTypes.TranscriptionEntry:
       const transcriptEntry = payload as TranscriptionEntryMessage;
 
       SidePanel.addTranscription({
@@ -70,12 +70,11 @@ export function handleWindowMessage(action: string, payload: IMessage): void {
         return;
       }
 
-      const item: User = {
+      SidePanel.usersJoined({
         id: userJoinedMsg.user.id,
         fullName: userJoinedMsg.user.fullName,
         pictureUrl: userJoinedMsg.user.pictureUrl
-      };
-      SidePanel.usersJoined(item);
+      });
       break;
 
     case MessageTypes.ReactionApplied:

@@ -74,7 +74,7 @@ var PostMessageSource = /* @__PURE__ */ ((PostMessageSource2) => {
   return PostMessageSource2;
 })(PostMessageSource || {});
 var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
-  MessageTypes2["TranscriptionEntryMessage"] = "TranscriptionEntryMessage";
+  MessageTypes2["TranscriptionEntry"] = "TranscriptionEntry";
   MessageTypes2["NotifyUserJoining"] = "NotifyUserJoining";
   MessageTypes2["ReactionApplied"] = "ReactionApplied";
   return MessageTypes2;
@@ -3091,7 +3091,7 @@ class MeetingHubClient {
     this.connection.on("ReceiveMessage", (msg) => {
       switch (msg.type) {
         case MessageTypes.NotifyUserJoining:
-        case MessageTypes.TranscriptionEntryMessage:
+        case MessageTypes.TranscriptionEntry:
         case MessageTypes.ReactionApplied:
           this.windowMessageHandler.postToWindow(msg);
           break;

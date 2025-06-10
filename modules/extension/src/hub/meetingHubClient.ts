@@ -52,7 +52,7 @@ export class MeetingHubClient {
     this.connection.on("ReceiveMessage", (msg: IMessage) => {
       switch (msg.type) {
         case MessageTypes.NotifyUserJoining:
-        case MessageTypes.TranscriptionEntryMessage:
+        case MessageTypes.TranscriptionEntry:
         case MessageTypes.ReactionApplied:
           this.windowMessageHandler.postToWindow(msg);
           break;
