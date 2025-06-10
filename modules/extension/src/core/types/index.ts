@@ -1,3 +1,8 @@
+export interface IMeetingPlatform {
+  getPlatformName(): string;
+  getMeetingId(): string;
+}
+
 export interface Speaker {
   fullName: string;
   pictureUrl: string;
@@ -47,11 +52,6 @@ export interface ReactionAppliedMessage extends IMessage {
   reaction: string;
 }
 
-export interface IMeetingPlatform {
-  getPlatformName(): string;
-  getMeetingId(): string;
-}
-
 export interface UserJoinedInMeetingMessage extends IMessage {
   readonly type: MessageTypes.NotifyUserJoining;
   user: User;
@@ -63,7 +63,7 @@ export interface TranscriptionEntryMessage extends IMessage {
   speaker: User;
   transcript: string;
   timestamp: Date;
-  readonly type: MessageTypes.TranscriptionEntryMessage;
+  readonly type: MessageTypes.TranscriptionEntry;
 }
 
 export enum PostMessageSource {
@@ -75,7 +75,7 @@ export enum PostMessageSource {
  * Actions that can be triggered by the content script.
  */
 export enum MessageTypes {
-  TranscriptionEntryMessage = "TranscriptionEntryMessage",
+  TranscriptionEntry = "TranscriptionEntry",
   NotifyUserJoining = "NotifyUserJoining",
   ReactionApplied = "ReactionApplied"
 }

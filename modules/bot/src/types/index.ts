@@ -72,5 +72,5 @@ export interface TranscriptionEntryMessage {
   speaker: Speaker;
   transcript: string;
   timestamp: Date;
-  readonly type: "NotifyRealTimeTranscription";
+  readonly type: "TranscriptionEntry";
 }

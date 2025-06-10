@@ -13,7 +13,7 @@ class ConfigurationManager {
     try {
       return {
         user: {
-          token: "",
+          token: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
           id: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
           fullName: "Mohammad Karimi",
           pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"

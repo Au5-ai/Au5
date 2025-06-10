@@ -14,7 +14,6 @@ public class MeetingHub(ILogger<MeetingHub> logger, IUserService userService, IM
     {
         if (string.IsNullOrWhiteSpace(joinMeeting.MeetingId))
         {
-            _logger.LogError("JoinMeeting called with empty MeetingId");
             throw new ArgumentException("MeetingId cannot be empty", nameof(joinMeeting.MeetingId));
         }
         await Groups.AddToGroupAsync(Context.ConnectionId, joinMeeting.MeetingId);
@@ -24,28 +23,17 @@ public class MeetingHub(ILogger<MeetingHub> logger, IUserService userService, IM
     {
         if (string.IsNullOrWhiteSpace(joinMeeting.MeetingId))
         {
-            _logger.LogError("JoinMeeting called with empty MeetingId");
             throw new ArgumentException("MeetingId cannot be empty", nameof(joinMeeting.MeetingId));
         }
-        if (joinMeeting.User is not null)
+        if (joinMeeting.User is null)
         {
-            _logger.LogError("JoinMeeting called with null User");
             throw new ArgumentNullException(nameof(joinMeeting.User), "User cannot be null");
         }
-        var users = _userService.AddUserToMeeting(joinMeeting.User, joinMeeting.MeetingId);
         await Groups.AddToGroupAsync(Context.ConnectionId, joinMeeting.MeetingId);
-        var meetStarted = _meetingService.IsStarted(joinMeeting.MeetingId);
-
-        if (meetStarted)
-        {
-            await SendToYourselfAsync(new MeetingStartedMessage(IsStarted: true));
-        }
-
-        await SendToYourselfAsync(new ListOfUsersInMeetingMessage(users));
         await SendToOthersInGroupAsync(joinMeeting.MeetingId, new UserJoinedInMeetingMessage(joinMeeting.User));
     }
 
-    public async Task NotifyRealTimeTranscription(TranscriptionEntry transcription)
+    public async Task TranscriptionEntry(TranscriptionEntry transcription)
     {
         _transcriptionService.UpsertBlock(transcription);
         await SendToOthersInGroupAsync(transcription.MeetingId, new TranscriptionEntryMessage()
@@ -69,12 +57,6 @@ public class MeetingHub(ILogger<MeetingHub> logger, IUserService userService, IM
         });
     }
 
-    public async Task TriggerTranscriptionStart(StartTranscription data)
-    {
-        _meetingService.Run(data.MeetingId, data.UserId);
-        await SendToOthersInGroupAsync(data.MeetingId, new TranscriptionStartedMessage(data.UserId));
-    }
-
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         await base.OnDisconnectedAsync(exception);
@@ -85,10 +67,4 @@ public class MeetingHub(ILogger<MeetingHub> logger, IUserService userService, IM
     /// </summary>
     private Task SendToOthersInGroupAsync(string groupName, IMessage msg)
         => Clients.OthersInGroup(groupName).SendAsync("ReceiveMessage", msg);
-
-    /// <summary>
-    /// Helper to send message to others in the same meeting group.
-    /// </summary>
-    private Task SendToYourselfAsync(IMessage msg)
-        => Clients.Caller.SendAsync("ReceiveMessage", msg);
 }

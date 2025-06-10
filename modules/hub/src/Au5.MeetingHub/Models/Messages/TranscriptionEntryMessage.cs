@@ -8,5 +8,5 @@ public record struct TranscriptionEntryMessage : IMessage
     public string Transcript { get; set; }
     public string Timestamp { get; set; }
 
-    public readonly string Type => MessageTypes.NotifyRealTimeTranscription;
+    public readonly string Type => MessageTypes.TranscriptionEntry;
 }
