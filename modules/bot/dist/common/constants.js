@@ -33,13 +33,18 @@ exports.MEETING_CONFIG = `{
   "hubUrl": "http://au5-hub:1366/meetinghub",
   "platform": "googleMeet",
   "meetingUrl": "https://meet.google.com/kqt-byur-jya",
-  "model": "liveCaption",
-  "botDisplayName": "Au5Bot",
+  "botDisplayName": "Au5",
   "meetingId": "kqt-byur-jya",
   "language": "fa-IR",
   "autoLeave": {
     "waitingEnter": 30000,
     "noParticipant": 60000,
     "allParticipantsLeft": 120000
+    },
+  "meeting_settings": {
+      "video_recording": true,
+      "audio_recording": true,
+      "transcription": true,
+      "transcription_model": "liveCaption"
   }
 }`;

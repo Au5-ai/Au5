@@ -45,10 +45,10 @@ export const MEETING_CONFIG = `{
     "noParticipant": 60000,
     "allParticipantsLeft": 120000
     },
-    "meeting_settings": {
+  "meeting_settings": {
       "video_recording": true,
       "audio_recording": true,
       "transcription": true,
-      "transcription_model": "liveCaption",
+      "transcription_model": "liveCaption"
   }
 }`;

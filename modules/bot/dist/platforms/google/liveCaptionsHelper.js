@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LiveCaptionsHelper = void 0;
 const logger_1 = require("../../utils/logger");
 const constants_1 = require("./constants");
+const task_1 = require("../../common/task");
 /**
  * Helper class to manage live captions in Google Meet.
  * It provides methods to enable captions, select language, and handle UI interactions.
@@ -20,7 +21,7 @@ class LiveCaptionsHelper {
             logger_1.logger.warn("More Options button not found");
             return;
         }
-        await delay(constants_1.RANDOM_DELAY_MAX);
+        await (0, task_1.delay)(constants_1.RANDOM_DELAY_MAX);
         const settingsBtn = await this.findSettingsMenuItem("Settings");
         if (settingsBtn) {
             await settingsBtn.click();
@@ -29,11 +30,11 @@ class LiveCaptionsHelper {
             logger_1.logger.warn("Settings menu item not found");
             return;
         }
-        await delay(constants_1.RANDOM_DELAY_MAX);
+        await (0, task_1.delay)(constants_1.RANDOM_DELAY_MAX);
         let captionsTab = await this.findCaptionsTabButton();
         let retries = 3;
         while (!captionsTab && retries > 0) {
-            await delay(300);
+            await (0, task_1.delay)(300);
             captionsTab = await this.findCaptionsTabButton();
             retries--;
         }
@@ -44,7 +45,7 @@ class LiveCaptionsHelper {
             logger_1.logger.warn("Captions tab not found after retries");
             return;
         }
-        await delay(300);
+        await (0, task_1.delay)(300);
         const comboBox = await this.getVisibleCaptionsLanguageDropdown();
         if (comboBox) {
             await comboBox.click();
@@ -53,7 +54,7 @@ class LiveCaptionsHelper {
             logger_1.logger.warn("Combobox not found in visible tab panel");
             return;
         }
-        await delay(constants_1.RANDOM_DELAY_MAX);
+        await (0, task_1.delay)(constants_1.RANDOM_DELAY_MAX);
         const languageOption = await this.findLanguageOptionByValue(languageValue);
         if (languageOption) {
             await languageOption.click();
@@ -62,7 +63,7 @@ class LiveCaptionsHelper {
             logger_1.logger.warn(`Language option '${languageValue}' not found`);
             return;
         }
-        await delay(constants_1.RANDOM_DELAY_MAX);
+        await (0, task_1.delay)(constants_1.RANDOM_DELAY_MAX);
         const liveRadio = await this.getLiveCaptionsRadioButton();
         if (liveRadio) {
             await liveRadio.click();

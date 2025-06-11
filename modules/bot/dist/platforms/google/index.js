@@ -59,12 +59,14 @@ class GoogleMeet {
             return false;
         }
     }
-    async startTranscription(handler) {
-        if (this.config.model == "liveCaption") {
+    async observeTranscriptions(handler) {
+        if (this.config.meeting_settings.transcription &&
+            this.config.meeting_settings.transcription_model == "liveCaption") {
             constants_1.Google_Caption_Configuration.language = this.config.language || "en-US";
             new transcriptMutationHandler_1.TranscriptMutationHandler(this.page, constants_1.Google_Caption_Configuration).initialize(handler);
         }
     }
+    async observeParticipations(handler) { }
     /**
      * Navigates to the Google Meet URL and prepares the bot for joining.
      * @param meetingUrl - The URL of the Google Meet session.

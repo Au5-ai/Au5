@@ -108,7 +108,7 @@ export async function startMeetingBot(
     }
 
     await meetingPlatform.observeTranscriptions(handleTranscription);
-    await meetingPlatform.observeParticipations(handleParticipation);
+    // await meetingPlatform.observeParticipations(handleParticipation);
   }
 }
 

@@ -15,6 +15,7 @@ let browser = null;
 let meetingPlatform;
 let hubClient;
 let meetingConfig;
+let meetingHasPaused = false;
 /**
  * Starts the meeting bot with the specified configuration.
  *
@@ -84,8 +85,28 @@ async function startMeetingBot(config) {
             process.exit(1);
             return;
         }
-        await meetingPlatform.startTranscription(handleTranscription);
+        await meetingPlatform.observeTranscriptions(handleTranscription);
+        // await meetingPlatform.observeParticipations(handleParticipation);
     }
+}
+async function handleTranscription(message) {
+    if (!hubClient) {
+        logger_1.logger.error("[Program] Hub client is not initialized.");
+        return;
+    }
+    message.meetingId = meetingConfig.meetingId;
+    logger_1.logger.info(message);
+    if (!meetingHasPaused) {
+        await hubClient.sendMessage(message);
+    }
+}
+async function handleParticipation(message) {
+    if (!hubClient) {
+        logger_1.logger.error("[Program] [handleParticipation] Hub client is not initialized.");
+        return;
+    }
+    message.meetingId = meetingConfig.meetingId;
+    await hubClient.sendMessage(message);
 }
 /**
  * Registers a function named `triggerNodeGracefulLeave` in the browser context,
@@ -190,15 +211,6 @@ async function performGracefulLeave() {
         logger_1.logger.info("[Program] Leave attempt failed or button not found. Exiting process with code 1 (Failure). Waiting for external termination.");
         process.exit(1);
     }
-}
-async function handleTranscription(message) {
-    if (!hubClient) {
-        logger_1.logger.error("[Program] Hub client is not initialized.");
-        return;
-    }
-    logger_1.logger.info(message);
-    message.meetingId = meetingConfig.meetingId;
-    await hubClient.sendMessage(message);
 }
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 process.on("SIGINT", () => gracefulShutdown("SIGINT"));
