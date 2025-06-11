@@ -1,20 +1,11 @@
-// import {MessageDispatcher} from "./backgroundHandlers/message.dispatcher";
-// import {MeetingEndedHandler} from "./backgroundHandlers/meeting.ended.handler";
-// import {MeetingStartedHandler} from "./backgroundHandlers/meeting.started.handler";
-// import {StorageService} from "./core/browser/storage.service";
-
-// // /**
-// //  * List of all available message handlers using the strategy pattern.
-// //  */
-// // const storageService = new StorageService();
-
-// // const dispatcher = new MessageDispatcher([
-// //   new MeetingStartedHandler(storageService),
-// //   new MeetingEndedHandler(storageService)
-// // ]);
-
-// // chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-// //   //return dispatcher.dispatch(message, sendResponse);
-// //   console.log("Received message:", message, sender);
-// //   sendResponse({success: true});
-// // });
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status === "complete" && tab.url) {
+    const isMeet = tab.url.includes("meet.google.com");
+    console.log("Tab updated:", tabId, changeInfo, tab.url);
+    chrome.sidePanel.setOptions({
+      tabId,
+      path: "sidepanel.html",
+      enabled: isMeet
+    });
+  }
+});

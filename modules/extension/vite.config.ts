@@ -9,7 +9,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         background: resolve(__dirname, "src/background.ts"),
-        content: resolve(__dirname, "src/content.ts"),
+        //content: resolve(__dirname, "src/content.ts"),
       },
       output: {
         manualChunks: () => undefined,
@@ -29,6 +29,9 @@ export default defineConfig({
     copy({
       targets: [
         { src: "manifest.json", dest: "dist" },
+        { src: "src/ui/sidepanel.html", dest: "dist/" },
+        { src: "src/ui/options.html", dest: "dist/" },
+        { src: "src/ui/styles/au5-panel.css", dest: "dist/styles/" },
         { src: "src/assets/*", dest: "dist/assets/" },
       ],
       hook: "writeBundle",

@@ -7,13 +7,13 @@
   "background": {
     "service_worker": "background.js"
   },
-  "content_scripts": [
-    {
-      "js": ["content.js"],
-      "matches": ["*://meet.google.com/*-*-*"],
-      "run_at": "document_end"
-    }
-  ],
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self';"
   },
@@ -22,15 +22,6 @@
     "48": "assets/icons/48x.png",
     "128": "assets/icons/128x.png"
   },
-  "permissions": [
-    "declarativeContent",
-    "activeTab",
-    "storage",
-    "alarms",
-    "scripting",
-    "unlimitedStorage",
-    "declarativeNetRequest",
-    "tabs"
-  ],
+  "permissions": ["sidePanel", "storage"],
   "host_permissions": ["*://meet.google.com/*-*-*"]
 }
