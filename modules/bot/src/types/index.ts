@@ -28,17 +28,27 @@ export type AutoLeaveTimeouts = {
  * @property meetingId - The unique identifier for the meeting.
  * @property language - The language code for the meeting (optional).
  * @property autoLeave - Auto-leave timeout settings.
+ * @property meeting_settings - Additional settings for the meeting, such as recording and transcription options.
+ * @property meeting_settings.video_recording - Whether video recording is enabled.
+ * @property meeting_settings.audio_recording - Whether audio recording is enabled.
+ * @property meeting_settings.transcription - Whether transcription is enabled.
+ * @property meeting_settings.transcription_model - The model used for transcription, either "liveVoice" or "liveCaption".
  */
 export type MeetingConfiguration = {
   hubUrl: string;
   platform: MeetingPlatform;
   meetingUrl: string | null;
-  model: "liveVoice" | "liveCaption";
   botDisplayName: string;
   meetingId: string;
   language?: string | null;
   delayBeforeInteraction: number;
   autoLeave: AutoLeaveTimeouts;
+  meeting_settings: {
+    video_recording?: boolean;
+    audio_recording?: boolean;
+    transcription?: boolean;
+    transcription_model?: "liveVoice" | "liveCaption";
+  };
 };
 
 /**

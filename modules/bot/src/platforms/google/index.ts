@@ -87,7 +87,10 @@ export class GoogleMeet implements IMeetingPlatform {
   async startTranscription(
     handler: (message: TranscriptionEntryMessage) => void
   ): Promise<void> {
-    if (this.config.model == "liveCaption") {
+    if (
+      this.config.meeting_settings.transcription &&
+      this.config.meeting_settings.transcription_model == "liveCaption"
+    ) {
       Google_Caption_Configuration.language = this.config.language || "en-US";
       new TranscriptMutationHandler(
         this.page,
