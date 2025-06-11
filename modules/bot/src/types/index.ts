@@ -62,9 +62,10 @@ export type MeetingConfiguration = {
 export interface IMeetingPlatform {
   joinMeeting(): Promise<boolean>;
   leaveMeeting(): Promise<boolean>;
-  startTranscription(
+  observeTranscriptions(
     handler: (message: TranscriptionEntryMessage) => void
   ): Promise<void>;
+  observeParticipations(handler: (participant: any) => void): Promise<void>;
 }
 
 export interface Speaker {

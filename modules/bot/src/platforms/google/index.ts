@@ -84,7 +84,7 @@ export class GoogleMeet implements IMeetingPlatform {
     }
   }
 
-  async startTranscription(
+  async observeTranscriptions(
     handler: (message: TranscriptionEntryMessage) => void
   ): Promise<void> {
     if (
@@ -98,6 +98,10 @@ export class GoogleMeet implements IMeetingPlatform {
       ).initialize(handler);
     }
   }
+
+  async observeParticipations(
+    handler: (participant: any) => void
+  ): Promise<void> {}
 
   /**
    * Navigates to the Google Meet URL and prepares the bot for joining.

@@ -21,6 +21,7 @@ let browser: Browser | null = null;
 let meetingPlatform: IMeetingPlatform;
 let hubClient: MeetingHubClient;
 let meetingConfig: MeetingConfiguration;
+let meetingHasPaused = false;
 /**
  * Starts the meeting bot with the specified configuration.
  *
@@ -106,8 +107,36 @@ export async function startMeetingBot(
       return;
     }
 
-    await meetingPlatform.startTranscription(handleTranscription);
+    await meetingPlatform.observeTranscriptions(handleTranscription);
+    await meetingPlatform.observeParticipations(handleParticipation);
   }
+}
+
+async function handleTranscription(
+  message: TranscriptionEntryMessage
+): Promise<void> {
+  if (!hubClient) {
+    logger.error("[Program] Hub client is not initialized.");
+    return;
+  }
+
+  message.meetingId = meetingConfig.meetingId;
+  logger.info(message);
+
+  if (!meetingHasPaused) {
+    await hubClient.sendMessage(message);
+  }
+}
+
+async function handleParticipation(message: any): Promise<void> {
+  if (!hubClient) {
+    logger.error(
+      "[Program] [handleParticipation] Hub client is not initialized."
+    );
+    return;
+  }
+  message.meetingId = meetingConfig.meetingId;
+  await hubClient.sendMessage(message);
 }
 
 /**
@@ -230,19 +259,6 @@ async function performGracefulLeave(): Promise<void> {
     );
     process.exit(1);
   }
-}
-
-async function handleTranscription(
-  message: TranscriptionEntryMessage
-): Promise<void> {
-  if (!hubClient) {
-    logger.error("[Program] Hub client is not initialized.");
-    return;
-  }
-
-  message.meetingId = meetingConfig.meetingId;
-  logger.info(message);
-  await hubClient.sendMessage(message);
 }
 
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
