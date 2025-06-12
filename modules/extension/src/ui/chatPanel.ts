@@ -1,4 +1,4 @@
-import {TranscriptionEntry} from "../core/types";
+import {TranscriptionEntry, User} from "../core/types";
 import {DateTime} from "../core/utils/datetime";
 
 export class ChatPanel {
@@ -103,12 +103,28 @@ export class ChatPanel {
   </div>`;
 
     this.transcriptionsContainerEl.appendChild(transcriptBlock);
-    if (this.activeMeetingEl) {
-      this.activeMeetingEl.scrollTo({
-        top: this.activeMeetingEl.scrollHeight,
-        behavior: "smooth"
-      });
+    this.scrollToBottom();
+  }
+
+  public usersJoined(user: User): void {
+    this.addUserJoinedOrLeaved(user, true);
+  }
+
+  public usersLeaved(user: User): void {
+    this.addUserJoinedOrLeaved(user, false);
+  }
+
+  private addUserJoinedOrLeaved(user: User, isJoined: boolean): void {
+    if (!this.transcriptionsContainerEl) {
+      return;
     }
+    const usersJoined = document.createElement("div");
+    usersJoined.className = "au5-join-time";
+    usersJoined.innerText = `👋 ${user.fullName} ${isJoined ? "Joined" : "Leaved"} at ${DateTime.toHoursAndMinutes(
+      new Date()
+    )}`;
+    this.transcriptionsContainerEl.appendChild(usersJoined);
+    this.scrollToBottom();
   }
 
   private addHeader(companyNameText: string, roomTitleText: string): void {
@@ -139,5 +155,14 @@ export class ChatPanel {
     headerLeft.appendChild(infoContainer);
 
     headerElement.appendChild(headerLeft);
+  }
+
+  private scrollToBottom(): void {
+    if (this.activeMeetingEl) {
+      this.activeMeetingEl.scrollTo({
+        top: this.activeMeetingEl.scrollHeight,
+        behavior: "smooth"
+      });
+    }
   }
 }

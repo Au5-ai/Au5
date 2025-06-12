@@ -101,12 +101,25 @@ class ChatPanel {
     </div>
   </div>`;
     this.transcriptionsContainerEl.appendChild(transcriptBlock);
-    if (this.activeMeetingEl) {
-      this.activeMeetingEl.scrollTo({
-        top: this.activeMeetingEl.scrollHeight,
-        behavior: "smooth"
-      });
+    this.scrollToBottom();
+  }
+  usersJoined(user) {
+    this.addUserJoinedOrLeaved(user, true);
+  }
+  usersLeaved(user) {
+    this.addUserJoinedOrLeaved(user, false);
+  }
+  addUserJoinedOrLeaved(user, isJoined) {
+    if (!this.transcriptionsContainerEl) {
+      return;
     }
+    const usersJoined = document.createElement("div");
+    usersJoined.className = "au5-join-time";
+    usersJoined.innerText = `👋 ${user.fullName} ${isJoined ? "Joined" : "Leaved"} at ${DateTime.toHoursAndMinutes(
+      /* @__PURE__ */ new Date()
+    )}`;
+    this.transcriptionsContainerEl.appendChild(usersJoined);
+    this.scrollToBottom();
   }
   addHeader(companyNameText, roomTitleText) {
     const headerElement = document.querySelector(".au5-header");
@@ -129,6 +142,14 @@ class ChatPanel {
     headerLeft.appendChild(companyAvatar);
     headerLeft.appendChild(infoContainer);
     headerElement.appendChild(headerLeft);
+  }
+  scrollToBottom() {
+    if (this.activeMeetingEl) {
+      this.activeMeetingEl.scrollTo({
+        top: this.activeMeetingEl.scrollHeight,
+        behavior: "smooth"
+      });
+    }
   }
 }
 class GoogleMeet {

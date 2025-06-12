@@ -260,16 +260,16 @@ body {
 .au5-chat-send-btn {
   width: fit-content;
 }
-/* =========================
-  Miscellaneous
-  ========================= */
-.au5-hidden {
-  display: none !important;
-}
 
 .au5-join-time {
   text-align: center;
   font-size: 12px;
   color: #666;
-  margin: 16px 0;
+}
+
+/* =========================
+  Miscellaneous
+  ========================= */
+.au5-hidden {
+  display: none !important;
 }
