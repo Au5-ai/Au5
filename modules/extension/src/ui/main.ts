@@ -1,5 +1,7 @@
+import {ConfigurationManager} from "../core/configurationManager";
 import {MeetingPlatformFactory} from "../core/platforms/meetingPlatformFactory";
-import {IMeetingPlatform} from "../core/types";
+import {AppConfiguration, IMeetingPlatform} from "../core/types";
+import {ChromeStorage} from "../core/utils/chromeStorage";
 import {ChatPanel} from "./chatPanel";
 
 function getCurrentUrl(): Promise<string> {
@@ -22,109 +24,27 @@ function getCurrentUrl(): Promise<string> {
 
 let platform: IMeetingPlatform | null;
 let chatPanel: ChatPanel | null = null;
+let config: AppConfiguration;
+const configurationManager = new ConfigurationManager(new ChromeStorage());
 
 async function initializeChatPanel(): Promise<void> {
   const url = await getCurrentUrl();
   platform = new MeetingPlatformFactory(url).getPlatform();
 
-  // if (!platform) {
-  chatPanel = new ChatPanel("Asa Co", "No Active Meeting", "ltr");
-  chatPanel.showTranscriptionContainer();
-  chatPanel.addTranscription({
-    transcriptBlockId: crypto.randomUUID(),
-    transcript: "Welcome to the meeting!",
-    timestamp: new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  chatPanel.addTranscription({
-    transcriptBlockId: "12345",
-    transcript: "Welcome to the meeting!",
-    timestamp: new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  chatPanel.addTranscription({
-    transcriptBlockId: "12345",
-    transcript: "Welcome to the meeting!",
-    timestamp: new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  chatPanel.addTranscription({
-    transcriptBlockId: crypto.randomUUID(),
-    transcript: "Welcome to the meeting!",
-    timestamp: new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  chatPanel.addTranscription({
-    transcriptBlockId: crypto.randomUUID(),
-    transcript: "Welcome to the meetingh!",
-    timestamp: new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  chatPanel.addTranscription({
-    transcriptBlockId: crypto.randomUUID(),
-    transcript: "Welcome to the meetingh!",
-    timestamp: new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  chatPanel.addTranscription({
-    transcriptBlockId: crypto.randomUUID(),
-    transcript: "Welcome to the meetingh!",
-    timestamp: new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  chatPanel.addTranscription({
-    transcriptBlockId: crypto.randomUUID(),
-    transcript: "Welcome to the meetingh!",
-    timestamp: new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  chatPanel.addTranscription({
-    transcriptBlockId: crypto.randomUUID(),
-    transcript: "Welcome to the meetingh!",
-    timestamp: new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  chatPanel.addTranscription({
-    transcriptBlockId: crypto.randomUUID(),
-    transcript: "Welcome to the meetingh!",
-    timestamp: new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  //   chatPanel.showNoActiveMeetingContainer();
-  // } else {
-  //   chatPanel = new ChatPanel("Asa Co", platform.getMeetingId());
-  //   chatPanel.showJoinMeetingContainer();
-  // }
+  config = await configurationManager.getConfig();
+  if (!config) {
+    chatPanel = new ChatPanel();
+    // chatPanel.showLoginContainer();
+    return;
+  }
+
+  if (!platform) {
+    chatPanel = new ChatPanel();
+    chatPanel.showNoActiveMeetingContainer();
+  } else {
+    chatPanel = new ChatPanel();
+    chatPanel.showJoinMeetingContainer();
+  }
 }
 
 initializeChatPanel();
@@ -136,3 +56,12 @@ initializeChatPanel();
 //     }
 //   }
 // });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const button = document.getElementById("au5-btn-joinMeeting") as HTMLButtonElement | null;
+  if (button) {
+    button.addEventListener("click", () => {
+      chatPanel?.showTranscriptionContainer(config.service.companyName, platform?.getMeetingId() || "Meeting Room");
+    });
+  }
+});

@@ -12,7 +12,7 @@ var DateTime;
   DateTime2.toHoursAndMinutes = toHoursAndMinutes;
 })(DateTime || (DateTime = {}));
 class ChatPanel {
-  constructor(companyNameText, roomTitleText, direction = "ltr") {
+  constructor(direction = "ltr") {
     __publicField(this, "noActiveMeetingEl");
     __publicField(this, "activeMeetingButNotStartedEl");
     __publicField(this, "activeMeetingEl");
@@ -20,7 +20,6 @@ class ChatPanel {
     __publicField(this, "transcriptionsContainerEl");
     var _a;
     this.direction = direction;
-    this.addHeader(companyNameText, roomTitleText);
     this.noActiveMeetingEl = document.getElementById("au5-noActiveMeeting");
     this.activeMeetingButNotStartedEl = document.getElementById("au5-activeMeetingButNotStarted");
     this.activeMeetingEl = document.getElementById("au5-activeMeeting");
@@ -29,13 +28,17 @@ class ChatPanel {
       ".au5-transcriptions-container"
     );
   }
-  showJoinMeetingContainer() {
-    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.remove("au5-hidden");
-  }
   showNoActiveMeetingContainer() {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
   }
-  showTranscriptionContainer() {
+  showJoinMeetingContainer() {
+    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.remove("au5-hidden");
+  }
+  showTranscriptionContainer(companyNameText, roomTitleText) {
+    const headerElement = document.querySelector(".au5-header");
+    if (!headerElement) return;
+    headerElement.classList.remove("au5-hidden");
+    this.addHeader(companyNameText, roomTitleText);
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
     if (this.activeMeetingEl) this.activeMeetingEl.classList.remove("au5-hidden");
@@ -152,6 +155,73 @@ class ChatPanel {
     }
   }
 }
+const CONFIGURATION_KEY = "configuration";
+class ConfigurationManager {
+  constructor(chrome2) {
+    this.chrome = chrome2;
+  }
+  /**
+   * Retrieves the entire configuration object from storage.
+   */
+  async getConfig() {
+    try {
+      return {
+        user: {
+          token: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
+          id: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
+          fullName: "Mohammad Karimi",
+          pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+        },
+        service: {
+          webhookUrl: "https://au5.ai/api/v1/",
+          direction: "rtl",
+          hubUrl: "http://localhost:1366/meetinghub",
+          companyName: "Asax Co"
+        }
+      };
+      const config2 = await this.chrome.get(CONFIGURATION_KEY);
+      return config2 ?? null;
+    } catch (error) {
+      console.error("Failed to load configuration:", error);
+      throw new Error("Configuration not found.");
+    }
+  }
+  /**
+   * Updates the entire configuration object in storage.
+   */
+  async setConfig(config2) {
+    try {
+      await this.chrome.set({ [CONFIGURATION_KEY]: config2 }, "local");
+    } catch (error) {
+      console.error("Failed to save configuration:", error);
+    }
+  }
+  /**
+   * Gets a single config field like webhookUrl or token.
+   */
+  async getValue(key) {
+    const config2 = await this.getConfig();
+    return config2 ? config2[key] : null;
+  }
+  /**
+   * Updates only one key of the configuration.
+   */
+  async setValue(key, value) {
+    const config2 = await this.getConfig() || {};
+    config2[key] = value;
+    await this.setConfig(config2);
+  }
+  /**
+   * Removes the entire configuration.
+   */
+  async clearConfig() {
+    try {
+      await this.chrome.remove(CONFIGURATION_KEY);
+    } catch (error) {
+      console.error("Failed to clear configuration:", error);
+    }
+  }
+}
 class GoogleMeet {
   constructor(url) {
     this.url = url;
@@ -179,9 +249,9 @@ class MeetingPlatformFactory {
     const patterns = {
       "Google Meet": /https?:\/\/meet\.google\.com\/[a-zA-Z0-9-]+/
     };
-    for (const [platform, pattern] of Object.entries(patterns)) {
+    for (const [platform2, pattern] of Object.entries(patterns)) {
       if (pattern.test(this._url)) {
-        platformName = platform;
+        platformName = platform2;
       }
     }
     switch (platformName) {
@@ -194,6 +264,49 @@ class MeetingPlatformFactory {
       default:
         return null;
     }
+  }
+}
+class ChromeStorage {
+  constructor() {
+    __publicField(this, "name", "Chrome");
+  }
+  get(keys, area = "local") {
+    return new Promise((resolve, reject) => {
+      chrome.storage[area].get(keys, (result) => {
+        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
+        resolve(result);
+      });
+    });
+  }
+  set(items, area = "local") {
+    return new Promise((resolve, reject) => {
+      chrome.storage[area].set(items, () => {
+        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
+        resolve();
+      });
+    });
+  }
+  remove(keys, area = "local") {
+    return new Promise((resolve, reject) => {
+      chrome.storage[area].remove(keys, () => {
+        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
+        resolve();
+      });
+    });
+  }
+  /**
+   * Injects a local script from the extension into the DOM.
+   *
+   * @param fileName - The filename of the script in the extension
+   * @param onLoad - Optional callback executed after the script is loaded
+   */
+  inject(fileName, onLoad = () => {
+  }) {
+    const script = document.createElement("script");
+    script.src = chrome.runtime.getURL(fileName);
+    script.type = "text/javascript";
+    script.onload = onLoad;
+    (document.head || document.documentElement).appendChild(script);
   }
 }
 function getCurrentUrl() {
@@ -212,101 +325,32 @@ function getCurrentUrl() {
     }
   });
 }
+let platform;
 let chatPanel = null;
+let config;
+const configurationManager = new ConfigurationManager(new ChromeStorage());
 async function initializeChatPanel() {
   const url = await getCurrentUrl();
-  new MeetingPlatformFactory(url).getPlatform();
-  chatPanel = new ChatPanel("Asa Co", "No Active Meeting", "ltr");
-  chatPanel.showTranscriptionContainer();
-  chatPanel.addTranscription({
-    transcriptBlockId: crypto.randomUUID(),
-    transcript: "Welcome to the meeting!",
-    timestamp: /* @__PURE__ */ new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  chatPanel.addTranscription({
-    transcriptBlockId: "12345",
-    transcript: "Welcome to the meeting!",
-    timestamp: /* @__PURE__ */ new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  chatPanel.addTranscription({
-    transcriptBlockId: "12345",
-    transcript: "Welcome to the meeting!",
-    timestamp: /* @__PURE__ */ new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  chatPanel.addTranscription({
-    transcriptBlockId: crypto.randomUUID(),
-    transcript: "Welcome to the meeting!",
-    timestamp: /* @__PURE__ */ new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  chatPanel.addTranscription({
-    transcriptBlockId: crypto.randomUUID(),
-    transcript: "Welcome to the meetingh!",
-    timestamp: /* @__PURE__ */ new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  chatPanel.addTranscription({
-    transcriptBlockId: crypto.randomUUID(),
-    transcript: "Welcome to the meetingh!",
-    timestamp: /* @__PURE__ */ new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  chatPanel.addTranscription({
-    transcriptBlockId: crypto.randomUUID(),
-    transcript: "Welcome to the meetingh!",
-    timestamp: /* @__PURE__ */ new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  chatPanel.addTranscription({
-    transcriptBlockId: crypto.randomUUID(),
-    transcript: "Welcome to the meetingh!",
-    timestamp: /* @__PURE__ */ new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  chatPanel.addTranscription({
-    transcriptBlockId: crypto.randomUUID(),
-    transcript: "Welcome to the meetingh!",
-    timestamp: /* @__PURE__ */ new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
-  chatPanel.addTranscription({
-    transcriptBlockId: crypto.randomUUID(),
-    transcript: "Welcome to the meetingh!",
-    timestamp: /* @__PURE__ */ new Date(),
-    speaker: {
-      fullName: "Mohammad Karimi",
-      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    }
-  });
+  platform = new MeetingPlatformFactory(url).getPlatform();
+  config = await configurationManager.getConfig();
+  if (!config) {
+    chatPanel = new ChatPanel();
+    return;
+  }
+  if (!platform) {
+    chatPanel = new ChatPanel();
+    chatPanel.showNoActiveMeetingContainer();
+  } else {
+    chatPanel = new ChatPanel();
+    chatPanel.showJoinMeetingContainer();
+  }
 }
 initializeChatPanel();
+document.addEventListener("DOMContentLoaded", () => {
+  const button = document.getElementById("au5-btn-joinMeeting");
+  if (button) {
+    button.addEventListener("click", () => {
+      chatPanel == null ? void 0 : chatPanel.showTranscriptionContainer(config.service.companyName, (platform == null ? void 0 : platform.getMeetingId()) || "Meeting Room");
+    });
+  }
+});

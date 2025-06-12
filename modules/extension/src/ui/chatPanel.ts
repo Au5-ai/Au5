@@ -8,9 +8,7 @@ export class ChatPanel {
   private footerEl: HTMLElement | null;
   private transcriptionsContainerEl: HTMLDivElement | null;
 
-  constructor(companyNameText: string, roomTitleText: string, private direction: "ltr" | "rtl" = "ltr") {
-    this.addHeader(companyNameText, roomTitleText);
-
+  constructor(private direction: "ltr" | "rtl" = "ltr") {
     this.noActiveMeetingEl = document.getElementById("au5-noActiveMeeting");
     this.activeMeetingButNotStartedEl = document.getElementById("au5-activeMeetingButNotStarted");
     this.activeMeetingEl = document.getElementById("au5-activeMeeting");
@@ -20,15 +18,20 @@ export class ChatPanel {
     ) as HTMLDivElement;
   }
 
-  public showJoinMeetingContainer(): void {
-    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.remove("au5-hidden");
-  }
-
   public showNoActiveMeetingContainer(): void {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
   }
 
-  public showTranscriptionContainer(): void {
+  public showJoinMeetingContainer(): void {
+    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.remove("au5-hidden");
+  }
+
+  public showTranscriptionContainer(companyNameText: string, roomTitleText: string): void {
+    const headerElement = document.querySelector(".au5-header") as HTMLElement;
+    if (!headerElement) return;
+    headerElement.classList.remove("au5-hidden");
+    this.addHeader(companyNameText, roomTitleText);
+
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
     if (this.activeMeetingEl) this.activeMeetingEl.classList.remove("au5-hidden");
