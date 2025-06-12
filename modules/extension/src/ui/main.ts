@@ -28,8 +28,17 @@ async function initializeChatPanel(): Promise<void> {
   platform = new MeetingPlatformFactory(url).getPlatform();
 
   // if (!platform) {
-  chatPanel = new ChatPanel("Asa Co", "No Active Meeting");
+  chatPanel = new ChatPanel("Asa Co", "No Active Meeting", "ltr");
   chatPanel.showTranscriptionContainer();
+  chatPanel.addTranscription({
+    transcriptBlockId: "12345",
+    transcript: "Welcome to the meeting!",
+    timestamp: new Date(),
+    speaker: {
+      fullName: "Mohammad Karimi",
+      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+    }
+  });
   //   chatPanel.showNoActiveMeetingContainer();
   // } else {
   //   chatPanel = new ChatPanel("Asa Co", platform.getMeetingId());
@@ -38,3 +47,11 @@ async function initializeChatPanel(): Promise<void> {
 }
 
 initializeChatPanel();
+
+// chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+//   if(message.type === ){
+//     if (chatPanel) {
+//       chatPanel.
+//     }
+//   }
+// });

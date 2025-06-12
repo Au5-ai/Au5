@@ -1,15 +1,31 @@
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+var DateTime;
+((DateTime2) => {
+  function toHoursAndMinutes(input) {
+    const date = typeof input === "string" ? new Date(input) : input;
+    const hh = date.getUTCHours().toString().padStart(2, "0");
+    const mm = date.getUTCMinutes().toString().padStart(2, "0");
+    return `${hh}:${mm}`;
+  }
+  DateTime2.toHoursAndMinutes = toHoursAndMinutes;
+})(DateTime || (DateTime = {}));
 class ChatPanel {
-  constructor(companyNameText, roomTitleText) {
+  constructor(companyNameText, roomTitleText, direction = "ltr") {
     __publicField(this, "noActiveMeetingEl");
     __publicField(this, "activeMeetingButNotStartedEl");
     __publicField(this, "activeMeetingEl");
+    __publicField(this, "transcriptionsContainerEl");
+    var _a;
+    this.direction = direction;
     this.addHeader(companyNameText, roomTitleText);
     this.noActiveMeetingEl = document.getElementById("au5-noActiveMeeting");
     this.activeMeetingButNotStartedEl = document.getElementById("au5-activeMeetingButNotStarted");
     this.activeMeetingEl = document.getElementById("au5-activeMeeting");
+    this.transcriptionsContainerEl = (_a = this.activeMeetingEl) == null ? void 0 : _a.querySelector(
+      ".au5-transcriptions-container"
+    );
   }
   showJoinMeetingContainer() {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
@@ -33,6 +49,58 @@ class ChatPanel {
         }
       });
     }
+  }
+  addTranscription(entry) {
+    if (!this.transcriptionsContainerEl) {
+      return;
+    }
+    const existing = this.transcriptionsContainerEl.querySelector(
+      `[data-id="${entry.transcriptBlockId}"]`
+    );
+    if (existing) {
+      const textEl = existing.querySelector(".au5-text");
+      if (textEl) textEl.innerText = entry.transcript;
+      return;
+    }
+    const transcriptBlock = document.createElement("div");
+    transcriptBlock.setAttribute("data-id", entry.transcriptBlockId);
+    transcriptBlock.className = "au5-transcription";
+    transcriptBlock.innerHTML = `
+  <div class="au5-transcription-message">
+    <div class="au5-message-avatar">
+      <img
+        class="au5-avatar-image"
+        src="${entry.speaker.pictureUrl || "https://i.sstatic.net/34AD2.jpg"}"
+        alt="Sender Avatar"
+      />
+    </div>
+
+    <div class="au5-message-bubble">
+      <div class="au5-message-header">
+        <span class="au5-message-sender">${entry.speaker.fullName}</span>
+        <span class="au5-message-time">${DateTime.toHoursAndMinutes(entry.timestamp)}</span>
+      </div>
+
+      <div class="au5-message-text" style="direction: ${this.direction};">
+        ${entry.transcript}
+      </div>
+
+      <div class="au5-message-reactions">
+        <div class="au5-reaction-list">
+          <div class="au5-reaction au5-reaction-highlight" reaction-type="task" data-blockId="${entry.transcriptBlockId}">
+            <span class="au5-reaction-emoji">⚡</span>
+            <div class="au5-reaction-users"></div>
+          </div>
+
+          <div class="au5-reaction au5-reaction-mute" reaction-type="important" data-blockId="${entry.transcriptBlockId}">
+            <span class="au5-reaction-emoji">🎯</span>
+            <div class="au5-reaction-users"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+    this.transcriptionsContainerEl.appendChild(transcriptBlock);
   }
   addHeader(companyNameText, roomTitleText) {
     const headerElement = document.querySelector(".au5-header");
@@ -121,7 +189,16 @@ let chatPanel = null;
 async function initializeChatPanel() {
   const url = await getCurrentUrl();
   new MeetingPlatformFactory(url).getPlatform();
-  chatPanel = new ChatPanel("Asa Co", "No Active Meeting");
+  chatPanel = new ChatPanel("Asa Co", "No Active Meeting", "ltr");
   chatPanel.showTranscriptionContainer();
+  chatPanel.addTranscription({
+    transcriptBlockId: "12345",
+    transcript: "Welcome to the meeting!",
+    timestamp: /* @__PURE__ */ new Date(),
+    speaker: {
+      fullName: "Mohammad Karimi",
+      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+    }
+  });
 }
 initializeChatPanel();

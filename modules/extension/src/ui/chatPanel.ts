@@ -1,14 +1,21 @@
+import {TranscriptionEntry} from "../core/types";
+import {DateTime} from "../core/utils/datetime";
+
 export class ChatPanel {
   private noActiveMeetingEl: HTMLElement | null;
   private activeMeetingButNotStartedEl: HTMLElement | null;
   private activeMeetingEl: HTMLElement | null;
+  private transcriptionsContainerEl: HTMLDivElement | null;
 
-  constructor(companyNameText: string, roomTitleText: string) {
+  constructor(companyNameText: string, roomTitleText: string, private direction: "ltr" | "rtl" = "ltr") {
     this.addHeader(companyNameText, roomTitleText);
 
     this.noActiveMeetingEl = document.getElementById("au5-noActiveMeeting");
     this.activeMeetingButNotStartedEl = document.getElementById("au5-activeMeetingButNotStarted");
     this.activeMeetingEl = document.getElementById("au5-activeMeeting");
+    this.transcriptionsContainerEl = this.activeMeetingEl?.querySelector(
+      ".au5-transcriptions-container"
+    ) as HTMLDivElement;
   }
 
   public showJoinMeetingContainer(): void {
@@ -36,6 +43,66 @@ export class ChatPanel {
         }
       });
     }
+  }
+
+  public addTranscription(entry: TranscriptionEntry): void {
+    if (!this.transcriptionsContainerEl) {
+      return;
+    }
+
+    const existing = this.transcriptionsContainerEl.querySelector(
+      `[data-id="${entry.transcriptBlockId}"]`
+    ) as HTMLDivElement;
+    if (existing) {
+      const textEl = existing.querySelector(".au5-text") as HTMLDivElement;
+      if (textEl) textEl.innerText = entry.transcript;
+      return;
+    }
+
+    const transcriptBlock = document.createElement("div");
+    transcriptBlock.setAttribute("data-id", entry.transcriptBlockId);
+    transcriptBlock.className = "au5-transcription";
+    transcriptBlock.innerHTML = `
+  <div class="au5-transcription-message">
+    <div class="au5-message-avatar">
+      <img
+        class="au5-avatar-image"
+        src="${entry.speaker.pictureUrl || "https://i.sstatic.net/34AD2.jpg"}"
+        alt="Sender Avatar"
+      />
+    </div>
+
+    <div class="au5-message-bubble">
+      <div class="au5-message-header">
+        <span class="au5-message-sender">${entry.speaker.fullName}</span>
+        <span class="au5-message-time">${DateTime.toHoursAndMinutes(entry.timestamp)}</span>
+      </div>
+
+      <div class="au5-message-text" style="direction: ${this.direction};">
+        ${entry.transcript}
+      </div>
+
+      <div class="au5-message-reactions">
+        <div class="au5-reaction-list">
+          <div class="au5-reaction au5-reaction-highlight" reaction-type="task" data-blockId="${
+            entry.transcriptBlockId
+          }">
+            <span class="au5-reaction-emoji">⚡</span>
+            <div class="au5-reaction-users"></div>
+          </div>
+
+          <div class="au5-reaction au5-reaction-mute" reaction-type="important" data-blockId="${
+            entry.transcriptBlockId
+          }">
+            <span class="au5-reaction-emoji">🎯</span>
+            <div class="au5-reaction-users"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+    this.transcriptionsContainerEl.appendChild(transcriptBlock);
   }
 
   private addHeader(companyNameText: string, roomTitleText: string): void {

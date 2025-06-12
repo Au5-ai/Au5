@@ -9,7 +9,7 @@ export interface Speaker {
 }
 
 export interface TranscriptionEntry {
-  meetingId: string;
+  meetingId?: string;
   transcriptBlockId: string;
   speaker: Speaker;
   transcript: string;
