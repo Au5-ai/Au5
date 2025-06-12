@@ -9,13 +9,16 @@ export default defineConfig({
     rollupOptions: {
       input: {
         background: resolve(__dirname, "src/background.ts"),
-        //content: resolve(__dirname, "src/content.ts"),
+        ui: resolve(__dirname, "src/ui/uiBundle.ts"),
       },
       output: {
-        manualChunks: () => undefined,
-        entryFileNames: "[name].js",
-        chunkFileNames: "[name].js",
+        entryFileNames: (chunkInfo) => {
+          if (chunkInfo.name === "ui") return "scripts/ui.js";
+          return "[name].js";
+        },
+        chunkFileNames: "scripts/[name].js",
         assetFileNames: "[name].[ext]",
+        manualChunks: () => undefined,
         preserveModules: false,
       },
     },
