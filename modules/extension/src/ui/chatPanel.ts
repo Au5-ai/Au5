@@ -27,6 +27,15 @@ export class ChatPanel {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
     if (this.activeMeetingEl) this.activeMeetingEl.classList.remove("au5-hidden");
+
+    const editor = document.querySelector(".au5-chat-editor");
+    if (editor) {
+      editor.addEventListener("input", () => {
+        if (editor.innerHTML.trim() === "<br>" || editor.innerHTML.trim() === "") {
+          editor.innerHTML = "";
+        }
+      });
+    }
   }
 
   private addHeader(companyNameText: string, roomTitleText: string): void {
@@ -37,17 +46,17 @@ export class ChatPanel {
     headerLeft.className = "au5-header-left";
 
     const companyAvatar = document.createElement("div");
-    companyAvatar.className = "au5-company-avatar";
+    companyAvatar.className = "au5-header-avatar";
     companyAvatar.textContent = "A";
 
     const infoContainer = document.createElement("div");
-
+    infoContainer.className = "au5-header-info";
     const companyName = document.createElement("div");
-    companyName.className = "au5-company-name";
+    companyName.className = "au5-header-title";
     companyName.textContent = companyNameText;
 
     const roomTitle = document.createElement("div");
-    roomTitle.className = "au5-room-title";
+    roomTitle.className = "au5-header-subtitle";
     roomTitle.textContent = roomTitleText;
 
     infoContainer.appendChild(companyName);

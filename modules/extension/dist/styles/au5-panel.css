@@ -208,8 +208,8 @@ body {
   border-radius: 12px;
   margin: auto;
   color: white;
-  box-shadow: 0 0px 3px rgba(0, 0, 0, 0.2);
   width: -webkit-fill-available;
+  border: 1px solid #dedede;
 }
 
 .au5-chat-wrapper {
@@ -228,7 +228,17 @@ body {
   border-radius: 10px;
   color: black;
 }
+.au5-chat-editor:focus {
+  border: none;
+  outline: none;
+}
 
+.au5-chat-editor:empty::before {
+  content: "Type a message...";
+  color: #888;
+  position: absolute;
+  pointer-events: none;
+}
 .au5-chat-footer {
   display: flex;
   justify-content: space-between;
@@ -248,13 +258,6 @@ body {
   ========================= */
 .au5-hidden {
   display: none !important;
-}
-
-.au5-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 16px 16px 16px;
 }
 
 .au5-join-time {

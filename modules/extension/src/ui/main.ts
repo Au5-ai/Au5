@@ -27,13 +27,14 @@ async function initializeChatPanel(): Promise<void> {
   const url = await getCurrentUrl();
   platform = new MeetingPlatformFactory(url).getPlatform();
 
-  if (!platform) {
-    chatPanel = new ChatPanel("Asa Co", "No Active Meeting");
-    chatPanel.showNoActiveMeetingContainer();
-  } else {
-    chatPanel = new ChatPanel("Asa Co", platform.getMeetingId());
-    chatPanel.showJoinMeetingContainer();
-  }
+  // if (!platform) {
+  chatPanel = new ChatPanel("Asa Co", "No Active Meeting");
+  chatPanel.showTranscriptionContainer();
+  //   chatPanel.showNoActiveMeetingContainer();
+  // } else {
+  //   chatPanel = new ChatPanel("Asa Co", platform.getMeetingId());
+  //   chatPanel.showJoinMeetingContainer();
+  // }
 }
 
 initializeChatPanel();

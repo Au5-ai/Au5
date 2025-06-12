@@ -228,7 +228,17 @@ body {
   border-radius: 10px;
   color: black;
 }
+.au5-chat-editor:focus {
+  border: none;
+  outline: none;
+}
 
+.au5-chat-editor:empty::before {
+  content: "Type a message...";
+  color: #888;
+  position: absolute;
+  pointer-events: none;
+}
 .au5-chat-footer {
   display: flex;
   justify-content: space-between;

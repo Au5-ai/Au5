@@ -25,6 +25,14 @@ class ChatPanel {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
     if (this.activeMeetingEl) this.activeMeetingEl.classList.remove("au5-hidden");
+    const editor = document.querySelector(".au5-chat-editor");
+    if (editor) {
+      editor.addEventListener("input", () => {
+        if (editor.innerHTML.trim() === "<br>" || editor.innerHTML.trim() === "") {
+          editor.innerHTML = "";
+        }
+      });
+    }
   }
   addHeader(companyNameText, roomTitleText) {
     const headerElement = document.querySelector(".au5-header");
@@ -32,14 +40,15 @@ class ChatPanel {
     const headerLeft = document.createElement("div");
     headerLeft.className = "au5-header-left";
     const companyAvatar = document.createElement("div");
-    companyAvatar.className = "au5-company-avatar";
+    companyAvatar.className = "au5-header-avatar";
     companyAvatar.textContent = "A";
     const infoContainer = document.createElement("div");
+    infoContainer.className = "au5-header-info";
     const companyName = document.createElement("div");
-    companyName.className = "au5-company-name";
+    companyName.className = "au5-header-title";
     companyName.textContent = companyNameText;
     const roomTitle = document.createElement("div");
-    roomTitle.className = "au5-room-title";
+    roomTitle.className = "au5-header-subtitle";
     roomTitle.textContent = roomTitleText;
     infoContainer.appendChild(companyName);
     infoContainer.appendChild(roomTitle);
@@ -75,9 +84,9 @@ class MeetingPlatformFactory {
     const patterns = {
       "Google Meet": /https?:\/\/meet\.google\.com\/[a-zA-Z0-9-]+/
     };
-    for (const [platform2, pattern] of Object.entries(patterns)) {
+    for (const [platform, pattern] of Object.entries(patterns)) {
       if (pattern.test(this._url)) {
-        platformName = platform2;
+        platformName = platform;
       }
     }
     switch (platformName) {
@@ -108,17 +117,11 @@ function getCurrentUrl() {
     }
   });
 }
-let platform;
 let chatPanel = null;
 async function initializeChatPanel() {
   const url = await getCurrentUrl();
-  platform = new MeetingPlatformFactory(url).getPlatform();
-  if (!platform) {
-    chatPanel = new ChatPanel("Asa Co", "No Active Meeting");
-    chatPanel.showNoActiveMeetingContainer();
-  } else {
-    chatPanel = new ChatPanel("Asa Co", platform.getMeetingId());
-    chatPanel.showJoinMeetingContainer();
-  }
+  new MeetingPlatformFactory(url).getPlatform();
+  chatPanel = new ChatPanel("Asa Co", "No Active Meeting");
+  chatPanel.showTranscriptionContainer();
 }
 initializeChatPanel();

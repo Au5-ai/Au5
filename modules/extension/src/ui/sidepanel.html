@@ -8,14 +8,13 @@
   <body>
     <div class="au5-panel">
       <!-- Header -->
-      <div class="au5-header">
-        <div class="au5-header-left">
-          <div class="au5-header-avatar">A</div>
-          <div class="au5-header-info">
-            <div class="au5-header-title">Office Meeting</div>
-            <div class="au5-header-subtitle">yjp-ognh-hxz</div>
-          </div>
-        </div>
+      <div class="au5-header"></div>
+
+      <!-- User UnAuthorized -->
+      <div id="au5-userUnAuthorized" class="au5-hidden au5-container">
+        <div class="au5-userUnAuthorized-title">User UnAuthorized</div>
+        <div class="au5-userUnAuthorized-text">You need to login to see the transcriptions.</div>
+        <a class="au5-login-btn au5-btn" href="/options.html" target="_blank">Login</a>
       </div>
 
       <!-- noActiveMeeting -->
@@ -111,7 +110,7 @@
             <div class="au5-chat-wrapper">
               <!-- Textarea Input -->
               <div class="au5-chat-editor-container">
-                <div class="au5-chat-editor" contenteditable="true" placeholder="Ask anything"></div>
+                <div class="au5-chat-editor" contenteditable="true"></div>
               </div>
 
               <!-- Footer Actions -->
@@ -130,6 +129,6 @@
       </div>
     </div>
 
-    <!-- <script src="scripts/ui.js"></script> -->
+    <script src="scripts/ui.js"></script>
   </body>
 </html>
