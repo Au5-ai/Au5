@@ -39,9 +39,10 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 12px;
-  background-color: #e8e8e8;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
+  box-shadow: 0px 2px 5px 0px #eee;
+  margin-bottom: 4px;
 }
 
 .au5-header-left {
@@ -83,10 +84,6 @@ body {
 /* =========================
   Main Container
   ========================= */
-.au5-transcriptions-container {
-  height: 100vh;
-  width: -webkit-fill-available;
-}
 
 .au5-container {
   height: calc(100vh - 90px);
@@ -103,15 +100,21 @@ body {
   Transcription & Messages CHECKED
   ========================= */
 #au5-activeMeeting {
+  height: auto;
+}
+
+.au5-transcriptions-container {
+  height: calc(100vh - 220px);
+  width: -webkit-fill-available;
+  gap: 16px;
   display: flex;
-  justify-content: flex-start;
+  flex-direction: column;
 }
 
 .au5-transcription-message {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  margin-bottom: 12px;
   position: relative;
 }
 
@@ -203,6 +206,9 @@ body {
   gap: 8px;
   align-items: center;
   width: -webkit-fill-available;
+  z-index: 99999;
+  background-color: #fff;
+  margin: 12px;
 }
 
 .au5-chat-container {
@@ -251,7 +257,6 @@ body {
   display: flex;
   gap: 12px;
 }
-
 .au5-chat-send-btn {
   width: fit-content;
 }

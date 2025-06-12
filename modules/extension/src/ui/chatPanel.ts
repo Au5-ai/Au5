@@ -5,6 +5,7 @@ export class ChatPanel {
   private noActiveMeetingEl: HTMLElement | null;
   private activeMeetingButNotStartedEl: HTMLElement | null;
   private activeMeetingEl: HTMLElement | null;
+  private footerEl: HTMLElement | null;
   private transcriptionsContainerEl: HTMLDivElement | null;
 
   constructor(companyNameText: string, roomTitleText: string, private direction: "ltr" | "rtl" = "ltr") {
@@ -13,27 +14,25 @@ export class ChatPanel {
     this.noActiveMeetingEl = document.getElementById("au5-noActiveMeeting");
     this.activeMeetingButNotStartedEl = document.getElementById("au5-activeMeetingButNotStarted");
     this.activeMeetingEl = document.getElementById("au5-activeMeeting");
+    this.footerEl = document.getElementById("au5-transcription-footer") as HTMLElement;
     this.transcriptionsContainerEl = this.activeMeetingEl?.querySelector(
       ".au5-transcriptions-container"
     ) as HTMLDivElement;
   }
 
   public showJoinMeetingContainer(): void {
-    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.remove("au5-hidden");
-    if (this.activeMeetingEl) this.activeMeetingEl.classList.add("au5-hidden");
   }
 
   public showNoActiveMeetingContainer(): void {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
-    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
-    if (this.activeMeetingEl) this.activeMeetingEl.classList.add("au5-hidden");
   }
 
   public showTranscriptionContainer(): void {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
     if (this.activeMeetingEl) this.activeMeetingEl.classList.remove("au5-hidden");
+    if (this.footerEl) this.footerEl.classList.remove("au5-hidden");
 
     const editor = document.querySelector(".au5-chat-editor");
     if (editor) {
@@ -47,6 +46,7 @@ export class ChatPanel {
 
   public addTranscription(entry: TranscriptionEntry): void {
     if (!this.transcriptionsContainerEl) {
+      console.error("Transcriptions container element not found.");
       return;
     }
 
@@ -54,7 +54,7 @@ export class ChatPanel {
       `[data-id="${entry.transcriptBlockId}"]`
     ) as HTMLDivElement;
     if (existing) {
-      const textEl = existing.querySelector(".au5-text") as HTMLDivElement;
+      const textEl = existing.querySelector(".au5-message-text") as HTMLDivElement;
       if (textEl) textEl.innerText = entry.transcript;
       return;
     }
@@ -103,6 +103,12 @@ export class ChatPanel {
   </div>`;
 
     this.transcriptionsContainerEl.appendChild(transcriptBlock);
+    if (this.activeMeetingEl) {
+      this.activeMeetingEl.scrollTo({
+        top: this.activeMeetingEl.scrollHeight,
+        behavior: "smooth"
+      });
+    }
   }
 
   private addHeader(companyNameText: string, roomTitleText: string): void {

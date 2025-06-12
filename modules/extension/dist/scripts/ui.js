@@ -16,6 +16,7 @@ class ChatPanel {
     __publicField(this, "noActiveMeetingEl");
     __publicField(this, "activeMeetingButNotStartedEl");
     __publicField(this, "activeMeetingEl");
+    __publicField(this, "footerEl");
     __publicField(this, "transcriptionsContainerEl");
     var _a;
     this.direction = direction;
@@ -23,24 +24,22 @@ class ChatPanel {
     this.noActiveMeetingEl = document.getElementById("au5-noActiveMeeting");
     this.activeMeetingButNotStartedEl = document.getElementById("au5-activeMeetingButNotStarted");
     this.activeMeetingEl = document.getElementById("au5-activeMeeting");
+    this.footerEl = document.getElementById("au5-transcription-footer");
     this.transcriptionsContainerEl = (_a = this.activeMeetingEl) == null ? void 0 : _a.querySelector(
       ".au5-transcriptions-container"
     );
   }
   showJoinMeetingContainer() {
-    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.remove("au5-hidden");
-    if (this.activeMeetingEl) this.activeMeetingEl.classList.add("au5-hidden");
   }
   showNoActiveMeetingContainer() {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
-    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
-    if (this.activeMeetingEl) this.activeMeetingEl.classList.add("au5-hidden");
   }
   showTranscriptionContainer() {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
     if (this.activeMeetingEl) this.activeMeetingEl.classList.remove("au5-hidden");
+    if (this.footerEl) this.footerEl.classList.remove("au5-hidden");
     const editor = document.querySelector(".au5-chat-editor");
     if (editor) {
       editor.addEventListener("input", () => {
@@ -52,13 +51,14 @@ class ChatPanel {
   }
   addTranscription(entry) {
     if (!this.transcriptionsContainerEl) {
+      console.error("Transcriptions container element not found.");
       return;
     }
     const existing = this.transcriptionsContainerEl.querySelector(
       `[data-id="${entry.transcriptBlockId}"]`
     );
     if (existing) {
-      const textEl = existing.querySelector(".au5-text");
+      const textEl = existing.querySelector(".au5-message-text");
       if (textEl) textEl.innerText = entry.transcript;
       return;
     }
@@ -101,6 +101,12 @@ class ChatPanel {
     </div>
   </div>`;
     this.transcriptionsContainerEl.appendChild(transcriptBlock);
+    if (this.activeMeetingEl) {
+      this.activeMeetingEl.scrollTo({
+        top: this.activeMeetingEl.scrollHeight,
+        behavior: "smooth"
+      });
+    }
   }
   addHeader(companyNameText, roomTitleText) {
     const headerElement = document.querySelector(".au5-header");
@@ -192,8 +198,89 @@ async function initializeChatPanel() {
   chatPanel = new ChatPanel("Asa Co", "No Active Meeting", "ltr");
   chatPanel.showTranscriptionContainer();
   chatPanel.addTranscription({
+    transcriptBlockId: crypto.randomUUID(),
+    transcript: "Welcome to the meeting!",
+    timestamp: /* @__PURE__ */ new Date(),
+    speaker: {
+      fullName: "Mohammad Karimi",
+      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+    }
+  });
+  chatPanel.addTranscription({
     transcriptBlockId: "12345",
     transcript: "Welcome to the meeting!",
+    timestamp: /* @__PURE__ */ new Date(),
+    speaker: {
+      fullName: "Mohammad Karimi",
+      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+    }
+  });
+  chatPanel.addTranscription({
+    transcriptBlockId: "12345",
+    transcript: "Welcome to the meeting!",
+    timestamp: /* @__PURE__ */ new Date(),
+    speaker: {
+      fullName: "Mohammad Karimi",
+      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+    }
+  });
+  chatPanel.addTranscription({
+    transcriptBlockId: crypto.randomUUID(),
+    transcript: "Welcome to the meeting!",
+    timestamp: /* @__PURE__ */ new Date(),
+    speaker: {
+      fullName: "Mohammad Karimi",
+      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+    }
+  });
+  chatPanel.addTranscription({
+    transcriptBlockId: crypto.randomUUID(),
+    transcript: "Welcome to the meetingh!",
+    timestamp: /* @__PURE__ */ new Date(),
+    speaker: {
+      fullName: "Mohammad Karimi",
+      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+    }
+  });
+  chatPanel.addTranscription({
+    transcriptBlockId: crypto.randomUUID(),
+    transcript: "Welcome to the meetingh!",
+    timestamp: /* @__PURE__ */ new Date(),
+    speaker: {
+      fullName: "Mohammad Karimi",
+      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+    }
+  });
+  chatPanel.addTranscription({
+    transcriptBlockId: crypto.randomUUID(),
+    transcript: "Welcome to the meetingh!",
+    timestamp: /* @__PURE__ */ new Date(),
+    speaker: {
+      fullName: "Mohammad Karimi",
+      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+    }
+  });
+  chatPanel.addTranscription({
+    transcriptBlockId: crypto.randomUUID(),
+    transcript: "Welcome to the meetingh!",
+    timestamp: /* @__PURE__ */ new Date(),
+    speaker: {
+      fullName: "Mohammad Karimi",
+      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+    }
+  });
+  chatPanel.addTranscription({
+    transcriptBlockId: crypto.randomUUID(),
+    transcript: "Welcome to the meetingh!",
+    timestamp: /* @__PURE__ */ new Date(),
+    speaker: {
+      fullName: "Mohammad Karimi",
+      pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+    }
+  });
+  chatPanel.addTranscription({
+    transcriptBlockId: crypto.randomUUID(),
+    transcript: "Welcome to the meetingh!",
     timestamp: /* @__PURE__ */ new Date(),
     speaker: {
       fullName: "Mohammad Karimi",

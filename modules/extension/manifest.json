@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Au5.ai",
-  "short_name": "Au5",
+  "short_name": "Au5.ai",
   "update_url": "https://clients2.google.com/service/update2/crx",
   "version": "0.1.1",
   "background": {
