@@ -7,16 +7,27 @@
   </head>
   <body>
     <div class="au5-panel">
-      <div class="au5-header"></div>
+      <!-- Header -->
+      <div class="au5-header">
+        <div class="au5-header-left">
+          <div class="au5-header-avatar">A</div>
+          <div class="au5-header-info">
+            <div class="au5-header-title">Office Meeting</div>
+            <div class="au5-header-subtitle">yjp-ognh-hxz</div>
+          </div>
+        </div>
+      </div>
 
-      <div id="au5-noActiveMeeting" class="au5-hidden">
+      <!-- noActiveMeeting -->
+      <div id="au5-noActiveMeeting" class="au5-hidden au5-container">
         <div class="au5-noActiveMeeting-title">No Active Meeting</div>
         <div class="au5-noActiveMeeting-text">
           You can go to meeting page and start a meeting to see the transcriptions here.
         </div>
       </div>
 
-      <div id="au5-activeMeetingButNotStarted" class="au5-hidden">
+      <!-- activeMeetingButNotStarted -->
+      <div id="au5-activeMeetingButNotStarted" class="au5-hidden au5-container">
         <div class="au5-activeMeetingButNotStarted-title">Active Meeting</div>
         <div class="au5-activeMeetingButNotStarted-text">
           You can start the transcription by clicking on the "Start Transcription" button.
@@ -24,181 +35,101 @@
         <button class="au5-start-btn au5-btn">Start Transcription</button>
       </div>
 
-      <div id="au5-activeMeeting" class="au5-hidden">
-        <div class="au5-transcriptions-container au5-container">
-          <div class="au5-transcription">
-            <div class="au5-avatar">
+      <!-- activeMeeting -->
+      <div id="au5-activeMeeting" class="au5-container">
+        <div class="au5-transcriptions-container">
+          <!-- Example Transcription -->
+          <div class="au5-transcription-message">
+            <div class="au5-message-avatar">
               <img
+                class="au5-avatar-image"
                 src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+                alt="Sender Avatar"
               />
             </div>
-            <div class="au5-bubble">
-              <div class="au5-sender">
-                <div class="au5-sender-title">Mohammad Karimi</div>
-                <div class="au5-sender-time">10:23</div>
+
+            <div class="au5-message-bubble">
+              <div class="au5-message-header">
+                <span class="au5-message-sender">Mohammad Karimi</span>
+                <span class="au5-message-time">10:23</span>
               </div>
-              <div class="au5-text">
+
+              <div class="au5-message-text">
                 سلام به همه من دیروز با توجه به ورک فلویی که از بقیه بچه ها دیدم به این نتیجه رسیدم که میتونایم
               </div>
 
-              <div class="au5-transcription-reactions">
-                <div class="au5-reactions">
-                  <div class="reaction reaction-highlight">
-                    <span class="reaction-emoji">⚡</span>
+              <div class="au5-message-reactions">
+                <div class="au5-reaction-list">
+                  <div class="au5-reaction au5-reaction-highlight">
+                    <span class="au5-reaction-emoji">⚡</span>
+                    <div class="au5-reaction-users">
+                      <img
+                        class="au5-reaction-user-avatar"
+                        src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+                        alt="User reacting"
+                      />
+                      <img
+                        class="au5-reaction-user-avatar"
+                        src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+                        alt="User reacting"
+                      />
+                    </div>
                   </div>
-                  <div class="reaction reaction-mute">
-                    <span class="reaction-emoji">🎯</span>
+
+                  <div class="au5-reaction au5-reaction-mute">
+                    <span class="au5-reaction-emoji">🎯</span>
+                    <div class="au5-reaction-users">
+                      <img
+                        class="au5-reaction-user-avatar"
+                        src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+                        alt="User reacting"
+                      />
+                      <img
+                        class="au5-reaction-user-avatar"
+                        src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+                        alt="User reacting"
+                      />
+                      <img
+                        class="au5-reaction-user-avatar"
+                        src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+                        alt="User reacting"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="au5-transcription">
-            <div class="au5-avatar">
-              <img
-                src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-              />
-            </div>
-            <div class="au5-bubble">
-              <div class="au5-sender">
-                <div class="au5-sender-title">Mohammad Karimi</div>
-                <div class="au5-sender-time">10:23</div>
-              </div>
-              <div class="au5-text">
-                سلام به همه من دیروز با توجه به ورک فلویی که از بقیه بچه ها دیدم به این نتیجه رسیدم که میتونایم
-              </div>
-              <div class="au5-transcription-reactions">
-                <div class="au5-reactions">
-                  <div class="reaction reaction-highlight">
-                    <span class="reaction-emoji">⚡</span>
-                  </div>
-                  <div class="reaction reaction-mute">
-                    <span class="reaction-emoji">🎯</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
+          <!-- End Example Transcription -->
           <div class="au5-join-time">Alireza Joined at 10:25</div>
+        </div>
 
-          <div class="au5-transcription">
-            <div class="au5-avatar">
-              <img src="https://randomuser.me/api/portraits/men/75.jpg" />
-            </div>
-            <div class="au5-bubble">
-              <div class="au5-sender">
-                <div class="au5-sender-title">Mohammad Karimi</div>
-                <div class="au5-sender-time">10:23</div>
+        <!-- Transcription Footer -->
+        <div class="au5-transcription-footer">
+          <div class="au5-chat-container">
+            <div class="au5-chat-wrapper">
+              <!-- Textarea Input -->
+              <div class="au5-chat-editor-container">
+                <div class="au5-chat-editor" contenteditable="true" placeholder="Ask anything"></div>
               </div>
-              <div class="au5-text">
-                سلام به همه من دیروز با توجه به ورک فلویی که از بقیه بچه ها دیدم به این نتیجه رسیدم که میتونایم
-              </div>
-              <div class="au5-transcription-reactions">
-                <div class="au5-reactions">
-                  <div class="reaction reaction-highlight">
-                    <span class="reaction-emoji">⚡</span>
-                  </div>
-                  <div class="reaction reaction-mute">
-                    <span class="reaction-emoji">🎯</span>
-                  </div>
+
+              <!-- Footer Actions -->
+              <div class="au5-chat-footer">
+                <div class="au5-chat-actions">
+                  <!-- Reserved for icons -->
                 </div>
-              </div>
-            </div>
-          </div>
 
-          <div class="au5-transcription">
-            <div class="au5-avatar">
-              <img
-                src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-              />
-            </div>
-            <div class="au5-bubble">
-              <div class="au5-sender">
-                <div class="au5-sender-title">Mohammad Karimi</div>
-                <div class="au5-sender-time">10:23</div>
-              </div>
-              <div class="au5-text">
-                سلام به همه من دیروز با توجه به ورک فلویی که از بقیه بچه ها دیدم به این نتیجه رسیدم که میتونایم
-              </div>
-              <div class="au5-transcription-reactions">
-                <div class="au5-reactions">
-                  <div class="reaction reaction-highlight">
-                    <span class="reaction-emoji">⚡</span>
-                    <div class="reaction-user">
-                      <img
-                        src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-                      />
-                    </div>
-                    <div class="reaction-user">
-                      <img
-                        src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-                      />
-                    </div>
-                  </div>
-                  <div class="reaction reaction-mute">
-                    <span class="reaction-emoji">🎯</span>
-                    <div class="reaction-user">
-                      <img
-                        src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-                      />
-                    </div>
-                    <div class="reaction-user">
-                      <img
-                        src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-                      />
-                    </div>
-                    <div class="reaction-user">
-                      <img
-                        src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="au5-join-time">Alireza Joined at 10:25</div>
-
-          <div class="au5-transcription">
-            <div class="au5-avatar">
-              <img src="https://randomuser.me/api/portraits/men/75.jpg" />
-            </div>
-            <div class="au5-bubble">
-              <div class="au5-sender">
-                <div class="au5-sender-title">Mohammad Karimi</div>
-                <div class="au5-sender-time">10:23</div>
-              </div>
-              <div class="au5-text">
-                سلام به همه من دیروز با توجه به ورک فلویی که از بقیه بچه ها دیدم به این نتیجه رسیدم که میتونایم
-              </div>
-              <div class="au5-transcription-reactions">
-                <div class="au5-reactions">
-                  <div class="reaction reaction-highlight">
-                    <span class="reaction-emoji">⚡</span>
-                  </div>
-                  <div class="reaction reaction-mute">
-                    <span class="reaction-emoji">🎯</span>
-                  </div>
-                </div>
+                <!-- Send Button -->
+                <button class="au5-chat-send-btn au5-btn">Send</button>
               </div>
             </div>
           </div>
         </div>
-        <div class="au5-footer">
-          <button class="au5-start-btn au5-btn au5-hidden">Start Transcription</button>
-          <div class="au5-input-wrapper">
-            <div class="au5-input-container">
-              <input type="text" class="au5-input" placeholder="Write your message ..." />
-              <button class="au5-send-btn au5-btn">Send</button>
-            </div>
-          </div>
-        </div>
+        <!-- End Of Footer -->
       </div>
     </div>
 
-    <script src="scripts/ui.js"></script>
+    <!-- <script src="scripts/ui.js"></script> -->
   </body>
 </html>

@@ -11,15 +11,20 @@ class ChatPanel {
     this.activeMeetingButNotStartedEl = document.getElementById("au5-activeMeetingButNotStarted");
     this.activeMeetingEl = document.getElementById("au5-activeMeeting");
   }
-  showJoinMeeting() {
+  showJoinMeetingContainer() {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.remove("au5-hidden");
     if (this.activeMeetingEl) this.activeMeetingEl.classList.add("au5-hidden");
   }
-  showNoActiveMeeting() {
+  showNoActiveMeetingContainer() {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
     if (this.activeMeetingEl) this.activeMeetingEl.classList.add("au5-hidden");
+  }
+  showTranscriptionContainer() {
+    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
+    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
+    if (this.activeMeetingEl) this.activeMeetingEl.classList.remove("au5-hidden");
   }
   addHeader(companyNameText, roomTitleText) {
     const headerElement = document.querySelector(".au5-header");
@@ -105,16 +110,15 @@ function getCurrentUrl() {
 }
 let platform;
 let chatPanel = null;
-(() => {
-  getCurrentUrl().then((url) => {
-    platform = new MeetingPlatformFactory(url).getPlatform();
-    if (!platform) {
-      console.log("Platform detected:", url);
-      chatPanel = new ChatPanel("Asa Co", "No Active Meeting");
-      chatPanel.showNoActiveMeeting();
-    } else {
-      chatPanel = new ChatPanel("Asa Co", platform.getMeetingId());
-      chatPanel.showJoinMeeting();
-    }
-  });
-})();
+async function initializeChatPanel() {
+  const url = await getCurrentUrl();
+  platform = new MeetingPlatformFactory(url).getPlatform();
+  if (!platform) {
+    chatPanel = new ChatPanel("Asa Co", "No Active Meeting");
+    chatPanel.showNoActiveMeetingContainer();
+  } else {
+    chatPanel = new ChatPanel("Asa Co", platform.getMeetingId());
+    chatPanel.showJoinMeetingContainer();
+  }
+}
+initializeChatPanel();

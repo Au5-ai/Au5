@@ -11,17 +11,24 @@ export class ChatPanel {
     this.activeMeetingEl = document.getElementById("au5-activeMeeting");
   }
 
-  public showJoinMeeting(): void {
+  public showJoinMeetingContainer(): void {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.remove("au5-hidden");
     if (this.activeMeetingEl) this.activeMeetingEl.classList.add("au5-hidden");
   }
 
-  public showNoActiveMeeting(): void {
+  public showNoActiveMeetingContainer(): void {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
     if (this.activeMeetingEl) this.activeMeetingEl.classList.add("au5-hidden");
   }
+
+  public showTranscriptionContainer(): void {
+    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
+    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
+    if (this.activeMeetingEl) this.activeMeetingEl.classList.remove("au5-hidden");
+  }
+
   private addHeader(companyNameText: string, roomTitleText: string): void {
     const headerElement = document.querySelector(".au5-header") as HTMLElement;
     if (!headerElement) return;

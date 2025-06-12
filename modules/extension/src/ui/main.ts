@@ -23,17 +23,17 @@ function getCurrentUrl(): Promise<string> {
 let platform: IMeetingPlatform | null;
 let chatPanel: ChatPanel | null = null;
 
-((): void => {
-  getCurrentUrl().then(url => {
-    platform = new MeetingPlatformFactory(url).getPlatform();
+async function initializeChatPanel(): Promise<void> {
+  const url = await getCurrentUrl();
+  platform = new MeetingPlatformFactory(url).getPlatform();
 
-    if (!platform) {
-      console.log("Platform detected:", url);
-      chatPanel = new ChatPanel("Asa Co", "No Active Meeting");
-      chatPanel.showNoActiveMeeting();
-    } else {
-      chatPanel = new ChatPanel("Asa Co", platform.getMeetingId());
-      chatPanel.showJoinMeeting();
-    }
-  });
-})();
+  if (!platform) {
+    chatPanel = new ChatPanel("Asa Co", "No Active Meeting");
+    chatPanel.showNoActiveMeetingContainer();
+  } else {
+    chatPanel = new ChatPanel("Asa Co", platform.getMeetingId());
+    chatPanel.showJoinMeetingContainer();
+  }
+}
+
+initializeChatPanel();
