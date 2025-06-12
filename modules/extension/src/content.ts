@@ -14,8 +14,8 @@ import {
 import {ChromeStorage} from "./core/utils/chromeStorage";
 import {DomUtils} from "./core/utils/dom.utils";
 import {MeetingHubClient} from "./hub/meetingHubClient";
-import SidePanel from "./ui/chatPanel";
-import {WindowMessageHandler} from "./core/windowMessageHandler";
+import SidePanel from "./ui/chatPanel.ts.backup";
+import {WindowMessageHandler} from "./core/windowMessageHandler.ts.backup";
 
 const platform: IMeetingPlatform = new MeetingPlatformFactory(window.location.href).getPlatform();
 let domUtils = new DomUtils();

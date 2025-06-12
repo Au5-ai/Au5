@@ -12,12 +12,10 @@ export class MeetingPlatformFactory {
    * Currently supports Google Meet, Zoom, and Microsoft Teams.
    * @returns {IMeetingPlatform | null} An instance of the meeting platform or null if not recognized.
    */
-  getPlatform(): IMeetingPlatform {
+  getPlatform(): IMeetingPlatform | null {
     let platformName: string | null = null;
     const patterns: {[key: string]: RegExp} = {
       "Google Meet": /https?:\/\/meet\.google\.com\/[a-zA-Z0-9-]+/
-      //Zoom: /https?:\/\/([a-z0-9]+\.)?zoom\.us\/(j|my)\/[a-zA-Z0-9?&=]+/, // Zoom implementation not provided yet
-      //"Microsoft Teams": /https?:\/\/(teams\.microsoft\.com|teams\.live\.com)\/[a-zA-Z0-9/?&=._-]+/ // Microsoft Teams implementation not provided yet
     };
 
     for (const [platform, pattern] of Object.entries(patterns)) {
@@ -26,7 +24,6 @@ export class MeetingPlatformFactory {
       }
     }
 
-    //if (!platformName) return null;
     switch (platformName) {
       case "Google Meet":
         return new GoogleMeet(this._url);
@@ -35,7 +32,7 @@ export class MeetingPlatformFactory {
       // case "Microsoft Teams":
       //   return new MicrosoftTeams(this._url); // Microsoft Teams implementation not provided
       default:
-        return new GoogleMeet(this._url); // Default to Google Meet if no match found
+        return null; // No matching platform found
     }
   }
 }

@@ -1,5 +1,5 @@
 import * as signalR from "@microsoft/signalr";
-import {WindowMessageHandler} from "../core/windowMessageHandler";
+import {WindowMessageHandler} from "../core/windowMessageHandler.ts.backup";
 import {AppConfiguration, IMessage, JoinMeeting} from "../core/types";
 import {MessageTypes, PostMessageSource} from "../core/types/index";
 
