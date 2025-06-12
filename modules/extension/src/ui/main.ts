@@ -23,7 +23,7 @@ function getCurrentUrl(): Promise<string> {
 }
 
 let platform: IMeetingPlatform | null;
-let chatPanel: ChatPanel | null = null;
+let chatPanel: ChatPanel = new ChatPanel();
 let config: AppConfiguration;
 const configurationManager = new ConfigurationManager(new ChromeStorage());
 
@@ -31,18 +31,20 @@ async function initializeChatPanel(): Promise<void> {
   const url = await getCurrentUrl();
   platform = new MeetingPlatformFactory(url).getPlatform();
 
-  config = await configurationManager.getConfig();
-  if (!config) {
-    chatPanel = new ChatPanel();
-    // chatPanel.showLoginContainer();
+  try {
+    config = await configurationManager.getConfig();
+    if (!config) {
+      chatPanel.showUserUnAuthorizedContainer();
+      return;
+    }
+  } catch (error) {
+    chatPanel.showUserUnAuthorizedContainer();
     return;
   }
 
   if (!platform) {
-    chatPanel = new ChatPanel();
     chatPanel.showNoActiveMeetingContainer();
   } else {
-    chatPanel = new ChatPanel();
     chatPanel.showJoinMeetingContainer();
   }
 }

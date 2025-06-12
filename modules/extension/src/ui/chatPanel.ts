@@ -2,6 +2,7 @@ import {TranscriptionEntry, User} from "../core/types";
 import {DateTime} from "../core/utils/datetime";
 
 export class ChatPanel {
+  private unauthorizedContainerEl: HTMLElement | null;
   private noActiveMeetingEl: HTMLElement | null;
   private activeMeetingButNotStartedEl: HTMLElement | null;
   private activeMeetingEl: HTMLElement | null;
@@ -9,15 +10,20 @@ export class ChatPanel {
   private transcriptionsContainerEl: HTMLDivElement | null;
 
   constructor(private direction: "ltr" | "rtl" = "ltr") {
+    this.unauthorizedContainerEl = document.getElementById("au5-userUnAuthorized");
     this.noActiveMeetingEl = document.getElementById("au5-noActiveMeeting");
     this.activeMeetingButNotStartedEl = document.getElementById("au5-activeMeetingButNotStarted");
     this.activeMeetingEl = document.getElementById("au5-activeMeeting");
     this.footerEl = document.getElementById("au5-transcription-footer") as HTMLElement;
+
     this.transcriptionsContainerEl = this.activeMeetingEl?.querySelector(
       ".au5-transcriptions-container"
     ) as HTMLDivElement;
   }
 
+  public showUserUnAuthorizedContainer(): void {
+    if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.remove("au5-hidden");
+  }
   public showNoActiveMeetingContainer(): void {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
   }

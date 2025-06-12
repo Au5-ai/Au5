@@ -13,6 +13,7 @@ var DateTime;
 })(DateTime || (DateTime = {}));
 class ChatPanel {
   constructor(direction = "ltr") {
+    __publicField(this, "unauthorizedContainerEl");
     __publicField(this, "noActiveMeetingEl");
     __publicField(this, "activeMeetingButNotStartedEl");
     __publicField(this, "activeMeetingEl");
@@ -20,6 +21,7 @@ class ChatPanel {
     __publicField(this, "transcriptionsContainerEl");
     var _a;
     this.direction = direction;
+    this.unauthorizedContainerEl = document.getElementById("au5-userUnAuthorized");
     this.noActiveMeetingEl = document.getElementById("au5-noActiveMeeting");
     this.activeMeetingButNotStartedEl = document.getElementById("au5-activeMeetingButNotStarted");
     this.activeMeetingEl = document.getElementById("au5-activeMeeting");
@@ -27,6 +29,9 @@ class ChatPanel {
     this.transcriptionsContainerEl = (_a = this.activeMeetingEl) == null ? void 0 : _a.querySelector(
       ".au5-transcriptions-container"
     );
+  }
+  showUserUnAuthorizedContainer() {
+    if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.remove("au5-hidden");
   }
   showNoActiveMeetingContainer() {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
@@ -326,22 +331,25 @@ function getCurrentUrl() {
   });
 }
 let platform;
-let chatPanel = null;
+let chatPanel = new ChatPanel();
 let config;
 const configurationManager = new ConfigurationManager(new ChromeStorage());
 async function initializeChatPanel() {
   const url = await getCurrentUrl();
   platform = new MeetingPlatformFactory(url).getPlatform();
-  config = await configurationManager.getConfig();
-  if (!config) {
-    chatPanel = new ChatPanel();
+  try {
+    config = await configurationManager.getConfig();
+    if (!config) {
+      chatPanel.showUserUnAuthorizedContainer();
+      return;
+    }
+  } catch (error) {
+    chatPanel.showUserUnAuthorizedContainer();
     return;
   }
   if (!platform) {
-    chatPanel = new ChatPanel();
     chatPanel.showNoActiveMeetingContainer();
   } else {
-    chatPanel = new ChatPanel();
     chatPanel.showJoinMeetingContainer();
   }
 }
