@@ -97,6 +97,13 @@ body {
 }
 
 /* =========================
+  No Active Meeting
+  ========================= */
+.au5-noActiveMeeting-icon {
+  width: 300px;
+}
+
+/* =========================
   Transcription & Messages CHECKED
   ========================= */
 #au5-activeMeeting {
