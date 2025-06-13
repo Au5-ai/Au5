@@ -1,4 +1,4 @@
-import {TranscriptionEntry, User} from "../core/types";
+import {ReactionAppliedMessage, TranscriptionEntry, User, UserJoinedInMeetingMessage} from "../core/types";
 import {DateTime} from "../core/utils/datetime";
 
 export class ChatPanel {
@@ -24,6 +24,7 @@ export class ChatPanel {
   public showUserUnAuthorizedContainer(): void {
     if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.remove("au5-hidden");
   }
+
   public showNoActiveMeetingContainer(): void {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
   }
@@ -115,12 +116,52 @@ export class ChatPanel {
     this.scrollToBottom();
   }
 
-  public usersJoined(user: User): void {
-    this.addUserJoinedOrLeaved(user, true);
+  public usersJoined(data: UserJoinedInMeetingMessage): void {
+    this.addUserJoinedOrLeaved(data.user, true);
   }
 
-  public usersLeaved(user: User): void {
-    this.addUserJoinedOrLeaved(user, false);
+  public usersLeaved(data: UserJoinedInMeetingMessage): void {
+    this.addUserJoinedOrLeaved(data.user, false);
+  }
+
+  public addReaction(reaction: ReactionAppliedMessage): void {
+    if (!this.transcriptionsContainerEl) {
+      return;
+    }
+
+    const transcriptionBlock = this.transcriptionsContainerEl.querySelector(
+      `[data-id="${reaction.transcriptBlockId}"]`
+    ) as HTMLDivElement;
+
+    if (!transcriptionBlock) {
+      console.warn("Transcription block not found for reaction:", reaction);
+      return;
+    }
+
+    const reactionsContainer = transcriptionBlock.querySelector(".au5-reaction-list") as HTMLDivElement;
+    if (!reactionsContainer) {
+      console.warn("Reactions container not found in transcription block.");
+      return;
+    }
+
+    const existingReaction = reactionsContainer.querySelector(
+      `.au5-reaction[reaction-type="${reaction.reactionType}"]`
+    ) as HTMLDivElement;
+
+    if (existingReaction) {
+      const reactionUsersContainer = existingReaction.querySelector(".au5-reaction-users") as HTMLDivElement;
+      if (!reactionUsersContainer) {
+        console.warn("Reaction users container not found.");
+        return;
+      }
+
+      const userSpan = document.createElement("img");
+      userSpan.className = "au5-reaction-user-avatar";
+      userSpan.src = `${reaction.user.pictureUrl}`;
+      userSpan.alt = `${reaction.user.fullName}'s avatar`;
+      userSpan.title = reaction.user.fullName;
+      reactionUsersContainer.appendChild(userSpan);
+    }
   }
 
   private addUserJoinedOrLeaved(user: User, isJoined: boolean): void {

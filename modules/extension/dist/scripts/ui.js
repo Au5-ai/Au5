@@ -111,11 +111,44 @@ class ChatPanel {
     this.transcriptionsContainerEl.appendChild(transcriptBlock);
     this.scrollToBottom();
   }
-  usersJoined(user) {
-    this.addUserJoinedOrLeaved(user, true);
+  usersJoined(data) {
+    this.addUserJoinedOrLeaved(data.user, true);
   }
-  usersLeaved(user) {
-    this.addUserJoinedOrLeaved(user, false);
+  usersLeaved(data) {
+    this.addUserJoinedOrLeaved(data.user, false);
+  }
+  addReaction(reaction) {
+    if (!this.transcriptionsContainerEl) {
+      return;
+    }
+    const transcriptionBlock = this.transcriptionsContainerEl.querySelector(
+      `[data-id="${reaction.transcriptBlockId}"]`
+    );
+    if (!transcriptionBlock) {
+      console.warn("Transcription block not found for reaction:", reaction);
+      return;
+    }
+    const reactionsContainer = transcriptionBlock.querySelector(".au5-reaction-list");
+    if (!reactionsContainer) {
+      console.warn("Reactions container not found in transcription block.");
+      return;
+    }
+    const existingReaction = reactionsContainer.querySelector(
+      `.au5-reaction[reaction-type="${reaction.reactionType}"]`
+    );
+    if (existingReaction) {
+      const reactionUsersContainer = existingReaction.querySelector(".au5-reaction-users");
+      if (!reactionUsersContainer) {
+        console.warn("Reaction users container not found.");
+        return;
+      }
+      const userSpan = document.createElement("img");
+      userSpan.className = "au5-reaction-user-avatar";
+      userSpan.src = `${reaction.user.pictureUrl}`;
+      userSpan.alt = `${reaction.user.fullName}'s avatar`;
+      userSpan.title = reaction.user.fullName;
+      reactionUsersContainer.appendChild(userSpan);
+    }
   }
   addUserJoinedOrLeaved(user, isJoined) {
     if (!this.transcriptionsContainerEl) {

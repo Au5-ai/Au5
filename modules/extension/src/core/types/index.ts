@@ -46,10 +46,10 @@ export interface JoinMeeting {
 
 export interface ReactionAppliedMessage extends IMessage {
   readonly type: MessageTypes.ReactionApplied;
-  meetingId: string;
+  meetingId?: string;
   transcriptBlockId: string;
   user: User;
-  reaction: string;
+  reactionType: string;
 }
 
 export interface UserJoinedInMeetingMessage extends IMessage {
