@@ -18,7 +18,7 @@ export interface TranscriptionEntry {
 
 export interface User {
   token?: string | null;
-  id: string;
+  id?: string;
   fullName: string;
   pictureUrl: string;
 }

@@ -1,11 +1,29 @@
 /* =========================
   Base Styles
   ========================= */
+@font-face {
+  font-family: "Inter";
+  src: url("../../assets/fonts/Inter-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
-    "Helvetica Neue", sans-serif;
+  font-family: "Inter", system-ui;
   margin: 0;
 }
+
+/* .bg-gradiant {
+  filter: blur(72px);
+  background-image: url(../../assets/images/gradient-light.png);
+  background-position: 50%;
+  background-size: cover;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+} */
 
 .au5-btn {
   background: #2196f3;
@@ -14,8 +32,7 @@ body {
   padding: 8px 12px;
   border-radius: 8px;
   cursor: pointer;
-  font-family: system-ui;
-  width: -webkit-fill-available;
+  font-family: "Inter";
 }
 
 .au5-btn:hover {
@@ -25,10 +42,9 @@ body {
   Panel Layout
   ========================= */
 .au5-panel {
-  border-radius: 20px;
   box-sizing: border-box;
   height: 100vh;
-  font-family: system-ui;
+  background: linear-gradient(to bottom, #f8fbff 0%, #f4f0ec 28%, #f4eae7 66%, #f4e8ec 100%);
 }
 
 /* =========================
@@ -41,8 +57,8 @@ body {
   padding: 12px;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
-  box-shadow: 0px 2px 5px 0px #eee;
   margin-bottom: 4px;
+  border-bottom: 1px solid #e8e8e8;
 }
 
 .au5-header-left {
@@ -97,10 +113,28 @@ body {
 }
 
 /* =========================
-  No Active Meeting
+  No Active Meeting & Active Meeting
   ========================= */
-.au5-noActiveMeeting-icon {
-  width: 300px;
+
+.au5-intro-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 16px;
+}
+
+.au5-intro-text {
+  text-align: center;
+  font-size: 13px;
+  color: #888;
+}
+.au5-btn-joinMeeting {
+  height: 40px;
+  font-family: "Inter";
+  min-width: 120px;
+}
+
+.au5-img {
+  width: 250px;
 }
 
 /* =========================
@@ -132,7 +166,7 @@ body {
 }
 
 .au5-message-bubble {
-  background: #f8f8f8;
+  background: #fff;
   border-radius: 12px;
   padding: 8px;
   gap: 12px;
@@ -216,6 +250,7 @@ body {
   z-index: 99999;
   background-color: #fff;
   margin: 12px;
+  border-radius: 12px;
 }
 
 .au5-chat-container {
