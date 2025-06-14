@@ -127,7 +127,8 @@ body {
   font-size: 13px;
   color: #888;
 }
-.au5-btn-joinMeeting {
+.au5-btn-joinMeeting,
+.au5-btn-reload {
   height: 40px;
   font-family: "Inter";
   min-width: 120px;

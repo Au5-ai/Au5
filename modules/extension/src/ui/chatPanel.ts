@@ -22,14 +22,17 @@ export class ChatPanel {
   }
 
   public showUserUnAuthorizedContainer(): void {
+    this.hideAllContainers();
     if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.remove("au5-hidden");
   }
 
   public showNoActiveMeetingContainer(): void {
+    this.hideAllContainers();
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
   }
 
   public showJoinMeetingContainer(): void {
+    this.hideAllContainers();
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.remove("au5-hidden");
   }
 
@@ -214,5 +217,11 @@ export class ChatPanel {
         behavior: "smooth"
       });
     }
+  }
+
+  private hideAllContainers(): void {
+    if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.add("au5-hidden");
+    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
+    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
   }
 }

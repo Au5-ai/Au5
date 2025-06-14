@@ -31,12 +31,15 @@ class ChatPanel {
     );
   }
   showUserUnAuthorizedContainer() {
+    this.hideAllContainers();
     if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.remove("au5-hidden");
   }
   showNoActiveMeetingContainer() {
+    this.hideAllContainers();
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
   }
   showJoinMeetingContainer() {
+    this.hideAllContainers();
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.remove("au5-hidden");
   }
   showTranscriptionContainer(companyNameText, roomTitleText) {
@@ -191,6 +194,11 @@ class ChatPanel {
         behavior: "smooth"
       });
     }
+  }
+  hideAllContainers() {
+    if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.add("au5-hidden");
+    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
+    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
   }
 }
 const CONFIGURATION_KEY = "configuration";
@@ -392,6 +400,20 @@ document.addEventListener("DOMContentLoaded", () => {
   if (button) {
     button.addEventListener("click", () => {
       chatPanel == null ? void 0 : chatPanel.showTranscriptionContainer(config.service.companyName, (platform == null ? void 0 : platform.getMeetingId()) || "Meeting Room");
+    });
+  }
+});
+document.addEventListener("DOMContentLoaded", () => {
+  const button = document.getElementById("au5-btn-reload");
+  if (button) {
+    button.addEventListener("click", async () => {
+      const url = await getCurrentUrl();
+      platform = new MeetingPlatformFactory(url).getPlatform();
+      if (!platform) {
+        chatPanel.showNoActiveMeetingContainer();
+      } else {
+        chatPanel.showJoinMeetingContainer();
+      }
     });
   }
 });

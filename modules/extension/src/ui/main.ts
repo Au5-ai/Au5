@@ -67,3 +67,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const button = document.getElementById("au5-btn-reload") as HTMLButtonElement | null;
+  if (button) {
+    button.addEventListener("click", async () => {
+      const url = await getCurrentUrl();
+      platform = new MeetingPlatformFactory(url).getPlatform();
+      if (!platform) {
+        chatPanel.showNoActiveMeetingContainer();
+      } else {
+        chatPanel.showJoinMeetingContainer();
+      }
+    });
+  }
+});
