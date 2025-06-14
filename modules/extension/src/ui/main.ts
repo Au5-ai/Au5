@@ -40,7 +40,7 @@ async function initializeChatPanel(): Promise<void> {
     chatPanel.showUserUnAuthorizedContainer();
     return;
   }
-
+  return;
   if (!platform) {
     chatPanel.showNoActiveMeetingContainer();
   } else {

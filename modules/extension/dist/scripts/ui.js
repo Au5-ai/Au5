@@ -381,11 +381,7 @@ async function initializeChatPanel() {
     chatPanel.showUserUnAuthorizedContainer();
     return;
   }
-  if (!platform) {
-    chatPanel.showNoActiveMeetingContainer();
-  } else {
-    chatPanel.showJoinMeetingContainer();
-  }
+  return;
 }
 function setupButtonHandlers() {
   const joinButton = document.getElementById("au5-btn-joinMeeting");
