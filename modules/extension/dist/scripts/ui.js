@@ -355,36 +355,29 @@ class ChromeStorage {
     (document.head || document.documentElement).appendChild(script);
   }
 }
-function getCurrentUrl() {
-  return new Promise((resolve) => {
-    let currentUrl = window.location.href;
-    if (typeof chrome !== "undefined" && chrome.tabs) {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        if (tabs[0] && tabs[0].url) {
-          resolve(tabs[0].url);
-        } else {
-          resolve(currentUrl);
-        }
-      });
-    } else {
-      resolve(currentUrl);
-    }
-  });
-}
-let platform;
-let chatPanel = new ChatPanel();
-let config;
 const configurationManager = new ConfigurationManager(new ChromeStorage());
+const chatPanel = new ChatPanel();
+let platform = null;
+let config;
+async function getCurrentUrl() {
+  if (typeof chrome !== "undefined" && chrome.tabs) {
+    return new Promise((resolve) => {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        var _a;
+        resolve(((_a = tabs[0]) == null ? void 0 : _a.url) || window.location.href);
+      });
+    });
+  }
+  return window.location.href;
+}
 async function initializeChatPanel() {
   const url = await getCurrentUrl();
   platform = new MeetingPlatformFactory(url).getPlatform();
   try {
     config = await configurationManager.getConfig();
-    if (!config) {
-      chatPanel.showUserUnAuthorizedContainer();
-      return;
-    }
+    if (!config) throw new Error("Missing configuration.");
   } catch (error) {
+    console.warn("Configuration error:", error);
     chatPanel.showUserUnAuthorizedContainer();
     return;
   }
@@ -394,26 +387,27 @@ async function initializeChatPanel() {
     chatPanel.showJoinMeetingContainer();
   }
 }
-initializeChatPanel();
-document.addEventListener("DOMContentLoaded", () => {
-  const button = document.getElementById("au5-btn-joinMeeting");
-  if (button) {
-    button.addEventListener("click", () => {
-      chatPanel == null ? void 0 : chatPanel.showTranscriptionContainer(config.service.companyName, (platform == null ? void 0 : platform.getMeetingId()) || "Meeting Room");
-    });
+function setupButtonHandlers() {
+  const joinButton = document.getElementById("au5-btn-joinMeeting");
+  const reloadButton = document.getElementById("au5-btn-reload");
+  joinButton == null ? void 0 : joinButton.addEventListener("click", handleJoinMeetingClick);
+  reloadButton == null ? void 0 : reloadButton.addEventListener("click", handleReloadMeetingClick);
+}
+function handleJoinMeetingClick() {
+  if (!config || !platform) return;
+  const meetingId = platform.getMeetingId() || "Meeting Room";
+  chatPanel.showTranscriptionContainer(config.service.companyName, meetingId);
+}
+async function handleReloadMeetingClick() {
+  const url = await getCurrentUrl();
+  platform = new MeetingPlatformFactory(url).getPlatform();
+  if (!platform) {
+    chatPanel.showNoActiveMeetingContainer();
+  } else {
+    chatPanel.showJoinMeetingContainer();
   }
-});
+}
 document.addEventListener("DOMContentLoaded", () => {
-  const button = document.getElementById("au5-btn-reload");
-  if (button) {
-    button.addEventListener("click", async () => {
-      const url = await getCurrentUrl();
-      platform = new MeetingPlatformFactory(url).getPlatform();
-      if (!platform) {
-        chatPanel.showNoActiveMeetingContainer();
-      } else {
-        chatPanel.showJoinMeetingContainer();
-      }
-    });
-  }
+  initializeChatPanel();
+  setupButtonHandlers();
 });

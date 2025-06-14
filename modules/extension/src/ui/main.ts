@@ -4,40 +4,39 @@ import {AppConfiguration, IMeetingPlatform} from "../core/types";
 import {ChromeStorage} from "../core/utils/chromeStorage";
 import {ChatPanel} from "./chatPanel";
 
-function getCurrentUrl(): Promise<string> {
-  return new Promise(resolve => {
-    let currentUrl = window.location.href;
+const configurationManager = new ConfigurationManager(new ChromeStorage());
+const chatPanel = new ChatPanel();
 
-    if (typeof chrome !== "undefined" && chrome.tabs) {
+let platform: IMeetingPlatform | null = null;
+let config: AppConfiguration | undefined;
+
+/**
+ * Gets the current URL from the browser tab or window.
+ */
+async function getCurrentUrl(): Promise<string> {
+  if (typeof chrome !== "undefined" && chrome.tabs) {
+    return new Promise(resolve => {
       chrome.tabs.query({active: true, currentWindow: true}, tabs => {
-        if (tabs[0] && tabs[0].url) {
-          resolve(tabs[0].url);
-        } else {
-          resolve(currentUrl);
-        }
+        resolve(tabs[0]?.url || window.location.href);
       });
-    } else {
-      resolve(currentUrl);
-    }
-  });
+    });
+  }
+
+  return window.location.href;
 }
 
-let platform: IMeetingPlatform | null;
-let chatPanel: ChatPanel = new ChatPanel();
-let config: AppConfiguration;
-const configurationManager = new ConfigurationManager(new ChromeStorage());
-
+/**
+ * Initializes platform and config, and shows relevant panel.
+ */
 async function initializeChatPanel(): Promise<void> {
   const url = await getCurrentUrl();
   platform = new MeetingPlatformFactory(url).getPlatform();
 
   try {
     config = await configurationManager.getConfig();
-    if (!config) {
-      chatPanel.showUserUnAuthorizedContainer();
-      return;
-    }
+    if (!config) throw new Error("Missing configuration.");
   } catch (error) {
+    console.warn("Configuration error:", error);
     chatPanel.showUserUnAuthorizedContainer();
     return;
   }
@@ -49,36 +48,45 @@ async function initializeChatPanel(): Promise<void> {
   }
 }
 
-initializeChatPanel();
+/**
+ * Sets up all UI button handlers.
+ */
+function setupButtonHandlers(): void {
+  const joinButton = document.getElementById("au5-btn-joinMeeting") as HTMLButtonElement | null;
+  const reloadButton = document.getElementById("au5-btn-reload") as HTMLButtonElement | null;
 
-// chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-//   if(message.type === ){
-//     if (chatPanel) {
-//       chatPanel.
-//     }
-//   }
-// });
+  joinButton?.addEventListener("click", handleJoinMeetingClick);
+  reloadButton?.addEventListener("click", handleReloadMeetingClick);
+}
 
-document.addEventListener("DOMContentLoaded", () => {
-  const button = document.getElementById("au5-btn-joinMeeting") as HTMLButtonElement | null;
-  if (button) {
-    button.addEventListener("click", () => {
-      chatPanel?.showTranscriptionContainer(config.service.companyName, platform?.getMeetingId() || "Meeting Room");
-    });
+/**
+ * Handles click event for join button.
+ */
+function handleJoinMeetingClick(): void {
+  if (!config || !platform) return;
+
+  const meetingId = platform.getMeetingId() || "Meeting Room";
+  chatPanel.showTranscriptionContainer(config.service.companyName, meetingId);
+}
+
+/**
+ * Handles click event for reload Meeting enterance button.
+ */
+async function handleReloadMeetingClick(): Promise<void> {
+  const url = await getCurrentUrl();
+  platform = new MeetingPlatformFactory(url).getPlatform();
+
+  if (!platform) {
+    chatPanel.showNoActiveMeetingContainer();
+  } else {
+    chatPanel.showJoinMeetingContainer();
   }
-});
+}
 
+/**
+ * Initialize everything on DOM ready.
+ */
 document.addEventListener("DOMContentLoaded", () => {
-  const button = document.getElementById("au5-btn-reload") as HTMLButtonElement | null;
-  if (button) {
-    button.addEventListener("click", async () => {
-      const url = await getCurrentUrl();
-      platform = new MeetingPlatformFactory(url).getPlatform();
-      if (!platform) {
-        chatPanel.showNoActiveMeetingContainer();
-      } else {
-        chatPanel.showJoinMeetingContainer();
-      }
-    });
-  }
+  initializeChatPanel();
+  setupButtonHandlers();
 });
