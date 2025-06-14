@@ -13,10 +13,6 @@ body {
   margin: 0;
 }
 
-a{
- text-decoration: none";
-}
-
 .au5-btn {
   background: #2196f3;
   border: none;
@@ -116,9 +112,29 @@ a{
 
 .au5-intro-text {
   text-align: center;
-  font-size: 13px;
+  font-size: 14px;
   color: #888;
 }
+
+.au5-btn-container {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.au5-btn-check {
+  background: transparent;
+  height: 40px;
+  color: black;
+  border: 1px solid;
+}
+
+.au5-btn-check:hover {
+  background: #eee !important;
+}
+
+.au5-btn-options,
 .au5-btn-joinMeeting,
 .au5-btn-reload {
   height: 40px;
