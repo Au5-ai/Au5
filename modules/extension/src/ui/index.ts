@@ -57,9 +57,19 @@ async function initializeChatPanel(): Promise<void> {
 function setupButtonHandlers(): void {
   const joinButton = document.getElementById("au5-btn-joinMeeting") as HTMLButtonElement | null;
   const reloadButton = document.getElementById("au5-btn-reload") as HTMLButtonElement | null;
+  const optionsButton = document.getElementById("au5-btn-options") as HTMLButtonElement | null;
+  const checkLoginButton = document.getElementById("au5-btn-check") as HTMLButtonElement | null;
 
   joinButton?.addEventListener("click", handleJoinMeetingClick);
   reloadButton?.addEventListener("click", handleReloadMeetingClick);
+
+  optionsButton?.addEventListener("click", () => {
+    window.open("options.html", "_blank");
+  });
+
+  checkLoginButton?.addEventListener("click", async () => {
+    await initializeChatPanel();
+  });
 }
 
 /**

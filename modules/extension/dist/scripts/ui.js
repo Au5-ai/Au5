@@ -201,17 +201,26 @@ class ChatPanel {
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
   }
 }
-const CONFIGURATION_KEY = "configuration";
 class ConfigurationManager {
   /**
    * Retrieves the entire configuration object from storage.
    */
   async getConfig() {
     try {
-      const localConfig = localStorage.getItem(CONFIGURATION_KEY);
-      if (localConfig) {
-        return JSON.parse(localConfig);
-      }
+      return {
+        user: {
+          token: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
+          id: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
+          fullName: "Mohammad Karimi",
+          pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+        },
+        service: {
+          webhookUrl: "https://au5.ai/api/v1/",
+          direction: "rtl",
+          hubUrl: "http://localhost:1366/meetinghub",
+          companyName: "Asax Co"
+        }
+      };
     } catch (error) {
       throw new Error("Configuration not found.");
     }
@@ -301,8 +310,16 @@ async function initializeChatPanel() {
 function setupButtonHandlers() {
   const joinButton = document.getElementById("au5-btn-joinMeeting");
   const reloadButton = document.getElementById("au5-btn-reload");
+  const optionsButton = document.getElementById("au5-btn-options");
+  const checkLoginButton = document.getElementById("au5-btn-check");
   joinButton == null ? void 0 : joinButton.addEventListener("click", handleJoinMeetingClick);
   reloadButton == null ? void 0 : reloadButton.addEventListener("click", handleReloadMeetingClick);
+  optionsButton == null ? void 0 : optionsButton.addEventListener("click", () => {
+    window.open("options.html", "_blank");
+  });
+  checkLoginButton == null ? void 0 : checkLoginButton.addEventListener("click", async () => {
+    await initializeChatPanel();
+  });
 }
 function handleJoinMeetingClick() {
   if (!config || !platform) return;
