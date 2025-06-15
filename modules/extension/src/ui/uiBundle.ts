@@ -1,2 +1,2 @@
 import "./chatPanel";
-import "./main";
+import ".";

@@ -203,69 +203,19 @@ class ChatPanel {
 }
 const CONFIGURATION_KEY = "configuration";
 class ConfigurationManager {
-  constructor(chrome2) {
-    this.chrome = chrome2;
-  }
   /**
    * Retrieves the entire configuration object from storage.
    */
   async getConfig() {
     try {
-      return {
-        user: {
-          token: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
-          id: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
-          fullName: "Mohammad Karimi",
-          pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-        },
-        service: {
-          webhookUrl: "https://au5.ai/api/v1/",
-          direction: "rtl",
-          hubUrl: "http://localhost:1366/meetinghub",
-          companyName: "Asax Co"
-        }
-      };
-      const config2 = await this.chrome.get(CONFIGURATION_KEY);
-      return config2 ?? null;
+      const localConfig = localStorage.getItem(CONFIGURATION_KEY);
+      if (localConfig) {
+        return JSON.parse(localConfig);
+      }
     } catch (error) {
-      console.error("Failed to load configuration:", error);
       throw new Error("Configuration not found.");
     }
-  }
-  /**
-   * Updates the entire configuration object in storage.
-   */
-  async setConfig(config2) {
-    try {
-      await this.chrome.set({ [CONFIGURATION_KEY]: config2 }, "local");
-    } catch (error) {
-      console.error("Failed to save configuration:", error);
-    }
-  }
-  /**
-   * Gets a single config field like webhookUrl or token.
-   */
-  async getValue(key) {
-    const config2 = await this.getConfig();
-    return config2 ? config2[key] : null;
-  }
-  /**
-   * Updates only one key of the configuration.
-   */
-  async setValue(key, value) {
-    const config2 = await this.getConfig() || {};
-    config2[key] = value;
-    await this.setConfig(config2);
-  }
-  /**
-   * Removes the entire configuration.
-   */
-  async clearConfig() {
-    try {
-      await this.chrome.remove(CONFIGURATION_KEY);
-    } catch (error) {
-      console.error("Failed to clear configuration:", error);
-    }
+    return null;
   }
 }
 class GoogleMeet {
@@ -312,53 +262,10 @@ class MeetingPlatformFactory {
     }
   }
 }
-class ChromeStorage {
-  constructor() {
-    __publicField(this, "name", "Chrome");
-  }
-  get(keys, area = "local") {
-    return new Promise((resolve, reject) => {
-      chrome.storage[area].get(keys, (result) => {
-        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
-        resolve(result);
-      });
-    });
-  }
-  set(items, area = "local") {
-    return new Promise((resolve, reject) => {
-      chrome.storage[area].set(items, () => {
-        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
-        resolve();
-      });
-    });
-  }
-  remove(keys, area = "local") {
-    return new Promise((resolve, reject) => {
-      chrome.storage[area].remove(keys, () => {
-        if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
-        resolve();
-      });
-    });
-  }
-  /**
-   * Injects a local script from the extension into the DOM.
-   *
-   * @param fileName - The filename of the script in the extension
-   * @param onLoad - Optional callback executed after the script is loaded
-   */
-  inject(fileName, onLoad = () => {
-  }) {
-    const script = document.createElement("script");
-    script.src = chrome.runtime.getURL(fileName);
-    script.type = "text/javascript";
-    script.onload = onLoad;
-    (document.head || document.documentElement).appendChild(script);
-  }
-}
-const configurationManager = new ConfigurationManager(new ChromeStorage());
+const configurationManager = new ConfigurationManager();
 const chatPanel = new ChatPanel();
 let platform = null;
-let config;
+let config = null;
 async function getCurrentUrl() {
   if (typeof chrome !== "undefined" && chrome.tabs) {
     return new Promise((resolve) => {
@@ -375,7 +282,11 @@ async function initializeChatPanel() {
   platform = new MeetingPlatformFactory(url).getPlatform();
   try {
     config = await configurationManager.getConfig();
-    if (!config) throw new Error("Missing configuration.");
+    console.log("Configuration loaded:", config);
+    if (config == null || config == void 0) {
+      chatPanel.showUserUnAuthorizedContainer();
+      return;
+    }
   } catch (error) {
     console.warn("Configuration error:", error);
     chatPanel.showUserUnAuthorizedContainer();
@@ -407,7 +318,7 @@ async function handleReloadMeetingClick() {
     chatPanel.showJoinMeetingContainer();
   }
 }
-document.addEventListener("DOMContentLoaded", () => {
-  initializeChatPanel();
+document.addEventListener("DOMContentLoaded", async () => {
+  await initializeChatPanel();
   setupButtonHandlers();
 });

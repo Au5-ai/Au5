@@ -1,14 +1,13 @@
 import {ConfigurationManager} from "../core/configurationManager";
 import {MeetingPlatformFactory} from "../core/platforms/meetingPlatformFactory";
 import {AppConfiguration, IMeetingPlatform} from "../core/types";
-import {ChromeStorage} from "../core/utils/chromeStorage";
 import {ChatPanel} from "./chatPanel";
 
-const configurationManager = new ConfigurationManager(new ChromeStorage());
+const configurationManager = new ConfigurationManager();
 const chatPanel = new ChatPanel();
 
 let platform: IMeetingPlatform | null = null;
-let config: AppConfiguration | undefined;
+let config: AppConfiguration | null = null;
 
 /**
  * Gets the current URL from the browser tab or window.
@@ -34,13 +33,17 @@ async function initializeChatPanel(): Promise<void> {
 
   try {
     config = await configurationManager.getConfig();
-    if (!config) throw new Error("Missing configuration.");
+    console.log("Configuration loaded:", config);
+    if (config == null || config == undefined) {
+      chatPanel.showUserUnAuthorizedContainer();
+      return;
+    }
   } catch (error) {
     console.warn("Configuration error:", error);
     chatPanel.showUserUnAuthorizedContainer();
     return;
   }
-  //return;
+
   if (!platform) {
     chatPanel.showNoActiveMeetingContainer();
   } else {
@@ -86,7 +89,7 @@ async function handleReloadMeetingClick(): Promise<void> {
 /**
  * Initialize everything on DOM ready.
  */
-document.addEventListener("DOMContentLoaded", () => {
-  initializeChatPanel();
+document.addEventListener("DOMContentLoaded", async () => {
+  await initializeChatPanel();
   setupButtonHandlers();
 });
