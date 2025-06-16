@@ -41,9 +41,10 @@ class ChatPanel {
     if (urlElement) {
       let displayUrl = url;
       if (url.length > 35) {
-        displayUrl = url.slice(0, 35) + "(...)";
+        displayUrl = url.slice(0, 35) + " (...)";
       }
       urlElement.innerHTML = displayUrl;
+      console.log("No active meeting for URL:", displayUrl);
     }
   }
   showJoinMeetingContainer() {
@@ -305,6 +306,7 @@ async function getCurrentUrl() {
     return new Promise((resolve) => {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         var _a;
+        console.log("Current tabs:", tabs);
         resolve(((_a = tabs[0]) == null ? void 0 : _a.url) || window.location.href);
       });
     });

@@ -23,5 +23,5 @@
     "128": "assets/icons/128x.png"
   },
   "permissions": ["sidePanel", "storage"],
-  "host_permissions": ["*://meet.google.com/*-*-*"]
+  "host_permissions": ["<all_urls>"]
 }

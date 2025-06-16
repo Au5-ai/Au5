@@ -34,9 +34,10 @@ export class ChatPanel {
     if (urlElement) {
       let displayUrl = url;
       if (url.length > 35) {
-        displayUrl = url.slice(0, 35) + "(...)";
+        displayUrl = url.slice(0, 35) + " (...)";
       }
       urlElement.innerHTML = displayUrl;
+      console.log("No active meeting for URL:", displayUrl);
     }
   }
 
