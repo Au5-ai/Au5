@@ -1,6 +1,6 @@
 import {ConfigurationManager} from "../core/configurationManager";
 import {MeetingPlatformFactory} from "../core/platforms/meetingPlatformFactory";
-import {AppConfiguration, IMeetingPlatform} from "../core/types";
+import {AppConfiguration, IMeetingPlatform, MessageTypes} from "../core/types";
 import {ChatPanel} from "./chatPanel";
 
 const configurationManager = new ConfigurationManager();
@@ -74,10 +74,16 @@ function setupButtonHandlers(): void {
     const target = event.target as HTMLElement;
     const reaction = target.closest(".au5-reaction");
     if (reaction) {
-      console.log("Dynamic reaction clicked:", reaction);
-      const type = reaction.getAttribute("reaction-type");
+      const reactionType = reaction.getAttribute("reaction-type");
       const blockId = reaction.getAttribute("data-blockId");
-      console.log("Type:", type, "BlockId:", blockId);
+      if (reactionType && blockId) {
+        chatPanel.addReaction({
+          type: MessageTypes.ReactionApplied,
+          transcriptBlockId: blockId,
+          user: {fullName: config?.user.fullName || "Unknown", pictureUrl: config?.user.pictureUrl || ""},
+          reactionType: reactionType
+        });
+      }
     }
   });
 }

@@ -271,6 +271,12 @@ class MeetingPlatformFactory {
     }
   }
 }
+var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
+  MessageTypes2["TranscriptionEntry"] = "TranscriptionEntry";
+  MessageTypes2["NotifyUserJoining"] = "NotifyUserJoining";
+  MessageTypes2["ReactionApplied"] = "ReactionApplied";
+  return MessageTypes2;
+})(MessageTypes || {});
 const configurationManager = new ConfigurationManager();
 const chatPanel = new ChatPanel();
 let platform = null;
@@ -324,10 +330,16 @@ function setupButtonHandlers() {
     const target = event.target;
     const reaction = target.closest(".au5-reaction");
     if (reaction) {
-      console.log("Dynamic reaction clicked:", reaction);
-      const type = reaction.getAttribute("reaction-type");
+      const reactionType = reaction.getAttribute("reaction-type");
       const blockId = reaction.getAttribute("data-blockId");
-      console.log("Type:", type, "BlockId:", blockId);
+      if (reactionType && blockId) {
+        chatPanel.addReaction({
+          type: MessageTypes.ReactionApplied,
+          transcriptBlockId: blockId,
+          user: { fullName: (config == null ? void 0 : config.user.fullName) || "Unknown", pictureUrl: (config == null ? void 0 : config.user.pictureUrl) || "" },
+          reactionType
+        });
+      }
     }
   });
 }
