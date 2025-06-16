@@ -320,6 +320,16 @@ function setupButtonHandlers() {
   checkLoginButton == null ? void 0 : checkLoginButton.addEventListener("click", async () => {
     await initializeChatPanel();
   });
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    const reaction = target.closest(".au5-reaction");
+    if (reaction) {
+      console.log("Dynamic reaction clicked:", reaction);
+      const type = reaction.getAttribute("reaction-type");
+      const blockId = reaction.getAttribute("data-blockId");
+      console.log("Type:", type, "BlockId:", blockId);
+    }
+  });
 }
 function handleJoinMeetingClick() {
   if (!config || !platform) return;

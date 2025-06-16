@@ -59,7 +59,6 @@ function setupButtonHandlers(): void {
   const reloadButton = document.getElementById("au5-btn-reload") as HTMLButtonElement | null;
   const optionsButton = document.getElementById("au5-btn-options") as HTMLButtonElement | null;
   const checkLoginButton = document.getElementById("au5-btn-check") as HTMLButtonElement | null;
-
   joinButton?.addEventListener("click", handleJoinMeetingClick);
   reloadButton?.addEventListener("click", handleReloadMeetingClick);
 
@@ -69,6 +68,17 @@ function setupButtonHandlers(): void {
 
   checkLoginButton?.addEventListener("click", async () => {
     await initializeChatPanel();
+  });
+
+  document.addEventListener("click", event => {
+    const target = event.target as HTMLElement;
+    const reaction = target.closest(".au5-reaction");
+    if (reaction) {
+      console.log("Dynamic reaction clicked:", reaction);
+      const type = reaction.getAttribute("reaction-type");
+      const blockId = reaction.getAttribute("data-blockId");
+      console.log("Type:", type, "BlockId:", blockId);
+    }
   });
 }
 
