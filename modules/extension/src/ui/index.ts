@@ -34,7 +34,6 @@ async function initializeChatPanel(): Promise<void> {
 
   try {
     config = await configurationManager.getConfig();
-    console.log("Configuration loaded:", config);
     if (config == null || config == undefined) {
       chatPanel.showUserUnAuthorizedContainer();
       return;
@@ -48,7 +47,7 @@ async function initializeChatPanel(): Promise<void> {
   if (!platform) {
     chatPanel.showNoActiveMeetingContainer(url);
   } else {
-    chatPanel.showJoinMeetingContainer();
+    chatPanel.showJoinMeetingContainer(url);
   }
 }
 
@@ -117,7 +116,7 @@ async function handleReloadMeetingClick(): Promise<void> {
   if (!platform) {
     chatPanel.showNoActiveMeetingContainer(url);
   } else {
-    chatPanel.showJoinMeetingContainer();
+    chatPanel.showJoinMeetingContainer(url);
   }
 }
 

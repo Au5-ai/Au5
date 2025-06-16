@@ -29,21 +29,13 @@ export class ChatPanel {
   public showNoActiveMeetingContainer(url: string): void {
     this.hideAllContainers();
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
-
-    const urlElement = document.getElementById("au5-url");
-    if (urlElement) {
-      let displayUrl = url;
-      if (url.length > 35) {
-        displayUrl = url.slice(0, 35) + " (...)";
-      }
-      urlElement.innerHTML = displayUrl;
-      console.log("No active meeting for URL:", displayUrl);
-    }
+    this.setUrl(url);
   }
 
-  public showJoinMeetingContainer(): void {
+  public showJoinMeetingContainer(url: string): void {
     this.hideAllContainers();
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.remove("au5-hidden");
+    this.setUrl(url);
   }
 
   public showTranscriptionContainer(companyNameText: string, roomTitleText: string): void {
@@ -187,6 +179,20 @@ export class ChatPanel {
     }
   }
 
+  private setUrl(url: string): void {
+    const urlElement = document.getElementsByClassName("au5-url");
+
+    Array.from(urlElement).forEach((el: Element) => {
+      if (el) {
+        let displayUrl = url;
+        if (url.length > 35) {
+          displayUrl = url.slice(0, 35) + " (...)";
+        }
+        el.innerHTML = displayUrl;
+        console.log("No active meeting for URL:", displayUrl);
+      }
+    });
+  }
   private addUserJoinedOrLeaved(user: User, isJoined: boolean): void {
     if (!this.transcriptionsContainerEl) {
       return;

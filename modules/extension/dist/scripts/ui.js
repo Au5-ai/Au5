@@ -37,19 +37,12 @@ class ChatPanel {
   showNoActiveMeetingContainer(url) {
     this.hideAllContainers();
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
-    const urlElement = document.getElementById("au5-url");
-    if (urlElement) {
-      let displayUrl = url;
-      if (url.length > 35) {
-        displayUrl = url.slice(0, 35) + " (...)";
-      }
-      urlElement.innerHTML = displayUrl;
-      console.log("No active meeting for URL:", displayUrl);
-    }
+    this.setUrl(url);
   }
-  showJoinMeetingContainer() {
+  showJoinMeetingContainer(url) {
     this.hideAllContainers();
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.remove("au5-hidden");
+    this.setUrl(url);
   }
   showTranscriptionContainer(companyNameText, roomTitleText) {
     const headerElement = document.querySelector(".au5-header");
@@ -169,6 +162,19 @@ class ChatPanel {
       userSpan.title = reaction.user.fullName;
       reactionUsersContainer.appendChild(userSpan);
     }
+  }
+  setUrl(url) {
+    const urlElement = document.getElementsByClassName("au5-url");
+    Array.from(urlElement).forEach((el) => {
+      if (el) {
+        let displayUrl = url;
+        if (url.length > 35) {
+          displayUrl = url.slice(0, 35) + " (...)";
+        }
+        el.innerHTML = displayUrl;
+        console.log("No active meeting for URL:", displayUrl);
+      }
+    });
   }
   addUserJoinedOrLeaved(user, isJoined) {
     if (!this.transcriptionsContainerEl) {
@@ -318,7 +324,6 @@ async function initializeChatPanel() {
   platform = new MeetingPlatformFactory(url).getPlatform();
   try {
     config = await configurationManager.getConfig();
-    console.log("Configuration loaded:", config);
     if (config == null || config == void 0) {
       chatPanel.showUserUnAuthorizedContainer();
       return;
@@ -331,7 +336,7 @@ async function initializeChatPanel() {
   if (!platform) {
     chatPanel.showNoActiveMeetingContainer(url);
   } else {
-    chatPanel.showJoinMeetingContainer();
+    chatPanel.showJoinMeetingContainer(url);
   }
 }
 function setupButtonHandlers() {
@@ -381,7 +386,7 @@ async function handleReloadMeetingClick() {
   if (!platform) {
     chatPanel.showNoActiveMeetingContainer(url);
   } else {
-    chatPanel.showJoinMeetingContainer();
+    chatPanel.showJoinMeetingContainer(url);
   }
 }
 document.addEventListener("DOMContentLoaded", async () => {

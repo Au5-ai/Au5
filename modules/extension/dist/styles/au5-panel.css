@@ -153,9 +153,15 @@ body {
   height: auto;
 }
 
-.au5-url {
-  border: 1px solid #888;
-  padding: 8px;
+.au5-url-invalid {
+  border: 1px solid #ea1b1b;
+  padding: 8px 12px;
+  border-radius: 22px;
+}
+
+.au5-url-valid {
+  border: 1px solid #3eb46e;
+  padding: 8px 12px;
   border-radius: 22px;
 }
 
