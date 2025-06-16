@@ -1,4 +1,4 @@
-import {IMeetingPlatform} from "../types";
+import {IMeetingPlatform, platformRegex} from "../types";
 import {GoogleMeet} from "./googleMeet";
 
 export class MeetingPlatformFactory {
@@ -15,7 +15,7 @@ export class MeetingPlatformFactory {
   getPlatform(): IMeetingPlatform | null {
     let platformName: string | null = null;
     const patterns: {[key: string]: RegExp} = {
-      "Google Meet": /https?:\/\/meet\.google\.com\/[a-zA-Z0-9-]+/
+      "Google Meet": platformRegex.googleMeet
     };
 
     for (const [platform, pattern] of Object.entries(patterns)) {

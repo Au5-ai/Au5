@@ -45,7 +45,7 @@ async function initializeChatPanel(): Promise<void> {
   }
 
   if (!platform) {
-    chatPanel.showNoActiveMeetingContainer();
+    chatPanel.showNoActiveMeetingContainer(url);
   } else {
     chatPanel.showJoinMeetingContainer();
   }
@@ -91,10 +91,18 @@ function setupButtonHandlers(): void {
 /**
  * Handles click event for join button.
  */
-function handleJoinMeetingClick(): void {
+async function handleJoinMeetingClick(): Promise<void> {
   if (!config || !platform) return;
 
-  const meetingId = platform.getMeetingId() || "Meeting Room";
+  const url = await getCurrentUrl();
+  platform = new MeetingPlatformFactory(url).getPlatform();
+
+  if (!platform) {
+    chatPanel.showNoActiveMeetingContainer(url);
+    return;
+  }
+
+  const meetingId = platform.getMeetingId();
   chatPanel.showTranscriptionContainer(config.service.companyName, meetingId);
 }
 
@@ -106,7 +114,7 @@ async function handleReloadMeetingClick(): Promise<void> {
   platform = new MeetingPlatformFactory(url).getPlatform();
 
   if (!platform) {
-    chatPanel.showNoActiveMeetingContainer();
+    chatPanel.showNoActiveMeetingContainer(url);
   } else {
     chatPanel.showJoinMeetingContainer();
   }

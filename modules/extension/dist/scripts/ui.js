@@ -34,9 +34,17 @@ class ChatPanel {
     this.hideAllContainers();
     if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.remove("au5-hidden");
   }
-  showNoActiveMeetingContainer() {
+  showNoActiveMeetingContainer(url) {
     this.hideAllContainers();
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
+    const urlElement = document.getElementById("au5-url");
+    if (urlElement) {
+      let displayUrl = url;
+      if (url.length > 35) {
+        displayUrl = url.slice(0, 35) + "(...)";
+      }
+      urlElement.innerHTML = displayUrl;
+    }
   }
   showJoinMeetingContainer() {
     this.hideAllContainers();
@@ -145,7 +153,15 @@ class ChatPanel {
         console.warn("Reaction users container not found.");
         return;
       }
+      const existingUser = reactionUsersContainer.querySelector(
+        `[data-user-id="${reaction.user.id || ""}"]`
+      );
+      if (existingUser) {
+        reactionUsersContainer.removeChild(existingUser);
+        return;
+      }
       const userSpan = document.createElement("img");
+      userSpan.setAttribute("data-user-id", reaction.user.id || "");
       userSpan.className = "au5-reaction-user-avatar";
       userSpan.src = `${reaction.user.pictureUrl}`;
       userSpan.alt = `${reaction.user.fullName}'s avatar`;
@@ -227,12 +243,21 @@ class ConfigurationManager {
     return null;
   }
 }
+const platformRegex = {
+  googleMeet: /https:\/\/meet\.google\.com\/([a-zA-Z0-9]{3}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{3})/
+};
+var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
+  MessageTypes2["TranscriptionEntry"] = "TranscriptionEntry";
+  MessageTypes2["NotifyUserJoining"] = "NotifyUserJoining";
+  MessageTypes2["ReactionApplied"] = "ReactionApplied";
+  return MessageTypes2;
+})(MessageTypes || {});
 class GoogleMeet {
   constructor(url) {
     this.url = url;
   }
   getMeetingId() {
-    const match = this.url.match(/meet\.google\.com\/([a-zA-Z0-9-]+)/);
+    const match = this.url.match(platformRegex.googleMeet);
     return match ? `${match[1]}` : "Google Meet";
   }
   getPlatformName() {
@@ -252,7 +277,7 @@ class MeetingPlatformFactory {
   getPlatform() {
     let platformName = null;
     const patterns = {
-      "Google Meet": /https?:\/\/meet\.google\.com\/[a-zA-Z0-9-]+/
+      "Google Meet": platformRegex.googleMeet
     };
     for (const [platform2, pattern] of Object.entries(patterns)) {
       if (pattern.test(this._url)) {
@@ -271,12 +296,6 @@ class MeetingPlatformFactory {
     }
   }
 }
-var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
-  MessageTypes2["TranscriptionEntry"] = "TranscriptionEntry";
-  MessageTypes2["NotifyUserJoining"] = "NotifyUserJoining";
-  MessageTypes2["ReactionApplied"] = "ReactionApplied";
-  return MessageTypes2;
-})(MessageTypes || {});
 const configurationManager = new ConfigurationManager();
 const chatPanel = new ChatPanel();
 let platform = null;
@@ -308,7 +327,7 @@ async function initializeChatPanel() {
     return;
   }
   if (!platform) {
-    chatPanel.showNoActiveMeetingContainer();
+    chatPanel.showNoActiveMeetingContainer(url);
   } else {
     chatPanel.showJoinMeetingContainer();
   }
@@ -343,16 +362,22 @@ function setupButtonHandlers() {
     }
   });
 }
-function handleJoinMeetingClick() {
+async function handleJoinMeetingClick() {
   if (!config || !platform) return;
-  const meetingId = platform.getMeetingId() || "Meeting Room";
+  const url = await getCurrentUrl();
+  platform = new MeetingPlatformFactory(url).getPlatform();
+  if (!platform) {
+    chatPanel.showNoActiveMeetingContainer(url);
+    return;
+  }
+  const meetingId = platform.getMeetingId();
   chatPanel.showTranscriptionContainer(config.service.companyName, meetingId);
 }
 async function handleReloadMeetingClick() {
   const url = await getCurrentUrl();
   platform = new MeetingPlatformFactory(url).getPlatform();
   if (!platform) {
-    chatPanel.showNoActiveMeetingContainer();
+    chatPanel.showNoActiveMeetingContainer(url);
   } else {
     chatPanel.showJoinMeetingContainer();
   }

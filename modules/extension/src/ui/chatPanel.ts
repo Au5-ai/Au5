@@ -26,9 +26,18 @@ export class ChatPanel {
     if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.remove("au5-hidden");
   }
 
-  public showNoActiveMeetingContainer(): void {
+  public showNoActiveMeetingContainer(url: string): void {
     this.hideAllContainers();
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
+
+    const urlElement = document.getElementById("au5-url");
+    if (urlElement) {
+      let displayUrl = url;
+      if (url.length > 35) {
+        displayUrl = url.slice(0, 35) + "(...)";
+      }
+      urlElement.innerHTML = displayUrl;
+    }
   }
 
   public showJoinMeetingContainer(): void {
@@ -158,7 +167,17 @@ export class ChatPanel {
         return;
       }
 
+      const existingUser = reactionUsersContainer.querySelector(
+        `[data-user-id="${reaction.user.id || ""}"]`
+      ) as HTMLImageElement;
+
+      if (existingUser) {
+        reactionUsersContainer.removeChild(existingUser);
+        return;
+      }
+
       const userSpan = document.createElement("img");
+      userSpan.setAttribute("data-user-id", reaction.user.id || "");
       userSpan.className = "au5-reaction-user-avatar";
       userSpan.src = `${reaction.user.pictureUrl}`;
       userSpan.alt = `${reaction.user.fullName}'s avatar`;

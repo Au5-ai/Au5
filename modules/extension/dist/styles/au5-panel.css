@@ -148,8 +148,15 @@ body {
 /* =========================
   Transcription & Messages CHECKED
   ========================= */
+
 #au5-activeMeeting {
   height: auto;
+}
+
+.au5-url {
+  border: 1px solid #888;
+  padding: 8px;
+  border-radius: 22px;
 }
 
 .au5-transcriptions-container {

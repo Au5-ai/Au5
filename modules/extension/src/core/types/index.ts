@@ -1,3 +1,7 @@
+export const platformRegex = {
+  googleMeet: /https:\/\/meet\.google\.com\/([a-zA-Z0-9]{3}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{3})/
+};
+
 export interface IMeetingPlatform {
   getPlatformName(): string;
   getMeetingId(): string;
