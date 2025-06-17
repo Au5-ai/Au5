@@ -39,6 +39,11 @@
   <body>
     <h2>AU5 Config Panel</h2>
 
+    <button onclick="checkExtension()">Check Extension Installed</button>
+    <label id="extensionStatus" style="color: #888; margin-bottom: 8px"
+      >Extension not detected</label
+    >
+
     <!-- User Info -->
     <label for="userId">User ID / Token</label>
     <input id="userId" value="23f45e89-8b5a-5c55-9df7-240d78a3ce15" />
@@ -72,6 +77,32 @@
     <button onclick="sendConfig()">Send Config</button>
 
     <script>
+      function checkExtension() {
+        // Send message to extension
+        window.postMessage(
+          {
+            source: "AU5_BACKOFFICE",
+            type: "PING_EXTENSION",
+          },
+          "*"
+        );
+      }
+
+      // Listen for extension reply
+      window.addEventListener("message", (event) => {
+        if (event.source !== window) return;
+        if (!event.data) return;
+        if (event.data?.source !== "AU5_EXTENSION") return;
+
+        if (event.data.type === "PING_REPLY") {
+          const statusLabel = document.getElementById("extensionStatus");
+          if (statusLabel) {
+            statusLabel.textContent = "Extension installed";
+            statusLabel.style.color = "green";
+          }
+        }
+      });
+
       const previewImg = document.getElementById("preview");
       document.getElementById("pictureUrl").addEventListener("input", (e) => {
         previewImg.src = e.target.value;

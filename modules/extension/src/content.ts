@@ -103,7 +103,13 @@ import {ConfigurationManager} from "./core/configurationManager";
 const CONFIGURATION_KEY: string = "configuration";
 window.addEventListener("message", event => {
   if (event.source !== window) return;
+  if (!event.data) return;
   if (event.data?.source !== "AU5_BACKOFFICE") return;
+
+  if (event.data.type === "PING_EXTENSION") {
+    window.postMessage({source: "AU5_EXTENSION", type: "PING_REPLY", installed: true}, "*");
+    return;
+  }
 
   if (event.data.type === "CONFIG_UPDATE") {
     const config = event.data.payload;
