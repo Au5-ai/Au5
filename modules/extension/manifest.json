@@ -2,8 +2,10 @@
   "manifest_version": 3,
   "name": "Au5.ai",
   "short_name": "Au5.ai",
-  "update_url": "https://clients2.google.com/service/update2/crx",
   "version": "0.1.1",
+  "action": {
+    "default_title": "Open Side Panel"
+  },
   "background": {
     "service_worker": "background.js"
   },
@@ -16,16 +18,10 @@
   "side_panel": {
     "default_path": "sidepanel.html"
   },
-  "options_ui": {
-    "page": "options.html",
-    "open_in_tab": true
-  },
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self';"
   },
   "icons": {
-    "16": "assets/icons/16x.png",
-    "48": "assets/icons/48x.png",
     "128": "assets/icons/128x.png"
   },
   "permissions": ["sidePanel", "storage"],

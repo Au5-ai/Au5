@@ -4,11 +4,12 @@ window.addEventListener("message", (event) => {
   if (event.source !== window) return;
   if (!event.data) return;
   if (((_a = event.data) == null ? void 0 : _a.source) !== "AU5_BACKOFFICE") return;
-  console.log("Received message from AU5_BACKOFFICE:", event.data.type, event.data.type === "PING_EXTENSION");
   if (event.data.type === "PING_EXTENSION") {
-    console.log("Sending PING_REPLY to AU5_BACKOFFICE");
     window.postMessage({ source: "AU5_EXTENSION", type: "PING_REPLY", installed: true }, "*");
     return;
+  }
+  if (event.data.type === "OPEN_SIDEPANEL") {
+    chrome.runtime.sendMessage({ type: "OPEN_SIDEPANEL" });
   }
   if (event.data.type === "CONFIG_UPDATE") {
     const config = event.data.payload;

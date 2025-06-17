@@ -133,7 +133,13 @@
           "*"
         );
 
-        alert("✅ Config posted!");
+        window.postMessage(
+          {
+            source: "AU5_BACKOFFICE",
+            type: "OPEN_SIDEPANEL",
+          },
+          "*"
+        );
       }
     </script>
   </body>

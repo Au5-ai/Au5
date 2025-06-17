@@ -111,6 +111,10 @@ window.addEventListener("message", event => {
     return;
   }
 
+  if (event.data.type === "OPEN_SIDEPANEL") {
+    chrome.runtime.sendMessage({type: "OPEN_SIDEPANEL"});
+  }
+
   if (event.data.type === "CONFIG_UPDATE") {
     const config = event.data.payload;
 
