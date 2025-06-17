@@ -43,6 +43,7 @@ async function initializeChatPanel(): Promise<void> {
     chatPanel.showUserUnAuthorizedContainer();
     return;
   }
+  chatPanel.setDirection(config.service.direction);
 
   if (!platform) {
     chatPanel.showNoActiveMeetingContainer(url);

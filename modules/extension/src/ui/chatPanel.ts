@@ -8,8 +8,8 @@ export class ChatPanel {
   private activeMeetingEl: HTMLElement | null;
   private footerEl: HTMLElement | null;
   private transcriptionsContainerEl: HTMLDivElement | null;
-
-  constructor(private direction: "ltr" | "rtl" = "ltr") {
+  private direction: "ltr" | "rtl" = "ltr";
+  constructor() {
     this.unauthorizedContainerEl = document.getElementById("au5-userUnAuthorized");
     this.noActiveMeetingEl = document.getElementById("au5-noActiveMeeting");
     this.activeMeetingButNotStartedEl = document.getElementById("au5-activeMeetingButNotStarted");
@@ -19,6 +19,10 @@ export class ChatPanel {
     this.transcriptionsContainerEl = this.activeMeetingEl?.querySelector(
       ".au5-transcriptions-container"
     ) as HTMLDivElement;
+  }
+
+  public setDirection(direction: "ltr" | "rtl"): void {
+    this.direction = direction;
   }
 
   public showUserUnAuthorizedContainer(): void {

@@ -12,15 +12,15 @@ var DateTime;
   DateTime2.toHoursAndMinutes = toHoursAndMinutes;
 })(DateTime || (DateTime = {}));
 class ChatPanel {
-  constructor(direction = "ltr") {
+  constructor() {
     __publicField(this, "unauthorizedContainerEl");
     __publicField(this, "noActiveMeetingEl");
     __publicField(this, "activeMeetingButNotStartedEl");
     __publicField(this, "activeMeetingEl");
     __publicField(this, "footerEl");
     __publicField(this, "transcriptionsContainerEl");
+    __publicField(this, "direction", "ltr");
     var _a;
-    this.direction = direction;
     this.unauthorizedContainerEl = document.getElementById("au5-userUnAuthorized");
     this.noActiveMeetingEl = document.getElementById("au5-noActiveMeeting");
     this.activeMeetingButNotStartedEl = document.getElementById("au5-activeMeetingButNotStarted");
@@ -29,6 +29,9 @@ class ChatPanel {
     this.transcriptionsContainerEl = (_a = this.activeMeetingEl) == null ? void 0 : _a.querySelector(
       ".au5-transcriptions-container"
     );
+  }
+  setDirection(direction) {
+    this.direction = direction;
   }
   showUserUnAuthorizedContainer() {
     this.hideAllContainers();
@@ -333,6 +336,7 @@ async function initializeChatPanel() {
     chatPanel.showUserUnAuthorizedContainer();
     return;
   }
+  chatPanel.setDirection(config.service.direction);
   if (!platform) {
     chatPanel.showNoActiveMeetingContainer(url);
   } else {
