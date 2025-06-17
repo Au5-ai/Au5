@@ -397,3 +397,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   await initializeChatPanel();
   setupButtonHandlers();
 });
+chrome.storage.local.get("config", (result) => {
+  const config2 = result.config;
+  document.getElementById("output");
+  if (config2) {
+    console.log(JSON.stringify(config2, null, 2));
+  } else {
+    console.warn("No configuration found in local storage.");
+  }
+});

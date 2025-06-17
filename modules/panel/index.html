@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Send Config</title>
+  </head>
+  <body>
+    <h1>Send Config to Extension</h1>
+    <button onclick="sendConfig()">Send Config</button>
+
+    <script>
+      function sendConfig() {
+        const config = {
+          theme: "dark",
+          featureFlags: {
+            betaEnabled: true,
+          },
+        };
+
+        window.postMessage(
+          {
+            source: "AU5_BACKOFFICE",
+            type: "CONFIG_UPDATE",
+            payload: config,
+          },
+          "*"
+        );
+      }
+    </script>
+  </body>
+</html>

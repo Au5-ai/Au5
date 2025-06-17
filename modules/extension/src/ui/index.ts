@@ -128,3 +128,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   await initializeChatPanel();
   setupButtonHandlers();
 });
+
+// chrome.storage.local.get("config", result => {
+//   const config = result.config;
+//   const output = document.getElementById("output");
+
+//   if (config) {
+//     console.log(JSON.stringify(config, null, 2));
+//   } else {
+//     console.warn("No configuration found in local storage.");
+//   }
+// });

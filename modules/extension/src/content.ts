@@ -95,3 +95,21 @@
 //       console.warn("Unknown message action received:", action);
 //   }
 // }
+
+window.addEventListener("message", event => {
+  if (event.source !== window) return;
+  if (event.data?.source !== "AU5_BACKOFFICE") return;
+
+  if (event.data.type === "CONFIG_UPDATE") {
+    const config = event.data.payload;
+
+    if (!chrome?.storage?.local) {
+      console.error("chrome.storage.local is undefined in content.js");
+      return;
+    }
+
+    chrome.storage.local.set({config}, () => {
+      console.log("✅ Config saved from content.js:", config);
+    });
+  }
+});

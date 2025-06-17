@@ -9,6 +9,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         background: resolve(__dirname, "src/background.ts"),
+        content: resolve(__dirname, "src/content.ts"),
         ui: resolve(__dirname, "src/ui/uiBundle.ts"),
       },
       output: {

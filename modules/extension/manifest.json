@@ -7,6 +7,12 @@
   "background": {
     "service_worker": "background.js"
   },
+  "content_scripts": [
+    {
+      "matches": ["http://localhost:5500/*"],
+      "js": ["content.js"]
+    }
+  ],
   "side_panel": {
     "default_path": "sidepanel.html"
   },
