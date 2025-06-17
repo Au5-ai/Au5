@@ -1,19 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <title>Send Config</title>
+    <title>AU5 Backoffice Config</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 12px;
+        background: #f9f9f9;
+      }
+      label {
+        display: block;
+        margin-top: 12px;
+        font-weight: bold;
+      }
+      input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 4px;
+        box-sizing: border-box;
+      }
+      button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 16px;
+      }
+      img {
+        margin-top: 10px;
+        height: 64px;
+        border-radius: 50%;
+      }
+    </style>
   </head>
   <body>
-    <h1>Send Config to Extension</h1>
+    <h2>AU5 Config Panel</h2>
+
+    <!-- User Info -->
+    <label for="userId">User ID / Token</label>
+    <input id="userId" value="23f45e89-8b5a-5c55-9df7-240d78a3ce15" />
+
+    <label for="fullName">Full Name</label>
+    <input id="fullName" value="Mohammad Karimi" />
+
+    <label for="pictureUrl">Picture URL</label>
+    <input
+      id="pictureUrl"
+      value="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+    />
+    <img
+      id="preview"
+      src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+    />
+
+    <!-- Service Info -->
+    <label for="webhookUrl">Webhook URL</label>
+    <input id="webhookUrl" value="https://au5.ai/api/v1/" />
+
+    <label for="hubUrl">Hub URL</label>
+    <input id="hubUrl" value="http://localhost:1366/meetinghub" />
+
+    <label for="companyName">Company Name</label>
+    <input id="companyName" value="Asax Co" />
+
+    <label for="direction">Direction (ltr/rtl)</label>
+    <input id="direction" value="rtl" />
+
     <button onclick="sendConfig()">Send Config</button>
 
     <script>
+      const previewImg = document.getElementById("preview");
+      document.getElementById("pictureUrl").addEventListener("input", (e) => {
+        previewImg.src = e.target.value;
+      });
+
       function sendConfig() {
         const config = {
-          theme: "dark",
-          featureFlags: {
-            betaEnabled: true,
+          user: {
+            token: document.getElementById("userId").value,
+            id: document.getElementById("userId").value,
+            fullName: document.getElementById("fullName").value,
+            pictureUrl: document.getElementById("pictureUrl").value,
+          },
+          service: {
+            webhookUrl: document.getElementById("webhookUrl").value,
+            direction: document.getElementById("direction").value,
+            hubUrl: document.getElementById("hubUrl").value,
+            companyName: document.getElementById("companyName").value,
           },
         };
 
@@ -25,6 +101,8 @@
           },
           "*"
         );
+
+        alert("✅ Config posted!");
       }
     </script>
   </body>

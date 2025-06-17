@@ -1,3 +1,4 @@
+const CONFIGURATION_KEY = "configuration";
 window.addEventListener("message", (event) => {
   var _a, _b;
   if (event.source !== window) return;
@@ -8,7 +9,7 @@ window.addEventListener("message", (event) => {
       console.error("chrome.storage.local is undefined in content.js");
       return;
     }
-    chrome.storage.local.set({ config }, () => {
+    chrome.storage.local.set({ [CONFIGURATION_KEY]: JSON.stringify(config) }, () => {
       console.log("✅ Config saved from content.js:", config);
     });
   }

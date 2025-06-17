@@ -17,6 +17,8 @@
 // import SidePanel from "./ui/chatPanel.ts.backup";
 // import {WindowMessageHandler} from "./core/windowMessageHandler.ts.backup";
 
+import {ConfigurationManager} from "./core/configurationManager";
+
 // const platform: IMeetingPlatform = new MeetingPlatformFactory(window.location.href).getPlatform();
 // let domUtils = new DomUtils();
 // let meetingHubClient: MeetingHubClient;
@@ -96,6 +98,9 @@
 //   }
 // }
 
+// const configurationManager = new ConfigurationManager();
+
+const CONFIGURATION_KEY: string = "configuration";
 window.addEventListener("message", event => {
   if (event.source !== window) return;
   if (event.data?.source !== "AU5_BACKOFFICE") return;
@@ -108,7 +113,7 @@ window.addEventListener("message", event => {
       return;
     }
 
-    chrome.storage.local.set({config}, () => {
+    chrome.storage.local.set({[CONFIGURATION_KEY]: JSON.stringify(config)}, () => {
       console.log("✅ Config saved from content.js:", config);
     });
   }

@@ -227,26 +227,22 @@ class ChatPanel {
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
   }
 }
+const CONFIGURATION_KEY = "configuration";
 class ConfigurationManager {
   /**
    * Retrieves the entire configuration object from storage.
    */
   async getConfig() {
     try {
-      return {
-        user: {
-          token: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
-          id: "23f45e89-8b5a-5c55-9df7-240d78a3ce15",
-          fullName: "Mohammad Karimi",
-          pictureUrl: "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-        },
-        service: {
-          webhookUrl: "https://au5.ai/api/v1/",
-          direction: "rtl",
-          hubUrl: "http://localhost:1366/meetinghub",
-          companyName: "Asax Co"
+      chrome.storage.local.get(CONFIGURATION_KEY, (result) => {
+        const config2 = result[CONFIGURATION_KEY];
+        if (config2) {
+          console.log("Configuration retrieved:", config2);
+          return JSON.parse(config2);
+        } else {
+          throw new Error("Configuration not found.");
         }
-      };
+      });
     } catch (error) {
       throw new Error("Configuration not found.");
     }
@@ -396,13 +392,4 @@ async function handleReloadMeetingClick() {
 document.addEventListener("DOMContentLoaded", async () => {
   await initializeChatPanel();
   setupButtonHandlers();
-});
-chrome.storage.local.get("config", (result) => {
-  const config2 = result.config;
-  document.getElementById("output");
-  if (config2) {
-    console.log(JSON.stringify(config2, null, 2));
-  } else {
-    console.warn("No configuration found in local storage.");
-  }
 });
