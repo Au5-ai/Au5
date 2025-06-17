@@ -34,6 +34,7 @@ async function initializeChatPanel(): Promise<void> {
 
   try {
     config = await configurationManager.getConfig();
+    console.log("Configuration retrieved:", config);
     if (config == null || config == undefined) {
       chatPanel.showUserUnAuthorizedContainer();
       return;

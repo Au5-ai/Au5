@@ -234,19 +234,21 @@ class ConfigurationManager {
    */
   async getConfig() {
     try {
-      chrome.storage.local.get(CONFIGURATION_KEY, (result) => {
-        const config2 = result[CONFIGURATION_KEY];
-        if (config2) {
-          console.log("Configuration retrieved:", config2);
-          return JSON.parse(config2);
-        } else {
-          throw new Error("Configuration not found.");
-        }
+      return await new Promise((resolve, reject) => {
+        chrome.storage.local.get(CONFIGURATION_KEY, (result) => {
+          const config2 = result[CONFIGURATION_KEY];
+          if (config2) {
+            console.log("Configuration retrieved:", JSON.parse(config2));
+            resolve(JSON.parse(config2));
+          } else {
+            resolve(null);
+          }
+        });
       });
     } catch (error) {
-      throw new Error("Configuration not found.");
+      console.error("Error retrieving configuration:", error);
+      return null;
     }
-    return null;
   }
 }
 const platformRegex = {
@@ -323,6 +325,7 @@ async function initializeChatPanel() {
   platform = new MeetingPlatformFactory(url).getPlatform();
   try {
     config = await configurationManager.getConfig();
+    console.log("Configuration retrieved:", config);
     if (config == null || config == void 0) {
       chatPanel.showUserUnAuthorizedContainer();
       return;
