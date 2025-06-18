@@ -1,6 +1,15 @@
 import {ConfigurationManager} from "../core/configurationManager";
 import {MeetingPlatformFactory} from "../core/platforms/meetingPlatformFactory";
-import {AppConfiguration, IMeetingPlatform, MessageTypes} from "../core/types";
+import {
+  AppConfiguration,
+  IMeetingPlatform,
+  IMessage,
+  MessageTypes,
+  ReactionAppliedMessage,
+  TranscriptionEntryMessage,
+  UserJoinedInMeetingMessage
+} from "../core/types";
+import {MeetingHubClient} from "../hub/meetingHubClient";
 import {ChatPanel} from "./chatPanel";
 
 const configurationManager = new ConfigurationManager();
@@ -106,6 +115,14 @@ async function handleJoinMeetingClick(): Promise<void> {
 
   const meetingId = platform.getMeetingId();
   chatPanel.showTranscriptionContainer(config.service.companyName, meetingId);
+  // Initialize the meeting hub client
+  meetingHubClient = new MeetingHubClient(config, platform.getMeetingId());
+  const isConnected = meetingHubClient.startConnection(handleMessage); // TODO: Handle when the user clicks to join the meeting
+
+  if (!isConnected) {
+    console.error("Failed to connect to the meeting hub.");
+    return;
+  }
 }
 
 /**
@@ -129,3 +146,48 @@ document.addEventListener("DOMContentLoaded", async () => {
   await initializeChatPanel();
   setupButtonHandlers();
 });
+
+let meetingHubClient: MeetingHubClient;
+
+function handleMessage(msg: IMessage): void {
+  switch (msg.type) {
+    case MessageTypes.TranscriptionEntry:
+      const transcriptEntry = msg as TranscriptionEntryMessage;
+
+      chatPanel.addTranscription({
+        meetingId: transcriptEntry.meetingId,
+        transcriptBlockId: transcriptEntry.transcriptBlockId,
+        speaker: transcriptEntry.speaker,
+        transcript: transcriptEntry.transcript,
+        timestamp: transcriptEntry.timestamp
+      });
+      break;
+
+    case MessageTypes.NotifyUserJoining:
+      const userJoinedMsg = msg as UserJoinedInMeetingMessage;
+
+      if (!userJoinedMsg.user) {
+        return;
+      }
+
+      chatPanel.usersJoined({
+        type: MessageTypes.NotifyUserJoining,
+        user: {
+          id: userJoinedMsg.user.id,
+          fullName: userJoinedMsg.user.fullName,
+          pictureUrl: userJoinedMsg.user.pictureUrl
+        }
+      });
+      break;
+
+    case MessageTypes.ReactionApplied:
+      const reactionMsg = msg as ReactionAppliedMessage;
+      if (!reactionMsg.meetingId || !reactionMsg.transcriptBlockId || !reactionMsg.user || !reactionMsg.reactionType) {
+        return;
+      }
+      chatPanel.addReaction(reactionMsg);
+      break;
+    default:
+      break;
+  }
+}
