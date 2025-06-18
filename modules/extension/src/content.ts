@@ -1,130 +1,53 @@
-// import {ConfigurationManager} from "./core/configurationManager";
-// import {MessageTypes, PostMessageSource} from "./core/types/index";
-// import {MeetingPlatformFactory} from "./core/platforms/meetingPlatformFactory";
-// import {
-//   AppConfiguration,
-//   IMeetingPlatform,
-//   IMessage,
-//   ReactionAppliedMessage,
-//   TranscriptionEntry,
-//   TranscriptionEntryMessage,
-//   User,
-//   UserJoinedInMeetingMessage
-// } from "./core/types";
-// import {ChromeStorage} from "./core/utils/chromeStorage";
-// import {DomUtils} from "./core/utils/dom.utils";
-// import {MeetingHubClient} from "./hub/meetingHubClient";
-// import SidePanel from "./ui/chatPanel.ts.backup";
-// import {WindowMessageHandler} from "./core/windowMessageHandler.ts.backup";
+const CONFIGURATION_KEY = "configuration";
+const MESSAGE_SOURCE = "AU5_BACKOFFICE";
+const EXTENSION_SOURCE = "AU5_EXTENSION";
 
-import {ConfigurationManager} from "./core/configurationManager";
+type MessageEventData = {
+  source?: string;
+  type?: string;
+  payload?: any;
+};
 
-// const platform: IMeetingPlatform = new MeetingPlatformFactory(window.location.href).getPlatform();
-// let domUtils = new DomUtils();
-// let meetingHubClient: MeetingHubClient;
-// let config: AppConfiguration;
-// const meetingEndIcon = {
-//   selector: ".google-symbols",
-//   text: "call_end"
-// };
-// const windowMessageHandler = new WindowMessageHandler(
-//   PostMessageSource.ContentScript,
-//   PostMessageSource.BackgroundScript,
-//   handleWindowMessage
-// );
+function isValidMessage(event: MessageEvent<MessageEventData>): boolean {
+  return event.source === window && !!event.data && event.data.source === MESSAGE_SOURCE;
+}
 
-// (async function main(): Promise<void> {
-//   try {
-//     const configurationManager = new ConfigurationManager(new ChromeStorage());
-//     config = await configurationManager.getConfig();
-//     await domUtils.waitForMatch(meetingEndIcon.selector, meetingEndIcon.text);
+function handlePingExtension() {
+  window.postMessage({source: EXTENSION_SOURCE, type: "PING_REPLY", installed: true}, "*");
+}
 
-//     SidePanel.createSidePanel(config, platform.getMeetingId());
+function handleOpenSidePanel() {
+  chrome.runtime.sendMessage({type: "OPEN_SIDEPANEL"});
+}
 
-//     document.getElementById("au5-joinMeeting-btn")?.addEventListener("click", () => {
-//       meetingHubClient = new MeetingHubClient(config, platform.getMeetingId());
-//       const isConnected = meetingHubClient.startConnection(); // TODO: Handle when the user clicks to join the meeting
-
-//       if (!isConnected) {
-//         console.error("Failed to connect to the meeting hub.");
-//         return;
-//       }
-
-//       SidePanel.showTranscriptionsContainer();
-//     });
-//   } catch (error) {
-//     console.error("Meeting routine execution failed:", error);
-//   }
-// })();
-
-// export function handleWindowMessage(action: string, payload: IMessage): void {
-//   console.log("Received message from background script:", action, payload);
-//   switch (action) {
-//     case MessageTypes.TranscriptionEntry:
-//       const transcriptEntry = payload as TranscriptionEntryMessage;
-
-//       SidePanel.addTranscription({
-//         meetingId: transcriptEntry.meetingId,
-//         transcriptBlockId: transcriptEntry.transcriptBlockId,
-//         speaker: transcriptEntry.speaker,
-//         transcript: transcriptEntry.transcript,
-//         timestamp: transcriptEntry.timestamp
-//       } as TranscriptionEntry);
-//       break;
-
-//     case MessageTypes.NotifyUserJoining:
-//       const userJoinedMsg = payload as UserJoinedInMeetingMessage;
-
-//       if (!userJoinedMsg.user) {
-//         return;
-//       }
-
-//       SidePanel.usersJoined({
-//         id: userJoinedMsg.user.id,
-//         fullName: userJoinedMsg.user.fullName,
-//         pictureUrl: userJoinedMsg.user.pictureUrl
-//       });
-//       break;
-
-//     case MessageTypes.ReactionApplied:
-//       const reactionMsg = payload as ReactionAppliedMessage;
-//       if (!reactionMsg.meetingId || !reactionMsg.transcriptBlockId || !reactionMsg.user || !reactionMsg.reaction) {
-//         return;
-//       }
-//       SidePanel.addReaction(reactionMsg);
-//       break;
-//     default:
-//       console.warn("Unknown message action received:", action);
-//   }
-// }
-
-// const configurationManager = new ConfigurationManager();
-
-const CONFIGURATION_KEY: string = "configuration";
-window.addEventListener("message", event => {
-  if (event.source !== window) return;
-  if (!event.data) return;
-  if (event.data?.source !== "AU5_BACKOFFICE") return;
-
-  if (event.data.type === "PING_EXTENSION") {
-    window.postMessage({source: "AU5_EXTENSION", type: "PING_REPLY", installed: true}, "*");
+function handleConfigUpdate(config: any) {
+  if (!chrome?.storage?.local) {
+    console.error("chrome.storage.local is undefined in content.js");
     return;
   }
+  chrome.storage.local.set({[CONFIGURATION_KEY]: JSON.stringify(config)}, () => {
+    console.log("✅ Config saved from content.js:", config);
+  });
+}
 
-  if (event.data.type === "OPEN_SIDEPANEL") {
-    chrome.runtime.sendMessage({type: "OPEN_SIDEPANEL"});
+function handleMessage(event: MessageEvent<MessageEventData>) {
+  if (!isValidMessage(event)) return;
+
+  const {type, payload} = event.data;
+
+  switch (type) {
+    case "PING_EXTENSION":
+      handlePingExtension();
+      break;
+    case "OPEN_SIDEPANEL":
+      handleOpenSidePanel();
+      break;
+    case "CONFIG_UPDATE":
+      handleConfigUpdate(payload);
+      break;
+    default:
+      break;
   }
+}
 
-  if (event.data.type === "CONFIG_UPDATE") {
-    const config = event.data.payload;
-
-    if (!chrome?.storage?.local) {
-      console.error("chrome.storage.local is undefined in content.js");
-      return;
-    }
-
-    chrome.storage.local.set({[CONFIGURATION_KEY]: JSON.stringify(config)}, () => {
-      console.log("✅ Config saved from content.js:", config);
-    });
-  }
-});
+window.addEventListener("message", handleMessage);
