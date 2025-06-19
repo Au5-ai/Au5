@@ -166,7 +166,7 @@ export class ChatPanel {
       }
 
       const existingUser = reactionUsersContainer.querySelector(
-        `[data-user-id="${reaction.user.id || ""}"]`
+        `[data-user-name="${reaction.user.fullName || ""}"]`
       ) as HTMLImageElement;
 
       if (existingUser) {
@@ -175,7 +175,7 @@ export class ChatPanel {
       }
 
       const userSpan = document.createElement("img");
-      userSpan.setAttribute("data-user-id", reaction.user.id || "");
+      userSpan.setAttribute("data-user-name", reaction.user.fullName || "");
       userSpan.className = "au5-reaction-user-avatar";
       userSpan.src = `${reaction.user.pictureUrl}`;
       userSpan.alt = `${reaction.user.fullName}'s avatar`;

@@ -85,6 +85,16 @@ function setupButtonHandlers(): void {
       const reactionType = reaction.getAttribute("reaction-type");
       const blockId = reaction.getAttribute("data-blockId");
       if (reactionType && blockId) {
+        if (meetingHubClient) {
+          meetingHubClient.sendMessage({
+            type: MessageTypes.ReactionApplied,
+            meetingId: platform?.getMeetingId(),
+            transcriptBlockId: blockId,
+            user: {
+              fullName: config?.user.fullName || "Unknown",
+              pictureUrl: config?.user.pictureUrl || ""
+            },
+            reactionType: reactionType} as ReactionAppliedMessage);
         chatPanel.addReaction({
           type: MessageTypes.ReactionApplied,
           transcriptBlockId: blockId,
@@ -115,7 +125,7 @@ async function handleJoinMeetingClick(): Promise<void> {
 
   // Initialize the meeting hub client
   meetingHubClient = new MeetingHubClient(config, platform.getMeetingId());
-  const isConnected = meetingHubClient.startConnection(handleMessage); // TODO: Handle when the user clicks to join the meeting
+  const isConnected = meetingHubClient.startConnection(handleMessage);
 
   if (!isConnected) {
     console.error("Failed to connect to the meeting hub.");
@@ -147,7 +157,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function handleMessage(msg: IMessage): void {
-  console.log("Received message:", msg);
   switch (msg.type) {
     case MessageTypes.TranscriptionEntry:
       const transcriptEntry = msg as TranscriptionEntryMessage;

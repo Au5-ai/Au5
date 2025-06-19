@@ -47,4 +47,12 @@ export class MeetingHubClient {
       });
     return true;
   }
+
+  public async sendMessage(payload: IMessage): Promise<void> {
+    try {
+      await this.connection.invoke(payload.type, payload);
+    } catch (err) {
+      console.error(`[SignalR] Failed to send message (${payload.type}):`, err);
+    }
+  }
 }
