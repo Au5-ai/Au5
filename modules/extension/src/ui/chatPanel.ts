@@ -31,6 +31,7 @@ export class ChatPanel {
   }
 
   public showNoActiveMeetingContainer(url: string): void {
+    console.log("No active meeting for URL:", url);
     this.hideAllContainers();
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
     this.setUrl(url);

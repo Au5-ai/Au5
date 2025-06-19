@@ -38,18 +38,17 @@ async function getCurrentUrl(): Promise<string> {
  * Initializes platform and config, and shows relevant panel.
  */
 async function initializeChatPanel(): Promise<void> {
+  console.log("Initializing chat panel...");
   const url = await getCurrentUrl();
   platform = new MeetingPlatformFactory(url).getPlatform();
 
   try {
     config = await configurationManager.getConfig();
-    console.log("Configuration retrieved:", config);
     if (config == null || config == undefined) {
       chatPanel.showUserUnAuthorizedContainer();
       return;
     }
   } catch (error) {
-    console.warn("Configuration error:", error);
     chatPanel.showUserUnAuthorizedContainer();
     return;
   }
@@ -103,6 +102,7 @@ function setupButtonHandlers(): void {
  * Handles click event for join button.
  */
 async function handleJoinMeetingClick(): Promise<void> {
+  console.log("Joining meeting...");
   if (!config || !platform) return;
 
   const url = await getCurrentUrl();
@@ -115,6 +115,7 @@ async function handleJoinMeetingClick(): Promise<void> {
 
   const meetingId = platform.getMeetingId();
   chatPanel.showTranscriptionContainer(config.service.companyName, meetingId);
+
   // Initialize the meeting hub client
   meetingHubClient = new MeetingHubClient(config, platform.getMeetingId());
   const isConnected = meetingHubClient.startConnection(handleMessage); // TODO: Handle when the user clicks to join the meeting
@@ -129,6 +130,7 @@ async function handleJoinMeetingClick(): Promise<void> {
  * Handles click event for reload Meeting enterance button.
  */
 async function handleReloadMeetingClick(): Promise<void> {
+  console.log("Reloading meeting entrance...");
   const url = await getCurrentUrl();
   platform = new MeetingPlatformFactory(url).getPlatform();
 

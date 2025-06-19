@@ -38,6 +38,7 @@ class ChatPanel {
     if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.remove("au5-hidden");
   }
   showNoActiveMeetingContainer(url) {
+    console.log("No active meeting for URL:", url);
     this.hideAllContainers();
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
     this.setUrl(url);
@@ -3155,17 +3156,16 @@ async function getCurrentUrl() {
   return window.location.href;
 }
 async function initializeChatPanel() {
+  console.log("Initializing chat panel...");
   const url = await getCurrentUrl();
   platform = new MeetingPlatformFactory(url).getPlatform();
   try {
     config = await configurationManager.getConfig();
-    console.log("Configuration retrieved:", config);
     if (config == null || config == void 0) {
       chatPanel.showUserUnAuthorizedContainer();
       return;
     }
   } catch (error) {
-    console.warn("Configuration error:", error);
     chatPanel.showUserUnAuthorizedContainer();
     return;
   }
@@ -3207,6 +3207,7 @@ function setupButtonHandlers() {
   });
 }
 async function handleJoinMeetingClick() {
+  console.log("Joining meeting...");
   if (!config || !platform) return;
   const url = await getCurrentUrl();
   platform = new MeetingPlatformFactory(url).getPlatform();
@@ -3224,6 +3225,7 @@ async function handleJoinMeetingClick() {
   }
 }
 async function handleReloadMeetingClick() {
+  console.log("Reloading meeting entrance...");
   const url = await getCurrentUrl();
   platform = new MeetingPlatformFactory(url).getPlatform();
   if (!platform) {

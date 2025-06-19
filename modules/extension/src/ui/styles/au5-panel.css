@@ -90,9 +90,9 @@ body {
   ========================= */
 
 .au5-container {
-  height: calc(100vh - 90px);
+  height: calc(100vh - 48px);
   overflow-y: auto;
-  padding: 12px;
+  padding: 24px;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -115,13 +115,6 @@ body {
   color: #888;
 }
 
-.au5-btn-container {
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-  margin-top: 12px;
-}
-
 .au5-btn-check {
   background: transparent;
   height: 40px;
@@ -138,7 +131,7 @@ body {
 .au5-btn-reload {
   height: 40px;
   font-family: "Inter";
-  min-width: 120px;
+  width: -webkit-fill-available;
 }
 
 .au5-img {
