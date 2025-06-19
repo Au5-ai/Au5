@@ -3141,6 +3141,7 @@ class MeetingHubClient {
 }
 const configurationManager = new ConfigurationManager();
 const chatPanel = new ChatPanel();
+let meetingHubClient;
 let platform = null;
 let config = null;
 async function getCurrentUrl() {
@@ -3148,7 +3149,6 @@ async function getCurrentUrl() {
     return new Promise((resolve) => {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         var _a;
-        console.log("Current tabs:", tabs);
         resolve(((_a = tabs[0]) == null ? void 0 : _a.url) || window.location.href);
       });
     });
@@ -3156,7 +3156,6 @@ async function getCurrentUrl() {
   return window.location.href;
 }
 async function initializeChatPanel() {
-  console.log("Initializing chat panel...");
   const url = await getCurrentUrl();
   platform = new MeetingPlatformFactory(url).getPlatform();
   try {
@@ -3207,7 +3206,6 @@ function setupButtonHandlers() {
   });
 }
 async function handleJoinMeetingClick() {
-  console.log("Joining meeting...");
   if (!config || !platform) return;
   const url = await getCurrentUrl();
   platform = new MeetingPlatformFactory(url).getPlatform();
@@ -3238,7 +3236,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   await initializeChatPanel();
   setupButtonHandlers();
 });
-let meetingHubClient;
 function handleMessage(msg) {
   console.log("Received message:", msg);
   switch (msg.type) {

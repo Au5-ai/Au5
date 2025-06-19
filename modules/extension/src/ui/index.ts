@@ -14,7 +14,7 @@ import {ChatPanel} from "./chatPanel";
 
 const configurationManager = new ConfigurationManager();
 const chatPanel = new ChatPanel();
-
+let meetingHubClient: MeetingHubClient;
 let platform: IMeetingPlatform | null = null;
 let config: AppConfiguration | null = null;
 
@@ -25,7 +25,6 @@ async function getCurrentUrl(): Promise<string> {
   if (typeof chrome !== "undefined" && chrome.tabs) {
     return new Promise(resolve => {
       chrome.tabs.query({active: true, currentWindow: true}, tabs => {
-        console.log("Current tabs:", tabs);
         resolve(tabs[0]?.url || window.location.href);
       });
     });
@@ -38,7 +37,6 @@ async function getCurrentUrl(): Promise<string> {
  * Initializes platform and config, and shows relevant panel.
  */
 async function initializeChatPanel(): Promise<void> {
-  console.log("Initializing chat panel...");
   const url = await getCurrentUrl();
   platform = new MeetingPlatformFactory(url).getPlatform();
 
@@ -102,7 +100,6 @@ function setupButtonHandlers(): void {
  * Handles click event for join button.
  */
 async function handleJoinMeetingClick(): Promise<void> {
-  console.log("Joining meeting...");
   if (!config || !platform) return;
 
   const url = await getCurrentUrl();
@@ -148,8 +145,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   await initializeChatPanel();
   setupButtonHandlers();
 });
-
-let meetingHubClient: MeetingHubClient;
 
 function handleMessage(msg: IMessage): void {
   console.log("Received message:", msg);

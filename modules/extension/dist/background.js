@@ -5,7 +5,6 @@ chrome.action.onClicked.addListener((tab) => {
     path: "sidepanel.html",
     enabled: true
   });
-  chrome.sidePanel.open({ tabId: tab.id });
 });
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   var _a;
