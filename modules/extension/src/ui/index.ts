@@ -150,6 +150,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 let meetingHubClient: MeetingHubClient;
 
 function handleMessage(msg: IMessage): void {
+  console.log("Received message:", msg);
   switch (msg.type) {
     case MessageTypes.TranscriptionEntry:
       const transcriptEntry = msg as TranscriptionEntryMessage;

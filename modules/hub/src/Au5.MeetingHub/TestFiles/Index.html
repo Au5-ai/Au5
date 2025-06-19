@@ -117,7 +117,7 @@
             document.getElementById("joinBtn").disabled = true;
 
             connection = new signalR.HubConnectionBuilder()
-                .withUrl("https://localhost:7061/meetinghub")
+                .withUrl("http://localhost:1366/meetinghub")
                 .configureLogging(signalR.LogLevel.Information)
                 .build();
 
@@ -177,12 +177,23 @@
             const pictureUrl = document.getElementById("pictureUrlInput").value.trim();
             const blockId = document.getElementById("blockId").value.trim();
             if (!transcript || !meetingId || !userId) return;
+            console.log({
+                MeetingId: meetingId,
+                TranscriptBlockId: blockId,
+                Speaker: {
+                    Id: userId,
+                    FullName: fullName,
+                    PictureUrl: pictureUrl
+                },
+                Transcript: transcript,
+                Timestamp: new Date().toISOString()
+            });
 
             try {
                 // Compose TranscriptionDto with correct case-sensitive properties
-                await connection.invoke("NotifyRealTimeTranscription", {
+                await connection.invoke("TranscriptionEntry", {
                     MeetingId: meetingId,
-                    TranscriptionBlockId: blockId,
+                    TranscriptBlockId: blockId,
                     Speaker: {
                         Id: userId,
                         FullName: fullName,

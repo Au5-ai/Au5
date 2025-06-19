@@ -1,21 +1,21 @@
 ﻿using Au5.MeetingHub.Mock.Interfaces;
+using Au5.MeetingHub.Models.Messages;
 using System.Text.Json;
 
 namespace Au5.MeetingHub.Mock;
 
 public class TranscriptionService : ITranscriptionService
 {
-    private static readonly ConcurrentDictionary<string, Dictionary<string, TranscriptionEntry>> _meetingTranscriptions = new();
+    private static readonly ConcurrentDictionary<string, Dictionary<string, TranscriptionEntryMessage>> _meetingTranscriptions = new();
     private static readonly Lock _lock = new();
 
-    // Cache the JsonSerializerOptions instance to avoid creating a new one for every serialization operation  
     private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
         WriteIndented = true,
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
-    public void UpsertBlock(TranscriptionEntry entry)
+    public void UpsertBlock(TranscriptionEntryMessage entry)
     {
         var meetingBlocks = _meetingTranscriptions.GetOrAdd(entry.MeetingId, _ => []);
 

@@ -20,11 +20,9 @@ export interface TranscriptionEntry {
   timestamp: Date;
 }
 
-export interface User {
+export interface User extends Speaker {
   token?: string | null;
   id?: string;
-  fullName: string;
-  pictureUrl: string;
 }
 
 export interface ServiceIntegration {

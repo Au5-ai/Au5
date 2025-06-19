@@ -1,4 +1,4 @@
-﻿namespace Au5.MeetingHub.Models.Input;
+﻿namespace Au5.MeetingHub.Models;
 
 public record User
 {

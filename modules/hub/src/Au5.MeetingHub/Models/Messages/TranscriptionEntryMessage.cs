@@ -3,7 +3,7 @@
 public record struct TranscriptionEntryMessage : IMessage
 {
     public string MeetingId { get; set; }
-    public string TranscriptionBlockId { get; set; }
+    public string TranscriptBlockId { get; set; }
     public User Speaker { get; set; }
     public string Transcript { get; set; }
     public string Timestamp { get; set; }

@@ -33,28 +33,15 @@ public class MeetingHub(ILogger<MeetingHub> logger, IUserService userService, IM
         await SendToOthersInGroupAsync(joinMeeting.MeetingId, new UserJoinedInMeetingMessage(joinMeeting.User));
     }
 
-    public async Task TranscriptionEntry(TranscriptionEntry transcription)
+    public async Task TranscriptionEntry(TranscriptionEntryMessage transcription)
     {
         _transcriptionService.UpsertBlock(transcription);
-        await SendToOthersInGroupAsync(transcription.MeetingId, new TranscriptionEntryMessage()
-        {
-            MeetingId = transcription.MeetingId,
-            Speaker = transcription.Speaker,
-            Timestamp = transcription.Timestamp,
-            Transcript = transcription.Transcript,
-            TranscriptionBlockId = transcription.TranscriptBlockId
-        });
+        await SendToOthersInGroupAsync(transcription.MeetingId, transcription);
     }
 
-    public async Task ReactionApplied(ReactionApplied data)
+    public async Task ReactionApplied(ReactionAppliedMessage reaction)
     {
-        await SendToOthersInGroupAsync(data.MeetingId, new ReactionAppliedMessage()
-        {
-            MeetingId = data.MeetingId,
-            Reaction = data.Reaction,
-            TranscriptBlockId = data.TranscriptBlockId,
-            User = data.User
-        });
+        await SendToOthersInGroupAsync(reaction.MeetingId, reaction);
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
