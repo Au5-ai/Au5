@@ -3,15 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="styles/au5-panel.css" />
-    <link rel="stylesheet" href="styles/sidepanel.css" />
-
+    <link rel="stylesheet" href="styles/framework.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
     <div class="au5-panel">
-      <!-- Header -->
-      <div class="au5-header hidden"></div>
-
       <!-- User UnAuthorized -->
       <div id="au5-userUnAuthorized" class="au5-container hidden">
         <img
@@ -75,16 +71,7 @@
                                 class="chat-list relative custom-scrollbar-reset-margin custom-scrollbar custom-scrollbar-hidden custom-scrollbar-float pb-9 flex-1 overflow-y-auto scrollbar-gutter-stable"
                                 style="--scrollbar-margin-block-start: 12px"
                               >
-                                <div class="absolute inset-x-0 top-1/4">
-                                  <div class="mb-2.5 max-w-[790px] mx-auto px-4">
-                                    <div class="flex flex-col items-start px-2 text-left justify-start">
-                                      <div class="text-[36px] font-semibold text-left">Hi,</div>
-                                      <div class="mt-[8px] font-semibold leading-5 text-[18px]">
-                                        There is no transcription yet.
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
+                                <!-- Transcription -->
                               </div>
                               <div>
                                 <div class="input-box relative max-w-[790px] mx-auto">
@@ -99,7 +86,7 @@
                                           <div class="relative">
                                             <textarea
                                               dir="auto"
-                                              placeholder="Ask anything, @ models, / prompts"
+                                              placeholder="Type your message here..."
                                               class="ant-input chat-input ant-input-borderless custom-scrollbar"
                                               style="
                                                 padding: 2px 12px 2px 2px;
@@ -114,33 +101,34 @@
                                           </div>
                                           <div class="bottom-area flex items-center me-[8px] justify-between">
                                             <div class="ms-auto">
-                                              <span
+                                              <span class="btn-wrapper"
                                                 ><div
                                                   role="button"
                                                   class="send-btn relative right-[-2px] size-[30px] rounded-lg transition-colors text-base flex-center bg-transparent hover:bg-grey-fill1-hover cursor-pointer text-text-primary-1"
                                                 >
                                                   <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
                                                     width="16"
                                                     height="16"
+                                                    viewBox="0 0 16 16"
                                                     fill="none"
-                                                    viewBox="0 0 60 60"
-                                                    class="rtl:rotate-180"
+                                                    xmlns="http://www.w3.org/2000/svg"
                                                   >
                                                     <path
-                                                      fill="currentColor"
-                                                      d="M33.49 16.752a5.05 5.05 0 0 0-7.14 0 2.25 2.25 0 1 1-3.183-3.182 9.55 9.55 0 0 1 13.505 0 2.25 2.25 0 0 1-3.182 3.182"
-                                                    ></path>
+                                                      d="M12.0467 6.38001L8.00004 2.33334L3.95337 6.38001"
+                                                      stroke="currentColor"
+                                                      stroke-width="1.5"
+                                                      stroke-miterlimit="10"
+                                                      stroke-linecap="round"
+                                                      stroke-linejoin="round"
+                                                    />
                                                     <path
-                                                      fill="currentColor"
-                                                      fill-rule="evenodd"
-                                                      d="M12.75 20c0-9.527 7.723-17.25 17.25-17.25S47.25 10.473 47.25 20v11c0 9.527-7.723 17.25-17.25 17.25S12.75 40.527 12.75 31zM30 7.25c-7.042 0-12.75 5.708-12.75 12.75v11c0 7.042 5.708 12.75 12.75 12.75S42.75 38.042 42.75 31V20c0-7.042-5.708-12.75-12.75-12.75"
-                                                      clip-rule="evenodd"
-                                                    ></path>
-                                                    <path
-                                                      fill="currentColor"
-                                                      d="M8.25 30a2.25 2.25 0 0 0-4.5 0v1c0 14.498 11.752 26.25 26.25 26.25S56.25 45.498 56.25 31v-1a2.25 2.25 0 0 0-4.5 0v1c0 12.012-9.738 21.75-21.75 21.75S8.25 43.012 8.25 31z"
-                                                    ></path>
+                                                      d="M8 13.6667V2.44666"
+                                                      stroke="currentColor"
+                                                      stroke-width="1.5"
+                                                      stroke-miterlimit="10"
+                                                      stroke-linecap="round"
+                                                      stroke-linejoin="round"
+                                                    />
                                                   </svg></div
                                               ></span>
                                             </div>
@@ -157,7 +145,7 @@
                                 <div
                                   class="flex w-full relative items-center justify-between px-3 mx-auto max-w-[790px]"
                                 >
-                                  <div class="flex items-center text-[12px] rtl:flex-row-reverse w-full">
+                                  <div id="pricing" class="flex items-center text-[12px] rtl:flex-row-reverse w-full">
                                     <div
                                       class="flex items-center gap-[5px] h-[30px] rounded-[35px] whitespace-nowrap me-[6px]"
                                     >
@@ -168,31 +156,12 @@
                                       </div>
                                     </div>
                                   </div>
-                                  <div class="flex items-center gap-[2px]">
+                                  <div id="feedbackIcons" class="flex items-center gap-[2px]">
                                     <div
-                                      class="sidebar-footer-link text-text-primary-4 cursor-pointer flex justify-center items-center w-[24px] h-[24px] hover:text-[#1890ff]"
+                                      id="feedback"
+                                      class="sidebar-footer-link hover:bg-[--gpts-bg-darken3] rounded-lg text-text-primary-4 cursor-pointer flex justify-center items-center w-[24px] h-[24px]"
                                     >
-                                      <div class="no-active w-full h-full flex-center">
-                                        <svg
-                                          width="14"
-                                          height="14"
-                                          viewBox="0 0 14 14"
-                                          fill="none"
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                          <g fill="currentColor">
-                                            <path
-                                              d="M4.571 4.762a.525.525 0 0 0-.742.743L5.144 6.82a2.625 2.625 0 0 0 3.712 0l1.315-1.315a.525.525 0 1 0-.742-.743L8.114 6.077a1.575 1.575 0 0 1-2.228 0z"
-                                            ></path>
-                                            <path
-                                              fill-rule="evenodd"
-                                              clip-rule="evenodd"
-                                              d="M9.496 1.575H4.504c-.569 0-1.028 0-1.4.03-.382.032-.718.098-1.03.256A2.63 2.63 0 0 0 .929 3.008c-.159.311-.225.647-.256 1.03-.03.372-.03.83-.03 1.4v3.124c0 .57 0 1.028.03 1.4.031.383.097.719.256 1.03.251.494.653.895 1.147 1.147.31.158.647.224 1.03.256.371.03.83.03 1.4.03h4.99c.57 0 1.029 0 1.4-.03.383-.032.72-.098 1.03-.256a2.62 2.62 0 0 0 1.147-1.147c.159-.311.225-.647.256-1.03.03-.372.03-.83.03-1.4V5.438c0-.57 0-1.028-.03-1.4-.031-.383-.097-.719-.256-1.03a2.63 2.63 0 0 0-1.147-1.147c-.31-.158-.647-.224-1.03-.256-.371-.03-.83-.03-1.4-.03M2.552 2.797c.138-.07.32-.12.638-.145.324-.027.74-.027 1.337-.027h4.946c.597 0 1.013 0 1.337.027.318.026.5.074.638.145.297.15.538.392.689.688.07.138.118.32.144.638.027.324.027.74.027 1.337v3.08c0 .597 0 1.013-.027 1.336-.026.318-.074.5-.144.639a1.58 1.58 0 0 1-.689.688c-.138.07-.32.12-.638.145-.324.026-.74.027-1.337.027H4.527c-.597 0-1.013 0-1.337-.027-.318-.026-.5-.074-.638-.145a1.58 1.58 0 0 1-.689-.688c-.07-.138-.119-.32-.144-.639-.027-.323-.027-.74-.027-1.336V5.46c0-.597 0-1.013.027-1.337.025-.317.074-.5.144-.638.151-.296.392-.537.689-.688"
-                                            ></path>
-                                          </g>
-                                        </svg>
-                                      </div>
-                                      <div class="active w-full h-full flex-center">
+                                      <div class="w-full h-full flex-center">
                                         <svg
                                           width="14"
                                           height="14"
@@ -201,11 +170,49 @@
                                           xmlns="http://www.w3.org/2000/svg"
                                         >
                                           <path
-                                            fill-rule="evenodd"
-                                            clip-rule="evenodd"
-                                            d="M4.504 1.575h4.992c.569 0 1.028 0 1.4.03.382.032.718.098 1.03.256.493.252.895.653 1.146 1.147.159.311.225.647.256 1.03.03.372.03.83.03 1.4v3.124c0 .57 0 1.028-.03 1.4-.031.383-.097.719-.256 1.03a2.62 2.62 0 0 1-1.147 1.147c-.31.158-.647.224-1.03.256-.371.03-.83.03-1.4.03h-4.99c-.57 0-1.029 0-1.4-.03-.383-.032-.72-.098-1.03-.256a2.63 2.63 0 0 1-1.147-1.147c-.159-.311-.225-.647-.256-1.03-.03-.372-.03-.83-.03-1.4V5.437c0-.569 0-1.027.03-1.4.031-.382.097-.718.256-1.029a2.63 2.63 0 0 1 1.147-1.147c.31-.158.647-.224 1.03-.256.371-.03.83-.03 1.4-.03zm.067 3.187a.525.525 0 0 0-.742.743L5.144 6.82a2.625 2.625 0 0 0 3.712 0l1.315-1.315a.525.525 0 1 0-.742-.743L8.114 6.077a1.575 1.575 0 0 1-2.228 0z"
-                                            fill="#1477F7"
-                                          ></path>
+                                            d="M4.66675 10.5H9.33342M4.66675 10.5C4.66675 11.7887 5.71142 12.8333 7.00008 12.8333C8.28875 12.8333 9.33342 11.7887 9.33342 10.5M4.66675 10.5V9.2101C4.66675 8.82872 4.47226 8.47953 4.19514 8.2175C3.40792 7.47314 2.91675 6.41893 2.91675 5.25001C2.91675 2.99484 4.74492 1.16667 7.00008 1.16667C9.25524 1.16667 11.0834 2.99484 11.0834 5.25001C11.0834 6.41893 10.5922 7.47314 9.80502 8.2175C9.5279 8.47953 9.33342 8.82872 9.33342 9.2101V10.5M5.83341 5.25001L7.00008 6.41667M7.00008 6.41667L8.16675 5.25001M7.00008 6.41667V10.5"
+                                            stroke="currentColor"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                          />
+                                        </svg>
+                                      </div>
+                                    </div>
+                                    <div
+                                      id="discord"
+                                      class="sidebar-footer-link hover:bg-[--gpts-bg-darken3] rounded-lg text-text-primary-4 cursor-pointer flex justify-center items-center w-[24px] h-[24px]"
+                                    >
+                                      <div class="w-full h-full flex-center">
+                                        <svg
+                                          width="14"
+                                          height="14"
+                                          viewBox="0 0 14 14"
+                                          fill="none"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                          <path
+                                            d="M11.241 3.10916C10.4652 2.74749 9.62515 2.48499 8.75015 2.33333C8.73476 2.33355 8.72009 2.33984 8.70932 2.35083C8.60432 2.54333 8.48182 2.79416 8.40015 2.98666C7.47206 2.84675 6.52824 2.84675 5.60015 2.98666C5.51848 2.78833 5.39598 2.54333 5.28515 2.35083C5.27932 2.33916 5.26182 2.33333 5.24432 2.33333C4.36932 2.48499 3.53515 2.74749 2.75348 3.10916C2.74765 3.10916 2.74182 3.11499 2.73598 3.12083C1.14932 5.49499 0.711816 7.80499 0.92765 10.0917C0.92765 10.1033 0.933483 10.115 0.94515 10.1208C1.99515 10.8908 3.00432 11.3575 4.00182 11.6667C4.01932 11.6725 4.03682 11.6667 4.04265 11.655C4.27598 11.3342 4.48598 10.9958 4.66682 10.64C4.67848 10.6167 4.66682 10.5933 4.64348 10.5875C4.31098 10.4592 3.99598 10.3075 3.68682 10.1325C3.66348 10.1208 3.66348 10.0858 3.68098 10.0683C3.74515 10.0217 3.80932 9.96916 3.87348 9.92249C3.88515 9.91083 3.90265 9.91083 3.91432 9.91666C5.92098 10.8325 8.08515 10.8325 10.0685 9.91666C10.0802 9.91083 10.0977 9.91083 10.1093 9.92249C10.1735 9.97499 10.2376 10.0217 10.3018 10.0742C10.3251 10.0917 10.3251 10.1267 10.296 10.1383C9.99265 10.3192 9.67182 10.465 9.33932 10.5933C9.31598 10.5992 9.31015 10.6283 9.31598 10.6458C9.50265 11.0017 9.71265 11.34 9.94015 11.6608C9.95765 11.6667 9.97515 11.6725 9.99265 11.6667C10.996 11.3575 12.0051 10.8908 13.0551 10.1208C13.0668 10.115 13.0726 10.1033 13.0726 10.0917C13.3293 7.44916 12.6468 5.15666 11.2643 3.12083C11.2585 3.11499 11.2527 3.10916 11.241 3.10916ZM4.97015 8.69749C4.36932 8.69749 3.86765 8.14333 3.86765 7.46083C3.86765 6.77833 4.35765 6.22416 4.97015 6.22416C5.58848 6.22416 6.07848 6.78416 6.07265 7.46083C6.07265 8.14333 5.58265 8.69749 4.97015 8.69749ZM9.03598 8.69749C8.43515 8.69749 7.93348 8.14333 7.93348 7.46083C7.93348 6.77833 8.42348 6.22416 9.03598 6.22416C9.65432 6.22416 10.1443 6.78416 10.1385 7.46083C10.1385 8.14333 9.65432 8.69749 9.03598 8.69749Z"
+                                            fill="currentColor"
+                                          />
+                                        </svg>
+                                      </div>
+                                    </div>
+                                    <div
+                                      id="github"
+                                      class="sidebar-footer-link hover:bg-[--gpts-bg-darken3] rounded-lg text-text-primary-4 cursor-pointer flex justify-center items-center w-[24px] h-[24px]"
+                                    >
+                                      <div class="w-full h-full flex-center">
+                                        <svg
+                                          width="14"
+                                          height="14"
+                                          viewBox="0 0 14 14"
+                                          fill="none"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                          <path
+                                            d="M7.00008 1.16667C6.23404 1.16667 5.47549 1.31756 4.76776 1.61071C4.06003 1.90386 3.41697 2.33354 2.87529 2.87522C1.78133 3.96918 1.16675 5.45291 1.16675 7C1.16675 9.57834 2.84091 11.7658 5.15675 12.5417C5.44842 12.5883 5.54175 12.4075 5.54175 12.25V11.2642C3.92591 11.6142 3.58175 10.4825 3.58175 10.4825C3.31341 9.80584 2.93425 9.625 2.93425 9.625C2.40341 9.26334 2.97508 9.275 2.97508 9.275C3.55841 9.31584 3.86758 9.87584 3.86758 9.87584C4.37508 10.7625 5.23258 10.5 5.56508 10.36C5.61758 9.98084 5.76925 9.72417 5.93258 9.57834C4.63758 9.4325 3.27841 8.93084 3.27841 6.70834C3.27841 6.06084 3.50008 5.54167 3.87925 5.1275C3.82091 4.98167 3.61675 4.37501 3.93758 3.58751C3.93758 3.58751 4.42758 3.43001 5.54175 4.18251C6.00258 4.05417 6.50425 3.99001 7.00008 3.99001C7.49592 3.99001 7.99758 4.05417 8.45842 4.18251C9.57258 3.43001 10.0626 3.58751 10.0626 3.58751C10.3834 4.37501 10.1792 4.98167 10.1209 5.1275C10.5001 5.54167 10.7217 6.06084 10.7217 6.70834C10.7217 8.93667 9.35675 9.42667 8.05592 9.5725C8.26592 9.75334 8.45842 10.1092 8.45842 10.6517V12.25C8.45842 12.4075 8.55175 12.5942 8.84925 12.5417C11.1651 11.76 12.8334 9.57834 12.8334 7C12.8334 6.23396 12.6825 5.47542 12.3894 4.76768C12.0962 4.05995 11.6665 3.41689 11.1249 2.87522C10.5832 2.33354 9.94013 1.90386 9.2324 1.61071C8.52467 1.31756 7.76613 1.16667 7.00008 1.16667Z"
+                                            fill="currentColor"
+                                          />
                                         </svg>
                                       </div>
                                     </div>
@@ -222,42 +229,68 @@
                     class="switch-bar bg-grey-layer1-normal pt-2 pb-3 flex flex-col items-center gap-4 h-full w-[44px] max-w-[44px]"
                   >
                     <div class="flex flex-col gap-4 justify-center">
-                      <span
-                        ><div
-                          class="switchbar-tab-item rounded-lg px-2 text-text-primary-3 group cursor-pointer flex-center flex-col"
+                      <div
+                        class="switchbar-tab-item rounded-lg px-2 text-text-primary-3 group cursor-pointer flex-center flex-col"
+                      >
+                        <div
+                          class="switchbar-tab-item-icon relative rounded-lg flex flex-col items-center justify-center group-hover:bg-grey-layer2-normal !bg-grey-layer2-normal text-brand-primary-normal arc-edge w-8 h-8"
                         >
-                          <div
-                            class="switchbar-tab-item-icon relative rounded-lg flex flex-col items-center justify-center group-hover:bg-grey-layer2-normal !bg-grey-layer2-normal text-brand-primary-normal arc-edge w-8 h-8"
-                          >
-                            <div class="size-5">
-                              <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  d="M12.899 1.417H7.1c-.813 0-1.468 0-2 .043-.546.045-1.026.139-1.47.365a3.75 3.75 0 0 0-1.639 1.64c-.226.443-.32.924-.365 1.47-.044.531-.044 1.187-.044 2v10.167c0 .258 0 .5.018.697.02.205.064.475.236.722.221.319.563.532.946.592.297.046.56-.032.752-.105.186-.07.403-.177.634-.29l1.499-.73c.513-.25.708-.343.907-.409q.281-.092.574-.132c.208-.029.424-.03.995-.03h4.755c.813 0 1.468 0 2-.044.546-.044 1.026-.139 1.47-.365a3.75 3.75 0 0 0 1.639-1.639c.226-.444.32-.924.365-1.47.044-.532.044-1.187.044-2V6.935c0-.813 0-1.469-.044-2-.044-.546-.139-1.027-.365-1.47a3.75 3.75 0 0 0-1.639-1.64c-.444-.226-.924-.32-1.47-.365-.532-.043-1.187-.043-2-.043z"
-                                  fill="currentColor"
-                                ></path>
-                                <path
-                                  fill-rule="evenodd"
-                                  clip-rule="evenodd"
-                                  d="M5.25 7.113a.75.75 0 0 1 .75-.75h8a.75.75 0 0 1 0 1.5H6a.75.75 0 0 1-.75-.75m0 4.667a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5H6a.75.75 0 0 1-.75-.75"
-                                  fill="#fff"
-                                ></path>
-                              </svg>
-                            </div>
-                          </div></div
-                      ></span>
+                          <div class="size-5">
+                            <svg
+                              width="20"
+                              height="20"
+                              viewBox="0 0 20 20"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M6.6665 8.33333H13.3332M6.6665 11.6667H9.99984M9.1665 2.5H10.8332C14.9753 2.5 18.3332 5.85786 18.3332 10C18.3332 14.1421 14.9753 17.5 10.8332 17.5H4.99984C3.15889 17.5 1.6665 16.0076 1.6665 14.1667V10C1.6665 5.85786 5.02437 2.5 9.1665 2.5Z"
+                                stroke="currentColor"
+                                stroke-width="1"
+                                stroke-linecap="round"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                     <div class="bottom-area mt-auto flex flex-col justify-center items-center gap-1">
                       <div
                         id="au5-theme-toggle"
                         class="w-8 h-8 flex items-center justify-center rounded-lg cursor-pointer text-text-primary-3 hover:bg-[--gpts-bg-darken3] undefined"
                       >
-                        <img src="assets/icons/light_mode.svg" alt="icon" width="16" height="16" />
+                        <svg
+                          id="lightmode"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <circle cx="8.00008" cy="7.99999" r="3.33333" stroke="currentColor" />
+                          <path d="M8 1.33334V2.66668" stroke="currentColor" stroke-linecap="round" />
+                          <path d="M8 13.3333V14.6667" stroke="currentColor" stroke-linecap="round" />
+                          <path d="M13.7734 4.66666L12.6187 5.33332" stroke="currentColor" stroke-linecap="round" />
+                          <path d="M3.3811 10.6667L2.2264 11.3333" stroke="currentColor" stroke-linecap="round" />
+                          <path d="M2.22656 4.66672L3.38126 5.33338" stroke="currentColor" stroke-linecap="round" />
+                          <path d="M12.6189 10.6667L13.7736 11.3333" stroke="currentColor" stroke-linecap="round" />
+                        </svg>
+
+                        <svg
+                          id="darkmode"
+                          class="hidden"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M12.2189 9.91243C8.83266 9.91243 6.08757 7.16734 6.08757 3.78108C6.08757 3.16164 6.17943 2.56365 6.35027 2C3.83264 2.76307 2 5.10184 2 7.86865C2 11.2549 4.7451 14 8.13135 14C10.8982 14 13.2369 12.1674 14 9.64973C13.4363 9.82057 12.8384 9.91243 12.2189 9.91243Z"
+                            stroke="currentColor"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
                       </div>
                       <div class="mt-3 cursor-pointer">
                         <div class="relative shrink-0" style="width: 24px; height: 24px">

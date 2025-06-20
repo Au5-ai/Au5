@@ -66,17 +66,10 @@ function setupButtonHandlers(): void {
   const joinButton = document.getElementById("au5-btn-joinMeeting") as HTMLButtonElement | null;
   const reloadButton = document.getElementById("au5-btn-reload") as HTMLButtonElement | null;
   const optionsButton = document.getElementById("au5-btn-options") as HTMLButtonElement | null;
-  const checkLoginButton = document.getElementById("au5-btn-check") as HTMLButtonElement | null;
+  const themeToggle = document.getElementById("au5-theme-toggle");
+
   joinButton?.addEventListener("click", handleJoinMeetingClick);
   reloadButton?.addEventListener("click", handleReloadMeetingClick);
-
-  optionsButton?.addEventListener("click", () => {
-    window.open("options.html", "_blank");
-  });
-
-  checkLoginButton?.addEventListener("click", async () => {
-    await initializeChatPanel();
-  });
 
   document.addEventListener("click", event => {
     const target = event.target as HTMLElement;
@@ -105,6 +98,27 @@ function setupButtonHandlers(): void {
         }
       }
     }
+  });
+
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute("data-gpts-theme");
+      html.setAttribute("data-gpts-theme", currentTheme === "light" ? "dark" : "light");
+      const darkSvg = document.getElementById("darkmode");
+      const lightSvg = document.getElementById("lightmode");
+      if (currentTheme === "light") {
+        darkSvg?.setAttribute("style", "display: inline;");
+        lightSvg?.setAttribute("style", "display: none;");
+      } else {
+        darkSvg?.setAttribute("style", "display: none;");
+        lightSvg?.setAttribute("style", "display: inline;");
+      }
+    });
+  }
+
+  optionsButton?.addEventListener("click", () => {
+    window.open("options.html", "_blank");
   });
 }
 
@@ -139,7 +153,6 @@ async function handleJoinMeetingClick(): Promise<void> {
  * Handles click event for reload Meeting enterance button.
  */
 async function handleReloadMeetingClick(): Promise<void> {
-  console.log("Reloading meeting entrance...");
   const url = await getCurrentUrl();
   platform = new MeetingPlatformFactory(url).getPlatform();
 

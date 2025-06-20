@@ -10907,6 +10907,7 @@ html[data-gpts-theme="dark"] .thinking-markdown .markdown-body ::-webkit-calenda
 }
 .chat-input-box .bottom-area .btn-wrapper .send-btn {
   transition: background 0.1s ease;
+  background-color: var(--sds-color-grey-fill1-hover, rgba(114, 118, 139, 0.08));
 }
 .chat-input-box .file-quick-action-btn {
   background-color: var(--gpts-sidebar-image-action-btn-bg-color);
