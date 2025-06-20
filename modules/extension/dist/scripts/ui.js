@@ -1,6 +1,16 @@
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+document.addEventListener("DOMContentLoaded", () => {
+  const themeToggle = document.getElementById("au5-theme-toggle");
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute("data-gpts-theme");
+      html.setAttribute("data-gpts-theme", currentTheme === "light" ? "dark" : "light");
+    });
+  }
+});
 var DateTime;
 ((DateTime2) => {
   function toHoursAndMinutes(input) {
@@ -17,7 +27,6 @@ class ChatPanel {
     __publicField(this, "noActiveMeetingEl");
     __publicField(this, "activeMeetingButNotStartedEl");
     __publicField(this, "activeMeetingEl");
-    __publicField(this, "footerEl");
     __publicField(this, "transcriptionsContainerEl");
     __publicField(this, "direction", "ltr");
     var _a;
@@ -25,7 +34,6 @@ class ChatPanel {
     this.noActiveMeetingEl = document.getElementById("au5-noActiveMeeting");
     this.activeMeetingButNotStartedEl = document.getElementById("au5-activeMeetingButNotStarted");
     this.activeMeetingEl = document.getElementById("au5-activeMeeting");
-    this.footerEl = document.getElementById("au5-transcription-footer");
     this.transcriptionsContainerEl = (_a = this.activeMeetingEl) == null ? void 0 : _a.querySelector(
       ".au5-transcriptions-container"
     );
@@ -56,7 +64,6 @@ class ChatPanel {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("hidden");
     if (this.activeMeetingEl) this.activeMeetingEl.classList.remove("hidden");
-    if (this.footerEl) this.footerEl.classList.remove("hidden");
     const editor = document.querySelector(".au5-chat-editor");
     if (editor) {
       editor.addEventListener("input", () => {
@@ -87,7 +94,7 @@ class ChatPanel {
     <div class="au5-message-avatar">
       <img
         class="au5-avatar-image"
-        src="${entry.speaker.pictureUrl || "https://i.sstatic.net/34AD2.jpg"}"
+        src="${entry.speaker.pictureUrl || "assets/icons/default-avatar.jpg"}"
         alt="Sender Avatar"
       />
     </div>
@@ -3252,7 +3259,6 @@ async function handleReloadMeetingClick() {
   }
 }
 document.addEventListener("DOMContentLoaded", async () => {
-  await initializeChatPanel();
   setupButtonHandlers();
 });
 function handleMessage(msg) {

@@ -147,13 +147,13 @@ body {
 }
 
 .au5-url-invalid {
-  border: 1px solid #ea1b1b;
+  border: 1.5px solid #ea1b1b;
   padding: 8px 12px;
   border-radius: 22px;
 }
 
 .au5-url-valid {
-  border: 1px solid #3eb46e;
+  border: 1.5px solid #3eb46e;
   padding: 8px 12px;
   border-radius: 22px;
 }

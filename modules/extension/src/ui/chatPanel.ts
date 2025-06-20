@@ -6,7 +6,6 @@ export class ChatPanel {
   private noActiveMeetingEl: HTMLElement | null;
   private activeMeetingButNotStartedEl: HTMLElement | null;
   private activeMeetingEl: HTMLElement | null;
-  private footerEl: HTMLElement | null;
   private transcriptionsContainerEl: HTMLDivElement | null;
   private direction: "ltr" | "rtl" = "ltr";
   constructor() {
@@ -14,7 +13,6 @@ export class ChatPanel {
     this.noActiveMeetingEl = document.getElementById("au5-noActiveMeeting");
     this.activeMeetingButNotStartedEl = document.getElementById("au5-activeMeetingButNotStarted");
     this.activeMeetingEl = document.getElementById("au5-activeMeeting");
-    this.footerEl = document.getElementById("au5-transcription-footer") as HTMLElement;
 
     this.transcriptionsContainerEl = this.activeMeetingEl?.querySelector(
       ".au5-transcriptions-container"
@@ -52,7 +50,6 @@ export class ChatPanel {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("hidden");
     if (this.activeMeetingEl) this.activeMeetingEl.classList.remove("hidden");
-    if (this.footerEl) this.footerEl.classList.remove("hidden");
 
     const editor = document.querySelector(".au5-chat-editor");
     if (editor) {
@@ -87,7 +84,7 @@ export class ChatPanel {
     <div class="au5-message-avatar">
       <img
         class="au5-avatar-image"
-        src="${entry.speaker.pictureUrl || "https://i.sstatic.net/34AD2.jpg"}"
+        src="${entry.speaker.pictureUrl || "assets/icons/default-avatar.jpg"}"
         alt="Sender Avatar"
       />
     </div>

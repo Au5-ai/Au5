@@ -154,7 +154,7 @@ async function handleReloadMeetingClick(): Promise<void> {
  * Initialize everything on DOM ready.
  */
 document.addEventListener("DOMContentLoaded", async () => {
-  await initializeChatPanel();
+  // await initializeChatPanel();
   setupButtonHandlers();
 });
 

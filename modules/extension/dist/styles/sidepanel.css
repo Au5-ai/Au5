@@ -1,33 +1,33 @@
 @charset "UTF-8";
-:where(.css-18jo2e4)[class^="ant-input"],
-:where(.css-18jo2e4)[class*=" ant-input"] {
+:where(.chat-input)[class^="ant-input"],
+:where(.chat-input)[class*=" ant-input"] {
   font-family: var(--gpts-font-family);
   font-size: 14px;
   box-sizing: border-box;
 }
-:where(.css-18jo2e4)[class^="ant-input"]::before,
-:where(.css-18jo2e4)[class*=" ant-input"]::before,
-:where(.css-18jo2e4)[class^="ant-input"]::after,
-:where(.css-18jo2e4)[class*=" ant-input"]::after {
+:where(.chat-input)[class^="ant-input"]::before,
+:where(.chat-input)[class*=" ant-input"]::before,
+:where(.chat-input)[class^="ant-input"]::after,
+:where(.chat-input)[class*=" ant-input"]::after {
   box-sizing: border-box;
 }
-:where(.css-18jo2e4)[class^="ant-input"] [class^="ant-input"],
-:where(.css-18jo2e4)[class*=" ant-input"] [class^="ant-input"],
-:where(.css-18jo2e4)[class^="ant-input"] [class*=" ant-input"],
-:where(.css-18jo2e4)[class*=" ant-input"] [class*=" ant-input"] {
+:where(.chat-input)[class^="ant-input"] [class^="ant-input"],
+:where(.chat-input)[class*=" ant-input"] [class^="ant-input"],
+:where(.chat-input)[class^="ant-input"] [class*=" ant-input"],
+:where(.chat-input)[class*=" ant-input"] [class*=" ant-input"] {
   box-sizing: border-box;
 }
-:where(.css-18jo2e4)[class^="ant-input"] [class^="ant-input"]::before,
-:where(.css-18jo2e4)[class*=" ant-input"] [class^="ant-input"]::before,
-:where(.css-18jo2e4)[class^="ant-input"] [class*=" ant-input"]::before,
-:where(.css-18jo2e4)[class*=" ant-input"] [class*=" ant-input"]::before,
-:where(.css-18jo2e4)[class^="ant-input"] [class^="ant-input"]::after,
-:where(.css-18jo2e4)[class*=" ant-input"] [class^="ant-input"]::after,
-:where(.css-18jo2e4)[class^="ant-input"] [class*=" ant-input"]::after,
-:where(.css-18jo2e4)[class*=" ant-input"] [class*=" ant-input"]::after {
+:where(.chat-input)[class^="ant-input"] [class^="ant-input"]::before,
+:where(.chat-input)[class*=" ant-input"] [class^="ant-input"]::before,
+:where(.chat-input)[class^="ant-input"] [class*=" ant-input"]::before,
+:where(.chat-input)[class*=" ant-input"] [class*=" ant-input"]::before,
+:where(.chat-input)[class^="ant-input"] [class^="ant-input"]::after,
+:where(.chat-input)[class*=" ant-input"] [class^="ant-input"]::after,
+:where(.chat-input)[class^="ant-input"] [class*=" ant-input"]::after,
+:where(.chat-input)[class*=" ant-input"] [class*=" ant-input"]::after {
   box-sizing: border-box;
 }
-:where(.css-18jo2e4).ant-input {
+:where(.chat-input).ant-input {
   box-sizing: border-box;
   margin: 0;
   padding: 4px 11px;
@@ -43,17 +43,17 @@
   border-radius: 8px;
   transition: all 0.2s;
 }
-:where(.css-18jo2e4).ant-input::-moz-placeholder {
+:where(.chat-input).ant-input::-moz-placeholder {
   opacity: 1;
 }
-:where(.css-18jo2e4).ant-input::placeholder {
+:where(.chat-input).ant-input::placeholder {
   color: var(--sds-color-text-primary-5);
   user-select: none;
 }
-:where(.css-18jo2e4).ant-input:placeholder-shown {
+:where(.chat-input).ant-input:placeholder-shown {
   text-overflow: ellipsis;
 }
-textarea:where(.css-18jo2e4).ant-input {
+textarea:where(.chat-input).ant-input {
   max-width: 100%;
   height: auto;
   min-height: 32px;
@@ -62,42 +62,42 @@ textarea:where(.css-18jo2e4).ant-input {
   transition: all 0.3s, height 0s;
   resize: vertical;
 }
-:where(.css-18jo2e4).ant-input-lg {
+:where(.chat-input).ant-input-lg {
   padding: 7px 11px;
   font-size: 16px;
   line-height: 1.5;
   border-radius: 12px;
 }
-:where(.css-18jo2e4).ant-input-sm {
+:where(.chat-input).ant-input-sm {
   padding: 0px 7px;
   font-size: 14px;
   border-radius: 8px;
 }
-:where(.css-18jo2e4).ant-input-rtl {
+:where(.chat-input).ant-input-rtl {
   direction: rtl;
 }
-:where(.css-18jo2e4).ant-input-textarea-rtl {
+:where(.chat-input).ant-input-textarea-rtl {
   direction: rtl;
 }
-:where(.css-18jo2e4).ant-input-outlined {
+:where(.chat-input).ant-input-outlined {
   background: transparent;
   border-width: 1px;
   border-style: solid;
   border-color: var(--sds-color-grey-line2-normal);
 }
-:where(.css-18jo2e4).ant-input-outlined:hover {
+:where(.chat-input).ant-input-outlined:hover {
   border-color: var(--sds-color-brand-primary-hover);
   background-color: transparent;
 }
-:where(.css-18jo2e4).ant-input-outlined:focus,
-:where(.css-18jo2e4).ant-input-outlined:focus-within {
+:where(.chat-input).ant-input-outlined:focus,
+:where(.chat-input).ant-input-outlined:focus-within {
   border-color: #6128ff;
   box-shadow: 0 0 0 3px var(--sds-color-focus-primary-1);
   outline: 0;
   background-color: transparent;
 }
-:where(.css-18jo2e4).ant-input-outlined.ant-input-disabled,
-:where(.css-18jo2e4).ant-input-outlined[disabled] {
+:where(.chat-input).ant-input-outlined.ant-input-disabled,
+:where(.chat-input).ant-input-outlined[disabled] {
   color: rgba(0, 0, 0, 0.25);
   background-color: rgba(0, 0, 0, 0.04);
   border-color: var(--sds-color-grey-line2-normal);
@@ -105,76 +105,76 @@ textarea:where(.css-18jo2e4).ant-input {
   cursor: not-allowed;
   opacity: 1;
 }
-:where(.css-18jo2e4).ant-input-outlined.ant-input-disabled:hover:not([disabled]),
-:where(.css-18jo2e4).ant-input-outlined[disabled]:hover:not([disabled]) {
+:where(.chat-input).ant-input-outlined.ant-input-disabled:hover:not([disabled]),
+:where(.chat-input).ant-input-outlined[disabled]:hover:not([disabled]) {
   border-color: var(--sds-color-grey-line2-normal);
   background-color: rgba(0, 0, 0, 0.04);
 }
-:where(.css-18jo2e4).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled) {
+:where(.chat-input).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled) {
   background: transparent;
   border-width: 1px;
   border-style: solid;
   border-color: var(--sds-color-error-normal);
 }
-:where(.css-18jo2e4).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled):hover {
+:where(.chat-input).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled):hover {
   border-color: #ffbab5;
   background-color: transparent;
 }
-:where(.css-18jo2e4).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled):focus,
-:where(.css-18jo2e4).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled):focus-within {
+:where(.chat-input).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled):focus,
+:where(.chat-input).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled):focus-within {
   border-color: var(--sds-color-error-normal);
   box-shadow: 0 0 0 3px var(--sds-color-focus-error-1);
   outline: 0;
   background-color: transparent;
 }
-:where(.css-18jo2e4).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled) .ant-input-prefix,
-:where(.css-18jo2e4).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled) .ant-input-suffix {
+:where(.chat-input).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled) .ant-input-prefix,
+:where(.chat-input).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled) .ant-input-suffix {
   color: var(--sds-color-error-normal);
 }
-:where(.css-18jo2e4).ant-input-outlined.ant-input-status-warning:not(.ant-input-disabled) {
+:where(.chat-input).ant-input-outlined.ant-input-status-warning:not(.ant-input-disabled) {
   background: transparent;
   border-width: 1px;
   border-style: solid;
   border-color: #faad14;
 }
-:where(.css-18jo2e4).ant-input-outlined.ant-input-status-warning:not(.ant-input-disabled):hover {
+:where(.chat-input).ant-input-outlined.ant-input-status-warning:not(.ant-input-disabled):hover {
   border-color: #ffd666;
   background-color: transparent;
 }
-:where(.css-18jo2e4).ant-input-outlined.ant-input-status-warning:not(.ant-input-disabled):focus,
-:where(.css-18jo2e4).ant-input-outlined.ant-input-status-warning:not(.ant-input-disabled):focus-within {
+:where(.chat-input).ant-input-outlined.ant-input-status-warning:not(.ant-input-disabled):focus,
+:where(.chat-input).ant-input-outlined.ant-input-status-warning:not(.ant-input-disabled):focus-within {
   border-color: #faad14;
   box-shadow: 0 0 0 2px rgba(255, 215, 5, 0.1);
   outline: 0;
   background-color: transparent;
 }
-:where(.css-18jo2e4).ant-input-outlined.ant-input-status-warning:not(.ant-input-disabled) .ant-input-prefix,
-:where(.css-18jo2e4).ant-input-outlined.ant-input-status-warning:not(.ant-input-disabled) .ant-input-suffix {
+:where(.chat-input).ant-input-outlined.ant-input-status-warning:not(.ant-input-disabled) .ant-input-prefix,
+:where(.chat-input).ant-input-outlined.ant-input-status-warning:not(.ant-input-disabled) .ant-input-suffix {
   color: #faad14;
 }
-:where(.css-18jo2e4).ant-input-filled {
+:where(.chat-input).ant-input-filled {
   background: rgba(0, 0, 0, 0.04);
   border-width: 1px;
   border-style: solid;
   border-color: transparent;
 }
-input:where(.css-18jo2e4).ant-input-filled,
-:where(.css-18jo2e4).ant-input-filled input,
-textarea:where(.css-18jo2e4).ant-input-filled,
-:where(.css-18jo2e4).ant-input-filled textarea {
+input:where(.chat-input).ant-input-filled,
+:where(.chat-input).ant-input-filled input,
+textarea:where(.chat-input).ant-input-filled,
+:where(.chat-input).ant-input-filled textarea {
   color: undefined;
 }
-:where(.css-18jo2e4).ant-input-filled:hover {
+:where(.chat-input).ant-input-filled:hover {
   background: rgba(0, 0, 0, 0.06);
 }
-:where(.css-18jo2e4).ant-input-filled:focus,
-:where(.css-18jo2e4).ant-input-filled:focus-within {
+:where(.chat-input).ant-input-filled:focus,
+:where(.chat-input).ant-input-filled:focus-within {
   outline: 0;
   border-color: #6128ff;
   background-color: transparent;
 }
-:where(.css-18jo2e4).ant-input-filled.ant-input-disabled,
-:where(.css-18jo2e4).ant-input-filled[disabled] {
+:where(.chat-input).ant-input-filled.ant-input-disabled,
+:where(.chat-input).ant-input-filled[disabled] {
   color: rgba(0, 0, 0, 0.25);
   background-color: rgba(0, 0, 0, 0.04);
   border-color: var(--sds-color-grey-line2-normal);
@@ -182,95 +182,95 @@ textarea:where(.css-18jo2e4).ant-input-filled,
   cursor: not-allowed;
   opacity: 1;
 }
-:where(.css-18jo2e4).ant-input-filled.ant-input-disabled:hover:not([disabled]),
-:where(.css-18jo2e4).ant-input-filled[disabled]:hover:not([disabled]) {
+:where(.chat-input).ant-input-filled.ant-input-disabled:hover:not([disabled]),
+:where(.chat-input).ant-input-filled[disabled]:hover:not([disabled]) {
   border-color: var(--sds-color-grey-line2-normal);
   background-color: rgba(0, 0, 0, 0.04);
 }
-:where(.css-18jo2e4).ant-input-filled.ant-input-status-error:not(.ant-input-disabled) {
+:where(.chat-input).ant-input-filled.ant-input-status-error:not(.ant-input-disabled) {
   background: #fff2f0;
   border-width: 1px;
   border-style: solid;
   border-color: transparent;
 }
-input:where(.css-18jo2e4).ant-input-filled.ant-input-status-error:not(.ant-input-disabled),
-:where(.css-18jo2e4).ant-input-filled.ant-input-status-error:not(.ant-input-disabled) input,
-textarea:where(.css-18jo2e4).ant-input-filled.ant-input-status-error:not(.ant-input-disabled),
-:where(.css-18jo2e4).ant-input-filled.ant-input-status-error:not(.ant-input-disabled) textarea {
+input:where(.chat-input).ant-input-filled.ant-input-status-error:not(.ant-input-disabled),
+:where(.chat-input).ant-input-filled.ant-input-status-error:not(.ant-input-disabled) input,
+textarea:where(.chat-input).ant-input-filled.ant-input-status-error:not(.ant-input-disabled),
+:where(.chat-input).ant-input-filled.ant-input-status-error:not(.ant-input-disabled) textarea {
   color: #e65a5a;
 }
-:where(.css-18jo2e4).ant-input-filled.ant-input-status-error:not(.ant-input-disabled):hover {
+:where(.chat-input).ant-input-filled.ant-input-status-error:not(.ant-input-disabled):hover {
   background: #fff2f0;
 }
-:where(.css-18jo2e4).ant-input-filled.ant-input-status-error:not(.ant-input-disabled):focus,
-:where(.css-18jo2e4).ant-input-filled.ant-input-status-error:not(.ant-input-disabled):focus-within {
+:where(.chat-input).ant-input-filled.ant-input-status-error:not(.ant-input-disabled):focus,
+:where(.chat-input).ant-input-filled.ant-input-status-error:not(.ant-input-disabled):focus-within {
   outline: 0;
   border-color: var(--sds-color-error-normal);
   background-color: transparent;
 }
-:where(.css-18jo2e4).ant-input-filled.ant-input-status-error:not(.ant-input-disabled) .ant-input-prefix,
-:where(.css-18jo2e4).ant-input-filled.ant-input-status-error:not(.ant-input-disabled) .ant-input-suffix {
+:where(.chat-input).ant-input-filled.ant-input-status-error:not(.ant-input-disabled) .ant-input-prefix,
+:where(.chat-input).ant-input-filled.ant-input-status-error:not(.ant-input-disabled) .ant-input-suffix {
   color: var(--sds-color-error-normal);
 }
-:where(.css-18jo2e4).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled) {
+:where(.chat-input).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled) {
   background: #fffbe6;
   border-width: 1px;
   border-style: solid;
   border-color: transparent;
 }
-input:where(.css-18jo2e4).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled),
-:where(.css-18jo2e4).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled) input,
-textarea:where(.css-18jo2e4).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled),
-:where(.css-18jo2e4).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled) textarea {
+input:where(.chat-input).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled),
+:where(.chat-input).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled) input,
+textarea:where(.chat-input).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled),
+:where(.chat-input).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled) textarea {
   color: #faad14;
 }
-:where(.css-18jo2e4).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled):hover {
+:where(.chat-input).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled):hover {
   background: #fff1b8;
 }
-:where(.css-18jo2e4).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled):focus,
-:where(.css-18jo2e4).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled):focus-within {
+:where(.chat-input).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled):focus,
+:where(.chat-input).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled):focus-within {
   outline: 0;
   border-color: #faad14;
   background-color: transparent;
 }
-:where(.css-18jo2e4).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled) .ant-input-prefix,
-:where(.css-18jo2e4).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled) .ant-input-suffix {
+:where(.chat-input).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled) .ant-input-prefix,
+:where(.chat-input).ant-input-filled.ant-input-status-warning:not(.ant-input-disabled) .ant-input-suffix {
   color: #faad14;
 }
-:where(.css-18jo2e4).ant-input-borderless {
+:where(.chat-input).ant-input-borderless {
   background: transparent;
   border: none;
 }
-:where(.css-18jo2e4).ant-input-borderless:focus,
-:where(.css-18jo2e4).ant-input-borderless:focus-within {
+:where(.chat-input).ant-input-borderless:focus,
+:where(.chat-input).ant-input-borderless:focus-within {
   outline: none;
 }
-:where(.css-18jo2e4).ant-input-borderless.ant-input-disabled,
-:where(.css-18jo2e4).ant-input-borderless[disabled] {
+:where(.chat-input).ant-input-borderless.ant-input-disabled,
+:where(.chat-input).ant-input-borderless[disabled] {
   color: rgba(0, 0, 0, 0.25);
 }
-:where(.css-18jo2e4).ant-input[type="color"] {
+:where(.chat-input).ant-input[type="color"] {
   height: 32px;
 }
-:where(.css-18jo2e4).ant-input[type="color"].ant-input-lg {
+:where(.chat-input).ant-input[type="color"].ant-input-lg {
   height: 40px;
 }
-:where(.css-18jo2e4).ant-input[type="color"].ant-input-sm {
+:where(.chat-input).ant-input[type="color"].ant-input-sm {
   height: 24px;
   padding-top: 3px;
   padding-bottom: 3px;
 }
-:where(.css-18jo2e4).ant-input[type="search"]::-webkit-search-cancel-button,
-:where(.css-18jo2e4).ant-input[type="search"]::-webkit-search-decoration {
+:where(.chat-input).ant-input[type="search"]::-webkit-search-cancel-button,
+:where(.chat-input).ant-input[type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
 }
-:where(.css-18jo2e4).ant-input-textarea {
+:where(.chat-input).ant-input-textarea {
   position: relative;
 }
-:where(.css-18jo2e4).ant-input-textarea-show-count > .ant-input {
+:where(.chat-input).ant-input-textarea-show-count > .ant-input {
   height: 100%;
 }
-:where(.css-18jo2e4).ant-input-textarea-show-count .ant-input-data-count {
+:where(.chat-input).ant-input-textarea-show-count .ant-input-data-count {
   position: absolute;
   bottom: -22px;
   inset-inline-end: 0;
@@ -278,40 +278,36 @@ textarea:where(.css-18jo2e4).ant-input-filled.ant-input-status-warning:not(.ant-
   white-space: nowrap;
   pointer-events: none;
 }
-:where(.css-18jo2e4).ant-input-textarea-allow-clear > .ant-input {
+:where(.chat-input).ant-input-textarea-allow-clear > .ant-input {
   padding-inline-end: 24px;
 }
-:where(.css-18jo2e4).ant-input-textarea-affix-wrapper.ant-input-textarea-has-feedback .ant-input {
+:where(.chat-input).ant-input-textarea-affix-wrapper.ant-input-textarea-has-feedback .ant-input {
   padding-inline-end: 24px;
 }
-:where(.css-18jo2e4).ant-input-textarea-affix-wrapper.ant-input-affix-wrapper {
+:where(.chat-input).ant-input-textarea-affix-wrapper.ant-input-affix-wrapper {
   padding: 0;
 }
-:where(.css-18jo2e4).ant-input-textarea-affix-wrapper.ant-input-affix-wrapper > textarea.ant-input {
+:where(.chat-input).ant-input-textarea-affix-wrapper.ant-input-affix-wrapper > textarea.ant-input {
   font-size: inherit;
   border: none;
   outline: none;
   background: transparent;
 }
-:where(.css-18jo2e4).ant-input-textarea-affix-wrapper.ant-input-affix-wrapper > textarea.ant-input:focus {
+:where(.chat-input).ant-input-textarea-affix-wrapper.ant-input-affix-wrapper > textarea.ant-input:focus {
   box-shadow: none !important;
 }
-:where(.css-18jo2e4).ant-input-textarea-affix-wrapper.ant-input-affix-wrapper .ant-input-suffix {
+:where(.chat-input).ant-input-textarea-affix-wrapper.ant-input-affix-wrapper .ant-input-suffix {
   margin: 0;
 }
-:where(.css-18jo2e4).ant-input-textarea-affix-wrapper.ant-input-affix-wrapper
-  .ant-input-suffix
-  > *:not(:last-child) {
+:where(.chat-input).ant-input-textarea-affix-wrapper.ant-input-affix-wrapper .ant-input-suffix > *:not(:last-child) {
   margin-inline: 0;
 }
-:where(.css-18jo2e4).ant-input-textarea-affix-wrapper.ant-input-affix-wrapper
-  .ant-input-suffix
-  .ant-input-clear-icon {
+:where(.chat-input).ant-input-textarea-affix-wrapper.ant-input-affix-wrapper .ant-input-suffix .ant-input-clear-icon {
   position: absolute;
   inset-inline-end: 8px;
   inset-block-start: 8px;
 }
-:where(.css-18jo2e4).ant-input-textarea-affix-wrapper.ant-input-affix-wrapper
+:where(.chat-input).ant-input-textarea-affix-wrapper.ant-input-affix-wrapper
   .ant-input-suffix
   .ant-input-textarea-suffix {
   position: absolute;
@@ -324,7 +320,7 @@ textarea:where(.css-18jo2e4).ant-input-filled.ant-input-status-warning:not(.ant-
   margin: auto;
   pointer-events: none;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper {
+:where(.chat-input).ant-input-affix-wrapper {
   position: relative;
   display: inline-flex;
   width: 100%;
@@ -336,17 +332,17 @@ textarea:where(.css-18jo2e4).ant-input-filled.ant-input-status-warning:not(.ant-
   border-radius: 8px;
   transition: all 0.2s;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper::-moz-placeholder {
+:where(.chat-input).ant-input-affix-wrapper::-moz-placeholder {
   opacity: 1;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper::placeholder {
+:where(.chat-input).ant-input-affix-wrapper::placeholder {
   color: var(--sds-color-text-primary-5);
   user-select: none;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper:placeholder-shown {
+:where(.chat-input).ant-input-affix-wrapper:placeholder-shown {
   text-overflow: ellipsis;
 }
-textarea:where(.css-18jo2e4).ant-input-affix-wrapper {
+textarea:where(.chat-input).ant-input-affix-wrapper {
   max-width: 100%;
   height: auto;
   min-height: 32px;
@@ -355,34 +351,34 @@ textarea:where(.css-18jo2e4).ant-input-affix-wrapper {
   transition: all 0.3s, height 0s;
   resize: vertical;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper-lg {
+:where(.chat-input).ant-input-affix-wrapper-lg {
   padding: 7px 11px;
   font-size: 16px;
   line-height: 1.5;
   border-radius: 12px;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper-sm {
+:where(.chat-input).ant-input-affix-wrapper-sm {
   padding: 0px 7px;
   font-size: 14px;
   border-radius: 8px;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper-rtl {
+:where(.chat-input).ant-input-affix-wrapper-rtl {
   direction: rtl;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper-textarea-rtl {
+:where(.chat-input).ant-input-affix-wrapper-textarea-rtl {
   direction: rtl;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper:not(.ant-input-disabled):hover {
+:where(.chat-input).ant-input-affix-wrapper:not(.ant-input-disabled):hover {
   z-index: 1;
 }
-.ant-input-search-with-button :where(.css-18jo2e4).ant-input-affix-wrapper:not(.ant-input-disabled):hover {
+.ant-input-search-with-button :where(.chat-input).ant-input-affix-wrapper:not(.ant-input-disabled):hover {
   z-index: 0;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper-focused,
-:where(.css-18jo2e4).ant-input-affix-wrapper:focus {
+:where(.chat-input).ant-input-affix-wrapper-focused,
+:where(.chat-input).ant-input-affix-wrapper:focus {
   z-index: 1;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper > input.ant-input {
+:where(.chat-input).ant-input-affix-wrapper > input.ant-input {
   padding: 0;
   font-size: inherit;
   border: none;
@@ -391,41 +387,41 @@ textarea:where(.css-18jo2e4).ant-input-affix-wrapper {
   background: transparent;
   color: inherit;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper > input.ant-input::-ms-reveal {
+:where(.chat-input).ant-input-affix-wrapper > input.ant-input::-ms-reveal {
   display: none;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper > input.ant-input:focus {
+:where(.chat-input).ant-input-affix-wrapper > input.ant-input:focus {
   box-shadow: none !important;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper::before {
+:where(.chat-input).ant-input-affix-wrapper::before {
   display: inline-block;
   width: 0;
   visibility: hidden;
   content: "\a0";
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper .ant-input-prefix,
-:where(.css-18jo2e4).ant-input-affix-wrapper .ant-input-suffix {
+:where(.chat-input).ant-input-affix-wrapper .ant-input-prefix,
+:where(.chat-input).ant-input-affix-wrapper .ant-input-suffix {
   display: flex;
   flex: none;
   align-items: center;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper .ant-input-prefix > *:not(:last-child),
-:where(.css-18jo2e4).ant-input-affix-wrapper .ant-input-suffix > *:not(:last-child) {
+:where(.chat-input).ant-input-affix-wrapper .ant-input-prefix > *:not(:last-child),
+:where(.chat-input).ant-input-affix-wrapper .ant-input-suffix > *:not(:last-child) {
   margin-inline-end: 8px;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper .ant-input-show-count-suffix {
+:where(.chat-input).ant-input-affix-wrapper .ant-input-show-count-suffix {
   color: var(--sds-color-text-primary-4);
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper .ant-input-show-count-has-suffix {
+:where(.chat-input).ant-input-affix-wrapper .ant-input-show-count-has-suffix {
   margin-inline-end: 8px;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper .ant-input-prefix {
+:where(.chat-input).ant-input-affix-wrapper .ant-input-prefix {
   margin-inline-end: 8px;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper .ant-input-suffix {
+:where(.chat-input).ant-input-affix-wrapper .ant-input-suffix {
   margin-inline-start: 8px;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper .ant-input-clear-icon {
+:where(.chat-input).ant-input-affix-wrapper .ant-input-clear-icon {
   margin: 0;
   color: rgba(0, 0, 0, 0.25);
   font-size: 12px;
@@ -433,27 +429,27 @@ textarea:where(.css-18jo2e4).ant-input-affix-wrapper {
   cursor: pointer;
   transition: color 0.3s;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper .ant-input-clear-icon:hover {
+:where(.chat-input).ant-input-affix-wrapper .ant-input-clear-icon:hover {
   color: rgba(0, 0, 0, 0.45);
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper .ant-input-clear-icon:active {
+:where(.chat-input).ant-input-affix-wrapper .ant-input-clear-icon:active {
   color: var(--sds-color-text-primary-1);
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper .ant-input-clear-icon-hidden {
+:where(.chat-input).ant-input-affix-wrapper .ant-input-clear-icon-hidden {
   visibility: hidden;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper .ant-input-clear-icon-has-suffix {
+:where(.chat-input).ant-input-affix-wrapper .ant-input-clear-icon-has-suffix {
   margin: 0 8px;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper .anticon.ant-input-password-icon {
+:where(.chat-input).ant-input-affix-wrapper .anticon.ant-input-password-icon {
   color: rgba(0, 0, 0, 0.45);
   cursor: pointer;
   transition: all 0.3s;
 }
-:where(.css-18jo2e4).ant-input-affix-wrapper .anticon.ant-input-password-icon:hover {
+:where(.chat-input).ant-input-affix-wrapper .anticon.ant-input-password-icon:hover {
   color: rgba(0, 0, 0, 0.88);
 }
-:where(.css-18jo2e4).ant-input-group {
+:where(.chat-input).ant-input-group {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -468,52 +464,52 @@ textarea:where(.css-18jo2e4).ant-input-affix-wrapper {
   border-collapse: separate;
   border-spacing: 0;
 }
-:where(.css-18jo2e4).ant-input-group[class*="col-"] {
+:where(.chat-input).ant-input-group[class*="col-"] {
   padding-inline-end: 8px;
 }
-:where(.css-18jo2e4).ant-input-group[class*="col-"]:last-child {
+:where(.chat-input).ant-input-group[class*="col-"]:last-child {
   padding-inline-end: 0;
 }
-:where(.css-18jo2e4).ant-input-group-lg .ant-input,
-:where(.css-18jo2e4).ant-input-group-lg > .ant-input-group-addon {
+:where(.chat-input).ant-input-group-lg .ant-input,
+:where(.chat-input).ant-input-group-lg > .ant-input-group-addon {
   padding: 7px 11px;
   font-size: 16px;
   line-height: 1.5;
   border-radius: 12px;
 }
-:where(.css-18jo2e4).ant-input-group-sm .ant-input,
-:where(.css-18jo2e4).ant-input-group-sm > .ant-input-group-addon {
+:where(.chat-input).ant-input-group-sm .ant-input,
+:where(.chat-input).ant-input-group-sm > .ant-input-group-addon {
   padding: 0px 7px;
   font-size: 14px;
   border-radius: 8px;
 }
-:where(.css-18jo2e4).ant-input-group-lg .ant-select-single .ant-select-selector {
+:where(.chat-input).ant-input-group-lg .ant-select-single .ant-select-selector {
   height: 40px;
 }
-:where(.css-18jo2e4).ant-input-group-sm .ant-select-single .ant-select-selector {
+:where(.chat-input).ant-input-group-sm .ant-select-single .ant-select-selector {
   height: 24px;
 }
-:where(.css-18jo2e4).ant-input-group > .ant-input {
+:where(.chat-input).ant-input-group > .ant-input {
   display: table-cell;
 }
-:where(.css-18jo2e4).ant-input-group > .ant-input:not(:first-child):not(:last-child) {
+:where(.chat-input).ant-input-group > .ant-input:not(:first-child):not(:last-child) {
   border-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-group .ant-input-group-addon,
-:where(.css-18jo2e4).ant-input-group .ant-input-group-wrap {
+:where(.chat-input).ant-input-group .ant-input-group-addon,
+:where(.chat-input).ant-input-group .ant-input-group-wrap {
   display: table-cell;
   width: 1px;
   white-space: nowrap;
   vertical-align: middle;
 }
-:where(.css-18jo2e4).ant-input-group .ant-input-group-addon:not(:first-child):not(:last-child),
-:where(.css-18jo2e4).ant-input-group .ant-input-group-wrap:not(:first-child):not(:last-child) {
+:where(.chat-input).ant-input-group .ant-input-group-addon:not(:first-child):not(:last-child),
+:where(.chat-input).ant-input-group .ant-input-group-wrap:not(:first-child):not(:last-child) {
   border-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-group .ant-input-group-wrap > * {
+:where(.chat-input).ant-input-group .ant-input-group-wrap > * {
   display: block !important;
 }
-:where(.css-18jo2e4).ant-input-group .ant-input-group-addon {
+:where(.chat-input).ant-input-group .ant-input-group-addon {
   position: relative;
   padding: 0 11px;
   color: var(--sds-color-text-primary-1);
@@ -524,10 +520,10 @@ textarea:where(.css-18jo2e4).ant-input-affix-wrapper {
   transition: all 0.3s;
   line-height: 1;
 }
-:where(.css-18jo2e4).ant-input-group .ant-input-group-addon .ant-select {
+:where(.chat-input).ant-input-group .ant-input-group-addon .ant-select {
   margin: -5px -11px;
 }
-:where(.css-18jo2e4).ant-input-group
+:where(.chat-input).ant-input-group
   .ant-input-group-addon
   .ant-select.ant-select-single:not(.ant-select-customize-input):not(.ant-pagination-size-changer)
   .ant-select-selector {
@@ -535,191 +531,185 @@ textarea:where(.css-18jo2e4).ant-input-affix-wrapper {
   border: 1px solid transparent;
   box-shadow: none;
 }
-:where(.css-18jo2e4).ant-input-group .ant-input-group-addon .ant-select-open .ant-select-selector,
-:where(.css-18jo2e4).ant-input-group .ant-input-group-addon .ant-select-focused .ant-select-selector {
+:where(.chat-input).ant-input-group .ant-input-group-addon .ant-select-open .ant-select-selector,
+:where(.chat-input).ant-input-group .ant-input-group-addon .ant-select-focused .ant-select-selector {
   color: #6128ff;
 }
-:where(.css-18jo2e4).ant-input-group .ant-input-group-addon .ant-cascader-picker {
+:where(.chat-input).ant-input-group .ant-input-group-addon .ant-cascader-picker {
   margin: -9px -11px;
   background-color: transparent;
 }
-:where(.css-18jo2e4).ant-input-group .ant-input-group-addon .ant-cascader-picker .ant-cascader-input {
+:where(.chat-input).ant-input-group .ant-input-group-addon .ant-cascader-picker .ant-cascader-input {
   text-align: start;
   border: 0;
   box-shadow: none;
 }
-:where(.css-18jo2e4).ant-input-group .ant-input {
+:where(.chat-input).ant-input-group .ant-input {
   width: 100%;
   margin-bottom: 0;
   text-align: inherit;
 }
-:where(.css-18jo2e4).ant-input-group .ant-input:focus {
+:where(.chat-input).ant-input-group .ant-input:focus {
   z-index: 1;
   border-inline-end-width: 1px;
 }
-:where(.css-18jo2e4).ant-input-group .ant-input:hover {
+:where(.chat-input).ant-input-group .ant-input:hover {
   z-index: 1;
   border-inline-end-width: 1px;
 }
-.ant-input-search-with-button :where(.css-18jo2e4).ant-input-group .ant-input:hover {
+.ant-input-search-with-button :where(.chat-input).ant-input-group .ant-input:hover {
   z-index: 0;
 }
-:where(.css-18jo2e4).ant-input-group > .ant-input:first-child,
-:where(.css-18jo2e4).ant-input-group .ant-input-group-addon:first-child {
+:where(.chat-input).ant-input-group > .ant-input:first-child,
+:where(.chat-input).ant-input-group .ant-input-group-addon:first-child {
   border-start-end-radius: 0;
   border-end-end-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-group > .ant-input:first-child .ant-select .ant-select-selector,
-:where(.css-18jo2e4).ant-input-group .ant-input-group-addon:first-child .ant-select .ant-select-selector {
+:where(.chat-input).ant-input-group > .ant-input:first-child .ant-select .ant-select-selector,
+:where(.chat-input).ant-input-group .ant-input-group-addon:first-child .ant-select .ant-select-selector {
   border-start-end-radius: 0;
   border-end-end-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-group > .ant-input-affix-wrapper:not(:first-child) .ant-input {
+:where(.chat-input).ant-input-group > .ant-input-affix-wrapper:not(:first-child) .ant-input {
   border-start-start-radius: 0;
   border-end-start-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-group > .ant-input-affix-wrapper:not(:last-child) .ant-input {
+:where(.chat-input).ant-input-group > .ant-input-affix-wrapper:not(:last-child) .ant-input {
   border-start-end-radius: 0;
   border-end-end-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-group > .ant-input:last-child,
-:where(.css-18jo2e4).ant-input-group .ant-input-group-addon:last-child {
+:where(.chat-input).ant-input-group > .ant-input:last-child,
+:where(.chat-input).ant-input-group .ant-input-group-addon:last-child {
   border-start-start-radius: 0;
   border-end-start-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-group > .ant-input:last-child .ant-select .ant-select-selector,
-:where(.css-18jo2e4).ant-input-group .ant-input-group-addon:last-child .ant-select .ant-select-selector {
+:where(.chat-input).ant-input-group > .ant-input:last-child .ant-select .ant-select-selector,
+:where(.chat-input).ant-input-group .ant-input-group-addon:last-child .ant-select .ant-select-selector {
   border-start-start-radius: 0;
   border-end-start-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-group .ant-input-affix-wrapper:not(:last-child) {
+:where(.chat-input).ant-input-group .ant-input-affix-wrapper:not(:last-child) {
   border-start-end-radius: 0;
   border-end-end-radius: 0;
 }
-.ant-input-search :where(.css-18jo2e4).ant-input-group .ant-input-affix-wrapper:not(:last-child) {
+.ant-input-search :where(.chat-input).ant-input-group .ant-input-affix-wrapper:not(:last-child) {
   border-start-start-radius: 8px;
   border-end-start-radius: 8px;
 }
-:where(.css-18jo2e4).ant-input-group .ant-input-affix-wrapper:not(:first-child),
-.ant-input-search :where(.css-18jo2e4).ant-input-group .ant-input-affix-wrapper:not(:first-child) {
+:where(.chat-input).ant-input-group .ant-input-affix-wrapper:not(:first-child),
+.ant-input-search :where(.chat-input).ant-input-group .ant-input-affix-wrapper:not(:first-child) {
   border-start-start-radius: 0;
   border-end-start-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact {
+:where(.chat-input).ant-input-group.ant-input-group-compact {
   display: block;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact::before {
+:where(.chat-input).ant-input-group.ant-input-group-compact::before {
   display: table;
   content: "";
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact::after {
+:where(.chat-input).ant-input-group.ant-input-group-compact::after {
   display: table;
   clear: both;
   content: "";
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact
-  .ant-input-group-addon:not(:first-child):not(:last-child),
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact
-  .ant-input-group-wrap:not(:first-child):not(:last-child),
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-input:not(:first-child):not(:last-child) {
+:where(.chat-input).ant-input-group.ant-input-group-compact .ant-input-group-addon:not(:first-child):not(:last-child),
+:where(.chat-input).ant-input-group.ant-input-group-compact .ant-input-group-wrap:not(:first-child):not(:last-child),
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-input:not(:first-child):not(:last-child) {
   border-inline-end-width: 1px;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact
+:where(.chat-input).ant-input-group.ant-input-group-compact
   .ant-input-group-addon:not(:first-child):not(:last-child):hover,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact
+:where(.chat-input).ant-input-group.ant-input-group-compact
   .ant-input-group-wrap:not(:first-child):not(:last-child):hover,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact
-  > .ant-input:not(:first-child):not(:last-child):hover {
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-input:not(:first-child):not(:last-child):hover {
   z-index: 1;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact
+:where(.chat-input).ant-input-group.ant-input-group-compact
   .ant-input-group-addon:not(:first-child):not(:last-child):focus,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact
+:where(.chat-input).ant-input-group.ant-input-group-compact
   .ant-input-group-wrap:not(:first-child):not(:last-child):focus,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact
-  > .ant-input:not(:first-child):not(:last-child):focus {
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-input:not(:first-child):not(:last-child):focus {
   z-index: 1;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > * {
+:where(.chat-input).ant-input-group.ant-input-group-compact > * {
   display: inline-block;
   float: none;
   vertical-align: top;
   border-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-input-affix-wrapper,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-input-number-affix-wrapper,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-picker-range {
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-input-affix-wrapper,
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-input-number-affix-wrapper,
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-picker-range {
   display: inline-flex;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > *:not(:last-child) {
+:where(.chat-input).ant-input-group.ant-input-group-compact > *:not(:last-child) {
   margin-inline-end: -1px;
   border-inline-end-width: 1px;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact .ant-input {
+:where(.chat-input).ant-input-group.ant-input-group-compact .ant-input {
   float: none;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-select > .ant-select-selector,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-select-auto-complete .ant-input,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-cascader-picker .ant-input,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-input-group-wrapper .ant-input {
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-select > .ant-select-selector,
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-select-auto-complete .ant-input,
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-cascader-picker .ant-input,
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-input-group-wrapper .ant-input {
   border-inline-end-width: 1px;
   border-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-select > .ant-select-selector:hover,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-select-auto-complete .ant-input:hover,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-cascader-picker .ant-input:hover,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-input-group-wrapper .ant-input:hover {
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-select > .ant-select-selector:hover,
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-select-auto-complete .ant-input:hover,
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-cascader-picker .ant-input:hover,
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-input-group-wrapper .ant-input:hover {
   z-index: 1;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-select > .ant-select-selector:focus,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-select-auto-complete .ant-input:focus,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-cascader-picker .ant-input:focus,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-input-group-wrapper .ant-input:focus {
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-select > .ant-select-selector:focus,
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-select-auto-complete .ant-input:focus,
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-cascader-picker .ant-input:focus,
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-input-group-wrapper .ant-input:focus {
   z-index: 1;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-select-focused {
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-select-focused {
   z-index: 1;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-select > .ant-select-arrow {
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-select > .ant-select-arrow {
   z-index: 1;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > *:first-child,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-select:first-child > .ant-select-selector,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-select-auto-complete:first-child .ant-input,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-cascader-picker:first-child .ant-input {
+:where(.chat-input).ant-input-group.ant-input-group-compact > *:first-child,
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-select:first-child > .ant-select-selector,
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-select-auto-complete:first-child .ant-input,
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-cascader-picker:first-child .ant-input {
   border-start-start-radius: 8px;
   border-end-start-radius: 8px;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > *:last-child,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-select:last-child > .ant-select-selector,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-cascader-picker:last-child .ant-input,
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact
-  > .ant-cascader-picker-focused:last-child
-  .ant-input {
+:where(.chat-input).ant-input-group.ant-input-group-compact > *:last-child,
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-select:last-child > .ant-select-selector,
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-cascader-picker:last-child .ant-input,
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-cascader-picker-focused:last-child .ant-input {
   border-inline-end-width: 1px;
   border-start-end-radius: 8px;
   border-end-end-radius: 8px;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact > .ant-select-auto-complete .ant-input {
+:where(.chat-input).ant-input-group.ant-input-group-compact > .ant-select-auto-complete .ant-input {
   vertical-align: top;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact .ant-input-group-wrapper + .ant-input-group-wrapper {
+:where(.chat-input).ant-input-group.ant-input-group-compact .ant-input-group-wrapper + .ant-input-group-wrapper {
   margin-inline-start: -1px;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact
+:where(.chat-input).ant-input-group.ant-input-group-compact
   .ant-input-group-wrapper
   + .ant-input-group-wrapper
   .ant-input-affix-wrapper {
   border-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact
+:where(.chat-input).ant-input-group.ant-input-group-compact
   .ant-input-group-wrapper:not(:last-child).ant-input-search
   > .ant-input-group
   > .ant-input-group-addon
   > .ant-input-search-button {
   border-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-group.ant-input-group-compact
+:where(.chat-input).ant-input-group.ant-input-group-compact
   .ant-input-group-wrapper:not(:last-child).ant-input-search
   > .ant-input-group
   > .ant-input {
@@ -728,46 +718,44 @@ textarea:where(.css-18jo2e4).ant-input-affix-wrapper {
   border-end-end-radius: 0;
   border-end-start-radius: 8px;
 }
-:where(.css-18jo2e4).ant-input-group-rtl {
+:where(.chat-input).ant-input-group-rtl {
   direction: rtl;
 }
-:where(.css-18jo2e4).ant-input-group-wrapper {
+:where(.chat-input).ant-input-group-wrapper {
   display: inline-block;
   width: 100%;
   text-align: start;
   vertical-align: top;
 }
-:where(.css-18jo2e4).ant-input-group-wrapper-rtl {
+:where(.chat-input).ant-input-group-wrapper-rtl {
   direction: rtl;
 }
-:where(.css-18jo2e4).ant-input-group-wrapper-lg .ant-input-group-addon {
+:where(.chat-input).ant-input-group-wrapper-lg .ant-input-group-addon {
   border-radius: 12px;
   font-size: 16px;
 }
-:where(.css-18jo2e4).ant-input-group-wrapper-sm .ant-input-group-addon {
+:where(.chat-input).ant-input-group-wrapper-sm .ant-input-group-addon {
   border-radius: 8px;
 }
-:where(.css-18jo2e4).ant-input-group-wrapper-outlined .ant-input-group-addon {
+:where(.chat-input).ant-input-group-wrapper-outlined .ant-input-group-addon {
   background: var(--sds-color-grey-fill2-normal);
   border: 1px solid var(--sds-color-grey-line2-normal);
 }
-:where(.css-18jo2e4).ant-input-group-wrapper-outlined .ant-input-group-addon:first-child {
+:where(.chat-input).ant-input-group-wrapper-outlined .ant-input-group-addon:first-child {
   border-inline-end: 0;
 }
-:where(.css-18jo2e4).ant-input-group-wrapper-outlined .ant-input-group-addon:last-child {
+:where(.chat-input).ant-input-group-wrapper-outlined .ant-input-group-addon:last-child {
   border-inline-start: 0;
 }
-:where(.css-18jo2e4).ant-input-group-wrapper-outlined.ant-input-group-wrapper-status-error
-  .ant-input-group-addon {
+:where(.chat-input).ant-input-group-wrapper-outlined.ant-input-group-wrapper-status-error .ant-input-group-addon {
   border-color: var(--sds-color-error-normal);
   color: #e65a5a;
 }
-:where(.css-18jo2e4).ant-input-group-wrapper-outlined.ant-input-group-wrapper-status-warning
-  .ant-input-group-addon {
+:where(.chat-input).ant-input-group-wrapper-outlined.ant-input-group-wrapper-status-warning .ant-input-group-addon {
   border-color: #faad14;
   color: #faad14;
 }
-:where(.css-18jo2e4).ant-input-group-wrapper-outlined.ant-input-group-wrapper-disabled .ant-input-group-addon {
+:where(.chat-input).ant-input-group-wrapper-outlined.ant-input-group-wrapper-disabled .ant-input-group-addon {
   color: rgba(0, 0, 0, 0.25);
   background-color: rgba(0, 0, 0, 0.04);
   border-color: var(--sds-color-grey-line2-normal);
@@ -775,107 +763,99 @@ textarea:where(.css-18jo2e4).ant-input-affix-wrapper {
   cursor: not-allowed;
   opacity: 1;
 }
-:where(.css-18jo2e4).ant-input-group-wrapper-outlined.ant-input-group-wrapper-disabled
+:where(.chat-input).ant-input-group-wrapper-outlined.ant-input-group-wrapper-disabled
   .ant-input-group-addon:hover:not([disabled]) {
   border-color: var(--sds-color-grey-line2-normal);
   background-color: rgba(0, 0, 0, 0.04);
 }
-:where(.css-18jo2e4).ant-input-group-wrapper-filled .ant-input-group-addon {
+:where(.chat-input).ant-input-group-wrapper-filled .ant-input-group-addon {
   background: rgba(0, 0, 0, 0.04);
 }
-:where(.css-18jo2e4).ant-input-group-wrapper-filled
+:where(.chat-input).ant-input-group-wrapper-filled
   .ant-input-group
   .ant-input-filled:not(:focus):not(:focus-within):not(:first-child) {
   border-inline-start: 1px solid rgba(5, 5, 5, 0.06);
 }
-:where(.css-18jo2e4).ant-input-group-wrapper-filled
+:where(.chat-input).ant-input-group-wrapper-filled
   .ant-input-group
   .ant-input-filled:not(:focus):not(:focus-within):not(:last-child) {
   border-inline-end: 1px solid rgba(5, 5, 5, 0.06);
 }
-:where(.css-18jo2e4).ant-input-group-wrapper-filled.ant-input-group-wrapper-status-error .ant-input-group-addon {
+:where(.chat-input).ant-input-group-wrapper-filled.ant-input-group-wrapper-status-error .ant-input-group-addon {
   background: #fff2f0;
   color: #e65a5a;
 }
-:where(.css-18jo2e4).ant-input-group-wrapper-filled.ant-input-group-wrapper-status-warning
-  .ant-input-group-addon {
+:where(.chat-input).ant-input-group-wrapper-filled.ant-input-group-wrapper-status-warning .ant-input-group-addon {
   background: #fffbe6;
   color: #faad14;
 }
-:where(.css-18jo2e4).ant-input-group-wrapper-filled.ant-input-group-wrapper-disabled .ant-input-group-addon {
+:where(.chat-input).ant-input-group-wrapper-filled.ant-input-group-wrapper-disabled .ant-input-group-addon {
   background: rgba(0, 0, 0, 0.04);
   color: rgba(0, 0, 0, 0.25);
 }
-:where(.css-18jo2e4).ant-input-group-wrapper-filled.ant-input-group-wrapper-disabled
-  .ant-input-group-addon:first-child {
+:where(.chat-input).ant-input-group-wrapper-filled.ant-input-group-wrapper-disabled .ant-input-group-addon:first-child {
   border-inline-start: 1px solid var(--sds-color-grey-line2-normal);
   border-top: 1px solid var(--sds-color-grey-line2-normal);
   border-bottom: 1px solid var(--sds-color-grey-line2-normal);
 }
-:where(.css-18jo2e4).ant-input-group-wrapper-filled.ant-input-group-wrapper-disabled
-  .ant-input-group-addon:last-child {
+:where(.chat-input).ant-input-group-wrapper-filled.ant-input-group-wrapper-disabled .ant-input-group-addon:last-child {
   border-inline-end: 1px solid var(--sds-color-grey-line2-normal);
   border-top: 1px solid var(--sds-color-grey-line2-normal);
   border-bottom: 1px solid var(--sds-color-grey-line2-normal);
 }
-:where(.css-18jo2e4).ant-input-group-wrapper:not(.ant-input-compact-first-item):not(
+:where(.chat-input).ant-input-group-wrapper:not(.ant-input-compact-first-item):not(
     .ant-input-compact-last-item
   ).ant-input-compact-item
   .ant-input,
-:where(.css-18jo2e4).ant-input-group-wrapper:not(.ant-input-compact-first-item):not(
+:where(.chat-input).ant-input-group-wrapper:not(.ant-input-compact-first-item):not(
     .ant-input-compact-last-item
   ).ant-input-compact-item
   .ant-input-group-addon {
   border-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-group-wrapper:not(.ant-input-compact-last-item).ant-input-compact-first-item
-  .ant-input,
-:where(.css-18jo2e4).ant-input-group-wrapper:not(.ant-input-compact-last-item).ant-input-compact-first-item
+:where(.chat-input).ant-input-group-wrapper:not(.ant-input-compact-last-item).ant-input-compact-first-item .ant-input,
+:where(.chat-input).ant-input-group-wrapper:not(.ant-input-compact-last-item).ant-input-compact-first-item
   .ant-input-group-addon {
   border-start-end-radius: 0;
   border-end-end-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-group-wrapper:not(.ant-input-compact-first-item).ant-input-compact-last-item
-  .ant-input,
-:where(.css-18jo2e4).ant-input-group-wrapper:not(.ant-input-compact-first-item).ant-input-compact-last-item
+:where(.chat-input).ant-input-group-wrapper:not(.ant-input-compact-first-item).ant-input-compact-last-item .ant-input,
+:where(.chat-input).ant-input-group-wrapper:not(.ant-input-compact-first-item).ant-input-compact-last-item
   .ant-input-group-addon {
   border-start-start-radius: 0;
   border-end-start-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-group-wrapper:not(.ant-input-compact-last-item).ant-input-compact-item
+:where(.chat-input).ant-input-group-wrapper:not(.ant-input-compact-last-item).ant-input-compact-item
   .ant-input-affix-wrapper {
   border-start-end-radius: 0;
   border-end-end-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-search .ant-input:hover,
-:where(.css-18jo2e4).ant-input-search .ant-input:focus {
+:where(.chat-input).ant-input-search .ant-input:hover,
+:where(.chat-input).ant-input-search .ant-input:focus {
   border-color: var(--sds-color-brand-primary-hover);
 }
-:where(.css-18jo2e4).ant-input-search
+:where(.chat-input).ant-input-search
   .ant-input:hover
   + .ant-input-group-addon
   .ant-input-search-button:not(.ant-btn-primary),
-:where(.css-18jo2e4).ant-input-search
+:where(.chat-input).ant-input-search
   .ant-input:focus
   + .ant-input-group-addon
   .ant-input-search-button:not(.ant-btn-primary) {
   border-inline-start-color: var(--sds-color-brand-primary-hover);
 }
-:where(.css-18jo2e4).ant-input-search .ant-input-affix-wrapper {
+:where(.chat-input).ant-input-search .ant-input-affix-wrapper {
   border-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-search .ant-input-lg {
+:where(.chat-input).ant-input-search .ant-input-lg {
   line-height: 1.4998;
 }
-:where(.css-18jo2e4).ant-input-search > .ant-input-group > .ant-input-group-addon:last-child {
+:where(.chat-input).ant-input-search > .ant-input-group > .ant-input-group-addon:last-child {
   inset-inline-start: -1px;
   padding: 0;
   border: 0;
 }
-:where(.css-18jo2e4).ant-input-search
-  > .ant-input-group
-  > .ant-input-group-addon:last-child
-  .ant-input-search-button {
+:where(.chat-input).ant-input-search > .ant-input-group > .ant-input-group-addon:last-child .ant-input-search-button {
   margin-inline-end: -1px;
   padding-top: 0;
   padding-bottom: 0;
@@ -885,25 +865,25 @@ textarea:where(.css-18jo2e4).ant-input-affix-wrapper {
   border-end-start-radius: 0;
   box-shadow: none;
 }
-:where(.css-18jo2e4).ant-input-search
+:where(.chat-input).ant-input-search
   > .ant-input-group
   > .ant-input-group-addon:last-child
   .ant-input-search-button:not(.ant-btn-primary) {
   color: var(--sds-color-text-primary-4);
 }
-:where(.css-18jo2e4).ant-input-search
+:where(.chat-input).ant-input-search
   > .ant-input-group
   > .ant-input-group-addon:last-child
   .ant-input-search-button:not(.ant-btn-primary):hover {
   color: var(--sds-color-brand-primary-hover);
 }
-:where(.css-18jo2e4).ant-input-search
+:where(.chat-input).ant-input-search
   > .ant-input-group
   > .ant-input-group-addon:last-child
   .ant-input-search-button:not(.ant-btn-primary):active {
   color: var(--sds-color-brand-primary-click);
 }
-:where(.css-18jo2e4).ant-input-search
+:where(.chat-input).ant-input-search
   > .ant-input-group
   > .ant-input-group-addon:last-child
   .ant-input-search-button:not(.ant-btn-primary).ant-btn-loading::before {
@@ -912,95 +892,80 @@ textarea:where(.css-18jo2e4).ant-input-affix-wrapper {
   inset-block-start: 0;
   inset-block-end: 0;
 }
-:where(.css-18jo2e4).ant-input-search .ant-input-search-button {
+:where(.chat-input).ant-input-search .ant-input-search-button {
   height: 32px;
 }
-:where(.css-18jo2e4).ant-input-search .ant-input-search-button:hover,
-:where(.css-18jo2e4).ant-input-search .ant-input-search-button:focus {
+:where(.chat-input).ant-input-search .ant-input-search-button:hover,
+:where(.chat-input).ant-input-search .ant-input-search-button:focus {
   z-index: 1;
 }
-:where(.css-18jo2e4).ant-input-search-large .ant-input-search-button {
+:where(.chat-input).ant-input-search-large .ant-input-search-button {
   height: 40px;
 }
-:where(.css-18jo2e4).ant-input-search-small .ant-input-search-button {
+:where(.chat-input).ant-input-search-small .ant-input-search-button {
   height: 24px;
 }
-:where(.css-18jo2e4).ant-input-search-rtl {
+:where(.chat-input).ant-input-search-rtl {
   direction: rtl;
 }
-:where(.css-18jo2e4).ant-input-search.ant-input-compact-item:not(.ant-input-compact-last-item)
+:where(.chat-input).ant-input-search.ant-input-compact-item:not(.ant-input-compact-last-item)
   .ant-input-group-addon
   .ant-input-search-button {
   margin-inline-end: -1px;
   border-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-search.ant-input-compact-item:not(.ant-input-compact-first-item) .ant-input,
-:where(.css-18jo2e4).ant-input-search.ant-input-compact-item:not(.ant-input-compact-first-item)
+:where(.chat-input).ant-input-search.ant-input-compact-item:not(.ant-input-compact-first-item) .ant-input,
+:where(.chat-input).ant-input-search.ant-input-compact-item:not(.ant-input-compact-first-item)
   .ant-input-affix-wrapper {
   border-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-search.ant-input-compact-item
-  > .ant-input-group-addon
-  .ant-input-search-button:hover,
-:where(.css-18jo2e4).ant-input-search.ant-input-compact-item > .ant-input:hover,
-:where(.css-18jo2e4).ant-input-search.ant-input-compact-item .ant-input-affix-wrapper:hover,
-:where(.css-18jo2e4).ant-input-search.ant-input-compact-item
-  > .ant-input-group-addon
-  .ant-input-search-button:focus,
-:where(.css-18jo2e4).ant-input-search.ant-input-compact-item > .ant-input:focus,
-:where(.css-18jo2e4).ant-input-search.ant-input-compact-item .ant-input-affix-wrapper:focus,
-:where(.css-18jo2e4).ant-input-search.ant-input-compact-item
-  > .ant-input-group-addon
-  .ant-input-search-button:active,
-:where(.css-18jo2e4).ant-input-search.ant-input-compact-item > .ant-input:active,
-:where(.css-18jo2e4).ant-input-search.ant-input-compact-item .ant-input-affix-wrapper:active {
+:where(.chat-input).ant-input-search.ant-input-compact-item > .ant-input-group-addon .ant-input-search-button:hover,
+:where(.chat-input).ant-input-search.ant-input-compact-item > .ant-input:hover,
+:where(.chat-input).ant-input-search.ant-input-compact-item .ant-input-affix-wrapper:hover,
+:where(.chat-input).ant-input-search.ant-input-compact-item > .ant-input-group-addon .ant-input-search-button:focus,
+:where(.chat-input).ant-input-search.ant-input-compact-item > .ant-input:focus,
+:where(.chat-input).ant-input-search.ant-input-compact-item .ant-input-affix-wrapper:focus,
+:where(.chat-input).ant-input-search.ant-input-compact-item > .ant-input-group-addon .ant-input-search-button:active,
+:where(.chat-input).ant-input-search.ant-input-compact-item > .ant-input:active,
+:where(.chat-input).ant-input-search.ant-input-compact-item .ant-input-affix-wrapper:active {
   z-index: 2;
 }
-:where(.css-18jo2e4).ant-input-search.ant-input-compact-item > .ant-input-affix-wrapper-focused {
+:where(.chat-input).ant-input-search.ant-input-compact-item > .ant-input-affix-wrapper-focused {
   z-index: 2;
 }
-:where(.css-18jo2e4).ant-input-out-of-range,
-:where(.css-18jo2e4).ant-input-out-of-range input,
-:where(.css-18jo2e4).ant-input-out-of-range textarea,
-:where(.css-18jo2e4).ant-input-out-of-range .ant-input-show-count-suffix,
-:where(.css-18jo2e4).ant-input-out-of-range .ant-input-data-count {
+:where(.chat-input).ant-input-out-of-range,
+:where(.chat-input).ant-input-out-of-range input,
+:where(.chat-input).ant-input-out-of-range textarea,
+:where(.chat-input).ant-input-out-of-range .ant-input-show-count-suffix,
+:where(.chat-input).ant-input-out-of-range .ant-input-data-count {
   color: var(--sds-color-error-normal);
 }
-:where(.css-18jo2e4).ant-input-compact-item:not(.ant-input-compact-last-item) {
+:where(.chat-input).ant-input-compact-item:not(.ant-input-compact-last-item) {
   margin-inline-end: -1px;
 }
-:where(.css-18jo2e4).ant-input-compact-item:hover,
-:where(.css-18jo2e4).ant-input-compact-item:focus,
-:where(.css-18jo2e4).ant-input-compact-item:active {
+:where(.chat-input).ant-input-compact-item:hover,
+:where(.chat-input).ant-input-compact-item:focus,
+:where(.chat-input).ant-input-compact-item:active {
   z-index: 2;
 }
-:where(.css-18jo2e4).ant-input-compact-item[disabled] {
+:where(.chat-input).ant-input-compact-item[disabled] {
   z-index: 0;
 }
-:where(.css-18jo2e4).ant-input-compact-item:not(.ant-input-compact-first-item):not(.ant-input-compact-last-item) {
+:where(.chat-input).ant-input-compact-item:not(.ant-input-compact-first-item):not(.ant-input-compact-last-item) {
   border-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-compact-item:not(.ant-input-compact-last-item).ant-input-compact-first-item,
-:where(.css-18jo2e4).ant-input-compact-item:not(
-    .ant-input-compact-last-item
-  ).ant-input-compact-first-item.ant-input-sm,
-:where(.css-18jo2e4).ant-input-compact-item:not(
-    .ant-input-compact-last-item
-  ).ant-input-compact-first-item.ant-input-lg {
+:where(.chat-input).ant-input-compact-item:not(.ant-input-compact-last-item).ant-input-compact-first-item,
+:where(.chat-input).ant-input-compact-item:not(.ant-input-compact-last-item).ant-input-compact-first-item.ant-input-sm,
+:where(.chat-input).ant-input-compact-item:not(.ant-input-compact-last-item).ant-input-compact-first-item.ant-input-lg {
   border-start-end-radius: 0;
   border-end-end-radius: 0;
 }
-:where(.css-18jo2e4).ant-input-compact-item:not(.ant-input-compact-first-item).ant-input-compact-last-item,
-:where(.css-18jo2e4).ant-input-compact-item:not(
-    .ant-input-compact-first-item
-  ).ant-input-compact-last-item.ant-input-sm,
-:where(.css-18jo2e4).ant-input-compact-item:not(
-    .ant-input-compact-first-item
-  ).ant-input-compact-last-item.ant-input-lg {
+:where(.chat-input).ant-input-compact-item:not(.ant-input-compact-first-item).ant-input-compact-last-item,
+:where(.chat-input).ant-input-compact-item:not(.ant-input-compact-first-item).ant-input-compact-last-item.ant-input-sm,
+:where(.chat-input).ant-input-compact-item:not(.ant-input-compact-first-item).ant-input-compact-last-item.ant-input-lg {
   border-start-start-radius: 0;
   border-end-start-radius: 0;
 }
-
 
 .chat-gpt-query-model-wrapper {
   width: 1px;
