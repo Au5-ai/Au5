@@ -322,10 +322,3 @@ body {
   font-size: 12px;
   color: #666;
 }
-
-/* =========================
-  Miscellaneous
-  ========================= */
-.au5-hidden {
-  display: none !important;
-}

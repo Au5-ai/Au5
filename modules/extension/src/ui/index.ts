@@ -94,13 +94,15 @@ function setupButtonHandlers(): void {
               fullName: config?.user.fullName || "Unknown",
               pictureUrl: config?.user.pictureUrl || ""
             },
-            reactionType: reactionType} as ReactionAppliedMessage);
-        chatPanel.addReaction({
-          type: MessageTypes.ReactionApplied,
-          transcriptBlockId: blockId,
-          user: {fullName: config?.user.fullName || "Unknown", pictureUrl: config?.user.pictureUrl || ""},
-          reactionType: reactionType
-        });
+            reactionType: reactionType
+          } as ReactionAppliedMessage);
+          chatPanel.addReaction({
+            type: MessageTypes.ReactionApplied,
+            transcriptBlockId: blockId,
+            user: {fullName: config?.user.fullName || "Unknown", pictureUrl: config?.user.pictureUrl || ""},
+            reactionType: reactionType
+          });
+        }
       }
     }
   });

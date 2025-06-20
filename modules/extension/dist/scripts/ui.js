@@ -35,28 +35,28 @@ class ChatPanel {
   }
   showUserUnAuthorizedContainer() {
     this.hideAllContainers();
-    if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.remove("au5-hidden");
+    if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.remove("hidden");
   }
   showNoActiveMeetingContainer(url) {
     console.log("No active meeting for URL:", url);
     this.hideAllContainers();
-    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
+    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("hidden");
     this.setUrl(url);
   }
   showJoinMeetingContainer(url) {
     this.hideAllContainers();
-    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.remove("au5-hidden");
+    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.remove("hidden");
     this.setUrl(url);
   }
   showTranscriptionContainer(companyNameText, roomTitleText) {
     const headerElement = document.querySelector(".au5-header");
     if (!headerElement) return;
-    headerElement.classList.remove("au5-hidden");
+    headerElement.classList.remove("hidden");
     this.addHeader(companyNameText, roomTitleText);
-    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
-    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
-    if (this.activeMeetingEl) this.activeMeetingEl.classList.remove("au5-hidden");
-    if (this.footerEl) this.footerEl.classList.remove("au5-hidden");
+    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("hidden");
+    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("hidden");
+    if (this.activeMeetingEl) this.activeMeetingEl.classList.remove("hidden");
+    if (this.footerEl) this.footerEl.classList.remove("hidden");
     const editor = document.querySelector(".au5-chat-editor");
     if (editor) {
       editor.addEventListener("input", () => {
@@ -152,14 +152,14 @@ class ChatPanel {
         return;
       }
       const existingUser = reactionUsersContainer.querySelector(
-        `[data-user-id="${reaction.user.id || ""}"]`
+        `[data-user-name="${reaction.user.fullName || ""}"]`
       );
       if (existingUser) {
         reactionUsersContainer.removeChild(existingUser);
         return;
       }
       const userSpan = document.createElement("img");
-      userSpan.setAttribute("data-user-id", reaction.user.id || "");
+      userSpan.setAttribute("data-user-name", reaction.user.fullName || "");
       userSpan.className = "au5-reaction-user-avatar";
       userSpan.src = `${reaction.user.pictureUrl}`;
       userSpan.alt = `${reaction.user.fullName}'s avatar`;
@@ -223,9 +223,9 @@ class ChatPanel {
     }
   }
   hideAllContainers() {
-    if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.add("au5-hidden");
-    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
-    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
+    if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.add("hidden");
+    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("hidden");
+    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("hidden");
   }
 }
 const CONFIGURATION_KEY = "configuration";
@@ -3138,6 +3138,13 @@ class MeetingHubClient {
     });
     return true;
   }
+  async sendMessage(payload) {
+    try {
+      await this.connection.invoke(payload.type, payload);
+    } catch (err) {
+      console.error(`[SignalR] Failed to send message (${payload.type}):`, err);
+    }
+  }
 }
 const configurationManager = new ConfigurationManager();
 const chatPanel = new ChatPanel();
@@ -3195,12 +3202,24 @@ function setupButtonHandlers() {
       const reactionType = reaction.getAttribute("reaction-type");
       const blockId = reaction.getAttribute("data-blockId");
       if (reactionType && blockId) {
-        chatPanel.addReaction({
-          type: MessageTypes.ReactionApplied,
-          transcriptBlockId: blockId,
-          user: { fullName: (config == null ? void 0 : config.user.fullName) || "Unknown", pictureUrl: (config == null ? void 0 : config.user.pictureUrl) || "" },
-          reactionType
-        });
+        if (meetingHubClient) {
+          meetingHubClient.sendMessage({
+            type: MessageTypes.ReactionApplied,
+            meetingId: platform == null ? void 0 : platform.getMeetingId(),
+            transcriptBlockId: blockId,
+            user: {
+              fullName: (config == null ? void 0 : config.user.fullName) || "Unknown",
+              pictureUrl: (config == null ? void 0 : config.user.pictureUrl) || ""
+            },
+            reactionType
+          });
+          chatPanel.addReaction({
+            type: MessageTypes.ReactionApplied,
+            transcriptBlockId: blockId,
+            user: { fullName: (config == null ? void 0 : config.user.fullName) || "Unknown", pictureUrl: (config == null ? void 0 : config.user.pictureUrl) || "" },
+            reactionType
+          });
+        }
       }
     }
   });
@@ -3237,7 +3256,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupButtonHandlers();
 });
 function handleMessage(msg) {
-  console.log("Received message:", msg);
   switch (msg.type) {
     case MessageTypes.TranscriptionEntry:
       const transcriptEntry = msg;

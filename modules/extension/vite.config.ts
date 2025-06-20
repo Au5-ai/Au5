@@ -34,8 +34,7 @@ export default defineConfig({
       targets: [
         { src: "manifest.json", dest: "dist" },
         { src: "src/ui/sidepanel.html", dest: "dist/" },
-        { src: "src/ui/options.html", dest: "dist/" },
-        { src: "src/ui/styles/au5-panel.css", dest: "dist/styles/" },
+        { src: "src/ui/styles/*", dest: "dist/styles/" },
         { src: "src/assets/*", dest: "dist/assets/" },
       ],
       hook: "writeBundle",

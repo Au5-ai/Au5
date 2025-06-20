@@ -27,32 +27,32 @@ export class ChatPanel {
 
   public showUserUnAuthorizedContainer(): void {
     this.hideAllContainers();
-    if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.remove("au5-hidden");
+    if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.remove("hidden");
   }
 
   public showNoActiveMeetingContainer(url: string): void {
     console.log("No active meeting for URL:", url);
     this.hideAllContainers();
-    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("au5-hidden");
+    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("hidden");
     this.setUrl(url);
   }
 
   public showJoinMeetingContainer(url: string): void {
     this.hideAllContainers();
-    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.remove("au5-hidden");
+    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.remove("hidden");
     this.setUrl(url);
   }
 
   public showTranscriptionContainer(companyNameText: string, roomTitleText: string): void {
     const headerElement = document.querySelector(".au5-header") as HTMLElement;
     if (!headerElement) return;
-    headerElement.classList.remove("au5-hidden");
+    headerElement.classList.remove("hidden");
     this.addHeader(companyNameText, roomTitleText);
 
-    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
-    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
-    if (this.activeMeetingEl) this.activeMeetingEl.classList.remove("au5-hidden");
-    if (this.footerEl) this.footerEl.classList.remove("au5-hidden");
+    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("hidden");
+    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("hidden");
+    if (this.activeMeetingEl) this.activeMeetingEl.classList.remove("hidden");
+    if (this.footerEl) this.footerEl.classList.remove("hidden");
 
     const editor = document.querySelector(".au5-chat-editor");
     if (editor) {
@@ -251,8 +251,8 @@ export class ChatPanel {
   }
 
   private hideAllContainers(): void {
-    if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.add("au5-hidden");
-    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("au5-hidden");
-    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("au5-hidden");
+    if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.add("hidden");
+    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("hidden");
+    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("hidden");
   }
 }
