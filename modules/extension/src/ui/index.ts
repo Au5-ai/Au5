@@ -68,6 +68,9 @@ function setupButtonHandlers(): void {
   const optionsButton = document.getElementById("au5-btn-options") as HTMLButtonElement | null;
   const themeToggle = document.getElementById("au5-theme-toggle");
 
+  const github = document.getElementById("github-link");
+  const discord = document.getElementById("discord-link");
+
   joinButton?.addEventListener("click", handleJoinMeetingClick);
   reloadButton?.addEventListener("click", handleReloadMeetingClick);
 
@@ -119,6 +122,13 @@ function setupButtonHandlers(): void {
 
   optionsButton?.addEventListener("click", () => {
     window.open("options.html", "_blank");
+  });
+
+  github?.addEventListener("click", () => {
+    window.open("https://github.com/Au5-ai/Au5", "_blank");
+  });
+  discord?.addEventListener("click", () => {
+    window.open("https://discord.com/channels/1385091638422016101", "_blank");
   });
 }
 
