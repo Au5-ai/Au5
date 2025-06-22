@@ -16,7 +16,7 @@ const configurationManager = new ConfigurationManager();
 const chatPanel = new ChatPanel();
 let meetingHubClient: MeetingHubClient;
 let platform: IMeetingPlatform | null = null;
-let config: AppConfiguration | null = null;
+let config: AppConfiguration;
 
 /**
  * Gets the current URL from the browser tab or window.
@@ -41,11 +41,12 @@ async function initializeChatPanel(): Promise<void> {
   platform = new MeetingPlatformFactory(url).getPlatform();
 
   try {
-    config = await configurationManager.getConfig();
-    if (config == null || config == undefined) {
+    const local_config = await configurationManager.getConfig();
+    if (local_config == null || local_config == undefined) {
       chatPanel.showUserUnAuthorizedContainer();
       return;
     }
+    config = local_config;
   } catch (error) {
     chatPanel.showUserUnAuthorizedContainer();
     return;
@@ -67,7 +68,7 @@ function setupButtonHandlers(): void {
   const reloadButton = document.getElementById("au5-btn-reload") as HTMLButtonElement | null;
   const optionsButton = document.getElementById("au5-btn-options") as HTMLButtonElement | null;
   const themeToggle = document.getElementById("au5-theme-toggle");
-
+  const messageSendButton = document.getElementById("au5-btn-sendMessage") as HTMLButtonElement | null;
   const github = document.getElementById("github-link");
   const discord = document.getElementById("discord-link");
 
@@ -87,15 +88,15 @@ function setupButtonHandlers(): void {
             meetingId: platform?.getMeetingId(),
             transcriptBlockId: blockId,
             user: {
-              fullName: config?.user.fullName || "Unknown",
-              pictureUrl: config?.user.pictureUrl || ""
+              fullName: config.user.fullName,
+              pictureUrl: config.user.pictureUrl
             },
             reactionType: reactionType
           } as ReactionAppliedMessage);
           chatPanel.addReaction({
             type: MessageTypes.ReactionApplied,
             transcriptBlockId: blockId,
-            user: {fullName: config?.user.fullName || "Unknown", pictureUrl: config?.user.pictureUrl || ""},
+            user: {fullName: config.user.fullName, pictureUrl: config.user.pictureUrl},
             reactionType: reactionType
           });
         }
@@ -127,11 +128,70 @@ function setupButtonHandlers(): void {
   github?.addEventListener("click", () => {
     window.open("https://github.com/Au5-ai/Au5", "_blank");
   });
+
   discord?.addEventListener("click", () => {
     window.open("https://discord.com/channels/1385091638422016101", "_blank");
   });
+
+  messageSendButton?.addEventListener("click", () => {
+    const messageInput = document.getElementById("au5-input-message") as HTMLInputElement | null;
+    if (messageInput && messageInput.value.trim() !== "") {
+      if (meetingHubClient) {
+        const message = {
+          type: MessageTypes.TranscriptionEntry,
+          meetingId: platform?.getMeetingId(),
+          transcriptBlockId: crypto.randomUUID(),
+          speaker: {fullName: config.user.fullName, pictureUrl: config.user.pictureUrl},
+          transcript: messageInput.value.trim(),
+          timestamp: new Date()
+        } as TranscriptionEntryMessage;
+
+        meetingHubClient.sendMessage(message);
+
+        chatPanel.addTranscription({
+          meetingId: message.meetingId,
+          transcriptBlockId: message.transcriptBlockId,
+          speaker: message.speaker,
+          transcript: message.transcript,
+          timestamp: message.timestamp
+        });
+        messageInput.value = "";
+      }
+    }
+  });
 }
 
+function setupTooltips(): void {
+  const tooltips = document.querySelectorAll("[data-tooltip]");
+  tooltips.forEach(tooltip => {
+    const tooltipText = tooltip.getAttribute("data-tooltip");
+    if (tooltipText) {
+      tooltip.addEventListener("mouseenter", () => {
+        const tooltipEl = document.createElement("div");
+        tooltipEl.className = "au5-tooltip";
+        tooltipEl.innerText = tooltipText;
+        document.body.appendChild(tooltipEl);
+
+        const rect = tooltip.getBoundingClientRect();
+        tooltipEl.style.left = `${rect.left + window.scrollX}px`;
+        tooltipEl.style.top = `${rect.top + window.scrollY - tooltipEl.offsetHeight - 8}px`;
+
+        requestAnimationFrame(() => {
+          tooltipEl.style.left = `${rect.left + window.scrollX}px`;
+          tooltipEl.style.top = `${rect.top + window.scrollY - tooltipEl.offsetHeight - 8}px`;
+        });
+
+        tooltip.addEventListener(
+          "mouseleave",
+          () => {
+            document.body.removeChild(tooltipEl);
+          },
+          {once: true}
+        );
+      });
+    }
+  });
+}
 /**
  * Handles click event for join button.
  */
@@ -178,6 +238,7 @@ async function handleReloadMeetingClick(): Promise<void> {
 document.addEventListener("DOMContentLoaded", async () => {
   await initializeChatPanel();
   setupButtonHandlers();
+  setupTooltips();
 });
 
 function handleMessage(msg: IMessage): void {

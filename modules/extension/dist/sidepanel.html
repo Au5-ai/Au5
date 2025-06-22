@@ -85,7 +85,7 @@
                                         <div class="px-[10px] pe-[2px] mt-1 pt-[6px] pb-[2px] flex flex-col gap-1">
                                           <div class="relative">
                                             <textarea
-                                              id="chat-input"
+                                              id="au5-input-message"
                                               dir="auto"
                                               placeholder="Type your message here..."
                                               class="ant-input chat-input ant-input-borderless custom-scrollbar"
@@ -95,6 +95,7 @@
                                             <div class="ms-auto">
                                               <span class="btn-wrapper"
                                                 ><div
+                                                  id="au5-btn-sendMessage"
                                                   role="button"
                                                   class="send-btn relative right-[-2px] size-[30px] rounded-lg transition-colors text-base flex-center bg-transparent hover:bg-grey-fill1-hover cursor-pointer text-text-primary-1"
                                                 >
@@ -151,6 +152,7 @@
                                   <div id="feedbackIcons" class="flex items-center gap-[2px]">
                                     <div
                                       id="feedback"
+                                      data-tooltip="Request a feature"
                                       class="sidebar-footer-link hover:bg-[--gpts-bg-darken3] rounded-lg text-text-primary-4 cursor-pointer flex justify-center items-center w-[24px] h-[24px]"
                                     >
                                       <div class="w-full h-full flex-center">
@@ -172,6 +174,7 @@
                                     </div>
                                     <div
                                       id="discord-link"
+                                      data-tooltip="Join us"
                                       class="sidebar-footer-link hover:bg-[--gpts-bg-darken3] rounded-lg text-text-primary-4 cursor-pointer flex justify-center items-center w-[24px] h-[24px]"
                                     >
                                       <div class="w-full h-full flex-center">
@@ -191,6 +194,7 @@
                                     </div>
                                     <div
                                       id="github-link"
+                                      data-tooltip="Source code"
                                       class="sidebar-footer-link hover:bg-[--gpts-bg-darken3] rounded-lg text-text-primary-4 cursor-pointer flex justify-center items-center w-[24px] h-[24px]"
                                     >
                                       <div class="w-full h-full flex-center">
