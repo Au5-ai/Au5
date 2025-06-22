@@ -290,6 +290,8 @@ function setupButtonHandlers() {
   const reloadButton = document.getElementById("au5-btn-reload");
   const optionsButton = document.getElementById("au5-btn-options");
   const themeToggle = document.getElementById("au5-theme-toggle");
+  const github = document.getElementById("github-link");
+  const discord = document.getElementById("discord-link");
   joinButton == null ? void 0 : joinButton.addEventListener("click", handleJoinMeetingClick);
   reloadButton == null ? void 0 : reloadButton.addEventListener("click", handleReloadMeetingClick);
   document.addEventListener("click", (event) => {
@@ -318,6 +320,12 @@ function setupButtonHandlers() {
   }
   optionsButton == null ? void 0 : optionsButton.addEventListener("click", () => {
     window.open("options.html", "_blank");
+  });
+  github == null ? void 0 : github.addEventListener("click", () => {
+    window.open("https://github.com/Au5-ai/Au5", "_blank");
+  });
+  discord == null ? void 0 : discord.addEventListener("click", () => {
+    window.open("https://discord.com/channels/1385091638422016101", "_blank");
   });
 }
 async function handleJoinMeetingClick() {

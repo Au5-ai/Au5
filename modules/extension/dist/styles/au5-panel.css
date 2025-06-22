@@ -180,7 +180,7 @@ body {
 }
 
 .au5-message-bubble {
-  background: #fff;
+  background: #f6f6f8;
   border-radius: 12px;
   padding: 8px;
   gap: 12px;
@@ -206,7 +206,7 @@ body {
 }
 
 .au5-message-text {
-  font-size: 13px;
+  font-size: 12.5px;
   direction: rtl;
 }
 
