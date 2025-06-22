@@ -180,7 +180,7 @@ body {
 }
 
 .au5-message-bubble {
-  background: #f6f6f8;
+  background: var(--sds-color-grey-fill2-normal, rgba(114, 118, 139, 0.06));
   border-radius: 12px;
   padding: 8px;
   gap: 12px;
@@ -226,7 +226,7 @@ body {
   gap: 4px;
   border-radius: 100px;
   cursor: pointer;
-  background-color: #eaeaea;
+  background-color: var(--sds-color-grey-fill2-normal, rgba(114, 118, 139, 0.06));
   align-items: center;
   height: 20px;
   padding: 2px;

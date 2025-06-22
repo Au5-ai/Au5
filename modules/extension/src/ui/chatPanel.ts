@@ -41,12 +41,7 @@ export class ChatPanel {
     this.setUrl(url);
   }
 
-  public showTranscriptionContainer(companyNameText: string, roomTitleText: string): void {
-    const headerElement = document.querySelector(".au5-header") as HTMLElement;
-    if (!headerElement) return;
-    headerElement.classList.remove("hidden");
-    this.addHeader(companyNameText, roomTitleText);
-
+  public showTranscriptionContainer(): void {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("hidden");
     if (this.activeMeetingEl) this.activeMeetingEl.classList.remove("hidden");
@@ -206,36 +201,6 @@ export class ChatPanel {
     )}`;
     this.transcriptionsContainerEl.appendChild(usersJoined);
     this.scrollToBottom();
-  }
-
-  private addHeader(companyNameText: string, roomTitleText: string): void {
-    const headerElement = document.querySelector(".au5-header") as HTMLElement;
-    if (!headerElement) return;
-
-    const headerLeft = document.createElement("div");
-    headerLeft.className = "au5-header-left";
-
-    const companyAvatar = document.createElement("div");
-    companyAvatar.className = "au5-header-avatar";
-    companyAvatar.textContent = "A";
-
-    const infoContainer = document.createElement("div");
-    infoContainer.className = "au5-header-info";
-    const companyName = document.createElement("div");
-    companyName.className = "au5-header-title";
-    companyName.textContent = companyNameText;
-
-    const roomTitle = document.createElement("div");
-    roomTitle.className = "au5-header-subtitle";
-    roomTitle.textContent = roomTitleText;
-
-    infoContainer.appendChild(companyName);
-    infoContainer.appendChild(roomTitle);
-
-    headerLeft.appendChild(companyAvatar);
-    headerLeft.appendChild(infoContainer);
-
-    headerElement.appendChild(headerLeft);
   }
 
   private scrollToBottom(): void {

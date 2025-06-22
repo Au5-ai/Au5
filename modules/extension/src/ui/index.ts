@@ -146,8 +146,7 @@ async function handleJoinMeetingClick(): Promise<void> {
     return;
   }
 
-  const meetingId = platform.getMeetingId();
-  chatPanel.showTranscriptionContainer(config.service.companyName, meetingId);
+  chatPanel.showTranscriptionContainer();
 
   // Initialize the meeting hub client
   meetingHubClient = new MeetingHubClient(config, platform.getMeetingId());
@@ -177,7 +176,7 @@ async function handleReloadMeetingClick(): Promise<void> {
  * Initialize everything on DOM ready.
  */
 document.addEventListener("DOMContentLoaded", async () => {
-  // await initializeChatPanel();
+  await initializeChatPanel();
   setupButtonHandlers();
 });
 
