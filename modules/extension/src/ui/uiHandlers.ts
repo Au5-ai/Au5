@@ -30,7 +30,6 @@ export class UIHandlers {
       .handleGithubLink()
       .handleDiscordLink()
       .handleMessageSend()
-      .handleEditorInput()
       .handleTooltips();
   }
 
@@ -168,18 +167,6 @@ export class UIHandlers {
         this.meetingHubClient?.sendMessage(message);
         this.chatPanel.addTranscription(message);
         input.value = "";
-      }
-    });
-    return this;
-  }
-
-  private handleEditorInput(): this {
-    const editor = document.getElementById("au5-input-message") as HTMLDivElement | null;
-    const sendButton = document.getElementById("au5-btn-sendMessage");
-    editor?.addEventListener("input", () => {
-      const value = (editor as HTMLInputElement).value || editor.textContent || "";
-      if (sendButton) {
-        sendButton.classList.toggle("hidden", value.trim().length <= 1);
       }
     });
     return this;

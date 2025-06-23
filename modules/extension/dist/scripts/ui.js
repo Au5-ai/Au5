@@ -3139,7 +3139,7 @@ class UIHandlers {
     this.chatPanel = chatPanel2;
   }
   init() {
-    return this.handleJoin().handleReload().handleReactions().handleThemeToggle().handleOptions().handleGithubLink().handleDiscordLink().handleMessageSend().handleEditorInput().handleTooltips();
+    return this.handleJoin().handleReload().handleReactions().handleThemeToggle().handleOptions().handleGithubLink().handleDiscordLink().handleMessageSend().handleTooltips();
   }
   handleJoin() {
     const btn = document.getElementById("au5-btn-joinMeeting");
@@ -3255,17 +3255,6 @@ class UIHandlers {
         (_b = this.meetingHubClient) == null ? void 0 : _b.sendMessage(message);
         this.chatPanel.addTranscription(message);
         input.value = "";
-      }
-    });
-    return this;
-  }
-  handleEditorInput() {
-    const editor = document.getElementById("au5-input-message");
-    const sendButton = document.getElementById("au5-btn-sendMessage");
-    editor == null ? void 0 : editor.addEventListener("input", () => {
-      const value = editor.value || editor.textContent || "";
-      if (sendButton) {
-        sendButton.classList.toggle("hidden", value.trim().length <= 1);
       }
     });
     return this;
