@@ -1,6 +1,6 @@
 import {ReactionAppliedMessage, TranscriptionEntry, User, UserJoinedInMeetingMessage} from "../core/types";
 import {DateTime} from "../core/utils/datetime";
-
+const DEFAULT_AVATAR_URL = "assets/icons/default-avatar.jpg";
 export class ChatPanel {
   private unauthorizedContainerEl: HTMLElement | null;
   private noActiveMeetingEl: HTMLElement | null;
@@ -77,7 +77,7 @@ export class ChatPanel {
     <div class="au5-message-avatar">
       <img
         class="au5-avatar-image"
-        src="${entry.speaker.pictureUrl || "assets/icons/default-avatar.jpg"}"
+        src="${entry.speaker.pictureUrl || DEFAULT_AVATAR_URL}"
         alt="Sender Avatar"
       />
     </div>
