@@ -164,7 +164,7 @@ class ChatPanel {
       if (el) {
         let displayUrl = url;
         if (url.length > 35) {
-          displayUrl = url.slice(0, 35) + " (...)";
+          displayUrl = url.slice(0, 36) + "(*)";
         }
         el.innerHTML = displayUrl;
       }

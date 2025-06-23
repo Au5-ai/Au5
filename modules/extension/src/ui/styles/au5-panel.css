@@ -147,15 +147,25 @@ body {
 }
 
 .au5-url-invalid {
-  border: 1.5px solid #ea1b1b;
+  border: 1.5px solid #ff1c1c;
   padding: 8px 12px;
   border-radius: 22px;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  font-size: 13px;
+  font-weight: bold;
 }
 
 .au5-url-valid {
-  border: 1.5px solid #3eb46e;
+  border: 1.5px solid #00a344;
   padding: 8px 12px;
   border-radius: 22px;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  font-size: 13px;
+  font-weight: bold;
 }
 
 .au5-transcriptions-container {
