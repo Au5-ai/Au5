@@ -208,10 +208,10 @@ class ConfigurationManager {
     try {
       return await new Promise((resolve, reject) => {
         chrome.storage.local.get(CONFIGURATION_KEY, (result) => {
-          const config2 = result[CONFIGURATION_KEY];
-          if (config2) {
-            console.log("Configuration retrieved:", JSON.parse(config2));
-            resolve(JSON.parse(config2));
+          const config = result[CONFIGURATION_KEY];
+          if (config) {
+            console.log("Configuration retrieved:", JSON.parse(config));
+            resolve(JSON.parse(config));
           } else {
             resolve(null);
           }
@@ -275,6 +275,17 @@ class MeetingPlatformFactory {
         return null;
     }
   }
+}
+async function getCurrentUrl() {
+  if (typeof chrome !== "undefined" && chrome.tabs) {
+    return new Promise((resolve) => {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        var _a;
+        resolve(((_a = tabs[0]) == null ? void 0 : _a.url) || window.location.href);
+      });
+    });
+  }
+  return window.location.href;
 }
 class HttpError extends Error {
   /** Constructs a new instance of {@link @microsoft/signalr.HttpError}.
@@ -3074,11 +3085,11 @@ function isLogger(logger) {
   return logger.log !== void 0;
 }
 class MeetingHubClient {
-  constructor(config2, meetingId) {
+  constructor(config, meetingId) {
     __publicField(this, "connection");
     __publicField(this, "meetingId");
     __publicField(this, "config");
-    this.config = config2;
+    this.config = config;
     this.meetingId = meetingId;
     this.connection = new HubConnectionBuilder().withUrl(this.config.service.hubUrl).withAutomaticReconnect().build();
   }
@@ -3117,221 +3128,216 @@ class MeetingHubClient {
     }
   }
 }
-const configurationManager = new ConfigurationManager();
-const chatPanel = new ChatPanel();
-let meetingHubClient;
-let platform = null;
-let config;
-async function getCurrentUrl() {
-  if (typeof chrome !== "undefined" && chrome.tabs) {
-    return new Promise((resolve) => {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        var _a;
-        resolve(((_a = tabs[0]) == null ? void 0 : _a.url) || window.location.href);
-      });
+class UIHandlers {
+  constructor(config, platform2, chatPanel2) {
+    __publicField(this, "meetingHubClient", null);
+    __publicField(this, "config");
+    __publicField(this, "platform");
+    __publicField(this, "chatPanel");
+    this.config = config;
+    this.platform = platform2;
+    this.chatPanel = chatPanel2;
+  }
+  init() {
+    return this.handleJoin().handleReload().handleReactions().handleThemeToggle().handleOptions().handleGithubLink().handleDiscordLink().handleMessageSend().handleEditorInput().handleTooltips();
+  }
+  handleJoin() {
+    const btn = document.getElementById("au5-btn-joinMeeting");
+    btn == null ? void 0 : btn.addEventListener("click", async () => {
+      if (!this.config) return;
+      const url = await getCurrentUrl();
+      this.platform = new MeetingPlatformFactory(url).getPlatform();
+      if (!this.platform) {
+        this.chatPanel.showNoActiveMeetingContainer(url);
+        return;
+      }
+      this.chatPanel.showTranscriptionContainer();
+      this.meetingHubClient = new MeetingHubClient(this.config, this.platform.getMeetingId());
+      const isConnected = this.meetingHubClient.startConnection(this.handleMessage);
+      if (!isConnected) {
+        console.error("Failed to connect to the meeting hub.");
+        return;
+      }
     });
+    return this;
   }
-  return window.location.href;
-}
-async function initializeChatPanel() {
-  const url = await getCurrentUrl();
-  platform = new MeetingPlatformFactory(url).getPlatform();
-  try {
-    const local_config = await configurationManager.getConfig();
-    if (local_config == null || local_config == void 0) {
-      chatPanel.showUserUnAuthorizedContainer();
-      return;
-    }
-    config = local_config;
-  } catch (error) {
-    chatPanel.showUserUnAuthorizedContainer();
-    return;
+  handleReload() {
+    const btn = document.getElementById("au5-btn-reload");
+    btn == null ? void 0 : btn.addEventListener("click", async () => {
+      const url = await getCurrentUrl();
+      this.platform = new MeetingPlatformFactory(url).getPlatform();
+      if (!this.platform) {
+        this.chatPanel.showNoActiveMeetingContainer(url);
+      } else {
+        this.chatPanel.showJoinMeetingContainer(url);
+      }
+    });
+    return this;
   }
-  chatPanel.setDirection(config.service.direction);
-  if (!platform) {
-    chatPanel.showNoActiveMeetingContainer(url);
-  } else {
-    chatPanel.showJoinMeetingContainer(url);
-  }
-}
-function setupButtonHandlers() {
-  const joinButton = document.getElementById("au5-btn-joinMeeting");
-  const reloadButton = document.getElementById("au5-btn-reload");
-  const optionsButton = document.getElementById("au5-btn-options");
-  const themeToggle = document.getElementById("au5-theme-toggle");
-  const messageSendButton = document.getElementById("au5-btn-sendMessage");
-  const github = document.getElementById("github-link");
-  const discord = document.getElementById("discord-link");
-  joinButton == null ? void 0 : joinButton.addEventListener("click", handleJoinMeetingClick);
-  reloadButton == null ? void 0 : reloadButton.addEventListener("click", handleReloadMeetingClick);
-  document.addEventListener("click", (event) => {
-    const target = event.target;
-    const reaction = target.closest(".au5-reaction");
-    if (reaction) {
-      const reactionType = reaction.getAttribute("reaction-type");
-      const blockId = reaction.getAttribute("data-blockId");
-      if (reactionType && blockId) {
-        if (meetingHubClient) {
-          meetingHubClient.sendMessage({
+  handleReactions() {
+    document.addEventListener("click", (event) => {
+      var _a, _b;
+      const target = event.target;
+      const reaction = target.closest(".au5-reaction");
+      if (reaction) {
+        const type = reaction.getAttribute("reaction-type");
+        const blockId = reaction.getAttribute("data-blockId");
+        if (type && blockId) {
+          (_b = this.meetingHubClient) == null ? void 0 : _b.sendMessage({
             type: MessageTypes.ReactionApplied,
-            meetingId: platform == null ? void 0 : platform.getMeetingId(),
+            meetingId: (_a = this.platform) == null ? void 0 : _a.getMeetingId(),
             transcriptBlockId: blockId,
             user: {
-              fullName: config.user.fullName,
-              pictureUrl: config.user.pictureUrl
+              fullName: this.config.user.fullName,
+              pictureUrl: this.config.user.pictureUrl
             },
-            reactionType
+            reactionType: type
           });
-          chatPanel.addReaction({
+          this.chatPanel.addReaction({
             type: MessageTypes.ReactionApplied,
             transcriptBlockId: blockId,
-            user: { fullName: config.user.fullName, pictureUrl: config.user.pictureUrl },
-            reactionType
+            user: {
+              fullName: this.config.user.fullName,
+              pictureUrl: this.config.user.pictureUrl
+            },
+            reactionType: type
           });
         }
       }
-    }
-  });
-  if (themeToggle) {
-    themeToggle.addEventListener("click", () => {
+    });
+    return this;
+  }
+  handleThemeToggle() {
+    const toggle = document.getElementById("au5-theme-toggle");
+    toggle == null ? void 0 : toggle.addEventListener("click", () => {
+      var _a, _b;
       const html = document.documentElement;
       const currentTheme = html.getAttribute("data-gpts-theme");
-      html.setAttribute("data-gpts-theme", currentTheme === "light" ? "dark" : "light");
-      const darkSvg = document.getElementById("darkmode");
-      const lightSvg = document.getElementById("lightmode");
-      if (currentTheme === "light") {
-        darkSvg == null ? void 0 : darkSvg.setAttribute("style", "display: inline;");
-        lightSvg == null ? void 0 : lightSvg.setAttribute("style", "display: none;");
-      } else {
-        darkSvg == null ? void 0 : darkSvg.setAttribute("style", "display: none;");
-        lightSvg == null ? void 0 : lightSvg.setAttribute("style", "display: inline;");
-      }
+      const nextTheme = currentTheme === "light" ? "dark" : "light";
+      html.setAttribute("data-gpts-theme", nextTheme);
+      (_a = document.getElementById("darkmode")) == null ? void 0 : _a.setAttribute("style", `display: ${nextTheme === "dark" ? "inline" : "none"};`);
+      (_b = document.getElementById("lightmode")) == null ? void 0 : _b.setAttribute("style", `display: ${nextTheme === "light" ? "inline" : "none"};`);
     });
+    return this;
   }
-  optionsButton == null ? void 0 : optionsButton.addEventListener("click", () => {
-    window.open("options.html", "_blank");
-  });
-  github == null ? void 0 : github.addEventListener("click", () => {
-    window.open("https://github.com/Au5-ai/Au5", "_blank");
-  });
-  discord == null ? void 0 : discord.addEventListener("click", () => {
-    window.open("https://discord.com/channels/1385091638422016101", "_blank");
-  });
-  messageSendButton == null ? void 0 : messageSendButton.addEventListener("click", () => {
-    const messageInput = document.getElementById("au5-input-message");
-    if (messageInput && messageInput.value.trim() !== "") {
-      if (meetingHubClient) {
+  handleOptions() {
+    const btn = document.getElementById("au5-btn-options");
+    btn == null ? void 0 : btn.addEventListener("click", () => window.open("options.html", "_blank"));
+    return this;
+  }
+  handleGithubLink() {
+    const btn = document.getElementById("github-link");
+    btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://github.com/Au5-ai/Au5", "_blank"));
+    return this;
+  }
+  handleDiscordLink() {
+    const btn = document.getElementById("discord-link");
+    btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://discord.com/channels/1385091638422016101", "_blank"));
+    return this;
+  }
+  handleMessageSend() {
+    const btn = document.getElementById("au5-btn-sendMessage");
+    const input = document.getElementById("au5-input-message");
+    btn == null ? void 0 : btn.addEventListener("click", () => {
+      var _a, _b;
+      if (input && input.value.trim()) {
         const message = {
-          type: MessageTypes.TranscriptionEntry,
-          meetingId: platform == null ? void 0 : platform.getMeetingId(),
+          type: "TranscriptionEntry",
+          meetingId: (_a = this.platform) == null ? void 0 : _a.getMeetingId(),
           transcriptBlockId: crypto.randomUUID(),
-          speaker: { fullName: config.user.fullName, pictureUrl: config.user.pictureUrl },
-          transcript: messageInput.value.trim(),
+          speaker: {
+            fullName: this.config.user.fullName,
+            pictureUrl: this.config.user.pictureUrl
+          },
+          transcript: input.value.trim(),
           timestamp: /* @__PURE__ */ new Date()
         };
-        meetingHubClient.sendMessage(message);
-        chatPanel.addTranscription({
-          meetingId: message.meetingId,
-          transcriptBlockId: message.transcriptBlockId,
-          speaker: message.speaker,
-          transcript: message.transcript,
-          timestamp: message.timestamp
-        });
-        messageInput.value = "";
+        (_b = this.meetingHubClient) == null ? void 0 : _b.sendMessage(message);
+        this.chatPanel.addTranscription(message);
+        input.value = "";
       }
-    }
-  });
-}
-function setupTooltips() {
-  const tooltips = document.querySelectorAll("[data-tooltip]");
-  tooltips.forEach((tooltip) => {
-    const tooltipText = tooltip.getAttribute("data-tooltip");
-    if (tooltipText) {
-      tooltip.addEventListener("mouseenter", () => {
-        const tooltipEl = document.createElement("div");
-        tooltipEl.className = "au5-tooltip";
-        tooltipEl.innerText = tooltipText;
-        document.body.appendChild(tooltipEl);
-        const rect = tooltip.getBoundingClientRect();
-        tooltipEl.style.left = `${rect.left + window.scrollX}px`;
-        tooltipEl.style.top = `${rect.top + window.scrollY - tooltipEl.offsetHeight - 8}px`;
-        requestAnimationFrame(() => {
+    });
+    return this;
+  }
+  handleEditorInput() {
+    const editor = document.getElementById("au5-input-message");
+    const sendButton = document.getElementById("au5-btn-sendMessage");
+    editor == null ? void 0 : editor.addEventListener("input", () => {
+      const value = editor.value || editor.textContent || "";
+      if (sendButton) {
+        sendButton.classList.toggle("hidden", value.trim().length <= 1);
+      }
+    });
+    return this;
+  }
+  handleTooltips() {
+    const tooltips = document.querySelectorAll("[data-tooltip]");
+    tooltips.forEach((tooltip) => {
+      const tooltipText = tooltip.getAttribute("data-tooltip");
+      if (tooltipText) {
+        tooltip.addEventListener("mouseenter", () => {
+          const tooltipEl = document.createElement("div");
+          tooltipEl.className = "au5-tooltip";
+          tooltipEl.innerText = tooltipText;
+          document.body.appendChild(tooltipEl);
+          const rect = tooltip.getBoundingClientRect();
           tooltipEl.style.left = `${rect.left + window.scrollX}px`;
           tooltipEl.style.top = `${rect.top + window.scrollY - tooltipEl.offsetHeight - 8}px`;
+          requestAnimationFrame(() => {
+            tooltipEl.style.left = `${rect.left + window.scrollX}px`;
+            tooltipEl.style.top = `${rect.top + window.scrollY - tooltipEl.offsetHeight - 8}px`;
+          });
+          tooltip.addEventListener(
+            "mouseleave",
+            () => {
+              document.body.removeChild(tooltipEl);
+            },
+            { once: true }
+          );
         });
-        tooltip.addEventListener(
-          "mouseleave",
-          () => {
-            document.body.removeChild(tooltipEl);
-          },
-          { once: true }
-        );
-      });
-    }
-  });
-}
-async function handleJoinMeetingClick() {
-  if (!config || !platform) return;
-  const url = await getCurrentUrl();
-  platform = new MeetingPlatformFactory(url).getPlatform();
-  if (!platform) {
-    chatPanel.showNoActiveMeetingContainer(url);
-    return;
-  }
-  chatPanel.showTranscriptionContainer();
-  meetingHubClient = new MeetingHubClient(config, platform.getMeetingId());
-  const isConnected = meetingHubClient.startConnection(handleMessage);
-  if (!isConnected) {
-    console.error("Failed to connect to the meeting hub.");
-    return;
-  }
-}
-async function handleReloadMeetingClick() {
-  const url = await getCurrentUrl();
-  platform = new MeetingPlatformFactory(url).getPlatform();
-  if (!platform) {
-    chatPanel.showNoActiveMeetingContainer(url);
-  } else {
-    chatPanel.showJoinMeetingContainer(url);
-  }
-}
-document.addEventListener("DOMContentLoaded", async () => {
-  await initializeChatPanel();
-  setupButtonHandlers();
-  setupTooltips();
-});
-function handleMessage(msg) {
-  switch (msg.type) {
-    case MessageTypes.TranscriptionEntry:
-      const transcriptEntry = msg;
-      chatPanel.addTranscription({
-        meetingId: transcriptEntry.meetingId,
-        transcriptBlockId: transcriptEntry.transcriptBlockId,
-        speaker: transcriptEntry.speaker,
-        transcript: transcriptEntry.transcript,
-        timestamp: transcriptEntry.timestamp
-      });
-      break;
-    case MessageTypes.NotifyUserJoining:
-      const userJoinedMsg = msg;
-      if (!userJoinedMsg.user) {
-        return;
       }
-      chatPanel.usersJoined({
-        type: MessageTypes.NotifyUserJoining,
-        user: {
-          id: userJoinedMsg.user.id,
-          fullName: userJoinedMsg.user.fullName,
-          pictureUrl: userJoinedMsg.user.pictureUrl
+    });
+    return this;
+  }
+  handleMessage(msg) {
+    switch (msg.type) {
+      case MessageTypes.TranscriptionEntry:
+        const transcriptEntry = msg;
+        this.chatPanel.addTranscription({
+          meetingId: transcriptEntry.meetingId,
+          transcriptBlockId: transcriptEntry.transcriptBlockId,
+          speaker: transcriptEntry.speaker,
+          transcript: transcriptEntry.transcript,
+          timestamp: transcriptEntry.timestamp
+        });
+        break;
+      case MessageTypes.NotifyUserJoining:
+        const userJoinedMsg = msg;
+        if (!userJoinedMsg.user) {
+          return;
         }
-      });
-      break;
-    case MessageTypes.ReactionApplied:
-      const reactionMsg = msg;
-      if (!reactionMsg.meetingId || !reactionMsg.transcriptBlockId || !reactionMsg.user || !reactionMsg.reactionType) {
-        return;
-      }
-      chatPanel.addReaction(reactionMsg);
-      break;
+        this.chatPanel.usersJoined({
+          type: MessageTypes.NotifyUserJoining,
+          user: {
+            id: userJoinedMsg.user.id,
+            fullName: userJoinedMsg.user.fullName,
+            pictureUrl: userJoinedMsg.user.pictureUrl
+          }
+        });
+        break;
+      case MessageTypes.ReactionApplied:
+        const reactionMsg = msg;
+        if (!reactionMsg.meetingId || !reactionMsg.transcriptBlockId || !reactionMsg.user || !reactionMsg.reactionType) {
+          return;
+        }
+        this.chatPanel.addReaction(reactionMsg);
+        break;
+    }
   }
 }
+const configurationManager = new ConfigurationManager();
+const chatPanel = new ChatPanel();
+let platform = null;
+document.addEventListener("DOMContentLoaded", async () => {
+  new UIHandlers(configurationManager.getConfig(), platform, chatPanel).init();
+});
