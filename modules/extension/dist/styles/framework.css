@@ -10912,6 +10912,11 @@ html[data-gpts-theme="dark"] .thinking-markdown .markdown-body ::-webkit-calenda
   border-radius: 50%;
   border: none;
 }
+
+.chat-input-box .bottom-area .btn-wrapper .send-btn:hover{
+  background: #0b57d0;
+}
+
 .chat-input-box .file-quick-action-btn {
   background-color: var(--gpts-sidebar-image-action-btn-bg-color);
   transition: background ease 0.2s;

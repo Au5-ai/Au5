@@ -150,10 +150,12 @@ export class UIHandlers {
   private handleMessageSend(): this {
     const btn = document.getElementById("au5-btn-sendMessage") as HTMLButtonElement | null;
     const input = document.getElementById("au5-input-message") as HTMLInputElement | null;
+    console.log("Button and input elements:", btn, input);
     btn?.addEventListener("click", () => {
+      console.log("Send message button clicked");
       if (input && input.value.trim()) {
         const message = {
-          type: "TranscriptionEntry",
+          type: MessageTypes.TranscriptionEntry,
           meetingId: this.platform?.getMeetingId(),
           transcriptBlockId: crypto.randomUUID(),
           speaker: {
@@ -163,7 +165,7 @@ export class UIHandlers {
           transcript: input.value.trim(),
           timestamp: new Date()
         };
-
+        console.log("Sending message:", message);
         this.meetingHubClient?.sendMessage(message);
         this.chatPanel.addTranscription(message);
         input.value = "";

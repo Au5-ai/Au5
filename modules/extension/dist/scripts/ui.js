@@ -167,7 +167,6 @@ class ChatPanel {
           displayUrl = url.slice(0, 35) + " (...)";
         }
         el.innerHTML = displayUrl;
-        console.log("No active meeting for URL:", displayUrl);
       }
     });
   }
@@ -3235,11 +3234,13 @@ class UIHandlers {
   handleMessageSend() {
     const btn = document.getElementById("au5-btn-sendMessage");
     const input = document.getElementById("au5-input-message");
+    console.log("Button and input elements:", btn, input);
     btn == null ? void 0 : btn.addEventListener("click", () => {
       var _a, _b;
+      console.log("Send message button clicked");
       if (input && input.value.trim()) {
         const message = {
-          type: "TranscriptionEntry",
+          type: MessageTypes.TranscriptionEntry,
           meetingId: (_a = this.platform) == null ? void 0 : _a.getMeetingId(),
           transcriptBlockId: crypto.randomUUID(),
           speaker: {
@@ -3249,6 +3250,7 @@ class UIHandlers {
           transcript: input.value.trim(),
           timestamp: /* @__PURE__ */ new Date()
         };
+        console.log("Sending message:", message);
         (_b = this.meetingHubClient) == null ? void 0 : _b.sendMessage(message);
         this.chatPanel.addTranscription(message);
         input.value = "";
@@ -3359,9 +3361,7 @@ async function initializeChatPanel() {
 }
 document.addEventListener("DOMContentLoaded", async () => {
   await initializeChatPanel();
-  console.log(config, platform, chatPanel);
   if (config && chatPanel) {
-    console.log("Initializing UI handlers with config, platform, and chat panel");
-    new UIHandlers(configurationManager.getConfig(), platform, chatPanel).init();
+    new UIHandlers(config, platform, chatPanel).init();
   }
 });
