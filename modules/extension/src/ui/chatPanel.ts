@@ -184,7 +184,6 @@ export class ChatPanel {
           displayUrl = url.slice(0, 35) + " (...)";
         }
         el.innerHTML = displayUrl;
-        console.log("No active meeting for URL:", displayUrl);
       }
     });
   }
