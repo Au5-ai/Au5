@@ -10913,7 +10913,7 @@ html[data-gpts-theme="dark"] .thinking-markdown .markdown-body ::-webkit-calenda
   border: none;
 }
 
-.chat-input-box .bottom-area .btn-wrapper .send-btn:hover{
+.chat-input-box .bottom-area .btn-wrapper .send-btn:hover {
   background: #0b57d0;
 }
 
@@ -19484,4 +19484,283 @@ html {
   height: 64px !important;
   min-height: 64px !important;
   max-height: 324px;
+}
+
+:where(.css-modal)[class^="ant-modal"],
+:where(.css-modal)[class*=" ant-modal"] {
+  font-family: var(--gpts-font-family);
+  font-size: 14px;
+  box-sizing: border-box;
+}
+:where(.css-modal)[class^="ant-modal"]::before,
+:where(.css-modal)[class*=" ant-modal"]::before,
+:where(.css-modal)[class^="ant-modal"]::after,
+:where(.css-modal)[class*=" ant-modal"]::after {
+  box-sizing: border-box;
+}
+:where(.css-modal)[class^="ant-modal"] [class^="ant-modal"],
+:where(.css-modal)[class*=" ant-modal"] [class^="ant-modal"],
+:where(.css-modal)[class^="ant-modal"] [class*=" ant-modal"],
+:where(.css-modal)[class*=" ant-modal"] [class*=" ant-modal"] {
+  box-sizing: border-box;
+}
+:where(.css-modal)[class^="ant-modal"] [class^="ant-modal"]::before,
+:where(.css-modal)[class*=" ant-modal"] [class^="ant-modal"]::before,
+:where(.css-modal)[class^="ant-modal"] [class*=" ant-modal"]::before,
+:where(.css-modal)[class*=" ant-modal"] [class*=" ant-modal"]::before,
+:where(.css-modal)[class^="ant-modal"] [class^="ant-modal"]::after,
+:where(.css-modal)[class*=" ant-modal"] [class^="ant-modal"]::after,
+:where(.css-modal)[class^="ant-modal"] [class*=" ant-modal"]::after,
+:where(.css-modal)[class*=" ant-modal"] [class*=" ant-modal"]::after {
+  box-sizing: border-box;
+}
+:where(.css-modal).ant-modal-root .ant-modal-wrap-rtl {
+  direction: rtl;
+}
+:where(.css-modal).ant-modal-root .ant-modal-centered {
+  text-align: center;
+}
+:where(.css-modal).ant-modal-root .ant-modal-centered::before {
+  display: inline-block;
+  width: 0;
+  height: 100%;
+  vertical-align: middle;
+  content: "";
+}
+:where(.css-modal).ant-modal-root .ant-modal-centered .ant-modal {
+  top: 0;
+  display: inline-block;
+  padding-bottom: 0;
+  text-align: start;
+  vertical-align: middle;
+}
+@media (max-width: 767px) {
+  :where(.css-modal).ant-modal-root .ant-modal {
+    max-width: calc(100vw - 16px);
+    margin: 8px auto;
+  }
+  :where(.css-modal).ant-modal-root .ant-modal-centered .ant-modal {
+    flex: 1;
+  }
+}
+:where(.css-modal).ant-modal {
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 0;
+  color: rgba(0, 0, 0, 0.88);
+  font-size: 14px;
+  line-height: 1.5714285714285714;
+  list-style: none;
+  font-family: var(--gpts-font-family);
+  pointer-events: none;
+  position: relative;
+  top: 100px;
+  width: auto;
+  max-width: calc(100vw - 32px);
+  padding-bottom: 24px;
+}
+:where(.css-modal).ant-modal .ant-modal-title {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.88);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+:where(.css-modal).ant-modal .ant-modal-content {
+  position: relative;
+  background-color: var(--sds-color-grey-layer3-normal);
+  background-clip: padding-box;
+  border: 0;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  pointer-events: auto;
+  padding: 20px 24px;
+}
+:where(.css-modal).ant-modal .ant-modal-close {
+  position: absolute;
+  top: 17px;
+  inset-inline-end: 17px;
+  z-index: 1010;
+  padding: 0;
+  color: rgba(0, 0, 0, 0.45);
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  background: transparent;
+  border-radius: 8px;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+  transition: color 0.2s, background-color 0.2s;
+}
+:where(.css-modal).ant-modal .ant-modal-close-x {
+  display: flex;
+  font-size: 16px;
+  font-style: normal;
+  line-height: 22px;
+  justify-content: center;
+  text-transform: none;
+  text-rendering: auto;
+}
+:where(.css-modal).ant-modal .ant-modal-close:hover {
+  color: rgba(0, 0, 0, 0.88);
+  background-color: rgba(0, 0, 0, 0.06);
+  text-decoration: none;
+}
+:where(.css-modal).ant-modal .ant-modal-close:active {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+:where(.css-modal).ant-modal .ant-modal-close:focus-visible {
+  outline: 4px solid #c5a3ff;
+  outline-offset: 1px;
+  transition: outline-offset 0s, outline 0s;
+}
+:where(.css-modal).ant-modal .ant-modal-header {
+  color: rgba(0, 0, 0, 0.88);
+  background: var(--sds-color-grey-layer3-normal);
+  border-radius: 16px 16px 0 0;
+  margin-bottom: 8px;
+  padding: 0;
+  border-bottom: none;
+}
+:where(.css-modal).ant-modal .ant-modal-body {
+  font-size: 14px;
+  line-height: 1.5714285714285714;
+  word-wrap: break-word;
+  padding: 0;
+}
+:where(.css-modal).ant-modal .ant-modal-footer {
+  text-align: end;
+  background: transparent;
+  margin-top: 12px;
+  padding: 0;
+  border-top: none;
+  border-radius: 0;
+}
+:where(.css-modal).ant-modal .ant-modal-footer > .ant-btn + .ant-btn {
+  margin-inline-start: 8px;
+}
+:where(.css-modal).ant-modal .ant-modal-open {
+  overflow: hidden;
+}
+:where(.css-modal).ant-modal-pure-panel {
+  top: auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+:where(.css-modal).ant-modal-pure-panel .ant-modal-content,
+:where(.css-modal).ant-modal-pure-panel .ant-modal-body,
+:where(.css-modal).ant-modal-pure-panel .ant-modal-confirm-body-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: auto;
+}
+:where(.css-modal).ant-modal-pure-panel .ant-modal-confirm-body {
+  margin-bottom: auto;
+}
+:where(.css-modal).ant-modal-root .ant-modal-wrap-rtl {
+  direction: rtl;
+}
+:where(.css-modal).ant-modal-root .ant-modal-wrap-rtl .ant-modal-confirm-body {
+  direction: rtl;
+}
+:where(.css-modal).ant-modal-root .ant-modal.ant-zoom-enter,
+:where(.css-modal).ant-modal-root .ant-modal.ant-zoom-appear {
+  transform: none;
+  opacity: 0;
+  animation-duration: 0.3s;
+  user-select: none;
+}
+:where(.css-modal).ant-modal-root .ant-modal.ant-zoom-leave .ant-modal-content {
+  pointer-events: none;
+}
+:where(.css-modal).ant-modal-root .ant-modal-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+:where(.css-modal).ant-modal-root .ant-modal-mask .ant-modal-hidden {
+  display: none;
+}
+:where(.css-modal).ant-modal-root .ant-modal-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  overflow: auto;
+  outline: 0;
+  -webkit-overflow-scrolling: touch;
+}
+:where(.css-modal).ant-modal-root .ant-modal-wrap:has(.ant-modal.ant-zoom-enter),
+:where(.css-modal).ant-modal-root .ant-modal-wrap:has(.ant-modal.ant-zoom-appear) {
+  pointer-events: none;
+}
+:where(.css-modal).ant-modal-root .ant-fade-enter,
+:where(.css-modal).ant-modal-root .ant-fade-appear {
+  animation-duration: 0.2s;
+  animation-fill-mode: both;
+  animation-play-state: paused;
+}
+:where(.css-modal).ant-modal-root .ant-fade-leave {
+  animation-duration: 0.2s;
+  animation-fill-mode: both;
+  animation-play-state: paused;
+}
+:where(.css-modal).ant-modal-root .ant-fade-enter.ant-fade-enter-active,
+:where(.css-modal).ant-modal-root .ant-fade-appear.ant-fade-appear-active {
+  animation-name: css-modal-antFadeIn;
+  animation-play-state: running;
+}
+:where(.css-modal).ant-modal-root .ant-fade-leave.ant-fade-leave-active {
+  animation-name: css-modal-antFadeOut;
+  animation-play-state: running;
+  pointer-events: none;
+}
+:where(.css-modal).ant-modal-root .ant-fade-enter,
+:where(.css-modal).ant-modal-root .ant-fade-appear {
+  opacity: 0;
+  animation-timing-function: linear;
+}
+:where(.css-modal).ant-modal-root .ant-fade-leave {
+  animation-timing-function: linear;
+}
+:where(.css-modal).ant-zoom-enter,
+:where(.css-modal).ant-zoom-appear {
+  animation-duration: 0.2s;
+  animation-fill-mode: both;
+  animation-play-state: paused;
+}
+:where(.css-modal).ant-zoom-leave {
+  animation-duration: 0.2s;
+  animation-fill-mode: both;
+  animation-play-state: paused;
+}
+:where(.css-modal).ant-zoom-enter.ant-zoom-enter-active,
+:where(.css-modal).ant-zoom-appear.ant-zoom-appear-active {
+  animation-name: css-modal-antZoomIn;
+  animation-play-state: running;
+}
+:where(.css-modal).ant-zoom-leave.ant-zoom-leave-active {
+  animation-name: css-modal-antZoomOut;
+  animation-play-state: running;
+  pointer-events: none;
+}
+:where(.css-modal).ant-zoom-enter,
+:where(.css-modal).ant-zoom-appear {
+  transform: scale(0);
+  opacity: 0;
+  animation-timing-function: cubic-bezier(0.08, 0.82, 0.17, 1);
+}
+:where(.css-modal).ant-zoom-enter-prepare,
+:where(.css-modal).ant-zoom-appear-prepare {
+  transform: none;
+}
+:where(.css-modal).ant-zoom-leave {
+  animation-timing-function: cubic-bezier(0.78, 0.14, 0.15, 0.86);
 }
