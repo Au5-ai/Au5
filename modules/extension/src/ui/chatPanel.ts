@@ -29,7 +29,6 @@ export class ChatPanel {
   }
 
   public showNoActiveMeetingContainer(url: string): void {
-    console.log("No active meeting for URL:", url);
     this.hideAllContainers();
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("hidden");
     this.setUrl(url);
@@ -58,7 +57,6 @@ export class ChatPanel {
 
   public addTranscription(entry: TranscriptionEntry): void {
     if (!this.transcriptionsContainerEl) {
-      console.error("Transcriptions container element not found.");
       return;
     }
 

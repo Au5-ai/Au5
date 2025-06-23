@@ -36,7 +36,6 @@ class ChatPanel {
     if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.remove("hidden");
   }
   showNoActiveMeetingContainer(url) {
-    console.log("No active meeting for URL:", url);
     this.hideAllContainers();
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("hidden");
     this.setUrl(url);
@@ -61,7 +60,6 @@ class ChatPanel {
   }
   addTranscription(entry) {
     if (!this.transcriptionsContainerEl) {
-      console.error("Transcriptions container element not found.");
       return;
     }
     const existing = this.transcriptionsContainerEl.querySelector(
@@ -208,10 +206,9 @@ class ConfigurationManager {
     try {
       return await new Promise((resolve, reject) => {
         chrome.storage.local.get(CONFIGURATION_KEY, (result) => {
-          const config = result[CONFIGURATION_KEY];
-          if (config) {
-            console.log("Configuration retrieved:", JSON.parse(config));
-            resolve(JSON.parse(config));
+          const config2 = result[CONFIGURATION_KEY];
+          if (config2) {
+            resolve(JSON.parse(config2));
           } else {
             resolve(null);
           }
@@ -276,7 +273,7 @@ class MeetingPlatformFactory {
     }
   }
 }
-async function getCurrentUrl() {
+async function getCurrentUrl$1() {
   if (typeof chrome !== "undefined" && chrome.tabs) {
     return new Promise((resolve) => {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -3085,11 +3082,11 @@ function isLogger(logger) {
   return logger.log !== void 0;
 }
 class MeetingHubClient {
-  constructor(config, meetingId) {
+  constructor(config2, meetingId) {
     __publicField(this, "connection");
     __publicField(this, "meetingId");
     __publicField(this, "config");
-    this.config = config;
+    this.config = config2;
     this.meetingId = meetingId;
     this.connection = new HubConnectionBuilder().withUrl(this.config.service.hubUrl).withAutomaticReconnect().build();
   }
@@ -3129,12 +3126,12 @@ class MeetingHubClient {
   }
 }
 class UIHandlers {
-  constructor(config, platform2, chatPanel2) {
+  constructor(config2, platform2, chatPanel2) {
     __publicField(this, "meetingHubClient", null);
     __publicField(this, "config");
     __publicField(this, "platform");
     __publicField(this, "chatPanel");
-    this.config = config;
+    this.config = config2;
     this.platform = platform2;
     this.chatPanel = chatPanel2;
   }
@@ -3145,7 +3142,7 @@ class UIHandlers {
     const btn = document.getElementById("au5-btn-joinMeeting");
     btn == null ? void 0 : btn.addEventListener("click", async () => {
       if (!this.config) return;
-      const url = await getCurrentUrl();
+      const url = await getCurrentUrl$1();
       this.platform = new MeetingPlatformFactory(url).getPlatform();
       if (!this.platform) {
         this.chatPanel.showNoActiveMeetingContainer(url);
@@ -3164,7 +3161,7 @@ class UIHandlers {
   handleReload() {
     const btn = document.getElementById("au5-btn-reload");
     btn == null ? void 0 : btn.addEventListener("click", async () => {
-      const url = await getCurrentUrl();
+      const url = await getCurrentUrl$1();
       this.platform = new MeetingPlatformFactory(url).getPlatform();
       if (!this.platform) {
         this.chatPanel.showNoActiveMeetingContainer(url);
@@ -3327,6 +3324,44 @@ class UIHandlers {
 const configurationManager = new ConfigurationManager();
 const chatPanel = new ChatPanel();
 let platform = null;
+let config;
+async function getCurrentUrl() {
+  if (typeof chrome !== "undefined" && chrome.tabs) {
+    return new Promise((resolve) => {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        var _a;
+        resolve(((_a = tabs[0]) == null ? void 0 : _a.url) || window.location.href);
+      });
+    });
+  }
+  return window.location.href;
+}
+async function initializeChatPanel() {
+  const url = await getCurrentUrl();
+  platform = new MeetingPlatformFactory(url).getPlatform();
+  try {
+    const local_config = await configurationManager.getConfig();
+    if (local_config == null || local_config == void 0) {
+      chatPanel.showUserUnAuthorizedContainer();
+      return;
+    }
+    config = local_config;
+  } catch (error) {
+    chatPanel.showUserUnAuthorizedContainer();
+    return;
+  }
+  chatPanel.setDirection(config.service.direction);
+  if (!platform) {
+    chatPanel.showNoActiveMeetingContainer(url);
+  } else {
+    chatPanel.showJoinMeetingContainer(url);
+  }
+}
 document.addEventListener("DOMContentLoaded", async () => {
-  new UIHandlers(configurationManager.getConfig(), platform, chatPanel).init();
+  await initializeChatPanel();
+  console.log(config, platform, chatPanel);
+  if (config && chatPanel) {
+    console.log("Initializing UI handlers with config, platform, and chat panel");
+    new UIHandlers(configurationManager.getConfig(), platform, chatPanel).init();
+  }
 });

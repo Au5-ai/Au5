@@ -55,7 +55,11 @@ async function initializeChatPanel(): Promise<void> {
  * Initialize everything on DOM ready.
  */
 document.addEventListener("DOMContentLoaded", async () => {
-  //await initializeChatPanel();
-
-  new UIHandlers(configurationManager.getConfig(), platform, chatPanel).init();
+  await initializeChatPanel();
+  // Initialize UI handlers with the configuration, platform, and chat panel
+  console.log(config, platform, chatPanel);
+  if (config && chatPanel) {
+    console.log("Initializing UI handlers with config, platform, and chat panel");
+    new UIHandlers(configurationManager.getConfig(), platform, chatPanel).init();
+  }
 });

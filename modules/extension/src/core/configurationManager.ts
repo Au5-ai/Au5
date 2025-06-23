@@ -1,4 +1,4 @@
-import {AppConfiguration, ServiceIntegration, User} from "./types";
+import {AppConfiguration} from "./types";
 
 const CONFIGURATION_KEY: string = "configuration";
 
@@ -12,7 +12,6 @@ export class ConfigurationManager {
         chrome.storage.local.get(CONFIGURATION_KEY, result => {
           const config = result[CONFIGURATION_KEY];
           if (config) {
-            console.log("Configuration retrieved:", JSON.parse(config) as AppConfiguration);
             resolve(JSON.parse(config) as AppConfiguration);
           } else {
             resolve(null);
