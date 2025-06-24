@@ -3,20 +3,10 @@ using Au5.MeetingHub.Models.Messages;
 
 namespace Au5.MeetingHub;
 
-public class MeetingHub(ILogger<MeetingHub> logger, IMeetingService meetingService, ITranscriptionService transcriptionService) : Hub
+public class MeetingHub(IMeetingService meetingService, ITranscriptionService transcriptionService) : Hub
 {
-    private readonly ILogger<MeetingHub> _logger = logger;
     private readonly IMeetingService _meetingService = meetingService;
     private readonly ITranscriptionService _transcriptionService = transcriptionService;
-
-    public async Task BotJoinMeeting(JoinMeeting joinMeeting)
-    {
-        //if (string.IsNullOrWhiteSpace(joinMeeting.MeetingId))
-        //{
-        //    return;
-        //}
-        //await Groups.AddToGroupAsync(Context.ConnectionId, joinMeeting.MeetingId);
-    }
 
     public async Task JoinMeeting(JoinMeeting joinMeeting)
     {
@@ -31,6 +21,26 @@ public class MeetingHub(ILogger<MeetingHub> logger, IMeetingService meetingServi
         _meetingService.AddUserToMeeting(joinMeeting.User, joinMeeting.MeetingId, joinMeeting.Platform);
         await Groups.AddToGroupAsync(Context.ConnectionId, joinMeeting.MeetingId);
         await SendToOthersInGroupAsync(joinMeeting.MeetingId, new UserJoinedInMeetingMessage(joinMeeting.User));
+    }
+
+    public async Task AddBotToMeet(RequestToAddBotMessage requestToAddBotMessage)
+    {
+        _meetingService.CreateBot(requestToAddBotMessage);
+        await SendToOthersInGroupAsync(requestToAddBotMessage.MeetingId, requestToAddBotMessage);
+    }
+
+    public async Task BotJoinMeeting(string meetingId)
+    {
+        if (string.IsNullOrWhiteSpace(meetingId))
+        {
+            return;
+        }
+        var botName = _meetingService.BotIsAdded(meetingId);
+        if (string.IsNullOrWhiteSpace(botName))
+        {
+            return;
+        }
+        await SendToOthersInGroupAsync(meetingId, new BotJoinedInMeetingMessage(meetingId, botName));
     }
 
     public void ParticipantJoinMeeting(Participants participants)
