@@ -68,9 +68,9 @@ public class MeetingService : IMeetingService
         meeting.Status = MeetingStatus.Ended;
     }
 
-    public void CreateBot(User user, string meetingId, string botName)
+    public void CreateBot(RequestToAddBotMessage requestToAddBotMessage)
     {
-        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == requestToAddBotMessage.MeetingId);
         if (meeting is null)
         {
             return;
@@ -79,8 +79,8 @@ public class MeetingService : IMeetingService
         {
             return;
         }
-        meeting.BotName = botName;
-        meeting.UserAddedBot = user;
+        meeting.BotName = requestToAddBotMessage.BotName;
+        meeting.UserAddedBot = requestToAddBotMessage.User;
         // Call CLI to create the bot container with the provided name and Configs
     }
 
@@ -101,6 +101,28 @@ public class MeetingService : IMeetingService
             meeting.Status = MeetingStatus.InProgress;
         }
         return meeting.BotName;
+    }
+
+
+    public bool IsPaused(string meetingId)
+    {
+        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+        if (meeting is null)
+        {
+            return true;
+        }
+
+        return meeting.Status == MeetingStatus.Paused || meeting.Status == MeetingStatus.Ended;
+    }
+
+    public void PauseMeeting(string meetingId)
+    {
+        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+        if (meeting is null)
+        {
+            return;
+        }
+        meeting.Status = MeetingStatus.Paused;
     }
 }
 

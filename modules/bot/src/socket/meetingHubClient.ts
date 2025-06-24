@@ -1,9 +1,5 @@
 import * as signalR from "@microsoft/signalr";
-import {
-  JoinMeeting,
-  MeetingConfiguration,
-  TranscriptionEntryMessage,
-} from "../types";
+import { MeetingConfiguration, TranscriptionEntryMessage } from "../types";
 
 export class MeetingHubClient {
   private connection: signalR.HubConnection;
@@ -18,9 +14,7 @@ export class MeetingHubClient {
   public async startConnection(): Promise<boolean> {
     try {
       await this.connection.start();
-      await this.connection.invoke("BotJoinMeeting", {
-        meetingId: this.config.meetingId,
-      } as JoinMeeting);
+      await this.connection.invoke("BotJoinMeeting", this.config.meetingId);
     } catch (err) {
       console.error("[SignalR] Connection failed:", err);
       return false;

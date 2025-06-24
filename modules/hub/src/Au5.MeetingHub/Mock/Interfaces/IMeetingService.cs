@@ -9,5 +9,7 @@ public interface IMeetingService
     void AddParticipantToMeet(List<string> users, string meetingId);
     void CreateBot(RequestToAddBotMessage requestToAddBotMessage);
     string BotIsAdded(string meetingId);
+    bool IsPaused(string meetingId);
+    void PauseMeeting(string meetingId);
 }
 

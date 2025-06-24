@@ -58,10 +58,25 @@ public class MeetingHub(IMeetingService meetingService, ITranscriptionService tr
 
     public async Task TranscriptionEntry(TranscriptionEntryMessage transcription)
     {
+       var isMeetingPaused =  _meetingService.IsPaused(transcription.MeetingId);
+        if (isMeetingPaused)
+        {
+            return;
+        }
         _transcriptionService.UpsertBlock(transcription);
         await SendToOthersInGroupAsync(transcription.MeetingId, transcription);
     }
 
+    public async Task PauseTranscription(User user, string meetingId)
+    {
+        if (string.IsNullOrWhiteSpace(meetingId))
+        {
+            return;
+        }
+        _meetingService.PauseMeeting(meetingId);
+
+        await SendToOthersInGroupAsync(meetingId, new GeneralMessage(meetingId, $"{user.FullName} paused transcription !"));
+    }
     public async Task ReactionApplied(ReactionAppliedMessage reaction)
     {
         _transcriptionService.AppliedReaction(reaction);

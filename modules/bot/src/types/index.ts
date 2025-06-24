@@ -73,10 +73,6 @@ export interface Speaker {
   pictureUrl: string;
 }
 
-export interface JoinMeeting {
-  meetingId: string;
-}
-
 export interface TranscriptionEntryMessage {
   meetingId: string;
   transcriptBlockId: string;
