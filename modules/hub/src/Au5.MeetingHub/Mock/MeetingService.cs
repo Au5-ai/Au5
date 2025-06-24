@@ -115,14 +115,21 @@ public class MeetingService : IMeetingService
         return meeting.Status == MeetingStatus.Paused || meeting.Status == MeetingStatus.Ended;
     }
 
-    public void PauseMeeting(string meetingId)
+    public void PauseMeeting(string meetingId, bool isPause)
     {
         var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
         if (meeting is null)
         {
             return;
         }
+        if (isPause)
+        {
         meeting.Status = MeetingStatus.Paused;
+        }
+        else
+        {
+            meeting.Status = MeetingStatus.InProgress;
+        }
     }
 }
 

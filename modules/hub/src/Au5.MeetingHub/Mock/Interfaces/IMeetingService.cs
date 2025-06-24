@@ -10,6 +10,6 @@ public interface IMeetingService
     void CreateBot(RequestToAddBotMessage requestToAddBotMessage);
     string BotIsAdded(string meetingId);
     bool IsPaused(string meetingId);
-    void PauseMeeting(string meetingId);
+    void PauseMeeting(string meetingId, bool isPause);
 }
 

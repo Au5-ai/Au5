@@ -67,13 +67,13 @@ public class MeetingHub(IMeetingService meetingService, ITranscriptionService tr
         await SendToOthersInGroupAsync(transcription.MeetingId, transcription);
     }
 
-    public async Task PauseTranscription(User user, string meetingId)
+    public async Task PauseTranscription(User user, string meetingId, bool isPause)
     {
         if (string.IsNullOrWhiteSpace(meetingId))
         {
             return;
         }
-        _meetingService.PauseMeeting(meetingId);
+        _meetingService.PauseMeeting(meetingId, isPause);
 
         await SendToOthersInGroupAsync(meetingId, new GeneralMessage(meetingId, $"{user.FullName} paused transcription !"));
     }
