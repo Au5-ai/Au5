@@ -65,13 +65,13 @@ public class TranscriptionService : ITranscriptionService
             var existingReaction = entry.Reactions.FirstOrDefault(r => r.ReactionType == reaction.ReactionType);
             existingReaction.Users ??= [];
 
-            if (!existingReaction.Users.Any(u => u.Id == reaction.User.Id))
+            if (!existingReaction.Users.Any(u => u == reaction.UserFullName))
             {
-                existingReaction.Users.Add(reaction.User);
+                existingReaction.Users.Add(reaction.UserFullName);
             }
             else
             {
-                existingReaction.Users.RemoveAll(u => u.Id == reaction.User.Id);
+                existingReaction.Users.RemoveAll(u => u == reaction.UserFullName);
             }
         }
     }
