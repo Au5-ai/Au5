@@ -2,5 +2,5 @@
 
 public interface IUserService
 {
-    IReadOnlyList<User> AddUserToMeeting(User user, string meetingId);
+    void AddUserToMeeting(User user, string meetingId);
 }

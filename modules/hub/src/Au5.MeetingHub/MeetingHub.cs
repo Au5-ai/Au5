@@ -29,6 +29,7 @@ public class MeetingHub(ILogger<MeetingHub> logger, IUserService userService, IM
         {
             throw new ArgumentNullException(nameof(joinMeeting.User), "User cannot be null");
         }
+        _userService.AddUserToMeeting(joinMeeting.User, joinMeeting.MeetingId);
         await Groups.AddToGroupAsync(Context.ConnectionId, joinMeeting.MeetingId);
         await SendToOthersInGroupAsync(joinMeeting.MeetingId, new UserJoinedInMeetingMessage(joinMeeting.User));
     }
@@ -41,6 +42,7 @@ public class MeetingHub(ILogger<MeetingHub> logger, IUserService userService, IM
 
     public async Task ReactionApplied(ReactionAppliedMessage reaction)
     {
+        _transcriptionService.AppliedReaction(reaction);
         await SendToOthersInGroupAsync(reaction.MeetingId, reaction);
     }
 

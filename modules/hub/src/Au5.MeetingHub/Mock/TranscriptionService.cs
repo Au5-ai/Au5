@@ -6,7 +6,7 @@ namespace Au5.MeetingHub.Mock;
 
 public class TranscriptionService : ITranscriptionService
 {
-    private static readonly ConcurrentDictionary<string, Dictionary<string, TranscriptionEntryMessage>> _meetingTranscriptions = new();
+    private static readonly ConcurrentDictionary<string, Dictionary<Guid, TranscriptionEntryMessage>> _meetingTranscriptions = new();
     private static readonly Lock _lock = new();
 
     private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
@@ -18,7 +18,6 @@ public class TranscriptionService : ITranscriptionService
     public void UpsertBlock(TranscriptionEntryMessage entry)
     {
         var meetingBlocks = _meetingTranscriptions.GetOrAdd(entry.MeetingId, _ => []);
-
         lock (_lock)
         {
             meetingBlocks[entry.TranscriptBlockId] = entry;
@@ -39,7 +38,7 @@ public class TranscriptionService : ITranscriptionService
                 {
                     time = b.Timestamp,
                     speaker = b.Speaker?.FullName ?? "Unknown",
-                    text = b.Transcript
+                    transcript = b.Transcript
                 })
         };
 
@@ -48,11 +47,32 @@ public class TranscriptionService : ITranscriptionService
 
     public void FinalizeMeeting(string meetingId)
     {
-        if (_meetingTranscriptions.TryRemove(meetingId, out _))
+
+    }
+
+    public void AppliedReaction(ReactionAppliedMessage reaction)
+    {
+        _meetingTranscriptions.TryGetValue(reaction.MeetingId, out var meetingBlocks);
+        if (meetingBlocks is null || !meetingBlocks.TryGetValue(reaction.TranscriptBlockId, out var entry))
         {
-            string finalTranscript = GetFullTranscriptionAsJson(meetingId);
-            File.WriteAllText($"transcription_{meetingId}.json", finalTranscript);
-            // TODO: Save finalTranscript to DB here  
+            return;
+        }
+
+        lock (_lock)
+        {
+            entry.Reactions ??= [];
+
+            var existingReaction = entry.Reactions.FirstOrDefault(r => r.ReactionType == reaction.ReactionType);
+            existingReaction.Users ??= [];
+
+            if (!existingReaction.Users.Any(u => u.Id == reaction.User.Id))
+            {
+                existingReaction.Users.Add(reaction.User);
+            }
+            else
+            {
+                existingReaction.Users.RemoveAll(u => u.Id == reaction.User.Id);
+            }
         }
     }
 }
