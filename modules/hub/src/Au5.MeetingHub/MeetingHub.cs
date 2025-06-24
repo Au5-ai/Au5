@@ -3,35 +3,47 @@ using Au5.MeetingHub.Models.Messages;
 
 namespace Au5.MeetingHub;
 
-public class MeetingHub(ILogger<MeetingHub> logger, IUserService userService, IMeetingService meetingService, ITranscriptionService transcriptionService) : Hub
+public class MeetingHub(ILogger<MeetingHub> logger, IMeetingService meetingService, ITranscriptionService transcriptionService) : Hub
 {
     private readonly ILogger<MeetingHub> _logger = logger;
-    private readonly IUserService _userService = userService;
     private readonly IMeetingService _meetingService = meetingService;
     private readonly ITranscriptionService _transcriptionService = transcriptionService;
 
     public async Task BotJoinMeeting(JoinMeeting joinMeeting)
     {
-        if (string.IsNullOrWhiteSpace(joinMeeting.MeetingId))
-        {
-            throw new ArgumentException("MeetingId cannot be empty", nameof(joinMeeting.MeetingId));
-        }
-        await Groups.AddToGroupAsync(Context.ConnectionId, joinMeeting.MeetingId);
+        //if (string.IsNullOrWhiteSpace(joinMeeting.MeetingId))
+        //{
+        //    return;
+        //}
+        //await Groups.AddToGroupAsync(Context.ConnectionId, joinMeeting.MeetingId);
     }
 
     public async Task JoinMeeting(JoinMeeting joinMeeting)
     {
         if (string.IsNullOrWhiteSpace(joinMeeting.MeetingId))
         {
-            throw new ArgumentException("MeetingId cannot be empty", nameof(joinMeeting.MeetingId));
+            return;
         }
         if (joinMeeting.User is null)
         {
-            throw new ArgumentNullException(nameof(joinMeeting.User), "User cannot be null");
+            return;
         }
-        _userService.AddUserToMeeting(joinMeeting.User, joinMeeting.MeetingId);
+        _meetingService.AddUserToMeeting(joinMeeting.User, joinMeeting.MeetingId, joinMeeting.Platform);
         await Groups.AddToGroupAsync(Context.ConnectionId, joinMeeting.MeetingId);
         await SendToOthersInGroupAsync(joinMeeting.MeetingId, new UserJoinedInMeetingMessage(joinMeeting.User));
+    }
+
+    public void ParticipantJoinMeeting(JoinMeeting joinMeeting)
+    {
+        if (string.IsNullOrWhiteSpace(joinMeeting.MeetingId))
+        {
+            return;
+        }
+        if (joinMeeting.User is null)
+        {
+            return;
+        }
+        _meetingService.AddParticipantToMeet(joinMeeting.User, joinMeeting.MeetingId, joinMeeting.Platform);
     }
 
     public async Task TranscriptionEntry(TranscriptionEntryMessage transcription)

@@ -2,7 +2,8 @@
 
 public interface IMeetingService
 {
-    void Run(string meetingId, Guid userId);
-    bool IsStarted(string meetingId);
+    void Run(string meetingId, string platform);
+    void AddUserToMeeting(User user, string meetingId, string platform);
+    void AddParticipantToMeet(User user, string meetingId, string platform);
 }
 
