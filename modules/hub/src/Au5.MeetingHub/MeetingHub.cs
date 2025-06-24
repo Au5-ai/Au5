@@ -33,17 +33,17 @@ public class MeetingHub(ILogger<MeetingHub> logger, IMeetingService meetingServi
         await SendToOthersInGroupAsync(joinMeeting.MeetingId, new UserJoinedInMeetingMessage(joinMeeting.User));
     }
 
-    public void ParticipantJoinMeeting(JoinMeeting joinMeeting)
+    public void ParticipantJoinMeeting(Participants participants)
     {
-        if (string.IsNullOrWhiteSpace(joinMeeting.MeetingId))
+        if (string.IsNullOrWhiteSpace(participants.MeetingId))
         {
             return;
         }
-        if (joinMeeting.User is null)
+        if (participants.User is null)
         {
             return;
         }
-        _meetingService.AddParticipantToMeet(joinMeeting.User, joinMeeting.MeetingId, joinMeeting.Platform);
+        _meetingService.AddParticipantToMeet(participants.User, participants.MeetingId);
     }
 
     public async Task TranscriptionEntry(TranscriptionEntryMessage transcription)
