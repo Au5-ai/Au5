@@ -80,5 +80,5 @@ export interface EntryMessage {
   content: string;
   timestamp: Date;
   entryType: "Transcription";
-  readonly type: "TranscriptionEntry";
+  readonly type: "Entry";
 }

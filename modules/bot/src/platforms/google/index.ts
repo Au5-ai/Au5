@@ -2,7 +2,7 @@ import { Page } from "playwright-core";
 import {
   IMeetingPlatform,
   MeetingConfiguration,
-  TranscriptionEntryMessage,
+  EntryMessage,
 } from "../../types";
 import { logger } from "../../utils/logger";
 import { randomDelay } from "../../utils";
@@ -85,7 +85,7 @@ export class GoogleMeet implements IMeetingPlatform {
   }
 
   async observeTranscriptions(
-    handler: (message: TranscriptionEntryMessage) => void
+    handler: (message: EntryMessage) => void
   ): Promise<void> {
     if (
       this.config.meeting_settings.transcription &&

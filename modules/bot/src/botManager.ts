@@ -1,8 +1,4 @@
-import {
-  IMeetingPlatform,
-  MeetingConfiguration,
-  TranscriptionEntryMessage,
-} from "./types";
+import { IMeetingPlatform, MeetingConfiguration, EntryMessage } from "./types";
 import { logger } from "./utils/logger";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { chromium } from "playwright-extra";
@@ -112,9 +108,7 @@ export async function startMeetingBot(
   }
 }
 
-async function handleTranscription(
-  message: TranscriptionEntryMessage
-): Promise<void> {
+async function handleTranscription(message: EntryMessage): Promise<void> {
   if (!hubClient) {
     logger.error("[Program] Hub client is not initialized.");
     return;

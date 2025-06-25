@@ -1,4 +1,4 @@
-import { TranscriptionEntryMessage } from "../../types";
+import { EntryMessage } from "../../types";
 import { Page } from "playwright-core";
 import { Caption, GoogleCaptionConfiguration, MutationContext } from "./types";
 import { DomUtility } from "./domUtility";
@@ -13,7 +13,7 @@ export class TranscriptMutationHandler {
     this.domUtility = new DomUtility(page);
   }
 
-  async initialize(callback: (message: TranscriptionEntryMessage) => void) {
+  async initialize(callback: (message: EntryMessage) => void) {
     await this.activateCaptions();
     let ctx = await this.findTranscriptContainer();
     await this.observeTranscriptContainer(ctx, callback);
@@ -53,7 +53,7 @@ export class TranscriptMutationHandler {
 
   private async observeTranscriptContainer(
     ctx: MutationContext,
-    callback: (message: TranscriptionEntryMessage) => void
+    callback: (message: EntryMessage) => void
   ): Promise<void> {
     if (!ctx.transcriptContainer) {
       logger.error(
@@ -71,16 +71,17 @@ export class TranscriptMutationHandler {
         this.previousTranscripts[caption.blockId] = caption.transcript;
 
         callback({
-          transcriptBlockId: caption.blockId,
+          blockId: caption.blockId,
           speaker: {
             fullName: caption.speakerName,
             pictureUrl: caption.pictureUrl,
           },
-          transcript: caption.transcript,
+          content: caption.transcript,
           timestamp: new Date(),
           meetingId: "",
-          type: "TranscriptionEntry",
-        } as TranscriptionEntryMessage);
+          entryType: "Transcription",
+          type: "Entry",
+        } as EntryMessage);
       }
     );
 
