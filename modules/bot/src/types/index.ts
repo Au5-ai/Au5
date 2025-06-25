@@ -63,7 +63,7 @@ export interface IMeetingPlatform {
   joinMeeting(): Promise<boolean>;
   leaveMeeting(): Promise<boolean>;
   observeTranscriptions(
-    handler: (message: TranscriptionEntryMessage) => void
+    handler: (message: EntryMessage) => void
   ): Promise<void>;
   observeParticipations(handler: (participant: any) => void): Promise<void>;
 }
@@ -73,11 +73,12 @@ export interface Speaker {
   pictureUrl: string;
 }
 
-export interface TranscriptionEntryMessage {
+export interface EntryMessage {
   meetingId: string;
-  transcriptBlockId: string;
+  blockId: string;
   speaker: Speaker;
-  transcript: string;
+  content: string;
   timestamp: Date;
+  entryType: "Transcription";
   readonly type: "TranscriptionEntry";
 }

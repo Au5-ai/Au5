@@ -22,7 +22,7 @@ public class MeetingService : IMeetingService
                     Id = Guid.NewGuid(),
                     MeetingId = meetingId,
                     Users = [],
-                    Transcriptions = [],
+                    Entries = [],
                     CreatedAt = DateTime.Now,
                     Platform = platform,
                     Participants = [],

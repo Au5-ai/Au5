@@ -20,6 +20,14 @@ export interface TranscriptionEntry {
   timestamp: Date;
 }
 
+export interface ChatEntry {
+  meetingId?: string;
+  blockId: string;
+  speaker: Speaker;
+  content: string;
+  timestamp: Date;
+}
+
 export interface User extends Speaker {
   token?: string | null;
   id?: string;
@@ -74,6 +82,15 @@ export interface TranscriptionEntryMessage extends IMessage {
   readonly type: MessageTypes.TranscriptionEntry;
 }
 
+export interface ChatEntryMessage extends IMessage {
+  meetingId: string;
+  blockId: string;
+  speaker: User;
+  content: string;
+  timestamp: Date;
+  readonly type: MessageTypes.ChatEntry;
+}
+
 export enum PostMessageSource {
   ContentScript = "Au5-ContentScript",
   BackgroundScript = "Au5-BackgroundScript"
@@ -86,6 +103,7 @@ export enum MessageTypes {
   UserJoinedInMeeting = "UserJoinedInMeeting",
   BotJoinedInMeeting = "BotJoinedInMeeting",
   TranscriptionEntry = "TranscriptionEntry",
+  ChatEntry = "ChatEntry",
   ReactionApplied = "ReactionApplied",
   GeneralMessage = "GeneralMessage",
   RequestToAddBot = "RequestToAddBot"

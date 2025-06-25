@@ -6,7 +6,7 @@ public class Meeting
 {
     public Guid Id { get; set; }
     public string MeetingId { get; set; }
-    public List<TranscriptionEntryMessage> Transcriptions { get; set; }
+    public List<EntryMessage> Entries { get; set; }
     public User UserAddedBot { get; set; }
     public string BotName { get; set; }
     public bool IsBotAdded { get; set; }

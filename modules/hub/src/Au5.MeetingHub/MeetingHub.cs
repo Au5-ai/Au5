@@ -66,7 +66,7 @@ public class MeetingHub(IMeetingService meetingService, ITranscriptionService tr
     //    _meetingService.AddParticipantToMeet(participants.User, participants.MeetingId);
     //}
 
-    public async Task TranscriptionEntry(TranscriptionEntryMessage transcription)
+    public async Task TranscriptionEntry(EntryMessage transcription)
     {
         //var isMeetingPaused =  _meetingService.IsPaused(transcription.MeetingId);
         // if (isMeetingPaused)
@@ -75,6 +75,17 @@ public class MeetingHub(IMeetingService meetingService, ITranscriptionService tr
         // }
         _transcriptionService.UpsertBlock(transcription);
         await SendToOthersInGroupAsync(transcription.MeetingId, transcription);
+    }
+
+    public async Task ChatEntry(EntryMessage chat)
+    {
+        //var isMeetingPaused =  _meetingService.IsPaused(transcription.MeetingId);
+        // if (isMeetingPaused)
+        // {
+        //     return;
+        // }
+         _transcriptionService.InsertBlock(chat);
+        await SendToOthersInGroupAsync(chat.MeetingId, chat);
     }
 
     //public async Task PauseTranscription(User user, string meetingId, bool isPause)

@@ -7,7 +7,7 @@ namespace Au5.MeetingHub.Mock;
 
 public class TranscriptionService : ITranscriptionService
 {
-    private static readonly ConcurrentDictionary<string, Dictionary<string, TranscriptionEntry>> _meetingTranscriptions = new();
+    private static readonly ConcurrentDictionary<string, Dictionary<string, Entry>> _meetingTranscriptions = new();
     private static readonly Lock _lock = new();
 
     private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
@@ -16,27 +16,46 @@ public class TranscriptionService : ITranscriptionService
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
-    public void UpsertBlock(TranscriptionEntryMessage entry)
+    public void UpsertBlock(EntryMessage entry)
     {
         var meetingBlocks = _meetingTranscriptions.GetOrAdd(entry.MeetingId, _ => []);
         lock (_lock)
         {
-            if (!meetingBlocks.TryGetValue(entry.TranscriptBlockId, out var block) || block is null)
+            if (!meetingBlocks.TryGetValue(entry.BlockId, out var block) || block is null)
             {
-                meetingBlocks[entry.TranscriptBlockId] = new TranscriptionEntry()
+                meetingBlocks[entry.BlockId] = new Entry()
                 {
                     MeetingId = entry.MeetingId,
-                    TranscriptBlockId = entry.TranscriptBlockId,
-                    Transcript = entry.Transcript,
+                    BlockId = entry.BlockId,
+                    Content = entry.Content,
                     Speaker = entry.Speaker,
                     Timestamp = entry.Timestamp,
+                    EntryType = entry.EntryType,
                     Reactions = []
                 };
             }
             else
             {
-                block.Transcript = entry.Transcript;
+                block.Content = entry.Content;
             }
+        }
+    }
+
+    public void InsertBlock(EntryMessage entry)
+    {
+        var meetingBlocks = _meetingTranscriptions.GetOrAdd(entry.MeetingId, _ => []);
+        lock (_lock)
+        {
+            meetingBlocks[entry.BlockId] = new Entry()
+            {
+                MeetingId = entry.MeetingId,
+                BlockId = entry.BlockId,
+                Content = entry.Content,
+                Speaker = entry.Speaker,
+                Timestamp = entry.Timestamp,
+                EntryType = entry.EntryType,
+                Reactions = []
+            };
         }
     }
 
@@ -54,7 +73,8 @@ public class TranscriptionService : ITranscriptionService
                 {
                     time = b.Timestamp,
                     speaker = b.Speaker?.FullName ?? "Unknown",
-                    transcript = b.Transcript
+                    content = b.Content,
+                    entryType = b.EntryType,
                 })
         };
 
@@ -69,7 +89,7 @@ public class TranscriptionService : ITranscriptionService
     public void AppliedReaction(ReactionAppliedMessage reaction)
     {
         _meetingTranscriptions.TryGetValue(reaction.MeetingId, out var meetingBlocks);
-        if (meetingBlocks is null || !meetingBlocks.TryGetValue(reaction.TranscriptBlockId, out var entry))
+        if (meetingBlocks is null || !meetingBlocks.TryGetValue(reaction.BlockId, out var entry))
         {
             return;
         }

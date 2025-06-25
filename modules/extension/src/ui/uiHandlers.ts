@@ -2,6 +2,8 @@ import {MeetingPlatformFactory} from "../core/platforms/meetingPlatformFactory";
 import {
   AppConfiguration,
   BotJoinedInMeetingMessage,
+  ChatEntry,
+  ChatEntryMessage,
   IMeetingPlatform,
   IMessage,
   MessageTypes,
@@ -154,24 +156,22 @@ export class UIHandlers {
   private handleMessageSend(): this {
     const btn = document.getElementById("au5-btn-sendMessage") as HTMLButtonElement | null;
     const input = document.getElementById("au5-input-message") as HTMLInputElement | null;
-    console.log("Button and input elements:", btn, input);
+
     btn?.addEventListener("click", () => {
-      console.log("Send message button clicked");
       if (input && input.value.trim()) {
         const message = {
-          type: MessageTypes.TranscriptionEntry,
+          type: MessageTypes.ChatEntry,
           meetingId: this.platform?.getMeetingId(),
-          transcriptBlockId: crypto.randomUUID(),
+          blockId: crypto.randomUUID(),
           speaker: {
             fullName: this.config.user.fullName,
             pictureUrl: this.config.user.pictureUrl
           },
-          transcript: input.value.trim(),
+          content: input.value.trim(),
           timestamp: new Date()
         };
-        console.log("Sending message:", message);
         this.meetingHubClient?.sendMessage(message);
-        this.chatPanel.addTranscription(message);
+        this.chatPanel.addChat(message);
         input.value = "";
       }
     });
@@ -219,7 +219,6 @@ export class UIHandlers {
         break;
 
       case MessageTypes.TranscriptionEntry:
-        console.log("Received transcription entry:", msg as TranscriptionEntryMessage);
         const transcriptEntry = msg as TranscriptionEntryMessage;
         console.log(this.chatPanel);
         this.chatPanel.addTranscription({
@@ -229,7 +228,17 @@ export class UIHandlers {
           transcript: transcriptEntry.transcript,
           timestamp: transcriptEntry.timestamp
         });
-        console.log("Transcription entry added:", transcriptEntry);
+        break;
+
+      case MessageTypes.ChatEntry:
+        const chatEntry = msg as ChatEntryMessage;
+        this.chatPanel.addChat({
+          meetingId: chatEntry.meetingId,
+          blockId: chatEntry.blockId,
+          speaker: chatEntry.speaker,
+          content: chatEntry.content,
+          timestamp: chatEntry.timestamp
+        });
         break;
 
       case MessageTypes.UserJoinedInMeeting:
