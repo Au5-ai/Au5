@@ -1,6 +1,6 @@
-﻿namespace Au5.MeetingHub.Models.Messages;
+﻿namespace Au5.MeetingHub.Models.Entity;
 
-public record struct Reactions
+public class Reactions
 {
     public List<string> Users { get; set; }
     public string ReactionType { get; set; }

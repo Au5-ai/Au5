@@ -14,7 +14,7 @@ export class MeetingHubClient {
   public async startConnection(): Promise<boolean> {
     try {
       await this.connection.start();
-      await this.connection.invoke("BotJoinMeeting", this.config.meetingId);
+      await this.connection.invoke("BotJoinedInMeeting", this.config.meetingId);
     } catch (err) {
       console.error("[SignalR] Connection failed:", err);
       return false;

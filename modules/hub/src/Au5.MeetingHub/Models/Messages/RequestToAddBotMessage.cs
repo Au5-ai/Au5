@@ -1,7 +1,8 @@
 ﻿namespace Au5.MeetingHub.Models.Messages;
 
-public record struct  RequestToAddBotMessage( User User,string MeetingId, string BotName) : IMessage
+public class RequestToAddBotMessage : Message
 {
-    public readonly string Type => MessageTypes.RequestToAddBot;
-    
+    public override string Type => MessageTypes.RequestToAddBot;
+    public User User { get; set; }
+    public string BotName { get; set; }
 }

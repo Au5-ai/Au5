@@ -22,7 +22,7 @@ export class MeetingHubClient {
     this.connection
       .start()
       .then(() => {
-        this.connection.invoke("JoinMeeting", {
+        this.connection.invoke("UserJoinedInMeeting", {
           meetingId: this.meetingId,
           user: {
             token: this.config.user.token,
@@ -35,13 +35,7 @@ export class MeetingHubClient {
       })
       .then(() => {
         this.connection.on("ReceiveMessage", (msg: IMessage) => {
-          switch (msg.type) {
-            case MessageTypes.NotifyUserJoining:
-            case MessageTypes.TranscriptionEntry:
-            case MessageTypes.ReactionApplied:
-              messageHandler(msg);
-              break;
-          }
+          messageHandler(msg);
         });
       })
       .catch(err => {

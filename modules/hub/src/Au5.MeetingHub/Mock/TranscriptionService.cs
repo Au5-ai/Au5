@@ -1,4 +1,5 @@
 ﻿using Au5.MeetingHub.Mock.Interfaces;
+using Au5.MeetingHub.Models.Entity;
 using Au5.MeetingHub.Models.Messages;
 using System.Text.Json;
 
@@ -6,7 +7,7 @@ namespace Au5.MeetingHub.Mock;
 
 public class TranscriptionService : ITranscriptionService
 {
-    private static readonly ConcurrentDictionary<string, Dictionary<Guid, TranscriptionEntryMessage>> _meetingTranscriptions = new();
+    private static readonly ConcurrentDictionary<string, Dictionary<string, TranscriptionEntry>> _meetingTranscriptions = new();
     private static readonly Lock _lock = new();
 
     private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
@@ -20,7 +21,22 @@ public class TranscriptionService : ITranscriptionService
         var meetingBlocks = _meetingTranscriptions.GetOrAdd(entry.MeetingId, _ => []);
         lock (_lock)
         {
-            meetingBlocks[entry.TranscriptBlockId] = entry;
+            if (!meetingBlocks.TryGetValue(entry.TranscriptBlockId, out var block) || block is null)
+            {
+                meetingBlocks[entry.TranscriptBlockId] = new TranscriptionEntry()
+                {
+                    MeetingId = entry.MeetingId,
+                    TranscriptBlockId = entry.TranscriptBlockId,
+                    Transcript = entry.Transcript,
+                    Speaker = entry.Speaker,
+                    Timestamp = entry.Timestamp,
+                    Reactions = []
+                };
+            }
+            else
+            {
+                block.Transcript = entry.Transcript;
+            }
         }
     }
 

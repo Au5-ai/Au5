@@ -61,7 +61,7 @@ export interface BotJoinedInMeetingMessage extends IMessage {
 }
 
 export interface UserJoinedInMeetingMessage extends IMessage {
-  readonly type: MessageTypes.NotifyUserJoining;
+  readonly type: MessageTypes.UserJoinedInMeeting;
   user: User;
 }
 
@@ -83,10 +83,10 @@ export enum PostMessageSource {
  * Actions that can be triggered by the content script.
  */
 export enum MessageTypes {
-  TranscriptionEntry = "TranscriptionEntry",
-  NotifyUserJoining = "NotifyUserJoining",
-  ReactionApplied = "ReactionApplied",
+  UserJoinedInMeeting = "UserJoinedInMeeting",
   BotJoinedInMeeting = "BotJoinedInMeeting",
+  TranscriptionEntry = "TranscriptionEntry",
+  ReactionApplied = "ReactionApplied",
   GeneralMessage = "GeneralMessage",
   RequestToAddBot = "RequestToAddBot"
 }

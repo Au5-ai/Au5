@@ -1,4 +1,5 @@
 ﻿using Au5.MeetingHub.Mock.Interfaces;
+using Au5.MeetingHub.Models.Entity;
 using Au5.MeetingHub.Models.Messages;
 
 namespace Au5.MeetingHub.Mock;

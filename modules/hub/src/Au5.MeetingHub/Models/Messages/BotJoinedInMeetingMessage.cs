@@ -1,6 +1,7 @@
 ﻿namespace Au5.MeetingHub.Models.Messages;
 
-public record struct BotJoinedInMeetingMessage(string MeetingId, string BotName) : IMessage
+public class BotJoinedInMeetingMessage : Message
 {
-    public readonly string Type => MessageTypes.BotJoinedInMeeting;
+    public override string Type => MessageTypes.BotJoinedInMeeting;
+    public string BotName { get; init; }
 }

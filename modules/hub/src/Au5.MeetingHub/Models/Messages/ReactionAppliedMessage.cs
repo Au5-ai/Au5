@@ -1,11 +1,9 @@
 ﻿namespace Au5.MeetingHub.Models.Messages;
 
-
-public record struct ReactionAppliedMessage : IMessage
+public class ReactionAppliedMessage : Message
 {
-    public string MeetingId { get; set; }
-    public Guid TranscriptBlockId { get; set; }
+    public override string Type => MessageTypes.ReactionApplied;
+    public string TranscriptBlockId { get; set; }
     public string UserFullName { get; set; }
     public string ReactionType { get; set; }
-    public readonly string Type => MessageTypes.ReactionApplied;
 }

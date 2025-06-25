@@ -60,6 +60,7 @@ class ChatPanel {
     }
   }
   addTranscription(entry) {
+    console.log(this.transcriptionsContainerEl);
     if (!this.transcriptionsContainerEl) {
       return;
     }
@@ -115,11 +116,11 @@ class ChatPanel {
   botJoined(botName) {
     this.addUserJoinedOrLeaved(botName, true);
   }
-  usersJoined(msg) {
-    this.addUserJoinedOrLeaved(msg.user.fullName, true);
+  usersJoined(fullName) {
+    this.addUserJoinedOrLeaved(fullName, true);
   }
-  usersLeaved(msg) {
-    this.addUserJoinedOrLeaved(msg.user.fullName, false);
+  usersLeaved(fullName) {
+    this.addUserJoinedOrLeaved(fullName, false);
   }
   addReaction(reaction) {
     if (!this.transcriptionsContainerEl) {
@@ -225,10 +226,10 @@ const platformRegex = {
   googleMeet: /https:\/\/meet\.google\.com\/([a-zA-Z0-9]{3}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{3})/
 };
 var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
-  MessageTypes2["TranscriptionEntry"] = "TranscriptionEntry";
-  MessageTypes2["NotifyUserJoining"] = "NotifyUserJoining";
-  MessageTypes2["ReactionApplied"] = "ReactionApplied";
+  MessageTypes2["UserJoinedInMeeting"] = "UserJoinedInMeeting";
   MessageTypes2["BotJoinedInMeeting"] = "BotJoinedInMeeting";
+  MessageTypes2["TranscriptionEntry"] = "TranscriptionEntry";
+  MessageTypes2["ReactionApplied"] = "ReactionApplied";
   MessageTypes2["GeneralMessage"] = "GeneralMessage";
   MessageTypes2["RequestToAddBot"] = "RequestToAddBot";
   return MessageTypes2;
@@ -3098,7 +3099,7 @@ class MeetingHubClient {
   }
   startConnection(messageHandler) {
     this.connection.start().then(() => {
-      this.connection.invoke("JoinMeeting", {
+      this.connection.invoke("UserJoinedInMeeting", {
         meetingId: this.meetingId,
         user: {
           token: this.config.user.token,
@@ -3110,13 +3111,7 @@ class MeetingHubClient {
       });
     }).then(() => {
       this.connection.on("ReceiveMessage", (msg) => {
-        switch (msg.type) {
-          case MessageTypes.NotifyUserJoining:
-          case MessageTypes.TranscriptionEntry:
-          case MessageTypes.ReactionApplied:
-            messageHandler(msg);
-            break;
-        }
+        messageHandler(msg);
       });
     }).catch((err) => {
       console.error("SignalR connection failed:", err);
@@ -3140,6 +3135,7 @@ class UIHandlers {
     __publicField(this, "chatPanel");
     this.config = config2;
     this.chatPanel = chatPanel2;
+    this.handleMessage = this.handleMessage.bind(this);
   }
   init() {
     return this.handleJoin().handleReload().handleReactions().handleThemeToggle().handleOptions().handleGithubLink().handleDiscordLink().handleMessageSend().handleTooltips();
@@ -3299,8 +3295,11 @@ class UIHandlers {
       case MessageTypes.BotJoinedInMeeting:
         const botJoinedMsg = msg;
         this.chatPanel.botJoined(botJoinedMsg.botName);
+        break;
       case MessageTypes.TranscriptionEntry:
+        console.log("Received transcription entry:", msg);
         const transcriptEntry = msg;
+        console.log(this.chatPanel);
         this.chatPanel.addTranscription({
           meetingId: transcriptEntry.meetingId,
           transcriptBlockId: transcriptEntry.transcriptBlockId,
@@ -3308,20 +3307,14 @@ class UIHandlers {
           transcript: transcriptEntry.transcript,
           timestamp: transcriptEntry.timestamp
         });
+        console.log("Transcription entry added:", transcriptEntry);
         break;
-      case MessageTypes.NotifyUserJoining:
+      case MessageTypes.UserJoinedInMeeting:
         const userJoinedMsg = msg;
         if (!userJoinedMsg.user) {
           return;
         }
-        this.chatPanel.usersJoined({
-          type: MessageTypes.NotifyUserJoining,
-          user: {
-            id: userJoinedMsg.user.id,
-            fullName: userJoinedMsg.user.fullName,
-            pictureUrl: userJoinedMsg.user.pictureUrl
-          }
-        });
+        this.chatPanel.usersJoined(userJoinedMsg.user.fullName);
         break;
       case MessageTypes.ReactionApplied:
         const reactionMsg = msg;

@@ -56,10 +56,10 @@ export class ChatPanel {
   }
 
   public addTranscription(entry: TranscriptionEntry): void {
+    console.log(this.transcriptionsContainerEl);
     if (!this.transcriptionsContainerEl) {
       return;
     }
-
     const existing = this.transcriptionsContainerEl.querySelector(
       `[data-id="${entry.transcriptBlockId}"]`
     ) as HTMLDivElement;
@@ -120,12 +120,12 @@ export class ChatPanel {
     this.addUserJoinedOrLeaved(botName, true);
   }
 
-  public usersJoined(msg: UserJoinedInMeetingMessage): void {
-    this.addUserJoinedOrLeaved(msg.user.fullName, true);
+  public usersJoined(fullName: string): void {
+    this.addUserJoinedOrLeaved(fullName, true);
   }
 
-  public usersLeaved(msg: UserJoinedInMeetingMessage): void {
-    this.addUserJoinedOrLeaved(msg.user.fullName, false);
+  public usersLeaved(fullName: string): void {
+    this.addUserJoinedOrLeaved(fullName, false);
   }
 
   public addReaction(reaction: ReactionAppliedMessage): void {

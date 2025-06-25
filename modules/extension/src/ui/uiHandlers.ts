@@ -22,6 +22,7 @@ export class UIHandlers {
   constructor(config: AppConfiguration, chatPanel: ChatPanel) {
     this.config = config;
     this.chatPanel = chatPanel;
+    this.handleMessage = this.handleMessage.bind(this);
   }
 
   init(): this {
@@ -215,10 +216,12 @@ export class UIHandlers {
       case MessageTypes.BotJoinedInMeeting:
         const botJoinedMsg = msg as BotJoinedInMeetingMessage;
         this.chatPanel.botJoined(botJoinedMsg.botName);
+        break;
 
       case MessageTypes.TranscriptionEntry:
+        console.log("Received transcription entry:", msg as TranscriptionEntryMessage);
         const transcriptEntry = msg as TranscriptionEntryMessage;
-
+        console.log(this.chatPanel);
         this.chatPanel.addTranscription({
           meetingId: transcriptEntry.meetingId,
           transcriptBlockId: transcriptEntry.transcriptBlockId,
@@ -226,23 +229,15 @@ export class UIHandlers {
           transcript: transcriptEntry.transcript,
           timestamp: transcriptEntry.timestamp
         });
+        console.log("Transcription entry added:", transcriptEntry);
         break;
 
-      case MessageTypes.NotifyUserJoining:
+      case MessageTypes.UserJoinedInMeeting:
         const userJoinedMsg = msg as UserJoinedInMeetingMessage;
-
         if (!userJoinedMsg.user) {
           return;
         }
-
-        this.chatPanel.usersJoined({
-          type: MessageTypes.NotifyUserJoining,
-          user: {
-            id: userJoinedMsg.user.id,
-            fullName: userJoinedMsg.user.fullName,
-            pictureUrl: userJoinedMsg.user.pictureUrl
-          }
-        });
+        this.chatPanel.usersJoined(userJoinedMsg.user.fullName);
         break;
 
       case MessageTypes.ReactionApplied:
