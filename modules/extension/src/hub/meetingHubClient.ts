@@ -1,15 +1,17 @@
 import * as signalR from "@microsoft/signalr";
-import {AppConfiguration, IMessage, JoinMeeting} from "../core/types";
+import {AppConfiguration, IMeetingPlatform, IMessage, JoinMeeting} from "../core/types";
 import {MessageTypes} from "../core/types/index";
 
 export class MeetingHubClient {
   private connection: signalR.HubConnection;
   private meetingId: string;
   private config: AppConfiguration;
+  private platform: IMeetingPlatform;
 
-  constructor(config: AppConfiguration, meetingId: string) {
+  constructor(config: AppConfiguration, platform: IMeetingPlatform) {
     this.config = config;
-    this.meetingId = meetingId;
+    this.platform = platform;
+    this.meetingId = platform.getMeetingId();
     this.connection = new signalR.HubConnectionBuilder()
       .withUrl(this.config.service.hubUrl)
       .withAutomaticReconnect()
@@ -27,7 +29,8 @@ export class MeetingHubClient {
             id: this.config.user.id,
             fullName: this.config.user.fullName,
             pictureUrl: this.config.user.pictureUrl
-          }
+          },
+          platform: this.platform.getPlatformName()
         } as JoinMeeting);
       })
       .then(() => {

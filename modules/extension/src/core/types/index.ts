@@ -54,6 +54,12 @@ export interface ReactionAppliedMessage extends IMessage {
   reactionType: string;
 }
 
+export interface BotJoinedInMeetingMessage extends IMessage {
+  readonly type: MessageTypes.BotJoinedInMeeting;
+  meetingId: string;
+  botName: string;
+}
+
 export interface UserJoinedInMeetingMessage extends IMessage {
   readonly type: MessageTypes.NotifyUserJoining;
   user: User;
@@ -79,5 +85,8 @@ export enum PostMessageSource {
 export enum MessageTypes {
   TranscriptionEntry = "TranscriptionEntry",
   NotifyUserJoining = "NotifyUserJoining",
-  ReactionApplied = "ReactionApplied"
+  ReactionApplied = "ReactionApplied",
+  BotJoinedInMeeting = "BotJoinedInMeeting",
+  GeneralMessage = "GeneralMessage",
+  RequestToAddBot = "RequestToAddBot"
 }

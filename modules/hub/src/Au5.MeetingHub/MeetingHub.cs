@@ -35,6 +35,8 @@ public class MeetingHub(IMeetingService meetingService, ITranscriptionService tr
         {
             return;
         }
+         await SendToOthersInGroupAsync(meetingId, new BotJoinedInMeetingMessage(meetingId, "Bot"));
+        Console.WriteLine($"Bot joining meeting: {meetingId}");
         var botName = _meetingService.BotIsAdded(meetingId);
         if (string.IsNullOrWhiteSpace(botName))
         {

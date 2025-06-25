@@ -14,9 +14,9 @@ public class MeetingService : IMeetingService
         {
             var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId && m.CreatedAt.Date == DateTime.Now.Date);
 
-            if (meeting is not null && meeting.Status == MeetingStatus.Ended)
+            if (meeting is null || ( meeting is not null && meeting.Status == MeetingStatus.Ended))
             {
-                _meetings.Add(new Meeting
+                meeting = new Meeting
                 {
                     Id = Guid.NewGuid(),
                     MeetingId = meetingId,
@@ -26,7 +26,8 @@ public class MeetingService : IMeetingService
                     Platform = platform,
                     Participants = [],
                     Status = MeetingStatus.NotStarted
-                });
+                };
+                _meetings.Add(meeting);
             }
 
             var existingUser = meeting.Users.Any(u => u == user.Id);

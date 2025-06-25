@@ -116,12 +116,16 @@ export class ChatPanel {
     this.scrollToBottom();
   }
 
-  public usersJoined(data: UserJoinedInMeetingMessage): void {
-    this.addUserJoinedOrLeaved(data.user, true);
+  public botJoined(botName: string): void {
+    this.addUserJoinedOrLeaved(botName, true);
   }
 
-  public usersLeaved(data: UserJoinedInMeetingMessage): void {
-    this.addUserJoinedOrLeaved(data.user, false);
+  public usersJoined(msg: UserJoinedInMeetingMessage): void {
+    this.addUserJoinedOrLeaved(msg.user.fullName, true);
+  }
+
+  public usersLeaved(msg: UserJoinedInMeetingMessage): void {
+    this.addUserJoinedOrLeaved(msg.user.fullName, false);
   }
 
   public addReaction(reaction: ReactionAppliedMessage): void {
@@ -187,15 +191,14 @@ export class ChatPanel {
       }
     });
   }
-  private addUserJoinedOrLeaved(user: User, isJoined: boolean): void {
+
+  private addUserJoinedOrLeaved(name: string, isJoined: boolean): void {
     if (!this.transcriptionsContainerEl) {
       return;
     }
     const usersJoined = document.createElement("div");
     usersJoined.className = "au5-join-time";
-    usersJoined.innerText = `👋 ${user.fullName} ${isJoined ? "Joined" : "Leaved"} at ${DateTime.toHoursAndMinutes(
-      new Date()
-    )}`;
+    usersJoined.innerText = `👋 ${name} ${isJoined ? "Joined" : "Leaved"} at ${DateTime.toHoursAndMinutes(new Date())}`;
     this.transcriptionsContainerEl.appendChild(usersJoined);
     this.scrollToBottom();
   }

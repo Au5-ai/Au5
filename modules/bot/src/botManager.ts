@@ -122,7 +122,6 @@ async function handleTranscription(
 
   message.meetingId = meetingConfig.meetingId;
   logger.info(message);
-
   if (!meetingHasPaused) {
     await hubClient.sendMessage(message);
   }

@@ -1,5 +1,8 @@
 import {MeetingPlatformFactory} from "../core/platforms/meetingPlatformFactory";
 import {
+  AppConfiguration,
+  BotJoinedInMeetingMessage,
+  IMeetingPlatform,
   IMessage,
   MessageTypes,
   ReactionAppliedMessage,
@@ -8,16 +11,16 @@ import {
 } from "../core/types";
 import {getCurrentUrl} from "../core/utils";
 import {MeetingHubClient} from "../hub/meetingHubClient";
+import {ChatPanel} from "./chatPanel";
 
 export class UIHandlers {
   private meetingHubClient: MeetingHubClient = null as any;
-  private config: any;
-  private platform: any;
-  private chatPanel: any;
+  private config: AppConfiguration;
+  private platform: IMeetingPlatform | null = null;
+  private chatPanel: ChatPanel;
 
-  constructor(config: any, platform: any, chatPanel: any) {
+  constructor(config: AppConfiguration, chatPanel: ChatPanel) {
     this.config = config;
-    this.platform = platform;
     this.chatPanel = chatPanel;
   }
 
@@ -49,7 +52,7 @@ export class UIHandlers {
 
       this.chatPanel.showTranscriptionContainer();
 
-      this.meetingHubClient = new MeetingHubClient(this.config, this.platform.getMeetingId());
+      this.meetingHubClient = new MeetingHubClient(this.config, this.platform);
       const isConnected = this.meetingHubClient.startConnection(this.handleMessage);
 
       if (!isConnected) {
@@ -209,6 +212,10 @@ export class UIHandlers {
 
   private handleMessage(msg: IMessage): void {
     switch (msg.type) {
+      case MessageTypes.BotJoinedInMeeting:
+        const botJoinedMsg = msg as BotJoinedInMeetingMessage;
+        this.chatPanel.botJoined(botJoinedMsg.botName);
+
       case MessageTypes.TranscriptionEntry:
         const transcriptEntry = msg as TranscriptionEntryMessage;
 
