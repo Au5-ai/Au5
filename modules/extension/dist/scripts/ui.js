@@ -59,23 +59,20 @@ class ChatPanel {
       });
     }
   }
-  addTranscription(entry) {
-    console.log(this.transcriptionsContainerEl);
+  addEntry(entry) {
     if (!this.transcriptionsContainerEl) {
       return;
     }
-    const existing = this.transcriptionsContainerEl.querySelector(
-      `[data-id="${entry.transcriptBlockId}"]`
-    );
+    const existing = this.transcriptionsContainerEl.querySelector(`[data-id="${entry.blockId}"]`);
     if (existing) {
       const textEl = existing.querySelector(".au5-message-text");
-      if (textEl) textEl.innerText = entry.transcript;
+      if (textEl) textEl.innerText = entry.content;
       return;
     }
-    const transcriptBlock = document.createElement("div");
-    transcriptBlock.setAttribute("data-id", entry.transcriptBlockId);
-    transcriptBlock.className = "au5-transcription";
-    transcriptBlock.innerHTML = `
+    const entryBlock = document.createElement("div");
+    entryBlock.setAttribute("data-id", entry.blockId);
+    entryBlock.className = "au5-transcription";
+    entryBlock.innerHTML = `
   <div class="au5-transcription-message">
     <div class="au5-message-avatar">
       <img
@@ -92,17 +89,17 @@ class ChatPanel {
       </div>
 
       <div class="au5-message-text" style="direction: ${this.direction};">
-        ${entry.transcript}
+        ${entry.content}
       </div>
 
       <div class="au5-message-reactions">
         <div class="au5-reaction-list">
-          <div class="au5-reaction au5-reaction-highlight" reaction-type="task" data-blockId="${entry.transcriptBlockId}">
+          <div class="au5-reaction au5-reaction-highlight" reaction-type="task" data-blockId="${entry.blockId}">
             <span class="au5-reaction-emoji">⚡</span>
             <div class="au5-reaction-users"></div>
           </div>
 
-          <div class="au5-reaction au5-reaction-mute" reaction-type="important" data-blockId="${entry.transcriptBlockId}">
+          <div class="au5-reaction au5-reaction-mute" reaction-type="important" data-blockId="${entry.blockId}">
             <span class="au5-reaction-emoji">🎯</span>
             <div class="au5-reaction-users"></div>
           </div>
@@ -110,7 +107,7 @@ class ChatPanel {
       </div>
     </div>
   </div>`;
-    this.transcriptionsContainerEl.appendChild(transcriptBlock);
+    this.transcriptionsContainerEl.appendChild(entryBlock);
     this.scrollToBottom();
   }
   botJoined(botName) {
@@ -228,7 +225,7 @@ const platformRegex = {
 var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
   MessageTypes2["UserJoinedInMeeting"] = "UserJoinedInMeeting";
   MessageTypes2["BotJoinedInMeeting"] = "BotJoinedInMeeting";
-  MessageTypes2["TranscriptionEntry"] = "TranscriptionEntry";
+  MessageTypes2["Entry"] = "Entry";
   MessageTypes2["ReactionApplied"] = "ReactionApplied";
   MessageTypes2["GeneralMessage"] = "GeneralMessage";
   MessageTypes2["RequestToAddBot"] = "RequestToAddBot";
@@ -3237,25 +3234,23 @@ class UIHandlers {
   handleMessageSend() {
     const btn = document.getElementById("au5-btn-sendMessage");
     const input = document.getElementById("au5-input-message");
-    console.log("Button and input elements:", btn, input);
     btn == null ? void 0 : btn.addEventListener("click", () => {
       var _a, _b;
-      console.log("Send message button clicked");
       if (input && input.value.trim()) {
-        const message = {
-          type: MessageTypes.TranscriptionEntry,
+        const entry = {
+          type: MessageTypes.Entry,
           meetingId: (_a = this.platform) == null ? void 0 : _a.getMeetingId(),
-          transcriptBlockId: crypto.randomUUID(),
+          blockId: crypto.randomUUID(),
           speaker: {
             fullName: this.config.user.fullName,
             pictureUrl: this.config.user.pictureUrl
           },
-          transcript: input.value.trim(),
-          timestamp: /* @__PURE__ */ new Date()
+          content: input.value.trim(),
+          timestamp: /* @__PURE__ */ new Date(),
+          entryType: "Chat"
         };
-        console.log("Sending message:", message);
-        (_b = this.meetingHubClient) == null ? void 0 : _b.sendMessage(message);
-        this.chatPanel.addTranscription(message);
+        (_b = this.meetingHubClient) == null ? void 0 : _b.sendMessage(entry);
+        this.chatPanel.addEntry(entry);
         input.value = "";
       }
     });
@@ -3296,18 +3291,16 @@ class UIHandlers {
         const botJoinedMsg = msg;
         this.chatPanel.botJoined(botJoinedMsg.botName);
         break;
-      case MessageTypes.TranscriptionEntry:
-        console.log("Received transcription entry:", msg);
+      case MessageTypes.Entry:
         const transcriptEntry = msg;
-        console.log(this.chatPanel);
-        this.chatPanel.addTranscription({
+        this.chatPanel.addEntry({
           meetingId: transcriptEntry.meetingId,
-          transcriptBlockId: transcriptEntry.transcriptBlockId,
+          blockId: transcriptEntry.blockId,
           speaker: transcriptEntry.speaker,
-          transcript: transcriptEntry.transcript,
+          content: transcriptEntry.content,
+          entryType: transcriptEntry.entryType,
           timestamp: transcriptEntry.timestamp
         });
-        console.log("Transcription entry added:", transcriptEntry);
         break;
       case MessageTypes.UserJoinedInMeeting:
         const userJoinedMsg = msg;

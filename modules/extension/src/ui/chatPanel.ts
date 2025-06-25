@@ -1,4 +1,4 @@
-import {ChatEntry, ReactionAppliedMessage, TranscriptionEntry, User, UserJoinedInMeetingMessage} from "../core/types";
+import {Entry, ReactionAppliedMessage} from "../core/types";
 import {DateTime} from "../core/utils/datetime";
 const DEFAULT_AVATAR_URL = "assets/icons/default-avatar.jpg";
 export class ChatPanel {
@@ -55,67 +55,7 @@ export class ChatPanel {
     }
   }
 
-  public addTranscription(entry: TranscriptionEntry): void {
-    if (!this.transcriptionsContainerEl) {
-      return;
-    }
-    const existing = this.transcriptionsContainerEl.querySelector(
-      `[data-id="${entry.transcriptBlockId}"]`
-    ) as HTMLDivElement;
-    if (existing) {
-      const textEl = existing.querySelector(".au5-message-text") as HTMLDivElement;
-      if (textEl) textEl.innerText = entry.transcript;
-      return;
-    }
-
-    const transcriptBlock = document.createElement("div");
-    transcriptBlock.setAttribute("data-id", entry.transcriptBlockId);
-    transcriptBlock.className = "au5-transcription";
-    transcriptBlock.innerHTML = `
-  <div class="au5-transcription-message">
-    <div class="au5-message-avatar">
-      <img
-        class="au5-avatar-image"
-        src="${entry.speaker.pictureUrl || DEFAULT_AVATAR_URL}"
-        alt="Sender Avatar"
-      />
-    </div>
-
-    <div class="au5-message-bubble">
-      <div class="au5-message-header">
-        <span class="au5-message-sender">${entry.speaker.fullName}</span>
-        <span class="au5-message-time">${DateTime.toHoursAndMinutes(entry.timestamp)}</span>
-      </div>
-
-      <div class="au5-message-text" style="direction: ${this.direction};">
-        ${entry.transcript}
-      </div>
-
-      <div class="au5-message-reactions">
-        <div class="au5-reaction-list">
-          <div class="au5-reaction au5-reaction-highlight" reaction-type="task" data-blockId="${
-            entry.transcriptBlockId
-          }">
-            <span class="au5-reaction-emoji">⚡</span>
-            <div class="au5-reaction-users"></div>
-          </div>
-
-          <div class="au5-reaction au5-reaction-mute" reaction-type="important" data-blockId="${
-            entry.transcriptBlockId
-          }">
-            <span class="au5-reaction-emoji">🎯</span>
-            <div class="au5-reaction-users"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>`;
-
-    this.transcriptionsContainerEl.appendChild(transcriptBlock);
-    this.scrollToBottom();
-  }
-
-  public addChat(entry: ChatEntry): void {
+  public addEntry(entry: Entry): void {
     if (!this.transcriptionsContainerEl) {
       return;
     }
@@ -126,10 +66,10 @@ export class ChatPanel {
       return;
     }
 
-    const chatBlock = document.createElement("div");
-    chatBlock.setAttribute("data-id", entry.blockId);
-    chatBlock.className = "au5-transcription";
-    chatBlock.innerHTML = `
+    const entryBlock = document.createElement("div");
+    entryBlock.setAttribute("data-id", entry.blockId);
+    entryBlock.className = "au5-transcription";
+    entryBlock.innerHTML = `
   <div class="au5-transcription-message">
     <div class="au5-message-avatar">
       <img
@@ -165,7 +105,7 @@ export class ChatPanel {
     </div>
   </div>`;
 
-    this.transcriptionsContainerEl.appendChild(chatBlock);
+    this.transcriptionsContainerEl.appendChild(entryBlock);
     this.scrollToBottom();
   }
 

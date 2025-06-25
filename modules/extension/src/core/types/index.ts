@@ -12,20 +12,13 @@ export interface Speaker {
   pictureUrl: string;
 }
 
-export interface TranscriptionEntry {
-  meetingId?: string;
-  transcriptBlockId: string;
-  speaker: Speaker;
-  transcript: string;
-  timestamp: Date;
-}
-
-export interface ChatEntry {
+export interface Entry {
   meetingId?: string;
   blockId: string;
   speaker: Speaker;
   content: string;
   timestamp: Date;
+  entryType: "Transcription" | "Chat";
 }
 
 export interface User extends Speaker {
@@ -73,22 +66,8 @@ export interface UserJoinedInMeetingMessage extends IMessage {
   user: User;
 }
 
-export interface TranscriptionEntryMessage extends IMessage {
-  meetingId: string;
-  transcriptBlockId: string;
-  speaker: User;
-  transcript: string;
-  timestamp: Date;
-  readonly type: MessageTypes.TranscriptionEntry;
-}
-
-export interface ChatEntryMessage extends IMessage {
-  meetingId: string;
-  blockId: string;
-  speaker: User;
-  content: string;
-  timestamp: Date;
-  readonly type: MessageTypes.ChatEntry;
+export interface EntryMessage extends Entry, IMessage {
+  readonly type: MessageTypes.Entry;
 }
 
 export enum PostMessageSource {
@@ -102,8 +81,7 @@ export enum PostMessageSource {
 export enum MessageTypes {
   UserJoinedInMeeting = "UserJoinedInMeeting",
   BotJoinedInMeeting = "BotJoinedInMeeting",
-  TranscriptionEntry = "TranscriptionEntry",
-  ChatEntry = "ChatEntry",
+  Entry = "Entry",
   ReactionApplied = "ReactionApplied",
   GeneralMessage = "GeneralMessage",
   RequestToAddBot = "RequestToAddBot"

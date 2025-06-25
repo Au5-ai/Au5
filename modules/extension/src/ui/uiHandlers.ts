@@ -2,13 +2,11 @@ import {MeetingPlatformFactory} from "../core/platforms/meetingPlatformFactory";
 import {
   AppConfiguration,
   BotJoinedInMeetingMessage,
-  ChatEntry,
-  ChatEntryMessage,
+  EntryMessage,
   IMeetingPlatform,
   IMessage,
   MessageTypes,
   ReactionAppliedMessage,
-  TranscriptionEntryMessage,
   UserJoinedInMeetingMessage
 } from "../core/types";
 import {getCurrentUrl} from "../core/utils";
@@ -159,8 +157,8 @@ export class UIHandlers {
 
     btn?.addEventListener("click", () => {
       if (input && input.value.trim()) {
-        const message = {
-          type: MessageTypes.ChatEntry,
+        const entry: EntryMessage = {
+          type: MessageTypes.Entry,
           meetingId: this.platform?.getMeetingId(),
           blockId: crypto.randomUUID(),
           speaker: {
@@ -168,10 +166,11 @@ export class UIHandlers {
             pictureUrl: this.config.user.pictureUrl
           },
           content: input.value.trim(),
-          timestamp: new Date()
+          timestamp: new Date(),
+          entryType: "Chat"
         };
-        this.meetingHubClient?.sendMessage(message);
-        this.chatPanel.addChat(message);
+        this.meetingHubClient?.sendMessage(entry);
+        this.chatPanel.addEntry(entry);
         input.value = "";
       }
     });
@@ -218,26 +217,15 @@ export class UIHandlers {
         this.chatPanel.botJoined(botJoinedMsg.botName);
         break;
 
-      case MessageTypes.TranscriptionEntry:
-        const transcriptEntry = msg as TranscriptionEntryMessage;
-        console.log(this.chatPanel);
-        this.chatPanel.addTranscription({
+      case MessageTypes.Entry:
+        const transcriptEntry = msg as EntryMessage;
+        this.chatPanel.addEntry({
           meetingId: transcriptEntry.meetingId,
-          transcriptBlockId: transcriptEntry.transcriptBlockId,
+          blockId: transcriptEntry.blockId,
           speaker: transcriptEntry.speaker,
-          transcript: transcriptEntry.transcript,
+          content: transcriptEntry.content,
+          entryType: transcriptEntry.entryType,
           timestamp: transcriptEntry.timestamp
-        });
-        break;
-
-      case MessageTypes.ChatEntry:
-        const chatEntry = msg as ChatEntryMessage;
-        this.chatPanel.addChat({
-          meetingId: chatEntry.meetingId,
-          blockId: chatEntry.blockId,
-          speaker: chatEntry.speaker,
-          content: chatEntry.content,
-          timestamp: chatEntry.timestamp
         });
         break;
 
