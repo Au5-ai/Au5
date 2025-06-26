@@ -140,8 +140,8 @@ export class UIHandlers {
   }
 
   private handleOptions(): this {
-    const btn = document.getElementById("au5-btn-options");
-    btn?.addEventListener("click", () => window.open("options.html", "_blank"));
+    const btn = document.getElementById("au5-btn-login");
+    btn?.addEventListener("click", () => window.open(this.config.service.panelUrl, "_blank"));
     return this;
   }
 

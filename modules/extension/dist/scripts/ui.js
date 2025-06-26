@@ -3279,8 +3279,8 @@ class UIHandlers {
     return this;
   }
   handleOptions() {
-    const btn = document.getElementById("au5-btn-options");
-    btn == null ? void 0 : btn.addEventListener("click", () => window.open("options.html", "_blank"));
+    const btn = document.getElementById("au5-btn-login");
+    btn == null ? void 0 : btn.addEventListener("click", () => window.open(this.config.service.panelUrl, "_blank"));
     return this;
   }
   handleGithubLink() {

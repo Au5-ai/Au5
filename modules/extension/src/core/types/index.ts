@@ -27,6 +27,7 @@ export interface User extends Speaker {
 }
 
 export interface ServiceIntegration {
+  panelUrl: string;
   baseUrl: string;
   direction: "ltr" | "rtl";
   hubUrl: string;
