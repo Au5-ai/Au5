@@ -71,6 +71,9 @@
     <label for="companyName">Company Name</label>
     <input id="companyName" value="Asax Co" />
 
+    <label for="botName">Bot Name</label>
+    <input id="botName" value="Au5 Bot" />
+
     <label for="direction">Direction (ltr/rtl)</label>
     <input id="direction" value="rtl" />
 
@@ -117,10 +120,11 @@
             pictureUrl: document.getElementById("pictureUrl").value,
           },
           service: {
-            webhookUrl: document.getElementById("webhookUrl").value,
+            baseUrl: document.getElementById("webhookUrl").value,
             direction: document.getElementById("direction").value,
             hubUrl: document.getElementById("hubUrl").value,
             companyName: document.getElementById("companyName").value,
+            botName: document.getElementById("botName").value,
           },
         };
 

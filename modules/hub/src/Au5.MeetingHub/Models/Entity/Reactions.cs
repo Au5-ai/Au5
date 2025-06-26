@@ -2,6 +2,6 @@
 
 public class Reactions
 {
-    public List<string> Users { get; set; }
+    public List<Guid> Users { get; set; }
     public string ReactionType { get; set; }
 }

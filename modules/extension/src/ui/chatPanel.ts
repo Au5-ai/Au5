@@ -1,4 +1,4 @@
-import {Entry, ReactionAppliedMessage} from "../core/types";
+import {Entry, ReactionAppliedMessage, RequestToAddBotMessage} from "../core/types";
 import {DateTime} from "../core/utils/datetime";
 const DEFAULT_AVATAR_URL = "assets/icons/default-avatar.jpg";
 export class ChatPanel {
@@ -111,6 +111,13 @@ export class ChatPanel {
 
   public botJoined(botName: string): void {
     this.addUserJoinedOrLeaved(botName, true);
+    if (!this.transcriptionsContainerEl) {
+      return;
+    }
+    const botContainer = this.transcriptionsContainerEl.querySelector("#au5-addBot-container") as HTMLDivElement;
+    if (botContainer) {
+      botContainer.remove();
+    }
   }
 
   public usersJoined(fullName: string): void {
@@ -127,7 +134,7 @@ export class ChatPanel {
     }
 
     const transcriptionBlock = this.transcriptionsContainerEl.querySelector(
-      `[data-id="${reaction.transcriptBlockId}"]`
+      `[data-id="${reaction.blockId}"]`
     ) as HTMLDivElement;
 
     if (!transcriptionBlock) {
@@ -153,7 +160,7 @@ export class ChatPanel {
       }
 
       const existingUser = reactionUsersContainer.querySelector(
-        `[data-user-name="${reaction.user.fullName || ""}"]`
+        `[data-user-id="${reaction.user.id || ""}"]`
       ) as HTMLImageElement;
 
       if (existingUser) {
@@ -162,12 +169,28 @@ export class ChatPanel {
       }
 
       const userSpan = document.createElement("img");
-      userSpan.setAttribute("data-user-name", reaction.user.fullName || "");
+      userSpan.setAttribute("data-user-id", reaction.user.id || "");
       userSpan.className = "au5-reaction-user-avatar";
       userSpan.src = `${reaction.user.pictureUrl}`;
       userSpan.alt = `${reaction.user.fullName}'s avatar`;
       userSpan.title = reaction.user.fullName;
       reactionUsersContainer.appendChild(userSpan);
+    }
+  }
+
+  public botRequested(request: RequestToAddBotMessage): void {
+    if (!this.transcriptionsContainerEl) {
+      return;
+    }
+    const botContainer = this.transcriptionsContainerEl.querySelector("#au5-addBot-container") as HTMLDivElement;
+
+    if (botContainer) {
+      botContainer.classList.add("hidden");
+      const botRequested = document.createElement("div");
+      botRequested.className = "au5-join-time";
+
+      botRequested.innerText = `🤖 ${request.botName} bot requested by ${request.user.fullName}`;
+      this.transcriptionsContainerEl.appendChild(botRequested);
     }
   }
 

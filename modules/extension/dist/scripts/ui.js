@@ -112,6 +112,13 @@ class ChatPanel {
   }
   botJoined(botName) {
     this.addUserJoinedOrLeaved(botName, true);
+    if (!this.transcriptionsContainerEl) {
+      return;
+    }
+    const botContainer = this.transcriptionsContainerEl.querySelector("#au5-addBot-container");
+    if (botContainer) {
+      botContainer.remove();
+    }
   }
   usersJoined(fullName) {
     this.addUserJoinedOrLeaved(fullName, true);
@@ -124,7 +131,7 @@ class ChatPanel {
       return;
     }
     const transcriptionBlock = this.transcriptionsContainerEl.querySelector(
-      `[data-id="${reaction.transcriptBlockId}"]`
+      `[data-id="${reaction.blockId}"]`
     );
     if (!transcriptionBlock) {
       console.warn("Transcription block not found for reaction:", reaction);
@@ -145,19 +152,32 @@ class ChatPanel {
         return;
       }
       const existingUser = reactionUsersContainer.querySelector(
-        `[data-user-name="${reaction.user.fullName || ""}"]`
+        `[data-user-id="${reaction.user.id || ""}"]`
       );
       if (existingUser) {
         reactionUsersContainer.removeChild(existingUser);
         return;
       }
       const userSpan = document.createElement("img");
-      userSpan.setAttribute("data-user-name", reaction.user.fullName || "");
+      userSpan.setAttribute("data-user-id", reaction.user.id || "");
       userSpan.className = "au5-reaction-user-avatar";
       userSpan.src = `${reaction.user.pictureUrl}`;
       userSpan.alt = `${reaction.user.fullName}'s avatar`;
       userSpan.title = reaction.user.fullName;
       reactionUsersContainer.appendChild(userSpan);
+    }
+  }
+  botRequested(request) {
+    if (!this.transcriptionsContainerEl) {
+      return;
+    }
+    const botContainer = this.transcriptionsContainerEl.querySelector("#au5-addBot-container");
+    if (botContainer) {
+      botContainer.classList.add("hidden");
+      const botRequested = document.createElement("div");
+      botRequested.className = "au5-join-time";
+      botRequested.innerText = `🤖 ${request.botName} bot requested by ${request.user.fullName}`;
+      this.transcriptionsContainerEl.appendChild(botRequested);
     }
   }
   setUrl(url) {
@@ -273,6 +293,45 @@ class MeetingPlatformFactory {
       default:
         return null;
     }
+  }
+}
+async function apiRequest(url, options = {}) {
+  const { method = "GET", headers = {}, body, authToken } = options;
+  const finalHeaders = {
+    "Content-Type": "application/json",
+    ...headers
+  };
+  const response = await fetch(url, {
+    method,
+    headers: finalHeaders,
+    body: body ? JSON.stringify(body) : void 0
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Fetch failed with ${response.status}: ${errorText}`);
+  }
+  if (response.status === 204) {
+    return {};
+  }
+  return response.json();
+}
+class BackEndApi {
+  constructor(config2) {
+    this.config = config2;
+  }
+  /**
+   * Sends a request to the backend to join a bot in a meeting.
+   * @returns A promise that resolves with the response from the backend.
+   */
+  async addBot(body) {
+    const url = this.config.service.baseUrl + "/meeting/addBot";
+    return apiRequest(url, {
+      method: "POST",
+      body,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
   }
 }
 async function getCurrentUrl$1() {
@@ -3130,12 +3189,14 @@ class UIHandlers {
     __publicField(this, "config");
     __publicField(this, "platform", null);
     __publicField(this, "chatPanel");
+    __publicField(this, "backendApi");
     this.config = config2;
     this.chatPanel = chatPanel2;
+    this.backendApi = new BackEndApi(config2);
     this.handleMessage = this.handleMessage.bind(this);
   }
   init() {
-    return this.handleJoin().handleReload().handleReactions().handleThemeToggle().handleOptions().handleGithubLink().handleDiscordLink().handleMessageSend().handleTooltips();
+    return this.handleJoin().handleReload().handleReactions().handleThemeToggle().handleOptions().handleGithubLink().handleDiscordLink().handleAddBot().handleMessageSend().handleTooltips();
   }
   handleJoin() {
     const btn = document.getElementById("au5-btn-joinMeeting");
@@ -3182,8 +3243,9 @@ class UIHandlers {
           (_b = this.meetingHubClient) == null ? void 0 : _b.sendMessage({
             type: MessageTypes.ReactionApplied,
             meetingId: (_a = this.platform) == null ? void 0 : _a.getMeetingId(),
-            transcriptBlockId: blockId,
+            blockId,
             user: {
+              id: this.config.user.id,
               fullName: this.config.user.fullName,
               pictureUrl: this.config.user.pictureUrl
             },
@@ -3191,7 +3253,7 @@ class UIHandlers {
           });
           this.chatPanel.addReaction({
             type: MessageTypes.ReactionApplied,
-            transcriptBlockId: blockId,
+            blockId,
             user: {
               fullName: this.config.user.fullName,
               pictureUrl: this.config.user.pictureUrl
@@ -3229,6 +3291,55 @@ class UIHandlers {
   handleDiscordLink() {
     const btn = document.getElementById("discord-link");
     btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://discord.com/channels/1385091638422016101", "_blank"));
+    return this;
+  }
+  handleAddBot() {
+    let disabled = false;
+    const btn = document.getElementById("au5-btn-addbot");
+    btn == null ? void 0 : btn.addEventListener("click", async () => {
+      var _a;
+      if (disabled) {
+        console.warn("Button is disabled, please wait before retrying.");
+        return;
+      }
+      if (!this.platform || !this.config) {
+        console.error("Platform or configuration is not set.");
+        return;
+      }
+      const meetingId = this.platform.getMeetingId();
+      const response = await this.backendApi.addBot({
+        meetingId,
+        botName: this.config.service.botName,
+        user: this.config.user
+      });
+      if (response.success) {
+        const message = {
+          type: MessageTypes.RequestToAddBot,
+          meetingId,
+          botName: this.config.service.botName,
+          user: this.config.user
+        };
+        (_a = this.meetingHubClient) == null ? void 0 : _a.sendMessage(message);
+        const addBotText = document.getElementById("au5-btn-addbot-text");
+        if (addBotText) {
+          let seconds = 30;
+          disabled = true;
+          addBotText.textContent = `${seconds}s to retry`;
+          const interval = setInterval(() => {
+            seconds--;
+            if (seconds > 0) {
+              addBotText.textContent = `${seconds}s to retry`;
+            } else {
+              clearInterval(interval);
+              disabled = false;
+              addBotText.textContent = "Add bot here";
+            }
+          }, 1e3);
+        }
+      } else {
+        console.error("Failed to add bot:", response.error);
+      }
+    });
     return this;
   }
   handleMessageSend() {
@@ -3311,10 +3422,14 @@ class UIHandlers {
         break;
       case MessageTypes.ReactionApplied:
         const reactionMsg = msg;
-        if (!reactionMsg.meetingId || !reactionMsg.transcriptBlockId || !reactionMsg.user || !reactionMsg.reactionType) {
+        if (!reactionMsg.meetingId || !reactionMsg.blockId || !reactionMsg.user || !reactionMsg.reactionType) {
           return;
         }
         this.chatPanel.addReaction(reactionMsg);
+        break;
+      case MessageTypes.RequestToAddBot:
+        const requestToAddBotMsg = msg;
+        this.chatPanel.botRequested(requestToAddBotMsg);
         break;
     }
   }

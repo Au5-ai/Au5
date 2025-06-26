@@ -27,10 +27,11 @@ export interface User extends Speaker {
 }
 
 export interface ServiceIntegration {
-  webhookUrl: string;
+  baseUrl: string;
   direction: "ltr" | "rtl";
   hubUrl: string;
   companyName: string;
+  botName: string;
 }
 
 export interface AppConfiguration {
@@ -50,7 +51,7 @@ export interface JoinMeeting {
 export interface ReactionAppliedMessage extends IMessage {
   readonly type: MessageTypes.ReactionApplied;
   meetingId?: string;
-  transcriptBlockId: string;
+  blockId: string;
   user: User;
   reactionType: string;
 }
@@ -70,6 +71,13 @@ export interface EntryMessage extends Entry, IMessage {
   readonly type: MessageTypes.Entry;
 }
 
+export interface RequestToAddBotMessage extends IMessage {
+  readonly type: MessageTypes.RequestToAddBot;
+  meetingId: string;
+  botName: string;
+  user: User;
+}
+
 export enum PostMessageSource {
   ContentScript = "Au5-ContentScript",
   BackgroundScript = "Au5-BackgroundScript"
@@ -85,4 +93,10 @@ export enum MessageTypes {
   ReactionApplied = "ReactionApplied",
   GeneralMessage = "GeneralMessage",
   RequestToAddBot = "RequestToAddBot"
+}
+
+export interface RequestAddBotModel {
+  meetingId: string;
+  botName: string;
+  user: User;
 }

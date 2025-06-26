@@ -1,3 +1,4 @@
+import {BackEndApi} from "../core/network/backend";
 import {MeetingPlatformFactory} from "../core/platforms/meetingPlatformFactory";
 import {
   AppConfiguration,
@@ -7,6 +8,7 @@ import {
   IMessage,
   MessageTypes,
   ReactionAppliedMessage,
+  RequestToAddBotMessage,
   UserJoinedInMeetingMessage
 } from "../core/types";
 import {getCurrentUrl} from "../core/utils";
@@ -18,10 +20,12 @@ export class UIHandlers {
   private config: AppConfiguration;
   private platform: IMeetingPlatform | null = null;
   private chatPanel: ChatPanel;
+  private backendApi: BackEndApi;
 
   constructor(config: AppConfiguration, chatPanel: ChatPanel) {
     this.config = config;
     this.chatPanel = chatPanel;
+    this.backendApi = new BackEndApi(config);
     this.handleMessage = this.handleMessage.bind(this);
   }
 
@@ -33,6 +37,7 @@ export class UIHandlers {
       .handleOptions()
       .handleGithubLink()
       .handleDiscordLink()
+      .handleAddBot()
       .handleMessageSend()
       .handleTooltips();
   }
@@ -93,8 +98,9 @@ export class UIHandlers {
           this.meetingHubClient?.sendMessage({
             type: MessageTypes.ReactionApplied,
             meetingId: this.platform?.getMeetingId(),
-            transcriptBlockId: blockId,
+            blockId: blockId,
             user: {
+              id: this.config.user.id,
               fullName: this.config.user.fullName,
               pictureUrl: this.config.user.pictureUrl
             },
@@ -102,7 +108,7 @@ export class UIHandlers {
           } as ReactionAppliedMessage);
           this.chatPanel.addReaction({
             type: MessageTypes.ReactionApplied,
-            transcriptBlockId: blockId,
+            blockId: blockId,
             user: {
               fullName: this.config.user.fullName,
               pictureUrl: this.config.user.pictureUrl
@@ -148,6 +154,57 @@ export class UIHandlers {
   private handleDiscordLink(): this {
     const btn = document.getElementById("discord-link");
     btn?.addEventListener("click", () => window.open("https://discord.com/channels/1385091638422016101", "_blank"));
+    return this;
+  }
+
+  private handleAddBot(): this {
+    let disabled = false;
+    const btn = document.getElementById("au5-btn-addbot") as HTMLButtonElement | null;
+    btn?.addEventListener("click", async () => {
+      if (disabled) {
+        console.warn("Button is disabled, please wait before retrying.");
+        return;
+      }
+      if (!this.platform || !this.config) {
+        console.error("Platform or configuration is not set.");
+        return;
+      }
+      const meetingId = this.platform.getMeetingId();
+      const response = await this.backendApi.addBot({
+        meetingId: meetingId,
+        botName: this.config.service.botName,
+        user: this.config.user
+      });
+
+      if (response.success) {
+        const message = {
+          type: MessageTypes.RequestToAddBot,
+          meetingId: meetingId,
+          botName: this.config.service.botName,
+          user: this.config.user
+        } as RequestToAddBotMessage;
+        this.meetingHubClient?.sendMessage(message);
+
+        const addBotText = document.getElementById("au5-btn-addbot-text");
+        if (addBotText) {
+          let seconds = 30;
+          disabled = true;
+          addBotText.textContent = `${seconds}s to retry`;
+          const interval = setInterval(() => {
+            seconds--;
+            if (seconds > 0) {
+              addBotText.textContent = `${seconds}s to retry`;
+            } else {
+              clearInterval(interval);
+              disabled = false;
+              addBotText.textContent = "Add bot here";
+            }
+          }, 1000);
+        }
+      } else {
+        console.error("Failed to add bot:", response.error);
+      }
+    });
     return this;
   }
 
@@ -239,16 +296,17 @@ export class UIHandlers {
 
       case MessageTypes.ReactionApplied:
         const reactionMsg = msg as ReactionAppliedMessage;
-        if (
-          !reactionMsg.meetingId ||
-          !reactionMsg.transcriptBlockId ||
-          !reactionMsg.user ||
-          !reactionMsg.reactionType
-        ) {
+        if (!reactionMsg.meetingId || !reactionMsg.blockId || !reactionMsg.user || !reactionMsg.reactionType) {
           return;
         }
         this.chatPanel.addReaction(reactionMsg);
         break;
+
+      case MessageTypes.RequestToAddBot:
+        const requestToAddBotMsg = msg as RequestToAddBotMessage;
+        this.chatPanel.botRequested(requestToAddBotMsg);
+        break;
+
       default:
         break;
     }

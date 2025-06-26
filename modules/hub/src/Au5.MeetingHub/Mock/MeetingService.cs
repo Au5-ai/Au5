@@ -186,18 +186,9 @@ public class MeetingService : IMeetingService
         }
     }
 
-    public string GetFullTranscriptionAsJson(string meetingId)
+    public Meeting GetFullTranscriptionAsJson(string meetingId)
     {
-        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
-        if (meeting is null)
-        {
-            return "{}";
-        }
-        return JsonSerializer.Serialize(meeting, new JsonSerializerOptions()
-        {
-            WriteIndented = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        });
+       return _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
     }
 
     public void AppliedReaction(ReactionAppliedMessage reaction)
@@ -218,13 +209,13 @@ public class MeetingService : IMeetingService
             var existingReaction = entryBlock.Reactions.FirstOrDefault(r => r.ReactionType == reaction.ReactionType);
             existingReaction.Users ??= [];
 
-            if (!existingReaction.Users.Any(u => u == reaction.UserFullName))
+            if (!existingReaction.Users.Any(u => u == reaction.UserId))
             {
-                existingReaction.Users.Add(reaction.UserFullName);
+                existingReaction.Users.Add(reaction.UserId);
             }
             else
             {
-                existingReaction.Users.RemoveAll(u => u == reaction.UserFullName);
+                existingReaction.Users.RemoveAll(u => u == reaction.UserId);
             }
         }
     }

@@ -7,7 +7,7 @@ builder.AddServiceDefaults();
 {
     builder.Services.AddSignalR();
 
-    builder.Services.RegisterApplicationServices(builder.Configuration);
+    builder.Services.RegisterApplicationServices();
     builder.Services.AddCors(options =>
     {
         options.AddDefaultPolicy(policy =>
@@ -45,13 +45,13 @@ app.MapDefaultEndpoints();
     app.MapHub<MeetingHub>("/meetinghub").AllowAnonymous();
     app.MapGet("/liveness", () => Results.Ok("Healthy"));
 
-    app.MapPost("/meeting/bot", (
+    app.MapPost("/meeting/addBot", (
         [FromBody] RequestToAddBotMessage request,
         [FromServices] IMeetingService meetingService) =>
     {
         var result = meetingService.AddBot(request);
 
-        return Results.Ok(new { Message = $"Bot added to meeting {request.MeetingId}" });
+        return Results.Ok(new { Success = true, Message = $"Bot added to meeting {request.MeetingId}" });
     });
 
 
@@ -60,7 +60,7 @@ app.MapDefaultEndpoints();
         [FromServices] IMeetingService meetingService) =>
     {
         var transcription = meetingService.GetFullTranscriptionAsJson(meetingId);
-        return Results.Ok(transcription);
+        return Results.Json(transcription);
     });
 
     app.Run();

@@ -1,4 +1,6 @@
-﻿namespace Au5.MeetingHub.Mock.Interfaces;
+﻿using Au5.MeetingHub.Models.Entity;
+
+namespace Au5.MeetingHub.Mock.Interfaces;
 
 public interface IMeetingService
 {
@@ -11,6 +13,6 @@ public interface IMeetingService
     void PauseMeeting(string meetingId, bool isPause);
     void UpsertBlock(EntryMessage entry);
     void InsertBlock(EntryMessage entry);
-    string GetFullTranscriptionAsJson(string meetingId);
+    Meeting GetFullTranscriptionAsJson(string meetingId);
     void AppliedReaction(ReactionAppliedMessage reaction);
 }
