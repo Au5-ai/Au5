@@ -207,6 +207,17 @@ public class MeetingService : IMeetingService
             }
 
             var existingReaction = entryBlock.Reactions.FirstOrDefault(r => r.ReactionType == reaction.ReactionType);
+            if (existingReaction is null)
+            {
+                existingReaction = new Reactions
+                {
+                    ReactionType = reaction.ReactionType,
+                    Users = [reaction.UserId]
+                };
+                entryBlock.Reactions.Add(existingReaction);
+                return;
+            }
+
             existingReaction.Users ??= [];
 
             if (!existingReaction.Users.Any(u => u == reaction.UserId))

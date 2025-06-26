@@ -1,0 +1,20 @@
+@meetingId = sample-meeting-id
+@baseUrl = http://localhost:5000/meeting
+
+### Get Meeting Transcription
+GET {{baseUrl}}/{{meetingId}}/transcription
+Accept: application/json
+
+### Add Bot to Meeting
+POST {{baseUrl}}/meeting/addBot
+Content-Type: application/json
+
+{
+  "MeetingId": "{{meetingId}}",
+  "User": {
+    "Id": "00000000-0000-0000-0000-000000000001",
+    "FullName": "Mohammad Karimi",
+    "PictureUrl": "https://example.com/pic.jpg"
+  },
+  "BotName": "Au5 bot"
+}
