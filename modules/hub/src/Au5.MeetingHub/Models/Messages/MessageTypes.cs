@@ -1,4 +1,4 @@
-﻿namespace Au5.MeetingHub.Models;
+﻿namespace Au5.MeetingHub.Models.Messages;
 
 public static class MessageTypes
 {

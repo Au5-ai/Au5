@@ -1,9 +1,8 @@
 ﻿namespace Au5.MeetingHub;
 
-public class MeetingHub(IMeetingService meetingService, ITranscriptionService transcriptionService) : Hub
+public class MeetingHub(IMeetingService meetingService) : Hub
 {
     private readonly IMeetingService _meetingService = meetingService;
-    private readonly ITranscriptionService _transcriptionService = transcriptionService;
 
     public async Task UserJoinedInMeeting(UserJoinedInMeetingMessage joinMeeting)
     {
@@ -35,6 +34,35 @@ public class MeetingHub(IMeetingService meetingService, ITranscriptionService tr
         await SendToOthersInGroupAsync(meetingId, new BotJoinedInMeetingMessage() { BotName = botName });
     }
 
+    public async Task Entry(EntryMessage transcription)
+    {
+        var isMeetingPaused = _meetingService.IsPaused(transcription.MeetingId);
+        if (isMeetingPaused)
+        {
+            return;
+        }
+        _meetingService.UpsertBlock(transcription);
+        await SendToOthersInGroupAsync(transcription.MeetingId, transcription);
+    }
+
+    public async Task ReactionApplied(ReactionAppliedMessage reaction)
+    {
+        _meetingService.AppliedReaction(reaction);
+        await SendToOthersInGroupAsync(reaction.MeetingId, reaction);
+    }
+
+    //public async Task PauseTranscription(User user, string meetingId, bool isPause)
+    //{
+    //    if (string.IsNullOrWhiteSpace(meetingId))
+    //    {
+    //        return;
+    //    }
+    //    _meetingService.PauseMeeting(meetingId, isPause);
+
+    //    await SendToOthersInGroupAsync(meetingId, new GeneralMessage(meetingId, $"{user.FullName} paused transcription !"));
+    //}
+
+
     //public void ParticipantJoinMeeting(Participants participants)
     //{
     //    public record Participants
@@ -52,33 +80,6 @@ public class MeetingHub(IMeetingService meetingService, ITranscriptionService tr
     //    }
     //    _meetingService.AddParticipantToMeet(participants.User, participants.MeetingId);
     //}
-
-    public async Task Entry(EntryMessage transcription)
-    {
-        //var isMeetingPaused =  _meetingService.IsPaused(transcription.MeetingId);
-        // if (isMeetingPaused)
-        // {
-        //     return;
-        // }
-        _transcriptionService.UpsertBlock(transcription);
-        await SendToOthersInGroupAsync(transcription.MeetingId, transcription);
-    }
-
-    //public async Task PauseTranscription(User user, string meetingId, bool isPause)
-    //{
-    //    if (string.IsNullOrWhiteSpace(meetingId))
-    //    {
-    //        return;
-    //    }
-    //    _meetingService.PauseMeeting(meetingId, isPause);
-
-    //    await SendToOthersInGroupAsync(meetingId, new GeneralMessage(meetingId, $"{user.FullName} paused transcription !"));
-    //}
-    public async Task ReactionApplied(ReactionAppliedMessage reaction)
-    {
-        _transcriptionService.AppliedReaction(reaction);
-        await SendToOthersInGroupAsync(reaction.MeetingId, reaction);
-    }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {

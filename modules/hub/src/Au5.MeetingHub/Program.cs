@@ -54,5 +54,14 @@ app.MapDefaultEndpoints();
         return Results.Ok(new { Message = $"Bot added to meeting {request.MeetingId}" });
     });
 
+
+    app.MapGet("/meeting/{meetingId}/transcription", (
+        [FromRoute] string meetingId,
+        [FromServices] IMeetingService meetingService) =>
+    {
+        var transcription = meetingService.GetFullTranscriptionAsJson(meetingId);
+        return Results.Ok(transcription);
+    });
+
     app.Run();
 }

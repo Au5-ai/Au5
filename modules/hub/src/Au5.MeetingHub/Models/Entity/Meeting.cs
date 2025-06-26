@@ -1,6 +1,4 @@
-﻿using Au5.MeetingHub.Models.Messages;
-
-namespace Au5.MeetingHub.Models.Entity;
+﻿namespace Au5.MeetingHub.Models.Entity;
 
 public class Meeting
 {
@@ -9,7 +7,7 @@ public class Meeting
     public Guid CreatorUserId { get; set; }
     public string BotName { get; set; }
     public bool IsBotAdded { get; set; }
-    public List<EntryMessage> Entries { get; set; }
+    public List<Entry> Entries { get; set; }
     public List<Guid> Users { get; set; }
     public List<string> Participants { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;

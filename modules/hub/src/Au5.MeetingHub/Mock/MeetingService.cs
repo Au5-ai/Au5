@@ -1,9 +1,11 @@
 ﻿using Au5.MeetingHub.Models.Entity;
+using System.Text.Json;
 
 namespace Au5.MeetingHub.Mock;
 
 public class MeetingService : IMeetingService
 {
+    //private static readonly ConcurrentDictionary<string, Dictionary<string, Entry>> _meetingTranscriptions = new();
     private static readonly Lock _lock = new();
     private static readonly List<Meeting> _meetings = [];
 
@@ -129,6 +131,101 @@ public class MeetingService : IMeetingService
         else
         {
             meeting.Status = MeetingStatus.InProgress;
+        }
+    }
+
+    public void UpsertBlock(EntryMessage entry)
+    {
+        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == entry.MeetingId);
+        if (meeting is null)
+        {
+            return;
+        }
+
+        lock (_lock)
+        {
+            var entryBlock = meeting.Entries.FirstOrDefault(e => e.BlockId == entry.BlockId);
+            if (entryBlock is not null)
+            {
+                entryBlock.Content = entry.Content;
+                return;
+            }
+
+            meeting.Entries.Add(new Entry()
+            {
+                MeetingId = entry.MeetingId,
+                BlockId = entry.BlockId,
+                Content = entry.Content,
+                Speaker = entry.Speaker,
+                Timestamp = entry.Timestamp,
+                EntryType = entry.EntryType,
+                Reactions = []
+            });
+        }
+    }
+
+    public void InsertBlock(EntryMessage entry)
+    {
+        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == entry.MeetingId);
+        if (meeting is null)
+        {
+            return;
+        }
+        lock (_lock)
+        {
+            meeting.Entries.Add(new Entry()
+            {
+                MeetingId = entry.MeetingId,
+                BlockId = entry.BlockId,
+                Content = entry.Content,
+                Speaker = entry.Speaker,
+                Timestamp = entry.Timestamp,
+                EntryType = entry.EntryType,
+                Reactions = []
+            });
+        }
+    }
+
+    public string GetFullTranscriptionAsJson(string meetingId)
+    {
+        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+        if (meeting is null)
+        {
+            return "{}";
+        }
+        return JsonSerializer.Serialize(meeting, new JsonSerializerOptions()
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        });
+    }
+
+    public void AppliedReaction(ReactionAppliedMessage reaction)
+    {
+        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == reaction.MeetingId);
+        if (meeting is null)
+        {
+            return;
+        }
+        lock (_lock)
+        {
+            var entryBlock = meeting.Entries.FirstOrDefault(e => e.BlockId == reaction.BlockId);
+            if (entryBlock is null)
+            {
+                return;
+            }
+
+            var existingReaction = entryBlock.Reactions.FirstOrDefault(r => r.ReactionType == reaction.ReactionType);
+            existingReaction.Users ??= [];
+
+            if (!existingReaction.Users.Any(u => u == reaction.UserFullName))
+            {
+                existingReaction.Users.Add(reaction.UserFullName);
+            }
+            else
+            {
+                existingReaction.Users.RemoveAll(u => u == reaction.UserFullName);
+            }
         }
     }
 }

@@ -9,4 +9,8 @@ public interface IMeetingService
     string BotIsAdded(string meetingId);
     bool IsPaused(string meetingId);
     void PauseMeeting(string meetingId, bool isPause);
+    void UpsertBlock(EntryMessage entry);
+    void InsertBlock(EntryMessage entry);
+    string GetFullTranscriptionAsJson(string meetingId);
+    void AppliedReaction(ReactionAppliedMessage reaction);
 }
