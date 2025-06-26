@@ -1,15 +1,11 @@
 using Au5.MeetingHub;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 {
     builder.Services.AddSignalR();
-    //.AddMessagePackProtocol(options =>
-    //{
-    //    options.SerializerOptions = MessagePackSerializerOptions.Standard
-    //    .WithSecurity(MessagePackSecurity.UntrustedData);
-    //});
 
     builder.Services.RegisterApplicationServices(builder.Configuration);
     builder.Services.AddCors(options =>
@@ -48,6 +44,15 @@ app.MapDefaultEndpoints();
     app.UseCors();
     app.MapHub<MeetingHub>("/meetinghub").AllowAnonymous();
     app.MapGet("/liveness", () => Results.Ok("Healthy"));
+
+    app.MapPost("/meeting/bot", (
+        [FromBody] RequestToAddBotMessage request,
+        [FromServices] IMeetingService meetingService) =>
+    {
+        var result = meetingService.AddBot(request);
+
+        return Results.Ok(new { Message = $"Bot added to meeting {request.MeetingId}" });
+    });
 
     app.Run();
 }

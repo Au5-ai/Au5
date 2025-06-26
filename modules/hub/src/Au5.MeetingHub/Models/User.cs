@@ -1,6 +1,6 @@
 ﻿namespace Au5.MeetingHub.Models;
 
-public record User
+public class User
 {
     public Guid Id { get; set; }
     public string Token { get; set; }

@@ -1,6 +1,4 @@
-﻿using Au5.MeetingHub.Mock.Interfaces;
-using Au5.MeetingHub.Models.Entity;
-using Au5.MeetingHub.Models.Messages;
+﻿using Au5.MeetingHub.Models.Entity;
 
 namespace Au5.MeetingHub.Mock;
 
@@ -15,7 +13,7 @@ public class MeetingService : IMeetingService
         {
             var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId && m.CreatedAt.Date == DateTime.Now.Date);
 
-            if (meeting is null || ( meeting is not null && meeting.Status == MeetingStatus.Ended))
+            if (meeting is null || (meeting is not null && meeting.Status == MeetingStatus.Ended))
             {
                 meeting = new Meeting
                 {
@@ -36,8 +34,25 @@ public class MeetingService : IMeetingService
             {
                 return;
             }
-            meeting?.Users.Add(user.Id);
+            meeting.Users.Add(user.Id);
         }
+    }
+    public bool AddBot(RequestToAddBotMessage request)
+    {
+        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == request.MeetingId);
+        if (meeting is null)
+        {
+            return false;
+        }
+        if (meeting.IsBotAdded)
+        {
+            return false;
+        }
+        meeting.BotName = request.BotName;
+        meeting.CreatorUserId = request.User.Id;
+
+        return true;
+        // Call CLI to create the bot container with the provided name and Configs
     }
 
     public void AddParticipantToMeet(List<string> users, string meetingId)
@@ -70,22 +85,6 @@ public class MeetingService : IMeetingService
         meeting.Status = MeetingStatus.Ended;
     }
 
-    public void CreateBot(RequestToAddBotMessage requestToAddBotMessage)
-    {
-        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == requestToAddBotMessage.MeetingId);
-        if (meeting is null)
-        {
-            return;
-        }
-        if (meeting.IsBotAdded)
-        {
-            return;
-        }
-        meeting.BotName = requestToAddBotMessage.BotName;
-        meeting.UserAddedBot = requestToAddBotMessage.User;
-        // Call CLI to create the bot container with the provided name and Configs
-    }
-
     public string BotIsAdded(string meetingId)
     {
         var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
@@ -104,7 +103,6 @@ public class MeetingService : IMeetingService
         }
         return meeting.BotName;
     }
-
 
     public bool IsPaused(string meetingId)
     {
@@ -126,7 +124,7 @@ public class MeetingService : IMeetingService
         }
         if (isPause)
         {
-        meeting.Status = MeetingStatus.Paused;
+            meeting.Status = MeetingStatus.Paused;
         }
         else
         {

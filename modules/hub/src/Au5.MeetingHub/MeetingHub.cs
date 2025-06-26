@@ -1,7 +1,4 @@
-﻿using Au5.MeetingHub.Mock.Interfaces;
-using Au5.MeetingHub.Models.Messages;
-
-namespace Au5.MeetingHub;
+﻿namespace Au5.MeetingHub;
 
 public class MeetingHub(IMeetingService meetingService, ITranscriptionService transcriptionService) : Hub
 {
@@ -20,32 +17,22 @@ public class MeetingHub(IMeetingService meetingService, ITranscriptionService tr
         }
         _meetingService.AddUserToMeeting(joinMeeting.User, joinMeeting.MeetingId, joinMeeting.Platform);
         await Groups.AddToGroupAsync(Context.ConnectionId, joinMeeting.MeetingId);
-        await SendToOthersInGroupAsync(joinMeeting.MeetingId, new UserJoinedInMeetingMessage()
-        {
-            User = joinMeeting.User
-        });
+        await SendToOthersInGroupAsync(joinMeeting.MeetingId, joinMeeting);
     }
 
-    public async Task AddBotToMeet(RequestToAddBotMessage requestToAddBotMessage)
+    public async Task RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage)
     {
-        _meetingService.CreateBot(requestToAddBotMessage);
         await SendToOthersInGroupAsync(requestToAddBotMessage.MeetingId, requestToAddBotMessage);
     }
 
     public async Task BotJoinedInMeeting(string meetingId)
     {
-        Console.WriteLine($"Bot joining meeting: {meetingId}");
-        if (string.IsNullOrWhiteSpace(meetingId))
+        var botName = _meetingService.BotIsAdded(meetingId);
+        if (string.IsNullOrWhiteSpace(botName))
         {
             return;
         }
-        await SendToOthersInGroupAsync(meetingId, new BotJoinedInMeetingMessage() { BotName = "Au5 bot" });
-        //var botName = _meetingService.BotIsAdded(meetingId);
-        //if (string.IsNullOrWhiteSpace(botName))
-        //{
-        //    return;
-        //}
-        //await SendToOthersInGroupAsync(meetingId, new BotJoinedInMeetingMessage(meetingId, botName));
+        await SendToOthersInGroupAsync(meetingId, new BotJoinedInMeetingMessage() { BotName = botName });
     }
 
     //public void ParticipantJoinMeeting(Participants participants)
@@ -66,7 +53,7 @@ public class MeetingHub(IMeetingService meetingService, ITranscriptionService tr
     //    _meetingService.AddParticipantToMeet(participants.User, participants.MeetingId);
     //}
 
-    public async Task TranscriptionEntry(EntryMessage transcription)
+    public async Task Entry(EntryMessage transcription)
     {
         //var isMeetingPaused =  _meetingService.IsPaused(transcription.MeetingId);
         // if (isMeetingPaused)
@@ -75,17 +62,6 @@ public class MeetingHub(IMeetingService meetingService, ITranscriptionService tr
         // }
         _transcriptionService.UpsertBlock(transcription);
         await SendToOthersInGroupAsync(transcription.MeetingId, transcription);
-    }
-
-    public async Task ChatEntry(EntryMessage chat)
-    {
-        //var isMeetingPaused =  _meetingService.IsPaused(transcription.MeetingId);
-        // if (isMeetingPaused)
-        // {
-        //     return;
-        // }
-         _transcriptionService.InsertBlock(chat);
-        await SendToOthersInGroupAsync(chat.MeetingId, chat);
     }
 
     //public async Task PauseTranscription(User user, string meetingId, bool isPause)
