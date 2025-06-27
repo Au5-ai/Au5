@@ -118,6 +118,69 @@ export class ChatPanel {
     if (botContainer) {
       botContainer.remove();
     }
+    const botPlayContainer = this.transcriptionsContainerEl.querySelector("#au5-bot-play") as HTMLDivElement;
+    botPlayContainer.innerHTML = `<div class="flex gap-[6px] min-w-[90px] max-w-[calc(100%-40px)]">
+                                    <div class="text-xs overflow-hidden">
+                                      <div
+                                        class="model-btn flex justify-center items-center cursor-pointer ps-[6px] pe-[5px] py-[7px] leading-4 rounded-3xl gap-[2px]"
+                                      >
+                                        <div class="icon flex-center rounded-full size-4 ms-[1px] me-[2px]">
+                                          <div
+                                            class="flex items-center justify-center rounded-full"
+                                            style="width: 18px; height: 18px"
+                                          >
+                                            <span
+                                              class="inline-flex shrink-0 [&amp;&gt;svg]:size-[inherit]"
+                                              style="width: 18px; height: 18px"
+                                            >
+                                              <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="24"
+                                                height="24"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                class="lucide lucide-audio-waveform w-4 h-4"
+                                              >
+                                                <path
+                                                  d="M2 13a2 2 0 0 0 2-2V7a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0V4a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0v-4a2 2 0 0 1 2-2"
+                                                ></path>
+                                              </svg>
+                                            </span>
+                                          </div>
+                                        </div>
+                                        <div
+                                          class="flex items-center pl-[2px] pr-[2px] transition-transform duration-100"
+                                        >
+                                          ${botName}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="flex items-center ms-auto">
+                                    <div
+                                      class="topbar-btn size-[30px] model-btn model-btn-no-bg overflow-hidden flex-center text-xs p-[5px] rounded-lg"
+                                    >
+                                      <svg
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 16 16"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                      >
+                                        <path
+                                          d="M2.66675 8V5.62667C2.66675 2.68 4.75341 1.47334 7.30675 2.94667L9.36675 4.13334L11.4267 5.32C13.9801 6.79334 13.9801 9.20667 11.4267 10.68L9.36675 11.8667L7.30675 13.0533C4.75341 14.5267 2.66675 13.32 2.66675 10.3733V8Z"
+                                          stroke="currentColor"
+                                          stroke-miterlimit="10"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                        />
+                                      </svg>
+                                    </div>
+                                  </div>`;
   }
 
   public usersJoined(fullName: string): void {

@@ -19322,7 +19322,7 @@ html,
 :host,
 div[data-gpts-theme="light"],
 .gpt-light.force-light {
-  --sds-color-brand-primary-normal: var(--sds-light, #6128ff) var(--sds-dark, #7f60ff);
+  --sds-color-brand-primary-normal: var(--sds-light, #6128ff) var(--sds-dark, #0e8cf1);
   --sds-color-brand-primary-hover: var(--sds-light, #6a3fff) var(--sds-dark, #937dff);
   --sds-color-brand-primary-click: var(--sds-light, #561bef) var(--sds-dark, #896fff);
   --sds-color-brand-primary-disable: var(--sds-light, rgba(122, 89, 255, 0.24))

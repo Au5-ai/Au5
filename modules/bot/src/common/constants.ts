@@ -37,7 +37,7 @@ export const MEETING_CONFIG = `{
   "hubUrl": "http://au5-hub:1366/meetinghub",
   "platform": "googleMeet",
   "meetingUrl": "https://meet.google.com/kqt-byur-jya",
-  "botDisplayName": "Au5",
+  "botDisplayName": "Cando",
   "meetingId": "kqt-byur-jya",
   "language": "fa-IR",
   "autoLeave": {
