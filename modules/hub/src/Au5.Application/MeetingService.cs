@@ -53,32 +53,33 @@ public class MeetingService : IMeetingService
 
     public void AddParticipantToMeet(List<string> users, string meetingId)
     {
-        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
-        if (meeting is null)
+        lock (_lock)
         {
-            return;
+            var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+            if (meeting is null)
+            {
+                return;
+            }
+            var delta = users.Except(meeting.Participants).ToList();
+            if (delta.Count is 0)
+            {
+                return;
+            }
+            meeting.Participants.AddRange(delta);
         }
-        var delta = users.Except(meeting.Participants).ToList();
-        if (delta.Count is 0)
-        {
-            return;
-        }
-        meeting.Participants.AddRange(delta);
     }
 
     public void EndMeeting(string meetingId)
     {
-        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
-        if (meeting is null)
+        lock (_lock)
         {
-            return;
+            var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+            if (meeting is null || meeting.Status == MeetingStatus.Ended)
+            {
+                return;
+            }
+            meeting.Status = MeetingStatus.Ended;
         }
-
-        if (meeting.Status == MeetingStatus.Ended)
-        {
-            return;
-        }
-        meeting.Status = MeetingStatus.Ended;
     }
 
     public string BotIsAdded(string meetingId)
@@ -88,16 +89,16 @@ public class MeetingService : IMeetingService
         {
             return string.Empty;
         }
-        if (meeting.IsBotAdded)
-        {
-            return meeting.BotName;
-        }
+
         lock (_lock)
         {
-            meeting.IsBotAdded = true;
-            meeting.Status = MeetingStatus.InProgress;
+            if (!meeting.IsBotAdded)
+            {
+                meeting.IsBotAdded = true;
+                meeting.Status = MeetingStatus.InProgress;
+            }
+            return meeting.BotName;
         }
-        return meeting.BotName;
     }
 
     public bool IsPaused(string meetingId)
@@ -118,14 +119,8 @@ public class MeetingService : IMeetingService
         {
             return;
         }
-        if (isPause)
-        {
-            meeting.Status = MeetingStatus.Paused;
-        }
-        else
-        {
-            meeting.Status = MeetingStatus.InProgress;
-        }
+
+        meeting.Status = isPause ? MeetingStatus.Paused : MeetingStatus.InProgress;
     }
 
     public void UpsertBlock(EntryMessage entry)
