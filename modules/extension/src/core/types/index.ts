@@ -15,15 +15,14 @@ export interface Speaker {
 export interface Entry {
   meetingId?: string;
   blockId: string;
-  speaker: Speaker;
+  speaker: User;
   content: string;
   timestamp: Date;
   entryType: "Transcription" | "Chat";
 }
 
 export interface User extends Speaker {
-  token?: string | null;
-  id?: string;
+  id: string;
 }
 
 export interface ServiceIntegration {
@@ -44,17 +43,18 @@ export interface IMessage {
   readonly type: string;
 }
 
-export interface JoinMeeting {
+export interface UserJoinedInMeetingMessage extends IMessage {
+  readonly type: MessageTypes.UserJoinedInMeeting;
   meetingId: string;
   user: User;
+  platform: string;
 }
 
-export interface ReactionAppliedMessage extends IMessage {
-  readonly type: MessageTypes.ReactionApplied;
-  meetingId?: string;
-  blockId: string;
+export interface RequestToAddBotMessage extends IMessage {
+  readonly type: MessageTypes.RequestToAddBot;
+  meetingId: string;
+  botName: string;
   user: User;
-  reactionType: string;
 }
 
 export interface BotJoinedInMeetingMessage extends IMessage {
@@ -63,20 +63,16 @@ export interface BotJoinedInMeetingMessage extends IMessage {
   botName: string;
 }
 
-export interface UserJoinedInMeetingMessage extends IMessage {
-  readonly type: MessageTypes.UserJoinedInMeeting;
-  user: User;
-}
-
 export interface EntryMessage extends Entry, IMessage {
   readonly type: MessageTypes.Entry;
 }
 
-export interface RequestToAddBotMessage extends IMessage {
-  readonly type: MessageTypes.RequestToAddBot;
-  meetingId: string;
-  botName: string;
+export interface ReactionAppliedMessage extends IMessage {
+  readonly type: MessageTypes.ReactionApplied;
+  meetingId?: string;
+  blockId: string;
   user: User;
+  reactionType: string;
 }
 
 export enum PostMessageSource {

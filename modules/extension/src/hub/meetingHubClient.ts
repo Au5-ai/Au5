@@ -1,5 +1,5 @@
 import * as signalR from "@microsoft/signalr";
-import {AppConfiguration, IMeetingPlatform, IMessage, JoinMeeting} from "../core/types";
+import {AppConfiguration, IMeetingPlatform, IMessage, MessageTypes, UserJoinedInMeetingMessage} from "../core/types";
 
 export class MeetingHubClient {
   private connection: signalR.HubConnection;
@@ -21,16 +21,15 @@ export class MeetingHubClient {
     this.connection
       .start()
       .then(() => {
-        this.connection.invoke("UserJoinedInMeeting", {
+        this.connection.invoke(MessageTypes.UserJoinedInMeeting, {
           meetingId: this.meetingId,
           user: {
-            token: this.config.user.token,
             id: this.config.user.id,
             fullName: this.config.user.fullName,
             pictureUrl: this.config.user.pictureUrl
           },
           platform: this.platform.getPlatformName()
-        } as JoinMeeting);
+        } as UserJoinedInMeetingMessage);
       })
       .then(() => {
         this.connection.on("ReceiveMessage", (msg: IMessage) => {

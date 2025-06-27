@@ -211,7 +211,7 @@ public class MeetingService : IMeetingService
                 existingReaction = new Reactions
                 {
                     ReactionType = reaction.ReactionType,
-                    Users = [reaction.UserId]
+                    Users = [reaction.User.Id]
                 };
                 entryBlock.Reactions.Add(existingReaction);
                 return;
@@ -219,13 +219,13 @@ public class MeetingService : IMeetingService
 
             existingReaction.Users ??= [];
 
-            if (!existingReaction.Users.Any(u => u == reaction.UserId))
+            if (!existingReaction.Users.Any(u => u == reaction.User.Id))
             {
-                existingReaction.Users.Add(reaction.UserId);
+                existingReaction.Users.Add(reaction.User.Id);
             }
             else
             {
-                existingReaction.Users.RemoveAll(u => u == reaction.UserId);
+                existingReaction.Users.RemoveAll(u => u == reaction.User.Id);
             }
         }
     }

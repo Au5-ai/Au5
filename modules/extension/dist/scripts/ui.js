@@ -3222,10 +3222,9 @@ class MeetingHubClient {
   }
   startConnection(messageHandler) {
     this.connection.start().then(() => {
-      this.connection.invoke("UserJoinedInMeeting", {
+      this.connection.invoke(MessageTypes.UserJoinedInMeeting, {
         meetingId: this.meetingId,
         user: {
-          token: this.config.user.token,
           id: this.config.user.id,
           fullName: this.config.user.fullName,
           pictureUrl: this.config.user.pictureUrl
@@ -3322,6 +3321,7 @@ class UIHandlers {
             type: MessageTypes.ReactionApplied,
             blockId,
             user: {
+              id: this.config.user.id,
               fullName: this.config.user.fullName,
               pictureUrl: this.config.user.pictureUrl
             },
@@ -3420,6 +3420,7 @@ class UIHandlers {
           meetingId: (_a = this.platform) == null ? void 0 : _a.getMeetingId(),
           blockId: crypto.randomUUID(),
           speaker: {
+            id: this.config.user.id,
             fullName: this.config.user.fullName,
             pictureUrl: this.config.user.pictureUrl
           },

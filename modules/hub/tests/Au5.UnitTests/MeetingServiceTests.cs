@@ -248,7 +248,7 @@ public class MeetingServiceTests
             MeetingId = meetingId,
             BlockId = blockId,
             ReactionType = "like",
-            UserId = userId
+            User = new UserDto() { Id = userId }
         };
 
         _service.AppliedReaction(reaction);

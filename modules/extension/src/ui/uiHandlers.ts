@@ -110,6 +110,7 @@ export class UIHandlers {
             type: MessageTypes.ReactionApplied,
             blockId: blockId,
             user: {
+              id: this.config.user.id,
               fullName: this.config.user.fullName,
               pictureUrl: this.config.user.pictureUrl
             },
@@ -219,6 +220,7 @@ export class UIHandlers {
           meetingId: this.platform?.getMeetingId(),
           blockId: crypto.randomUUID(),
           speaker: {
+            id: this.config.user.id,
             fullName: this.config.user.fullName,
             pictureUrl: this.config.user.pictureUrl
           },
