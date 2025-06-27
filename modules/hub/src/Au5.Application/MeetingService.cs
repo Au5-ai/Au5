@@ -1,21 +1,17 @@
-﻿using Au5.MeetingHub.Models.Entity;
-using System.Text.Json;
-
-namespace Au5.MeetingHub.Mock;
+﻿namespace Au5.Application;
 
 public class MeetingService : IMeetingService
 {
-    //private static readonly ConcurrentDictionary<string, Dictionary<string, Entry>> _meetingTranscriptions = new();
     private static readonly Lock _lock = new();
     private static readonly List<Meeting> _meetings = [];
 
-    public void AddUserToMeeting(User user, string meetingId, string platform)
+    public void AddUserToMeeting(Guid userId, string meetingId, string platform)
     {
         lock (_lock)
         {
             var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId && m.CreatedAt.Date == DateTime.Now.Date);
 
-            if (meeting is null || (meeting is not null && meeting.Status == MeetingStatus.Ended))
+            if (meeting is null || meeting is not null && meeting.Status == MeetingStatus.Ended)
             {
                 meeting = new Meeting
                 {
@@ -31,30 +27,28 @@ public class MeetingService : IMeetingService
                 _meetings.Add(meeting);
             }
 
-            var existingUser = meeting.Users.Any(u => u == user.Id);
+            var existingUser = meeting.Users.Any(u => u == userId);
             if (existingUser)
             {
                 return;
             }
-            meeting.Users.Add(user.Id);
+            meeting.Users.Add(userId);
         }
     }
     public bool AddBot(RequestToAddBotMessage request)
     {
-        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == request.MeetingId);
-        if (meeting is null)
+        lock (_lock)
         {
-            return false;
+            var meeting = _meetings.FirstOrDefault(m => m.MeetingId == request.MeetingId);
+            if (meeting is null || meeting.IsBotAdded)
+            {
+                return false;
+            }
+            meeting.BotName = request.BotName;
+            meeting.CreatorUserId = request.User.Id;
+            // Call CLI to create the bot container with the provided name and Configs
+            return true;
         }
-        if (meeting.IsBotAdded)
-        {
-            return false;
-        }
-        meeting.BotName = request.BotName;
-        meeting.CreatorUserId = request.User.Id;
-
-        return true;
-        // Call CLI to create the bot container with the provided name and Configs
     }
 
     public void AddParticipantToMeet(List<string> users, string meetingId)
@@ -156,7 +150,12 @@ public class MeetingService : IMeetingService
                 MeetingId = entry.MeetingId,
                 BlockId = entry.BlockId,
                 Content = entry.Content,
-                Speaker = entry.Speaker,
+                Speaker = new User()
+                {
+                    Id = entry.Speaker.Id,
+                    PictureUrl = entry.Speaker.PictureUrl,
+                    FullName = entry.Speaker.FullName
+                },
                 Timestamp = entry.Timestamp,
                 EntryType = entry.EntryType,
                 Reactions = []
@@ -178,7 +177,12 @@ public class MeetingService : IMeetingService
                 MeetingId = entry.MeetingId,
                 BlockId = entry.BlockId,
                 Content = entry.Content,
-                Speaker = entry.Speaker,
+                Speaker = new User()
+                {
+                    Id = entry.Speaker.Id,
+                    PictureUrl = entry.Speaker.PictureUrl,
+                    FullName = entry.Speaker.FullName
+                },
                 Timestamp = entry.Timestamp,
                 EntryType = entry.EntryType,
                 Reactions = []
@@ -188,7 +192,7 @@ public class MeetingService : IMeetingService
 
     public Meeting GetFullTranscriptionAsJson(string meetingId)
     {
-       return _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+        return _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
     }
 
     public void AppliedReaction(ReactionAppliedMessage reaction)

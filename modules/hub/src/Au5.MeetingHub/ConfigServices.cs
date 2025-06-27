@@ -1,4 +1,5 @@
-﻿using Au5.MeetingHub.Mock;
+﻿using Au5.Application;
+using Au5.Application.Interfaces;
 
 namespace Au5.MeetingHub;
 

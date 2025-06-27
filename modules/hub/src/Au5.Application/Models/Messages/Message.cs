@@ -1,4 +1,4 @@
-﻿namespace Au5.MeetingHub.Models.Messages;
+﻿namespace Au5.Application.Models.Messages;
 
 public abstract class Message
 {

@@ -1,11 +1,12 @@
-﻿namespace Au5.MeetingHub.Models.Messages;
+﻿namespace Au5.Domain.Entities;
 
-public class EntryMessage : Message
+public class Entry
 {
-    public override string Type => MessageTypes.Entry;
+    public string MeetingId { get; set; }
     public string BlockId { get; set; }
     public User Speaker { get; set; }
     public string Content { get; set; }
     public string Timestamp { get; set; }
     public string EntryType { get; set; }
+    public List<Reactions> Reactions { get; set; }
 }

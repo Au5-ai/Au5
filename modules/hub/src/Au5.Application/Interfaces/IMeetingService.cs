@@ -1,11 +1,9 @@
-﻿using Au5.MeetingHub.Models.Entity;
-
-namespace Au5.MeetingHub.Mock.Interfaces;
+﻿namespace Au5.Application.Interfaces;
 
 public interface IMeetingService
 {
-    void AddUserToMeeting(User user, string meetingId, string platform);
-    bool AddBot(RequestToAddBotMessage requestToAddBotMessage);
+    void AddUserToMeeting(Guid userId, string meetingId, string platform);
+    bool AddBot(RequestToAddBotMessage request);
     void EndMeeting(string meetingId);
     void AddParticipantToMeet(List<string> users, string meetingId);
     string BotIsAdded(string meetingId);

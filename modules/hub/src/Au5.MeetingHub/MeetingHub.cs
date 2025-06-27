@@ -1,4 +1,7 @@
-﻿namespace Au5.MeetingHub;
+﻿using Au5.Application.Interfaces;
+using Au5.Application.Models.Messages;
+
+namespace Au5.MeetingHub;
 
 public class MeetingHub(IMeetingService meetingService) : Hub
 {
@@ -11,7 +14,7 @@ public class MeetingHub(IMeetingService meetingService) : Hub
             return;
         }
 
-        _meetingService.AddUserToMeeting(msg.User, msg.MeetingId, msg.Platform);
+        _meetingService.AddUserToMeeting(msg.User.Id, msg.MeetingId, msg.Platform);
         await Groups.AddToGroupAsync(Context.ConnectionId, msg.MeetingId);
         await BroadcastToGroupExceptCallerAsync(msg.MeetingId, msg);
     }

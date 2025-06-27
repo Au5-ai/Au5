@@ -1,4 +1,4 @@
-﻿namespace Au5.MeetingHub.Models.Entity;
+﻿namespace Au5.Domain.Entities;
 
 public enum MeetingStatus
 {
