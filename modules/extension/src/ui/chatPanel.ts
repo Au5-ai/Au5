@@ -118,7 +118,10 @@ export class ChatPanel {
     if (botContainer) {
       botContainer.remove();
     }
-    const botPlayContainer = this.transcriptionsContainerEl.querySelector("#au5-bot-play") as HTMLDivElement;
+    const botPlayContainer = this.activeMeetingEl?.querySelector("#au5-bot-play") as HTMLDivElement;
+    if (!botPlayContainer) {
+      return;
+    }
     botPlayContainer.innerHTML = `<div class="flex gap-[6px] min-w-[90px] max-w-[calc(100%-40px)]">
                                     <div class="text-xs overflow-hidden">
                                       <div

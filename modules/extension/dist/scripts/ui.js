@@ -111,6 +111,7 @@ class ChatPanel {
     this.scrollToBottom();
   }
   botJoined(botName) {
+    var _a;
     this.addUserJoinedOrLeaved(botName, true);
     if (!this.transcriptionsContainerEl) {
       return;
@@ -119,7 +120,10 @@ class ChatPanel {
     if (botContainer) {
       botContainer.remove();
     }
-    const botPlayContainer = this.transcriptionsContainerEl.querySelector("#au5-bot-play");
+    const botPlayContainer = (_a = this.activeMeetingEl) == null ? void 0 : _a.querySelector("#au5-bot-play");
+    if (!botPlayContainer) {
+      return;
+    }
     botPlayContainer.innerHTML = `<div class="flex gap-[6px] min-w-[90px] max-w-[calc(100%-40px)]">
                                     <div class="text-xs overflow-hidden">
                                       <div
