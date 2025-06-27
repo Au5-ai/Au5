@@ -10,7 +10,7 @@ public class Meeting
     public List<Entry> Entries { get; set; }
     public List<Guid> Users { get; set; }
     public List<string> Participants { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime CreatedAt { get; set; }
     public string Platform { get; set; }
     public MeetingStatus Status { get; set; }
 }
