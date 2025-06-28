@@ -120,72 +120,98 @@ class ChatPanel {
     if (botContainer) {
       botContainer.remove();
     }
-    const botPlayContainer = (_a = this.activeMeetingEl) == null ? void 0 : _a.querySelector("#au5-bot-play");
+    const botPlayContainer = (_a = this.activeMeetingEl) == null ? void 0 : _a.querySelector("#au5-bot-playContainer");
     if (!botPlayContainer) {
       return;
     }
     botPlayContainer.innerHTML = `<div class="flex gap-[6px] min-w-[90px] max-w-[calc(100%-40px)]">
-                                    <div class="text-xs overflow-hidden">
-                                      <div
-                                        class="model-btn flex justify-center items-center cursor-pointer ps-[6px] pe-[5px] py-[7px] leading-4 rounded-3xl gap-[2px]"
-                                      >
-                                        <div class="icon flex-center rounded-full size-4 ms-[1px] me-[2px]">
-                                          <div
-                                            class="flex items-center justify-center rounded-full"
+                                  <div class="text-xs overflow-hidden">
+                                    <div
+                                      class="model-btn flex justify-center items-center cursor-pointer ps-[6px] pe-[5px] py-[7px] leading-4 rounded-3xl gap-[2px]"
+                                    >
+                                      <div class="icon flex-center rounded-full size-4 ms-[1px] me-[2px]">
+                                        <div
+                                          class="flex items-center justify-center rounded-full"
+                                          style="width: 18px; height: 18px"
+                                        >
+                                          <span
+                                            class="inline-flex shrink-0 [&amp;&gt;svg]:size-[inherit]"
                                             style="width: 18px; height: 18px"
                                           >
-                                            <span
-                                              class="inline-flex shrink-0 [&amp;&gt;svg]:size-[inherit]"
-                                              style="width: 18px; height: 18px"
+                                            <svg
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              width="24"
+                                              height="24"
+                                              viewBox="0 0 24 24"
+                                              fill="none"
+                                              stroke="currentColor"
+                                              stroke-width="2"
+                                              stroke-linecap="round"
+                                              stroke-linejoin="round"
+                                              class="lucide lucide-audio-waveform w-4 h-4"
                                             >
-                                              <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="24"
-                                                height="24"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                stroke-width="2"
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                class="lucide lucide-audio-waveform w-4 h-4"
-                                              >
-                                                <path
-                                                  d="M2 13a2 2 0 0 0 2-2V7a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0V4a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0v-4a2 2 0 0 1 2-2"
-                                                ></path>
-                                              </svg>
-                                            </span>
-                                          </div>
+                                              <path
+                                                d="M2 13a2 2 0 0 0 2-2V7a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0V4a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0v-4a2 2 0 0 1 2-2"
+                                              ></path>
+                                            </svg>
+                                          </span>
                                         </div>
-                                        <div
-                                          class="flex items-center pl-[2px] pr-[2px] transition-transform duration-100"
-                                        >
-                                          ${botName}
-                                        </div>
+                                      </div>
+                                      <div
+                                        class="flex items-center pl-[2px] pr-[2px] transition-transform duration-100"
+                                      >
+                                        ${botName}
                                       </div>
                                     </div>
                                   </div>
-                                  <div class="flex items-center ms-auto">
-                                    <div
-                                      class="topbar-btn size-[30px] model-btn model-btn-no-bg overflow-hidden flex-center text-xs p-[5px] rounded-lg"
+                                </div>
+                                <div id="au5-bot-actionContainer" class="flex items-center ms-auto">
+                                  <div
+                                    id="au5-bot-puaseAction"
+                                    class="topbar-btn size-[30px] model-btn model-btn-no-bg overflow-hidden flex-center text-xs p-[5px] rounded-lg"
+                                  >
+                                    <svg
+                                      width="16"
+                                      height="16"
+                                      viewBox="0 0 16 16"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg"
                                     >
-                                      <svg
-                                        width="16"
-                                        height="16"
-                                        viewBox="0 0 16 16"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                      >
-                                        <path
-                                          d="M2.66675 8V5.62667C2.66675 2.68 4.75341 1.47334 7.30675 2.94667L9.36675 4.13334L11.4267 5.32C13.9801 6.79334 13.9801 9.20667 11.4267 10.68L9.36675 11.8667L7.30675 13.0533C4.75341 14.5267 2.66675 13.32 2.66675 10.3733V8Z"
-                                          stroke="currentColor"
-                                          stroke-miterlimit="10"
-                                          stroke-linecap="round"
-                                          stroke-linejoin="round"
-                                        />
-                                      </svg>
-                                    </div>
-                                  </div>`;
+                                      <path
+                                        d="M7.1 12.74V3.26C7.1 2.36 6.72 2 5.76 2H3.34C2.38 2 2 2.36 2 3.26V12.74C2 13.64 2.38 14 3.34 14H5.76C6.72 14 7.1 13.64 7.1 12.74Z"
+                                        stroke="currentColor"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                      />
+                                      <path
+                                        d="M14.0001 12.74V3.26C14.0001 2.36 13.6201 2 12.6601 2H10.2401C9.28681 2 8.90015 2.36 8.90015 3.26V12.74C8.90015 13.64 9.28015 14 10.2401 14H12.6601C13.6201 14 14.0001 13.64 14.0001 12.74Z"
+                                        stroke="currentColor"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                      />
+                                    </svg>
+                                  </div>
+                                    <div
+                                    id="au5-bot-playAction"
+                                    class="topbar-btn size-[30px] model-btn model-btn-no-bg overflow-hidden flex-center text-xs p-[5px] rounded-lg hidden"
+                                  >
+                                    <svg
+                                      width="16"
+                                      height="16"
+                                      viewBox="0 0 16 16"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        d="M2.66675 8V5.62667C2.66675 2.68 4.75341 1.47334 7.30675 2.94667L9.36675 4.13334L11.4267 5.32C13.9801 6.79334 13.9801 9.20667 11.4267 10.68L9.36675 11.8667L7.30675 13.0533C4.75341 14.5267 2.66675 13.32 2.66675 10.3733V8Z"
+                                        stroke="currentColor"
+                                        stroke-miterlimit="10"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                      />
+                                    </svg>
+                                  </div>
+                                </div>`;
   }
   usersJoined(fullName) {
     this.addUserJoinedOrLeaved(fullName, true);
@@ -247,6 +273,29 @@ class ChatPanel {
       this.transcriptionsContainerEl.appendChild(botRequested);
     }
   }
+  pauseAndPlay(action) {
+    if (!this.activeMeetingEl) {
+      return;
+    }
+    const botPlayContainer = this.activeMeetingEl.querySelector("#au5-bot-play");
+    if (!botPlayContainer) {
+      return;
+    }
+    const botPlayAction = this.activeMeetingEl.querySelector("#au5-bot-playAction");
+    const botPauseAction = this.activeMeetingEl.querySelector("#au5-bot-puaseAction");
+    if (!botPlayAction || !botPauseAction) {
+      return;
+    }
+    if (action.isPaused === true) {
+      botPlayAction.classList.remove("hidden");
+      botPauseAction.classList.add("hidden");
+      this.addGeneralMessage("⏸️ Transcription paused by " + action.user.fullName);
+    } else {
+      botPlayAction.classList.add("hidden");
+      botPauseAction.classList.remove("hidden");
+      this.addGeneralMessage("▶️ Transcription resumed by " + action.user.fullName);
+    }
+  }
   setUrl(url) {
     const urlElement = document.getElementsByClassName("au5-url");
     Array.from(urlElement).forEach((el) => {
@@ -266,6 +315,16 @@ class ChatPanel {
     const usersJoined = document.createElement("div");
     usersJoined.className = "au5-join-time";
     usersJoined.innerText = `👋 ${name} ${isJoined ? "Joined" : "Leaved"} at ${DateTime.toHoursAndMinutes(/* @__PURE__ */ new Date())}`;
+    this.transcriptionsContainerEl.appendChild(usersJoined);
+    this.scrollToBottom();
+  }
+  addGeneralMessage(content) {
+    if (!this.transcriptionsContainerEl) {
+      return;
+    }
+    const usersJoined = document.createElement("div");
+    usersJoined.className = "au5-join-time";
+    usersJoined.innerText = `👋 ${content} at ${DateTime.toHoursAndMinutes(/* @__PURE__ */ new Date())}`;
     this.transcriptionsContainerEl.appendChild(usersJoined);
     this.scrollToBottom();
   }
@@ -316,6 +375,7 @@ var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
   MessageTypes2["ReactionApplied"] = "ReactionApplied";
   MessageTypes2["GeneralMessage"] = "GeneralMessage";
   MessageTypes2["RequestToAddBot"] = "RequestToAddBot";
+  MessageTypes2["PauseAndPlayTranscription"] = "PauseAndPlayTranscription";
   return MessageTypes2;
 })(MessageTypes || {});
 class GoogleMeet {
@@ -3262,7 +3322,7 @@ class UIHandlers {
     this.handleMessage = this.handleMessage.bind(this);
   }
   init() {
-    return this.handleJoin().handleReload().handleReactions().handleThemeToggle().handleOptions().handleGithubLink().handleDiscordLink().handleAddBot().handleMessageSend().handleTooltips();
+    return this.handleJoin().handleReload().handleReactions().handleThemeToggle().handleOptions().handleGithubLink().handleDiscordLink().handleAddBot().handleMessageSend().handleBotPlayPauseActions().handleTooltips();
   }
   handleJoin() {
     const btn = document.getElementById("au5-btn-joinMeeting");
@@ -3389,7 +3449,7 @@ class UIHandlers {
         (_a = this.meetingHubClient) == null ? void 0 : _a.sendMessage(message);
         const addBotText = document.getElementById("au5-btn-addbot-text");
         if (addBotText) {
-          let seconds = 30;
+          let seconds = 60;
           disabled = true;
           addBotText.textContent = `${seconds}s to retry`;
           const interval = setInterval(() => {
@@ -3464,6 +3524,39 @@ class UIHandlers {
     });
     return this;
   }
+  handleBotPlayPauseActions() {
+    const botPlayAction = document.getElementById("au5-bot-playAction");
+    const botPauseAction = document.getElementById("au5-bot-puaseAction");
+    botPlayAction == null ? void 0 : botPlayAction.addEventListener("click", () => {
+      if (!this.platform || !this.meetingHubClient) return;
+      const message = {
+        type: MessageTypes.PauseAndPlayTranscription,
+        meetingId: this.platform.getMeetingId(),
+        isPaused: false,
+        user: {
+          id: this.config.user.id,
+          fullName: this.config.user.fullName,
+          pictureUrl: this.config.user.pictureUrl
+        }
+      };
+      this.meetingHubClient.sendMessage(message);
+    });
+    botPauseAction == null ? void 0 : botPauseAction.addEventListener("click", () => {
+      if (!this.platform || !this.meetingHubClient) return;
+      const message = {
+        type: MessageTypes.PauseAndPlayTranscription,
+        meetingId: this.platform.getMeetingId(),
+        isPaused: true,
+        user: {
+          id: this.config.user.id,
+          fullName: this.config.user.fullName,
+          pictureUrl: this.config.user.pictureUrl
+        }
+      };
+      this.meetingHubClient.sendMessage(message);
+    });
+    return this;
+  }
   handleMessage(msg) {
     switch (msg.type) {
       case MessageTypes.BotJoinedInMeeting:
@@ -3498,6 +3591,10 @@ class UIHandlers {
       case MessageTypes.RequestToAddBot:
         const requestToAddBotMsg = msg;
         this.chatPanel.botRequested(requestToAddBotMsg);
+        break;
+      case MessageTypes.PauseAndPlayTranscription:
+        const pauseAndPlayTranscription = msg;
+        this.chatPanel.pauseAndPlay(pauseAndPlayTranscription);
         break;
     }
   }

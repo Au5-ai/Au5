@@ -3,11 +3,11 @@ using Au5.Application.Models.Messages;
 
 namespace Au5.MeetingHub;
 
-public class MeetingHub(IMeetingService meetingService) : Hub, IMeetingHub
+public class MeetingHub(IMeetingService meetingService) : Hub
 {
     private readonly IMeetingService _meetingService = meetingService;
 
-    public async Task UserJoinedInMeeting(UserJoinedInMeetingMessage msg, CancellationToken cancellationToken)
+    public async Task UserJoinedInMeeting(UserJoinedInMeetingMessage msg)
     {
         if (string.IsNullOrWhiteSpace(msg.MeetingId) || msg.User is null)
         {
@@ -16,56 +16,56 @@ public class MeetingHub(IMeetingService meetingService) : Hub, IMeetingHub
         if (string.IsNullOrEmpty(Context.ConnectionId)) return;
 
         _meetingService.AddUserToMeeting(msg.User.Id, msg.MeetingId, msg.Platform);
-        await Groups.AddToGroupAsync(Context.ConnectionId, msg.MeetingId, cancellationToken);
-        await BroadcastToGroupExceptCallerAsync(msg.MeetingId, msg, cancellationToken);
+        await Groups.AddToGroupAsync(Context.ConnectionId, msg.MeetingId);
+        await BroadcastToGroupExceptCallerAsync(msg.MeetingId, msg);
     }
 
-    public async Task RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage, CancellationToken cancellationToken)
+    public async Task RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage)
     {
-        await BroadcastToGroupExceptCallerAsync(requestToAddBotMessage.MeetingId, requestToAddBotMessage, cancellationToken);
+        await BroadcastToGroupExceptCallerAsync(requestToAddBotMessage.MeetingId, requestToAddBotMessage);
     }
 
-    public async Task BotJoinedInMeeting(string meetingId, CancellationToken cancellationToken)
+    public async Task BotJoinedInMeeting(string meetingId)
     {
         var botName = _meetingService.BotIsAdded(meetingId);
         if (string.IsNullOrWhiteSpace(botName))
         {
             return;
         }
-        await BroadcastToGroupExceptCallerAsync(meetingId, new BotJoinedInMeetingMessage() { BotName = botName }, cancellationToken);
+        await BroadcastToGroupExceptCallerAsync(meetingId, new BotJoinedInMeetingMessage() { BotName = botName });
     }
 
-    public async Task Entry(EntryMessage transcription, CancellationToken cancellationToken)
+    public async Task Entry(EntryMessage transcription)
     {
-      
+
         _meetingService.UpsertBlock(transcription);
-        await BroadcastToGroupExceptCallerAsync(transcription.MeetingId, transcription, cancellationToken);
+        await BroadcastToGroupExceptCallerAsync(transcription.MeetingId, transcription);
     }
 
-    public async Task ReactionApplied(ReactionAppliedMessage reaction, CancellationToken cancellationToken)
+    public async Task ReactionApplied(ReactionAppliedMessage reaction)
     {
         _meetingService.AppliedReaction(reaction);
-        await BroadcastToGroupExceptCallerAsync(reaction.MeetingId, reaction, cancellationToken);
+        await BroadcastToGroupExceptCallerAsync(reaction.MeetingId, reaction);
     }
 
-    public async Task PauseAndPlayTranscription(PauseAndPlayTranscriptionMessage message, CancellationToken cancellationToken)
+    public async Task PauseAndPlayTranscription(PauseAndPlayTranscriptionMessage message)
     {
         _meetingService.PauseMeeting(message.MeetingId, message.IsPaused);
-        await BroadcastToGroupExceptCallerAsync(message.MeetingId, message, cancellationToken);
+        await BroadcastToGroupExceptCallerAsync(message.MeetingId, message);
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         if (string.IsNullOrEmpty(Context.ConnectionId)) return;
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, Context.GetHttpContext()?.Request.Query["meetingId"] ?? string.Empty);
+        //  await Groups.RemoveFromGroupAsync(Context.ConnectionId, Context.GetHttpContext()?.Request.Query["meetingId"] ?? string.Empty);
         await base.OnDisconnectedAsync(exception);
     }
 
     /// <summary>
     /// Helper to send message to others in the same meeting group.
     /// </summary>
-    private async Task BroadcastToGroupExceptCallerAsync(string groupName, Message msg, CancellationToken cancellationToken)
-        => await Clients.OthersInGroup(groupName).SendAsync("ReceiveMessage", msg, cancellationToken);
+    private async Task BroadcastToGroupExceptCallerAsync(string groupName, Message msg)
+        => await Clients.OthersInGroup(groupName).SendAsync("ReceiveMessage", msg);
 }
 
 
