@@ -11,6 +11,7 @@ import fetch, { Headers, Request, Response } from "node-fetch";
 
 async function main() {
   //const rawConfig = MEETING_CONFIG;
+  console.log("Starting Meeting Bot...", process.env.MEETING_CONFIG);
   const rawConfig = process.env.MEETING_CONFIG;
   if (!rawConfig) {
     console.error(ErrorMessages.MEETING_CONFIG_NOT_SET);
