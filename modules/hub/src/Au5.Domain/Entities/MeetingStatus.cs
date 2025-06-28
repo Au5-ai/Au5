@@ -3,7 +3,7 @@
 public enum MeetingStatus
 {
     NotStarted,
-    InProgress,
+    Recording,
     Paused,
     Ended
 }

@@ -154,7 +154,7 @@ public class MeetingServiceTests
 
         Assert.Equal("Bot2", botName);
         Assert.True(result.IsBotAdded);
-        Assert.Equal(MeetingStatus.InProgress, result.Status);
+        Assert.Equal(MeetingStatus.Recording, result.Status);
     }
 
     [Fact]

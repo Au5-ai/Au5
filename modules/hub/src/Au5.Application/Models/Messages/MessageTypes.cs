@@ -8,4 +8,5 @@ public static class MessageTypes
     public const string ReactionApplied = "ReactionApplied";
     public const string GeneralMessage = "GeneralMessage";
     public const string RequestToAddBot = "RequestToAddBot";
+    public const string PauseAndPlayTranscription = "PauseAndPlayTranscription";
 }

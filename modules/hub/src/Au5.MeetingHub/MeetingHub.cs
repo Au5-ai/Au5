@@ -1,10 +1,9 @@
 ﻿using Au5.Application.Interfaces;
 using Au5.Application.Models.Messages;
-using System.Threading;
 
 namespace Au5.MeetingHub;
 
-public class MeetingHub(IMeetingService meetingService) : Hub
+public class MeetingHub(IMeetingService meetingService) : Hub, IMeetingHub
 {
     private readonly IMeetingService _meetingService = meetingService;
 
@@ -53,6 +52,12 @@ public class MeetingHub(IMeetingService meetingService) : Hub
         await BroadcastToGroupExceptCallerAsync(reaction.MeetingId, reaction, cancellationToken);
     }
 
+    public async Task PauseAndPlayTranscription(PauseAndPlayTranscriptionMessage message, CancellationToken cancellationToken)
+    {
+        _meetingService.PauseMeeting(message.MeetingId, message.IsPaused);
+        await BroadcastToGroupExceptCallerAsync(message.MeetingId, message, cancellationToken);
+    }
+
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         if (string.IsNullOrEmpty(Context.ConnectionId)) return;
@@ -66,18 +71,6 @@ public class MeetingHub(IMeetingService meetingService) : Hub
     private async Task BroadcastToGroupExceptCallerAsync(string groupName, Message msg, CancellationToken cancellationToken)
         => await Clients.OthersInGroup(groupName).SendAsync("ReceiveMessage", msg, cancellationToken);
 }
-
-
-//public async Task PauseTranscription(User user, string meetingId, bool isPause)
-//{
-//    if (string.IsNullOrWhiteSpace(meetingId))
-//    {
-//        return;
-//    }
-//    _meetingService.PauseMeeting(meetingId, isPause);
-
-//    await BroadcastToGroupExceptCallerAsync(meetingId, new GeneralMessage(meetingId, $"{user.FullName} paused transcription !"));
-//}
 
 
 //public void ParticipantJoinMeeting(Participants participants)

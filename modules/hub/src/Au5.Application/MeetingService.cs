@@ -95,7 +95,7 @@ public class MeetingService : IMeetingService
             if (!meeting.IsBotAdded)
             {
                 meeting.IsBotAdded = true;
-                meeting.Status = MeetingStatus.InProgress;
+                meeting.Status = MeetingStatus.Recording;
             }
             return meeting.BotName;
         }
@@ -120,7 +120,7 @@ public class MeetingService : IMeetingService
             return;
         }
 
-        meeting.Status = isPause ? MeetingStatus.Paused : MeetingStatus.InProgress;
+        meeting.Status = isPause ? MeetingStatus.Paused : MeetingStatus.Recording;
     }
 
     public void UpsertBlock(EntryMessage entry)
