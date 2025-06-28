@@ -10,8 +10,8 @@ import fetch, { Headers, Request, Response } from "node-fetch";
 (global as any).Response = Response;
 
 async function main() {
-  const rawConfig = MEETING_CONFIG; //process.env.MEETING_CONFIG;
-  //const rawConfig = process.env.MEETING_CONFIG;
+  //const rawConfig = MEETING_CONFIG;
+  const rawConfig = process.env.MEETING_CONFIG;
   if (!rawConfig) {
     console.error(ErrorMessages.MEETING_CONFIG_NOT_SET);
     process.exit(1);
