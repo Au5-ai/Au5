@@ -7,6 +7,7 @@ import {
   IMeetingPlatform,
   IMessage,
   MessageTypes,
+  PauseAndPlayTranscriptionMessage,
   ReactionAppliedMessage,
   RequestToAddBotMessage,
   UserJoinedInMeetingMessage
@@ -39,6 +40,7 @@ export class UIHandlers {
       .handleDiscordLink()
       .handleAddBot()
       .handleMessageSend()
+      .handleBotPlayPauseActions()
       .handleTooltips();
   }
 
@@ -188,7 +190,7 @@ export class UIHandlers {
 
         const addBotText = document.getElementById("au5-btn-addbot-text");
         if (addBotText) {
-          let seconds = 30;
+          let seconds = 60;
           disabled = true;
           addBotText.textContent = `${seconds}s to retry`;
           const interval = setInterval(() => {
@@ -269,6 +271,43 @@ export class UIHandlers {
     return this;
   }
 
+  private handleBotPlayPauseActions(): this {
+    const botPlayAction = document.getElementById("au5-bot-playAction") as HTMLDivElement | null;
+    const botPauseAction = document.getElementById("au5-bot-puaseAction") as HTMLDivElement | null;
+
+    botPlayAction?.addEventListener("click", () => {
+      if (!this.platform || !this.meetingHubClient) return;
+      const message: PauseAndPlayTranscriptionMessage = {
+        type: MessageTypes.PauseAndPlayTranscription,
+        meetingId: this.platform.getMeetingId(),
+        isPaused: false,
+        user: {
+          id: this.config.user.id,
+          fullName: this.config.user.fullName,
+          pictureUrl: this.config.user.pictureUrl
+        }
+      };
+      this.meetingHubClient.sendMessage(message);
+    });
+
+    botPauseAction?.addEventListener("click", () => {
+      if (!this.platform || !this.meetingHubClient) return;
+      const message: PauseAndPlayTranscriptionMessage = {
+        type: MessageTypes.PauseAndPlayTranscription,
+        meetingId: this.platform.getMeetingId(),
+        isPaused: true,
+        user: {
+          id: this.config.user.id,
+          fullName: this.config.user.fullName,
+          pictureUrl: this.config.user.pictureUrl
+        }
+      };
+      this.meetingHubClient.sendMessage(message);
+    });
+
+    return this;
+  }
+
   private handleMessage(msg: IMessage): void {
     switch (msg.type) {
       case MessageTypes.BotJoinedInMeeting:
@@ -307,6 +346,11 @@ export class UIHandlers {
       case MessageTypes.RequestToAddBot:
         const requestToAddBotMsg = msg as RequestToAddBotMessage;
         this.chatPanel.botRequested(requestToAddBotMsg);
+        break;
+
+      case MessageTypes.PauseAndPlayTranscription:
+        const pauseAndPlayTranscription = msg as PauseAndPlayTranscriptionMessage;
+        this.chatPanel.pauseAndPlay(pauseAndPlayTranscription);
         break;
 
       default:

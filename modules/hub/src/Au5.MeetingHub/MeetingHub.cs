@@ -16,7 +16,7 @@ public class MeetingHub(IMeetingService meetingService) : Hub, IMeetingHub
         if (string.IsNullOrEmpty(Context.ConnectionId)) return;
 
         _meetingService.AddUserToMeeting(msg.User.Id, msg.MeetingId, msg.Platform);
-        await Groups.AddToGroupAsync(Context.ConnectionId, msg.MeetingId);
+        await Groups.AddToGroupAsync(Context.ConnectionId, msg.MeetingId, cancellationToken);
         await BroadcastToGroupExceptCallerAsync(msg.MeetingId, msg, cancellationToken);
     }
 
@@ -37,11 +37,7 @@ public class MeetingHub(IMeetingService meetingService) : Hub, IMeetingHub
 
     public async Task Entry(EntryMessage transcription, CancellationToken cancellationToken)
     {
-        var isMeetingPaused = _meetingService.IsPaused(transcription.MeetingId);
-        if (isMeetingPaused)
-        {
-            return;
-        }
+      
         _meetingService.UpsertBlock(transcription);
         await BroadcastToGroupExceptCallerAsync(transcription.MeetingId, transcription, cancellationToken);
     }

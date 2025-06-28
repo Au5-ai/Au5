@@ -13,4 +13,12 @@ public class Meeting
     public DateTime CreatedAt { get; set; }
     public string Platform { get; set; }
     public MeetingStatus Status { get; set; }
+
+    public bool IsPaused()
+        => Status == MeetingStatus.Paused;
+
+    public bool IsRecording()
+        => Status == MeetingStatus.Recording;
+    public bool IsEnded()
+        => Status == MeetingStatus.Ended;
 }

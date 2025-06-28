@@ -1,4 +1,6 @@
-﻿namespace Au5.Application;
+﻿using Au5.Application.Interfaces;
+
+namespace Au5.Application;
 
 public class MeetingService : IMeetingService
 {
@@ -11,7 +13,7 @@ public class MeetingService : IMeetingService
         {
             var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId && m.CreatedAt.Date == DateTime.Now.Date);
 
-            if (meeting is null || meeting is not null && meeting.Status == MeetingStatus.Ended)
+            if (meeting is null || meeting is not null && meeting.IsEnded())
             {
                 meeting = new Meeting
                 {
@@ -101,32 +103,22 @@ public class MeetingService : IMeetingService
         }
     }
 
-    public bool IsPaused(string meetingId)
+    public bool PauseMeeting(string meetingId, bool isPause)
     {
         var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
         if (meeting is null)
         {
-            return true;
-        }
-
-        return meeting.Status == MeetingStatus.Paused || meeting.Status == MeetingStatus.Ended;
-    }
-
-    public void PauseMeeting(string meetingId, bool isPause)
-    {
-        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
-        if (meeting is null)
-        {
-            return;
+            return false;
         }
 
         meeting.Status = isPause ? MeetingStatus.Paused : MeetingStatus.Recording;
+        return true;
     }
 
     public void UpsertBlock(EntryMessage entry)
     {
         var meeting = _meetings.FirstOrDefault(m => m.MeetingId == entry.MeetingId);
-        if (meeting is null)
+        if (meeting is null || meeting.IsPaused())
         {
             return;
         }

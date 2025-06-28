@@ -7,8 +7,7 @@ public interface IMeetingService
     void EndMeeting(string meetingId);
     void AddParticipantToMeet(List<string> users, string meetingId);
     string BotIsAdded(string meetingId);
-    bool IsPaused(string meetingId);
-    void PauseMeeting(string meetingId, bool isPause);
+    bool PauseMeeting(string meetingId, bool isPause);
     void UpsertBlock(EntryMessage entry);
     void InsertBlock(EntryMessage entry);
     Meeting GetFullTranscriptionAsJson(string meetingId);

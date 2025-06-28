@@ -162,9 +162,7 @@ public class MeetingServiceTests
     {
         var meetingId = "m6";
         _service.AddUserToMeeting(Guid.NewGuid(), meetingId, "Zoom");
-        _service.PauseMeeting(meetingId, true);
-
-        var paused = _service.IsPaused(meetingId);
+        var paused = _service.PauseMeeting(meetingId, true);
 
         Assert.True(paused);
     }
