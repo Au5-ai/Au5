@@ -145,12 +145,7 @@ public class MeetingService : IMeetingService
                 MeetingId = entry.MeetingId,
                 BlockId = entry.BlockId,
                 Content = entry.Content,
-                Speaker = new User()
-                {
-                    Id = entry.Speaker.Id,
-                    PictureUrl = entry.Speaker.PictureUrl,
-                    FullName = entry.Speaker.FullName
-                },
+                Speaker = entry.Speaker.ToUser(),
                 Timestamp = entry.Timestamp,
                 EntryType = entry.EntryType,
                 Reactions = []
@@ -172,12 +167,7 @@ public class MeetingService : IMeetingService
                 MeetingId = entry.MeetingId,
                 BlockId = entry.BlockId,
                 Content = entry.Content,
-                Speaker = new User()
-                {
-                    Id = entry.Speaker.Id,
-                    PictureUrl = entry.Speaker.PictureUrl,
-                    FullName = entry.Speaker.FullName
-                },
+                Speaker = entry.Speaker.ToUser(),
                 Timestamp = entry.Timestamp,
                 EntryType = entry.EntryType,
                 Reactions = []
