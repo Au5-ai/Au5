@@ -9,4 +9,5 @@ public static class MessageTypes
     public const string GeneralMessage = "GeneralMessage";
     public const string RequestToAddBot = "RequestToAddBot";
     public const string PauseAndPlayTranscription = "PauseAndPlayTranscription";
+    public const string MeetingIsActive = "MeetingIsActive";
 }

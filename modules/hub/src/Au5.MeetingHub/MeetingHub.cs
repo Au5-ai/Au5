@@ -15,7 +15,11 @@ public class MeetingHub(IMeetingService meetingService) : Hub
         }
         if (string.IsNullOrEmpty(Context.ConnectionId)) return;
 
-        _meetingService.AddUserToMeeting(msg.User.Id, msg.MeetingId, msg.Platform);
+        var meeting = _meetingService.AddUserToMeeting(msg.User.Id, msg.MeetingId, msg.Platform);
+        if (meeting is null && meeting.IsActive())
+        {
+            await Clients.Caller.SendAsync( "ReceiveMessage",  new MeetingIsActiveMessage() { MeetingId = msg.MeetingId });
+        }
         await Groups.AddToGroupAsync(Context.ConnectionId, msg.MeetingId);
         await BroadcastToGroupExceptCallerAsync(msg.MeetingId, msg);
     }

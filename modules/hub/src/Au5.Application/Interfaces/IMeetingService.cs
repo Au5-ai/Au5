@@ -2,7 +2,7 @@
 
 public interface IMeetingService
 {
-    void AddUserToMeeting(Guid userId, string meetingId, string platform);
+    Meeting AddUserToMeeting(Guid userId, string meetingId, string platform);
     bool AddBot(RequestToAddBotMessage request);
     void EndMeeting(string meetingId);
     void AddParticipantToMeet(List<string> users, string meetingId);

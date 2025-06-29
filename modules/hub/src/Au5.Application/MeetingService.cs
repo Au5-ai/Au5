@@ -7,7 +7,7 @@ public class MeetingService : IMeetingService
     private static readonly Lock _lock = new();
     private static readonly List<Meeting> _meetings = [];
 
-    public void AddUserToMeeting(Guid userId, string meetingId, string platform)
+    public Meeting AddUserToMeeting(Guid userId, string meetingId, string platform)
     {
         lock (_lock)
         {
@@ -32,9 +32,10 @@ public class MeetingService : IMeetingService
             var existingUser = meeting.Users.Any(u => u == userId);
             if (existingUser)
             {
-                return;
+                return meeting;
             }
             meeting.Users.Add(userId);
+            return meeting;
         }
     }
     public bool AddBot(RequestToAddBotMessage request)

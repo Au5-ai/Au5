@@ -14,11 +14,15 @@ public class Meeting
     public string Platform { get; set; }
     public MeetingStatus Status { get; set; }
 
+    public bool IsActive()
+        => Status == MeetingStatus.Recording || Status == MeetingStatus.Paused;
+
     public bool IsPaused()
         => Status == MeetingStatus.Paused;
 
     public bool IsRecording()
         => Status == MeetingStatus.Recording;
+
     public bool IsEnded()
         => Status == MeetingStatus.Ended;
 }
