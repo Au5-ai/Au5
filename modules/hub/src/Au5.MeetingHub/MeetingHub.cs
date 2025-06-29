@@ -38,8 +38,11 @@ public class MeetingHub(IMeetingService meetingService) : Hub
     public async Task Entry(EntryMessage transcription)
     {
 
-        _meetingService.UpsertBlock(transcription);
-        await BroadcastToGroupExceptCallerAsync(transcription.MeetingId, transcription);
+        var isMeetingPause = _meetingService.UpsertBlock(transcription);
+        if (!isMeetingPause)
+        {
+            await BroadcastToGroupExceptCallerAsync(transcription.MeetingId, transcription);
+        }
     }
 
     public async Task ReactionApplied(ReactionAppliedMessage reaction)

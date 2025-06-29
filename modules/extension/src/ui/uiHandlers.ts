@@ -276,7 +276,9 @@ export class UIHandlers {
     const botPauseAction = document.getElementById("au5-bot-puaseAction") as HTMLDivElement | null;
 
     botPlayAction?.addEventListener("click", () => {
+      console.log("Bot play action clicked", this.platform, this.meetingHubClient);
       if (!this.platform || !this.meetingHubClient) return;
+      console.log("Bot play action clicked");
       const message: PauseAndPlayTranscriptionMessage = {
         type: MessageTypes.PauseAndPlayTranscription,
         meetingId: this.platform.getMeetingId(),
