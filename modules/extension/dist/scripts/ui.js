@@ -214,7 +214,7 @@ class ChatPanel {
     Array.from(urlElement).forEach((el) => {
       if (el) {
         let displayUrl = url;
-        if (url.length > 35) {
+        if (url.length > 36) {
           displayUrl = url.slice(0, 36) + "(*)";
         }
         el.innerHTML = displayUrl;
