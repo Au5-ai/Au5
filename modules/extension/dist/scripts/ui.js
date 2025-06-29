@@ -289,6 +289,7 @@ var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
   MessageTypes2["GeneralMessage"] = "GeneralMessage";
   MessageTypes2["RequestToAddBot"] = "RequestToAddBot";
   MessageTypes2["PauseAndPlayTranscription"] = "PauseAndPlayTranscription";
+  MessageTypes2["MeetingIsActive"] = "MeetingIsActive";
   return MessageTypes2;
 })(MessageTypes || {});
 class GoogleMeet {
@@ -3510,6 +3511,10 @@ class UIHandlers {
       case MessageTypes.PauseAndPlayTranscription:
         const pauseAndPlayTranscription = msg;
         this.chatPanel.pauseAndPlay(pauseAndPlayTranscription);
+        break;
+      case MessageTypes.MeetingIsActive:
+        const meetingIsActive = msg;
+        this.chatPanel.botJoined(meetingIsActive.botName);
         break;
     }
   }

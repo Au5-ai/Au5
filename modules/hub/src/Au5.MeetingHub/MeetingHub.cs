@@ -16,10 +16,15 @@ public class MeetingHub(IMeetingService meetingService) : Hub
         if (string.IsNullOrEmpty(Context.ConnectionId)) return;
 
         var meeting = _meetingService.AddUserToMeeting(msg.User.Id, msg.MeetingId, msg.Platform);
-        if (meeting is null && meeting.IsActive())
+        if (meeting is not null && meeting.IsActive())
         {
-            await Clients.Caller.SendAsync( "ReceiveMessage",  new MeetingIsActiveMessage() { MeetingId = msg.MeetingId });
+            await Clients.Caller.SendAsync("ReceiveMessage", new MeetingIsActiveMessage()
+            {
+                BotName = meeting.BotName,
+                MeetingId = msg.MeetingId
+            });
         }
+        meeting.Status = Domain.Entities.MeetingStatus.Recording;   
         await Groups.AddToGroupAsync(Context.ConnectionId, msg.MeetingId);
         await BroadcastToGroupExceptCallerAsync(msg.MeetingId, msg);
     }
