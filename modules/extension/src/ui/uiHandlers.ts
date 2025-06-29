@@ -6,6 +6,7 @@ import {
   EntryMessage,
   IMeetingPlatform,
   IMessage,
+  MeetingIsActiveMessage,
   MessageTypes,
   PauseAndPlayTranscriptionMessage,
   ReactionAppliedMessage,
@@ -353,6 +354,11 @@ export class UIHandlers {
       case MessageTypes.PauseAndPlayTranscription:
         const pauseAndPlayTranscription = msg as PauseAndPlayTranscriptionMessage;
         this.chatPanel.pauseAndPlay(pauseAndPlayTranscription);
+        break;
+
+      case MessageTypes.MeetingIsActive:
+        const meetingIsActive = msg as MeetingIsActiveMessage;
+        this.chatPanel.botJoined(meetingIsActive.botName);
         break;
 
       default:

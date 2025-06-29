@@ -82,6 +82,12 @@ export interface PauseAndPlayTranscriptionMessage extends IMessage {
   isPaused: boolean;
 }
 
+export interface MeetingIsActiveMessage extends IMessage {
+  readonly type: MessageTypes.MeetingIsActive;
+  meetingId: string;
+  botName: string;
+}
+
 export enum PostMessageSource {
   ContentScript = "Au5-ContentScript",
   BackgroundScript = "Au5-BackgroundScript"
@@ -97,7 +103,8 @@ export enum MessageTypes {
   ReactionApplied = "ReactionApplied",
   GeneralMessage = "GeneralMessage",
   RequestToAddBot = "RequestToAddBot",
-  PauseAndPlayTranscription = "PauseAndPlayTranscription"
+  PauseAndPlayTranscription = "PauseAndPlayTranscription",
+  MeetingIsActive = "MeetingIsActive"
 }
 
 export interface RequestAddBotModel {
