@@ -68,7 +68,10 @@ public class MeetingHub(IMeetingService meetingService) : Hub
     /// Helper to send message to others in the same meeting group.
     /// </summary>
     private async Task BroadcastToGroupExceptCallerAsync(string groupName, Message msg)
-        => await Clients.OthersInGroup(groupName).SendAsync("ReceiveMessage", msg);
+    {
+        Console.WriteLine($"Broadcasting message of type {msg.Type}");
+        await Clients.OthersInGroup(groupName).SendAsync("ReceiveMessage", msg);
+    }
 }
 
 

@@ -3445,9 +3445,7 @@ class UIHandlers {
     const botPlayAction = document.getElementById("au5-bot-playAction");
     const botPauseAction = document.getElementById("au5-bot-puaseAction");
     botPlayAction == null ? void 0 : botPlayAction.addEventListener("click", () => {
-      console.log("Bot play action clicked", this.platform, this.meetingHubClient);
       if (!this.platform || !this.meetingHubClient) return;
-      console.log("Bot play action clicked");
       const message = {
         type: MessageTypes.PauseAndPlayTranscription,
         meetingId: this.platform.getMeetingId(),
@@ -3459,11 +3457,10 @@ class UIHandlers {
         }
       };
       this.meetingHubClient.sendMessage(message);
+      this.chatPanel.pauseAndPlay(message);
     });
     botPauseAction == null ? void 0 : botPauseAction.addEventListener("click", () => {
-      console.log("Bot pause action clicked", this.platform, this.meetingHubClient);
       if (!this.platform || !this.meetingHubClient) return;
-      console.log("Bot pause action clicked");
       const message = {
         type: MessageTypes.PauseAndPlayTranscription,
         meetingId: this.platform.getMeetingId(),
@@ -3475,6 +3472,7 @@ class UIHandlers {
         }
       };
       this.meetingHubClient.sendMessage(message);
+      this.chatPanel.pauseAndPlay(message);
     });
     return this;
   }
