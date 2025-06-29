@@ -12767,7 +12767,7 @@ html[data-gpts-theme="dark"] .alert-container .ant-notification .ant-notificatio
   display: contents;
 }
 .hidden {
-  display: none !important;
+  display: none;
 }
 .aspect-auto {
   aspect-ratio: auto;

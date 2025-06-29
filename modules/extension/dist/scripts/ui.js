@@ -194,22 +194,18 @@ class ChatPanel {
     if (!this.activeMeetingEl) {
       return;
     }
-    const botPlayContainer = this.activeMeetingEl.querySelector("#au5-bot-play");
-    if (!botPlayContainer) {
-      return;
-    }
     const botPlayAction = this.activeMeetingEl.querySelector("#au5-bot-playAction");
     const botPauseAction = this.activeMeetingEl.querySelector("#au5-bot-puaseAction");
     if (!botPlayAction || !botPauseAction) {
       return;
     }
     if (action.isPaused === true) {
-      botPlayAction.classList.remove("hidden");
-      botPauseAction.classList.add("hidden");
+      botPlayAction.setAttribute("style", `display:"inline";`);
+      botPauseAction.setAttribute("style", `display:"none";`);
       this.addGeneralMessage("⏸️ Transcription paused by " + action.user.fullName);
     } else {
-      botPlayAction.classList.add("hidden");
-      botPauseAction.classList.remove("hidden");
+      botPlayAction.setAttribute("style", `display:"none";`);
+      botPauseAction.setAttribute("style", `display:"inline";`);
       this.addGeneralMessage("▶️ Transcription resumed by " + action.user.fullName);
     }
   }

@@ -37,9 +37,8 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 
     public async Task Entry(EntryMessage transcription)
     {
-
-        var isMeetingPause = _meetingService.UpsertBlock(transcription);
-        if (!isMeetingPause)
+        var canBroadcast = _meetingService.UpsertBlock(transcription);
+        if (canBroadcast)
         {
             await BroadcastToGroupExceptCallerAsync(transcription.MeetingId, transcription);
         }

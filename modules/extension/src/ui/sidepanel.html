@@ -179,7 +179,29 @@
                                   </div>
                                   <div id="au5-bot-actionContainer" class="flex items-center ms-auto">
                                     <div
+                                      id="au5-bot-stopAction"
+                                      data-tooltip="Stop Transcription (Not available for now)"
+                                      class="topbar-btn size-[30px] model-btn model-btn-no-bg overflow-hidden flex-center text-xs p-[5px] rounded-lg"
+                                    >
+                                      <svg
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 16 16"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                      >
+                                        <path
+                                          d="M6.2 14H9.8C12.8 14 14 12.8 14 9.8V6.2C14 3.2 12.8 2 9.8 2H6.2C3.2 2 2 3.2 2 6.2V9.8C2 12.8 3.2 14 6.2 14Z"
+                                          stroke="currentColor"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                        />
+                                      </svg>
+                                    </div>
+
+                                    <div
                                       id="au5-bot-puaseAction"
+                                      data-tooltip="Pause Transcription"
                                       class="topbar-btn size-[30px] model-btn model-btn-no-bg overflow-hidden flex-center text-xs p-[5px] rounded-lg"
                                     >
                                       <svg
@@ -205,7 +227,9 @@
                                     </div>
                                     <div
                                       id="au5-bot-playAction"
-                                      class="topbar-btn size-[30px] model-btn model-btn-no-bg overflow-hidden flex-center text-xs p-[5px] rounded-lg hidden"
+                                      data-tooltip="Start Transcription"
+                                      class="topbar-btn size-[30px] model-btn model-btn-no-bg overflow-hidden flex-center text-xs p-[5px] rounded-lg"
+                                      style="display: none"
                                     >
                                       <svg
                                         width="16"
