@@ -342,11 +342,15 @@ body {
   color: white;
   font-size: 13px;
   padding: 6px;
+  min-width: 66px;
   vertical-align: middle;
   text-align: center;
+  display: flex;
   width: fit-content;
   background-color: var(--sds-color-grey-layer3-reserve);
   border-radius: 8px;
   box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
 }

@@ -200,12 +200,12 @@ class ChatPanel {
       return;
     }
     if (action.isPaused === true) {
-      botPlayAction.setAttribute("style", `display:"inline";`);
-      botPauseAction.setAttribute("style", `display:"none";`);
+      botPlayAction.removeAttribute("style");
+      botPauseAction.setAttribute("style", `display:none;`);
       this.addGeneralMessage("⏸️ Transcription paused by " + action.user.fullName);
     } else {
-      botPlayAction.setAttribute("style", `display:"none";`);
-      botPauseAction.setAttribute("style", `display:"inline";`);
+      botPlayAction.setAttribute("style", `display:none;`);
+      botPauseAction.removeAttribute("style");
       this.addGeneralMessage("▶️ Transcription resumed by " + action.user.fullName);
     }
   }
@@ -237,14 +237,14 @@ class ChatPanel {
     }
     const usersJoined = document.createElement("div");
     usersJoined.className = "au5-join-time";
-    usersJoined.innerText = `👋 ${content} at ${DateTime.toHoursAndMinutes(/* @__PURE__ */ new Date())}`;
+    usersJoined.innerText = `${content} at ${DateTime.toHoursAndMinutes(/* @__PURE__ */ new Date())}`;
     this.transcriptionsContainerEl.appendChild(usersJoined);
     this.scrollToBottom();
   }
   scrollToBottom() {
-    if (this.activeMeetingEl) {
-      this.activeMeetingEl.scrollTo({
-        top: this.activeMeetingEl.scrollHeight,
+    if (this.transcriptionsContainerEl) {
+      this.transcriptionsContainerEl.scrollTo({
+        top: this.transcriptionsContainerEl.scrollHeight,
         behavior: "smooth"
       });
     }
