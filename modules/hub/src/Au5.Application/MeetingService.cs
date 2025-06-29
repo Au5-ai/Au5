@@ -115,12 +115,12 @@ public class MeetingService : IMeetingService
         return true;
     }
 
-    public void UpsertBlock(EntryMessage entry)
+    public bool UpsertBlock(EntryMessage entry)
     {
         var meeting = _meetings.FirstOrDefault(m => m.MeetingId == entry.MeetingId);
         if (meeting is null || meeting.IsPaused())
         {
-            return;
+            return false;
         }
 
         lock (_lock)
@@ -129,7 +129,7 @@ public class MeetingService : IMeetingService
             if (entryBlock is not null)
             {
                 entryBlock.Content = entry.Content;
-                return;
+                return true;
             }
 
             meeting.Entries.Add(new Entry()
@@ -142,6 +142,7 @@ public class MeetingService : IMeetingService
                 EntryType = entry.EntryType,
                 Reactions = []
             });
+            return true;
         }
     }
 

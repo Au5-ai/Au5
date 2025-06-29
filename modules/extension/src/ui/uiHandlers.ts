@@ -288,6 +288,7 @@ export class UIHandlers {
         }
       };
       this.meetingHubClient.sendMessage(message);
+      this.chatPanel.pauseAndPlay(message);
     });
 
     botPauseAction?.addEventListener("click", () => {
@@ -303,6 +304,7 @@ export class UIHandlers {
         }
       };
       this.meetingHubClient.sendMessage(message);
+      this.chatPanel.pauseAndPlay(message);
     });
 
     return this;

@@ -14,6 +14,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4321372D-8F6F-4ADC-8BC3-6B61FF4DE5D8}"
 	ProjectSection(SolutionItems) = preProject
 		Dockerfile = Dockerfile
+		editorconfig = editorconfig
 		README.md = README.md
 	EndProjectSection
 EndProject
