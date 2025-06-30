@@ -13,7 +13,7 @@ class GoogleMeet {
         this.selectors = {
             leaveButton: `//button[@aria-label="Leave call"]`,
             enterNameField: 'input[type="text"][aria-label="Your name"]',
-            joinButton: '//button[.//span[text()="Ask to join"]]',
+            joinButton: '//button[.//span[text()="Ask to join" or text()="Join now"]]',
             muteButton: '[aria-label*="Turn off microphone"]',
             cameraOffButton: '[aria-label*="Turn off camera"]',
         };
