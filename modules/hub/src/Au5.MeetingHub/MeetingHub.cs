@@ -24,7 +24,6 @@ public class MeetingHub(IMeetingService meetingService) : Hub
                 MeetingId = msg.MeetingId
             });
         }
-        meeting.Status = Domain.Entities.MeetingStatus.Recording;   
         await Groups.AddToGroupAsync(Context.ConnectionId, msg.MeetingId);
         await BroadcastToGroupExceptCallerAsync(msg.MeetingId, msg);
     }
