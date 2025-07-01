@@ -7,63 +7,61 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 {
-    builder.Services.AddSignalR();
+	builder.Services.AddSignalR();
 
-    builder.Services.RegisterApplicationServices();
-    builder.Services.AddCors(options =>
-    {
-        options.AddDefaultPolicy(policy =>
-            policy
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowAnyOrigin()
-        );
-    });
+	builder.Services.RegisterApplicationServices();
+	builder.Services.AddCors(options =>
+	{
+		options.AddDefaultPolicy(policy =>
+			policy
+				.AllowAnyHeader()
+				.AllowAnyMethod()
+				.AllowAnyOrigin());
+	});
 
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("AllowAllWithCredentials", policy =>
-        {
-            policy
-                .SetIsOriginAllowed(origin => true)
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials();
-        });
-    });
-    builder.Logging.ClearProviders();
-    builder.Logging.AddConsole();
-    builder.Logging.SetMinimumLevel(LogLevel.Information);
+	builder.Services.AddCors(options =>
+	{
+		options.AddPolicy("AllowAllWithCredentials", policy =>
+		{
+			policy
+				.SetIsOriginAllowed(origin => true)
+				.AllowAnyMethod()
+				.AllowAnyHeader()
+				.AllowCredentials();
+		});
+	});
+	builder.Logging.ClearProviders();
+	builder.Logging.AddConsole();
+	builder.Logging.SetMinimumLevel(LogLevel.Information);
 }
 
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
 {
-    app.UseCors("AllowAllWithCredentials");
-    app.UseRouting();
+	app.UseCors("AllowAllWithCredentials");
+	app.UseRouting();
 
-    app.UseCors();
-    app.MapHub<MeetingHub>("/meetinghub").AllowAnonymous();
-    app.MapGet("/liveness", () => Results.Ok("Healthy"));
+	app.UseCors();
+	app.MapHub<MeetingHub>("/meetinghub").AllowAnonymous();
+	app.MapGet("/liveness", () => Results.Ok("Healthy"));
 
-    app.MapPost("/meeting/addBot", (
-        [FromBody] RequestToAddBotMessage request,
-        [FromServices] IMeetingService meetingService) =>
-    {
-        var result = meetingService.AddBot(request);
+	app.MapPost("/meeting/addBot", (
+		[FromBody] RequestToAddBotMessage request,
+		[FromServices] IMeetingService meetingService) =>
+	{
+		var result = meetingService.AddBot(request);
 
-        return Results.Ok(new { Success = true, Message = $"Bot added to meeting {request.MeetingId}" });
-    });
+		return Results.Ok(new { Success = true, Message = $"Bot added to meeting {request.MeetingId}" });
+	});
 
+	app.MapGet("/meeting/{meetingId}/transcription", (
+		[FromRoute] string meetingId,
+		[FromServices] IMeetingService meetingService) =>
+	{
+		var transcription = meetingService.GetFullTranscriptionAsJson(meetingId);
+		return Results.Json(transcription);
+	});
 
-    app.MapGet("/meeting/{meetingId}/transcription", (
-        [FromRoute] string meetingId,
-        [FromServices] IMeetingService meetingService) =>
-    {
-        var transcription = meetingService.GetFullTranscriptionAsJson(meetingId);
-        return Results.Json(transcription);
-    });
-
-    app.Run();
+	app.Run();
 }

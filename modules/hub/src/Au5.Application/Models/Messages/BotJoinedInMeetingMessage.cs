@@ -2,6 +2,6 @@
 
 public class BotJoinedInMeetingMessage : Message
 {
-    public override string Type => MessageTypes.BotJoinedInMeeting;
-    public string BotName { get; init; }
+	public override string Type => MessageTypes.BotJoinedInMeeting;
+	public string BotName { get; init; }
 }

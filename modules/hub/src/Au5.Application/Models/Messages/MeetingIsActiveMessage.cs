@@ -2,6 +2,6 @@
 
 public class MeetingIsActiveMessage : Message
 {
-    public override string Type => MessageTypes.MeetingIsActive;
-    public string BotName { get; set; }
+	public override string Type => MessageTypes.MeetingIsActive;
+	public string BotName { get; set; }
 }

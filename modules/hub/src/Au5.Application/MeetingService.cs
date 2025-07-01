@@ -1,216 +1,224 @@
-﻿using Au5.Application.Interfaces;
-
-namespace Au5.Application;
+﻿namespace Au5.Application;
 
 public class MeetingService : IMeetingService
 {
-    private static readonly Lock _lock = new();
-    private static readonly List<Meeting> _meetings = [];
+	private static readonly Lock _lock = new();
+	private static readonly List<Meeting> _meetings = [];
 
-    public Meeting AddUserToMeeting(Guid userId, string meetingId, string platform)
-    {
-        lock (_lock)
-        {
-            var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId && m.CreatedAt.Date == DateTime.Now.Date);
+	public Meeting AddUserToMeeting(Guid userId, string meetingId, string platform)
+	{
+		lock (_lock)
+		{
+			var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId && m.CreatedAt.Date == DateTime.Now.Date);
 
-            if (meeting is null || meeting is not null && meeting.IsEnded())
-            {
-                meeting = new Meeting
-                {
-                    Id = Guid.NewGuid(),
-                    MeetingId = meetingId,
-                    Users = [],
-                    Entries = [],
-                    CreatedAt = DateTime.Now,
-                    Platform = platform,
-                    Participants = [],
-                    Status = MeetingStatus.NotStarted
-                };
-                _meetings.Add(meeting);
-            }
+			if (meeting is null || (meeting is not null && meeting.IsEnded()))
+			{
+				meeting = new Meeting
+				{
+					Id = Guid.NewGuid(),
+					MeetingId = meetingId,
+					Users = [],
+					Entries = [],
+					CreatedAt = DateTime.Now,
+					Platform = platform,
+					Participants = [],
+					Status = MeetingStatus.NotStarted
+				};
+				_meetings.Add(meeting);
+			}
 
-            var existingUser = meeting.Users.Any(u => u == userId);
-            if (existingUser)
-            {
-                return meeting;
-            }
-            meeting.Users.Add(userId);
-            return meeting;
-        }
-    }
-    public bool AddBot(RequestToAddBotMessage request)
-    {
-        lock (_lock)
-        {
-            var meeting = _meetings.FirstOrDefault(m => m.MeetingId == request.MeetingId);
-            if (meeting is null || meeting.IsBotAdded)
-            {
-                return false;
-            }
-            meeting.BotName = request.BotName;
-            meeting.CreatorUserId = request.User.Id;
-            // Call CLI to create the bot container with the provided name and Configs
-            return true;
-        }
-    }
+			var existingUser = meeting.Users.Any(u => u == userId);
+			if (existingUser)
+			{
+				return meeting;
+			}
 
-    public void AddParticipantToMeet(List<string> users, string meetingId)
-    {
-        lock (_lock)
-        {
-            var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
-            if (meeting is null)
-            {
-                return;
-            }
-            var delta = users.Except(meeting.Participants).ToList();
-            if (delta.Count is 0)
-            {
-                return;
-            }
-            meeting.Participants.AddRange(delta);
-        }
-    }
+			meeting.Users.Add(userId);
+			return meeting;
+		}
+	}
 
-    public void EndMeeting(string meetingId)
-    {
-        lock (_lock)
-        {
-            var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
-            if (meeting is null || meeting.Status == MeetingStatus.Ended)
-            {
-                return;
-            }
-            meeting.Status = MeetingStatus.Ended;
-        }
-    }
+	public bool AddBot(RequestToAddBotMessage request)
+	{
+		lock (_lock)
+		{
+			var meeting = _meetings.FirstOrDefault(m => m.MeetingId == request.MeetingId);
+			if (meeting is null || meeting.IsBotAdded)
+			{
+				return false;
+			}
 
-    public string BotIsAdded(string meetingId)
-    {
-        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
-        if (meeting is null)
-        {
-            return string.Empty;
-        }
+			meeting.BotName = request.BotName;
+			meeting.CreatorUserId = request.User.Id;
 
-        lock (_lock)
-        {
-            if (!meeting.IsBotAdded)
-            {
-                meeting.IsBotAdded = true;
-                meeting.Status = MeetingStatus.Recording;
-            }
-            return meeting.BotName;
-        }
-    }
+			// Call CLI to create the bot container with the provided name and Configs
+			return true;
+		}
+	}
 
-    public bool PauseMeeting(string meetingId, bool isPause)
-    {
-        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
-        if (meeting is null)
-        {
-            return false;
-        }
+	public void AddParticipantToMeet(List<string> users, string meetingId)
+	{
+		lock (_lock)
+		{
+			var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+			if (meeting is null)
+			{
+				return;
+			}
 
-        meeting.Status = isPause ? MeetingStatus.Paused : MeetingStatus.Recording;
-        return true;
-    }
+			var delta = users.Except(meeting.Participants).ToList();
+			if (delta.Count is 0)
+			{
+				return;
+			}
 
-    public bool UpsertBlock(EntryMessage entry)
-    {
-        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == entry.MeetingId);
-        if (meeting is null || meeting.IsPaused())
-        {
-            return false;
-        }
+			meeting.Participants.AddRange(delta);
+		}
+	}
 
-        lock (_lock)
-        {
-            var entryBlock = meeting.Entries.FirstOrDefault(e => e.BlockId == entry.BlockId);
-            if (entryBlock is not null)
-            {
-                entryBlock.Content = entry.Content;
-                return true;
-            }
+	public void EndMeeting(string meetingId)
+	{
+		lock (_lock)
+		{
+			var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+			if (meeting is null || meeting.Status == MeetingStatus.Ended)
+			{
+				return;
+			}
 
-            meeting.Entries.Add(new Entry()
-            {
-                MeetingId = entry.MeetingId,
-                BlockId = entry.BlockId,
-                Content = entry.Content,
-                Speaker = entry.Speaker.ToUser(),
-                Timestamp = entry.Timestamp,
-                EntryType = entry.EntryType,
-                Reactions = []
-            });
-            return true;
-        }
-    }
+			meeting.Status = MeetingStatus.Ended;
+		}
+	}
 
-    public void InsertBlock(EntryMessage entry)
-    {
-        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == entry.MeetingId);
-        if (meeting is null)
-        {
-            return;
-        }
-        lock (_lock)
-        {
-            meeting.Entries.Add(new Entry()
-            {
-                MeetingId = entry.MeetingId,
-                BlockId = entry.BlockId,
-                Content = entry.Content,
-                Speaker = entry.Speaker.ToUser(),
-                Timestamp = entry.Timestamp,
-                EntryType = entry.EntryType,
-                Reactions = []
-            });
-        }
-    }
+	public string BotIsAdded(string meetingId)
+	{
+		var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+		if (meeting is null)
+		{
+			return string.Empty;
+		}
 
-    public Meeting GetFullTranscriptionAsJson(string meetingId)
-    {
-        return _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
-    }
+		lock (_lock)
+		{
+			if (!meeting.IsBotAdded)
+			{
+				meeting.IsBotAdded = true;
+				meeting.Status = MeetingStatus.Recording;
+			}
 
-    public void AppliedReaction(ReactionAppliedMessage reaction)
-    {
-        var meeting = _meetings.FirstOrDefault(m => m.MeetingId == reaction.MeetingId);
-        if (meeting is null)
-        {
-            return;
-        }
-        lock (_lock)
-        {
-            var entryBlock = meeting.Entries.FirstOrDefault(e => e.BlockId == reaction.BlockId);
-            if (entryBlock is null)
-            {
-                return;
-            }
+			return meeting.BotName;
+		}
+	}
 
-            var existingReaction = entryBlock.Reactions.FirstOrDefault(r => r.ReactionType == reaction.ReactionType);
-            if (existingReaction is null)
-            {
-                existingReaction = new Reactions
-                {
-                    ReactionType = reaction.ReactionType,
-                    Users = [reaction.User.Id]
-                };
-                entryBlock.Reactions.Add(existingReaction);
-                return;
-            }
+	public bool PauseMeeting(string meetingId, bool isPause)
+	{
+		var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+		if (meeting is null)
+		{
+			return false;
+		}
 
-            existingReaction.Users ??= [];
+		meeting.Status = isPause ? MeetingStatus.Paused : MeetingStatus.Recording;
+		return true;
+	}
 
-            if (!existingReaction.Users.Any(u => u == reaction.User.Id))
-            {
-                existingReaction.Users.Add(reaction.User.Id);
-            }
-            else
-            {
-                existingReaction.Users.RemoveAll(u => u == reaction.User.Id);
-            }
-        }
-    }
+	public bool UpsertBlock(EntryMessage entry)
+	{
+		var meeting = _meetings.FirstOrDefault(m => m.MeetingId == entry.MeetingId);
+		if (meeting is null || meeting.IsPaused())
+		{
+			return false;
+		}
+
+		lock (_lock)
+		{
+			var entryBlock = meeting.Entries.FirstOrDefault(e => e.BlockId == entry.BlockId);
+			if (entryBlock is not null)
+			{
+				entryBlock.Content = entry.Content;
+				return true;
+			}
+
+			meeting.Entries.Add(new Entry()
+			{
+				MeetingId = entry.MeetingId,
+				BlockId = entry.BlockId,
+				Content = entry.Content,
+				Speaker = entry.Speaker.ToUser(),
+				Timestamp = entry.Timestamp,
+				EntryType = entry.EntryType,
+				Reactions = []
+			});
+			return true;
+		}
+	}
+
+	public void InsertBlock(EntryMessage entry)
+	{
+		var meeting = _meetings.FirstOrDefault(m => m.MeetingId == entry.MeetingId);
+		if (meeting is null)
+		{
+			return;
+		}
+
+		lock (_lock)
+		{
+			meeting.Entries.Add(new Entry()
+			{
+				MeetingId = entry.MeetingId,
+				BlockId = entry.BlockId,
+				Content = entry.Content,
+				Speaker = entry.Speaker.ToUser(),
+				Timestamp = entry.Timestamp,
+				EntryType = entry.EntryType,
+				Reactions = []
+			});
+		}
+	}
+
+	public Meeting GetFullTranscriptionAsJson(string meetingId)
+	{
+		return _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+	}
+
+	public void AppliedReaction(ReactionAppliedMessage reaction)
+	{
+		var meeting = _meetings.FirstOrDefault(m => m.MeetingId == reaction.MeetingId);
+		if (meeting is null)
+		{
+			return;
+		}
+
+		lock (_lock)
+		{
+			var entryBlock = meeting.Entries.FirstOrDefault(e => e.BlockId == reaction.BlockId);
+			if (entryBlock is null)
+			{
+				return;
+			}
+
+			var existingReaction = entryBlock.Reactions.FirstOrDefault(r => r.ReactionType == reaction.ReactionType);
+			if (existingReaction is null)
+			{
+				existingReaction = new Reactions
+				{
+					ReactionType = reaction.ReactionType,
+					Users = [reaction.User.Id]
+				};
+				entryBlock.Reactions.Add(existingReaction);
+				return;
+			}
+
+			existingReaction.Users ??= [];
+
+			if (!existingReaction.Users.Any(u => u == reaction.User.Id))
+			{
+				existingReaction.Users.Add(reaction.User.Id);
+			}
+			else
+			{
+				existingReaction.Users.RemoveAll(u => u == reaction.User.Id);
+			}
+		}
+	}
 }
