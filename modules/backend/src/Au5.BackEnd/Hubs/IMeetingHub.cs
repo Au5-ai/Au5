@@ -1,6 +1,6 @@
 using Au5.Application.Models.Messages;
 
-namespace Au5.MeetingHub;
+namespace Au5.MeetingHub.Hubs;
 public interface IMeetingHub
 {
 	Task UserJoinedInMeeting(UserJoinedInMeetingMessage msg, CancellationToken cancellationToken);

@@ -5,7 +5,7 @@ VisualStudioVersion = 17.12.35827.183
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1B9F5751-2942-4EFE-8B47-8E1B0447F928}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Au5.MeetingHub", "src\Au5.MeetingHub\Au5.MeetingHub.csproj", "{EEAA0FDF-1261-41E1-9D78-F5C3CB044DE1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Au5.BackEnd", "src\Au5.BackEnd\Au5.BackEnd.csproj", "{EEAA0FDF-1261-41E1-9D78-F5C3CB044DE1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{7E2880E5-536D-4250-9A07-9D8104F43410}"
 EndProject
@@ -21,9 +21,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		stylecop.json = stylecop.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Au5.Hub.AppHost", "src\Au5.Hub.AppHost\Au5.Hub.AppHost.csproj", "{DE6264D8-A279-4C85-8698-7898CC32C146}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Au5.AppHost", "src\Au5.AppHost\Au5.AppHost.csproj", "{DE6264D8-A279-4C85-8698-7898CC32C146}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Au5.Hub.ServiceDefaults", "src\Au5.Hub.ServiceDefaults\Au5.Hub.ServiceDefaults.csproj", "{FA5FFD91-5E8D-4B09-B6FC-F33139B99865}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Au5.ServiceDefaults", "src\Au5.ServiceDefaults\Au5.ServiceDefaults.csproj", "{FA5FFD91-5E8D-4B09-B6FC-F33139B99865}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Au5.Application", "src\Au5.Application\Au5.Application.csproj", "{82BE10CE-4FC9-4BCD-9C1F-6956D9EBB2B2}"
 EndProject

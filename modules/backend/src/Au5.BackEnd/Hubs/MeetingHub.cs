@@ -1,7 +1,7 @@
-﻿using Au5.Application.Interfaces;
+using Au5.Application.Interfaces;
 using Au5.Application.Models.Messages;
 
-namespace Au5.MeetingHub;
+namespace Au5.MeetingHub.Hubs;
 
 public class MeetingHub(IMeetingService meetingService) : Hub
 {
@@ -14,65 +14,65 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 			return;
 		}
 
-		if (string.IsNullOrEmpty(this.Context.ConnectionId))
+		if (string.IsNullOrEmpty(Context.ConnectionId))
 		{
 			return;
 		}
 
-		var meeting = this.meetingService.AddUserToMeeting(msg.User.Id, msg.MeetingId, msg.Platform);
+		var meeting = meetingService.AddUserToMeeting(msg.User.Id, msg.MeetingId, msg.Platform);
 		if (meeting is not null && meeting.IsActive())
 		{
-			await this.Clients.Caller.SendAsync("ReceiveMessage", new MeetingIsActiveMessage()
+			await Clients.Caller.SendAsync("ReceiveMessage", new MeetingIsActiveMessage()
 			{
 				BotName = meeting.BotName,
 				MeetingId = msg.MeetingId,
 			});
 		}
 
-		await this.Groups.AddToGroupAsync(this.Context.ConnectionId, msg.MeetingId);
-		await this.BroadcastToGroupExceptCallerAsync(msg.MeetingId, msg);
+		await Groups.AddToGroupAsync(Context.ConnectionId, msg.MeetingId);
+		await BroadcastToGroupExceptCallerAsync(msg.MeetingId, msg);
 	}
 
 	public async Task RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage)
 	{
-		await this.BroadcastToGroupExceptCallerAsync(requestToAddBotMessage.MeetingId, requestToAddBotMessage);
+		await BroadcastToGroupExceptCallerAsync(requestToAddBotMessage.MeetingId, requestToAddBotMessage);
 	}
 
 	public async Task BotJoinedInMeeting(string meetingId)
 	{
-		var botName = this.meetingService.BotIsAdded(meetingId);
+		var botName = meetingService.BotIsAdded(meetingId);
 		if (string.IsNullOrWhiteSpace(botName))
 		{
 			return;
 		}
 
-		await this.BroadcastToGroupExceptCallerAsync(meetingId, new BotJoinedInMeetingMessage() { BotName = botName });
+		await BroadcastToGroupExceptCallerAsync(meetingId, new BotJoinedInMeetingMessage() { BotName = botName });
 	}
 
 	public async Task Entry(EntryMessage transcription)
 	{
-		var canBroadcast = this.meetingService.UpsertBlock(transcription);
+		var canBroadcast = meetingService.UpsertBlock(transcription);
 		if (canBroadcast)
 		{
-			await this.BroadcastToGroupExceptCallerAsync(transcription.MeetingId, transcription);
+			await BroadcastToGroupExceptCallerAsync(transcription.MeetingId, transcription);
 		}
 	}
 
 	public async Task ReactionApplied(ReactionAppliedMessage reaction)
 	{
-		this.meetingService.AppliedReaction(reaction);
-		await this.BroadcastToGroupExceptCallerAsync(reaction.MeetingId, reaction);
+		meetingService.AppliedReaction(reaction);
+		await BroadcastToGroupExceptCallerAsync(reaction.MeetingId, reaction);
 	}
 
 	public async Task PauseAndPlayTranscription(PauseAndPlayTranscriptionMessage message)
 	{
-		this.meetingService.PauseMeeting(message.MeetingId, message.IsPaused);
-		await this.BroadcastToGroupExceptCallerAsync(message.MeetingId, message);
+		meetingService.PauseMeeting(message.MeetingId, message.IsPaused);
+		await BroadcastToGroupExceptCallerAsync(message.MeetingId, message);
 	}
 
-	public override async Task OnDisconnectedAsync(Exception? exception)
+	public override async Task OnDisconnectedAsync(Exception exception)
 	{
-		if (string.IsNullOrEmpty(this.Context.ConnectionId))
+		if (string.IsNullOrEmpty(Context.ConnectionId))
 		{
 			return;
 		}
@@ -87,7 +87,7 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 	private async Task BroadcastToGroupExceptCallerAsync(string groupName, Message msg)
 	{
 		Console.WriteLine($"Broadcasting message of type {msg.Type}");
-		await this.Clients.OthersInGroup(groupName).SendAsync("ReceiveMessage", msg);
+		await Clients.OthersInGroup(groupName).SendAsync("ReceiveMessage", msg);
 	}
 }
 

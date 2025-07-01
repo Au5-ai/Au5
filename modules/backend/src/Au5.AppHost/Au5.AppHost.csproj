@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Au5.MeetingHub\Au5.MeetingHub.csproj" />
+    <ProjectReference Include="..\Au5.MeetingHub\Au5.BackEnd.csproj" />
   </ItemGroup>
 
 </Project>
