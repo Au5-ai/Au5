@@ -13,13 +13,8 @@ export class LiveCaptionsHelper {
   public async enableCaptions(languageValue: string): Promise<void> {
     const turnOnButton = await this.findTurnOnCaptionButton();
     if (turnOnButton) {
-      logger.info("Clicking turn on captions button");
       await turnOnButton.click();
-    } else {
-      logger.warn("Turn on captions button not found");
-      return;
     }
-
     await delay(RANDOM_DELAY_MAX);
 
     const comb = await this.getVisibleCaptionsLanguageDropdown();
@@ -87,19 +82,22 @@ export class LiveCaptionsHelper {
   }
 
   private async findTurnOnCaptionButton(): Promise<ElementHandle<HTMLElement> | null> {
-    const buttons = await this.page.$$('[role="button"]');
-
-    for (const btn of buttons) {
-      const text = await btn.evaluate((el) =>
-        (el as HTMLElement).innerText.trim().toLowerCase()
-      );
-
-      if (text.includes("closed_caption_off")) {
-        return btn as ElementHandle<HTMLElement>;
+    const handle = await this.page.evaluateHandle(() => {
+      const buttons = document.querySelectorAll('[role="button"]');
+      for (const btn of buttons) {
+        if (
+          btn instanceof HTMLElement &&
+          btn.innerText.trim().toLowerCase().includes("closed_caption_off")
+        ) {
+          return btn;
+        }
       }
-    }
+      return null;
+    });
 
-    return null;
+    // Convert JSHandle to ElementHandle if it's not null
+    const element = handle.asElement();
+    return element ? (element as ElementHandle<HTMLElement>) : null;
   }
 }
 
