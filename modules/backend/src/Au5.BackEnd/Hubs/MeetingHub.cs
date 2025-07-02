@@ -1,7 +1,7 @@
 using Au5.Application.Interfaces;
 using Au5.Application.Models.Messages;
 
-namespace Au5.MeetingHub.Hubs;
+namespace Au5.BackEnd.Hubs;
 
 public class MeetingHub(IMeetingService meetingService) : Hub
 {

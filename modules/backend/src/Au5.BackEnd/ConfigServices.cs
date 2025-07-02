@@ -1,7 +1,7 @@
 ﻿using Au5.Application;
 using Au5.Application.Interfaces;
 
-namespace Au5.MeetingHub;
+namespace Au5.BackEnd;
 
 public static class ConfigServices
 {
