@@ -16,9 +16,7 @@
           alt="User UnAuthorized Icon"
         />
         <div class="au5-intro-title">User UnAuthorized</div>
-        <div class="au5-intro-text">
-          You need to set your login info to see the transcriptions.
-        </div>
+        <div class="au5-intro-text">You need to set your login info to see the transcriptions.</div>
 
         <button id="au5-btn-login" class="au5-btn-login au5-btn">Login</button>
       </div>
@@ -26,13 +24,7 @@
       <!-- noActiveMeeting -->
       <div id="au5-noActiveMeeting" class="au5-container hidden">
         <div class="au5-url-invalid">
-          <svg
-            width="25"
-            height="24"
-            viewBox="0 0 25 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+          <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M16.7427 7.75738L8.25739 16.2427M16.7427 16.2426L8.25739 7.75732"
               stroke="#FF1C1C"
@@ -49,26 +41,15 @@
           alt="No Active Meeting Icon"
         />
         <div class="au5-intro-title">Invalid Meeting Url !</div>
-        <div class="au5-intro-text">
-          You can go to meeting page and start a meeting to see the
-          transcriptions here.
-        </div>
+        <div class="au5-intro-text">You can go to meeting page and start a meeting to see the transcriptions here.</div>
 
-        <button id="au5-btn-reload" class="au5-btn-reload au5-btn">
-          Reload
-        </button>
+        <button id="au5-btn-reload" class="au5-btn-reload au5-btn">Reload</button>
       </div>
 
       <!-- activeMeetingButNotStarted -->
       <div id="au5-activeMeetingButNotStarted" class="au5-container hidden">
         <div class="au5-url-valid" id="au5-url">
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M5 13L8.52642 15.8211C9.35374 16.483 10.5536 16.3848 11.2624 15.5973L19 7"
               stroke="#00A344"
@@ -88,64 +69,36 @@
 
         <div class="au5-intro-title">Ready to join?</div>
         <div class="au5-intro-text">
-          You can start the transcription by clicking on the "Start
-          Transcription" button.
+          You can start the transcription by clicking on the "Start Transcription" button.
         </div>
-        <button id="au5-btn-joinMeeting" class="au5-btn-joinMeeting au5-btn">
-          Start Transcription
-        </button>
+        <button id="au5-btn-joinMeeting" class="au5-btn-joinMeeting au5-btn">Start Transcription</button>
       </div>
 
       <!-- activeMeeting -->
       <div id="au5-activeMeeting" class="ant-app sider-sidepanel hidden">
-        <div
-          dir="ltr"
-          class="chat-gpt-quick-query-container disable-translator-fab in-sidepanel"
-        >
-          <div
-            class="chat-gpt-query-model-wrapper outline-none active:outline-none focus:outline-none"
-            tabindex="1"
-          >
+        <div dir="ltr" class="chat-gpt-quick-query-container disable-translator-fab in-sidepanel">
+          <div class="chat-gpt-query-model-wrapper outline-none active:outline-none focus:outline-none" tabindex="1">
             <div class="chat-gpt-query-model text-base show">
               <div class="flip-y">
-                <div
-                  class="flex size-full overflow-hidden bg-grey-layer1-normal"
-                >
-                  <div
-                    class="flex flex-col relative p-1 transition-all w-[calc(100%-44px)] pe-0"
-                  >
+                <div class="flex size-full overflow-hidden bg-grey-layer1-normal">
+                  <div class="flex flex-col relative p-1 transition-all w-[calc(100%-44px)] pe-0">
                     <div
                       class="tab-container w-full relative flex-1 overflow-hidden bg-grey-layer2-normal rounded-xl"
                       style="--scrollbar-margin-block-start: 12px"
                     >
                       <div class="contents">
-                        <div
-                          class="query-chat-panel relative flex flex-col h-full text-sm"
-                        >
+                        <div class="query-chat-panel relative flex flex-col h-full text-sm">
                           <div class="flex w-full h-full">
                             <div class="flex flex-col w-full h-full">
                               <div
                                 class="au5-transcriptions-container chat-list relative custom-scrollbar-reset-margin custom-scrollbar custom-scrollbar-hidden custom-scrollbar-float pl-1 pt-1 pr-1 pb-6 pt-4 flex-1 overflow-y-auto scrollbar-gutter-stable"
                                 style="--scrollbar-margin-block-start: 12px"
                               >
-                                <div
-                                  id="au5-addBot-container"
-                                  class="absolute inset-x-0 top-1/4"
-                                >
-                                  <div
-                                    class="mb-2.5 max-w-[790px] mx-auto px-4"
-                                  >
-                                    <div
-                                      class="flex flex-col items-start px-2 text-left justify-start"
-                                    >
-                                      <div
-                                        class="text-[36px] font-semibold text-left"
-                                      >
-                                        Hi,
-                                      </div>
-                                      <div
-                                        class="mt-[8px] font-semibold leading-5 text-[18px]"
-                                      >
+                                <div id="au5-addBot-container" class="absolute inset-x-0 top-1/4">
+                                  <div class="mb-2.5 max-w-[790px] mx-auto px-4">
+                                    <div class="flex flex-col items-start px-2 text-left justify-start">
+                                      <div class="text-[36px] font-semibold text-left">Hi,</div>
+                                      <div class="mt-[8px] font-semibold leading-5 text-[18px]">
                                         There is no bot here yet 🤖
                                       </div>
                                     </div>
@@ -173,9 +126,7 @@
                                         ></path>
                                       </svg>
 
-                                      <span id="au5-btn-addbot-text"
-                                        >Add bot here</span
-                                      >
+                                      <span id="au5-btn-addbot-text">Add bot here</span>
                                     </div>
                                   </div>
                                 </div>
@@ -186,16 +137,12 @@
                                   id="au5-bot-playContainer"
                                   class="chat-input-top-bar px-3 gap-2 py-2 flex justify-start items-center hidden"
                                 >
-                                  <div
-                                    class="flex gap-[6px] min-w-[90px] max-w-[calc(100%-40px)]"
-                                  >
+                                  <div class="flex gap-[6px] min-w-[90px] max-w-[calc(100%-40px)]">
                                     <div class="text-xs overflow-hidden">
                                       <div
                                         class="model-btn flex justify-center items-center cursor-pointer ps-[6px] pe-[5px] py-[7px] leading-4 rounded-3xl gap-[2px]"
                                       >
-                                        <div
-                                          class="icon flex-center rounded-full size-4 ms-[1px] me-[2px]"
-                                        >
+                                        <div class="icon flex-center rounded-full size-4 ms-[1px] me-[2px]">
                                           <div
                                             class="flex items-center justify-center rounded-full"
                                             style="width: 18px; height: 18px"
@@ -230,10 +177,28 @@
                                       </div>
                                     </div>
                                   </div>
-                                  <div
-                                    id="au5-bot-actionContainer"
-                                    class="flex items-center ms-auto"
-                                  >
+                                  <div id="au5-bot-actionContainer" class="flex items-center ms-auto">
+                                    <div
+                                      id="au5-bot-stopAction"
+                                      data-tooltip="Stop (Soon)"
+                                      class="topbar-btn size-[30px] model-btn model-btn-no-bg overflow-hidden flex-center text-xs p-[5px] rounded-lg"
+                                    >
+                                      <svg
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 16 16"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                      >
+                                        <path
+                                          d="M6.2 14H9.8C12.8 14 14 12.8 14 9.8V6.2C14 3.2 12.8 2 9.8 2H6.2C3.2 2 2 3.2 2 6.2V9.8C2 12.8 3.2 14 6.2 14Z"
+                                          stroke="currentColor"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                        />
+                                      </svg>
+                                    </div>
+
                                     <div
                                       id="au5-bot-puaseAction"
                                       data-tooltip="Pause"
@@ -284,9 +249,7 @@
                                     </div>
                                   </div>
                                 </div>
-                                <div
-                                  class="input-box relative max-w-[790px] mx-auto"
-                                >
+                                <div class="input-box relative max-w-[790px] mx-auto">
                                   <div
                                     class="chat-input-box relative bg-grey-layer2-normal px-3 max-w-[790px] mx-auto pb-1"
                                   >
@@ -294,9 +257,7 @@
                                       <div
                                         class="chat-input-area relative z-10 min-h-[97px] rounded-2xl border flex-1 items-center pb-[6px] border-solid border-grey-line2-normal hover:border-grey-line2-hover cursor-text"
                                       >
-                                        <div
-                                          class="px-[10px] pe-[2px] mt-1 pt-[6px] pb-[2px] flex flex-col gap-1"
-                                        >
+                                        <div class="px-[10px] pe-[2px] mt-1 pt-[6px] pb-[2px] flex flex-col gap-1">
                                           <div class="relative">
                                             <textarea
                                               id="au5-input-message"
@@ -305,9 +266,7 @@
                                               class="ant-input chat-input ant-input-borderless custom-scrollbar"
                                             ></textarea>
                                           </div>
-                                          <div
-                                            class="bottom-area flex items-center me-[8px] justify-between"
-                                          >
+                                          <div class="bottom-area flex items-center me-[8px] justify-between">
                                             <div class="ms-auto">
                                               <span class="btn-wrapper"
                                                 ><button
@@ -354,28 +313,19 @@
                                 <div
                                   class="flex w-full relative items-center justify-between px-3 mx-auto max-w-[790px]"
                                 >
-                                  <div
-                                    id="pricing"
-                                    class="flex items-center text-[12px] rtl:flex-row-reverse w-full"
-                                  >
+                                  <div id="pricing" class="flex items-center text-[12px] rtl:flex-row-reverse w-full">
                                     <div
                                       class="flex items-center gap-[5px] h-[30px] rounded-[35px] whitespace-nowrap me-[6px]"
                                     >
                                       <div
-                                        class="ant-dropdown-trigger max-w-[140px] h-5 items-center model-btn flex truncate bg-grey-fill2-normal hover:bg-grey-fill2-hover rounded-xl pr-[4px] pl-[4px] cursor-pointer opacity-100"
+                                        id="connection-status"
+                                        class="ant-dropdown-trigger online max-w-[140px] h-5 items-center model-btn flex truncate bg-grey-fill2-normal hover:bg-grey-fill2-hover rounded-xl pr-[4px] pl-[4px] cursor-pointer opacity-100"
                                       >
-                                        <span class="opacity-50"
-                                          ><span class="font-bold"
-                                            >free</span
-                                          ></span
-                                        >
+                                        <span class="font-bold" id="connection-status-text">online</span>
                                       </div>
                                     </div>
                                   </div>
-                                  <div
-                                    id="feedbackIcons"
-                                    class="flex items-center gap-[2px]"
-                                  >
+                                  <div id="feedbackIcons" class="flex items-center gap-[2px]">
                                     <div
                                       id="feedback"
                                       data-tooltip="Request a feature"
@@ -476,9 +426,7 @@
                         </div>
                       </div>
                     </div>
-                    <div
-                      class="bottom-area mt-auto flex flex-col justify-center items-center gap-1"
-                    >
+                    <div class="bottom-area mt-auto flex flex-col justify-center items-center gap-1">
                       <div
                         id="au5-theme-toggle"
                         class="w-8 h-8 flex items-center justify-center rounded-lg cursor-pointer text-text-primary-3 hover:bg-[--gpts-bg-darken3] undefined"
@@ -491,42 +439,13 @@
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
                         >
-                          <circle
-                            cx="8.00008"
-                            cy="7.99999"
-                            r="3.33333"
-                            stroke="currentColor"
-                          />
-                          <path
-                            d="M8 1.33334V2.66668"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                          />
-                          <path
-                            d="M8 13.3333V14.6667"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                          />
-                          <path
-                            d="M13.7734 4.66666L12.6187 5.33332"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                          />
-                          <path
-                            d="M3.3811 10.6667L2.2264 11.3333"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                          />
-                          <path
-                            d="M2.22656 4.66672L3.38126 5.33338"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                          />
-                          <path
-                            d="M12.6189 10.6667L13.7736 11.3333"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                          />
+                          <circle cx="8.00008" cy="7.99999" r="3.33333" stroke="currentColor" />
+                          <path d="M8 1.33334V2.66668" stroke="currentColor" stroke-linecap="round" />
+                          <path d="M8 13.3333V14.6667" stroke="currentColor" stroke-linecap="round" />
+                          <path d="M13.7734 4.66666L12.6187 5.33332" stroke="currentColor" stroke-linecap="round" />
+                          <path d="M3.3811 10.6667L2.2264 11.3333" stroke="currentColor" stroke-linecap="round" />
+                          <path d="M2.22656 4.66672L3.38126 5.33338" stroke="currentColor" stroke-linecap="round" />
+                          <path d="M12.6189 10.6667L13.7736 11.3333" stroke="currentColor" stroke-linecap="round" />
                         </svg>
 
                         <svg
@@ -546,10 +465,7 @@
                         </svg>
                       </div>
                       <div class="mt-3 cursor-pointer">
-                        <div
-                          class="relative shrink-0"
-                          style="width: 24px; height: 24px"
-                        >
+                        <div class="relative shrink-0" style="width: 24px; height: 24px">
                           <img
                             class="size-full rounded-full"
                             src="https://chitchat-avatar.s3.amazonaws.com/98791124590241baa06d5d647666c501-1750163661.png"

@@ -356,11 +356,11 @@ body {
 }
 
 .offline {
-  background-color: rgb(205, 32, 31);
-  color: white;
+  background-color: rgb(205, 32, 31) !important;
+  color: white !important;
 }
 
 .online {
-  background-color: rgb(0, 170, 68);
-  color: white;
+  background-color: rgb(0, 170, 68) !important;
+  color: white !important;
 }

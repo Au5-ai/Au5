@@ -354,3 +354,13 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+.offline {
+  background-color: rgb(205, 32, 31);
+  color: white;
+}
+
+.online {
+  background-color: rgb(0, 170, 68);
+  color: white;
+}
