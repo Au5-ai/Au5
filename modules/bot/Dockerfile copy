@@ -1,0 +1,27 @@
+    # --- Runtime Stage ---
+    FROM mcr.microsoft.com/playwright:v1.52.0-jammy AS runtime
+    
+    # Set working directory
+    WORKDIR /app
+    
+    # Install runtime dependencies
+    RUN apt-get update && apt-get install -y --no-install-recommends \
+        xvfb \
+        && rm -rf /var/lib/apt/lists/*
+    
+    # Copy the built app and dependencies
+    COPY --from=base /app /app
+    
+    # Ensure the Playwright cache directory has proper permissions
+    RUN mkdir -p /root/ms-playwright && chmod -R 777 /root/ms-playwright
+    
+    # Copy and make the runner script executable
+    COPY runner.sh /app/runner.sh
+    RUN chmod +x /app/runner.sh
+    
+    # Set the display
+    ENV DISPLAY=:99
+    
+    # Start the runner script
+    CMD ["bash", "/app/runner.sh"]
+    

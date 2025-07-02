@@ -10907,10 +10907,11 @@ html[data-gpts-theme="dark"] .thinking-markdown .markdown-body ::-webkit-calenda
 }
 .chat-input-box .bottom-area .btn-wrapper .send-btn {
   transition: background 0.1s ease;
-  background-color: #0e8cf1;
+  background-color: var(--sds-color-btn, #0e8cf1);
   color: white;
   border-radius: 50%;
-  border: none;
+  border: 1px solid;
+  border-color: var(--sds-color-grey-line2-normal, rgba(114, 118, 139, 0.16));
 }
 
 .chat-input-box .bottom-area .btn-wrapper .send-btn:hover {
@@ -19434,6 +19435,7 @@ div[data-gpts-theme="light"],
   --sds-color-focus-error-1: var(--sds-light, rgba(215, 65, 52, 0.12)) var(--sds-dark, rgba(215, 65, 52, 0.24));
   --sds-color-focus-gray-1: var(--sds-light, rgba(114, 118, 139, 0.06)) var(--sds-dark, rgba(114, 118, 139, 0.12));
   --sds-color-table-border: var(--sds-light, #d0d7de) var(--sds-dark, #30363d);
+  --sds-color-btn: var(--sds-light, #0e8cf1) var(--sds-dark, #1e1f2b);
 }
 html,
 :host,
