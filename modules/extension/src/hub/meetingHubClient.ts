@@ -36,9 +36,11 @@ export class MeetingHubClient {
         this.connection.on("ReceiveMessage", (msg: IMessage) => {
           messageHandler(msg);
         });
+        this.chatPanel.isOnline();
         return true;
       })
       .catch(err => {
+        this.chatPanel.isOffline();
         console.error("SignalR connection failed:", err);
       });
     return false;

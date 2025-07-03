@@ -20,6 +20,7 @@ class ChatPanel {
     __publicField(this, "activeMeetingEl");
     __publicField(this, "transcriptionsContainerEl");
     __publicField(this, "direction", "ltr");
+    __publicField(this, "reactions", []);
     var _a;
     this.unauthorizedContainerEl = document.getElementById("au5-userUnAuthorized");
     this.noActiveMeetingEl = document.getElementById("au5-noActiveMeeting");
@@ -31,6 +32,9 @@ class ChatPanel {
   }
   setDirection(direction) {
     this.direction = direction;
+  }
+  setReactions(reactions) {
+    this.reactions = reactions;
   }
   showUserUnAuthorizedContainer() {
     this.hideAllContainers();
@@ -92,19 +96,7 @@ class ChatPanel {
         ${entry.content}
       </div>
 
-      <div class="au5-message-reactions">
-        <div class="au5-reaction-list">
-          <div class="au5-reaction au5-reaction-highlight" reaction-type="task" data-blockId="${entry.blockId}">
-            <span class="au5-reaction-emoji">⚡</span>
-            <div class="au5-reaction-users"></div>
-          </div>
-
-          <div class="au5-reaction au5-reaction-mute" reaction-type="important" data-blockId="${entry.blockId}">
-            <span class="au5-reaction-emoji">🎯</span>
-            <div class="au5-reaction-users"></div>
-          </div>
-        </div>
-      </div>
+      ${this.getReactionsHtml(entry.blockId)} 
     </div>
   </div>`;
     this.transcriptionsContainerEl.appendChild(entryBlock);
@@ -282,6 +274,25 @@ class ChatPanel {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("hidden");
   }
+  getReactionsHtml(blockId) {
+    if (!this.reactions || this.reactions.length === 0) {
+      return "";
+    }
+    const reactionsHtml = this.reactions.map((reaction) => {
+      return `
+      <div class="au5-reaction ${reaction.className}" reaction-type="${reaction.type}" data-blockId="${blockId}">
+        <span class="au5-reaction-emoji">${reaction.emoji}</span>
+        <div class="au5-reaction-users"></div>
+      </div>`;
+    }).join("");
+    return `
+      <div class="au5-message-reactions">
+        <div class="au5-reaction-list">
+          ${reactionsHtml}
+        </div>
+      </div>
+    `;
+  }
 }
 const CONFIGURATION_KEY = "configuration";
 class ConfigurationManager {
@@ -397,6 +408,15 @@ class BackEndApi {
     return apiRequest(url, {
       method: "POST",
       body,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  }
+  async getReactions() {
+    const url = this.config.service.baseUrl + "/reactions";
+    return apiRequest(url, {
+      method: "GET",
       headers: {
         "Content-Type": "application/json"
       }
@@ -3238,8 +3258,10 @@ class MeetingHubClient {
       this.connection.on("ReceiveMessage", (msg) => {
         messageHandler(msg);
       });
+      this.chatPanel.isOnline();
       return true;
     }).catch((err) => {
+      this.chatPanel.isOffline();
       console.error("SignalR connection failed:", err);
     });
     return false;
@@ -3291,14 +3313,13 @@ class UIHandlers {
       }
       this.chatPanel.showTranscriptionContainer();
       this.meetingHubClient = new MeetingHubClient(this.config, this.platform, this.chatPanel);
-      const isConnected = this.meetingHubClient.startConnection(this.handleMessage);
-      console.log("MeetingHubClient started connection:", isConnected);
-      if (isConnected) {
-        this.chatPanel.isOnline();
+      this.meetingHubClient.startConnection(this.handleMessage);
+      const reactions = await this.backendApi.getReactions();
+      console.log("Reactions fetched:", reactions);
+      if (reactions && reactions.length > 0) {
+        this.chatPanel.setReactions(reactions);
       } else {
-        this.chatPanel.isOffline();
-        console.error("Failed to connect to the meeting hub.");
-        return;
+        console.warn("No reactions found or failed to fetch reactions.");
       }
     });
     return this;
