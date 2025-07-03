@@ -14,21 +14,16 @@ export class LiveCaptionsHelper {
     const turnOnButton = await this.findTurnOnCaptionButton();
     if (turnOnButton) {
       await turnOnButton.click();
+    } else {
+      logger.warn("turnOnButton not found in visible tab panel");
+      return;
     }
+
     await delay(RANDOM_DELAY_MAX);
 
     const comb = await this.getVisibleCaptionsLanguageDropdown();
     if (comb) {
-      try {
-        logger.info("Clicking combobox to select language");
-        await comb.click({ force: true });
-      } catch (err) {
-        logger.warn("Standard combobox click failed, trying evaluate fallback");
-        await this.page.evaluate(() => {
-          const combobox = document.querySelector('[role="combobox"]');
-          if (combobox instanceof HTMLElement) combobox.click();
-        });
-      }
+      await comb.click();
     } else {
       logger.warn("Combobox not found in visible tab panel");
       return;
@@ -37,7 +32,6 @@ export class LiveCaptionsHelper {
     await delay(RANDOM_DELAY_MAX);
 
     const languageOption = await this.findLanguageOptionByValue(languageValue);
-
     if (languageOption) {
       try {
         await languageOption.click({ force: true });
@@ -71,14 +65,13 @@ export class LiveCaptionsHelper {
   }
 
   private async getVisibleCaptionsLanguageDropdown(): Promise<ElementHandle<HTMLElement> | null> {
-    const dropdown = await this.page.$("[role=combobox]");
-    if (
-      dropdown &&
-      (await dropdown.evaluate((d) => d instanceof HTMLElement))
-    ) {
-      return dropdown as ElementHandle<HTMLElement>;
-    }
-    return null;
+    const handle = await this.page.evaluateHandle(() => {
+      const combobox = document.querySelector('[role="combobox"]');
+      return combobox;
+    });
+
+    const element = handle.asElement();
+    return element ? (element as ElementHandle<HTMLElement>) : null;
   }
 
   private async findTurnOnCaptionButton(): Promise<ElementHandle<HTMLElement> | null> {
