@@ -1,4 +1,4 @@
-﻿namespace Au5.Application;
+namespace Au5.Application;
 
 public class MeetingService : IMeetingService
 {
@@ -178,7 +178,36 @@ public class MeetingService : IMeetingService
 
 	public Meeting GetFullTranscriptionAsJson(string meetingId)
 	{
-		return _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+		var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+		if (meeting is null || meeting.Entries.Count == 0)
+		{
+			return meeting;
+		}
+
+		var parsedEntries = meeting.Entries
+			.Select(e => new
+			{
+				Entry = e,
+				ParsedTimestamp = DateTime.TryParse(e.Timestamp, out var dt) ? dt : (DateTime?)null
+			})
+			.Where(x => x.ParsedTimestamp.HasValue)
+			.OrderBy(x => x.ParsedTimestamp)
+			.ToList();
+
+		if (parsedEntries.Count == 0)
+		{
+			return meeting;
+		}
+
+		var startTime = parsedEntries.First().ParsedTimestamp.Value;
+
+		foreach (var x in parsedEntries)
+		{
+			var elapsed = x.ParsedTimestamp.Value - startTime;
+			x.Entry.Timestamp = elapsed.ToString(@"hh\:mm\:ss");
+		}
+
+		return meeting;
 	}
 
 	public void AppliedReaction(ReactionAppliedMessage reaction)
