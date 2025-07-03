@@ -1,9 +1,9 @@
-﻿namespace Au5.Domain.Entities;
+namespace Au5.Domain.Entities;
 
 public enum MeetingStatus
 {
-    NotStarted,
-    Recording,
-    Paused,
-    Ended
+	NotStarted,
+	Recording,
+	Paused,
+	Ended
 }
