@@ -33,17 +33,15 @@ export class MeetingHubClient {
           },
           platform: this.platform.getPlatformName()
         } as UserJoinedInMeetingMessage);
-      })
-      .then(() => {
         this.connection.on("ReceiveMessage", (msg: IMessage) => {
           messageHandler(msg);
         });
+        return true;
       })
       .catch(err => {
         console.error("SignalR connection failed:", err);
-        return false;
       });
-    return true;
+    return false;
   }
 
   public async sendMessage(payload: IMessage): Promise<void> {

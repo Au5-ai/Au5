@@ -190,6 +190,34 @@ class ChatPanel {
       this.transcriptionsContainerEl.appendChild(botRequested);
     }
   }
+  isOnline() {
+    const text = document.getElementById("connection-status-text");
+    const status = document.getElementById("connection-status");
+    if (text) {
+      text.innerText = "Online";
+    }
+    if (status) {
+      status.classList.remove("offline");
+      status.classList.add("online");
+    }
+  }
+  showReconnecting() {
+    const text = document.querySelector("#connection-status-text");
+    if (text) {
+      text.innerText = "Reconnecting...";
+    }
+  }
+  isOffline() {
+    const text = document.getElementById("connection-status-text");
+    const status = document.getElementById("connection-status");
+    if (text) {
+      text.innerText = "Offline";
+    }
+    if (status) {
+      status.classList.add("offline");
+      status.classList.remove("online");
+    }
+  }
   pauseAndPlay(action) {
     if (!this.activeMeetingEl) {
       return;
@@ -3184,14 +3212,16 @@ function isLogger(logger) {
   return logger.log !== void 0;
 }
 class MeetingHubClient {
-  constructor(config2, platform2) {
+  constructor(config2, platform2, chatPanel2) {
     __publicField(this, "connection");
     __publicField(this, "meetingId");
     __publicField(this, "config");
     __publicField(this, "platform");
+    __publicField(this, "chatPanel");
     this.config = config2;
     this.platform = platform2;
     this.meetingId = platform2.getMeetingId();
+    this.chatPanel = chatPanel2;
     this.connection = new HubConnectionBuilder().withUrl(this.config.service.hubUrl).withAutomaticReconnect().build();
   }
   startConnection(messageHandler) {
@@ -3205,15 +3235,14 @@ class MeetingHubClient {
         },
         platform: this.platform.getPlatformName()
       });
-    }).then(() => {
       this.connection.on("ReceiveMessage", (msg) => {
         messageHandler(msg);
       });
+      return true;
     }).catch((err) => {
       console.error("SignalR connection failed:", err);
-      return false;
     });
-    return true;
+    return false;
   }
   async sendMessage(payload) {
     try {
@@ -3221,6 +3250,18 @@ class MeetingHubClient {
     } catch (err) {
       console.error(`[SignalR] Failed to send message (${payload.type}):`, err);
     }
+  }
+  onDisconnect(handler) {
+    this.connection.onclose((error) => {
+      this.chatPanel.isOffline();
+      handler(error ?? void 0);
+    });
+    this.connection.onreconnecting((error) => {
+      this.chatPanel.showReconnecting();
+    });
+    this.connection.onreconnected((connectionId) => {
+      this.chatPanel.isOnline();
+    });
   }
 }
 class UIHandlers {
@@ -3249,9 +3290,13 @@ class UIHandlers {
         return;
       }
       this.chatPanel.showTranscriptionContainer();
-      this.meetingHubClient = new MeetingHubClient(this.config, this.platform);
+      this.meetingHubClient = new MeetingHubClient(this.config, this.platform, this.chatPanel);
       const isConnected = this.meetingHubClient.startConnection(this.handleMessage);
-      if (!isConnected) {
+      console.log("MeetingHubClient started connection:", isConnected);
+      if (isConnected) {
+        this.chatPanel.isOnline();
+      } else {
+        this.chatPanel.isOffline();
         console.error("Failed to connect to the meeting hub.");
         return;
       }

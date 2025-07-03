@@ -63,7 +63,7 @@ export class UIHandlers {
 
       this.meetingHubClient = new MeetingHubClient(this.config, this.platform, this.chatPanel);
       const isConnected = this.meetingHubClient.startConnection(this.handleMessage);
-
+      console.log("MeetingHubClient started connection:", isConnected);
       if (isConnected) {
         this.chatPanel.isOnline();
       } else {

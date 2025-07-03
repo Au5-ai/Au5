@@ -204,8 +204,8 @@ export class ChatPanel {
   }
 
   public isOnline(): void {
-    const text = this.activeMeetingEl?.querySelector("#connection-status-text") as HTMLDivElement;
-    const status = this.activeMeetingEl?.querySelector("#connection-status") as HTMLDivElement;
+    const text = document.getElementById("connection-status-text") as HTMLDivElement;
+    const status = document.getElementById("connection-status") as HTMLDivElement;
 
     if (text) {
       text.innerText = "Online";
@@ -217,22 +217,22 @@ export class ChatPanel {
   }
 
   public showReconnecting(): void {
-    const text = this.activeMeetingEl?.querySelector("#connection-status-text") as HTMLDivElement;
+    const text = document.querySelector("#connection-status-text") as HTMLDivElement;
     if (text) {
       text.innerText = "Reconnecting...";
     }
   }
 
   public isOffline(): void {
-    const text = this.activeMeetingEl?.querySelector("#connection-status-text") as HTMLDivElement;
-    const status = this.activeMeetingEl?.querySelector("#connection-status") as HTMLDivElement;
+    const text = document.getElementById("connection-status-text") as HTMLDivElement;
+    const status = document.getElementById("connection-status") as HTMLDivElement;
 
     if (text) {
-      text.innerText = "Online";
+      text.innerText = "Offline";
     }
     if (status) {
-      status.classList.remove("offline");
-      status.classList.add("online");
+      status.classList.add("offline");
+      status.classList.remove("online");
     }
   }
 
