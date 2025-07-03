@@ -203,6 +203,39 @@ export class ChatPanel {
     }
   }
 
+  public isOnline(): void {
+    const text = this.activeMeetingEl?.querySelector("#connection-status-text") as HTMLDivElement;
+    const status = this.activeMeetingEl?.querySelector("#connection-status") as HTMLDivElement;
+
+    if (text) {
+      text.innerText = "Online";
+    }
+    if (status) {
+      status.classList.remove("offline");
+      status.classList.add("online");
+    }
+  }
+
+  public showReconnecting(): void {
+    const text = this.activeMeetingEl?.querySelector("#connection-status-text") as HTMLDivElement;
+    if (text) {
+      text.innerText = "Reconnecting...";
+    }
+  }
+
+  public isOffline(): void {
+    const text = this.activeMeetingEl?.querySelector("#connection-status-text") as HTMLDivElement;
+    const status = this.activeMeetingEl?.querySelector("#connection-status") as HTMLDivElement;
+
+    if (text) {
+      text.innerText = "Online";
+    }
+    if (status) {
+      status.classList.remove("offline");
+      status.classList.add("online");
+    }
+  }
+
   public pauseAndPlay(action: PauseAndPlayTranscriptionMessage): void {
     if (!this.activeMeetingEl) {
       return;
