@@ -61,7 +61,7 @@ export class UIHandlers {
 
       this.chatPanel.showTranscriptionContainer();
 
-      this.meetingHubClient = new MeetingHubClient(this.config, this.platform);
+      this.meetingHubClient = new MeetingHubClient(this.config, this.platform, this.chatPanel);
       const isConnected = this.meetingHubClient.startConnection(this.handleMessage);
 
       if (isConnected) {
