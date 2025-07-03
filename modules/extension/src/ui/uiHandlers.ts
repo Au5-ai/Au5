@@ -62,14 +62,14 @@ export class UIHandlers {
       this.chatPanel.showTranscriptionContainer();
 
       this.meetingHubClient = new MeetingHubClient(this.config, this.platform, this.chatPanel);
-      const isConnected = this.meetingHubClient.startConnection(this.handleMessage);
-      console.log("MeetingHubClient started connection:", isConnected);
-      if (isConnected) {
-        this.chatPanel.isOnline();
+      this.meetingHubClient.startConnection(this.handleMessage);
+
+      const reactions = await this.backendApi.getReactions();
+      console.log("Reactions fetched:", reactions);
+      if (reactions && reactions.length > 0) {
+        this.chatPanel.setReactions(reactions);
       } else {
-        this.chatPanel.isOffline();
-        console.error("Failed to connect to the meeting hub.");
-        return;
+        console.warn("No reactions found or failed to fetch reactions.");
       }
     });
 

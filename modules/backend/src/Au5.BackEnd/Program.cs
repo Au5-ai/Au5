@@ -2,6 +2,7 @@ using Au5.Application.Interfaces;
 using Au5.Application.Models.Messages;
 using Au5.BackEnd;
 using Au5.BackEnd.Hubs;
+using Au5.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -62,6 +63,17 @@ app.MapDefaultEndpoints();
 	{
 		var transcription = meetingService.GetFullTranscriptionAsJson(meetingId);
 		return Results.Json(transcription);
+	});
+
+	app.MapGet("/reactions", () =>
+	{
+		List<Reaction> reactions = [
+			new Reaction() { Type = "Task", Emoji = "⚡", ClassName = "reaction-task" },
+			new Reaction() { Type = "GoodPoint", Emoji = "⭐", ClassName = "reaction-important" },
+			new Reaction() { Type = "Goal", Emoji = "🎯", ClassName = "reaction-question" }
+		];
+
+		return Results.Ok(reactions);
 	});
 
 	app.Run();

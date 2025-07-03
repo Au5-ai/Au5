@@ -1,4 +1,4 @@
-import {AppConfiguration, RequestAddBotModel} from "../types";
+import {AppConfiguration, Reaction, RequestAddBotModel} from "../types";
 import {apiRequest} from "./apiRequest";
 
 export class BackEndApi {
@@ -14,6 +14,16 @@ export class BackEndApi {
     return apiRequest<any, RequestAddBotModel>(url, {
       method: "POST",
       body,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  }
+
+  public async getReactions(): Promise<Array<Reaction>> {
+    const url = this.config.service.baseUrl + "/reactions";
+    return apiRequest<Array<Reaction>>(url, {
+      method: "GET",
       headers: {
         "Content-Type": "application/json"
       }

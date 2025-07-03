@@ -1,4 +1,10 @@
-import {Entry, PauseAndPlayTranscriptionMessage, ReactionAppliedMessage, RequestToAddBotMessage} from "../core/types";
+import {
+  Entry,
+  PauseAndPlayTranscriptionMessage,
+  Reaction,
+  ReactionAppliedMessage,
+  RequestToAddBotMessage
+} from "../core/types";
 import {DateTime} from "../core/utils/datetime";
 const DEFAULT_AVATAR_URL = "assets/icons/default-avatar.jpg";
 export class ChatPanel {
@@ -8,6 +14,8 @@ export class ChatPanel {
   private activeMeetingEl: HTMLElement | null;
   private transcriptionsContainerEl: HTMLDivElement | null;
   private direction: "ltr" | "rtl" = "ltr";
+  private reactions: Array<Reaction> = [];
+
   constructor() {
     this.unauthorizedContainerEl = document.getElementById("au5-userUnAuthorized");
     this.noActiveMeetingEl = document.getElementById("au5-noActiveMeeting");
@@ -21,6 +29,10 @@ export class ChatPanel {
 
   public setDirection(direction: "ltr" | "rtl"): void {
     this.direction = direction;
+  }
+
+  public setReactions(reactions: Array<Reaction>): void {
+    this.reactions = reactions;
   }
 
   public showUserUnAuthorizedContainer(): void {
@@ -89,19 +101,7 @@ export class ChatPanel {
         ${entry.content}
       </div>
 
-      <div class="au5-message-reactions">
-        <div class="au5-reaction-list">
-          <div class="au5-reaction au5-reaction-highlight" reaction-type="task" data-blockId="${entry.blockId}">
-            <span class="au5-reaction-emoji">⚡</span>
-            <div class="au5-reaction-users"></div>
-          </div>
-
-          <div class="au5-reaction au5-reaction-mute" reaction-type="important" data-blockId="${entry.blockId}">
-            <span class="au5-reaction-emoji">🎯</span>
-            <div class="au5-reaction-users"></div>
-          </div>
-        </div>
-      </div>
+      ${this.getReactionsHtml(entry.blockId)} 
     </div>
   </div>`;
 
@@ -306,5 +306,28 @@ export class ChatPanel {
     if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.add("hidden");
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("hidden");
+  }
+  private getReactionsHtml(blockId: string): string {
+    if (!this.reactions || this.reactions.length === 0) {
+      return "";
+    }
+
+    const reactionsHtml = this.reactions
+      .map(reaction => {
+        return `
+      <div class="au5-reaction ${reaction.className}" reaction-type="${reaction.type}" data-blockId="${blockId}">
+        <span class="au5-reaction-emoji">${reaction.emoji}</span>
+        <div class="au5-reaction-users"></div>
+      </div>`;
+      })
+      .join("");
+
+    return `
+      <div class="au5-message-reactions">
+        <div class="au5-reaction-list">
+          ${reactionsHtml}
+        </div>
+      </div>
+    `;
   }
 }

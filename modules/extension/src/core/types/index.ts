@@ -112,3 +112,9 @@ export interface RequestAddBotModel {
   botName: string;
   user: User;
 }
+
+export interface Reaction {
+  type: string;
+  emoji: string;
+  className: string;
+}
