@@ -134,6 +134,7 @@ export class UIHandlers {
       const html = document.documentElement;
       const currentTheme = html.getAttribute("data-gpts-theme");
       const nextTheme = currentTheme === "light" ? "dark" : "light";
+      StateManager.getInstance().setTheme(nextTheme);
       html.setAttribute("data-gpts-theme", nextTheme);
 
       document
