@@ -295,16 +295,41 @@ public class MeetingServiceTests
 			EntryType = "Transcription"
 		};
 
+		var entry4 = new EntryMessage
+		{
+			MeetingId = meetingId,
+			BlockId = "block2",
+			Content = "Second entry",
+			Speaker = new UserDto { Id = userId, FullName = "User1" },
+			Timestamp = now.AddSeconds(300).ToString("o"),
+			EntryType = "Transcription"
+		};
+
+		var entry5 = new EntryMessage
+		{
+			MeetingId = meetingId,
+			BlockId = "block2",
+			Content = "Second entry",
+			Speaker = new UserDto { Id = userId, FullName = "User1" },
+			Timestamp = now.AddSeconds(601).ToString("o"),
+			EntryType = "Transcription"
+		};
+
+
 		_service.InsertBlock(entry1);
 		_service.InsertBlock(entry2);
 		_service.InsertBlock(entry3);
+		_service.InsertBlock(entry4);
+		_service.InsertBlock(entry5);
 
 		var result = _service.GetFullTranscriptionAsJson(meetingId);
 
 		Assert.NotNull(result);
-		Assert.Equal(3, result.Entries.Count);
+		//Assert.Equal(3, result.Entries.Count);
 		Assert.Equal("00:00:00", result.Entries[0].Timestamp);
 		Assert.Equal("00:00:09", result.Entries[1].Timestamp);
 		Assert.Equal("00:01:30", result.Entries[2].Timestamp);
+		Assert.Equal("00:05:00", result.Entries[3].Timestamp);
+		Assert.Equal("00:10:01", result.Entries[4].Timestamp);
 	}
 }

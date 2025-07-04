@@ -118,3 +118,18 @@ export interface Reaction {
   emoji: string;
   className: string;
 }
+
+export enum PageState {
+  ActiveMeeting = "activeMeeting",
+  ActiveMeetingButNotStarted = "activeMeetingButNotStarted",
+  NoActiveMeeting = "noActiveMeeting",
+  UserUnAuthorized = "userUnAuthorized"
+}
+
+export interface GLobalState {
+  isConnected: boolean;
+  page: PageState;
+  isBotAdded: boolean;
+  isTranscriptionPaused: boolean;
+  isBotContainerVisible: boolean;
+}

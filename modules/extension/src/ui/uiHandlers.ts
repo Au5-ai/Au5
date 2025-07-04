@@ -1,5 +1,6 @@
 import {BackEndApi} from "../core/network/backend";
 import {MeetingPlatformFactory} from "../core/platforms/meetingPlatformFactory";
+import StateManager from "../core/stateManager";
 import {
   AppConfiguration,
   BotJoinedInMeetingMessage,
@@ -220,6 +221,17 @@ export class UIHandlers {
 
     btn?.addEventListener("click", () => {
       if (input && input.value.trim()) {
+        const state = StateManager.getInstance().getState();
+        if (state.isConnected === false) {
+          //show error message
+          console.warn("Cannot send message: Bot is not added or connection is not established.");
+          return this;
+        }
+
+        if (state.isBotContainerVisible === true) {
+          this.chatPanel.removeBotContainer();
+        }
+
         const entry: EntryMessage = {
           type: MessageTypes.Entry,
           meetingId: this.platform?.getMeetingId(),

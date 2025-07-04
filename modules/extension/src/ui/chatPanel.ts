@@ -1,5 +1,7 @@
+import StateManager from "../core/stateManager";
 import {
   Entry,
+  PageState,
   PauseAndPlayTranscriptionMessage,
   Reaction,
   ReactionAppliedMessage,
@@ -15,6 +17,7 @@ export class ChatPanel {
   private transcriptionsContainerEl: HTMLDivElement | null;
   private direction: "ltr" | "rtl" = "ltr";
   private reactions: Array<Reaction> = [];
+  private stateManager = StateManager.getInstance();
 
   constructor() {
     this.unauthorizedContainerEl = document.getElementById("au5-userUnAuthorized");
@@ -37,18 +40,27 @@ export class ChatPanel {
 
   public showUserUnAuthorizedContainer(): void {
     this.hideAllContainers();
-    if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.remove("hidden");
+    if (this.unauthorizedContainerEl) {
+      this.unauthorizedContainerEl.classList.remove("hidden");
+      this.stateManager.setPage(PageState.UserUnAuthorized);
+    }
   }
 
   public showNoActiveMeetingContainer(url: string): void {
     this.hideAllContainers();
-    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("hidden");
+    if (this.noActiveMeetingEl) {
+      this.noActiveMeetingEl.classList.remove("hidden");
+      this.stateManager.setPage(PageState.NoActiveMeeting);
+    }
     this.setUrl(url);
   }
 
   public showJoinMeetingContainer(url: string): void {
     this.hideAllContainers();
-    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.remove("hidden");
+    if (this.activeMeetingButNotStartedEl) {
+      this.activeMeetingButNotStartedEl.classList.remove("hidden");
+      this.stateManager.setPage(PageState.ActiveMeetingButNotStarted);
+    }
     this.setUrl(url);
   }
 
@@ -65,6 +77,7 @@ export class ChatPanel {
         }
       });
     }
+    this.stateManager.setPage(PageState.ActiveMeeting);
   }
 
   public addEntry(entry: Entry): void {
@@ -111,13 +124,9 @@ export class ChatPanel {
 
   public botJoined(botName: string): void {
     this.addUserJoinedOrLeaved(botName, true);
-    if (!this.transcriptionsContainerEl) {
-      return;
-    }
-    const botContainer = this.transcriptionsContainerEl.querySelector("#au5-addBot-container") as HTMLDivElement;
-    if (botContainer) {
-      botContainer.remove();
-    }
+    this.stateManager.setBotAdded(true);
+
+    this.removeBotContainer();
     const botPlayContainer = this.activeMeetingEl?.querySelector("#au5-bot-playContainer") as HTMLDivElement;
     if (!botPlayContainer) {
       return;
@@ -129,6 +138,13 @@ export class ChatPanel {
     }
   }
 
+  public removeBotContainer(): void {
+    const botContainer = document.querySelector("#au5-addBot-container") as HTMLDivElement;
+    if (botContainer) {
+      botContainer.remove();
+      this.stateManager.disableBotContainer();
+    }
+  }
   public usersJoined(fullName: string): void {
     this.addUserJoinedOrLeaved(fullName, true);
   }
@@ -214,6 +230,7 @@ export class ChatPanel {
       status.classList.remove("offline");
       status.classList.add("online");
     }
+    this.stateManager.setConnected(true);
   }
 
   public showReconnecting(): void {
@@ -234,6 +251,7 @@ export class ChatPanel {
       status.classList.add("offline");
       status.classList.remove("online");
     }
+    this.stateManager.setConnected(false);
   }
 
   public pauseAndPlay(action: PauseAndPlayTranscriptionMessage): void {
@@ -246,14 +264,16 @@ export class ChatPanel {
     if (!botPlayAction || !botPauseAction) {
       return;
     }
+
+    this.stateManager.pauseTranscription(action.isPaused);
     if (action.isPaused === true) {
       botPlayAction.removeAttribute("style");
       botPauseAction.setAttribute("style", `display:none;`);
-      this.addGeneralMessage("⏸️ Transcription paused by " + action.user.fullName);
+      this.addGeneralMessage("🫸🏻 Transcription paused by " + action.user.fullName);
     } else {
       botPlayAction.setAttribute("style", `display:none;`);
       botPauseAction.removeAttribute("style");
-      this.addGeneralMessage("▶️ Transcription resumed by " + action.user.fullName);
+      this.addGeneralMessage("🎮 Transcription resumed by " + action.user.fullName);
     }
   }
 
@@ -288,7 +308,7 @@ export class ChatPanel {
     }
     const usersJoined = document.createElement("div");
     usersJoined.className = "au5-join-time";
-    usersJoined.innerText = `${content} at ${DateTime.toHoursAndMinutes(new Date())}`;
+    usersJoined.innerText = `${content}`;
     this.transcriptionsContainerEl.appendChild(usersJoined);
     this.scrollToBottom();
   }

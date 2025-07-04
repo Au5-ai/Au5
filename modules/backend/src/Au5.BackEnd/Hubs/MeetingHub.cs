@@ -20,7 +20,7 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 		}
 
 		var meeting = meetingService.AddUserToMeeting(msg.User.Id, msg.MeetingId, msg.Platform);
-		if (meeting is not null && meeting.IsActive())
+		if (meeting is not null && meeting.IsActive() && meeting.IsBotAdded)
 		{
 			await Clients.Caller.SendAsync("ReceiveMessage", new MeetingIsActiveMessage()
 			{

@@ -1,6 +1,64 @@
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+const platformRegex = {
+  googleMeet: /https:\/\/meet\.google\.com\/([a-zA-Z0-9]{3}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{3})/
+};
+var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
+  MessageTypes2["UserJoinedInMeeting"] = "UserJoinedInMeeting";
+  MessageTypes2["BotJoinedInMeeting"] = "BotJoinedInMeeting";
+  MessageTypes2["Entry"] = "Entry";
+  MessageTypes2["ReactionApplied"] = "ReactionApplied";
+  MessageTypes2["GeneralMessage"] = "GeneralMessage";
+  MessageTypes2["RequestToAddBot"] = "RequestToAddBot";
+  MessageTypes2["PauseAndPlayTranscription"] = "PauseAndPlayTranscription";
+  MessageTypes2["MeetingIsActive"] = "MeetingIsActive";
+  return MessageTypes2;
+})(MessageTypes || {});
+var PageState = /* @__PURE__ */ ((PageState2) => {
+  PageState2["ActiveMeeting"] = "activeMeeting";
+  PageState2["ActiveMeetingButNotStarted"] = "activeMeetingButNotStarted";
+  PageState2["NoActiveMeeting"] = "noActiveMeeting";
+  PageState2["UserUnAuthorized"] = "userUnAuthorized";
+  return PageState2;
+})(PageState || {});
+const _StateManager = class _StateManager {
+  constructor() {
+    __publicField(this, "state", {
+      isConnected: false,
+      page: PageState.NoActiveMeeting,
+      isBotAdded: false,
+      isTranscriptionPaused: false,
+      isBotContainerVisible: true
+    });
+  }
+  static getInstance() {
+    if (!_StateManager.instance) {
+      _StateManager.instance = new _StateManager();
+    }
+    return _StateManager.instance;
+  }
+  getState() {
+    return { ...this.state };
+  }
+  setConnected(isConnected) {
+    this.state.isConnected = isConnected;
+  }
+  setPage(page) {
+    this.state.page = page;
+  }
+  setBotAdded(isBotAdded) {
+    this.state.isBotAdded = isBotAdded;
+  }
+  pauseTranscription(isPaused) {
+    this.state.isTranscriptionPaused = isPaused;
+  }
+  disableBotContainer() {
+    this.state.isBotContainerVisible = false;
+  }
+};
+__publicField(_StateManager, "instance");
+let StateManager = _StateManager;
 var DateTime;
 ((DateTime2) => {
   function toHoursAndMinutes(input) {
@@ -21,6 +79,7 @@ class ChatPanel {
     __publicField(this, "transcriptionsContainerEl");
     __publicField(this, "direction", "ltr");
     __publicField(this, "reactions", []);
+    __publicField(this, "stateManager", StateManager.getInstance());
     var _a;
     this.unauthorizedContainerEl = document.getElementById("au5-userUnAuthorized");
     this.noActiveMeetingEl = document.getElementById("au5-noActiveMeeting");
@@ -38,16 +97,25 @@ class ChatPanel {
   }
   showUserUnAuthorizedContainer() {
     this.hideAllContainers();
-    if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.remove("hidden");
+    if (this.unauthorizedContainerEl) {
+      this.unauthorizedContainerEl.classList.remove("hidden");
+      this.stateManager.setPage(PageState.UserUnAuthorized);
+    }
   }
   showNoActiveMeetingContainer(url) {
     this.hideAllContainers();
-    if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.remove("hidden");
+    if (this.noActiveMeetingEl) {
+      this.noActiveMeetingEl.classList.remove("hidden");
+      this.stateManager.setPage(PageState.NoActiveMeeting);
+    }
     this.setUrl(url);
   }
   showJoinMeetingContainer(url) {
     this.hideAllContainers();
-    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.remove("hidden");
+    if (this.activeMeetingButNotStartedEl) {
+      this.activeMeetingButNotStartedEl.classList.remove("hidden");
+      this.stateManager.setPage(PageState.ActiveMeetingButNotStarted);
+    }
     this.setUrl(url);
   }
   showTranscriptionContainer() {
@@ -62,6 +130,7 @@ class ChatPanel {
         }
       });
     }
+    this.stateManager.setPage(PageState.ActiveMeeting);
   }
   addEntry(entry) {
     if (!this.transcriptionsContainerEl) {
@@ -105,13 +174,8 @@ class ChatPanel {
   botJoined(botName) {
     var _a;
     this.addUserJoinedOrLeaved(botName, true);
-    if (!this.transcriptionsContainerEl) {
-      return;
-    }
-    const botContainer = this.transcriptionsContainerEl.querySelector("#au5-addBot-container");
-    if (botContainer) {
-      botContainer.remove();
-    }
+    this.stateManager.setBotAdded(true);
+    this.removeBotContainer();
     const botPlayContainer = (_a = this.activeMeetingEl) == null ? void 0 : _a.querySelector("#au5-bot-playContainer");
     if (!botPlayContainer) {
       return;
@@ -120,6 +184,13 @@ class ChatPanel {
     const botNameEl = botPlayContainer.querySelector("#au5-bot-name");
     if (botNameEl) {
       botNameEl.innerText = botName;
+    }
+  }
+  removeBotContainer() {
+    const botContainer = document.querySelector("#au5-addBot-container");
+    if (botContainer) {
+      botContainer.remove();
+      this.stateManager.disableBotContainer();
     }
   }
   usersJoined(fullName) {
@@ -192,6 +263,7 @@ class ChatPanel {
       status.classList.remove("offline");
       status.classList.add("online");
     }
+    this.stateManager.setConnected(true);
   }
   showReconnecting() {
     const text = document.querySelector("#connection-status-text");
@@ -209,6 +281,7 @@ class ChatPanel {
       status.classList.add("offline");
       status.classList.remove("online");
     }
+    this.stateManager.setConnected(false);
   }
   pauseAndPlay(action) {
     if (!this.activeMeetingEl) {
@@ -219,14 +292,15 @@ class ChatPanel {
     if (!botPlayAction || !botPauseAction) {
       return;
     }
+    this.stateManager.pauseTranscription(action.isPaused);
     if (action.isPaused === true) {
       botPlayAction.removeAttribute("style");
       botPauseAction.setAttribute("style", `display:none;`);
-      this.addGeneralMessage("⏸️ Transcription paused by " + action.user.fullName);
+      this.addGeneralMessage("🫸🏻 Transcription paused by " + action.user.fullName);
     } else {
       botPlayAction.setAttribute("style", `display:none;`);
       botPauseAction.removeAttribute("style");
-      this.addGeneralMessage("▶️ Transcription resumed by " + action.user.fullName);
+      this.addGeneralMessage("🎮 Transcription resumed by " + action.user.fullName);
     }
   }
   setUrl(url) {
@@ -257,7 +331,7 @@ class ChatPanel {
     }
     const usersJoined = document.createElement("div");
     usersJoined.className = "au5-join-time";
-    usersJoined.innerText = `${content} at ${DateTime.toHoursAndMinutes(/* @__PURE__ */ new Date())}`;
+    usersJoined.innerText = `${content}`;
     this.transcriptionsContainerEl.appendChild(usersJoined);
     this.scrollToBottom();
   }
@@ -317,20 +391,6 @@ class ConfigurationManager {
     }
   }
 }
-const platformRegex = {
-  googleMeet: /https:\/\/meet\.google\.com\/([a-zA-Z0-9]{3}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{3})/
-};
-var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
-  MessageTypes2["UserJoinedInMeeting"] = "UserJoinedInMeeting";
-  MessageTypes2["BotJoinedInMeeting"] = "BotJoinedInMeeting";
-  MessageTypes2["Entry"] = "Entry";
-  MessageTypes2["ReactionApplied"] = "ReactionApplied";
-  MessageTypes2["GeneralMessage"] = "GeneralMessage";
-  MessageTypes2["RequestToAddBot"] = "RequestToAddBot";
-  MessageTypes2["PauseAndPlayTranscription"] = "PauseAndPlayTranscription";
-  MessageTypes2["MeetingIsActive"] = "MeetingIsActive";
-  return MessageTypes2;
-})(MessageTypes || {});
 class GoogleMeet {
   constructor(url) {
     this.url = url;
@@ -3315,7 +3375,6 @@ class UIHandlers {
       this.meetingHubClient = new MeetingHubClient(this.config, this.platform, this.chatPanel);
       this.meetingHubClient.startConnection(this.handleMessage);
       const reactions = await this.backendApi.getReactions();
-      console.log("Reactions fetched:", reactions);
       if (reactions && reactions.length > 0) {
         this.chatPanel.setReactions(reactions);
       } else {
@@ -3455,6 +3514,15 @@ class UIHandlers {
     btn == null ? void 0 : btn.addEventListener("click", () => {
       var _a, _b;
       if (input && input.value.trim()) {
+        const state = StateManager.getInstance().getState();
+        console.log("Current state:", state);
+        if (state.isConnected === false) {
+          console.warn("Cannot send message: Bot is not added or connection is not established.");
+          return this;
+        }
+        if (state.isBotContainerVisible === true) {
+          this.chatPanel.removeBotContainer();
+        }
         const entry = {
           type: MessageTypes.Entry,
           meetingId: (_a = this.platform) == null ? void 0 : _a.getMeetingId(),
