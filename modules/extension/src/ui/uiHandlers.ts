@@ -65,7 +65,6 @@ export class UIHandlers {
       this.meetingHubClient.startConnection(this.handleMessage);
 
       const reactions = await this.backendApi.getReactions();
-      console.log("Reactions fetched:", reactions);
       if (reactions && reactions.length > 0) {
         this.chatPanel.setReactions(reactions);
       } else {

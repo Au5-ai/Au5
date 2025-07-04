@@ -33,17 +33,7 @@ export class LiveCaptionsHelper {
 
     const languageOption = await this.findLanguageOptionByValue(languageValue);
     if (languageOption) {
-      try {
-        await languageOption.click({ force: true });
-      } catch (err) {
-        logger.warn("languageOption click failed, trying evaluate fallback");
-        await this.page.evaluate((languageValue) => {
-          const option = document.querySelector(
-            `[role=option][data-value="${languageValue}"]`
-          );
-          if (option instanceof HTMLElement) option.click();
-        }, languageValue);
-      }
+      await languageOption.click({ force: true });
     } else {
       logger.warn("languageOption not found in visible tab panel");
       return;
@@ -53,15 +43,25 @@ export class LiveCaptionsHelper {
   private async findLanguageOptionByValue(
     value: string
   ): Promise<ElementHandle<HTMLElement> | null> {
-    let el = await this.page.$(`[role=radio][data-value="${value}"]`);
-    if (el) return el as ElementHandle<HTMLElement>;
-    el = await this.page.$(
-      `[type=radio][name=languageRadioGroup][value="${value}"]`
-    );
-    if (el) return el as ElementHandle<HTMLElement>;
-    el = await this.page.$(`[role=option][data-value="${value}"]`);
-    if (el) return el as ElementHandle<HTMLElement>;
-    return null;
+    const handle = await this.page.evaluateHandle((val) => {
+      const selectors = [
+        `[role=radio][data-value="${val}"]`,
+        `[type=radio][name=languageRadioGroup][value="${val}"]`,
+        `[role=option][data-value="${val}"]`,
+      ];
+
+      for (const selector of selectors) {
+        const el = document.querySelector(selector);
+        if (el instanceof HTMLElement && el.offsetParent !== null) {
+          return el;
+        }
+      }
+
+      return null;
+    }, value);
+
+    const element = handle.asElement();
+    return element ? (element as ElementHandle<HTMLElement>) : null;
   }
 
   private async getVisibleCaptionsLanguageDropdown(): Promise<ElementHandle<HTMLElement> | null> {
