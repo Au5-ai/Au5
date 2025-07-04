@@ -1,5 +1,6 @@
 import {BackEndApi} from "../core/network/backend";
 import {MeetingPlatformFactory} from "../core/platforms/meetingPlatformFactory";
+import StateManager from "../core/stateManager";
 import {
   AppConfiguration,
   BotJoinedInMeetingMessage,
@@ -215,6 +216,13 @@ export class UIHandlers {
   }
 
   private handleMessageSend(): this {
+    const state = StateManager.getInstance().getState();
+    if (state.isConnected === false || state.isBotContainerVisible === true) {
+      //show error message
+      console.warn("Cannot send message: Bot is not added or connection is not established.");
+      return this;
+    }
+
     const btn = document.getElementById("au5-btn-sendMessage") as HTMLButtonElement | null;
     const input = document.getElementById("au5-input-message") as HTMLInputElement | null;
 
