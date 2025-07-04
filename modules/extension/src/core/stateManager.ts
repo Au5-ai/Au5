@@ -7,7 +7,8 @@ class StateManager {
     page: PageState.NoActiveMeeting,
     isBotAdded: false,
     isTranscriptionPaused: false,
-    isBotContainerVisible: true
+    isBotContainerVisible: true,
+    theme: "light"
   };
 
   private constructor() {}
@@ -41,6 +42,10 @@ class StateManager {
 
   public disableBotContainer(): void {
     this.state.isBotContainerVisible = false;
+  }
+
+  public setTheme(theme: "dark" | "light"): void {
+    this.state.theme = theme;
   }
 }
 

@@ -14,7 +14,7 @@ import {
   RequestToAddBotMessage,
   UserJoinedInMeetingMessage
 } from "../core/types";
-import {getCurrentUrl} from "../core/utils";
+import {getCurrentUrl, showToast} from "../core/utils";
 import {MeetingHubClient} from "../hub/meetingHubClient";
 import {ChatPanel} from "./chatPanel";
 
@@ -134,6 +134,7 @@ export class UIHandlers {
       const html = document.documentElement;
       const currentTheme = html.getAttribute("data-gpts-theme");
       const nextTheme = currentTheme === "light" ? "dark" : "light";
+      StateManager.getInstance().setTheme(nextTheme);
       html.setAttribute("data-gpts-theme", nextTheme);
 
       document
@@ -223,8 +224,7 @@ export class UIHandlers {
       if (input && input.value.trim()) {
         const state = StateManager.getInstance().getState();
         if (state.isConnected === false) {
-          //show error message
-          console.warn("Cannot send message: Bot is not added or connection is not established.");
+          showToast("Cannot send message: Connection is not established.");
           return this;
         }
 
