@@ -124,17 +124,9 @@ export class ChatPanel {
 
   public botJoined(botName: string): void {
     this.addUserJoinedOrLeaved(botName, true);
-    if (!this.transcriptionsContainerEl) {
-      return;
-    }
-
     this.stateManager.setBotAdded(true);
 
-    const botContainer = this.transcriptionsContainerEl.querySelector("#au5-addBot-container") as HTMLDivElement;
-    if (botContainer) {
-      botContainer.remove();
-      this.stateManager.disableBotContainer();
-    }
+    this.removeBotContainer();
     const botPlayContainer = this.activeMeetingEl?.querySelector("#au5-bot-playContainer") as HTMLDivElement;
     if (!botPlayContainer) {
       return;
@@ -146,6 +138,13 @@ export class ChatPanel {
     }
   }
 
+  public removeBotContainer(): void {
+    const botContainer = document.querySelector("#au5-addBot-container") as HTMLDivElement;
+    if (botContainer) {
+      botContainer.remove();
+      this.stateManager.disableBotContainer();
+    }
+  }
   public usersJoined(fullName: string): void {
     this.addUserJoinedOrLeaved(fullName, true);
   }
@@ -270,11 +269,11 @@ export class ChatPanel {
     if (action.isPaused === true) {
       botPlayAction.removeAttribute("style");
       botPauseAction.setAttribute("style", `display:none;`);
-      this.addGeneralMessage("⏸️ Transcription paused by " + action.user.fullName);
+      this.addGeneralMessage("🫸🏻 Transcription paused by " + action.user.fullName);
     } else {
       botPlayAction.setAttribute("style", `display:none;`);
       botPauseAction.removeAttribute("style");
-      this.addGeneralMessage("▶️ Transcription resumed by " + action.user.fullName);
+      this.addGeneralMessage("🎮 Transcription resumed by " + action.user.fullName);
     }
   }
 
@@ -309,7 +308,7 @@ export class ChatPanel {
     }
     const usersJoined = document.createElement("div");
     usersJoined.className = "au5-join-time";
-    usersJoined.innerText = `${content} at ${DateTime.toHoursAndMinutes(new Date())}`;
+    usersJoined.innerText = `${content}`;
     this.transcriptionsContainerEl.appendChild(usersJoined);
     this.scrollToBottom();
   }
