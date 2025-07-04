@@ -29,7 +29,8 @@ const _StateManager = class _StateManager {
       page: PageState.NoActiveMeeting,
       isBotAdded: false,
       isTranscriptionPaused: false,
-      isBotContainerVisible: true
+      isBotContainerVisible: true,
+      theme: "light"
     });
   }
   static getInstance() {
@@ -55,6 +56,9 @@ const _StateManager = class _StateManager {
   }
   disableBotContainer() {
     this.state.isBotContainerVisible = false;
+  }
+  setTheme(theme) {
+    this.state.theme = theme;
   }
 };
 __publicField(_StateManager, "instance");
@@ -493,6 +497,23 @@ async function getCurrentUrl$1() {
     });
   }
   return window.location.href;
+}
+function showToast(message, duration = 4500) {
+  let container = document.getElementById("toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toast-container";
+    document.body.appendChild(container);
+  }
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.textContent = message;
+  container.insertBefore(toast, container.firstChild);
+  requestAnimationFrame(() => toast.classList.add("show"));
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300);
+  }, duration);
 }
 class HttpError extends Error {
   /** Constructs a new instance of {@link @microsoft/signalr.HttpError}.
@@ -3515,9 +3536,8 @@ class UIHandlers {
       var _a, _b;
       if (input && input.value.trim()) {
         const state = StateManager.getInstance().getState();
-        console.log("Current state:", state);
         if (state.isConnected === false) {
-          console.warn("Cannot send message: Bot is not added or connection is not established.");
+          showToast("Cannot send message: Connection is not established.");
           return this;
         }
         if (state.isBotContainerVisible === true) {

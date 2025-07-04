@@ -132,4 +132,5 @@ export interface GLobalState {
   isBotAdded: boolean;
   isTranscriptionPaused: boolean;
   isBotContainerVisible: boolean;
+  theme: "light" | "dark";
 }
