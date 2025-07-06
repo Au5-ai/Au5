@@ -3459,6 +3459,7 @@ class UIHandlers {
       const html = document.documentElement;
       const currentTheme = html.getAttribute("data-gpts-theme");
       const nextTheme = currentTheme === "light" ? "dark" : "light";
+      StateManager.getInstance().setTheme(nextTheme);
       html.setAttribute("data-gpts-theme", nextTheme);
       (_a = document.getElementById("darkmode")) == null ? void 0 : _a.setAttribute("style", `display: ${nextTheme === "dark" ? "inline" : "none"};`);
       (_b = document.getElementById("lightmode")) == null ? void 0 : _b.setAttribute("style", `display: ${nextTheme === "light" ? "inline" : "none"};`);

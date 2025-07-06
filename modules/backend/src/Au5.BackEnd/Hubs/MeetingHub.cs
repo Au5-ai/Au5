@@ -31,7 +31,12 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 
 	public async Task RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage)
 	{
-		// Add Bot to meeting here
+		if (string.IsNullOrWhiteSpace(requestToAddBotMessage.MeetingId) || requestToAddBotMessage.User is null)
+		{
+			return;
+		}
+
+		//meetingService.RequestToAddBot(requestToAddBotMessage);
 		await BroadcastToGroupExceptCallerAsync(requestToAddBotMessage.MeetingId, requestToAddBotMessage);
 	}
 

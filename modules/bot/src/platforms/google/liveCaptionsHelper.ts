@@ -12,6 +12,7 @@ export class LiveCaptionsHelper {
 
   public async enableCaptions(languageValue: string): Promise<void> {
     const turnOnButton = await this.findTurnOnCaptionButton();
+    logger.info(turnOnButton ? "Turn on captions button found" : "Turn on captions button not found");
     if (turnOnButton) {
       await turnOnButton.click();
     } else {
@@ -22,6 +23,7 @@ export class LiveCaptionsHelper {
     await delay(RANDOM_DELAY_MAX);
 
     const comb = await this.getVisibleCaptionsLanguageDropdown();
+    logger.info(comb ? "Combobox found in visible tab panel" : "Combobox not found in visible tab panel");
     if (comb) {
       await comb.click();
     } else {
@@ -32,6 +34,7 @@ export class LiveCaptionsHelper {
     await delay(RANDOM_DELAY_MAX);
 
     const languageOption = await this.findLanguageOptionByValue(languageValue);
+    logger.info(languageOption ? `Language option '${languageValue}' found` : `Language option '${languageValue}' not found`);
     if (languageOption) {
       await languageOption.click({ force: true });
     } else {
@@ -43,7 +46,7 @@ export class LiveCaptionsHelper {
   private async findLanguageOptionByValue(
     value: string
   ): Promise<ElementHandle<HTMLElement> | null> {
-    const handle = await this.page.evaluateHandle((val) => {
+    const handle = await this.page.evaluateHandle((val:string) => {
       const selectors = [
         `[role=radio][data-value="${val}"]`,
         `[type=radio][name=languageRadioGroup][value="${val}"]`,
