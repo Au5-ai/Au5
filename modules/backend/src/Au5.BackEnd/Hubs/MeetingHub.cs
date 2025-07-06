@@ -5,16 +5,12 @@ namespace Au5.BackEnd.Hubs;
 
 public class MeetingHub(IMeetingService meetingService) : Hub
 {
+	private const string METHOD = "ReceiveMessage";
 	private readonly IMeetingService meetingService = meetingService;
 
 	public async Task UserJoinedInMeeting(UserJoinedInMeetingMessage msg)
 	{
-		if (string.IsNullOrWhiteSpace(msg.MeetingId) || msg.User is null)
-		{
-			return;
-		}
-
-		if (string.IsNullOrEmpty(Context.ConnectionId))
+		if (string.IsNullOrWhiteSpace(msg.MeetingId) || msg.User is null || string.IsNullOrWhiteSpace(Context.ConnectionId))
 		{
 			return;
 		}
@@ -22,7 +18,7 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 		var meeting = meetingService.AddUserToMeeting(msg.User.Id, msg.MeetingId, msg.Platform);
 		if (meeting is not null && meeting.IsActive() && meeting.IsBotAdded)
 		{
-			await Clients.Caller.SendAsync("ReceiveMessage", new MeetingIsActiveMessage()
+			await Clients.Caller.SendAsync(METHOD, new MeetingIsActiveMessage()
 			{
 				BotName = meeting.BotName,
 				MeetingId = msg.MeetingId,
@@ -35,6 +31,7 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 
 	public async Task RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage)
 	{
+		// Add Bot to meeting here
 		await BroadcastToGroupExceptCallerAsync(requestToAddBotMessage.MeetingId, requestToAddBotMessage);
 	}
 
@@ -77,7 +74,6 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 			return;
 		}
 
-		// await Groups.RemoveFromGroupAsync(Context.ConnectionId, Context.GetHttpContext()?.Request.Query["meetingId"] ?? string.Empty);
 		await base.OnDisconnectedAsync(exception);
 	}
 
@@ -86,8 +82,7 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 	/// </summary>
 	private async Task BroadcastToGroupExceptCallerAsync(string groupName, Message msg)
 	{
-		Console.WriteLine($"Broadcasting message of type {msg.Type}");
-		await Clients.OthersInGroup(groupName).SendAsync("ReceiveMessage", msg);
+		await Clients.OthersInGroup(groupName).SendAsync(METHOD, msg);
 	}
 }
 
