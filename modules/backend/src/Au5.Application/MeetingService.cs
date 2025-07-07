@@ -1,3 +1,5 @@
+using Au5.Domain.Entities;
+
 namespace Au5.Application;
 
 public class MeetingService : IMeetingService
@@ -51,7 +53,7 @@ public class MeetingService : IMeetingService
 			meeting.BotName = request.BotName;
 			meeting.CreatorUserId = request.User.Id;
 
-			// Call CLI to create the bot container with the provided name and Configs
+			// Create a Unique Token for the bot and return
 			return true;
 		}
 	}
@@ -249,5 +251,17 @@ public class MeetingService : IMeetingService
 				existingReaction.Users.RemoveAll(u => u == reaction.User.Id);
 			}
 		}
+	}
+
+	public void RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage)
+	{
+		var meeting = _meetings.FirstOrDefault(m => m.MeetingId == requestToAddBotMessage.MeetingId);
+		if (meeting is null)
+		{
+			return;
+		}
+
+		meeting.BotInviterUserId = requestToAddBotMessage.User.Id;
+		meeting.BotName = requestToAddBotMessage.BotName;
 	}
 }

@@ -36,7 +36,7 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 			return;
 		}
 
-		//meetingService.RequestToAddBot(requestToAddBotMessage);
+		meetingService.RequestToAddBot(requestToAddBotMessage);
 		await BroadcastToGroupExceptCallerAsync(requestToAddBotMessage.MeetingId, requestToAddBotMessage);
 	}
 

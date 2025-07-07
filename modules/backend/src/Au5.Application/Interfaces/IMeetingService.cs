@@ -1,4 +1,4 @@
-﻿namespace Au5.Application.Interfaces;
+namespace Au5.Application.Interfaces;
 
 public interface IMeetingService
 {
@@ -21,4 +21,6 @@ public interface IMeetingService
 	Meeting GetFullTranscriptionAsJson(string meetingId);
 
 	void AppliedReaction(ReactionAppliedMessage reaction);
+
+	void RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage);
 }

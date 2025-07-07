@@ -8,6 +8,8 @@ public class Meeting
 
 	public Guid CreatorUserId { get; set; }
 
+	public Guid BotInviterUserId { get; set; }
+
 	public string Platform { get; set; }
 
 	public string BotName { get; set; }

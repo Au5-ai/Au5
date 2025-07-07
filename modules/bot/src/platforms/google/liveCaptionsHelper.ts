@@ -12,9 +12,13 @@ export class LiveCaptionsHelper {
 
   public async enableCaptions(languageValue: string): Promise<void> {
     const turnOnButton = await this.findTurnOnCaptionButton();
-    logger.info(turnOnButton ? "Turn on captions button found" : "Turn on captions button not found");
+    logger.info(
+      turnOnButton
+        ? "Turn on captions button found"
+        : "Turn on captions button not found"
+    );
     if (turnOnButton) {
-      await turnOnButton.click();
+      await turnOnButton.click({ force: true });
     } else {
       logger.warn("turnOnButton not found in visible tab panel");
       return;
@@ -23,9 +27,13 @@ export class LiveCaptionsHelper {
     await delay(RANDOM_DELAY_MAX);
 
     const comb = await this.getVisibleCaptionsLanguageDropdown();
-    logger.info(comb ? "Combobox found in visible tab panel" : "Combobox not found in visible tab panel");
+    logger.info(
+      comb
+        ? "Combobox found in visible tab panel"
+        : "Combobox not found in visible tab panel"
+    );
     if (comb) {
-      await comb.click();
+      await comb.click({ force: true });
     } else {
       logger.warn("Combobox not found in visible tab panel");
       return;
@@ -34,7 +42,11 @@ export class LiveCaptionsHelper {
     await delay(RANDOM_DELAY_MAX);
 
     const languageOption = await this.findLanguageOptionByValue(languageValue);
-    logger.info(languageOption ? `Language option '${languageValue}' found` : `Language option '${languageValue}' not found`);
+    logger.info(
+      languageOption
+        ? `Language option '${languageValue}' found`
+        : `Language option '${languageValue}' not found`
+    );
     if (languageOption) {
       await languageOption.click({ force: true });
     } else {
@@ -46,21 +58,11 @@ export class LiveCaptionsHelper {
   private async findLanguageOptionByValue(
     value: string
   ): Promise<ElementHandle<HTMLElement> | null> {
-    const handle = await this.page.evaluateHandle((val:string) => {
-      const selectors = [
-        `[role=radio][data-value="${val}"]`,
-        `[type=radio][name=languageRadioGroup][value="${val}"]`,
-        `[role=option][data-value="${val}"]`,
-      ];
-
-      for (const selector of selectors) {
-        const el = document.querySelector(selector);
-        if (el instanceof HTMLElement && el.offsetParent !== null) {
-          return el;
-        }
-      }
-
-      return null;
+    const handle = await this.page.evaluateHandle((val: string) => {
+      const option = document.querySelector(
+        `[role=option][data-value="${val}"]`
+      );
+      return option;
     }, value);
 
     const element = handle.asElement();

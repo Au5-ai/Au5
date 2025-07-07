@@ -14,29 +14,19 @@ class LiveCaptionsHelper {
     }
     async enableCaptions(languageValue) {
         const turnOnButton = await this.findTurnOnCaptionButton();
+        logger_1.logger.info(turnOnButton ? "Turn on captions button found" : "Turn on captions button not found");
         if (turnOnButton) {
-            logger_1.logger.info("Clicking turn on captions button");
             await turnOnButton.click();
         }
         else {
-            logger_1.logger.warn("Turn on captions button not found");
+            logger_1.logger.warn("turnOnButton not found in visible tab panel");
             return;
         }
         await (0, task_1.delay)(constants_1.RANDOM_DELAY_MAX);
         const comb = await this.getVisibleCaptionsLanguageDropdown();
+        logger_1.logger.info(comb ? "Combobox found in visible tab panel" : "Combobox not found in visible tab panel");
         if (comb) {
-            try {
-                logger_1.logger.info("Clicking combobox to select language");
-                await comb.click({ force: true });
-            }
-            catch (err) {
-                logger_1.logger.warn("Standard combobox click failed, trying evaluate fallback");
-                await this.page.evaluate(() => {
-                    const combobox = document.querySelector('[role="combobox"]');
-                    if (combobox instanceof HTMLElement)
-                        combobox.click();
-                });
-            }
+            await comb.click();
         }
         else {
             logger_1.logger.warn("Combobox not found in visible tab panel");
@@ -44,18 +34,9 @@ class LiveCaptionsHelper {
         }
         await (0, task_1.delay)(constants_1.RANDOM_DELAY_MAX);
         const languageOption = await this.findLanguageOptionByValue(languageValue);
+        logger_1.logger.info(languageOption ? `Language option '${languageValue}' found` : `Language option '${languageValue}' not found`);
         if (languageOption) {
-            try {
-                await languageOption.click({ force: true });
-            }
-            catch (err) {
-                logger_1.logger.warn("languageOption click failed, trying evaluate fallback");
-                await this.page.evaluate((languageValue) => {
-                    const option = document.querySelector(`[role=option][data-value="${languageValue}"]`);
-                    if (option instanceof HTMLElement)
-                        option.click();
-                }, languageValue);
-            }
+            await languageOption.click({ force: true });
         }
         else {
             logger_1.logger.warn("languageOption not found in visible tab panel");
@@ -63,34 +44,45 @@ class LiveCaptionsHelper {
         }
     }
     async findLanguageOptionByValue(value) {
-        let el = await this.page.$(`[role=radio][data-value="${value}"]`);
-        if (el)
-            return el;
-        el = await this.page.$(`[type=radio][name=languageRadioGroup][value="${value}"]`);
-        if (el)
-            return el;
-        el = await this.page.$(`[role=option][data-value="${value}"]`);
-        if (el)
-            return el;
-        return null;
+        const handle = await this.page.evaluateHandle((val) => {
+            const selectors = [
+                `[role=radio][data-value="${val}"]`,
+                `[type=radio][name=languageRadioGroup][value="${val}"]`,
+                `[role=option][data-value="${val}"]`,
+            ];
+            for (const selector of selectors) {
+                const el = document.querySelector(selector);
+                if (el instanceof HTMLElement && el.offsetParent !== null) {
+                    return el;
+                }
+            }
+            return null;
+        }, value);
+        const element = handle.asElement();
+        return element ? element : null;
     }
     async getVisibleCaptionsLanguageDropdown() {
-        const dropdown = await this.page.$("[role=combobox]");
-        if (dropdown &&
-            (await dropdown.evaluate((d) => d instanceof HTMLElement))) {
-            return dropdown;
-        }
-        return null;
+        const handle = await this.page.evaluateHandle(() => {
+            const combobox = document.querySelector('[role="combobox"]');
+            return combobox;
+        });
+        const element = handle.asElement();
+        return element ? element : null;
     }
     async findTurnOnCaptionButton() {
-        const buttons = await this.page.$$('[role="button"]');
-        for (const btn of buttons) {
-            const text = await btn.evaluate((el) => el.innerText.trim().toLowerCase());
-            if (text.includes("closed_caption_off")) {
-                return btn;
+        const handle = await this.page.evaluateHandle(() => {
+            const buttons = document.querySelectorAll('[role="button"]');
+            for (const btn of buttons) {
+                if (btn instanceof HTMLElement &&
+                    btn.innerText.trim().toLowerCase().includes("closed_caption_off")) {
+                    return btn;
+                }
             }
-        }
-        return null;
+            return null;
+        });
+        // Convert JSHandle to ElementHandle if it's not null
+        const element = handle.asElement();
+        return element ? element : null;
     }
 }
 exports.LiveCaptionsHelper = LiveCaptionsHelper;
