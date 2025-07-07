@@ -22,5 +22,5 @@ public interface IMeetingService
 
 	void AppliedReaction(ReactionAppliedMessage reaction);
 
-	void RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage);
+	string RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage);
 }

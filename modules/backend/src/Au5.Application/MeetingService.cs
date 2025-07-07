@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using Au5.Domain.Entities;
 
 namespace Au5.Application;
@@ -253,15 +255,23 @@ public class MeetingService : IMeetingService
 		}
 	}
 
-	public void RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage)
+	public string RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage)
 	{
 		var meeting = _meetings.FirstOrDefault(m => m.MeetingId == requestToAddBotMessage.MeetingId);
 		if (meeting is null)
 		{
-			return;
+			return string.Empty;
 		}
 
+		var raw = $"{requestToAddBotMessage.User.Id}{DateTime.Now:O}";
+		var bytes = Encoding.UTF8.GetBytes(raw);
+		var hash = SHA256.HashData(bytes);
+		var hashToken = Convert.ToBase64String(hash);
+
+		meeting.HashToken = hashToken;
 		meeting.BotInviterUserId = requestToAddBotMessage.User.Id;
 		meeting.BotName = requestToAddBotMessage.BotName;
+
+		return hashToken;
 	}
 }

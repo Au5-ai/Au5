@@ -10,6 +10,8 @@ public class Meeting
 
 	public Guid BotInviterUserId { get; set; }
 
+	public string HashToken { get; set; }
+
 	public string Platform { get; set; }
 
 	public string BotName { get; set; }
