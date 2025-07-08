@@ -20,16 +20,9 @@ export class LiveCaptionsHelper {
       return;
     }
 
-    await delay(RANDOM_DELAY_MAX);
+    await delay(400);
 
-    const comb = await this.getVisibleCaptionsLanguageDropdown();
-    if (comb) {
-      await comb.click({ force: true });
-      logger.info("Combobox clicked in visible tab panel");
-    } else {
-      logger.warn("Combobox not found in visible tab panel");
-      return;
-    }
+    await this.getVisibleCaptionsLanguageDropdown();
 
     await delay(RANDOM_DELAY_MAX);
     await this.findLanguageOptionByValue(languageValue);
@@ -54,14 +47,21 @@ export class LiveCaptionsHelper {
     }
   }
 
-  private async getVisibleCaptionsLanguageDropdown(): Promise<ElementHandle<HTMLElement> | null> {
-    const handle = await this.page.evaluateHandle(() => {
-      const combobox = document.querySelector('[role="combobox"]');
-      return combobox;
+  private async getVisibleCaptionsLanguageDropdown(): Promise<void> {
+    const clicked = await this.page.evaluate(() => {
+      const dropdown = document.querySelector<HTMLElement>(`[role="combobox"]`);
+      if (dropdown) {
+        dropdown.click();
+        return true;
+      }
+      return false;
     });
 
-    const element = handle.asElement();
-    return element ? (element as ElementHandle<HTMLElement>) : null;
+    if (clicked) {
+      logger.info(`CaptionsLanguageDropdown finded and clicked`);
+    } else {
+      logger.warn(`CaptionsLanguageDropdown not found :(`);
+    }
   }
 
   private async findTurnOnCaptionButton(): Promise<ElementHandle<HTMLElement> | null> {
