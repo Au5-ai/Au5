@@ -259,77 +259,41 @@ public class MeetingServiceTests
 	}
 
 	[Fact]
-	public void GetFullTranscriptionAsJson_ShouldReturnMeetingWithNormalizedTimestamps()
+	public void GetFullTranscriptionAsJson_ShouldReturnMeetingWithNormalizedTimestamps_OverTwoHoursWith100Entries()
 	{
-		var meetingId = "transcriptionTest";
+		var meetingId = "transcriptionTest2Hours100Entries";
 		var userId = Guid.NewGuid();
 		_service.AddUserToMeeting(userId, meetingId, "GoogleMeet");
 
-		var now = DateTime.UtcNow;
-		var entry1 = new EntryMessage
-		{
-			MeetingId = meetingId,
-			BlockId = "block1",
-			Content = "First entry",
-			Speaker = new UserDto { Id = userId, FullName = "User1" },
-			Timestamp = now.ToString("o"),
-			EntryType = "Transcription"
-		};
-		var entry2 = new EntryMessage
-		{
-			MeetingId = meetingId,
-			BlockId = "block2",
-			Content = "Second entry",
-			Speaker = new UserDto { Id = userId, FullName = "User1" },
-			Timestamp = now.AddSeconds(9).ToString("o"),
-			EntryType = "Transcription"
-		};
+		var start = DateTime.Now;
+		var totalEntries = 100;
+		var intervalSeconds = (2 * 60 * 60) / totalEntries;
 
-		var entry3 = new EntryMessage
+		for (int i = 0; i < totalEntries; i++)
 		{
-			MeetingId = meetingId,
-			BlockId = "block2",
-			Content = "Second entry",
-			Speaker = new UserDto { Id = userId, FullName = "User1" },
-			Timestamp = now.AddSeconds(90).ToString("o"),
-			EntryType = "Transcription"
-		};
+			var entry = new EntryMessage
+			{
+				MeetingId = meetingId,
+				BlockId = $"block{i + 1}",
+				Content = $"Entry {i + 1}",
+				Speaker = new UserDto { Id = userId, FullName = "User1" },
+				Timestamp = start.AddSeconds(i * intervalSeconds).ToString("o"),
+				EntryType = "Transcription"
+			};
 
-		var entry4 = new EntryMessage
-		{
-			MeetingId = meetingId,
-			BlockId = "block2",
-			Content = "Second entry",
-			Speaker = new UserDto { Id = userId, FullName = "User1" },
-			Timestamp = now.AddSeconds(300).ToString("o"),
-			EntryType = "Transcription"
-		};
-
-		var entry5 = new EntryMessage
-		{
-			MeetingId = meetingId,
-			BlockId = "block2",
-			Content = "Second entry",
-			Speaker = new UserDto { Id = userId, FullName = "User1" },
-			Timestamp = now.AddSeconds(601).ToString("o"),
-			EntryType = "Transcription"
-		};
-
-
-		_service.InsertBlock(entry1);
-		_service.InsertBlock(entry2);
-		_service.InsertBlock(entry3);
-		_service.InsertBlock(entry4);
-		_service.InsertBlock(entry5);
+			_service.InsertBlock(entry);
+		}
 
 		var result = _service.GetFullTranscriptionAsJson(meetingId);
 
 		Assert.NotNull(result);
-		//Assert.Equal(3, result.Entries.Count);
-		Assert.Equal("00:00:00", result.Entries[0].Timestamp);
-		Assert.Equal("00:00:09", result.Entries[1].Timestamp);
-		Assert.Equal("00:01:30", result.Entries[2].Timestamp);
-		Assert.Equal("00:05:00", result.Entries[3].Timestamp);
-		Assert.Equal("00:10:01", result.Entries[4].Timestamp);
+		Assert.Equal(totalEntries, result.Entries.Count);
+
+		// Check some expected normalized timestamps
+		Assert.Equal("00:00:00", result.Entries[0].Time); 
+		Assert.Equal("00:12:00", result.Entries[10].Time);
+		Assert.Equal("00:36:00", result.Entries[30].Time);
+		Assert.Equal("01:12:00", result.Entries[60].Time);
+		Assert.Equal("01:58:48", result.Entries[99].Time);
 	}
 }

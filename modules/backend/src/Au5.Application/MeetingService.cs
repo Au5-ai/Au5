@@ -208,7 +208,7 @@ public class MeetingService : IMeetingService
 		foreach (var x in parsedEntries)
 		{
 			var elapsed = x.ParsedTimestamp.Value - startTime;
-			x.Entry.Timestamp = elapsed.ToString(@"hh\:mm\:ss");
+			x.Entry.Time = elapsed.ToString(@"hh\:mm\:ss");
 		}
 
 		return meeting;

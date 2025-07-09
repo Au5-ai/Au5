@@ -12,6 +12,8 @@ public class Entry
 
 	public string Timestamp { get; set; }
 
+	public string Time { get; set; }
+
 	public string EntryType { get; set; }
 
 	public List<Reactions> Reactions { get; set; }
