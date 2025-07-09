@@ -36,13 +36,6 @@ let meetingHasPaused = false;
  */
 async function startMeetingBot(config) {
     meetingConfig = config;
-    logger_1.logger.info(`[Program] Launching meeting bot with configuration:`, {
-        platform: config.platform,
-        meetingUrl: config.meetingUrl,
-        botDisplayName: config.botDisplayName,
-        language: config.language,
-        meetingId: config.meetingId,
-    });
     const stealth = (0, puppeteer_extra_plugin_stealth_1.default)();
     stealth.enabledEvasions.delete("iframe.contentWindow");
     stealth.enabledEvasions.delete("media.codecs");
@@ -55,6 +48,7 @@ async function startMeetingBot(config) {
         permissions: ["camera", "microphone"],
         userAgent: constants_1.USER_AGENT,
         viewport: { width: 1280, height: 720 },
+        locale: "fa-IR",
     });
     const page = await context.newPage();
     await registerGracefulShutdownHandler(page);
@@ -83,7 +77,6 @@ async function startMeetingBot(config) {
             logger_1.logger.error(`[Program] Failed to connect to the hub service at ${config.hubUrl}`);
             meetingPlatform.leaveMeeting();
             process.exit(1);
-            return;
         }
         await meetingPlatform.observeTranscriptions(handleTranscription);
         // await meetingPlatform.observeParticipations(handleParticipation);
@@ -95,7 +88,6 @@ async function handleTranscription(message) {
         return;
     }
     message.meetingId = meetingConfig.meetingId;
-    logger_1.logger.info(message);
     if (!meetingHasPaused) {
         await hubClient.sendMessage(message);
     }
@@ -144,7 +136,7 @@ async function applyAntiDetection(page) {
             get: () => [{ name: "Chrome PDF Plugin" }, { name: "Chrome PDF Viewer" }],
         });
         Object.defineProperty(navigator, "languages", {
-            get: () => ["en-US", "en"],
+            get: () => ["fa-IR", "fa"], // spoof as Persian for transcription
         });
         Object.defineProperty(navigator, "hardwareConcurrency", { get: () => 4 });
         Object.defineProperty(navigator, "deviceMemory", { get: () => 8 });

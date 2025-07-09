@@ -40,14 +40,6 @@ export async function startMeetingBot(
   config: MeetingConfiguration
 ): Promise<void> {
   meetingConfig = config;
-  logger.info(`[Program] Launching meeting bot with configuration:`, {
-    platform: config.platform,
-    meetingUrl: config.meetingUrl,
-    botDisplayName: config.botDisplayName,
-    language: config.language,
-    meetingId: config.meetingId,
-  });
-
   const stealth = StealthPlugin();
   stealth.enabledEvasions.delete("iframe.contentWindow");
   stealth.enabledEvasions.delete("media.codecs");
@@ -100,7 +92,6 @@ export async function startMeetingBot(
       );
       meetingPlatform.leaveMeeting();
       process.exit(1);
-      return;
     }
 
     await meetingPlatform.observeTranscriptions(handleTranscription);
@@ -115,7 +106,6 @@ async function handleTranscription(message: EntryMessage): Promise<void> {
   }
 
   message.meetingId = meetingConfig.meetingId;
-  logger.info(message);
   if (!meetingHasPaused) {
     await hubClient.sendMessage(message);
   }

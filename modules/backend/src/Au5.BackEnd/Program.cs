@@ -3,6 +3,7 @@ using Au5.Application.Models.Messages;
 using Au5.BackEnd;
 using Au5.BackEnd.Hubs;
 using Au5.Domain.Entities;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -47,6 +48,15 @@ app.MapDefaultEndpoints();
 	app.UseCors();
 	app.MapHub<MeetingHub>("/meetinghub").AllowAnonymous();
 	app.MapGet("/liveness", () => Results.Ok("Healthy"));
+
+	app.MapPost("/meeting/addBot", (
+		[FromBody] RequestToAddBotMessage request,
+		[FromServices] IMeetingService meetingService) =>
+	{
+		var result = meetingService.RequestToAddBot(request);
+
+		return Results.Ok(new { Success = true, Message = $"Bot added to meeting {request.MeetingId}" });
+	});
 
 	app.MapGet("/meeting/{meetingId}/transcription", (
 		[FromRoute] string meetingId,

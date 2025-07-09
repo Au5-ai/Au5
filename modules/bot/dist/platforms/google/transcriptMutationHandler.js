@@ -28,9 +28,9 @@ class TranscriptMutationHandler {
         const dom = await this.domUtility.getCaptionContainer(this.config.transcriptSelectors.aria, this.config.transcriptSelectors.fallback);
         if (!dom)
             throw new Error("Transcript container not found in DOM");
+        logger_1.logger.info(`[GoogleMeet][Transcription] Transcript container found using ${await dom.container?.innerHTML()}`);
         ctx.transcriptContainer = dom.container;
         ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
-        logger_1.logger.info(`[GoogleMeet][Transcription] Transcript container found: ${ctx.transcriptContainer || "unknown"}`);
         return ctx;
     }
     async observeTranscriptContainer(ctx, callback) {

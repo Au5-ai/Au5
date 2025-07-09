@@ -28,6 +28,9 @@ exports.BROWSER_ARGS = [
     "--use-file-for-fake-video-capture=/dev/null",
     "--use-file-for-fake-audio-capture=/dev/null",
     "--allow-running-insecure-content",
+    "--lang=fa-IR", // Needed for Meet transcription
+    "--disable-features=Translate", // Prevent Chrome auto-translate
+    "--disable-translate", // Prevent Google Translate service
 ];
 exports.MEETING_CONFIG = `{
   "hubUrl": "http://au5-hub:1366/meetinghub",

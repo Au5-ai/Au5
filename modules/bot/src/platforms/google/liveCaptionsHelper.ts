@@ -23,78 +23,9 @@ export class LiveCaptionsHelper {
     await delay(600);
 
     const dropdownClicked = await this.getVisibleCaptionsLanguageDropdown();
-    await delay(RANDOM_DELAY_MAX);
-    await this.findLanguageOptionByValue(languageValue);
-  }
-
-  private async findLanguageOptionByValue(
-    value: string,
-    maxRetries = 5,
-    delayMs = 2000
-  ): Promise<void> {
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      const clicked = await this.page.evaluate((val: string) => {
-        const option = document.querySelector<HTMLElement>(
-          `[role="option"][data-value="${val}"]`
-        );
-        if (option) {
-          option.scrollIntoView({ block: "center" });
-          option.click();
-          return true;
-        }
-        return false;
-      }, value);
-
-      if (clicked) {
-        logger.info(`Language option '${value}' clicked (attempt ${attempt})`);
-        return;
-      } else {
-        logger.warn(
-          `Language option '${value}' not found or not clickable (attempt ${attempt})`
-        );
-        if (attempt < maxRetries) {
-          await new Promise((res) => setTimeout(res, delayMs));
-        }
-      }
+    if (dropdownClicked) {
+      await this.findLanguageOptionByValue(languageValue);
     }
-
-    logger.error(
-      `Failed to click language option '${value}' after ${maxRetries} retries`
-    );
-  }
-
-  private async getVisibleCaptionsLanguageDropdown(
-    maxRetries = 5,
-    delayMs = 2000
-  ): Promise<boolean> {
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      const clicked = await this.page.evaluate(() => {
-        const dropdown =
-          document.querySelector<HTMLElement>('[role="combobox"]');
-        if (dropdown) {
-          dropdown.click();
-          return true;
-        }
-        return false;
-      });
-
-      if (clicked) {
-        logger.info(
-          `CaptionsLanguageDropdown found and clicked (attempt ${attempt})`
-        );
-        return true;
-      } else {
-        logger.warn(`CaptionsLanguageDropdown not found (attempt ${attempt})`);
-        if (attempt < maxRetries) {
-          await new Promise((res) => setTimeout(res, delayMs));
-        }
-      }
-    }
-
-    logger.error(
-      `Failed to find and click CaptionsLanguageDropdown after ${maxRetries} attempts`
-    );
-    return false;
   }
 
   private async findTurnOnCaptionButton(): Promise<ElementHandle<HTMLElement> | null> {
@@ -114,5 +45,65 @@ export class LiveCaptionsHelper {
     // Convert JSHandle to ElementHandle if it's not null
     const element = handle.asElement();
     return element ? (element as ElementHandle<HTMLElement>) : null;
+  }
+
+  private async getVisibleCaptionsLanguageDropdown(
+    maxRetries = 3,
+    delayMs = 500
+  ): Promise<boolean> {
+    const dropdownLocator = this.page.locator('[role="combobox"]');
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      const isVisible = await dropdownLocator.isVisible();
+
+      if (isVisible) {
+        try {
+          await dropdownLocator.click({ force: true });
+          logger.info(`CaptionsLanguageDropdown clicked (attempt ${attempt})`);
+          return true;
+        } catch (err) {
+          logger.warn(`Dropdown found but not clickable (attempt ${attempt})`);
+        }
+      } else {
+        logger.warn(`Dropdown not visible (attempt ${attempt})`);
+      }
+
+      if (attempt < maxRetries) {
+        await this.page.waitForTimeout(delayMs);
+      }
+    }
+
+    logger.error(
+      `Failed to click CaptionsLanguageDropdown after ${maxRetries} attempts`
+    );
+    return false;
+  }
+
+  private async findLanguageOptionByValue(
+    value: string,
+    maxRetries = 3,
+    delayMs = 500
+  ): Promise<void> {
+    const optionLocator = this.page.locator(
+      `[role="option"][data-value="${value}"]`
+    );
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        await optionLocator.click({ force: true });
+        logger.info(`Language option '${value}' clicked (attempt ${attempt})`);
+        return;
+      } catch (err) {
+        logger.warn(
+          `Language option '${value}' not clickable (attempt ${attempt})`
+        );
+
+        await this.page.waitForTimeout(delayMs);
+      }
+    }
+
+    logger.error(
+      `Failed to click language option '${value}' after ${maxRetries} retries`
+    );
   }
 }

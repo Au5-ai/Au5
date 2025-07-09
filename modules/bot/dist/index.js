@@ -42,7 +42,6 @@ global.Headers = node_fetch_1.Headers;
 global.Request = node_fetch_1.Request;
 global.Response = node_fetch_1.Response;
 async function main() {
-    //const rawConfig = MEETING_CONFIG;
     console.log("Starting Meeting Bot...", process.env.MEETING_CONFIG);
     const rawConfig = process.env.MEETING_CONFIG;
     if (!rawConfig) {

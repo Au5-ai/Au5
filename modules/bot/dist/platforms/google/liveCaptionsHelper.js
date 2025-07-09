@@ -2,8 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LiveCaptionsHelper = void 0;
 const logger_1 = require("../../utils/logger");
-const constants_1 = require("./constants");
-const task_1 = require("../../common/task");
 /**
  * Helper class to manage live captions in Google Meet.
  * It provides methods to enable captions, select language, and handle UI interactions.
@@ -22,42 +20,58 @@ class LiveCaptionsHelper {
             logger_1.logger.warn("turnOnButton not found in visible tab panel");
             return;
         }
-        await (0, task_1.delay)(constants_1.RANDOM_DELAY_MAX);
-        const comb = await this.getVisibleCaptionsLanguageDropdown();
-        if (comb) {
-            await comb.click({ force: true });
-            logger_1.logger.info("Combobox clicked in visible tab panel");
-        }
-        else {
-            logger_1.logger.warn("Combobox not found in visible tab panel");
-            return;
-        }
-        await (0, task_1.delay)(constants_1.RANDOM_DELAY_MAX);
-        await this.findLanguageOptionByValue(languageValue);
+        // await delay(600);
+        // const dropdownClicked = await this.getVisibleCaptionsLanguageDropdown();
+        // await delay(RANDOM_DELAY_MAX);
+        // await this.findLanguageOptionByValue(languageValue);
     }
-    async findLanguageOptionByValue(value) {
-        const clicked = await this.page.evaluate((val) => {
-            const option = document.querySelector(`[role="option"][data-value="${val}"]`);
-            if (option) {
-                option.click();
+    async findLanguageOptionByValue(value, maxRetries = 5, delayMs = 2000) {
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            const clicked = await this.page.evaluate((val) => {
+                const option = document.querySelector(`[role="option"][data-value="${val}"]`);
+                if (option) {
+                    option.scrollIntoView({ block: "center" });
+                    option.click();
+                    return true;
+                }
+                return false;
+            }, value);
+            if (clicked) {
+                logger_1.logger.info(`Language option '${value}' clicked (attempt ${attempt})`);
+                return;
+            }
+            else {
+                logger_1.logger.warn(`Language option '${value}' not found or not clickable (attempt ${attempt})`);
+                if (attempt < maxRetries) {
+                    await new Promise((res) => setTimeout(res, delayMs));
+                }
+            }
+        }
+        logger_1.logger.error(`Failed to click language option '${value}' after ${maxRetries} retries`);
+    }
+    async getVisibleCaptionsLanguageDropdown(maxRetries = 5, delayMs = 2000) {
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            const clicked = await this.page.evaluate(() => {
+                const dropdown = document.querySelector('[role="combobox"]');
+                if (dropdown) {
+                    dropdown.click();
+                    return true;
+                }
+                return false;
+            });
+            if (clicked) {
+                logger_1.logger.info(`CaptionsLanguageDropdown found and clicked (attempt ${attempt})`);
                 return true;
             }
-            return false;
-        }, value);
-        if (clicked) {
-            logger_1.logger.info(`Language option '${value}' clicked`);
+            else {
+                logger_1.logger.warn(`CaptionsLanguageDropdown not found (attempt ${attempt})`);
+                if (attempt < maxRetries) {
+                    await new Promise((res) => setTimeout(res, delayMs));
+                }
+            }
         }
-        else {
-            logger_1.logger.warn(`Language option '${value}' not found or not clickable`);
-        }
-    }
-    async getVisibleCaptionsLanguageDropdown() {
-        const handle = await this.page.evaluateHandle(() => {
-            const combobox = document.querySelector('[role="combobox"]');
-            return combobox;
-        });
-        const element = handle.asElement();
-        return element ? element : null;
+        logger_1.logger.error(`Failed to find and click CaptionsLanguageDropdown after ${maxRetries} attempts`);
+        return false;
     }
     async findTurnOnCaptionButton() {
         const handle = await this.page.evaluateHandle(() => {
