@@ -48,15 +48,6 @@ app.MapDefaultEndpoints();
 	app.MapHub<MeetingHub>("/meetinghub").AllowAnonymous();
 	app.MapGet("/liveness", () => Results.Ok("Healthy"));
 
-	app.MapPost("/meeting/addBot", (
-		[FromBody] RequestToAddBotMessage request,
-		[FromServices] IMeetingService meetingService) =>
-	{
-		var result = meetingService.AddBot(request);
-
-		return Results.Ok(new { Success = true, Message = $"Bot added to meeting {request.MeetingId}" });
-	});
-
 	app.MapGet("/meeting/{meetingId}/transcription", (
 		[FromRoute] string meetingId,
 		[FromServices] IMeetingService meetingService) =>

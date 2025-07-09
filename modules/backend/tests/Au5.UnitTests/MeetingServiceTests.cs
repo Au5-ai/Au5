@@ -50,9 +50,49 @@ public class MeetingServiceTests
 			User = new UserDto { Id = Guid.NewGuid() }
 		};
 
-		var result = _service.AddBot(request);
+		var result = _service.RequestToAddBot(request);
 
-		Assert.False(result);
+		Assert.Equal(result, string.Empty);
+	}
+
+	[Fact]
+	public void AddBot_ShouldReturnFalse_IfUserWhoIsNotInMeeting_WantsToAddBot()
+	{
+		var userId = Guid.NewGuid();
+		var meetingId = Guid.NewGuid().ToString();
+		var platform = "Zoom";
+
+		_service.AddUserToMeeting(userId, meetingId, platform);
+		var request = new RequestToAddBotMessage
+		{
+			MeetingId = Guid.NewGuid().ToString(),
+			BotName = "Bot1",
+			User = new UserDto { Id = Guid.NewGuid() }
+		};
+
+		var result = _service.RequestToAddBot(request);
+
+		Assert.Equal(result, string.Empty);
+	}
+
+	[Fact]
+	public void AddBot_ShouldReturnFalse_IfUserIsInMeeting()
+	{
+		var userId = Guid.NewGuid();
+		var meetingId = Guid.NewGuid().ToString();
+		var platform = "Zoom";
+
+		_service.AddUserToMeeting(userId, meetingId, platform);
+		var request = new RequestToAddBotMessage
+		{
+			MeetingId = meetingId,
+			BotName = "Bot1",
+			User = new UserDto { Id = userId }
+		};
+
+		var result = _service.RequestToAddBot(request);
+
+		Assert.NotEqual(result, string.Empty);
 	}
 
 	[Fact]
@@ -92,7 +132,7 @@ public class MeetingServiceTests
 
 		_service.AddUserToMeeting(userId, meetingId, "Teams");
 
-		var success = _service.AddBot(new RequestToAddBotMessage
+		var hash = _service.RequestToAddBot(new RequestToAddBotMessage
 		{
 			MeetingId = meetingId,
 			BotName = "Bot1",
@@ -101,9 +141,10 @@ public class MeetingServiceTests
 
 		var result = _service.GetFullTranscriptionAsJson(meetingId);
 
-		Assert.True(success);
+		Assert.NotEqual(hash, string.Empty);
 		Assert.Equal("Bot1", result.BotName);
 		Assert.Equal(userId, result.CreatorUserId);
+		Assert.Equal(userId, result.BotInviterUserId);
 	}
 
 	[Fact]
@@ -141,7 +182,7 @@ public class MeetingServiceTests
 		var userId = Guid.NewGuid();
 
 		_service.AddUserToMeeting(userId, meetingId, "Zoom");
-		_service.AddBot(new RequestToAddBotMessage
+		_service.RequestToAddBot(new RequestToAddBotMessage
 		{
 			MeetingId = meetingId,
 			BotName = "Bot2",
@@ -290,7 +331,7 @@ public class MeetingServiceTests
 		Assert.Equal(totalEntries, result.Entries.Count);
 
 		// Check some expected normalized timestamps
-		Assert.Equal("00:00:00", result.Entries[0].Time); 
+		Assert.Equal("00:00:00", result.Entries[0].Time);
 		Assert.Equal("00:12:00", result.Entries[10].Time);
 		Assert.Equal("00:36:00", result.Entries[30].Time);
 		Assert.Equal("01:12:00", result.Entries[60].Time);

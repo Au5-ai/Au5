@@ -392,3 +392,7 @@ body {
 .toast.show {
   opacity: 1;
 }
+
+.eye {
+  color: var(--sds-light, #ffffff) var(--sds-dark, #353637);
+}

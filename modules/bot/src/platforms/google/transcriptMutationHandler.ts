@@ -40,14 +40,12 @@ export class TranscriptMutationHandler {
     );
 
     if (!dom) throw new Error("Transcript container not found in DOM");
-    ctx.transcriptContainer = dom.container;
-    ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
     logger.info(
-      `[GoogleMeet][Transcription] Transcript container found: ${
-        ctx.transcriptContainer || "unknown"
-      }`
+      `[GoogleMeet][Transcription] Transcript container found using ${await dom.container?.innerHTML()}`
     );
 
+    ctx.transcriptContainer = dom.container;
+    ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
     return ctx;
   }
 

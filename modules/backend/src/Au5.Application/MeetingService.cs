@@ -26,7 +26,8 @@ public class MeetingService : IMeetingService
 					CreatedAt = DateTime.Now,
 					Platform = platform,
 					Participants = [],
-					Status = MeetingStatus.NotStarted
+					Status = MeetingStatus.NotStarted,
+					CreatorUserId = userId,
 				};
 				_meetings.Add(meeting);
 			}
@@ -39,24 +40,6 @@ public class MeetingService : IMeetingService
 
 			meeting.Users.Add(userId);
 			return meeting;
-		}
-	}
-
-	public bool AddBot(RequestToAddBotMessage request)
-	{
-		lock (_lock)
-		{
-			var meeting = _meetings.FirstOrDefault(m => m.MeetingId == request.MeetingId);
-			if (meeting is null || meeting.IsBotAdded)
-			{
-				return false;
-			}
-
-			meeting.BotName = request.BotName;
-			meeting.CreatorUserId = request.User.Id;
-
-			// Create a Unique Token for the bot and return
-			return true;
 		}
 	}
 
@@ -261,6 +244,17 @@ public class MeetingService : IMeetingService
 		if (meeting is null)
 		{
 			return string.Empty;
+		}
+
+		var userFinded = meeting.Users.Any(u => u == requestToAddBotMessage.User.Id);
+		if (!userFinded)
+		{
+			return string.Empty;
+		}
+
+		if (meeting.IsBotAdded)
+		{
+			return meeting.HashToken;
 		}
 
 		var raw = $"{requestToAddBotMessage.User.Id}{DateTime.Now:O}";

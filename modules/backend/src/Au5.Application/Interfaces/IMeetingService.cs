@@ -4,8 +4,6 @@ public interface IMeetingService
 {
 	Meeting AddUserToMeeting(Guid userId, string meetingId, string platform);
 
-	bool AddBot(RequestToAddBotMessage request);
-
 	void EndMeeting(string meetingId);
 
 	void AddParticipantToMeet(List<string> users, string meetingId);

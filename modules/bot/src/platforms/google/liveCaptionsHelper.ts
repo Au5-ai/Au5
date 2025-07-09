@@ -30,7 +30,7 @@ export class LiveCaptionsHelper {
   private async findLanguageOptionByValue(
     value: string,
     maxRetries = 5,
-    delayMs = 500
+    delayMs = 2000
   ): Promise<void> {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       const clicked = await this.page.evaluate((val: string) => {
@@ -65,7 +65,7 @@ export class LiveCaptionsHelper {
 
   private async getVisibleCaptionsLanguageDropdown(
     maxRetries = 5,
-    delayMs = 500
+    delayMs = 2000
   ): Promise<boolean> {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       const clicked = await this.page.evaluate(() => {
