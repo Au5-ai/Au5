@@ -20,48 +20,81 @@ export class LiveCaptionsHelper {
       return;
     }
 
-    await delay(400);
+    await delay(600);
 
-    await this.getVisibleCaptionsLanguageDropdown();
-
+    const dropdownClicked = await this.getVisibleCaptionsLanguageDropdown();
     await delay(RANDOM_DELAY_MAX);
     await this.findLanguageOptionByValue(languageValue);
   }
 
-  private async findLanguageOptionByValue(value: string): Promise<void> {
-    const clicked = await this.page.evaluate((val: string) => {
-      const option = document.querySelector<HTMLElement>(
-        `[role="option"][data-value="${val}"]`
-      );
-      if (option) {
-        option.click();
-        return true;
-      }
-      return false;
-    }, value);
+  private async findLanguageOptionByValue(
+    value: string,
+    maxRetries = 5,
+    delayMs = 500
+  ): Promise<void> {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      const clicked = await this.page.evaluate((val: string) => {
+        const option = document.querySelector<HTMLElement>(
+          `[role="option"][data-value="${val}"]`
+        );
+        if (option) {
+          option.scrollIntoView({ block: "center" });
+          option.click();
+          return true;
+        }
+        return false;
+      }, value);
 
-    if (clicked) {
-      logger.info(`Language option '${value}' clicked`);
-    } else {
-      logger.warn(`Language option '${value}' not found or not clickable`);
+      if (clicked) {
+        logger.info(`Language option '${value}' clicked (attempt ${attempt})`);
+        return;
+      } else {
+        logger.warn(
+          `Language option '${value}' not found or not clickable (attempt ${attempt})`
+        );
+        if (attempt < maxRetries) {
+          await new Promise((res) => setTimeout(res, delayMs));
+        }
+      }
     }
+
+    logger.error(
+      `Failed to click language option '${value}' after ${maxRetries} retries`
+    );
   }
 
-  private async getVisibleCaptionsLanguageDropdown(): Promise<void> {
-    const clicked = await this.page.evaluate(() => {
-      const dropdown = document.querySelector<HTMLElement>(`[role="combobox"]`);
-      if (dropdown) {
-        dropdown.click();
-        return true;
-      }
-      return false;
-    });
+  private async getVisibleCaptionsLanguageDropdown(
+    maxRetries = 5,
+    delayMs = 500
+  ): Promise<boolean> {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      const clicked = await this.page.evaluate(() => {
+        const dropdown =
+          document.querySelector<HTMLElement>('[role="combobox"]');
+        if (dropdown) {
+          dropdown.click();
+          return true;
+        }
+        return false;
+      });
 
-    if (clicked) {
-      logger.info(`CaptionsLanguageDropdown finded and clicked`);
-    } else {
-      logger.warn(`CaptionsLanguageDropdown not found :(`);
+      if (clicked) {
+        logger.info(
+          `CaptionsLanguageDropdown found and clicked (attempt ${attempt})`
+        );
+        return true;
+      } else {
+        logger.warn(`CaptionsLanguageDropdown not found (attempt ${attempt})`);
+        if (attempt < maxRetries) {
+          await new Promise((res) => setTimeout(res, delayMs));
+        }
+      }
     }
+
+    logger.error(
+      `Failed to find and click CaptionsLanguageDropdown after ${maxRetries} attempts`
+    );
+    return false;
   }
 
   private async findTurnOnCaptionButton(): Promise<ElementHandle<HTMLElement> | null> {
