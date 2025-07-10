@@ -18,6 +18,19 @@ export class MeetingHubClient {
       .withUrl(this.config.service.hubUrl)
       .withAutomaticReconnect()
       .build();
+
+    this.connection.onclose(err => {
+      console.log("onclose fired");
+      this.chatPanel.isOffline();
+    });
+
+    this.connection.onreconnecting(err => {
+      this.chatPanel.isOffline();
+    });
+
+    this.connection.onreconnected(connId => {
+      this.chatPanel.isOnline();
+    });
   }
 
   public startConnection(messageHandler: (msg: IMessage) => void): boolean {
@@ -43,6 +56,7 @@ export class MeetingHubClient {
         this.chatPanel.isOffline();
         console.error("SignalR connection failed:", err);
       });
+
     return false;
   }
 
@@ -52,20 +66,5 @@ export class MeetingHubClient {
     } catch (err) {
       console.error(`[SignalR] Failed to send message (${payload.type}):`, err);
     }
-  }
-
-  public onDisconnect(handler: (error?: Error) => void): void {
-    this.connection.onclose(error => {
-      this.chatPanel.isOffline();
-      handler(error ?? undefined);
-    });
-
-    this.connection.onreconnecting(error => {
-      this.chatPanel.showReconnecting();
-    });
-
-    this.connection.onreconnected(connectionId => {
-      this.chatPanel.isOnline();
-    });
   }
 }

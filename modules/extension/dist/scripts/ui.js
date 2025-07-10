@@ -3324,6 +3324,16 @@ class MeetingHubClient {
     this.meetingId = platform2.getMeetingId();
     this.chatPanel = chatPanel2;
     this.connection = new HubConnectionBuilder().withUrl(this.config.service.hubUrl).withAutomaticReconnect().build();
+    this.connection.onclose((err) => {
+      console.log("onclose fired");
+      this.chatPanel.isOffline();
+    });
+    this.connection.onreconnecting((err) => {
+      this.chatPanel.isOffline();
+    });
+    this.connection.onreconnected((connId) => {
+      this.chatPanel.isOnline();
+    });
   }
   startConnection(messageHandler) {
     this.connection.start().then(() => {
@@ -3353,18 +3363,6 @@ class MeetingHubClient {
     } catch (err) {
       console.error(`[SignalR] Failed to send message (${payload.type}):`, err);
     }
-  }
-  onDisconnect(handler) {
-    this.connection.onclose((error) => {
-      this.chatPanel.isOffline();
-      handler(error ?? void 0);
-    });
-    this.connection.onreconnecting((error) => {
-      this.chatPanel.showReconnecting();
-    });
-    this.connection.onreconnected((connectionId) => {
-      this.chatPanel.isOnline();
-    });
   }
 }
 class UIHandlers {
