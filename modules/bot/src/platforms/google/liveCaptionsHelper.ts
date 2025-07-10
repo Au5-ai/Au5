@@ -1,30 +1,40 @@
 import { ElementHandle, Page } from "playwright";
 import { logger } from "../../utils/logger";
-import { RANDOM_DELAY_MAX } from "./constants";
 import { delay } from "../../common/task";
+import { Google_Caption_Configuration } from "./constants";
 
 /**
  * Helper class to manage live captions in Google Meet.
- * It provides methods to enable captions, select language, and handle UI interactions.
  */
 export class LiveCaptionsHelper {
   constructor(private page: Page) {}
 
   public async enableCaptions(languageValue: string): Promise<void> {
     const turnOnButton = await this.findTurnOnCaptionButton();
-    if (turnOnButton) {
-      await turnOnButton.click({ force: true });
-      logger.info("Turn on captions button clicked in visible tab panel");
-    } else {
-      logger.warn("turnOnButton not found in visible tab panel");
+    if (!turnOnButton) {
+      logger.warn("Turn on captions button not found in visible tab panel.");
       return;
     }
 
-    await delay(600);
+    await turnOnButton.click({ force: true });
+    logger.info('Clicked on "Turn on captions" button.');
+    await delay(700);
 
-    const dropdownClicked = await this.getVisibleCaptionsLanguageDropdown();
-    if (dropdownClicked) {
-      await this.findLanguageOptionByValue(languageValue);
+    const overlayReady = await this.activateLanguageDropdownOverlay();
+    if (!overlayReady) {
+      logger.warn("Overlay not visible, skipping language selection.");
+      return;
+    }
+
+    logger.info("Overlay activated. Clicking combo box.");
+    await this.page.getByRole("combobox").click({ force: true });
+    await delay(700);
+
+    const languageSelected = await this.selectLanguageOption(languageValue);
+    if (languageSelected) {
+      logger.info(`Language "${languageValue}" selected successfully.`);
+    } else {
+      logger.error(`Failed to select language "${languageValue}".`);
     }
   }
 
@@ -42,68 +52,37 @@ export class LiveCaptionsHelper {
       return null;
     });
 
-    // Convert JSHandle to ElementHandle if it's not null
-    const element = handle.asElement();
-    return element ? (element as ElementHandle<HTMLElement>) : null;
+    return handle.asElement() as ElementHandle<HTMLElement> | null;
   }
 
-  private async getVisibleCaptionsLanguageDropdown(
-    maxRetries = 3,
-    delayMs = 500
-  ): Promise<boolean> {
-    const dropdownLocator = this.page.locator('[role="combobox"]');
+  private async activateLanguageDropdownOverlay(): Promise<boolean> {
+    return await this.page.evaluate(() => {
+      const overlay = document.querySelector(
+        Google_Caption_Configuration.transcriptSelectors.overlay
+      ) as HTMLElement;
 
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      const isVisible = await dropdownLocator.isVisible();
-
-      if (isVisible) {
-        try {
-          await dropdownLocator.click({ force: true });
-          logger.info(`CaptionsLanguageDropdown clicked (attempt ${attempt})`);
-          return true;
-        } catch (err) {
-          logger.warn(`Dropdown found but not clickable (attempt ${attempt})`);
-        }
-      } else {
-        logger.warn(`Dropdown not visible (attempt ${attempt})`);
+      if (overlay) {
+        overlay.style.opacity = "1";
+        overlay.style.pointerEvents = "auto";
+        overlay.style.display = "block";
+        return true;
       }
-
-      if (attempt < maxRetries) {
-        await this.page.waitForTimeout(delayMs);
-      }
-    }
-
-    logger.error(
-      `Failed to click CaptionsLanguageDropdown after ${maxRetries} attempts`
-    );
-    return false;
+      return false;
+    });
   }
 
-  private async findLanguageOptionByValue(
-    value: string,
-    maxRetries = 3,
-    delayMs = 500
-  ): Promise<void> {
-    const optionLocator = this.page.locator(
-      `[role="option"][data-value="${value}"]`
-    );
+  private async selectLanguageOption(languageValue: string): Promise<boolean> {
+    return await this.page.evaluate((value) => {
+      const option = document.querySelector(
+        `[role="option"][data-value="${value}"]`
+      ) as HTMLElement;
 
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        await optionLocator.click({ force: true });
-        logger.info(`Language option '${value}' clicked (attempt ${attempt})`);
-        return;
-      } catch (err) {
-        logger.warn(
-          `Language option '${value}' not clickable (attempt ${attempt})`
-        );
-
-        await this.page.waitForTimeout(delayMs);
+      if (option) {
+        option.scrollIntoView({ block: "center" });
+        option.click();
+        return true;
       }
-    }
-
-    logger.error(
-      `Failed to click language option '${value}' after ${maxRetries} retries`
-    );
+      return false;
+    }, languageValue);
   }
 }

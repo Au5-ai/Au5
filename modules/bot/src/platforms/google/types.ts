@@ -17,5 +17,6 @@ export interface GoogleCaptionConfiguration {
   transcriptSelectors: {
     aria: string;
     fallback: string;
+    overlay: string;
   };
 }
