@@ -128,7 +128,6 @@ public class MeetingService : IMeetingService
 
 			meeting.Entries.Add(new Entry()
 			{
-				MeetingId = entry.MeetingId,
 				BlockId = entry.BlockId,
 				Content = entry.Content,
 				Speaker = entry.Speaker.ToUser(),
@@ -152,7 +151,6 @@ public class MeetingService : IMeetingService
 		{
 			meeting.Entries.Add(new Entry()
 			{
-				MeetingId = entry.MeetingId,
 				BlockId = entry.BlockId,
 				Content = entry.Content,
 				Speaker = entry.Speaker.ToUser(),

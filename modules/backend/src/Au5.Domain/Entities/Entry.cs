@@ -2,8 +2,6 @@ namespace Au5.Domain.Entities;
 
 public class Entry
 {
-	public string MeetingId { get; set; }
-
 	public string BlockId { get; set; }
 
 	public User Speaker { get; set; }
