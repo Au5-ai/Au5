@@ -2,6 +2,7 @@ using System.Text;
 using Au5.Application;
 using Au5.Application.Interfaces;
 using Au5.Application.Models.Authentication;
+using Au5.BackEnd.Hubs;
 using Au5.Infrastructure.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -25,6 +26,7 @@ public static class ConfigServices
 	public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration config)
 	{
 		services.Configure<JwtSettings>(config.GetSection("JwtSettings"));
+		services.AddSingleton<Microsoft.AspNetCore.SignalR.IUserIdProvider, UserIdProvider>();
 
 		var jwtSettings = config.GetSection("JwtSettings").Get<JwtSettings>();
 		var key = Encoding.UTF8.GetBytes(jwtSettings.SecretKey);
@@ -45,6 +47,23 @@ public static class ConfigServices
 				ValidIssuer = jwtSettings.Issuer,
 				ValidAudience = jwtSettings.Audience,
 				IssuerSigningKey = new SymmetricSecurityKey(key)
+			};
+
+			options.Events = new JwtBearerEvents
+			{
+				OnMessageReceived = context =>
+				{
+					var accessToken = context.Request.Query["access_token"];
+
+					var path = context.HttpContext.Request.Path;
+					if (!string.IsNullOrEmpty(accessToken) &&
+						path.StartsWithSegments("/meetinghub"))
+					{
+						context.Token = accessToken;
+					}
+
+					return Task.CompletedTask;
+				}
 			};
 		});
 
