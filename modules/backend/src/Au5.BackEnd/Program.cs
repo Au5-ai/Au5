@@ -1,11 +1,10 @@
+using System.Security.Claims;
 using Au5.Application.Interfaces;
 using Au5.Application.Models.Authentication;
 using Au5.Application.Models.Messages;
 using Au5.BackEnd;
 using Au5.BackEnd.Hubs;
 using Au5.Domain.Entities;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +14,9 @@ builder.AddServiceDefaults();
 	builder.Services.AddSignalR();
 	builder.Services.AddJwtAuthentication(builder.Configuration);
 
-	builder.Services.RegisterApplicationServices();
+	builder.Services.RegisterApplicationServices()
+		.RegisterInfrastrustureServices();
+
 	builder.Services.AddCors(options =>
 	{
 		options.AddDefaultPolicy(policy =>
@@ -36,6 +37,7 @@ builder.AddServiceDefaults();
 				.AllowCredentials();
 		});
 	});
+	builder.Services.AddControllers();
 	builder.Logging.ClearProviders();
 	builder.Logging.AddConsole();
 	builder.Logging.SetMinimumLevel(LogLevel.Information);
@@ -47,6 +49,9 @@ app.MapDefaultEndpoints();
 {
 	app.UseCors("AllowAllWithCredentials");
 	app.UseRouting();
+
+	app.UseAuthentication();
+	app.UseAuthorization();
 
 	app.UseCors();
 	app.MapHub<MeetingHub>("/meetinghub").AllowAnonymous();
@@ -80,20 +85,7 @@ app.MapDefaultEndpoints();
 		return Results.Ok(reactions);
 	});
 
-	app.MapPost("/api/login", async (LoginRequestDto request, ITokenService tokenService) =>
-	{
-		await Task.CompletedTask;
-
-		// todo: Fake check – replace with real user validation
-		if (request.Username == "admin" && request.Password == "admin")
-		{
-			var token = tokenService.GenerateToken(request.Username, "Admin");
-
-			return Results.Ok(new { token });
-		}
-
-		return Results.Unauthorized();
-	});
+	app.MapControllers();
 
 	app.Run();
 }
