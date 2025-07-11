@@ -205,7 +205,7 @@ export class UIHandlers {
             } else {
               clearInterval(interval);
               disabled = false;
-              addBotText.textContent = "Add bot here";
+              addBotText.textContent = "Add bot";
             }
           }, 1000);
         }
