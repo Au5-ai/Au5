@@ -18,15 +18,15 @@ public class Meeting
 
 	public bool IsBotAdded { get; set; }
 
-	public List<Entry> Entries { get; set; }
-
-	public List<Guid> Users { get; set; }
-
-	public List<string> Participants { get; set; }
-
 	public DateTime CreatedAt { get; set; }
 
 	public MeetingStatus Status { get; set; }
+
+	public List<string> Participants { get; set; }
+
+	public List<Entry> Entries { get; set; }
+
+	public List<Guid> Users { get; set; }
 
 	public bool IsActive()
 		=> Status == MeetingStatus.Recording || Status == MeetingStatus.Paused;
