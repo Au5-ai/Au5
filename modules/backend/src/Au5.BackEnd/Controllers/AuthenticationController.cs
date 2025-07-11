@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using Au5.Application.Interfaces;
+using Au5.Application.Models;
 using Au5.Application.Models.Authentication;
+using Au5.BackEnd.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +25,13 @@ public class AuthenticationController : ControllerBase
 		// todo: Fake check – replace with real user validation
 		if (request.Username == "admin" && request.Password == "admin")
 		{
-			var token = _tokenService.GenerateToken(request.Username, "Admin");
+			UserDto user = new()
+			{
+				Id = Guid.NewGuid(),
+				FullName = "Admin User",
+				PictureUrl = "https://example.com/admin.png",
+			};
+			var token = _tokenService.GenerateToken(user, "Admin");
 			return Ok(new { token });
 		}
 
@@ -34,7 +42,7 @@ public class AuthenticationController : ControllerBase
 	[HttpGet("test-auth")]
 	public IActionResult TestAuth()
 	{
-		var username = User.Identity?.Name;
+		var username = User.ToUserDto();
 		var role = User.FindFirst(ClaimTypes.Role)?.Value;
 		return Ok(new
 		{
