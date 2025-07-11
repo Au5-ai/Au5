@@ -1,9 +1,11 @@
 using Au5.Application.Interfaces;
+using Au5.Application.Models.Authentication;
 using Au5.Application.Models.Messages;
 using Au5.BackEnd;
 using Au5.BackEnd.Hubs;
 using Au5.Domain.Entities;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 {
 	builder.Services.AddSignalR();
+	builder.Services.AddJwtAuthentication(builder.Configuration);
 
 	builder.Services.RegisterApplicationServices();
 	builder.Services.AddCors(options =>
@@ -75,6 +78,21 @@ app.MapDefaultEndpoints();
 		];
 
 		return Results.Ok(reactions);
+	});
+
+	app.MapPost("/api/login", async (LoginRequestDto request, ITokenService tokenService) =>
+	{
+		await Task.CompletedTask;
+
+		// todo: Fake check – replace with real user validation
+		if (request.Username == "admin" && request.Password == "admin")
+		{
+			var token = tokenService.GenerateToken(request.Username, "Admin");
+
+			return Results.Ok(new { token });
+		}
+
+		return Results.Unauthorized();
 	});
 
 	app.Run();

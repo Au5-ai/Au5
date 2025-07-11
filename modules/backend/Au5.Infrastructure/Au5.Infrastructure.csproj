@@ -6,4 +6,13 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\Au5.Application\Au5.Application.csproj" />
+  </ItemGroup>
+
 </Project>
