@@ -1,12 +1,14 @@
-﻿namespace Au5.Application.Models.Messages;
+namespace Au5.Application.Models.Messages;
 
 public class ReactionAppliedMessage : Message
 {
-	public override string Type => MessageTypes.ReactionApplied;
+	public override string Type => MessageTypesConstants.ReactionApplied;
 
-	public string BlockId { get; set; }
+	public int ReactionId { get; set; }
 
-	public UserDto User { get; set; }
+	public Guid BlockId { get; set; }
+
+	public Participant User { get; set; }
 
 	public string ReactionType { get; set; }
 }

@@ -1,6 +1,6 @@
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
-using Au5.Domain.Entities;
 
 namespace Au5.Application;
 
@@ -9,41 +9,44 @@ public class MeetingService : IMeetingService
 	private static readonly Lock _lock = new();
 	private static readonly List<Meeting> _meetings = [];
 
-	public Meeting AddUserToMeeting(Guid userId, string meetingId, string platform)
+	public Meeting AddUserToMeeting(UserJoinedInMeetingMessage msg)
 	{
 		lock (_lock)
 		{
-			var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId && m.CreatedAt.Date == DateTime.Now.Date);
+			var meeting = _meetings.FirstOrDefault(m => m.MeetingId == msg.MeetingId && m.CreatedAt.Date == DateTime.Now.Date);
 
 			if (meeting is null || (meeting is not null && meeting.IsEnded()))
 			{
 				meeting = new Meeting
 				{
 					Id = Guid.NewGuid(),
-					MeetingId = meetingId,
+					MeetingId = msg.MeetingId,
 					Users = [],
 					Entries = [],
 					CreatedAt = DateTime.Now,
-					Platform = platform,
+					Platform = msg.Platform,
 					Participants = [],
 					Status = MeetingStatus.NotStarted,
-					CreatorUserId = userId,
+					CreatorUserId = msg.User.Id,
 				};
 				_meetings.Add(meeting);
 			}
 
-			var existingUser = meeting.Users.Any(u => u == userId);
+			var existingUser = meeting.Users.Any(u => u.Id == msg.User.Id);
 			if (existingUser)
 			{
 				return meeting;
 			}
 
-			meeting.Users.Add(userId);
+			meeting.Users.Add(new User()
+			{
+				Id = msg.User.Id
+			});
 			return meeting;
 		}
 	}
 
-	public void AddParticipantToMeet(List<string> users, string meetingId)
+	public void AddParticipantToMeet(List<Participant> users, string meetingId)
 	{
 		lock (_lock)
 		{
@@ -130,7 +133,7 @@ public class MeetingService : IMeetingService
 			{
 				BlockId = entry.BlockId,
 				Content = entry.Content,
-				Speaker = entry.Speaker.ToUser(),
+				Participant = entry.Participant,
 				Timestamp = entry.Timestamp,
 				EntryType = entry.EntryType,
 				Reactions = []
@@ -153,7 +156,7 @@ public class MeetingService : IMeetingService
 			{
 				BlockId = entry.BlockId,
 				Content = entry.Content,
-				Speaker = entry.Speaker.ToUser(),
+				Participant = entry.Participant,
 				Timestamp = entry.Timestamp,
 				EntryType = entry.EntryType,
 				Reactions = []
@@ -173,9 +176,8 @@ public class MeetingService : IMeetingService
 			.Select(e => new
 			{
 				Entry = e,
-				ParsedTimestamp = DateTime.TryParse(e.Timestamp, out var dt) ? dt : (DateTime?)null
+				ParsedTimestamp = e.Timestamp
 			})
-			.Where(x => x.ParsedTimestamp.HasValue)
 			.OrderBy(x => x.ParsedTimestamp)
 			.ToList();
 
@@ -184,12 +186,12 @@ public class MeetingService : IMeetingService
 			return meeting;
 		}
 
-		var startTime = parsedEntries.First().ParsedTimestamp.Value;
+		var startTime = parsedEntries.First().ParsedTimestamp;
 
 		foreach (var x in parsedEntries)
 		{
-			var elapsed = x.ParsedTimestamp.Value - startTime;
-			x.Entry.Time = elapsed.ToString(@"hh\:mm\:ss");
+			var elapsed = x.ParsedTimestamp - startTime;
+			x.Entry.Timeline = elapsed.ToString(@"hh\:mm\:ss");
 		}
 
 		return meeting;
@@ -211,12 +213,13 @@ public class MeetingService : IMeetingService
 				return;
 			}
 
-			var existingReaction = entryBlock.Reactions.FirstOrDefault(r => r.ReactionType == reaction.ReactionType);
+			var existingReaction = entryBlock.Reactions.FirstOrDefault(r => r.Id == reaction.ReactionId);
 			if (existingReaction is null)
 			{
-				existingReaction = new Reactions
+				existingReaction = new AppliedReactions
 				{
-					ReactionType = reaction.ReactionType,
+					EntryId = entryBlock.Id,
+					ReactionId = reaction.ReactionId,
 					Users = [reaction.User.Id]
 				};
 				entryBlock.Reactions.Add(existingReaction);
@@ -244,7 +247,7 @@ public class MeetingService : IMeetingService
 			return string.Empty;
 		}
 
-		var userFinded = meeting.Users.Any(u => u == requestToAddBotMessage.User.Id);
+		var userFinded = meeting.Users.Any(u => u.Id == requestToAddBotMessage.User.Id);
 		if (!userFinded)
 		{
 			return string.Empty;

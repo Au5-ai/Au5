@@ -11,7 +11,8 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="StyleCop.Analyzers" >
+		<PackageReference Include="Microsoft.EntityFrameworkCore" />
+		<PackageReference Include="StyleCop.Analyzers">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>

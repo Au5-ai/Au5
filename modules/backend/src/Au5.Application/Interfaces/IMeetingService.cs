@@ -2,11 +2,11 @@ namespace Au5.Application.Interfaces;
 
 public interface IMeetingService
 {
-	Meeting AddUserToMeeting(Guid userId, string meetingId, string platform);
+	Meeting AddUserToMeeting(UserJoinedInMeetingMessage userJoined);
 
 	void EndMeeting(string meetingId);
 
-	void AddParticipantToMeet(List<string> users, string meetingId);
+	void AddParticipantToMeet(List<Participant> users, string meetingId);
 
 	string BotIsAdded(string meetingId);
 

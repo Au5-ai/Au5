@@ -327,6 +327,7 @@ export class ChatPanel {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("hidden");
   }
+
   private getReactionsHtml(blockId: string): string {
     if (!this.reactions || this.reactions.length === 0) {
       return "";

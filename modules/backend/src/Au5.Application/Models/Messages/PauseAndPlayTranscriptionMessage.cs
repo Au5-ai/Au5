@@ -1,10 +1,10 @@
-﻿namespace Au5.Application.Models.Messages;
+namespace Au5.Application.Models.Messages;
 
 public class PauseAndPlayTranscriptionMessage : Message
 {
-	public override string Type => MessageTypes.PauseAndPlayTranscription;
+	public override string Type => MessageTypesConstants.PauseAndPlayTranscription;
 
-	public UserDto User { get; set; }
+	public Participant User { get; set; }
 
 	public bool IsPaused { get; set; }
 }

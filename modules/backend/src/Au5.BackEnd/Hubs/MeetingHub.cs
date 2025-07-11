@@ -15,7 +15,7 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 			return;
 		}
 
-		var meeting = meetingService.AddUserToMeeting(msg.User.Id, msg.MeetingId, msg.Platform);
+		var meeting = meetingService.AddUserToMeeting(msg);
 		if (meeting is not null && meeting.IsActive() && meeting.IsBotAdded)
 		{
 			await Clients.Caller.SendAsync(METHOD, new MeetingIsActiveMessage()
