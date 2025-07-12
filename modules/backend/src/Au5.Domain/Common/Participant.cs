@@ -7,4 +7,6 @@ public class Participant
 	public string FullName { get; set; }
 
 	public string PictureUrl { get; set; }
+
+	public bool IsKnownUser { get; set; }
 }

@@ -13,14 +13,14 @@ public class MeetingService : IMeetingService
 	{
 		lock (_lock)
 		{
-			var meeting = _meetings.FirstOrDefault(m => m.MeetingId == msg.MeetingId && m.CreatedAt.Date == DateTime.Now.Date);
+			var meeting = _meetings.FirstOrDefault(m => m.MeetId == msg.MeetId && m.CreatedAt.Date == DateTime.Now.Date);
 
 			if (meeting is null || (meeting is not null && meeting.IsEnded()))
 			{
 				meeting = new Meeting
 				{
 					Id = Guid.NewGuid(),
-					MeetingId = msg.MeetingId,
+					MeetId = msg.MeetId,
 					Entries = [],
 					CreatedAt = DateTime.Now,
 					Platform = msg.Platform,
@@ -31,15 +31,15 @@ public class MeetingService : IMeetingService
 				_meetings.Add(meeting);
 			}
 
-			var existingUser = meeting.Participants.Any(u => u.Id == msg.User.Id);
+			var existingUser = meeting.Participants.Any(u => u.UserId == msg.User.Id);
 			if (existingUser)
 			{
 				return meeting;
 			}
 
-			meeting.Participants.Add(new Participant()
+			meeting.Participants.Add(new ParticipantInMeeting()
 			{
-				Id = msg.User.Id
+				UserId = msg.User.Id
 			});
 			return meeting;
 		}
@@ -49,19 +49,25 @@ public class MeetingService : IMeetingService
 	{
 		lock (_lock)
 		{
-			var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+			var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetingId);
 			if (meeting is null)
 			{
 				return;
 			}
 
-			var delta = users.Except(meeting.Participants).ToList();
-			if (delta.Count is 0)
+			foreach (var item in users)
 			{
-				return;
+				if (!meeting.Participants.Any(x => x.UserId == item.Id))
+				{
+					meeting.Participants.Add(new ParticipantInMeeting
+					{
+						MeetingId = meeting.Id,
+						FullName = item.IsKnownUser ? string.Empty : item.FullName,
+						PictureUrl = item.IsKnownUser ? string.Empty : item.PictureUrl,
+						UserId = item.Id
+					});
+				}
 			}
-
-			meeting.Participants.AddRange(delta);
 		}
 	}
 
@@ -69,7 +75,7 @@ public class MeetingService : IMeetingService
 	{
 		lock (_lock)
 		{
-			var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+			var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetingId);
 			if (meeting is null || meeting.Status == MeetingStatus.Ended)
 			{
 				return;
@@ -81,7 +87,7 @@ public class MeetingService : IMeetingService
 
 	public string BotIsAdded(string meetingId)
 	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+		var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetingId);
 		if (meeting is null)
 		{
 			return string.Empty;
@@ -101,7 +107,7 @@ public class MeetingService : IMeetingService
 
 	public bool PauseMeeting(string meetingId, bool isPause)
 	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+		var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetingId);
 		if (meeting is null)
 		{
 			return false;
@@ -113,7 +119,7 @@ public class MeetingService : IMeetingService
 
 	public bool UpsertBlock(EntryMessage entry)
 	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetingId == entry.MeetingId);
+		var meeting = _meetings.FirstOrDefault(m => m.MeetId == entry.MeetId);
 		if (meeting is null || meeting.IsPaused())
 		{
 			return false;
@@ -132,7 +138,7 @@ public class MeetingService : IMeetingService
 			{
 				BlockId = entry.BlockId,
 				Content = entry.Content,
-				Participant = entry.Participant,
+				ParticipantId = entry.Participant.Id,
 				Timestamp = entry.Timestamp,
 				EntryType = entry.EntryType,
 				Reactions = []
@@ -143,7 +149,7 @@ public class MeetingService : IMeetingService
 
 	public void InsertBlock(EntryMessage entry)
 	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetingId == entry.MeetingId);
+		var meeting = _meetings.FirstOrDefault(m => m.MeetId == entry.MeetId);
 		if (meeting is null)
 		{
 			return;
@@ -155,7 +161,7 @@ public class MeetingService : IMeetingService
 			{
 				BlockId = entry.BlockId,
 				Content = entry.Content,
-				Participant = entry.Participant,
+				ParticipantId = entry.Participant.Id,
 				Timestamp = entry.Timestamp,
 				EntryType = entry.EntryType,
 				Reactions = []
@@ -165,7 +171,7 @@ public class MeetingService : IMeetingService
 
 	public Meeting GetFullTranscriptionAsJson(string meetingId)
 	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetingId == meetingId);
+		var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetingId);
 		if (meeting is null || meeting.Entries.Count == 0)
 		{
 			return meeting;
@@ -198,7 +204,7 @@ public class MeetingService : IMeetingService
 
 	public void AppliedReaction(ReactionAppliedMessage reaction)
 	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetingId == reaction.MeetingId);
+		var meeting = _meetings.FirstOrDefault(m => m.MeetId == reaction.MeetId);
 		if (meeting is null)
 		{
 			return;
@@ -240,13 +246,13 @@ public class MeetingService : IMeetingService
 
 	public string RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage)
 	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetingId == requestToAddBotMessage.MeetingId);
+		var meeting = _meetings.FirstOrDefault(m => m.MeetId == requestToAddBotMessage.MeetId);
 		if (meeting is null)
 		{
 			return string.Empty;
 		}
 
-		var userFinded = meeting.Participants.Any(u => u.Id == requestToAddBotMessage.User.Id);
+		var userFinded = meeting.Participants.Any(u => u.UserId == requestToAddBotMessage.User.Id);
 		if (!userFinded)
 		{
 			return string.Empty;

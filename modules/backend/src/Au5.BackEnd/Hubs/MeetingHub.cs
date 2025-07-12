@@ -12,7 +12,7 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 
 	public async Task UserJoinedInMeeting(UserJoinedInMeetingMessage msg)
 	{
-		if (string.IsNullOrWhiteSpace(msg.MeetingId) || msg.User is null || string.IsNullOrWhiteSpace(Context.ConnectionId))
+		if (string.IsNullOrWhiteSpace(msg.MeetId) || msg.User is null || string.IsNullOrWhiteSpace(Context.ConnectionId))
 		{
 			return;
 		}
@@ -23,23 +23,23 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 			await Clients.Caller.SendAsync(METHOD, new MeetingIsActiveMessage()
 			{
 				BotName = meeting.BotName,
-				MeetingId = msg.MeetingId,
+				MeetId = msg.MeetId,
 			});
 		}
 
-		await Groups.AddToGroupAsync(Context.ConnectionId, msg.MeetingId);
-		await BroadcastToGroupExceptCallerAsync(msg.MeetingId, msg);
+		await Groups.AddToGroupAsync(Context.ConnectionId, msg.MeetId);
+		await BroadcastToGroupExceptCallerAsync(msg.MeetId, msg);
 	}
 
 	public async Task RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage)
 	{
-		if (string.IsNullOrWhiteSpace(requestToAddBotMessage.MeetingId) || requestToAddBotMessage.User is null)
+		if (string.IsNullOrWhiteSpace(requestToAddBotMessage.MeetId) || requestToAddBotMessage.User is null)
 		{
 			return;
 		}
 
 		meetingService.RequestToAddBot(requestToAddBotMessage);
-		await BroadcastToGroupExceptCallerAsync(requestToAddBotMessage.MeetingId, requestToAddBotMessage);
+		await BroadcastToGroupExceptCallerAsync(requestToAddBotMessage.MeetId, requestToAddBotMessage);
 	}
 
 	public async Task BotJoinedInMeeting(string meetingId)
@@ -58,20 +58,20 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 		var canBroadcast = meetingService.UpsertBlock(transcription);
 		if (canBroadcast)
 		{
-			await BroadcastToGroupExceptCallerAsync(transcription.MeetingId, transcription);
+			await BroadcastToGroupExceptCallerAsync(transcription.MeetId, transcription);
 		}
 	}
 
 	public async Task ReactionApplied(ReactionAppliedMessage reaction)
 	{
 		meetingService.AppliedReaction(reaction);
-		await BroadcastToGroupExceptCallerAsync(reaction.MeetingId, reaction);
+		await BroadcastToGroupExceptCallerAsync(reaction.MeetId, reaction);
 	}
 
 	public async Task PauseAndPlayTranscription(PauseAndPlayTranscriptionMessage message)
 	{
-		meetingService.PauseMeeting(message.MeetingId, message.IsPaused);
-		await BroadcastToGroupExceptCallerAsync(message.MeetingId, message);
+		meetingService.PauseMeeting(message.MeetId, message.IsPaused);
+		await BroadcastToGroupExceptCallerAsync(message.MeetId, message);
 	}
 
 	public override async Task OnDisconnectedAsync(Exception exception)

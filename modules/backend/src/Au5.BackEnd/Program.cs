@@ -54,7 +54,7 @@ app.MapDefaultEndpoints();
 	{
 		var result = meetingService.RequestToAddBot(request);
 
-		return Results.Ok(new { Success = true, Message = $"Bot added to meeting {request.MeetingId}", Data = result });
+		return Results.Ok(new { Success = true, Message = $"Bot added to meeting {request.MeetId}", Data = result });
 	});
 
 	app.MapGet("/meeting/{meetingId}/transcription", (

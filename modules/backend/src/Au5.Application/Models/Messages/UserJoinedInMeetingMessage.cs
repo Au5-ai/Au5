@@ -1,5 +1,3 @@
-using Au5.Domain.Common;
-
 namespace Au5.Application.Models.Messages;
 
 public class UserJoinedInMeetingMessage : Message

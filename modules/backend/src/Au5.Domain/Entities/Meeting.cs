@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using Au5.Domain.Common;
 
 namespace Au5.Domain.Entities;
 
@@ -8,7 +7,7 @@ public class Meeting
 {
 	public Guid Id { get; set; }
 
-	public string MeetingId { get; set; }
+	public string MeetId { get; set; }
 
 	public Guid CreatorUserId { get; set; }
 
@@ -29,9 +28,9 @@ public class Meeting
 
 	public MeetingStatus Status { get; set; }
 
-	public List<Participant> Participants { get; set; }
+	public ICollection<ParticipantInMeeting> Participants { get; set; }
 
-	public List<Entry> Entries { get; set; }
+	public ICollection<Entry> Entries { get; set; }
 
 	public bool IsActive()
 		=> Status == MeetingStatus.Recording || Status == MeetingStatus.Paused;

@@ -1,5 +1,6 @@
 namespace Au5.Domain.Entities;
 
+[Entity]
 public class AppliedReactions
 {
 	public int Id { get; set; }
