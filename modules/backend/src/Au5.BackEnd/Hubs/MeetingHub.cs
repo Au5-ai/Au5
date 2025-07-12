@@ -1,8 +1,10 @@
 using Au5.Application.Interfaces;
 using Au5.Application.Models.Messages;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Hubs;
 
+[Authorize]
 public class MeetingHub(IMeetingService meetingService) : Hub
 {
 	private const string METHOD = "ReceiveMessage";
