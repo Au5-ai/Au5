@@ -7,15 +7,13 @@ public static class ClaimsPrincipalExtensions
 {
 	public static Participant ToParticipant(this ClaimsPrincipal principal)
 	{
-		var idClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-		var fullName = principal.FindFirst(ClaimTypes.Name)?.Value;
-		var pictureUrl = principal.FindFirst("pictureUrl")?.Value;
+		ArgumentNullException.ThrowIfNull(principal);
 
 		return new Participant
 		{
-			Id = Guid.TryParse(idClaim, out var guid) ? guid : Guid.Empty,
-			FullName = fullName ?? string.Empty,
-			PictureUrl = pictureUrl ?? string.Empty
+			Id = Guid.TryParse(principal.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var id) ? id : Guid.Empty,
+			FullName = principal.FindFirstValue(ClaimTypes.Name) ?? string.Empty,
+			PictureUrl = principal.FindFirstValue("pictureUrl") ?? string.Empty
 		};
 	}
 }

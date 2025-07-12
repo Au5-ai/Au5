@@ -25,8 +25,4 @@
     <ProjectReference Include="..\Au5.Domain\Au5.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Persistence\Migrations\" />
-  </ItemGroup>
-
 </Project>

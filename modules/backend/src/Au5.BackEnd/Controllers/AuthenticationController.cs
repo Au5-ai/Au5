@@ -3,6 +3,7 @@ using Au5.Application.Models.Authentication;
 using Au5.BackEnd.Extensions;
 using Au5.Domain.Common;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Au5.BackEnd.Controllers;
 
@@ -15,33 +16,39 @@ public class AuthenticationController(ITokenService tokenService) : ControllerBa
 	[HttpPost("login")]
 	public IActionResult Login([FromBody] LoginRequestDto request)
 	{
-		// todo: Fake check – replace with real user validation
-		if (request.Username == "admin" && request.Password == "admin")
+		// TODO: Replace with real user validation (e.g., from database or identity provider)
+		const string demoUsername = "admin";
+		const string demoPassword = "admin";
+
+		if (request.Username == demoUsername && request.Password == demoPassword)
 		{
-			Participant user = new()
+			var user = new Participant
 			{
 				Id = Guid.NewGuid(),
-				FullName = "Admin User",
-				PictureUrl = "https://example.com/admin.png",
+				FullName = "Mohammad Karimi",
+				PictureUrl = "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
 			};
+
 			var token = _tokenService.GenerateToken(user, "Admin");
+
 			return Ok(new { token });
 		}
 
-		return Unauthorized();
+		return Unauthorized(new { message = "Invalid username or password" });
 	}
 
 	[Authorize]
 	[HttpGet("test-auth")]
 	public IActionResult TestAuth()
 	{
-		var username = User.ToParticipant();
-		var role = User.FindFirst(ClaimTypes.Role)?.Value;
+		var participant = User.ToParticipant();
+		var role = User.FindFirstValue(ClaimTypes.Role) ?? "Unknown";
+
 		return Ok(new
 		{
 			message = "JWT authentication successful!",
-			user = username,
-			role = role
+			user = participant,
+			role
 		});
 	}
 }
