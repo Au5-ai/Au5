@@ -11,7 +11,7 @@ namespace Au5.BackEnd.Controllers;
 [Route("authentication")]
 public class AuthenticationController(ITokenService tokenService) : ControllerBase
 {
-	private readonly ITokenService _tokenService = tokenService;
+	private readonly ITokenService tokenService = tokenService;
 
 	[HttpPost("login")]
 	public IActionResult Login([FromBody] LoginRequestDto request)
@@ -29,7 +29,7 @@ public class AuthenticationController(ITokenService tokenService) : ControllerBa
 				PictureUrl = "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
 			};
 
-			var token = _tokenService.GenerateToken(user, "Admin");
+			var token = tokenService.GenerateToken(user, "Admin");
 
 			return Ok(new { token });
 		}

@@ -8,10 +8,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Au5.Infrastructure.Persistence.Context;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ILogger<ApplicationDbContext> logger)
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ILogger<ApplicationDbContext> contextLogger)
 	: DbContext(options), IApplicationDbContext
 {
-	private readonly ILogger<ApplicationDbContext> _logger = logger;
+	private readonly ILogger<ApplicationDbContext> logger = contextLogger;
 
 	public new async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 	{
@@ -21,7 +21,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 		}
 		catch (Exception ex)
 		{
-			_logger.LogError(ex, "DataBase_Exception");
+			logger.LogError(ex, "DataBase_Exception");
 			return 0;
 		}
 	}

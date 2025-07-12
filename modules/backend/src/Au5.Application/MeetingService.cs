@@ -6,14 +6,14 @@ namespace Au5.Application;
 
 public class MeetingService : IMeetingService
 {
-	private static readonly Lock _lock = new();
-	private static readonly List<Meeting> _meetings = [];
+	private static readonly Lock LockObject = new();
+	private static readonly List<Meeting> Meetings = [];
 
 	public Meeting AddUserToMeeting(UserJoinedInMeetingMessage msg)
 	{
-		lock (_lock)
+		lock (LockObject)
 		{
-			var meeting = _meetings.FirstOrDefault(m => m.MeetId == msg.MeetId && m.CreatedAt.Date == DateTime.Now.Date);
+			var meeting = Meetings.FirstOrDefault(m => m.MeetId == msg.MeetId && m.CreatedAt.Date == DateTime.Now.Date);
 
 			if (meeting is null || (meeting is not null && meeting.IsEnded()))
 			{
@@ -28,7 +28,7 @@ public class MeetingService : IMeetingService
 					Status = MeetingStatus.NotStarted,
 					CreatorUserId = msg.User.Id,
 				};
-				_meetings.Add(meeting);
+				Meetings.Add(meeting);
 			}
 
 			var existingUser = meeting.Participants.Any(u => u.UserId == msg.User.Id);
@@ -47,9 +47,9 @@ public class MeetingService : IMeetingService
 
 	public void AddParticipantToMeet(List<Participant> users, string meetingId)
 	{
-		lock (_lock)
+		lock (LockObject)
 		{
-			var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetingId);
+			var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetingId);
 			if (meeting is null)
 			{
 				return;
@@ -73,9 +73,9 @@ public class MeetingService : IMeetingService
 
 	public void EndMeeting(string meetingId)
 	{
-		lock (_lock)
+		lock (LockObject)
 		{
-			var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetingId);
+			var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetingId);
 			if (meeting is null || meeting.Status == MeetingStatus.Ended)
 			{
 				return;
@@ -87,13 +87,13 @@ public class MeetingService : IMeetingService
 
 	public string BotIsAdded(string meetingId)
 	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetingId);
+		var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetingId);
 		if (meeting is null)
 		{
 			return string.Empty;
 		}
 
-		lock (_lock)
+		lock (LockObject)
 		{
 			if (!meeting.IsBotAdded)
 			{
@@ -107,7 +107,7 @@ public class MeetingService : IMeetingService
 
 	public bool PauseMeeting(string meetingId, bool isPause)
 	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetingId);
+		var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetingId);
 		if (meeting is null)
 		{
 			return false;
@@ -119,13 +119,13 @@ public class MeetingService : IMeetingService
 
 	public bool UpsertBlock(EntryMessage entry)
 	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetId == entry.MeetId);
+		var meeting = Meetings.FirstOrDefault(m => m.MeetId == entry.MeetId);
 		if (meeting is null || meeting.IsPaused())
 		{
 			return false;
 		}
 
-		lock (_lock)
+		lock (LockObject)
 		{
 			var entryBlock = meeting.Entries.FirstOrDefault(e => e.BlockId == entry.BlockId);
 			if (entryBlock is not null)
@@ -149,13 +149,13 @@ public class MeetingService : IMeetingService
 
 	public void InsertBlock(EntryMessage entry)
 	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetId == entry.MeetId);
+		var meeting = Meetings.FirstOrDefault(m => m.MeetId == entry.MeetId);
 		if (meeting is null)
 		{
 			return;
 		}
 
-		lock (_lock)
+		lock (LockObject)
 		{
 			meeting.Entries.Add(new Entry()
 			{
@@ -171,7 +171,7 @@ public class MeetingService : IMeetingService
 
 	public Meeting GetFullTranscriptionAsJson(string meetingId)
 	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetingId);
+		var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetingId);
 		if (meeting is null || meeting.Entries.Count == 0)
 		{
 			return meeting;
@@ -204,13 +204,13 @@ public class MeetingService : IMeetingService
 
 	public void AppliedReaction(ReactionAppliedMessage reaction)
 	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetId == reaction.MeetId);
+		var meeting = Meetings.FirstOrDefault(m => m.MeetId == reaction.MeetId);
 		if (meeting is null)
 		{
 			return;
 		}
 
-		lock (_lock)
+		lock (LockObject)
 		{
 			var entryBlock = meeting.Entries.FirstOrDefault(e => e.BlockId == reaction.BlockId);
 			if (entryBlock is null)
@@ -246,7 +246,7 @@ public class MeetingService : IMeetingService
 
 	public string RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage)
 	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetId == requestToAddBotMessage.MeetId);
+		var meeting = Meetings.FirstOrDefault(m => m.MeetId == requestToAddBotMessage.MeetId);
 		if (meeting is null)
 		{
 			return string.Empty;
