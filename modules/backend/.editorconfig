@@ -53,6 +53,7 @@ dotnet_style_parentheses_in_other_binary_operators = always_for_clarity:silent
 dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity:silent
 dotnet_style_parentheses_in_other_operators = never_if_unnecessary:silent
 dotnet_diagnostic.CA1021.severity = error
+dotnet_diagnostic.CA1823.severity = error
 
 # C# Files
 [*.cs]
@@ -680,7 +681,7 @@ dotnet_diagnostic.SA1313.severity = none
 dotnet_diagnostic.SA1010.severity = none
 dotnet_diagnostic.SA1011.severity = none
 dotnet_diagnostic.SA1503.severity = error
-dotnet_diagnostic.SA1309.severity = none
+dotnet_diagnostic.SA1309.severity = error
 dotnet_diagnostic.SA1124.severity = none
 dotnet_diagnostic.CA1200.severity = none
 csharp_prefer_static_local_function = true:suggestion
@@ -707,6 +708,8 @@ csharp_style_prefer_switch_expression = true:suggestion
 csharp_style_prefer_pattern_matching = true:silent
 csharp_style_prefer_not_pattern = true:suggestion
 dotnet_diagnostic.CA1070.severity = error
+dotnet_diagnostic.SX1309.severity = none
+dotnet_diagnostic.SX1309S.severity = none
 
 [**Tests**/*.cs]
 
