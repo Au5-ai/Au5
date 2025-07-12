@@ -14,4 +14,6 @@ public class User
 	public string Password { get; set; }
 
 	public bool IsActive { get; set; }
+
+	public ICollection<Meeting> Meetings { get; set; }
 }

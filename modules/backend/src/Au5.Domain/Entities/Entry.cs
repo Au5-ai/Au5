@@ -1,6 +1,5 @@
 namespace Au5.Domain.Entities;
 
-[Entity]
 public class Entry
 {
 	public int Id { get; set; }

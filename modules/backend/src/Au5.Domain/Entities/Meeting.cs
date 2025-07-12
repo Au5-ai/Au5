@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Au5.Domain.Common;
 
 namespace Au5.Domain.Entities;
@@ -10,6 +11,9 @@ public class Meeting
 	public string MeetingId { get; set; }
 
 	public Guid CreatorUserId { get; set; }
+
+	[ForeignKey(nameof(CreatorUserId))]
+	public User User { get; set; }
 
 	public Guid BotInviterUserId { get; set; }
 
@@ -28,8 +32,6 @@ public class Meeting
 	public List<Participant> Participants { get; set; }
 
 	public List<Entry> Entries { get; set; }
-
-	public List<User> Users { get; set; }
 
 	public bool IsActive()
 		=> Status == MeetingStatus.Recording || Status == MeetingStatus.Paused;

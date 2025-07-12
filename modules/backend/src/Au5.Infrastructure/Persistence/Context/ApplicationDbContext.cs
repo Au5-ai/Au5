@@ -34,7 +34,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
-		modelBuilder.HasDefaultSchema(EntitySchema.BASE);
 		modelBuilder.RegisterEntities(typeof(EntityAttribute).Assembly);
 		modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 

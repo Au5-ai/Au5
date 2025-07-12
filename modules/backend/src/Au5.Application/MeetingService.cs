@@ -21,7 +21,6 @@ public class MeetingService : IMeetingService
 				{
 					Id = Guid.NewGuid(),
 					MeetingId = msg.MeetingId,
-					Users = [],
 					Entries = [],
 					CreatedAt = DateTime.Now,
 					Platform = msg.Platform,
@@ -32,13 +31,13 @@ public class MeetingService : IMeetingService
 				_meetings.Add(meeting);
 			}
 
-			var existingUser = meeting.Users.Any(u => u.Id == msg.User.Id);
+			var existingUser = meeting.Participants.Any(u => u.Id == msg.User.Id);
 			if (existingUser)
 			{
 				return meeting;
 			}
 
-			meeting.Users.Add(new User()
+			meeting.Participants.Add(new Participant()
 			{
 				Id = msg.User.Id
 			});
@@ -247,7 +246,7 @@ public class MeetingService : IMeetingService
 			return string.Empty;
 		}
 
-		var userFinded = meeting.Users.Any(u => u.Id == requestToAddBotMessage.User.Id);
+		var userFinded = meeting.Participants.Any(u => u.Id == requestToAddBotMessage.User.Id);
 		if (!userFinded)
 		{
 			return string.Empty;

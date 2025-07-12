@@ -9,7 +9,7 @@ public class UserConfig : IEntityTypeConfiguration<User>
 	public void Configure(EntityTypeBuilder<User> builder)
 	{
 		builder.HasKey(t => t.Id)
-			.HasName("PK_Base_User");
+			.HasName("PK_dbo_User");
 
 		builder.Property(x => x.Password)
 			.IsRequired()

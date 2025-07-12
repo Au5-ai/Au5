@@ -10,6 +10,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Ardalis.GuardClauses" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="StyleCop.Analyzers">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -17,12 +21,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Persistence\" />
+    <ProjectReference Include="..\Au5.Application\Au5.Application.csproj" />
+    <ProjectReference Include="..\Au5.Domain\Au5.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Au5.Application\Au5.Application.csproj" />
-    <ProjectReference Include="..\Au5.Domain\Au5.Domain.csproj" />
+    <Folder Include="Persistence\Migrations\" />
   </ItemGroup>
 
 </Project>
