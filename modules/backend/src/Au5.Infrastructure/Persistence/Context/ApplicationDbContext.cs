@@ -1,6 +1,7 @@
 using System.Reflection;
 using Au5.Application.Common.Interfaces;
 using Au5.Domain.Common;
+using Au5.Domain.Entities;
 using Au5.Infrastructure.Persistence.Consts;
 using Au5.Infrastructure.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -41,5 +42,15 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 		{
 			relationship.DeleteBehavior = DeleteBehavior.NoAction;
 		}
+
+		SeedReactions(modelBuilder);
+	}
+
+	private void SeedReactions(ModelBuilder modelBuilder)
+	{
+		modelBuilder.Entity<Reaction>().HasData(
+			new Reaction { Id = 1, Type = "Task", Emoji = "⚡", ClassName = "reaction-task" },
+			new Reaction { Id = 2, Type = "GoodPoint", Emoji = "⭐", ClassName = "reaction-important" },
+			new Reaction { Id = 3, Type = "Goal", Emoji = "🎯", ClassName = "reaction-question" });
 	}
 }
