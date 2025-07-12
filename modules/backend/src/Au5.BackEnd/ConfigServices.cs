@@ -11,18 +11,6 @@ namespace Au5.BackEnd;
 
 public static class ConfigServices
 {
-	public static IServiceCollection RegisterApplicationServices(this IServiceCollection services)
-	{
-		services.AddSingleton<IMeetingService, MeetingService>();
-		return services;
-	}
-
-	public static IServiceCollection RegisterInfrastrustureServices(this IServiceCollection services)
-	{
-		services.AddScoped<ITokenService, TokenService>();
-		return services;
-	}
-
 	public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration config)
 	{
 		services.Configure<JwtSettings>(config.GetSection("JwtSettings"));

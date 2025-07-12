@@ -1,5 +1,7 @@
 using Ardalis.GuardClauses;
 using Au5.Application.Common.Interfaces;
+using Au5.Application.Interfaces;
+using Au5.Infrastructure.Authentication;
 using Au5.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -26,6 +28,8 @@ public static class ConfigureServices
 				connectionString,
 				(db) => { db.MigrationsHistoryTable("MigrationHistory"); });
 		});
+
+		services.AddScoped<ITokenService, TokenService>();
 
 		return services;
 	}

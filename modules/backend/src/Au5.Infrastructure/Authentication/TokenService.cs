@@ -1,11 +1,11 @@
-using System.Text;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using Au5.Application.Interfaces;
+using Au5.Application.Models.Authentication;
+using Au5.Domain.Common;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using Au5.Application.Models;
-using Au5.Application.Models.Authentication;
 
 namespace Au5.Infrastructure.Authentication;
 
@@ -18,7 +18,7 @@ public class TokenService : ITokenService
 		_jwt = jwtOptions.Value;
 	}
 
-	public string GenerateToken(UserDto user, string role)
+	public string GenerateToken(Participant user, string role)
 	{
 		var claims = new[]
 		{
@@ -35,8 +35,7 @@ public class TokenService : ITokenService
 			audience: _jwt.Audience,
 			claims: claims,
 			expires: DateTime.UtcNow.AddMinutes(_jwt.ExpiryMinutes),
-			signingCredentials: creds
-		);
+			signingCredentials: creds);
 
 		return new JwtSecurityTokenHandler().WriteToken(token);
 	}
