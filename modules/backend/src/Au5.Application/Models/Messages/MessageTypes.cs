@@ -1,6 +1,6 @@
-﻿namespace Au5.Application.Models.Messages;
+namespace Au5.Application.Models.Messages;
 
-public static class MessageTypes
+public static class MessageTypesConstants
 {
 	public const string UserJoinedInMeeting = "UserJoinedInMeeting";
 	public const string BotJoinedInMeeting = "BotJoinedInMeeting";

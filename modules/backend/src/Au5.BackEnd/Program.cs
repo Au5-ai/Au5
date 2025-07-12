@@ -6,7 +6,6 @@ using Au5.BackEnd;
 using Au5.BackEnd.Hubs;
 using Au5.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
@@ -17,6 +16,7 @@ builder.AddServiceDefaults();
 	builder.Services.RegisterApplicationServices()
 		.RegisterInfrastrustureServices();
 
+	builder.Services.RegisterApplicationServices().RegisterInfrastructureServices(builder.Configuration);
 	builder.Services.AddCors(options =>
 	{
 		options.AddDefaultPolicy(policy =>
@@ -63,7 +63,7 @@ app.MapDefaultEndpoints();
 	{
 		var result = meetingService.RequestToAddBot(request);
 
-		return Results.Ok(new { Success = true, Message = $"Bot added to meeting {request.MeetingId}" });
+		return Results.Ok(new { Success = true, Message = $"Bot added to meeting {request.MeetingId}", Data = result });
 	});
 
 	app.MapGet("/meeting/{meetingId}/transcription", (
@@ -76,13 +76,8 @@ app.MapDefaultEndpoints();
 
 	app.MapGet("/reactions", () =>
 	{
-		List<Reaction> reactions = [
-			new Reaction() { Type = "Task", Emoji = "⚡", ClassName = "reaction-task" },
-			new Reaction() { Type = "GoodPoint", Emoji = "⭐", ClassName = "reaction-important" },
-			new Reaction() { Type = "Goal", Emoji = "🎯", ClassName = "reaction-question" }
-		];
-
-		return Results.Ok(reactions);
+		ReactionService reactionService = new();
+		return Results.Ok(reactionService.GetAll());
 	});
 
 	app.MapControllers();

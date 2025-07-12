@@ -1,10 +1,10 @@
-﻿namespace Au5.Application.Models.Messages;
+namespace Au5.Application.Models.Messages;
 
 public class RequestToAddBotMessage : Message
 {
-	public override string Type => MessageTypes.RequestToAddBot;
+	public override string Type => MessageTypesConstants.RequestToAddBot;
 
-	public UserDto User { get; set; }
+	public Participant User { get; set; }
 
 	public string BotName { get; set; }
 }

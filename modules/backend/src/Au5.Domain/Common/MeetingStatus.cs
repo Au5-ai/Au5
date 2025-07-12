@@ -1,4 +1,4 @@
-namespace Au5.Domain.Entities;
+namespace Au5.Domain.Common;
 
 public enum MeetingStatus
 {
