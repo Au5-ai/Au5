@@ -48,7 +48,6 @@ async function startMeetingBot(config) {
         permissions: ["camera", "microphone"],
         userAgent: constants_1.USER_AGENT,
         viewport: { width: 1280, height: 720 },
-        locale: "fa-IR",
     });
     const page = await context.newPage();
     await registerGracefulShutdownHandler(page);
@@ -136,7 +135,7 @@ async function applyAntiDetection(page) {
             get: () => [{ name: "Chrome PDF Plugin" }, { name: "Chrome PDF Viewer" }],
         });
         Object.defineProperty(navigator, "languages", {
-            get: () => ["fa-IR", "fa"], // spoof as Persian for transcription
+            get: () => ["en-US", "en"],
         });
         Object.defineProperty(navigator, "hardwareConcurrency", { get: () => 4 });
         Object.defineProperty(navigator, "deviceMemory", { get: () => 8 });
