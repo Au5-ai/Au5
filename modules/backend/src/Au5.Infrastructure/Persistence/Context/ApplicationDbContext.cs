@@ -37,20 +37,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 	{
 		modelBuilder.RegisterEntities(typeof(EntityAttribute).Assembly);
 		modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+		modelBuilder.SeedData();
 
 		foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
 		{
 			relationship.DeleteBehavior = DeleteBehavior.NoAction;
 		}
-
-		SeedReactions(modelBuilder);
-	}
-
-	private void SeedReactions(ModelBuilder modelBuilder)
-	{
-		modelBuilder.Entity<Reaction>().HasData(
-			new Reaction { Id = 1, Type = "Task", Emoji = "⚡", ClassName = "reaction-task" },
-			new Reaction { Id = 2, Type = "GoodPoint", Emoji = "⭐", ClassName = "reaction-important" },
-			new Reaction { Id = 3, Type = "Goal", Emoji = "🎯", ClassName = "reaction-question" });
 	}
 }
