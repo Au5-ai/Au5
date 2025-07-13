@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Au5.Application.Common.Interfaces;
+using Au5.Application.Features.Implement;
 using Au5.Application.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +15,7 @@ public static class ConfigureServices
 	public static IServiceCollection RegisterApplicationServices(this IServiceCollection services)
 	{
 		services.AddSingleton<IMeetingService, MeetingService>();
+		services.AddScoped<IReactionService, ReactionService>();
 
 		return services;
 	}

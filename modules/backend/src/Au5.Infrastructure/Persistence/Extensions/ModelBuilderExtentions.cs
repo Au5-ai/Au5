@@ -1,5 +1,6 @@
 using System.Reflection;
 using Au5.Domain.Common;
+using Au5.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Infrastructure.Persistence.Extensions;
@@ -20,6 +21,19 @@ public static class ModelBuilderExtension
 		foreach (var type in types)
 		{
 			modelBuilder.Entity(type);
+		}
+	}
+
+	public static void SeedData(this ModelBuilder builder)
+	{
+		SeedReactions(builder);
+
+		void SeedReactions(ModelBuilder modelBuilder)
+		{
+			modelBuilder.Entity<Reaction>().HasData(
+				new Reaction { Id = 1, Type = "Task", Emoji = "⚡", ClassName = "reaction-task" },
+				new Reaction { Id = 2, Type = "GoodPoint", Emoji = "⭐", ClassName = "reaction-important" },
+				new Reaction { Id = 3, Type = "Goal", Emoji = "🎯", ClassName = "reaction-question" });
 		}
 	}
 }
