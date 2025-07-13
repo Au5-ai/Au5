@@ -17,13 +17,13 @@
 //	public void AddUserToMeeting_ShouldNotAddDuplicateUser()
 //	{
 //		var userId = Guid.NewGuid();
-//		var meetingId = Guid.NewGuid().ToString();
+//		var meetId = Guid.NewGuid().ToString();
 //		var platform = "Zoom";
 
-//		_service.AddUserToMeeting(userId, meetingId, platform);
-//		_service.AddUserToMeeting(userId, meetingId, platform);
+//		_service.AddUserToMeeting( userId, meetId, platform);
+//		_service.AddUserToMeeting(userId, meetId, platform);
 
-//		var meeting = _service.GetFullTranscriptionAsJson(meetingId);
+//		var meeting = _service.GetFullTranscriptionAsJson(meetimeetIdngId);
 //		Assert.Single(meeting.Users.FindAll(u => u == userId));
 //	}
 
@@ -31,7 +31,7 @@
 //	public void EndMeeting_ShouldSetStatusToEnded()
 //	{
 //		var userId = Guid.NewGuid();
-//		var meetingId = Guid.NewGuid().ToString();
+//		var MeetId = Guid.NewGuid().ToString();
 //		_service.AddUserToMeeting(userId, meetingId, "Teams");
 
 //		_service.EndMeeting(meetingId);
@@ -45,7 +45,7 @@
 //	{
 //		var request = new RequestToAddBotMessage
 //		{
-//			MeetingId = Guid.NewGuid().ToString(),
+//			MeetId = Guid.NewGuid().ToString(),
 //			BotName = "Bot1",
 //			User = new Participant { Id = Guid.NewGuid() }
 //		};
@@ -59,13 +59,13 @@
 //	public void AddBot_ShouldReturnFalse_IfUserWhoIsNotInMeeting_WantsToAddBot()
 //	{
 //		var userId = Guid.NewGuid();
-//		var meetingId = Guid.NewGuid().ToString();
+//		var MeetId = Guid.NewGuid().ToString();
 //		var platform = "Zoom";
 
 //		_service.AddUserToMeeting(userId, meetingId, platform);
 //		var request = new RequestToAddBotMessage
 //		{
-//			MeetingId = Guid.NewGuid().ToString(),
+//			MeetId = Guid.NewGuid().ToString(),
 //			BotName = "Bot1",
 //			User = new Participant { Id = Guid.NewGuid() }
 //		};
@@ -79,13 +79,13 @@
 //	public void AddBot_ShouldReturnFalse_IfUserIsInMeeting()
 //	{
 //		var userId = Guid.NewGuid();
-//		var meetingId = Guid.NewGuid().ToString();
+//		var MeetId = Guid.NewGuid().ToString();
 //		var platform = "Zoom";
 
 //		_service.AddUserToMeeting(userId, meetingId, platform);
 //		var request = new RequestToAddBotMessage
 //		{
-//			MeetingId = meetingId,
+//			MeetId = meetingId,
 //			BotName = "Bot1",
 //			User = new Participant { Id = userId }
 //		};
@@ -99,7 +99,7 @@
 //	public void AddParticipantToMeet_ShouldAddParticipants()
 //	{
 //		var userId = Guid.NewGuid();
-//		var meetingId = Guid.NewGuid().ToString();
+//		var MeetId = Guid.NewGuid().ToString();
 //		_service.AddUserToMeeting(userId, meetingId, "Teams");
 //		var participants = new List<string> { "user1", "user2" };
 
@@ -114,7 +114,7 @@
 //	public void AddUserToMeeting_ShouldAddUser_WhenMeetingDoesNotExist()
 //	{
 //		var userId = Guid.NewGuid();
-//		var meetingId = "m1";
+//		var MeetId = "m1";
 
 //		_service.AddUserToMeeting(userId, meetingId, "Zoom");
 
@@ -127,14 +127,14 @@
 //	[Fact]
 //	public void AddBot_ShouldSetBotNameAndCreator()
 //	{
-//		var meetingId = "m2";
+//		var MeetId = "m2";
 //		var userId = Guid.NewGuid();
 
 //		_service.AddUserToMeeting(userId, meetingId, "Teams");
 
 //		var hash = _service.RequestToAddBot(new RequestToAddBotMessage
 //		{
-//			MeetingId = meetingId,
+//			MeetId = meetingId,
 //			BotName = "Bot1",
 //			User = new Participant { Id = userId }
 //		});
@@ -150,7 +150,7 @@
 //	[Fact]
 //	public void AddParticipantToMeet_ShouldAddNewParticipantsOnly()
 //	{
-//		var meetingId = "m3";
+//		var MeetId = "m3";
 //		var userId = Guid.NewGuid();
 //		_service.AddUserToMeeting(userId, meetingId, "Zoom");
 
@@ -165,7 +165,7 @@
 //	[Fact]
 //	public void EndMeeting_ShouldChangeStatusToEnded()
 //	{
-//		var meetingId = "m4";
+//		var MeetId = "m4";
 //		_service.AddUserToMeeting(Guid.NewGuid(), meetingId, "Zoom");
 
 //		_service.EndMeeting(meetingId);
@@ -178,13 +178,13 @@
 //	[Fact]
 //	public void BotIsAdded_ShouldMarkBotAsAdded()
 //	{
-//		var meetingId = "m5";
+//		var MeetId = "m5";
 //		var userId = Guid.NewGuid();
 
 //		_service.AddUserToMeeting(userId, meetingId, "Zoom");
 //		_service.RequestToAddBot(new RequestToAddBotMessage
 //		{
-//			MeetingId = meetingId,
+//			MeetId = meetingId,
 //			BotName = "Bot2",
 //			User = new Participant { Id = userId }
 //		});
@@ -201,7 +201,7 @@
 //	[Fact]
 //	public void IsPaused_ShouldReturnTrueWhenPaused()
 //	{
-//		var meetingId = "m6";
+//		var MeetId = "m6";
 //		_service.AddUserToMeeting(Guid.NewGuid(), meetingId, "Zoom");
 //		var paused = _service.PauseMeeting(meetingId, true);
 
@@ -211,7 +211,7 @@
 //	[Fact]
 //	public void UpsertBlock_ShouldInsertOrUpdateEntry()
 //	{
-//		var meetingId = "m7";
+//		var MeetId = "m7";
 //		var blockId = "b1";
 //		var userId = Guid.NewGuid();
 
@@ -219,7 +219,7 @@
 
 //		var entry = new EntryMessage
 //		{
-//			MeetingId = meetingId,
+//			MeetId = meetingId,
 //			BlockId = blockId,
 //			Content = "Initial",
 //			Participant = new Participant { Id = userId, FullName = "Test User" },
@@ -241,7 +241,7 @@
 //	[Fact]
 //	public void InsertBlock_ShouldAddNewEntry()
 //	{
-//		var meetingId = "m8";
+//		var MeetId = "m8";
 //		var blockId = "b2";
 //		var userId = Guid.NewGuid();
 
@@ -249,7 +249,7 @@
 
 //		var entry = new EntryMessage
 //		{
-//			MeetingId = meetingId,
+//			MeetId = meetingId,
 //			BlockId = blockId,
 //			Content = "Text",
 //			Participant = new Participant { Id = userId, FullName = "Tester" },
@@ -266,20 +266,20 @@
 //	[Fact]
 //	public void AppliedReaction_ShouldAddAndToggleReaction()
 //	{
-//		var meetingId = "m9";
-//		var blockId =  Guid.NewGuid();
+//		var MeetId = "m9";
+//		var blockId = Guid.NewGuid();
 //		var userId = Guid.NewGuid();
 
 //		_service.AddUserToMeeting(new UserJoinedInMeetingMessage()
 //		{
 //			User = new Participant() { Id = userId },
-//			MeetingId = meetingId,
+//			MeetId = meetingId,
 //			Platform = "Zoom",
 //		});
 
 //		_service.InsertBlock(new EntryMessage
 //		{
-//			MeetingId = meetingId,
+//			MeetId = meetingId,
 //			BlockId = blockId,
 //			Content = "Msg",
 //			Participant = new Participant { Id = userId },
@@ -290,7 +290,7 @@
 //		var reaction = new ReactionAppliedMessage
 //		{
 //			ReactionId = 1,
-//			MeetingId = meetingId,
+//			MeetId = meetingId,
 //			BlockId = blockId,
 //			ReactionType = "like",
 //			User = new Participant() { Id = userId }
@@ -308,7 +308,7 @@
 //	[Fact]
 //	public void GetFullTranscriptionAsJson_ShouldReturnMeetingWithNormalizedTimestamps_OverTwoHoursWith100Entries()
 //	{
-//		var meetingId = "transcriptionTest2Hours100Entries";
+//		var MeetId = "transcriptionTest2Hours100Entries";
 //		var userId = Guid.NewGuid();
 //		_service.AddUserToMeeting(userId, meetingId, "GoogleMeet");
 
@@ -320,7 +320,7 @@
 //		{
 //			var entry = new EntryMessage
 //			{
-//				MeetingId = meetingId,
+//				MeetId = meetingId,
 //				BlockId = $"block{i + 1}",
 //				Content = $"Entry {i + 1}",
 //				Participant = new Participant { Id = userId, FullName = "User1" },
