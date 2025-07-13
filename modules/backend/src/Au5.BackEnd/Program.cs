@@ -65,10 +65,9 @@ app.MapDefaultEndpoints();
 		return Results.Json(transcription);
 	});
 
-	app.MapGet("/reactions", () =>
+	app.MapGet("/reactions", async (IReactionService reactionService, CancellationToken ct) =>
 	{
-		ReactionService reactionService = new();
-		return Results.Ok(reactionService.GetAll());
+		return Results.Ok(await reactionService.GetAllAsync(ct));
 	});
 
 	app.MapControllers();

@@ -1,15 +1,15 @@
+using System.Threading.Tasks;
+using Au5.Application.Common.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
 namespace Au5.Application.Features.Implement;
 
-public class ReactionService
+public class ReactionService(IApplicationDbContext dbContext) : IReactionService
 {
-	public IReadOnlyCollection<Reaction> GetAll()
-	{
-		List<Reaction> reactions = [
-			new Reaction() { Id = 1,  Type = "Task", Emoji = "⚡", ClassName = "reaction-task" },
-			new Reaction() { Id = 2, Type = "GoodPoint", Emoji = "⭐", ClassName = "reaction-important" },
-			new Reaction() { Id = 3, Type = "Goal", Emoji = "🎯", ClassName = "reaction-question" }
-	  ];
+	private readonly IApplicationDbContext context = dbContext;
 
-		return reactions;
+	public async Task<IReadOnlyCollection<Reaction>> GetAllAsync(CancellationToken ct)
+	{
+		return await context.Set<Reaction>().ToListAsync(ct);
 	}
 }

@@ -1,6 +1,7 @@
 using System.Reflection;
 using Au5.Application.Common.Interfaces;
 using Au5.Domain.Common;
+using Au5.Domain.Entities;
 using Au5.Infrastructure.Persistence.Consts;
 using Au5.Infrastructure.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -8,10 +9,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Au5.Infrastructure.Persistence.Context;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ILogger<ApplicationDbContext> logger)
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ILogger<ApplicationDbContext> contextLogger)
 	: DbContext(options), IApplicationDbContext
 {
-	private readonly ILogger<ApplicationDbContext> _logger = logger;
+	private readonly ILogger<ApplicationDbContext> logger = contextLogger;
 
 	public new async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 	{
@@ -21,7 +22,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 		}
 		catch (Exception ex)
 		{
-			_logger.LogError(ex, "DataBase_Exception");
+			logger.LogError(ex, "DataBase_Exception");
 			return 0;
 		}
 	}
@@ -36,6 +37,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 	{
 		modelBuilder.RegisterEntities(typeof(EntityAttribute).Assembly);
 		modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+		modelBuilder.SeedData();
 
 		foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
 		{

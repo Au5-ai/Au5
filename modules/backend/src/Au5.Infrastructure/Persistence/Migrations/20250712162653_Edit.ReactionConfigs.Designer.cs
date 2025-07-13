@@ -4,6 +4,7 @@ using Au5.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250712162653_Edit.ReactionConfigs")]
+    partial class EditReactionConfigs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -199,29 +202,6 @@ namespace Au5.Infrastructure.Migrations
                         .HasName("PK_dbo_Reaction");
 
                     b.ToTable("Reaction");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ClassName = "reaction-task",
-                            Emoji = "⚡",
-                            Type = "Task"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ClassName = "reaction-important",
-                            Emoji = "⭐",
-                            Type = "GoodPoint"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ClassName = "reaction-question",
-                            Emoji = "🎯",
-                            Type = "Goal"
-                        });
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.User", b =>
