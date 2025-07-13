@@ -9,6 +9,7 @@ namespace Au5.Application.Features.Implement;
 public class AuthenticationService(IApplicationDbContext context, ITokenService tokenService) : IAuthenticationService
 {
 	private readonly IApplicationDbContext _context = context;
+	private readonly ITokenService _tokenService = tokenService;
 
 	public async Task<ErrorOr<object>> LoginAsync(LoginRequestDto request)
 	{
@@ -29,7 +30,7 @@ public class AuthenticationService(IApplicationDbContext context, ITokenService 
 			IsKnownUser = true
 		};
 
-		var token = tokenService.GenerateToken(participant, "User");
+		var token = _tokenService.GenerateToken(participant, "User");
 
 		return new
 		{
