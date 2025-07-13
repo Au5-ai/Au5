@@ -182,7 +182,7 @@ dotnet_diagnostic.CA1303.severity = warning
 dotnet_diagnostic.CA1304.severity = warning
 
 #pecify IFormatProvider
-dotnet_diagnostic.CA1305.severity = warning
+dotnet_diagnostic.CA1305.severity = none
 
 #Use ordinal string comparison
 dotnet_diagnostic.CA1309.severity = warning
@@ -221,7 +221,7 @@ dotnet_diagnostic.CA1715.severity = warning
 dotnet_diagnostic.CA1720.severity = warning
 
 #Parameter names should match base declaration
-dotnet_diagnostic.CA1725.severity = warning
+dotnet_diagnostic.CA1725.severity = error
 
 #Avoid uninstantiated internal classes
 dotnet_diagnostic.CA1812.severity = warning
@@ -721,7 +721,7 @@ dotnet_diagnostic.SA1027.severity = none
 dotnet_diagnostic.CA1001.severity = warning
 
 #Specify IFormatProvider
-dotnet_diagnostic.CA1305.severity = warning
+dotnet_diagnostic.CA1305.severity = none
 
 #Identifiers should not contain underscores
 dotnet_diagnostic.CA1707.severity = warning

@@ -44,11 +44,11 @@ public class MeetingService : IMeetingService
 		}
 	}
 
-	public void AddParticipantToMeet(List<Participant> users, string meetingId)
+	public void AddParticipantToMeet(List<Participant> users, string meetId)
 	{
 		lock (LockObject)
 		{
-			var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetingId);
+			var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetId);
 			if (meeting is null)
 			{
 				return;
@@ -56,7 +56,19 @@ public class MeetingService : IMeetingService
 
 			foreach (var item in users)
 			{
-				if (!meeting.Participants.Any(x => x.UserId == item.Id))
+				var existingParticipant = true;
+
+				if (item.IsKnownUser && !meeting.Participants.Any(x => x.UserId == item.Id))
+				{
+					existingParticipant = false;
+				}
+
+				if (!item.IsKnownUser && !meeting.Participants.Any(x => x.FullName == item.FullName))
+				{
+					existingParticipant = false;
+				}
+
+				if (!existingParticipant)
 				{
 					meeting.Participants.Add(new ParticipantInMeeting
 					{
@@ -70,11 +82,11 @@ public class MeetingService : IMeetingService
 		}
 	}
 
-	public void EndMeeting(string meetingId)
+	public void EndMeeting(string meetId)
 	{
 		lock (LockObject)
 		{
-			var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetingId);
+			var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetId);
 			if (meeting is null || meeting.Status == MeetingStatus.Ended)
 			{
 				return;
@@ -84,9 +96,9 @@ public class MeetingService : IMeetingService
 		}
 	}
 
-	public string BotIsAdded(string meetingId)
+	public string BotIsAdded(string meetId)
 	{
-		var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetingId);
+		var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetId);
 		if (meeting is null)
 		{
 			return string.Empty;
@@ -104,9 +116,9 @@ public class MeetingService : IMeetingService
 		}
 	}
 
-	public bool PauseMeeting(string meetingId, bool isPause)
+	public bool PauseMeeting(string meetId, bool isPause)
 	{
-		var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetingId);
+		var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetId);
 		if (meeting is null)
 		{
 			return false;
@@ -217,7 +229,7 @@ public class MeetingService : IMeetingService
 				return;
 			}
 
-			var existingReaction = entryBlock.Reactions.FirstOrDefault(r => r.Id == reaction.ReactionId);
+			var existingReaction = entryBlock.Reactions.FirstOrDefault(r => r.ReactionId == reaction.ReactionId);
 			if (existingReaction is null)
 			{
 				existingReaction = new AppliedReactions

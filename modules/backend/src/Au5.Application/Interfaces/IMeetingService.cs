@@ -4,13 +4,13 @@ public interface IMeetingService
 {
 	Meeting AddUserToMeeting(UserJoinedInMeetingMessage userJoined);
 
-	void EndMeeting(string meetingId);
+	void EndMeeting(string meetId);
 
 	void AddParticipantToMeet(List<Participant> users, string meetId);
 
-	string BotIsAdded(string meetingId);
+	string BotIsAdded(string meetId);
 
-	bool PauseMeeting(string meetingId, bool isPause);
+	bool PauseMeeting(string meetId, bool isPause);
 
 	bool UpsertBlock(EntryMessage entry);
 
