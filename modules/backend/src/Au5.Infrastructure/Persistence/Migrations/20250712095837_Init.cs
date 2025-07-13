@@ -1,4 +1,3 @@
-using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -79,7 +78,7 @@ namespace Au5.Infrastructure.Migrations
 					Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
 					Timeline = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
 					EntryType = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
-					MeetingId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+					MeetingId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
 				},
 				constraints: table =>
 				{
@@ -100,7 +99,7 @@ namespace Au5.Infrastructure.Migrations
 					MeetingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					FullName = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
-					PictureUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true)
+					PictureUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
 				},
 				constraints: table =>
 				{
@@ -120,7 +119,7 @@ namespace Au5.Infrastructure.Migrations
 						.Annotation("SqlServer:Identity", "1, 1"),
 					EntryId = table.Column<int>(type: "int", nullable: false),
 					ReactionId = table.Column<int>(type: "int", nullable: false),
-					Users = table.Column<string>(type: "nvarchar(max)", nullable: true)
+					Users = table.Column<string>(type: "nvarchar(max)", nullable: true),
 				},
 				constraints: table =>
 				{

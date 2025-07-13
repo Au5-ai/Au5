@@ -5,5 +5,5 @@ public enum MeetingStatus
 	NotStarted,
 	Recording,
 	Paused,
-	Ended
+	Ended,
 }

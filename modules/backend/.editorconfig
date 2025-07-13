@@ -29,7 +29,7 @@ dotnet_style_object_initializer = true:warning
 dotnet_style_collection_initializer = true:warning
 dotnet_style_prefer_simplified_boolean_expressions = true:warning
 dotnet_style_prefer_conditional_expression_over_assignment = true:silent
-dotnet_diagnostic.CA1305.severity = warning
+dotnet_diagnostic.CA1305.severity = none
 dotnet_style_prefer_conditional_expression_over_return = true:silent
 dotnet_style_prefer_simplified_interpolation = true:suggestion
 dotnet_style_qualification_for_field = false:warning
@@ -381,7 +381,7 @@ dotnet_diagnostic.IDE0053.severity = warning
 dotnet_diagnostic.IDE0054.severity = warning
 
 #Fix formatting
-dotnet_diagnostic.IDE0055.severity = warning
+dotnet_diagnostic.IDE0055.severity = none
 
 #Use index operator
 dotnet_diagnostic.IDE0056.severity = warning
@@ -526,7 +526,7 @@ dotnet_diagnostic.SA1316.severity = warning
 dotnet_diagnostic.SA1400.severity = error
 
 #The last statement in a multi-line C# initializer or list is missing a trailing comma
-dotnet_diagnostic.SA1413.severity = warning
+dotnet_diagnostic.SA1413.severity = none
 
 #A tuple type without element names is present in a member declaration
 dotnet_diagnostic.SA1414.severity = warning
@@ -676,9 +676,9 @@ csharp_style_expression_bodied_local_functions = false:silent
 csharp_prefer_system_threading_lock = true:none
 dotnet_diagnostic.SA1009.severity = none
 dotnet_diagnostic.SA1516.severity = error
-dotnet_diagnostic.SA1000.severity = warning
+dotnet_diagnostic.SA1000.severity = none
 dotnet_diagnostic.SA1313.severity = error
-dotnet_diagnostic.SA1010.severity = warning
+dotnet_diagnostic.SA1010.severity = none
 dotnet_diagnostic.SA1011.severity = warning
 dotnet_diagnostic.SA1503.severity = error
 dotnet_diagnostic.SA1309.severity = none

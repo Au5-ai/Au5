@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -9,29 +8,29 @@ public class MeetingService : IMeetingService
 	private static readonly Lock LockObject = new();
 	private static readonly List<Meeting> Meetings = [];
 
-	public Meeting AddUserToMeeting(UserJoinedInMeetingMessage msg)
+	public Meeting AddUserToMeeting(UserJoinedInMeetingMessage userJoined)
 	{
 		lock (LockObject)
 		{
-			var meeting = Meetings.FirstOrDefault(m => m.MeetId == msg.MeetId && m.CreatedAt.Date == DateTime.Now.Date);
+			var meeting = Meetings.FirstOrDefault(m => m.MeetId == userJoined.MeetId && m.CreatedAt.Date == DateTime.Now.Date);
 
 			if (meeting is null || (meeting is not null && meeting.IsEnded()))
 			{
 				meeting = new Meeting
 				{
 					Id = Guid.NewGuid(),
-					MeetId = msg.MeetId,
+					MeetId = userJoined.MeetId,
 					Entries = [],
 					CreatedAt = DateTime.Now,
-					Platform = msg.Platform,
+					Platform = userJoined.Platform,
 					Participants = [],
 					Status = MeetingStatus.NotStarted,
-					CreatorUserId = msg.User.Id,
+					CreatorUserId = userJoined.User.Id,
 				};
 				Meetings.Add(meeting);
 			}
 
-			var existingUser = meeting.Participants.Any(u => u.UserId == msg.User.Id);
+			var existingUser = meeting.Participants.Any(u => u.UserId == userJoined.User.Id);
 			if (existingUser)
 			{
 				return meeting;
@@ -39,7 +38,7 @@ public class MeetingService : IMeetingService
 
 			meeting.Participants.Add(new ParticipantInMeeting()
 			{
-				UserId = msg.User.Id
+				UserId = userJoined.User.Id,
 			});
 			return meeting;
 		}
@@ -64,7 +63,7 @@ public class MeetingService : IMeetingService
 						MeetingId = meeting.Id,
 						FullName = item.IsKnownUser ? string.Empty : item.FullName,
 						PictureUrl = item.IsKnownUser ? string.Empty : item.PictureUrl,
-						UserId = item.Id
+						UserId = item.Id,
 					});
 				}
 			}
@@ -141,7 +140,7 @@ public class MeetingService : IMeetingService
 				ParticipantId = entry.Participant.Id,
 				Timestamp = entry.Timestamp,
 				EntryType = entry.EntryType,
-				Reactions = []
+				Reactions = [],
 			});
 			return true;
 		}
@@ -164,7 +163,7 @@ public class MeetingService : IMeetingService
 				ParticipantId = entry.Participant.Id,
 				Timestamp = entry.Timestamp,
 				EntryType = entry.EntryType,
-				Reactions = []
+				Reactions = [],
 			});
 		}
 	}
@@ -181,7 +180,7 @@ public class MeetingService : IMeetingService
 			.Select(e => new
 			{
 				Entry = e,
-				ParsedTimestamp = e.Timestamp
+				ParsedTimestamp = e.Timestamp,
 			})
 			.OrderBy(x => x.ParsedTimestamp)
 			.ToList();
@@ -225,7 +224,7 @@ public class MeetingService : IMeetingService
 				{
 					EntryId = entryBlock.Id,
 					ReactionId = reaction.ReactionId,
-					Users = [reaction.User.Id]
+					Users = [reaction.User.Id],
 				};
 				entryBlock.Reactions.Add(existingReaction);
 				return;

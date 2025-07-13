@@ -13,7 +13,7 @@ public static class ClaimsPrincipalExtensions
 		{
 			Id = Guid.TryParse(principal.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var id) ? id : Guid.Empty,
 			FullName = principal.FindFirstValue(ClaimTypes.Name) ?? string.Empty,
-			PictureUrl = principal.FindFirstValue("pictureUrl") ?? string.Empty
+			PictureUrl = principal.FindFirstValue("pictureUrl") ?? string.Empty,
 		};
 	}
 }
