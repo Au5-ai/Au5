@@ -21,28 +21,28 @@ dotnet_style_require_accessibility_modifiers = omit_if_default:warning
 dotnet_style_operator_placement_when_wrapping = beginning_of_line
 tab_width = 4
 indent_size = 4
-dotnet_style_coalesce_expression = true:none
-dotnet_style_null_propagation = true:none
-dotnet_style_prefer_is_null_check_over_reference_equality_method = true:none
+dotnet_style_coalesce_expression = true:warning
+dotnet_style_null_propagation = true:warning
+dotnet_style_prefer_is_null_check_over_reference_equality_method = true:warning
 dotnet_style_prefer_auto_properties = true:silent
-dotnet_style_object_initializer = true:none
-dotnet_style_collection_initializer = true:none
-dotnet_style_prefer_simplified_boolean_expressions = true:none
+dotnet_style_object_initializer = true:warning
+dotnet_style_collection_initializer = true:warning
+dotnet_style_prefer_simplified_boolean_expressions = true:warning
 dotnet_style_prefer_conditional_expression_over_assignment = true:silent
-dotnet_diagnostic.CA1305.severity = none
+dotnet_diagnostic.CA1305.severity = warning
 dotnet_style_prefer_conditional_expression_over_return = true:silent
 dotnet_style_prefer_simplified_interpolation = true:suggestion
-dotnet_style_qualification_for_field = false:none
-dotnet_style_qualification_for_property = false:none
-dotnet_style_qualification_for_method = false:none
-dotnet_style_qualification_for_event = false:none
+dotnet_style_qualification_for_field = false:warning
+dotnet_style_qualification_for_property = false:warning
+dotnet_style_qualification_for_method = false:warning
+dotnet_style_qualification_for_event = false:warning
 dotnet_style_allow_multiple_blank_lines_experimental = true:silent
 dotnet_style_allow_statement_immediately_after_block_experimental = true:silent
-dotnet_style_prefer_inferred_tuple_names = true:none
+dotnet_style_prefer_inferred_tuple_names = true:warning
 dotnet_style_explicit_tuple_names = true:warning
 dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
 dotnet_style_prefer_compound_assignment = true:suggestion
-dotnet_style_prefer_collection_expression = when_types_exactly_match:none
+dotnet_style_prefer_collection_expression = when_types_exactly_match:warning
 dotnet_style_namespace_match_folder = true:suggestion
 dotnet_style_readonly_field = true:suggestion
 dotnet_style_predefined_type_for_locals_parameters_members = true:warning
@@ -76,15 +76,15 @@ csharp_indent_switch_labels=true:warning
 csharp_indent_labels= flush_left
 
 # Avoid `this.` unless neccesary
-dotnet_style_qualification_for_field=false:none
-dotnet_style_qualification_for_property=false:none
-dotnet_style_qualification_for_method=false:none
-dotnet_style_qualification_for_event=false:none
+dotnet_style_qualification_for_field=false:warning
+dotnet_style_qualification_for_property=false:warning
+dotnet_style_qualification_for_method=false:warning
+dotnet_style_qualification_for_event=false:warning
 
 # Prefer `var`, though WTG.Analyzers does a better job of this.
-csharp_style_var_for_built_in_types= true:none
-csharp_style_var_when_type_is_apparent= true:none
-csharp_style_var_elsewhere= true:none
+csharp_style_var_for_built_in_types= true:warning
+csharp_style_var_when_type_is_apparent= true:warning
+csharp_style_var_elsewhere= true:warning
 
 # Prefer language keywords over BCL types
 dotnet_style_predefined_type_for_locals_parameters_members=true:warning
@@ -111,19 +111,19 @@ csharp_preserve_single_line_blocks=true
 csharp_preserve_single_line_statements=false
 
 # Prefer modern language features when available
-dotnet_style_object_initializer=true:none
-dotnet_style_collection_initializer=true:none
+dotnet_style_object_initializer=true:warning
+dotnet_style_collection_initializer=true:warning
 dotnet_style_explicit_tuple_names=true:warning
-dotnet_style_coalesce_expression=true:none
-dotnet_style_null_propagation=true:none
-dotnet_style_prefer_inferred_tuple_names = true:none
-dotnet_style_prefer_collection_expression=when_types_exactly_match:none
-csharp_style_pattern_matching_over_is_with_cast_check= true:none
-csharp_style_pattern_matching_over_as_with_null_check= true:none
-csharp_style_inlined_variable_declaration= true:none
-csharp_style_conditional_delegate_call= true:none
-csharp_style_throw_expression= true:none
-csharp_style_pattern_local_over_anonymous_function = true:none
+dotnet_style_coalesce_expression=true:warning
+dotnet_style_null_propagation=true:warning
+dotnet_style_prefer_inferred_tuple_names = true:warning
+dotnet_style_prefer_collection_expression=when_types_exactly_match:warning
+csharp_style_pattern_matching_over_is_with_cast_check= true:warning
+csharp_style_pattern_matching_over_as_with_null_check= true:warning
+csharp_style_inlined_variable_declaration= true:warning
+csharp_style_conditional_delegate_call= true:warning
+csharp_style_throw_expression= true:warning
+csharp_style_pattern_local_over_anonymous_function = true:warning
 csharp_style_prefer_method_group_conversion= true:none
 
 # Spacing preferences
@@ -154,332 +154,332 @@ csharp_space_between_square_brackets=false
 csharp_prefer_braces = true:none
 
 #Style - Expression-level  preferences
-csharp_prefer_simple_default_expression = true:none
+csharp_prefer_simple_default_expression = true:warning
 
 #Style - Using directive preferences
 csharp_using_directive_placement = outside_namespace:silent
 
 #Avoid excessive parameters on generic
-dotnet_diagnostic.CA1005.severity = none
+dotnet_diagnostic.CA1005.severity = warning
 
 #Disposing resources in TearDown and OneTimeTearDown attributes
-dotnet_diagnostic.NUnit1032.severity = none
+dotnet_diagnostic.NUnit1032.severity = warning
 
 #Mark assemblies with CLSCompliantAttribute
-dotnet_diagnostic.CA1014.severity = none
+dotnet_diagnostic.CA1014.severity = warning
 
 #Nested types should not be visible
-dotnet_diagnostic.CA1034.severity = none
+dotnet_diagnostic.CA1034.severity = warning
 
 #Declare types in namespaces
-dotnet_diagnostic.CA1050.severity = none
+dotnet_diagnostic.CA1050.severity = warning
 
 #Do not pass literals as localized parameters
-dotnet_diagnostic.CA1303.severity = none
+dotnet_diagnostic.CA1303.severity = warning
 
 #Specify CultureInfo
-dotnet_diagnostic.CA1304.severity = none
+dotnet_diagnostic.CA1304.severity = warning
 
 #pecify IFormatProvider
-dotnet_diagnostic.CA1305.severity = none
+dotnet_diagnostic.CA1305.severity = warning
 
 #Use ordinal string comparison
-dotnet_diagnostic.CA1309.severity = none
+dotnet_diagnostic.CA1309.severity = warning
 
 #Avoid excessive inheritance
-dotnet_diagnostic.CA1501.severity = none
+dotnet_diagnostic.CA1501.severity = warning
 
 #Avoid excessive complexity
-dotnet_diagnostic.CA1502.severity = none
+dotnet_diagnostic.CA1502.severity = warning
 
 #Avoid unmaintainable code
-dotnet_diagnostic.CA1505.severity = none
+dotnet_diagnostic.CA1505.severity = warning
 
 #Avoid excessive class coupling
-dotnet_diagnostic.CA1506.severity = none
+dotnet_diagnostic.CA1506.severity = warning
 
 #Identifiers should not contain underscores
-dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CA1707.severity = warning
 
 #Identifiers should differ by more than case
-dotnet_diagnostic.CA1708.severity = none
+dotnet_diagnostic.CA1708.severity = warning
 
 #Identifiers should have correct suffix
-dotnet_diagnostic.CA1710.severity = none
+dotnet_diagnostic.CA1710.severity = warning
 
 #Identifiers should not have incorrect suffix
-dotnet_diagnostic.CA1711.severity = none
+dotnet_diagnostic.CA1711.severity = warning
 
 #Do not prefix enum values with type name
-dotnet_diagnostic.CA1712.severity = none
+dotnet_diagnostic.CA1712.severity = warning
 
 #Identifiers should have correct prefix
-dotnet_diagnostic.CA1715.severity = none
+dotnet_diagnostic.CA1715.severity = warning
 
 #Identifier contains type name
-dotnet_diagnostic.CA1720.severity = none
+dotnet_diagnostic.CA1720.severity = warning
 
 #Parameter names should match base declaration
-dotnet_diagnostic.CA1725.severity = none
+dotnet_diagnostic.CA1725.severity = warning
 
 #Avoid uninstantiated internal classes
-dotnet_diagnostic.CA1812.severity = none
+dotnet_diagnostic.CA1812.severity = warning
 
 #Use concrete types when possible for improved performance
-dotnet_diagnostic.CA1859.severity = none
+dotnet_diagnostic.CA1859.severity = warning
 
 #Use the LoggerMessage delegates
-dotnet_diagnostic.CA1848.severity = none
+dotnet_diagnostic.CA1848.severity = warning
 
 #https://github.com/dotnet/roslyn-analyzers/issues/5530
 #https://github.com/dotnet/roslyn-analyzers/issues/5712
 #Consider calling ConfigureAwait on the awaited task
-dotnet_diagnostic.CA2007.severity = none
+dotnet_diagnostic.CA2007.severity = warning
 
 #Do not raise reserved exception types
-dotnet_diagnostic.CA2201.severity = none
+dotnet_diagnostic.CA2201.severity = warning
 
 #Simplify name
-dotnet_diagnostic.IDE0001.severity = none
+dotnet_diagnostic.IDE0001.severity = warning
 
 #Simplify member access
-dotnet_diagnostic.IDE0002.severity = none
+dotnet_diagnostic.IDE0002.severity = warning
 
 #Remove this or Me qualification
-dotnet_diagnostic.IDE0003.severity = none
+dotnet_diagnostic.IDE0003.severity = error
 
 #Remove unnecessary cast
-dotnet_diagnostic.IDE0004.severity = none
+dotnet_diagnostic.IDE0004.severity = warning
 
 #Remove unnecessary import
-dotnet_diagnostic.IDE0005.severity = none
+dotnet_diagnostic.IDE0005.severity = error
 
 #Use var instead of explicit type
-dotnet_diagnostic.IDE0007.severity = none
+dotnet_diagnostic.IDE0007.severity = warning
 
 #Use explicit type instead of var
-dotnet_diagnostic.IDE0008.severity = none
+dotnet_diagnostic.IDE0008.severity = warning
 
 #Add this or Me qualification
-dotnet_diagnostic.IDE0009.severity = none
+dotnet_diagnostic.IDE0009.severity = warning
 
 #Add missing cases to switch statement
-dotnet_diagnostic.IDE0010.severity = none
+dotnet_diagnostic.IDE0010.severity = warning
 
 #Add braces
-dotnet_diagnostic.IDE0011.severity = none
+dotnet_diagnostic.IDE0011.severity = warning
 
 #Use throw expression
-dotnet_diagnostic.IDE0016.severity = none
+dotnet_diagnostic.IDE0016.severity = warning
 
 #Use object initializers
-dotnet_diagnostic.IDE0017.severity = none
+dotnet_diagnostic.IDE0017.severity = warning
 
 #Inline variable declaration
-dotnet_diagnostic.IDE0018.severity = none
+dotnet_diagnostic.IDE0018.severity = warning
 
 #Use pattern matching to avoid as followed by a null check
-dotnet_diagnostic.IDE0019.severity = none
+dotnet_diagnostic.IDE0019.severity = warning
 
 #Use pattern matching to avoid is check followed by a cast (with variable)
-dotnet_diagnostic.IDE0020.severity = none
+dotnet_diagnostic.IDE0020.severity = warning
 
 #Use expression body for constructors
-dotnet_diagnostic.IDE0021.severity = none
+dotnet_diagnostic.IDE0021.severity = warning
 
 #Use expression body for methods
-dotnet_diagnostic.IDE0022.severity = none
+dotnet_diagnostic.IDE0022.severity = warning
 
 #Use expression body for conversion operators
-dotnet_diagnostic.IDE0023.severity = none
+dotnet_diagnostic.IDE0023.severity = warning
 
 #Use expression body for operators
-dotnet_diagnostic.IDE0024.severity = none
+dotnet_diagnostic.IDE0024.severity = warning
 
 #Use expression body for properties
-dotnet_diagnostic.IDE0025.severity = none
+dotnet_diagnostic.IDE0025.severity = warning
 
 #Use expression body for indexers
-dotnet_diagnostic.IDE0026.severity = none
+dotnet_diagnostic.IDE0026.severity = warning
 
 #Use expression body for accessors
-dotnet_diagnostic.IDE0027.severity = none
+dotnet_diagnostic.IDE0027.severity = warning
 
 #Use collection initializers
-dotnet_diagnostic.IDE0028.severity = none
+dotnet_diagnostic.IDE0028.severity = warning
 
 #Use coalesce expression (non-nullable types)
-dotnet_diagnostic.IDE0029.severity = none
+dotnet_diagnostic.IDE0029.severity = warning
 
 #Use coalesce expression (nullable types)
-dotnet_diagnostic.IDE0030.severity = none
+dotnet_diagnostic.IDE0030.severity = warning
 
 #Use null propagation
-dotnet_diagnostic.IDE0031.severity = none
+dotnet_diagnostic.IDE0031.severity = warning
 
 #Use auto property
-dotnet_diagnostic.IDE0032.severity = none
+dotnet_diagnostic.IDE0032.severity = warning
 
 #Use explicitly provided tuple name
-dotnet_diagnostic.IDE0033.severity = none
+dotnet_diagnostic.IDE0033.severity = warning
 
 #Simplify default expression
-dotnet_diagnostic.IDE0034.severity = none
+dotnet_diagnostic.IDE0034.severity = warning
 
 #Remove unreachable code
-dotnet_diagnostic.IDE0035.severity = none
+dotnet_diagnostic.IDE0035.severity = warning
 
 #Order modifiers
-dotnet_diagnostic.IDE0036.severity = none
+dotnet_diagnostic.IDE0036.severity = warning
 
 #Use inferred member name
-dotnet_diagnostic.IDE0037.severity = none
+dotnet_diagnostic.IDE0037.severity = warning
 
 #Use local function instead of lambda
-dotnet_diagnostic.IDE0039.severity = none
+dotnet_diagnostic.IDE0039.severity = warning
 
 #Add accessibility modifiers
 dotnet_diagnostic.IDE0040.severity = none
 
 #Use is null check
-dotnet_diagnostic.IDE0041.severity = none
+dotnet_diagnostic.IDE0041.severity = warning
 
 #Deconstruct variable declaration
-dotnet_diagnostic.IDE0042.severity = none
+dotnet_diagnostic.IDE0042.severity = warning
 
 #Add readonly modifier
-dotnet_diagnostic.IDE0044.severity = none
+dotnet_diagnostic.IDE0044.severity = warning
 
 #Use conditional expression for assignment
-dotnet_diagnostic.IDE0045.severity = none
+dotnet_diagnostic.IDE0045.severity = warning
 
 #Use conditional expression for return
-dotnet_diagnostic.IDE0046.severity = none
+dotnet_diagnostic.IDE0046.severity = warning
 
 #Remove unnecessary parentheses
-dotnet_diagnostic.IDE0047.severity = none
+dotnet_diagnostic.IDE0047.severity = warning
 
 #Add parentheses for clarity
-dotnet_diagnostic.IDE0048.severity = none
+dotnet_diagnostic.IDE0048.severity = warning
 
 #Use language keywords instead of framework type names for type references
-dotnet_diagnostic.IDE0049.severity = none
+dotnet_diagnostic.IDE0049.severity = warning
 
 #Convert anonymous type to tuple
-dotnet_diagnostic.IDE0050.severity = none
+dotnet_diagnostic.IDE0050.severity = warning
 
 #Remove unused private member
-dotnet_diagnostic.IDE0051.severity = none
+dotnet_diagnostic.IDE0051.severity = warning
 
 #Remove unread private member
-dotnet_diagnostic.IDE0052.severity = none
+dotnet_diagnostic.IDE0052.severity = warning
 
 #Use expression body for lambdas
-dotnet_diagnostic.IDE0053.severity = none
+dotnet_diagnostic.IDE0053.severity = warning
 
 #Use compound assignment
-dotnet_diagnostic.IDE0054.severity = none
+dotnet_diagnostic.IDE0054.severity = warning
 
 #Fix formatting
-dotnet_diagnostic.IDE0055.severity = none
+dotnet_diagnostic.IDE0055.severity = warning
 
 #Use index operator
-dotnet_diagnostic.IDE0056.severity = none
+dotnet_diagnostic.IDE0056.severity = warning
 
 #Use range operator
-dotnet_diagnostic.IDE0057.severity = none
+dotnet_diagnostic.IDE0057.severity = warning
 
 #Remove unused expression value
 dotnet_diagnostic.IDE0058.severity = none
 
 #Remove unnecessary value assignment
-dotnet_diagnostic.IDE0059.severity = none
+dotnet_diagnostic.IDE0059.severity = warning
 
 #Remove unused parameter
-dotnet_diagnostic.IDE0060.severity = none
+dotnet_diagnostic.IDE0060.severity = error
 
 #Use expression body for local functions
-dotnet_diagnostic.IDE0061.severity = none
+dotnet_diagnostic.IDE0061.severity = warning
 
 #Make local function static
-dotnet_diagnostic.IDE0062.severity = none
+dotnet_diagnostic.IDE0062.severity = warning
 
 #Use simple using statement
-dotnet_diagnostic.IDE0063.severity = none
+dotnet_diagnostic.IDE0063.severity = warning
 
 #Make struct fields writable
-dotnet_diagnostic.IDE0064.severity = none
+dotnet_diagnostic.IDE0064.severity = warning
 
 #using directive placement
-dotnet_diagnostic.IDE0065.severity = none
+dotnet_diagnostic.IDE0065.severity = warning
 
 #Use switch expression
-dotnet_diagnostic.IDE0066.severity = none
+dotnet_diagnostic.IDE0066.severity = warning
 
 #Use System.HashCode.Combine
-dotnet_diagnostic.IDE0070.severity = none
+dotnet_diagnostic.IDE0070.severity = warning
 
 #Simplify interpolation
-dotnet_diagnostic.IDE0071.severity = none
+dotnet_diagnostic.IDE0071.severity = warning
 
 #Add missing cases to switch expression
-dotnet_diagnostic.IDE0072.severity = none
+dotnet_diagnostic.IDE0072.severity = warning
 
 #Use file header
-dotnet_diagnostic.IDE0073.severity = none
+dotnet_diagnostic.IDE0073.severity = warning
 
 #Use coalesce compound assignment
-dotnet_diagnostic.IDE0074.severity = none
+dotnet_diagnostic.IDE0074.severity = warning
 
 #Simplify conditional expression
-dotnet_diagnostic.IDE0075.severity = none
+dotnet_diagnostic.IDE0075.severity = warning
 
 #Remove invalid global SuppressMessageAttribute
-dotnet_diagnostic.IDE0076.severity = none
+dotnet_diagnostic.IDE0076.severity = warning
 
 #Avoid legacy format target in global SuppressMessageAttribute
-dotnet_diagnostic.IDE0077.severity = none
+dotnet_diagnostic.IDE0077.severity = warning
 
 #Use pattern matching
-dotnet_diagnostic.IDE0078.severity = none
+dotnet_diagnostic.IDE0078.severity = warning
 
 #Remove unnecessary suppression
-dotnet_diagnostic.IDE0079.severity = none
+dotnet_diagnostic.IDE0079.severity = warning
 
 #Remove unnecessary suppression operator
-dotnet_diagnostic.IDE0080.severity = none
+dotnet_diagnostic.IDE0080.severity = warning
 
 #Remove ByVal
-dotnet_diagnostic.IDE0081.severity = none
+dotnet_diagnostic.IDE0081.severity = warning
 
 #Convert typeof to nameof
-dotnet_diagnostic.IDE0082.severity = none
+dotnet_diagnostic.IDE0082.severity = warning
 
 #Use pattern matching (not operator)
-dotnet_diagnostic.IDE0083.severity = none
+dotnet_diagnostic.IDE0083.severity = warning
 
 #Use pattern matching (IsNot operator)
-dotnet_diagnostic.IDE0084.severity = none
+dotnet_diagnostic.IDE0084.severity = warning
 
 #Simplify new expression
-dotnet_diagnostic.IDE0090.severity = none
+dotnet_diagnostic.IDE0090.severity = warning
 
 #Remove unnecessary equality operator
-dotnet_diagnostic.IDE0100.severity = none
+dotnet_diagnostic.IDE0100.severity = warning
 
 #Remove unnecessary discard
-dotnet_diagnostic.IDE0110.severity = none
+dotnet_diagnostic.IDE0110.severity = warning
 
 #Simplify object creation
-dotnet_diagnostic.IDE0140.severity = none
+dotnet_diagnostic.IDE0140.severity = warning
 
 #Use conditional delegate call
-dotnet_diagnostic.IDE1005.severity = none
+dotnet_diagnostic.IDE1005.severity = warning
 
 #Naming styles
-dotnet_diagnostic.IDE1006.severity = none
+dotnet_diagnostic.IDE1006.severity = warning
 
-dotnet_diagnostic.RE0001.severity = none
+dotnet_diagnostic.RE0001.severity = warning
 
 #Unmapped target member
 dotnet_diagnostic.RMG012.severity = error
@@ -488,11 +488,11 @@ dotnet_diagnostic.RMG012.severity = error
 dotnet_diagnostic.RMG020.severity = error
 
 #All diagnostics of XML documentation comments has been disabled due to the current project configuration
-dotnet_diagnostic.SA0001.severity = none
+dotnet_diagnostic.SA0001.severity = warning
 
 #StyleCop Defaults
 dotnet_analyzer_diagnostic.category-StyleCop.CSharp.AlternativeRules.severity = error
-dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity = warning
 dotnet_analyzer_diagnostic.category-StyleCop.CSharp.LayoutRules.severity = error
 dotnet_analyzer_diagnostic.category-StyleCop.CSharp.MaintainabilityRules.severity = error
 dotnet_analyzer_diagnostic.category-StyleCop.CSharp.NamingRules.severity = error
@@ -502,170 +502,170 @@ dotnet_analyzer_diagnostic.category-StyleCop.CSharp.SpacingRules.severity = erro
 dotnet_analyzer_diagnostic.category-StyleCop.CSharp.SpecialRules.severity = error
 
 #A single-line comment within a C# code file does not begin with a single space
-dotnet_diagnostic.SA1005.severity = none
+dotnet_diagnostic.SA1005.severity = warning
 
 #A call to an instance member of the local class or a base class is not prefixed with 'this.', within a C# code file
 dotnet_diagnostic.SA1101.severity = none
 
 #A parameter to a C# method or indexer, other than the first parameter, spans across multiple lines
-dotnet_diagnostic.SA1118.severity = none
+dotnet_diagnostic.SA1118.severity = warning
 
 #A constructor initializer is on the same line as the constructor declaration, within a C# code file
-dotnet_diagnostic.SA1128.severity = none
+dotnet_diagnostic.SA1128.severity = warning
 
 #A static element is positioned beneath an instance element of the same type
-dotnet_diagnostic.SA1204.severity = none
+dotnet_diagnostic.SA1204.severity = warning
 
 #The partial element does not have an access modifier defined
-dotnet_diagnostic.SA1205.severity = none
+dotnet_diagnostic.SA1205.severity = warning
 
 #Element names within a tuple type should have the correct casing
-dotnet_diagnostic.SA1316.severity = none
+dotnet_diagnostic.SA1316.severity = warning
 
 #The access modifier for a C# element has not been explicitly defined
-dotnet_diagnostic.SA1400.severity = none
+dotnet_diagnostic.SA1400.severity = error
 
 #The last statement in a multi-line C# initializer or list is missing a trailing comma
-dotnet_diagnostic.SA1413.severity = none
+dotnet_diagnostic.SA1413.severity = warning
 
 #A tuple type without element names is present in a member declaration
-dotnet_diagnostic.SA1414.severity = none
+dotnet_diagnostic.SA1414.severity = warning
 
 #Do not use the 'private' keyword
-dotnet_diagnostic.WTG1001.severity = none
+dotnet_diagnostic.WTG1001.severity = warning
 
 #Duplicate of IDE0007 and broken for nullable
 #Use the 'var' keyword instead of an explicit type where possible
-dotnet_diagnostic.WTG1002.severity = none
+dotnet_diagnostic.WTG1002.severity = warning
 
 #Do not leave whitespace on the end of the line
-dotnet_diagnostic.WTG1003.severity = none
+dotnet_diagnostic.WTG1003.severity = warning
 
 #Indent with tabs rather than spaces
-dotnet_diagnostic.WTG1004.severity = none
+dotnet_diagnostic.WTG1004.severity = warning
 
 #Use consistent line endings
-dotnet_diagnostic.WTG1005.severity = none
+dotnet_diagnostic.WTG1005.severity = warning
 
 #Do not use the 'internal' keyword for non-nested type definitions
-dotnet_diagnostic.WTG1006.severity = none
+dotnet_diagnostic.WTG1006.severity = warning
 
 #Do not compare bool to a constant value
-dotnet_diagnostic.WTG1007.severity = none
+dotnet_diagnostic.WTG1007.severity = warning
 
 #Do not compare bool to a constant value in an expression
-dotnet_diagnostic.WTG1008.severity = none
+dotnet_diagnostic.WTG1008.severity = warning
 
 #Using directives must be ordered by kind
-dotnet_diagnostic.WTG1009.severity = none
+dotnet_diagnostic.WTG1009.severity = warning
 
 #Use the 'var' keyword instead of an explicit type where possible
-dotnet_diagnostic.WTG1010.severity = none
+dotnet_diagnostic.WTG1010.severity = warning
 
 #Use the 'var' keyword once when deconstructing an object
-dotnet_diagnostic.WTG1011.severity = none
+dotnet_diagnostic.WTG1011.severity = warning
 
 #Use the 'var' keyword instead of an explicit type where possible
-dotnet_diagnostic.WTG1012.severity = none
+dotnet_diagnostic.WTG1012.severity = warning
 
 #Don't use tuple types in public interfaces
-dotnet_diagnostic.WTG1013.severity = none
+dotnet_diagnostic.WTG1013.severity = warning
 
 #Don't nest conditional operators
-dotnet_diagnostic.WTG1014.severity = none
+dotnet_diagnostic.WTG1014.severity = warning
 
 #Conditional operators should not have multiline values
-dotnet_diagnostic.WTG1015.severity = none
+dotnet_diagnostic.WTG1015.severity = warning
 
 #Avoid the discard-coalesce-throw pattern
-dotnet_diagnostic.WTG1016.severity = none
+dotnet_diagnostic.WTG1016.severity = warning
 
 #Don't define variables that could be confused with discards
-dotnet_diagnostic.WTG1017.severity = none
+dotnet_diagnostic.WTG1017.severity = warning
 
 #The meaning of boolean literals may not be easy to understand at the call-site
-dotnet_diagnostic.WTG1018.severity = none
+dotnet_diagnostic.WTG1018.severity = warning
 
 #Do not use ConfigureAwait from an async void method
-dotnet_diagnostic.WTG2001.severity = none
+dotnet_diagnostic.WTG2001.severity = warning
 
 #Avoid conditional compilation based on DEBUG
-dotnet_diagnostic.WTG2002.severity = none
+dotnet_diagnostic.WTG2002.severity = warning
 
 #Flags enums should specify explicit values
-dotnet_diagnostic.WTG2003.severity = none
+dotnet_diagnostic.WTG2003.severity = warning
 
 #This project does not use Code Contracts
-dotnet_diagnostic.WTG2004.severity = none
+dotnet_diagnostic.WTG2004.severity = warning
 
 #Use Correct Emit Overload
-dotnet_diagnostic.WTG2005.severity = none
+dotnet_diagnostic.WTG2005.severity = warning
 
 #Do not pass the Compiled option into static methods on Regex
-dotnet_diagnostic.WTG2006.severity = none
+dotnet_diagnostic.WTG2006.severity = warning
 
 #Do not set custom values for the HTTP Reason Phrase
-dotnet_diagnostic.WTG2007.severity = none
+dotnet_diagnostic.WTG2007.severity = warning
 
 #Do not specify filesystem path separators in path string literals
-dotnet_diagnostic.WTG2008.severity = none
+dotnet_diagnostic.WTG2008.severity = warning
 
 #Remove orphaned suppressions
-dotnet_diagnostic.WTG3001.severity = none
+dotnet_diagnostic.WTG3001.severity = warning
 
 #Prefer direct member access over linq
-dotnet_diagnostic.WTG3002.severity = none
+dotnet_diagnostic.WTG3002.severity = warning
 
 #Prefer direct member access over linq in an expression
-dotnet_diagnostic.WTG3003.severity = none
+dotnet_diagnostic.WTG3003.severity = warning
 
 #Prefer Array.Empty<T>() over creating a new empty array
-dotnet_diagnostic.WTG3004.severity = none
+dotnet_diagnostic.WTG3004.severity = warning
 
 #Don't call ToString() on a string
-dotnet_diagnostic.WTG3005.severity = none
+dotnet_diagnostic.WTG3005.severity = warning
 
 #Prefer nameof over calling ToString on an enum literal
-dotnet_diagnostic.WTG3006.severity = none
+dotnet_diagnostic.WTG3006.severity = warning
 
 #Overrides should not simply call base
-dotnet_diagnostic.WTG3007.severity = none
+dotnet_diagnostic.WTG3007.severity = warning
 
 #Do not compare value types with null
-dotnet_diagnostic.WTG3008.severity = none
+dotnet_diagnostic.WTG3008.severity = warning
 
 #Prefer Task.CompletedTask when applicable
-dotnet_diagnostic.WTG3009.severity = none
+dotnet_diagnostic.WTG3009.severity = warning
 
 #Don't await a trivially completed task
-dotnet_diagnostic.WTG3010.severity = none
+dotnet_diagnostic.WTG3010.severity = warning
 
 #Don't mutate string arguments appended to a string builder
-dotnet_diagnostic.WTG3011.severity = none
+dotnet_diagnostic.WTG3011.severity = warning
 
 #Avoid combining bool literals in larger boolean expressions
-dotnet_diagnostic.WTG3012.severity = none
+dotnet_diagnostic.WTG3012.severity = warning
 
 #Do not nest regions
-dotnet_diagnostic.WTG3101.severity = none
+dotnet_diagnostic.WTG3101.severity = warning
 
 #Regions should not split structures
-dotnet_diagnostic.WTG3102.severity = none
+dotnet_diagnostic.WTG3102.severity = warning
 
 #Conditional compilation directives should not split structures
-dotnet_diagnostic.WTG3103.severity = none
+dotnet_diagnostic.WTG3103.severity = warning
 	
 #Do not use insecure randomness	
-dotnet_diagnostic.CA5394.severity = none
+dotnet_diagnostic.CA5394.severity = warning
 
 #Missing XML comment for publicly visible type or member
-dotnet_diagnostic.CS1591.severity = none
+dotnet_diagnostic.CS1591.severity = warning
 
 #Missing XML comment for publicly visible type or member
-dotnet_diagnostic.CS1573.severity = none
+dotnet_diagnostic.CS1573.severity = warning
 
 #Missing XML comment for publicly visible type or member
-dotnet_diagnostic.CS1712.severity = none
+dotnet_diagnostic.CS1712.severity = warning
 csharp_prefer_simple_using_statement = true:none
 csharp_style_namespace_declarations = block_scoped:silent
 csharp_style_prefer_top_level_statements = true:silent
@@ -676,14 +676,14 @@ csharp_style_expression_bodied_local_functions = false:silent
 csharp_prefer_system_threading_lock = true:none
 dotnet_diagnostic.SA1009.severity = none
 dotnet_diagnostic.SA1516.severity = error
-dotnet_diagnostic.SA1000.severity = none
-dotnet_diagnostic.SA1313.severity = none
-dotnet_diagnostic.SA1010.severity = none
-dotnet_diagnostic.SA1011.severity = none
+dotnet_diagnostic.SA1000.severity = warning
+dotnet_diagnostic.SA1313.severity = error
+dotnet_diagnostic.SA1010.severity = warning
+dotnet_diagnostic.SA1011.severity = warning
 dotnet_diagnostic.SA1503.severity = error
-dotnet_diagnostic.SA1309.severity = error
-dotnet_diagnostic.SA1124.severity = none
-dotnet_diagnostic.CA1200.severity = none
+dotnet_diagnostic.SA1309.severity = none
+dotnet_diagnostic.SA1124.severity = warning
+dotnet_diagnostic.CA1200.severity = warning
 csharp_prefer_static_local_function = true:suggestion
 csharp_prefer_static_anonymous_function = true:suggestion
 csharp_style_prefer_readonly_struct = true:suggestion
@@ -708,50 +708,53 @@ csharp_style_prefer_switch_expression = true:suggestion
 csharp_style_prefer_pattern_matching = true:silent
 csharp_style_prefer_not_pattern = true:suggestion
 dotnet_diagnostic.CA1070.severity = error
-dotnet_diagnostic.SX1309.severity = none
+dotnet_diagnostic.SX1309.severity = error
 dotnet_diagnostic.SX1309S.severity = none
+dotnet_diagnostic.SA1600.severity = none
+dotnet_diagnostic.SA1633.severity = none
+dotnet_diagnostic.SA1027.severity = none
 
 [**Tests**/*.cs]
 
 #Types that own disposable fields should be disposable
-dotnet_diagnostic.CA1001.severity = none
+dotnet_diagnostic.CA1001.severity = warning
 
 #Specify IFormatProvider
-dotnet_diagnostic.CA1305.severity = none
+dotnet_diagnostic.CA1305.severity = warning
 
 #Identifiers should not contain underscores
-dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CA1707.severity = warning
 
 #Avoid constant arrays as arguments
-dotnet_diagnostic.CA1861.severity = none
+dotnet_diagnostic.CA1861.severity = warning
 
 #Use 'CompositeFormat'
-dotnet_diagnostic.CA1863.severity = none
+dotnet_diagnostic.CA1863.severity = warning
 
 #Dispose objects before losing scope
-dotnet_diagnostic.CA2000.severity = none
+dotnet_diagnostic.CA2000.severity = warning
 
 #Consider calling ConfigureAwait on the awaited task
-dotnet_diagnostic.CA2007.severity = none
+dotnet_diagnostic.CA2007.severity = warning
 
 #Review SQL queries for security vulnerabilities
-dotnet_diagnostic.CA2100.severity = none
+dotnet_diagnostic.CA2100.severity = warning
 
 #Do not use insecure randomness	
-dotnet_diagnostic.CA5394.severity = none
+dotnet_diagnostic.CA5394.severity = warning
 
 #Split object initializers with more than one property value assignment across multiple lines
-dotnet_diagnostic.LS1100.severity = none
+dotnet_diagnostic.LS1100.severity = warning
 
 #Add Async suffix to names of methods which return Task or ValueTask
-dotnet_diagnostic.LS1300.severity = none
+dotnet_diagnostic.LS1300.severity = warning
 
 #Use "Async" suffix in names of methods that return an awaitable type
-dotnet_diagnostic.VSTHRD200.severity = none
+dotnet_diagnostic.VSTHRD200.severity = warning
 
 #Do not warn about public modifier for method signatures in interfaces
 [I[ABCDEFGHIJKLMZOPQRSTUVWXYZ]*.cs]
-dotnet_diagnostic.IDE0040.severity = none
+dotnet_diagnostic.IDE0040.severity = warning
 
 # XML-based project files
 [*.{csproj,vcxproj,vcxproj.filters,fsproj,nativeproj,locproj,shproj,ruleset,props,targets,config,xml,json}]

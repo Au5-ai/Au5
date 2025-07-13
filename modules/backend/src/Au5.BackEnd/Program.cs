@@ -67,7 +67,7 @@ app.MapDefaultEndpoints();
 
 	app.MapGet("/reactions", async (IReactionService reactionService, CancellationToken ct) =>
 	{
-		return Results.Ok(await reactionService.GetAllAsync(ct));
+		return Results.Ok(await reactionService.GetAllAsync(ct).ConfigureAwait(false));
 	});
 
 	app.MapControllers();

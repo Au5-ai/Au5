@@ -1,9 +1,12 @@
+// <copyright file="AuthenticationController.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System.Security.Claims;
 using Au5.Application.Models.Authentication;
 using Au5.BackEnd.Extensions;
 using Au5.Domain.Common;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Au5.BackEnd.Controllers;
 
@@ -11,7 +14,7 @@ namespace Au5.BackEnd.Controllers;
 [Route("authentication")]
 public class AuthenticationController(ITokenService tokenService) : ControllerBase
 {
-	private readonly ITokenService tokenService = tokenService;
+	private readonly ITokenService _tokenService = tokenService;
 
 	[HttpPost("login")]
 	public IActionResult Login([FromBody] LoginRequestDto request)
@@ -26,10 +29,10 @@ public class AuthenticationController(ITokenService tokenService) : ControllerBa
 			{
 				Id = Guid.NewGuid(),
 				FullName = "Mohammad Karimi",
-				PictureUrl = "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+				PictureUrl = "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo",
 			};
 
-			var token = tokenService.GenerateToken(user, "Admin");
+			var token = _tokenService.GenerateToken(user, "Admin");
 
 			return Ok(new { token });
 		}
@@ -48,7 +51,7 @@ public class AuthenticationController(ITokenService tokenService) : ControllerBa
 		{
 			message = "JWT authentication successful!",
 			user = participant,
-			role
+			role,
 		});
 	}
 }

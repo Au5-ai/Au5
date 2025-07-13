@@ -11,11 +11,11 @@ namespace Au5.Infrastructure.Authentication;
 
 public class TokenService : ITokenService
 {
-	private readonly JwtSettings jwt;
+	private readonly JwtSettings _jwt;
 
 	public TokenService(IOptions<JwtSettings> jwtOptions)
 	{
-		jwt = jwtOptions.Value;
+		_jwt = jwtOptions.Value;
 	}
 
 	public string GenerateToken(Participant user, string role)
@@ -27,14 +27,14 @@ public class TokenService : ITokenService
 			new Claim(ClaimTypes.Role, role),
 		};
 
-		var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.SecretKey));
+		var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.SecretKey));
 		var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
 		var token = new JwtSecurityToken(
-			issuer: jwt.Issuer,
-			audience: jwt.Audience,
+			issuer: _jwt.Issuer,
+			audience: _jwt.Audience,
 			claims: claims,
-			expires: DateTime.UtcNow.AddMinutes(jwt.ExpiryMinutes),
+			expires: DateTime.UtcNow.AddMinutes(_jwt.ExpiryMinutes),
 			signingCredentials: creds);
 
 		return new JwtSecurityTokenHandler().WriteToken(token);
