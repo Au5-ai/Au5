@@ -168,9 +168,9 @@ public class MeetingService : IMeetingService
 		}
 	}
 
-	public Meeting GetFullTranscriptionAsJson(string meetingId)
+	public Meeting GetFullTranscriptionAsJson(string meetId)
 	{
-		var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetingId);
+		var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetId);
 		if (meeting is null || meeting.Entries.Count == 0)
 		{
 			return meeting;

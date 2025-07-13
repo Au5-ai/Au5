@@ -6,7 +6,7 @@ public interface IMeetingService
 
 	void EndMeeting(string meetingId);
 
-	void AddParticipantToMeet(List<Participant> users, string meetingId);
+	void AddParticipantToMeet(List<Participant> users, string meetId);
 
 	string BotIsAdded(string meetingId);
 
@@ -16,7 +16,7 @@ public interface IMeetingService
 
 	void InsertBlock(EntryMessage entry);
 
-	Meeting GetFullTranscriptionAsJson(string meetingId);
+	Meeting GetFullTranscriptionAsJson(string meetId);
 
 	void AppliedReaction(ReactionAppliedMessage reaction);
 

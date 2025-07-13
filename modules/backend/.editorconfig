@@ -54,6 +54,7 @@ dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity:sil
 dotnet_style_parentheses_in_other_operators = never_if_unnecessary:silent
 dotnet_diagnostic.CA1021.severity = error
 dotnet_diagnostic.CA1823.severity = error
+dotnet_diagnostic.CA1725.severity = error
 
 # C# Files
 [*.cs]
