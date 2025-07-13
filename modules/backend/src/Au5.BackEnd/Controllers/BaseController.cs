@@ -31,7 +31,7 @@ public abstract class BaseController : ControllerBase
 			_ => StatusCodes.Status500InternalServerError,
 		};
 
-        var response = ApiResponse<T>.Failure(messages);
+        var response = ApiResponse<T>.Failure([.. messages]);
         return StatusCode(statusCode, response);
     }
 }

@@ -10,7 +10,5 @@ public class ApiResponse<T>
 
     public static ApiResponse<T> Success(T data) => new() { IsSuccess = true, Data = data };
 
-    public static ApiResponse<T> Failure(List<string> errors) => new() { IsSuccess = false, Errors = errors };
-
-    public static ApiResponse<T> Failure(string error) => Failure([error]);
+    public static ApiResponse<T> Failure(params string[] errors) => new() { IsSuccess = false, Errors = [.. errors] };
 }
