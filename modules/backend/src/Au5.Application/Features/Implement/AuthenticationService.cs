@@ -18,7 +18,7 @@ public class AuthenticationService(IApplicationDbContext context, ITokenService 
 
 		if (user is null || user.Password != request.Password.HashPassword(user.Id))
 		{
-			return Error.Failure("Username or password is incorrect.");
+			return Error.Unauthorized(description: "Username or password is incorrect.");
 		}
 
 		Participant participant = new()

@@ -9,17 +9,16 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
 
-[ApiController]
 [Route("authentication")]
-public class AuthenticationController(IAuthenticationService authenticationService) : ControllerBase
+public class AuthenticationController(IAuthenticationService authenticationService) : BaseController
 {
 	private readonly IAuthenticationService _authenticationService = authenticationService;
 
 	[HttpPost("login")]
 	public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
     {
-        var loginResult = await _authenticationService.LoginAsync(request).ConfigureAwait(false);
-        return loginResult.IsError ? Unauthorized(loginResult) : Ok(loginResult);
+        var result = await _authenticationService.LoginAsync(request).ConfigureAwait(false);
+        return ApiResult(result);
 	}
 
 	[Authorize]
