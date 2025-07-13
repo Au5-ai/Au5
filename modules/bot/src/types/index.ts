@@ -25,7 +25,7 @@ export type AutoLeaveTimeouts = {
  * @property meetingUrl - The URL of the meeting (nullable).
  * @property model - The bot operation mode ("liveVoice" or "liveCaption").
  * @property botDisplayName - The display name for the bot.
- * @property meetingId - The unique identifier for the meeting.
+ * @property meetId - The unique identifier for the meeting.
  * @property language - The language code for the meeting (optional).
  * @property autoLeave - Auto-leave timeout settings.
  * @property meeting_settings - Additional settings for the meeting, such as recording and transcription options.
@@ -38,8 +38,8 @@ export type MeetingConfiguration = {
   hubUrl: string;
   platform: MeetingPlatform;
   meetingUrl: string | null;
+  meetId: string;
   botDisplayName: string;
-  meetingId: string;
   language?: string | null;
   delayBeforeInteraction: number;
   autoLeave: AutoLeaveTimeouts;

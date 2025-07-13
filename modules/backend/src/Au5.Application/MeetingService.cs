@@ -58,12 +58,12 @@ public class MeetingService : IMeetingService
 			{
 				var existingParticipant = true;
 
-				if (item.IsKnownUser && !meeting.Participants.Any(x => x.UserId == item.Id))
+				if (item.HasAccount && !meeting.Participants.Any(x => x.UserId == item.Id))
 				{
 					existingParticipant = false;
 				}
 
-				if (!item.IsKnownUser && !meeting.Participants.Any(x => x.FullName == item.FullName))
+				if (!item.HasAccount && !meeting.Participants.Any(x => x.FullName == item.FullName))
 				{
 					existingParticipant = false;
 				}
@@ -73,8 +73,8 @@ public class MeetingService : IMeetingService
 					meeting.Participants.Add(new ParticipantInMeeting
 					{
 						MeetingId = meeting.Id,
-						FullName = item.IsKnownUser ? string.Empty : item.FullName,
-						PictureUrl = item.IsKnownUser ? string.Empty : item.PictureUrl,
+						FullName = item.HasAccount ? string.Empty : item.FullName,
+						PictureUrl = item.HasAccount ? string.Empty : item.PictureUrl,
 						UserId = item.Id,
 					});
 				}

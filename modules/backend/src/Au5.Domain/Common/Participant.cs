@@ -8,5 +8,8 @@ public class Participant
 
 	public string PictureUrl { get; set; }
 
-	public bool IsKnownUser { get; set; }
+	/// <summary>
+	/// Gets or sets a value indicating whether indicates whether the participant has an account in the system.
+	/// </summary>
+	public bool HasAccount { get; set; }
 }
