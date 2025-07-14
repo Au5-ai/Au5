@@ -26,7 +26,6 @@ class LiveCaptionsHelper {
             return;
         }
         logger_1.logger.info("Overlay activated. Clicking combo box.");
-        await this.page.getByRole("combobox").click({ force: true });
         await (0, task_1.delay)(700);
         const languageSelected = await this.selectLanguageOption(languageValue);
         if (languageSelected) {
@@ -56,7 +55,11 @@ class LiveCaptionsHelper {
                 overlay.style.opacity = "1";
                 overlay.style.pointerEvents = "auto";
                 overlay.style.display = "block";
-                return true;
+                const combobox = document.querySelector('[role="combobox"]');
+                if (combobox) {
+                    combobox.click();
+                    return true;
+                }
             }
             return false;
         });

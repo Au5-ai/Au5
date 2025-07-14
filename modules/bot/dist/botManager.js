@@ -71,7 +71,7 @@ async function startMeetingBot(config) {
     if (isJoined) {
         logger_1.logger.info(`[Program] Bot successfully joined the meeting on platform: ${config.platform}`);
         hubClient = new meetingHubClient_1.MeetingHubClient(config);
-        const isConnected = await hubClient.startConnection();
+        const isConnected = true; //await hubClient.startConnection();
         if (!isConnected) {
             logger_1.logger.error(`[Program] Failed to connect to the hub service at ${config.hubUrl}`);
             meetingPlatform.leaveMeeting();

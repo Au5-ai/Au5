@@ -84,7 +84,7 @@ export async function startMeetingBot(
       `[Program] Bot successfully joined the meeting on platform: ${config.platform}`
     );
     hubClient = new MeetingHubClient(config);
-    const isConnected = await hubClient.startConnection();
+    const isConnected = true; //await hubClient.startConnection();
 
     if (!isConnected) {
       logger.error(
@@ -119,6 +119,11 @@ async function handleParticipation(message: any): Promise<void> {
     return;
   }
   message.meetingId = meetingConfig.meetId;
+  logger.info(
+    `[Program] [handleParticipation] Sending participation message: ${JSON.stringify(
+      message
+    )}`
+  );
   await hubClient.sendMessage(message);
 }
 
