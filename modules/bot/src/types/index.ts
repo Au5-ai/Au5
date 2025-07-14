@@ -69,13 +69,14 @@ export interface IMeetingPlatform {
 }
 
 export interface Participant {
+  id: string;
   fullName: string;
   pictureUrl: string;
-  isKnown: boolean;
+  hasAccount: boolean;
 }
 
 export interface EntryMessage {
-  meetingId: string;
+  meetId: string;
   blockId: string;
   speaker: Participant;
   content: string;

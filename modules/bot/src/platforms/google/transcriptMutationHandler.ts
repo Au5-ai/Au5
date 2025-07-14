@@ -72,7 +72,7 @@ export class TranscriptMutationHandler {
           },
           content: caption.transcript,
           timestamp: new Date(),
-          meetingId: "",
+          meetId: "",
           entryType: "Transcription",
           type: "Entry",
         } as EntryMessage);

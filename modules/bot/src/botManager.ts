@@ -105,7 +105,7 @@ async function handleTranscription(message: EntryMessage): Promise<void> {
     return;
   }
 
-  message.meetingId = meetingConfig.meetingId;
+  message.meetId = meetingConfig.meetId;
   if (!meetingHasPaused) {
     await hubClient.sendMessage(message);
   }
@@ -118,7 +118,7 @@ async function handleParticipation(message: any): Promise<void> {
     );
     return;
   }
-  message.meetingId = meetingConfig.meetingId;
+  message.meetingId = meetingConfig.meetId;
   await hubClient.sendMessage(message);
 }
 

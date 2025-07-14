@@ -86,7 +86,7 @@ async function handleTranscription(message) {
         logger_1.logger.error("[Program] Hub client is not initialized.");
         return;
     }
-    message.meetingId = meetingConfig.meetingId;
+    message.meetId = meetingConfig.meetId;
     if (!meetingHasPaused) {
         await hubClient.sendMessage(message);
     }
@@ -96,7 +96,7 @@ async function handleParticipation(message) {
         logger_1.logger.error("[Program] [handleParticipation] Hub client is not initialized.");
         return;
     }
-    message.meetingId = meetingConfig.meetingId;
+    message.meetingId = meetingConfig.meetId;
     await hubClient.sendMessage(message);
 }
 /**
