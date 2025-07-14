@@ -1,6 +1,6 @@
 namespace Au5.Application.Models.Authentication;
 
-public record LoginRequestDto
+public record LoginRequest
 {
 	public string Username { get; init; }
 
