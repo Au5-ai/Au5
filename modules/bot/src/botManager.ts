@@ -84,7 +84,7 @@ export async function startMeetingBot(
       `[Program] Bot successfully joined the meeting on platform: ${config.platform}`
     );
     hubClient = new MeetingHubClient(config);
-    const isConnected = true; //await hubClient.startConnection();
+    const isConnected = await hubClient.startConnection();
 
     if (!isConnected) {
       logger.error(
@@ -111,21 +111,21 @@ async function handleTranscription(message: EntryMessage): Promise<void> {
   }
 }
 
-async function handleParticipation(message: any): Promise<void> {
-  if (!hubClient) {
-    logger.error(
-      "[Program] [handleParticipation] Hub client is not initialized."
-    );
-    return;
-  }
-  message.meetingId = meetingConfig.meetId;
-  logger.info(
-    `[Program] [handleParticipation] Sending participation message: ${JSON.stringify(
-      message
-    )}`
-  );
-  await hubClient.sendMessage(message);
-}
+// async function handleParticipation(message: any): Promise<void> {
+//   if (!hubClient) {
+//     logger.error(
+//       "[Program] [handleParticipation] Hub client is not initialized."
+//     );
+//     return;
+//   }
+//   message.meetingId = meetingConfig.meetId;
+//   logger.info(
+//     `[Program] [handleParticipation] Sending participation message: ${JSON.stringify(
+//       message
+//     )}`
+//   );
+//   await hubClient.sendMessage(message);
+// }
 
 /**
  * Registers a function named `triggerNodeGracefulLeave` in the browser context,
@@ -226,10 +226,6 @@ async function performGracefulLeave(): Promise<void> {
   try {
     if (browser && browser.isConnected()) {
       await browser.close();
-    } else {
-      logger.info(
-        "[Program] Browser instance already closed or not available."
-      );
     }
   } catch (error) {
     logger.error(
@@ -242,9 +238,6 @@ async function performGracefulLeave(): Promise<void> {
   if (leaveSuccess) {
     process.exit(0);
   } else {
-    logger.info(
-      "[Program] Leave attempt failed or button not found. Exiting process with code 1 (Failure). Waiting for external termination."
-    );
     process.exit(1);
   }
 }

@@ -3,7 +3,7 @@
   "platform": "googleMeet",
   "meetingUrl": "https://meet.google.com/kqt-byur-jya",
   "botDisplayName": "Cando",
-  "meetingId": "kqt-byur-jya",
+  "meetId": "kqt-byur-jya",
   "language": "fa-IR",
   "autoLeave": {
     "waitingEnter": 30000,
