@@ -28,6 +28,13 @@
 		<ProjectReference Include="..\Au5.Domain\Au5.Domain.csproj" />
 		<ProjectReference Include="..\Au5.Infrastructure\Au5.Infrastructure.csproj" />
 		<ProjectReference Include="..\Au5.ServiceDefaults\Au5.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\Au5.Shared\Au5.Shared.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Include="StyleCop.Analyzers">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 </Project>

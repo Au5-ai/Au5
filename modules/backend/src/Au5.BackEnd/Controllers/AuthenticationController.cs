@@ -1,7 +1,3 @@
-// <copyright file="AuthenticationController.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
 using System.Security.Claims;
 using Au5.Application.Models.Authentication;
 using Au5.BackEnd.Extensions;
@@ -10,9 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
 
-[ApiController]
 [Route("authentication")]
-public class AuthenticationController(ITokenService tokenService) : ControllerBase
+public class AuthenticationController(ITokenService tokenService) : BaseController
 {
 	private readonly ITokenService _tokenService = tokenService;
 

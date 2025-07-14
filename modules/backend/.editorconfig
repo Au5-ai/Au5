@@ -55,6 +55,8 @@ dotnet_style_parentheses_in_other_operators = never_if_unnecessary:silent
 dotnet_diagnostic.CA1021.severity = error
 dotnet_diagnostic.CA1823.severity = error
 dotnet_diagnostic.CA1725.severity = error
+dotnet_diagnostic.CA2007.severity = none
+dotnet_diagnostic.CA1710.severity = error
 
 # C# Files
 [*.cs]
@@ -206,7 +208,7 @@ dotnet_diagnostic.CA1707.severity = warning
 dotnet_diagnostic.CA1708.severity = warning
 
 #Identifiers should have correct suffix
-dotnet_diagnostic.CA1710.severity = warning
+dotnet_diagnostic.CA1710.severity = error
 
 #Identifiers should not have incorrect suffix
 dotnet_diagnostic.CA1711.severity = warning
@@ -235,7 +237,7 @@ dotnet_diagnostic.CA1848.severity = warning
 #https://github.com/dotnet/roslyn-analyzers/issues/5530
 #https://github.com/dotnet/roslyn-analyzers/issues/5712
 #Consider calling ConfigureAwait on the awaited task
-dotnet_diagnostic.CA2007.severity = warning
+dotnet_diagnostic.CA2007.severity = none
 
 #Do not raise reserved exception types
 dotnet_diagnostic.CA2201.severity = warning
@@ -319,7 +321,7 @@ dotnet_diagnostic.IDE0030.severity = warning
 dotnet_diagnostic.IDE0031.severity = warning
 
 #Use auto property
-dotnet_diagnostic.IDE0032.severity = warning
+dotnet_diagnostic.IDE0032.severity = none
 
 #Use explicitly provided tuple name
 dotnet_diagnostic.IDE0033.severity = warning
@@ -463,7 +465,7 @@ dotnet_diagnostic.IDE0083.severity = warning
 dotnet_diagnostic.IDE0084.severity = warning
 
 #Simplify new expression
-dotnet_diagnostic.IDE0090.severity = warning
+dotnet_diagnostic.IDE0090.severity = error
 
 #Remove unnecessary equality operator
 dotnet_diagnostic.IDE0100.severity = warning
@@ -736,7 +738,7 @@ dotnet_diagnostic.CA1863.severity = warning
 dotnet_diagnostic.CA2000.severity = warning
 
 #Consider calling ConfigureAwait on the awaited task
-dotnet_diagnostic.CA2007.severity = warning
+dotnet_diagnostic.CA2007.severity = none
 
 #Review SQL queries for security vulnerabilities
 dotnet_diagnostic.CA2100.severity = warning

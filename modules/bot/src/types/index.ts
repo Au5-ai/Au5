@@ -68,15 +68,16 @@ export interface IMeetingPlatform {
   observeParticipations(handler: (participant: any) => void): Promise<void>;
 }
 
-export interface Speaker {
+export interface Participant {
   fullName: string;
   pictureUrl: string;
+  isKnown: boolean;
 }
 
 export interface EntryMessage {
   meetingId: string;
   blockId: string;
-  speaker: Speaker;
+  speaker: Participant;
   content: string;
   timestamp: Date;
   entryType: "Transcription";
