@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using System.Text;
 using Au5.Application.Common.Interfaces;
 using Au5.Application.Models.Authentication;
@@ -11,7 +11,7 @@ public class AuthenticationService(IApplicationDbContext context, ITokenService 
 	private readonly IApplicationDbContext _context = context;
 	private readonly ITokenService _tokenService = tokenService;
 
-	public async Task<ErrorOr<object>> LoginAsync(LoginRequestDto request)
+	public async Task<ErrorOr<LoginResponse>> LoginAsync(LoginRequestDto request)
 	{
 		var user = await _context.Set<User>()
 			.FirstOrDefaultAsync(u => u.Email == request.Username && u.IsActive)
@@ -22,25 +22,18 @@ public class AuthenticationService(IApplicationDbContext context, ITokenService 
 			return Error.Unauthorized(description: "Username or password is incorrect.");
 		}
 
-		Participant participant = new()
-		{
-			Id = user.Id,
-			FullName = user.FullName,
-			PictureUrl = user.PictureUrl,
-			IsKnownUser = true
-		};
-
+		Participant participant = new(user);
 		var token = _tokenService.GenerateToken(participant, "User");
 
-		return new
+		return new LoginResponse()
 		{
 			AccessToken = token,
 			RefreshToken = string.Empty,
-			User = new
+			Participant = new ParticipantDto()
 			{
-				user.FullName,
-				user.PictureUrl,
-				user.Email
+				FullName = user.FullName,
+				PictureUrl = user.PictureUrl,
+				Email = user.Email
 			}
 		};
 	}
