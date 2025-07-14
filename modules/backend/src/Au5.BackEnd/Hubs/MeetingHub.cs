@@ -43,15 +43,15 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 		await BroadcastToGroupExceptCallerAsync(requestToAddBotMessage.MeetId, requestToAddBotMessage).ConfigureAwait(false);
 	}
 
-	public async Task BotJoinedInMeeting(string meetingId)
+	public async Task BotJoinedInMeeting(string meetId)
 	{
-		var botName = meetingService.BotIsAdded(meetingId);
+		var botName = meetingService.BotIsAdded(meetId);
 		if (string.IsNullOrWhiteSpace(botName))
 		{
 			return;
 		}
 
-		await BroadcastToGroupExceptCallerAsync(meetingId, new BotJoinedInMeetingMessage() { BotName = botName }).ConfigureAwait(false);
+		await BroadcastToGroupExceptCallerAsync(meetId, new BotJoinedInMeetingMessage() { BotName = botName }).ConfigureAwait(false);
 	}
 
 	public async Task Entry(EntryMessage transcription)
