@@ -10,7 +10,7 @@ public class AppliedReactions
 	public int ReactionId { get; set; }
 
 	/// <summary>
-	/// List of user IDs who applied this reaction to the entry as Json.
+	/// Gets or sets list of user IDs who applied this reaction to the entry as Json.
 	/// </summary>
 	public List<Guid> Users { get; set; }
 }

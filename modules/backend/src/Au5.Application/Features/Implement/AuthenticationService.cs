@@ -20,16 +20,17 @@ public class AuthenticationService(IApplicationDbContext context, ITokenService 
 			return Error.Unauthorized(description: "Username or password is incorrect.");
 		}
 
-		Participant participant = new(user);
-		var token = _tokenService.GenerateToken(participant, "User");
+		var token = _tokenService.GenerateToken(user.ToParticipant(), "User");
 
 		return new LoginResponse(
 					accessToken: token,
 					refreshToken: string.Empty,
-					participant: new ParticipantDto(
-						fullName: user.FullName,
-						pictureUrl: user.PictureUrl,
-						email: user.Email));
+					participant: new
+					{
+						fullName = user.FullName,
+						pictureUrl = user.PictureUrl,
+						email = user.Email
+					});
 	}
 
 	private static string HashPassword(string password, Guid salt)

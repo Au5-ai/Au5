@@ -11,10 +11,10 @@ public class AuthenticationController(IAuthenticationService authenticationServi
 	private readonly IAuthenticationService _authenticationService = authenticationService;
 
 	[HttpPost("login")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> Login([FromBody] LoginRequest requestModel, CancellationToken ct)
 	{
-		var result = await _authenticationService.LoginAsync(requestModel, ct);
-		return new ObjectResult(result);
+		return Ok(await _authenticationService.LoginAsync(requestModel, ct));
 	}
 
 	[Authorize]

@@ -33,7 +33,7 @@ public class Meeting
 	public ICollection<Entry> Entries { get; set; }
 
 	public bool IsActive()
-		=> Status == MeetingStatus.Recording || Status == MeetingStatus.Paused;
+		=> Status is MeetingStatus.Recording or MeetingStatus.Paused;
 
 	public bool IsPaused()
 		=> Status == MeetingStatus.Paused;
