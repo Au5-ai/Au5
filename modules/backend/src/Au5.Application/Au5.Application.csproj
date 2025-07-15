@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Au5.Domain\Au5.Domain.csproj" />
+    <ProjectReference Include="..\Au5.Shared\Au5.Shared.csproj" />
   </ItemGroup>
 
 	<ItemGroup>
