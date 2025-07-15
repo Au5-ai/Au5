@@ -1,3 +1,5 @@
+using Au5.BackEnd.GlobalHandler;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
@@ -32,12 +34,17 @@ builder.AddServiceDefaults();
 	builder.Logging.ClearProviders();
 	builder.Logging.AddConsole();
 	builder.Logging.SetMinimumLevel(LogLevel.Information);
+
+	builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
+	builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+	builder.Services.AddProblemDetails();
 }
 
 var app = builder.Build();
-
-app.MapDefaultEndpoints();
 {
+	app.UseExceptionHandler();
+	app.MapDefaultEndpoints();
+
 	app.UseCors("AllowAllWithCredentials");
 	app.UseRouting();
 
