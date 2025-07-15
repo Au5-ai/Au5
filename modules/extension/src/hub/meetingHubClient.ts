@@ -4,7 +4,7 @@ import {ChatPanel} from "../ui/chatPanel";
 
 export class MeetingHubClient {
   private connection: signalR.HubConnection;
-  private meetingId: string;
+  private meetId: string;
   private config: AppConfiguration;
   private platform: IMeetingPlatform;
   private chatPanel: ChatPanel;
@@ -12,7 +12,7 @@ export class MeetingHubClient {
   constructor(config: AppConfiguration, platform: IMeetingPlatform, chatPanel: ChatPanel) {
     this.config = config;
     this.platform = platform;
-    this.meetingId = platform.getMeetingId();
+    this.meetId = platform.getMeetId();
     this.chatPanel = chatPanel;
     this.connection = new signalR.HubConnectionBuilder()
       .withUrl(this.config.service.hubUrl)
@@ -38,7 +38,7 @@ export class MeetingHubClient {
       .start()
       .then(() => {
         this.connection.invoke(MessageTypes.UserJoinedInMeeting, {
-          meetingId: this.meetingId,
+          meetId: this.meetId,
           user: {
             id: this.config.user.id,
             fullName: this.config.user.fullName,

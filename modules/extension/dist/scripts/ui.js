@@ -154,14 +154,14 @@ class ChatPanel {
     <div class="au5-message-avatar">
       <img
         class="au5-avatar-image"
-        src="${entry.speaker.pictureUrl || DEFAULT_AVATAR_URL}"
+        src="${entry.participant.pictureUrl || DEFAULT_AVATAR_URL}"
         alt="Sender Avatar"
       />
     </div>
 
     <div class="au5-message-bubble">
       <div class="au5-message-header">
-        <span class="au5-message-sender">${entry.speaker.fullName}</span>
+        <span class="au5-message-sender">${entry.participant.fullName}</span>
         <span class="au5-message-time">${DateTime.toHoursAndMinutes(entry.timestamp)}</span>
       </div>
 
@@ -399,7 +399,7 @@ class GoogleMeet {
   constructor(url) {
     this.url = url;
   }
-  getMeetingId() {
+  getMeetId() {
     const match = this.url.match(platformRegex.googleMeet);
     return match ? `${match[1]}` : "Google Meet";
   }
@@ -3315,13 +3315,13 @@ function isLogger(logger) {
 class MeetingHubClient {
   constructor(config2, platform2, chatPanel2) {
     __publicField(this, "connection");
-    __publicField(this, "meetingId");
+    __publicField(this, "meetId");
     __publicField(this, "config");
     __publicField(this, "platform");
     __publicField(this, "chatPanel");
     this.config = config2;
     this.platform = platform2;
-    this.meetingId = platform2.getMeetingId();
+    this.meetId = platform2.getMeetId();
     this.chatPanel = chatPanel2;
     this.connection = new HubConnectionBuilder().withUrl(this.config.service.hubUrl).withAutomaticReconnect().build();
     this.connection.onclose((err) => {
@@ -3338,7 +3338,7 @@ class MeetingHubClient {
   startConnection(messageHandler) {
     this.connection.start().then(() => {
       this.connection.invoke(MessageTypes.UserJoinedInMeeting, {
-        meetingId: this.meetingId,
+        meetId: this.meetId,
         user: {
           id: this.config.user.id,
           fullName: this.config.user.fullName,
@@ -3426,12 +3426,13 @@ class UIHandlers {
         if (type && blockId) {
           (_b = this.meetingHubClient) == null ? void 0 : _b.sendMessage({
             type: MessageTypes.ReactionApplied,
-            meetingId: (_a = this.platform) == null ? void 0 : _a.getMeetingId(),
+            meetId: (_a = this.platform) == null ? void 0 : _a.getMeetId(),
             blockId,
             user: {
               id: this.config.user.id,
               fullName: this.config.user.fullName,
-              pictureUrl: this.config.user.pictureUrl
+              pictureUrl: this.config.user.pictureUrl,
+              hasAccount: this.config.user.hasAccount || true
             },
             reactionType: type
           });
@@ -3441,7 +3442,8 @@ class UIHandlers {
             user: {
               id: this.config.user.id,
               fullName: this.config.user.fullName,
-              pictureUrl: this.config.user.pictureUrl
+              pictureUrl: this.config.user.pictureUrl,
+              hasAccount: this.config.user.hasAccount || true
             },
             reactionType: type
           });
@@ -3492,16 +3494,16 @@ class UIHandlers {
         console.error("Platform or configuration is not set.");
         return;
       }
-      const meetingId = this.platform.getMeetingId();
+      const meetId = this.platform.getMeetId();
       const response = await this.backendApi.addBot({
-        meetingId,
+        meetId,
         botName: this.config.service.botName,
         user: this.config.user
       });
       if (response.success) {
         const message = {
           type: MessageTypes.RequestToAddBot,
-          meetingId,
+          meetId,
           botName: this.config.service.botName,
           user: this.config.user
         };
@@ -3518,7 +3520,7 @@ class UIHandlers {
             } else {
               clearInterval(interval);
               disabled = false;
-              addBotText.textContent = "Add bot here";
+              addBotText.textContent = "Add bot";
             }
           }, 1e3);
         }
@@ -3544,12 +3546,13 @@ class UIHandlers {
         }
         const entry = {
           type: MessageTypes.Entry,
-          meetingId: (_a = this.platform) == null ? void 0 : _a.getMeetingId(),
+          meetId: (_a = this.platform) == null ? void 0 : _a.getMeetId(),
           blockId: crypto.randomUUID(),
-          speaker: {
+          participant: {
             id: this.config.user.id,
             fullName: this.config.user.fullName,
-            pictureUrl: this.config.user.pictureUrl
+            pictureUrl: this.config.user.pictureUrl,
+            hasAccount: this.config.user.hasAccount || true
           },
           content: input.value.trim(),
           timestamp: /* @__PURE__ */ new Date(),
@@ -3598,12 +3601,13 @@ class UIHandlers {
       if (!this.platform || !this.meetingHubClient) return;
       const message = {
         type: MessageTypes.PauseAndPlayTranscription,
-        meetingId: this.platform.getMeetingId(),
+        meetId: this.platform.getMeetId(),
         isPaused: false,
         user: {
           id: this.config.user.id,
           fullName: this.config.user.fullName,
-          pictureUrl: this.config.user.pictureUrl
+          pictureUrl: this.config.user.pictureUrl,
+          hasAccount: this.config.user.hasAccount || true
         }
       };
       this.meetingHubClient.sendMessage(message);
@@ -3613,12 +3617,13 @@ class UIHandlers {
       if (!this.platform || !this.meetingHubClient) return;
       const message = {
         type: MessageTypes.PauseAndPlayTranscription,
-        meetingId: this.platform.getMeetingId(),
+        meetId: this.platform.getMeetId(),
         isPaused: true,
         user: {
           id: this.config.user.id,
           fullName: this.config.user.fullName,
-          pictureUrl: this.config.user.pictureUrl
+          pictureUrl: this.config.user.pictureUrl,
+          hasAccount: this.config.user.hasAccount || true
         }
       };
       this.meetingHubClient.sendMessage(message);
@@ -3635,9 +3640,9 @@ class UIHandlers {
       case MessageTypes.Entry:
         const transcriptEntry = msg;
         this.chatPanel.addEntry({
-          meetingId: transcriptEntry.meetingId,
+          meetId: transcriptEntry.meetId,
           blockId: transcriptEntry.blockId,
-          speaker: transcriptEntry.speaker,
+          participant: transcriptEntry.participant,
           content: transcriptEntry.content,
           entryType: transcriptEntry.entryType,
           timestamp: transcriptEntry.timestamp
@@ -3652,7 +3657,7 @@ class UIHandlers {
         break;
       case MessageTypes.ReactionApplied:
         const reactionMsg = msg;
-        if (!reactionMsg.meetingId || !reactionMsg.blockId || !reactionMsg.user || !reactionMsg.reactionType) {
+        if (!reactionMsg.meetId || !reactionMsg.blockId || !reactionMsg.user || !reactionMsg.reactionType) {
           return;
         }
         this.chatPanel.addReaction(reactionMsg);

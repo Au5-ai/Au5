@@ -4,25 +4,23 @@ export const platformRegex = {
 
 export interface IMeetingPlatform {
   getPlatformName(): string;
-  getMeetingId(): string;
-}
-
-export interface Speaker {
-  fullName: string;
-  pictureUrl: string;
+  getMeetId(): string;
 }
 
 export interface Entry {
-  meetingId?: string;
+  meetId?: string;
   blockId: string;
-  speaker: User;
+  participant: Participant;
   content: string;
   timestamp: Date;
   entryType: "Transcription" | "Chat";
 }
 
-export interface User extends Speaker {
+export interface Participant {
   id: string;
+  fullName: string;
+  pictureUrl: string;
+  hasAccount: boolean;
 }
 
 export interface ServiceIntegration {
@@ -35,7 +33,7 @@ export interface ServiceIntegration {
 }
 
 export interface AppConfiguration {
-  user: User;
+  user: Participant;
   service: ServiceIntegration;
 }
 
@@ -45,21 +43,21 @@ export interface IMessage {
 
 export interface UserJoinedInMeetingMessage extends IMessage {
   readonly type: MessageTypes.UserJoinedInMeeting;
-  meetingId: string;
-  user: User;
+  meetId: string;
+  user: Participant;
   platform: string;
 }
 
 export interface RequestToAddBotMessage extends IMessage {
   readonly type: MessageTypes.RequestToAddBot;
-  meetingId: string;
+  meetId: string;
   botName: string;
-  user: User;
+  user: Participant;
 }
 
 export interface BotJoinedInMeetingMessage extends IMessage {
   readonly type: MessageTypes.BotJoinedInMeeting;
-  meetingId: string;
+  meetId: string;
   botName: string;
 }
 
@@ -69,22 +67,22 @@ export interface EntryMessage extends Entry, IMessage {
 
 export interface ReactionAppliedMessage extends IMessage {
   readonly type: MessageTypes.ReactionApplied;
-  meetingId?: string;
+  meetId?: string;
   blockId: string;
-  user: User;
+  user: Participant;
   reactionType: string;
 }
 
 export interface PauseAndPlayTranscriptionMessage extends IMessage {
   readonly type: MessageTypes.PauseAndPlayTranscription;
-  meetingId: string;
-  user: User;
+  meetId: string;
+  user: Participant;
   isPaused: boolean;
 }
 
 export interface MeetingIsActiveMessage extends IMessage {
   readonly type: MessageTypes.MeetingIsActive;
-  meetingId: string;
+  meetId: string;
   botName: string;
 }
 
@@ -108,9 +106,9 @@ export enum MessageTypes {
 }
 
 export interface RequestAddBotModel {
-  meetingId: string;
+  meetId: string;
   botName: string;
-  user: User;
+  user: Participant;
 }
 
 export interface Reaction {

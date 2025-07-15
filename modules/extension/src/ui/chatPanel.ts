@@ -99,14 +99,14 @@ export class ChatPanel {
     <div class="au5-message-avatar">
       <img
         class="au5-avatar-image"
-        src="${entry.speaker.pictureUrl || DEFAULT_AVATAR_URL}"
+        src="${entry.participant.pictureUrl || DEFAULT_AVATAR_URL}"
         alt="Sender Avatar"
       />
     </div>
 
     <div class="au5-message-bubble">
       <div class="au5-message-header">
-        <span class="au5-message-sender">${entry.speaker.fullName}</span>
+        <span class="au5-message-sender">${entry.participant.fullName}</span>
         <span class="au5-message-time">${DateTime.toHoursAndMinutes(entry.timestamp)}</span>
       </div>
 

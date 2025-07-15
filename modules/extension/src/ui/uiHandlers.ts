@@ -103,12 +103,13 @@ export class UIHandlers {
         if (type && blockId) {
           this.meetingHubClient?.sendMessage({
             type: MessageTypes.ReactionApplied,
-            meetingId: this.platform?.getMeetingId(),
+            meetId: this.platform?.getMeetId(),
             blockId: blockId,
             user: {
               id: this.config.user.id,
               fullName: this.config.user.fullName,
-              pictureUrl: this.config.user.pictureUrl
+              pictureUrl: this.config.user.pictureUrl,
+              hasAccount: this.config.user.hasAccount || true
             },
             reactionType: type
           } as ReactionAppliedMessage);
@@ -118,7 +119,8 @@ export class UIHandlers {
             user: {
               id: this.config.user.id,
               fullName: this.config.user.fullName,
-              pictureUrl: this.config.user.pictureUrl
+              pictureUrl: this.config.user.pictureUrl,
+              hasAccount: this.config.user.hasAccount || true
             },
             reactionType: type
           });
@@ -177,9 +179,9 @@ export class UIHandlers {
         console.error("Platform or configuration is not set.");
         return;
       }
-      const meetingId = this.platform.getMeetingId();
+      const meetId = this.platform.getMeetId();
       const response = await this.backendApi.addBot({
-        meetingId: meetingId,
+        meetId: meetId,
         botName: this.config.service.botName,
         user: this.config.user
       });
@@ -187,7 +189,7 @@ export class UIHandlers {
       if (response.success) {
         const message = {
           type: MessageTypes.RequestToAddBot,
-          meetingId: meetingId,
+          meetId: meetId,
           botName: this.config.service.botName,
           user: this.config.user
         } as RequestToAddBotMessage;
@@ -234,12 +236,13 @@ export class UIHandlers {
 
         const entry: EntryMessage = {
           type: MessageTypes.Entry,
-          meetingId: this.platform?.getMeetingId(),
+          meetId: this.platform?.getMeetId(),
           blockId: crypto.randomUUID(),
-          speaker: {
+          participant: {
             id: this.config.user.id,
             fullName: this.config.user.fullName,
-            pictureUrl: this.config.user.pictureUrl
+            pictureUrl: this.config.user.pictureUrl,
+            hasAccount: this.config.user.hasAccount || true
           },
           content: input.value.trim(),
           timestamp: new Date(),
@@ -294,12 +297,13 @@ export class UIHandlers {
       if (!this.platform || !this.meetingHubClient) return;
       const message: PauseAndPlayTranscriptionMessage = {
         type: MessageTypes.PauseAndPlayTranscription,
-        meetingId: this.platform.getMeetingId(),
+        meetId: this.platform.getMeetId(),
         isPaused: false,
         user: {
           id: this.config.user.id,
           fullName: this.config.user.fullName,
-          pictureUrl: this.config.user.pictureUrl
+          pictureUrl: this.config.user.pictureUrl,
+          hasAccount: this.config.user.hasAccount || true
         }
       };
       this.meetingHubClient.sendMessage(message);
@@ -310,12 +314,13 @@ export class UIHandlers {
       if (!this.platform || !this.meetingHubClient) return;
       const message: PauseAndPlayTranscriptionMessage = {
         type: MessageTypes.PauseAndPlayTranscription,
-        meetingId: this.platform.getMeetingId(),
+        meetId: this.platform.getMeetId(),
         isPaused: true,
         user: {
           id: this.config.user.id,
           fullName: this.config.user.fullName,
-          pictureUrl: this.config.user.pictureUrl
+          pictureUrl: this.config.user.pictureUrl,
+          hasAccount: this.config.user.hasAccount || true
         }
       };
       this.meetingHubClient.sendMessage(message);
@@ -335,9 +340,9 @@ export class UIHandlers {
       case MessageTypes.Entry:
         const transcriptEntry = msg as EntryMessage;
         this.chatPanel.addEntry({
-          meetingId: transcriptEntry.meetingId,
+          meetId: transcriptEntry.meetId,
           blockId: transcriptEntry.blockId,
-          speaker: transcriptEntry.speaker,
+          participant: transcriptEntry.participant,
           content: transcriptEntry.content,
           entryType: transcriptEntry.entryType,
           timestamp: transcriptEntry.timestamp
@@ -354,7 +359,7 @@ export class UIHandlers {
 
       case MessageTypes.ReactionApplied:
         const reactionMsg = msg as ReactionAppliedMessage;
-        if (!reactionMsg.meetingId || !reactionMsg.blockId || !reactionMsg.user || !reactionMsg.reactionType) {
+        if (!reactionMsg.meetId || !reactionMsg.blockId || !reactionMsg.user || !reactionMsg.reactionType) {
           return;
         }
         this.chatPanel.addReaction(reactionMsg);
