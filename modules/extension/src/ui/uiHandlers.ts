@@ -98,6 +98,7 @@ export class UIHandlers {
       const target = event.target as HTMLElement;
       const reaction = target.closest(".au5-reaction");
       if (reaction) {
+        const reactionId = Number.parseInt(reaction.getAttribute("reaction-Id")?.toString() || "0");
         const type = reaction.getAttribute("reaction-type");
         const blockId = reaction.getAttribute("data-blockId");
         if (type && blockId) {
@@ -111,6 +112,7 @@ export class UIHandlers {
               pictureUrl: this.config.user.pictureUrl,
               hasAccount: this.config.user.hasAccount || true
             },
+            reactionId: reactionId,
             reactionType: type
           } as ReactionAppliedMessage);
           this.chatPanel.addReaction({
@@ -122,6 +124,7 @@ export class UIHandlers {
               pictureUrl: this.config.user.pictureUrl,
               hasAccount: this.config.user.hasAccount || true
             },
+            reactionId: reactionId,
             reactionType: type
           });
         }

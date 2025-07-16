@@ -336,7 +336,7 @@ export class ChatPanel {
     const reactionsHtml = this.reactions
       .map(reaction => {
         return `
-      <div class="au5-reaction ${reaction.className}" reaction-type="${reaction.type}" data-blockId="${blockId}">
+      <div class="au5-reaction ${reaction.className}" reaction-Id="${reaction.id}" reaction-type="${reaction.type}" data-blockId="${blockId}">
         <span class="au5-reaction-emoji">${reaction.emoji}</span>
         <div class="au5-reaction-users"></div>
       </div>`;
