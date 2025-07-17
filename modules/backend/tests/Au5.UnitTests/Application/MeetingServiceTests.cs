@@ -1,66 +1,47 @@
 using Au5.Application;
 using Au5.Application.Models.Messages;
-using Au5.Domain.Common;
 
 namespace Au5.UnitTests.Application;
 
 public class MeetingServiceTests
 {
-	private readonly MeetingService _service;
+	private const string MEETID = "oik-okwe-dew";
+	private const string PLATFORM = "Google Meet";
+	private readonly Guid _userId = Guid.NewGuid();
 
-	public MeetingServiceTests()
+	[Fact]
+	public void Should_NotAddDuplicateUser_When_AddUserToMeetingIsCalledTwiceWithSameUser()
 	{
-		_service = new MeetingService();
+		var service = CreateServiceWithUser();
+
+		service.AddUserToMeeting(new UserJoinedInMeetingMessage()
+		{
+			User = new Participant() { Id = _userId },
+			MeetId = MEETID,
+			Platform = PLATFORM
+		});
+
+		var meeting = service.GetFullTranscriptionAsJson(MEETID);
+		var participantList = meeting.Participants.Where(u => u.UserId == _userId).ToList();
+		Assert.Single(participantList);
 	}
 
 	[Fact]
-	public void AddUserToMeetingShouldNotAddDuplicateUser()
+	public void Should_SetStatusToEnded_When_EndMeetingIsCalled()
 	{
-		var userId = Guid.NewGuid();
-		var meetId = Guid.NewGuid().ToString();
-		var platform = "Zoom";
+		var service = CreateServiceWithUser();
 
-		_service.AddUserToMeeting(new UserJoinedInMeetingMessage()
-		{
-			User = new Participant() { Id = userId },
-			MeetId = meetId,
-			Platform = platform
-		});
-		_service.AddUserToMeeting(new UserJoinedInMeetingMessage()
-		{
-			User = new Participant() { Id = userId },
-			MeetId = meetId,
-			Platform = platform
-		});
+		service.EndMeeting(MEETID);
 
-		var meeting = _service.GetFullTranscriptionAsJson(meetId);
-		Assert.Single(meeting.Participants.Where(u => u.UserId == userId).ToList());
-	}
-
-	[Fact]
-	public void EndMeetingShouldSetStatusToEnded()
-	{
-		var userId = Guid.NewGuid();
-		var meetId = Guid.NewGuid().ToString();
-		var platform = "Zoom";
-
-		_ = Guid.NewGuid().ToString();
-		_service.AddUserToMeeting(new UserJoinedInMeetingMessage()
-		{
-			User = new Participant() { Id = userId },
-			MeetId = meetId,
-			Platform = platform
-		});
-
-		_service.EndMeeting(meetId);
-
-		var meeting = _service.GetFullTranscriptionAsJson(meetId);
+		var meeting = service.GetFullTranscriptionAsJson(MEETID);
 		Assert.Equal(MeetingStatus.Ended, meeting.Status);
 	}
 
 	[Fact]
-	public void AddBotShouldReturnFalseIfMeetingDoesNotExist()
+	public void Should_ReturnEmptyString_When_AddBotToNonExistentMeeting()
 	{
+		var service = CreateServiceWithUser();
+
 		var request = new RequestToAddBotMessage
 		{
 			MeetId = Guid.NewGuid().ToString(),
@@ -68,24 +49,16 @@ public class MeetingServiceTests
 			User = new Participant { Id = Guid.NewGuid() }
 		};
 
-		var result = _service.RequestToAddBot(request);
+		var result = service.RequestToAddBot(request);
 
 		Assert.Equal(result, string.Empty);
 	}
 
 	[Fact]
-	public void AddBotShouldReturnFalseIfUserWhoIsNotInMeetingWantsToAddBot()
+	public void Should_ReturnEmptyString_When_UserNotInMeetingTriesToAddBot()
 	{
-		var userId = Guid.NewGuid();
-		var meetId = Guid.NewGuid().ToString();
-		var platform = "Zoom";
+		var service = CreateServiceWithUser();
 
-		_service.AddUserToMeeting(new UserJoinedInMeetingMessage()
-		{
-			User = new Participant() { Id = userId },
-			MeetId = meetId,
-			Platform = platform
-		});
 		var request = new RequestToAddBotMessage
 		{
 			MeetId = Guid.NewGuid().ToString(),
@@ -93,286 +66,199 @@ public class MeetingServiceTests
 			User = new Participant { Id = Guid.NewGuid() }
 		};
 
-		var result = _service.RequestToAddBot(request);
+		var result = service.RequestToAddBot(request);
 
 		Assert.Equal(result, string.Empty);
 	}
 
 	[Fact]
-	public void AddBotShouldReturnFalseIfUserIsInMeeting()
+	public void Should_ReturnNonEmptyString_When_UserInMeetingAddsBot()
 	{
-		var userId = Guid.NewGuid();
-		var meetId = Guid.NewGuid().ToString();
-		var platform = "Zoom";
-
-		_service.AddUserToMeeting(new UserJoinedInMeetingMessage()
-		{
-			User = new Participant() { Id = userId },
-			MeetId = meetId,
-			Platform = platform
-		});
+		var service = CreateServiceWithUser();
 
 		var request = new RequestToAddBotMessage
 		{
-			MeetId = meetId,
+			MeetId = MEETID,
 			BotName = "Bot1",
-			User = new Participant { Id = userId }
+			User = new Participant { Id = _userId }
 		};
 
-		var result = _service.RequestToAddBot(request);
+		var result = service.RequestToAddBot(request);
 
 		Assert.NotEqual(result, string.Empty);
 	}
 
-	[Fact]
-	public void AddParticipantToMeetShouldAddParticipants()
+	[Theory]
+	[InlineData("user1,user2")]
+	[InlineData("userA,userB,userC")]
+	[InlineData("singleUser")]
+	public void Should_AddParticipants_When_AddParticipantToMeetIsCalled(string participantNamesCsv)
 	{
-		var userId = Guid.NewGuid();
-		var meetId = Guid.NewGuid().ToString();
-		_service.AddUserToMeeting(new UserJoinedInMeetingMessage()
+		var service = CreateServiceWithUser();
+		var names = participantNamesCsv.Split(',');
+
+		var participants = names.Select(name => new Participant { FullName = name }).ToList();
+
+		service.AddParticipantToMeet(participants, MEETID);
+
+		var meeting = service.GetFullTranscriptionAsJson(MEETID);
+		var participantFullNames = meeting.Participants.Select(x => x.FullName).ToList();
+
+		foreach (var name in names)
 		{
-			User = new Participant() { Id = userId },
-			MeetId = meetId,
-			Platform = "platform"
-		});
-		List<Participant> participants = [new Participant() { FullName = "user1" }, new Participant() { FullName = "user2" }];
-
-		_service.AddParticipantToMeet(participants, meetId);
-
-		var meeting = _service.GetFullTranscriptionAsJson(meetId);
-		Assert.Contains("user1", meeting.Participants.Select(x => x.FullName));
-		Assert.Contains("user2", meeting.Participants.Select(x => x.FullName));
+			Assert.Contains(name, participantFullNames);
+		}
 	}
 
 	[Fact]
-	public void AddUserToMeetingShouldAddUserWhenMeetingDoesNotExist()
+	public void Should_AddUser_When_AddUserToMeetingIsCalledAndMeetingDoesNotExist()
 	{
-		var userId = Guid.NewGuid();
-		var meetId = Guid.NewGuid().ToString();
-		var platform = "Zoom";
+		var service = CreateServiceWithUser();
 
-		_service.AddUserToMeeting(new UserJoinedInMeetingMessage()
-		{
-			User = new Participant() { Id = userId },
-			MeetId = meetId,
-			Platform = platform
-		});
-
-		var result = _service.GetFullTranscriptionAsJson(meetId);
+		var result = service.GetFullTranscriptionAsJson(MEETID);
 
 		Assert.NotNull(result);
-		Assert.Contains(userId, result.Participants.Select(x => x.UserId));
+		Assert.Contains(_userId, result.Participants.Select(x => x.UserId));
 	}
 
 	[Fact]
-	public void AddBotShouldSetBotNameAndCreator()
+	public void Should_SetBotNameAndCreator_When_AddBotIsCalled()
 	{
-		var userId = Guid.NewGuid();
-		var meetId = Guid.NewGuid().ToString();
-		var platform = "Zoom";
+		var botName = "Cando";
+		var service = CreateServiceWithUser();
 
-		_service.AddUserToMeeting(new UserJoinedInMeetingMessage()
+		var hash = service.RequestToAddBot(new RequestToAddBotMessage
 		{
-			User = new Participant() { Id = userId },
-			MeetId = meetId,
-			Platform = platform
+			MeetId = MEETID,
+			BotName = botName,
+			User = new Participant { Id = _userId }
 		});
 
-		var hash = _service.RequestToAddBot(new RequestToAddBotMessage
-		{
-			MeetId = meetId,
-			BotName = "Bot1",
-			User = new Participant { Id = userId }
-		});
-
-		var result = _service.GetFullTranscriptionAsJson(meetId);
+		var result = service.GetFullTranscriptionAsJson(MEETID);
 
 		Assert.NotEqual(hash, string.Empty);
-		Assert.Equal("Bot1", result.BotName);
-		Assert.Equal(userId, result.CreatorUserId);
-		Assert.Equal(userId, result.BotInviterUserId);
+		Assert.Equal(botName, result.BotName);
+		Assert.Equal(_userId, result.CreatorUserId);
+		Assert.Equal(_userId, result.BotInviterUserId);
 	}
 
 	[Fact]
-	public void AddParticipantToMeetShouldAddNewParticipantsOnly()
+	public void Should_AddNewParticipantsOnly_When_AddParticipantToMeetIsCalledMultipleTimes()
 	{
-		var userId = Guid.NewGuid();
-		var meetId = Guid.NewGuid().ToString();
-		var platform = "Zoom";
+		var service = CreateServiceWithUser();
 
-		_service.AddUserToMeeting(new UserJoinedInMeetingMessage()
-		{
-			User = new Participant() { Id = userId },
-			MeetId = meetId,
-			Platform = platform
-		});
+		service.AddParticipantToMeet([new Participant() { HasAccount = true, Id = _userId, FullName = "u1" }, new Participant() { FullName = "u2" }], MEETID);
+		service.AddParticipantToMeet([new Participant() { HasAccount = true, Id = _userId, FullName = "u1" }, new Participant() { FullName = "u3" }, new Participant() { FullName = "u2" }], MEETID);
 
-		_service.AddParticipantToMeet([new Participant() { HasAccount = true, Id = userId, FullName = "u1" }, new Participant() { FullName = "u2" }], meetId);
-		_service.AddParticipantToMeet([new Participant() { HasAccount = true, Id = userId, FullName = "u1" }, new Participant() { FullName = "u3" }, new Participant() { FullName = "u2" }], meetId);
-
-		var result = _service.GetFullTranscriptionAsJson(meetId);
+		var result = service.GetFullTranscriptionAsJson(MEETID);
 
 		Assert.Equal(3, result.Participants.Count);
 	}
 
 	[Fact]
-	public void EndMeetingShouldChangeStatusToEnded()
+	public void Should_ChangeStatusToEnded_When_EndMeetingIsCalled()
 	{
-		var userId = Guid.NewGuid();
-		var meetId = Guid.NewGuid().ToString();
-		var platform = "Zoom";
+		var service = CreateServiceWithUser();
 
-		_service.AddUserToMeeting(new UserJoinedInMeetingMessage()
-		{
-			User = new Participant() { Id = userId },
-			MeetId = meetId,
-			Platform = platform
-		});
+		service.EndMeeting(MEETID);
 
-		_service.EndMeeting(meetId);
-
-		var result = _service.GetFullTranscriptionAsJson(meetId);
+		var result = service.GetFullTranscriptionAsJson(MEETID);
 
 		Assert.Equal(MeetingStatus.Ended, result.Status);
 	}
 
 	[Fact]
-	public void BotIsAddedShouldMarkBotAsAdded()
+	public void Should_MarkBotAsAdded_When_BotIsAddedIsCalled()
 	{
-		var userId = Guid.NewGuid();
-		var meetId = Guid.NewGuid().ToString();
-		var platform = "Zoom";
+		var botName = "Cando";
+		var service = CreateServiceWithUser();
 
-		_service.AddUserToMeeting(new UserJoinedInMeetingMessage()
+		service.RequestToAddBot(new RequestToAddBotMessage
 		{
-			User = new Participant() { Id = userId },
-			MeetId = meetId,
-			Platform = platform
+			MeetId = MEETID,
+			BotName = botName,
+			User = new Participant { Id = _userId }
 		});
 
-		_service.RequestToAddBot(new RequestToAddBotMessage
-		{
-			MeetId = meetId,
-			BotName = "Bot2",
-			User = new Participant { Id = userId }
-		});
+		var botNameFromResponse = service.BotIsAdded(MEETID);
 
-		var botName = _service.BotIsAdded(meetId);
+		var result = service.GetFullTranscriptionAsJson(MEETID);
 
-		var result = _service.GetFullTranscriptionAsJson(meetId);
-
-		Assert.Equal("Bot2", botName);
+		Assert.Equal(botNameFromResponse, botName);
 		Assert.True(result.IsBotAdded);
 		Assert.Equal(MeetingStatus.Recording, result.Status);
 	}
 
 	[Fact]
-	public void IsPausedShouldReturnTrueWhenPaused()
+	public void Should_ReturnTrue_When_PauseMeetingIsCalledWithTrue()
 	{
-		var userId = Guid.NewGuid();
-		var meetId = Guid.NewGuid().ToString();
-		var platform = "Zoom";
+		var service = CreateServiceWithUser();
 
-		_service.AddUserToMeeting(new UserJoinedInMeetingMessage()
-		{
-			User = new Participant() { Id = userId },
-			MeetId = meetId,
-			Platform = platform
-		});
-
-		var paused = _service.PauseMeeting(meetId, true);
-
+		var paused = service.PauseMeeting(MEETID, true);
 		Assert.True(paused);
 	}
 
 	[Fact]
-	public void UpsertBlockShouldInsertOrUpdateEntry()
+	public void Should_InsertOrUpdateEntry_When_UpsertBlockIsCalled()
 	{
+		var service = CreateServiceWithUser();
 		var blockId = Guid.NewGuid();
-		var userId = Guid.NewGuid();
-		var meetId = Guid.NewGuid().ToString();
-		var platform = "Zoom";
-
-		_service.AddUserToMeeting(new UserJoinedInMeetingMessage()
-		{
-			User = new Participant() { Id = userId },
-			MeetId = meetId,
-			Platform = platform
-		});
 
 		var entry = new EntryMessage
 		{
-			MeetId = meetId,
+			MeetId = MEETID,
 			BlockId = blockId,
 			Content = "Initial",
-			Participant = new Participant { Id = userId, FullName = "Test User" },
+			Participant = new Participant { Id = _userId, FullName = "Mohammad Karimi" },
 			Timestamp = DateTime.UtcNow,
 			EntryType = "Transcription"
 		};
 
-		_service.UpsertBlock(entry);
+		service.UpsertBlock(entry);
 
 		entry.Content = "Updated";
-		_service.UpsertBlock(entry);
+		service.UpsertBlock(entry);
 
-		var result = _service.GetFullTranscriptionAsJson(meetId);
+		var result = service.GetFullTranscriptionAsJson(MEETID);
 		var updatedEntry = result.Entries.FirstOrDefault(e => e.BlockId == blockId);
 
 		Assert.Equal("Updated", updatedEntry.Content);
 	}
 
 	[Fact]
-	public void InsertBlockShouldAddNewEntry()
+	public void Should_AddNewEntry_When_InsertBlockIsCalled()
 	{
+		var service = CreateServiceWithUser();
 		var blockId = Guid.NewGuid();
-		var userId = Guid.NewGuid();
-		var meetId = Guid.NewGuid().ToString();
-		var platform = "Zoom";
-
-		_service.AddUserToMeeting(new UserJoinedInMeetingMessage()
-		{
-			User = new Participant() { Id = userId },
-			MeetId = meetId,
-			Platform = platform
-		});
 
 		var entry = new EntryMessage
 		{
-			MeetId = meetId,
+			MeetId = MEETID,
 			BlockId = blockId,
 			Content = "Text",
-			Participant = new Participant { Id = userId, FullName = "Tester" },
+			Participant = new Participant { Id = _userId, FullName = "Tester" },
 			Timestamp = DateTime.UtcNow,
 			EntryType = "Chat"
 		};
 
-		_service.InsertBlock(entry);
+		service.InsertBlock(entry);
 
-		var result = _service.GetFullTranscriptionAsJson(meetId);
+		var result = service.GetFullTranscriptionAsJson(MEETID);
 		Assert.Single(result.Entries);
 	}
 
 	[Fact]
-	public void AppliedReactionShouldAddAndToggleReaction()
+	public void Should_AddAndToggleReaction_When_AppliedReactionIsCalledTwice()
 	{
+		var service = CreateServiceWithUser();
 		var blockId = Guid.NewGuid();
-		var userId = Guid.NewGuid();
-		var meetId = Guid.NewGuid().ToString();
-		var platform = "Zoom";
 
-		_service.AddUserToMeeting(new UserJoinedInMeetingMessage()
+		service.InsertBlock(new EntryMessage
 		{
-			User = new Participant() { Id = userId },
-			MeetId = meetId,
-			Platform = platform
-		});
-
-		_service.InsertBlock(new EntryMessage
-		{
-			MeetId = meetId,
+			MeetId = MEETID,
 			BlockId = blockId,
 			Content = "Msg",
-			Participant = new Participant { Id = userId },
+			Participant = new Participant { Id = _userId },
 			Timestamp = DateTime.UtcNow,
 			EntryType = "Transcription"
 		});
@@ -380,34 +266,25 @@ public class MeetingServiceTests
 		var reaction = new ReactionAppliedMessage
 		{
 			ReactionId = 1,
-			MeetId = meetId,
+			MeetId = MEETID,
 			BlockId = blockId,
-			ReactionType = "like",
-			User = new Participant() { Id = userId }
+			ReactionType = "Like",
+			User = new Participant() { Id = _userId }
 		};
 
-		_service.AppliedReaction(reaction);
-		_service.AppliedReaction(reaction);
+		service.AppliedReaction(reaction);
+		service.AppliedReaction(reaction);
 
-		var result = _service.GetFullTranscriptionAsJson(meetId);
+		var result = service.GetFullTranscriptionAsJson(MEETID);
 		var entry = result.Entries.FirstOrDefault(e => e.BlockId == blockId);
 
-		Assert.DoesNotContain(userId, entry.Reactions.FirstOrDefault(r => r.ReactionId == 1).Users);
+		Assert.DoesNotContain(_userId, entry.Reactions.FirstOrDefault(r => r.ReactionId == 1).Users);
 	}
 
 	[Fact]
-	public void GetFullTranscriptionAsJsonShouldReturnMeetingWithNormalizedTimestampsOverTwoHoursWith100Entries()
+	public void Should_ReturnMeetingWithNormalizedTimestamps_When_GetFullTranscriptionAsJsonIsCalledWithOverTwoHoursAnd100Entries()
 	{
-		var userId = Guid.NewGuid();
-		var meetId = Guid.NewGuid().ToString();
-		var platform = "Zoom";
-
-		_service.AddUserToMeeting(new UserJoinedInMeetingMessage()
-		{
-			User = new Participant() { Id = userId },
-			MeetId = meetId,
-			Platform = platform
-		});
+		var service = CreateServiceWithUser();
 
 		var start = DateTime.Now;
 		var totalEntries = 100;
@@ -417,18 +294,18 @@ public class MeetingServiceTests
 		{
 			var entry = new EntryMessage
 			{
-				MeetId = meetId,
+				MeetId = MEETID,
 				BlockId = Guid.NewGuid(),
 				Content = $"Entry {i + 1}",
-				Participant = new Participant { Id = userId, FullName = "User1" },
+				Participant = new Participant { Id = _userId, FullName = "User1" },
 				Timestamp = start.AddSeconds(i * intervalSeconds),
 				EntryType = "Transcription"
 			};
 
-			_service.InsertBlock(entry);
+			service.InsertBlock(entry);
 		}
 
-		var result = _service.GetFullTranscriptionAsJson(meetId);
+		var result = service.GetFullTranscriptionAsJson(MEETID);
 
 		Assert.NotNull(result);
 		Assert.Equal(totalEntries, result.Entries.Count);
@@ -439,5 +316,17 @@ public class MeetingServiceTests
 		Assert.Equal("00:36:00", entries[30].Timeline);
 		Assert.Equal("01:12:00", entries[60].Timeline);
 		Assert.Equal("01:58:48", entries[99].Timeline);
+	}
+
+	private MeetingService CreateServiceWithUser()
+	{
+		var service = new MeetingService();
+		service.AddUserToMeeting(new UserJoinedInMeetingMessage
+		{
+			User = new Participant { Id = _userId },
+			MeetId = MEETID,
+			Platform = PLATFORM
+		});
+		return service;
 	}
 }

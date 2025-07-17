@@ -6,13 +6,13 @@ namespace Au5.Application;
 public class MeetingService : IMeetingService
 {
 	private static readonly Lock LockObject = new();
-	private static readonly List<Meeting> Meetings = [];
+	private readonly List<Meeting> _meetings = [];
 
 	public Meeting AddUserToMeeting(UserJoinedInMeetingMessage userJoined)
 	{
 		lock (LockObject)
 		{
-			var meeting = Meetings.FirstOrDefault(m => m.MeetId == userJoined.MeetId && m.CreatedAt.Date == DateTime.Now.Date);
+			var meeting = _meetings.FirstOrDefault(m => m.MeetId == userJoined.MeetId && m.CreatedAt.Date == DateTime.Now.Date);
 
 			if (meeting is null || (meeting is not null && meeting.IsEnded()))
 			{
@@ -27,7 +27,7 @@ public class MeetingService : IMeetingService
 					Status = MeetingStatus.NotStarted,
 					CreatorUserId = userJoined.User.Id,
 				};
-				Meetings.Add(meeting);
+				_meetings.Add(meeting);
 			}
 
 			var existingUser = meeting.Participants.Any(u => u.UserId == userJoined.User.Id);
@@ -48,7 +48,7 @@ public class MeetingService : IMeetingService
 	{
 		lock (LockObject)
 		{
-			var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetId);
+			var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetId);
 			if (meeting is null)
 			{
 				return;
@@ -86,7 +86,7 @@ public class MeetingService : IMeetingService
 	{
 		lock (LockObject)
 		{
-			var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetId);
+			var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetId);
 			if (meeting is null || meeting.Status == MeetingStatus.Ended)
 			{
 				return;
@@ -98,7 +98,7 @@ public class MeetingService : IMeetingService
 
 	public string BotIsAdded(string meetId)
 	{
-		var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetId);
+		var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetId);
 		if (meeting is null)
 		{
 			return string.Empty;
@@ -118,7 +118,7 @@ public class MeetingService : IMeetingService
 
 	public bool PauseMeeting(string meetId, bool isPause)
 	{
-		var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetId);
+		var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetId);
 		if (meeting is null)
 		{
 			return false;
@@ -130,7 +130,7 @@ public class MeetingService : IMeetingService
 
 	public bool UpsertBlock(EntryMessage entry)
 	{
-		var meeting = Meetings.FirstOrDefault(m => m.MeetId == entry.MeetId);
+		var meeting = _meetings.FirstOrDefault(m => m.MeetId == entry.MeetId);
 		if (meeting is null || meeting.IsPaused())
 		{
 			return false;
@@ -160,7 +160,7 @@ public class MeetingService : IMeetingService
 
 	public void InsertBlock(EntryMessage entry)
 	{
-		var meeting = Meetings.FirstOrDefault(m => m.MeetId == entry.MeetId);
+		var meeting = _meetings.FirstOrDefault(m => m.MeetId == entry.MeetId);
 		if (meeting is null)
 		{
 			return;
@@ -182,7 +182,7 @@ public class MeetingService : IMeetingService
 
 	public Meeting GetFullTranscriptionAsJson(string meetId)
 	{
-		var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetId);
+		var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetId);
 		if (meeting is null || meeting.Entries.Count == 0)
 		{
 			return meeting;
@@ -215,7 +215,7 @@ public class MeetingService : IMeetingService
 
 	public void AppliedReaction(ReactionAppliedMessage reaction)
 	{
-		var meeting = Meetings.FirstOrDefault(m => m.MeetId == reaction.MeetId);
+		var meeting = _meetings.FirstOrDefault(m => m.MeetId == reaction.MeetId);
 		if (meeting is null)
 		{
 			return;
@@ -257,7 +257,7 @@ public class MeetingService : IMeetingService
 
 	public string RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage)
 	{
-		var meeting = Meetings.FirstOrDefault(m => m.MeetId == requestToAddBotMessage.MeetId);
+		var meeting = _meetings.FirstOrDefault(m => m.MeetId == requestToAddBotMessage.MeetId);
 		if (meeting is null)
 		{
 			return string.Empty;
