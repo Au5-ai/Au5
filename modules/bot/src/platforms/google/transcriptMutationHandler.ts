@@ -66,7 +66,7 @@ export class TranscriptMutationHandler {
 
         callback({
           blockId: caption.blockId,
-          speaker: {
+          participant: {
             fullName: caption.speakerName,
             pictureUrl: caption.pictureUrl,
           },

@@ -78,7 +78,7 @@ export interface Participant {
 export interface EntryMessage {
   meetId: string;
   blockId: string;
-  speaker: Participant;
+  participant: Participant;
   content: string;
   timestamp: Date;
   entryType: "Transcription";

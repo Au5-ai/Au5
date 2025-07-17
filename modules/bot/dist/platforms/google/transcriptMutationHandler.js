@@ -45,7 +45,7 @@ class TranscriptMutationHandler {
             this.previousTranscripts[caption.blockId] = caption.transcript;
             callback({
                 blockId: caption.blockId,
-                speaker: {
+                participant: {
                     fullName: caption.speakerName,
                     pictureUrl: caption.pictureUrl,
                 },

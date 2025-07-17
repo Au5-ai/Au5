@@ -21,9 +21,9 @@ internal sealed class GlobalExceptionHandler(IProblemDetailsService problemDetai
 			Exception = exception,
 			ProblemDetails = new ProblemDetails
 			{
-				Type = exception.GetType().Name,
+				Type = "Internal Server Error",
 				Title = "An error occured",
-				Detail = exception.Message
+				Detail = exception.Message // must be changed in Production.
 			}
 		});
 	}

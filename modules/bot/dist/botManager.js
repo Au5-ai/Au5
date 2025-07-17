@@ -71,7 +71,7 @@ async function startMeetingBot(config) {
     if (isJoined) {
         logger_1.logger.info(`[Program] Bot successfully joined the meeting on platform: ${config.platform}`);
         hubClient = new meetingHubClient_1.MeetingHubClient(config);
-        const isConnected = true; //await hubClient.startConnection();
+        const isConnected = await hubClient.startConnection();
         if (!isConnected) {
             logger_1.logger.error(`[Program] Failed to connect to the hub service at ${config.hubUrl}`);
             meetingPlatform.leaveMeeting();
@@ -91,14 +91,21 @@ async function handleTranscription(message) {
         await hubClient.sendMessage(message);
     }
 }
-async function handleParticipation(message) {
-    if (!hubClient) {
-        logger_1.logger.error("[Program] [handleParticipation] Hub client is not initialized.");
-        return;
-    }
-    message.meetingId = meetingConfig.meetId;
-    await hubClient.sendMessage(message);
-}
+// async function handleParticipation(message: any): Promise<void> {
+//   if (!hubClient) {
+//     logger.error(
+//       "[Program] [handleParticipation] Hub client is not initialized."
+//     );
+//     return;
+//   }
+//   message.meetingId = meetingConfig.meetId;
+//   logger.info(
+//     `[Program] [handleParticipation] Sending participation message: ${JSON.stringify(
+//       message
+//     )}`
+//   );
+//   await hubClient.sendMessage(message);
+// }
 /**
  * Registers a function named `triggerNodeGracefulLeave` in the browser context,
  * allowing the browser to request a graceful shutdown of the Node.js process.
@@ -188,9 +195,6 @@ async function performGracefulLeave() {
         if (browser && browser.isConnected()) {
             await browser.close();
         }
-        else {
-            logger_1.logger.info("[Program] Browser instance already closed or not available.");
-        }
     }
     catch (error) {
         logger_1.logger.error(`[Program] Error closing browser: ${error instanceof Error ? error.message : error}`);
@@ -199,7 +203,6 @@ async function performGracefulLeave() {
         process.exit(0);
     }
     else {
-        logger_1.logger.info("[Program] Leave attempt failed or button not found. Exiting process with code 1 (Failure). Waiting for external termination.");
         process.exit(1);
     }
 }

@@ -11,14 +11,12 @@ export class LiveCaptionsHelper {
   public async enableCaptions(languageValue: string): Promise<void> {
     const overlayDismissed = await this.dismissOverlayIfPresent();
     if (!overlayDismissed) {
-      logger.debug("❌ No overlay dialog present, proceeding.");
+      logger.debug("No overlay dialog present, proceeding.");
     }
 
     const turnOnButton = await this.findTurnOnCaptionButton();
     if (!turnOnButton) {
-      logger.warn(
-        '❌ "Turn on captions" button not found in visible tab panel.'
-      );
+      logger.warn('Turn on captions" button not found in visible tab panel.');
       return;
     }
 
@@ -28,7 +26,7 @@ export class LiveCaptionsHelper {
     const overlayReady = await this.activateLanguageDropdownOverlay();
     if (!overlayReady) {
       logger.warn(
-        "❌ Captions language overlay not activated — skipping language selection."
+        "Captions language overlay not activated — skipping language selection."
       );
       return;
     }
@@ -37,13 +35,13 @@ export class LiveCaptionsHelper {
 
     const dropdownClicked = await this.clickLanguageDropdown();
     if (!dropdownClicked) {
-      logger.error("❌ Failed to click on the language dropdown combobox.");
+      logger.error("Failed to click on the language dropdown combobox.");
       return;
     }
 
     const languageSelected = await this.selectLanguageOption(languageValue);
     if (!languageSelected) {
-      logger.error(`❌ Failed to select language option "${languageValue}".`);
+      logger.error(`Failed to select language option "${languageValue}".`);
     }
   }
 
