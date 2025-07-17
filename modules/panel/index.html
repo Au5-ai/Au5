@@ -45,8 +45,8 @@
     >
 
     <!-- User Info -->
-    <label for="userId">User ID / Token</label>
-    <input id="userId" value="23f45e89-8b5a-5c55-9df7-240d78a3ce15" />
+    <label for="token">jwt Token</label>
+    <input id="token" value="23f45e89-8b5a-5c55-9df7-240d78a3ce15" />
 
     <label for="fullName">Full Name</label>
     <input id="fullName" value="Mohammad Karimi" />
@@ -117,10 +117,10 @@
       function sendConfig() {
         const config = {
           user: {
-            token: document.getElementById("userId").value,
-            id: document.getElementById("userId").value,
+            token: document.getElementById("token").value,
             fullName: document.getElementById("fullName").value,
             pictureUrl: document.getElementById("pictureUrl").value,
+            hasAccount: true,
           },
           service: {
             panelUrl: document.getElementById("panelUrl").value,

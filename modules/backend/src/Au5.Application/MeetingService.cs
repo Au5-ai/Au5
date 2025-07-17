@@ -58,11 +58,6 @@ public class MeetingService : IMeetingService
 			{
 				var existingParticipant = true;
 
-				if (item.HasAccount && !meeting.Participants.Any(x => x.UserId == item.Id))
-				{
-					existingParticipant = false;
-				}
-
 				if (!item.HasAccount && !meeting.Participants.Any(x => x.FullName == item.FullName))
 				{
 					existingParticipant = false;
@@ -74,8 +69,7 @@ public class MeetingService : IMeetingService
 					{
 						MeetingId = meeting.Id,
 						FullName = item.HasAccount ? string.Empty : item.FullName,
-						PictureUrl = item.HasAccount ? string.Empty : item.PictureUrl,
-						UserId = item.Id,
+						PictureUrl = item.HasAccount ? string.Empty : item.PictureUrl
 					});
 				}
 			}

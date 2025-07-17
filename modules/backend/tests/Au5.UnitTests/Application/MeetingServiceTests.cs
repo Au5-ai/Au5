@@ -63,7 +63,7 @@ public class MeetingServiceTests
 		{
 			MeetId = Guid.NewGuid().ToString(),
 			BotName = "Bot1",
-			User = new Participant { Id = Guid.NewGuid() }
+			User = new Participant { FullName = "Mohammad Karimi" }
 		};
 
 		var result = service.RequestToAddBot(request);

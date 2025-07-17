@@ -66,7 +66,7 @@ func handleStartBot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Bot started for meeting ID: %s\n", config.MeetingId)
+	fmt.Fprintf(w, "Bot started for meeting ID: %s\n", config.MeetId)
 }
 
 func main() {

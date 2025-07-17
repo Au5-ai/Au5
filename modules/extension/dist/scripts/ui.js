@@ -3342,7 +3342,8 @@ class MeetingHubClient {
         user: {
           id: this.config.user.id,
           fullName: this.config.user.fullName,
-          pictureUrl: this.config.user.pictureUrl
+          pictureUrl: this.config.user.pictureUrl,
+          hasAccount: this.config.user.hasAccount ?? true
         },
         platform: this.platform.getPlatformName()
       });
@@ -3433,7 +3434,7 @@ class UIHandlers {
               id: this.config.user.id,
               fullName: this.config.user.fullName,
               pictureUrl: this.config.user.pictureUrl,
-              hasAccount: this.config.user.hasAccount || true
+              hasAccount: this.config.user.hasAccount
             },
             reactionId,
             reactionType: type
@@ -3445,7 +3446,7 @@ class UIHandlers {
               id: this.config.user.id,
               fullName: this.config.user.fullName,
               pictureUrl: this.config.user.pictureUrl,
-              hasAccount: this.config.user.hasAccount || true
+              hasAccount: this.config.user.hasAccount
             },
             reactionId,
             reactionType: type
@@ -3555,7 +3556,7 @@ class UIHandlers {
             id: this.config.user.id,
             fullName: this.config.user.fullName,
             pictureUrl: this.config.user.pictureUrl,
-            hasAccount: this.config.user.hasAccount || true
+            hasAccount: this.config.user.hasAccount
           },
           content: input.value.trim(),
           timestamp: /* @__PURE__ */ new Date(),
@@ -3610,7 +3611,7 @@ class UIHandlers {
           id: this.config.user.id,
           fullName: this.config.user.fullName,
           pictureUrl: this.config.user.pictureUrl,
-          hasAccount: this.config.user.hasAccount || true
+          hasAccount: this.config.user.hasAccount
         }
       };
       this.meetingHubClient.sendMessage(message);
@@ -3626,7 +3627,7 @@ class UIHandlers {
           id: this.config.user.id,
           fullName: this.config.user.fullName,
           pictureUrl: this.config.user.pictureUrl,
-          hasAccount: this.config.user.hasAccount || true
+          hasAccount: this.config.user.hasAccount
         }
       };
       this.meetingHubClient.sendMessage(message);

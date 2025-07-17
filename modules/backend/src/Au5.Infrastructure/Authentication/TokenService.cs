@@ -3,7 +3,6 @@ using System.Security.Claims;
 using System.Text;
 using Au5.Application.Interfaces;
 using Au5.Application.Models.Authentication;
-using Au5.Domain.Common;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -18,12 +17,12 @@ public class TokenService : ITokenService
 		_jwt = jwtOptions.Value;
 	}
 
-	public string GenerateToken(Participant user, string role)
+	public string GenerateToken(Guid extensionId, string fullName, string role)
 	{
 		var claims = new[]
 		{
-			new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-			new Claim(ClaimTypes.Name, user.FullName ?? string.Empty),
+			new Claim(ClaimTypes.NameIdentifier, extensionId.ToString()),
+			new Claim(ClaimTypes.Name, fullName ?? string.Empty),
 			new Claim(ClaimTypes.Role, role),
 		};
 

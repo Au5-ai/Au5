@@ -1,7 +1,10 @@
+using System.Text.Json.Serialization;
+
 namespace Au5.Domain.Common;
 
 public class Participant
 {
+	[JsonIgnore]
 	public Guid Id { get; set; }
 
 	public string FullName { get; set; }

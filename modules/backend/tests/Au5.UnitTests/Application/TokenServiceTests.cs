@@ -37,7 +37,7 @@ public class TokenServiceTests
 		};
 		var role = "Admin";
 
-		var token = _tokenService.GenerateToken(participant, role);
+		var token = _tokenService.GenerateToken(participant.Id, participant.FullName, role);
 
 		Assert.False(string.IsNullOrWhiteSpace(token));
 
