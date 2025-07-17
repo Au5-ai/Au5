@@ -71,7 +71,7 @@ var app = builder.Build();
 		var transcription = meetingService.GetFullTranscriptionAsJson(meetingId);
 		return Results.Json(transcription);
 	});
- 
+
 	app.MapControllers();
 
 	app.Run();
