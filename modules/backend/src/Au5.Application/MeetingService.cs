@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using Au5.Application.Models.Dtos.MeetingDtos;
 
 namespace Au5.Application;
 
@@ -182,66 +183,61 @@ public class MeetingService(IReactionService reactionService) : IMeetingService
 	}
 
 	public async Task<Result<object>> GetFullTranscriptionAsJson(string meetId, CancellationToken ct = default)
-	{
-		var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetId);
-		if (meeting is null || meeting.Entries == null || meeting.Entries.Count == 0)
-		{
-			return Error.NotFound(description: "No meeting with this ID was found.");
-		}
+    {
+        var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetId);
+        if (meeting is null || meeting.Entries == null || meeting.Entries.Count == 0)
+        {
+            return Error.NotFound(description: "No meeting with this ID was found.");
+        }
 
-		var orderedEntries = meeting.Entries
-			.OrderBy(e => e.Timestamp)
-			.ToList();
+        var orderedEntries = meeting.Entries
+            .OrderBy(e => e.Timestamp)
+            .ToList();
 
-		var baseTime = orderedEntries.First().Timestamp;
-		var reactionsList = await _reationService.GetAllAsync(ct);
+        var baseTime = orderedEntries.First().Timestamp;
+        var reactionsList = await _reationService.GetAllAsync(ct);
 
-		var result = new
-		{
-			id = meeting.Id,
-			meetId = meeting.MeetId,
-			creatorUserId = meeting.CreatorUserId,
-			botInviterUserId = meeting.BotInviterUserId,
-			hashToken = meeting.HashToken,
-			platform = meeting.Platform,
-			botName = meeting.BotName,
-			isBotAdded = meeting.IsBotAdded,
-			createdAt = meeting.CreatedAt.ToString("o"),
-			status = meeting.Status.ToString(),
-
-			participants = meeting.Participants.Select(p => new
-			{
-				userId = p.UserId,
-				fullName = p.FullName ?? string.Empty,
-				pictureUrl = p.PictureUrl ?? string.Empty
-			}).ToList(),
-
-			entries = orderedEntries.Select(entry => new
-			{
-				blockId = entry.BlockId,
-				participantId = entry.ParticipantId,
-				content = entry.Content,
-				timestamp = entry.Timestamp.ToString("o"),
-				timeline = (entry.Timestamp - baseTime).ToString(@"hh\:mm\:ss"),
-				entryType = entry.EntryType,
-
-				reactions = entry.Reactions?.Select(r =>
+        var result = new FullMeetingTranscriptionDto(
+            id: meeting.Id,
+            meetingId: meeting.MeetId,
+            creatorUserId: meeting.CreatorUserId,
+            botInviterUserId: meeting.BotInviterUserId,
+            hashToken: meeting.HashToken,
+            platform: meeting.Platform,
+            botName: meeting.BotName,
+            isBotAdded: meeting.IsBotAdded,
+            createdAt: meeting.CreatedAt.ToString("o"),
+            status: meeting.Status.ToString(),
+            participants: meeting.Participants
+                .Select(p => new ParticipantDto(
+                    userId: p.UserId,
+                    fullName: p.FullName ?? string.Empty,
+                    pictureUrl: p.PictureUrl ?? string.Empty))
+                .ToList()
+                .AsReadOnly(),
+            entries: orderedEntries
+                .Select(entry => new EntryDto(
+                    blockId: entry.BlockId,
+                    participantId: entry.ParticipantId,
+                    content: entry.Content,
+                    timestamp: entry.Timestamp.ToString("o"),
+                    timeline: (entry.Timestamp - baseTime).ToString(@"hh\:mm\:ss"),
+                    entryType: entry.EntryType,
+                    reactions: entry.Reactions.Select(ar =>
 					{
-						var matched = reactionsList.FirstOrDefault(x => x.Id == r.ReactionId);
-						return new
-						{
-							id = r.ReactionId,
-							type = matched?.Type ?? "unknown",
-							emoji = matched?.Emoji ?? string.Empty,
-							className = matched?.ClassName ?? string.Empty,
-							users = r.Users?.Select(u => u.ToString()).ToList() ?? []
-						};
-					}).ToList()
-			}).ToList()
-		};
+						var reaction = reactionsList.FirstOrDefault(r => r.Id == ar.ReactionId);
+						return new ReactionDto(
+							id: ar.ReactionId,
+							users: ar.Users ?? [],
+							type: reaction?.Type ?? "unknown",
+							className: reaction?.ClassName ?? string.Empty,
+							emoji: reaction?.Emoji ?? string.Empty);
+					}).ToList().AsReadOnly()))
+				.ToList()
+                .AsReadOnly());
 
-		return result;
-	}
+        return result;
+    }
 
 	public void AppliedReaction(ReactionAppliedMessage reaction)
 	{
