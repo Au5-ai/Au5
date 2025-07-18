@@ -1,6 +1,9 @@
 using Au5.Application;
+using Au5.Application.Interfaces;
 using Au5.Application.Models.Messages;
 using Au5.Domain.Common;
+using Au5.Domain.Entities;
+using Moq;
 
 namespace Au5.UnitTests.Application;
 
@@ -10,11 +13,20 @@ public class MeetingServiceTests
 
 	public MeetingServiceTests()
 	{
-		_service = new MeetingService();
+		var reactions = new List<Reaction>
+		{
+			new() { Id = 1, Type = "Task", Emoji = "⚡", ClassName = "reaction-task" },
+			new() { Id = 2, Type = "GoodPoint", Emoji = "⭐", ClassName = "reaction-important" },
+			new() { Id = 3, Type = "Goal", Emoji = "🎯", ClassName = "reaction-question" }
+		};
+
+		var reactionServiceMock = new Mock<IReactionService>();
+		reactionServiceMock.Setup(r => r.GetAllAsync(default)).ReturnsAsync(reactions);
+		_service = new MeetingService(reactionServiceMock.Object);
 	}
 
 	[Fact]
-	public void AddUserToMeetingShouldNotAddDuplicateUser()
+	public async Task AddUserToMeetingShouldNotAddDuplicateUser()
 	{
 		var userId = Guid.NewGuid();
 		var meetId = Guid.NewGuid().ToString();
@@ -33,12 +45,13 @@ public class MeetingServiceTests
 			Platform = platform
 		});
 
-		var meeting = _service.GetFullTranscriptionAsJson(meetId);
-		Assert.Single(meeting.Participants.Where(u => u.UserId == userId).ToList());
+		var meetingResult = await _service.GetFullTranscriptionAsJson(meetId);
+		var meeting = meetingResult.Data!;
+		Assert.Single(meeting.participants.Where(u => u.userId == userId).ToList());
 	}
 
 	[Fact]
-	public void EndMeetingShouldSetStatusToEnded()
+	public async Task EndMeetingShouldSetStatusToEnded()
 	{
 		var userId = Guid.NewGuid();
 		var meetId = Guid.NewGuid().ToString();
@@ -54,8 +67,9 @@ public class MeetingServiceTests
 
 		_service.EndMeeting(meetId);
 
-		var meeting = _service.GetFullTranscriptionAsJson(meetId);
-		Assert.Equal(MeetingStatus.Ended, meeting.Status);
+		var meetingResult = await _service.GetFullTranscriptionAsJson(meetId);
+		var meeting = meetingResult.Data!;
+		Assert.Equal(MeetingStatus.Ended.ToString(), meeting.status);
 	}
 
 	[Fact]
@@ -125,7 +139,7 @@ public class MeetingServiceTests
 	}
 
 	[Fact]
-	public void AddParticipantToMeetShouldAddParticipants()
+	public async Task AddParticipantToMeetShouldAddParticipants()
 	{
 		var userId = Guid.NewGuid();
 		var meetId = Guid.NewGuid().ToString();
@@ -139,13 +153,14 @@ public class MeetingServiceTests
 
 		_service.AddParticipantToMeet(participants, meetId);
 
-		var meeting = _service.GetFullTranscriptionAsJson(meetId);
-		Assert.Contains("user1", meeting.Participants.Select(x => x.FullName));
-		Assert.Contains("user2", meeting.Participants.Select(x => x.FullName));
+		var meetingResult = await _service.GetFullTranscriptionAsJson(meetId);
+		var meeting = meetingResult.Data!;
+		Assert.Contains("user1", meeting.participants.Select(x => x.fullName));
+		Assert.Contains("user2", meeting.participants.Select(x => x.fullName));
 	}
 
 	[Fact]
-	public void AddUserToMeetingShouldAddUserWhenMeetingDoesNotExist()
+	public async Task AddUserToMeetingShouldAddUserWhenMeetingDoesNotExist()
 	{
 		var userId = Guid.NewGuid();
 		var meetId = Guid.NewGuid().ToString();
@@ -158,14 +173,15 @@ public class MeetingServiceTests
 			Platform = platform
 		});
 
-		var result = _service.GetFullTranscriptionAsJson(meetId);
+		var result = await _service.GetFullTranscriptionAsJson(meetId);
+		var meeting = result.Data!;
 
-		Assert.NotNull(result);
-		Assert.Contains(userId, result.Participants.Select(x => x.UserId));
+		Assert.NotNull(meeting);
+		Assert.Contains(userId, meeting.participants.Select(x => x.userId));
 	}
 
 	[Fact]
-	public void AddBotShouldSetBotNameAndCreator()
+	public async Task AddBotShouldSetBotNameAndCreator()
 	{
 		var userId = Guid.NewGuid();
 		var meetId = Guid.NewGuid().ToString();
@@ -185,16 +201,17 @@ public class MeetingServiceTests
 			User = new Participant { Id = userId }
 		});
 
-		var result = _service.GetFullTranscriptionAsJson(meetId);
+		var result = await _service.GetFullTranscriptionAsJson(meetId);
+		var meeting = result.Data!;
 
 		Assert.NotEqual(hash, string.Empty);
-		Assert.Equal("Bot1", result.BotName);
-		Assert.Equal(userId, result.CreatorUserId);
-		Assert.Equal(userId, result.BotInviterUserId);
+		Assert.Equal("Bot1", meeting.botName);
+		Assert.Equal(userId, meeting.creatorUserId);
+		Assert.Equal(userId, meeting.botInviterUserId);
 	}
 
 	[Fact]
-	public void AddParticipantToMeetShouldAddNewParticipantsOnly()
+	public async Task AddParticipantToMeetShouldAddNewParticipantsOnly()
 	{
 		var userId = Guid.NewGuid();
 		var meetId = Guid.NewGuid().ToString();
@@ -210,13 +227,14 @@ public class MeetingServiceTests
 		_service.AddParticipantToMeet([new Participant() { HasAccount = true, Id = userId, FullName = "u1" }, new Participant() { FullName = "u2" }], meetId);
 		_service.AddParticipantToMeet([new Participant() { HasAccount = true, Id = userId, FullName = "u1" }, new Participant() { FullName = "u3" }, new Participant() { FullName = "u2" }], meetId);
 
-		var result = _service.GetFullTranscriptionAsJson(meetId);
+		var result = await _service.GetFullTranscriptionAsJson(meetId);
+		var meeting = result.Data!;
 
-		Assert.Equal(3, result.Participants.Count);
+		Assert.Equal(3, meeting.participants.Count);
 	}
 
 	[Fact]
-	public void EndMeetingShouldChangeStatusToEnded()
+	public async Task EndMeetingShouldChangeStatusToEnded()
 	{
 		var userId = Guid.NewGuid();
 		var meetId = Guid.NewGuid().ToString();
@@ -231,13 +249,14 @@ public class MeetingServiceTests
 
 		_service.EndMeeting(meetId);
 
-		var result = _service.GetFullTranscriptionAsJson(meetId);
+		var result = await _service.GetFullTranscriptionAsJson(meetId);
+		var meeting = result.Data!;
 
-		Assert.Equal(MeetingStatus.Ended, result.Status);
+		Assert.Equal(MeetingStatus.Ended.ToString(), meeting.status);
 	}
 
 	[Fact]
-	public void BotIsAddedShouldMarkBotAsAdded()
+	public async Task BotIsAddedShouldMarkBotAsAdded()
 	{
 		var userId = Guid.NewGuid();
 		var meetId = Guid.NewGuid().ToString();
@@ -259,11 +278,12 @@ public class MeetingServiceTests
 
 		var botName = _service.BotIsAdded(meetId);
 
-		var result = _service.GetFullTranscriptionAsJson(meetId);
+		var result = await _service.GetFullTranscriptionAsJson(meetId);
+		var meeting = result.Data!;
 
 		Assert.Equal("Bot2", botName);
-		Assert.True(result.IsBotAdded);
-		Assert.Equal(MeetingStatus.Recording, result.Status);
+		Assert.True(meeting.isBotAdded);
+		Assert.Equal(MeetingStatus.Recording.ToString(), meeting.status);
 	}
 
 	[Fact]
@@ -286,7 +306,7 @@ public class MeetingServiceTests
 	}
 
 	[Fact]
-	public void UpsertBlockShouldInsertOrUpdateEntry()
+	public async Task UpsertBlockShouldInsertOrUpdateEntry()
 	{
 		var blockId = Guid.NewGuid();
 		var userId = Guid.NewGuid();
@@ -315,14 +335,15 @@ public class MeetingServiceTests
 		entry.Content = "Updated";
 		_service.UpsertBlock(entry);
 
-		var result = _service.GetFullTranscriptionAsJson(meetId);
-		var updatedEntry = result.Entries.FirstOrDefault(e => e.BlockId == blockId);
+		var result = await _service.GetFullTranscriptionAsJson(meetId);
+		var meeting = result.Data!;
+		var updatedEntry = meeting.entries.FirstOrDefault(e => e.blockId == blockId);
 
-		Assert.Equal("Updated", updatedEntry.Content);
+		Assert.Equal("Updated", updatedEntry.content);
 	}
 
 	[Fact]
-	public void InsertBlockShouldAddNewEntry()
+	public async Task InsertBlockShouldAddNewEntry()
 	{
 		var blockId = Guid.NewGuid();
 		var userId = Guid.NewGuid();
@@ -348,12 +369,13 @@ public class MeetingServiceTests
 
 		_service.InsertBlock(entry);
 
-		var result = _service.GetFullTranscriptionAsJson(meetId);
-		Assert.Single(result.Entries);
+		var result = await _service.GetFullTranscriptionAsJson(meetId);
+		var meeting = result.Data!;
+		Assert.Single(meeting.entries);
 	}
 
 	[Fact]
-	public void AppliedReactionShouldAddAndToggleReaction()
+	public async Task AppliedReactionShouldAddAndToggleReaction()
 	{
 		var blockId = Guid.NewGuid();
 		var userId = Guid.NewGuid();
@@ -389,14 +411,15 @@ public class MeetingServiceTests
 		_service.AppliedReaction(reaction);
 		_service.AppliedReaction(reaction);
 
-		var result = _service.GetFullTranscriptionAsJson(meetId);
-		var entry = result.Entries.FirstOrDefault(e => e.BlockId == blockId);
+		var result = await _service.GetFullTranscriptionAsJson(meetId);
+		var meeting = result.Data!;
+		var entry = meeting.entries.FirstOrDefault(e => e.blockId == blockId);
 
-		Assert.DoesNotContain(userId, entry.Reactions.FirstOrDefault(r => r.ReactionId == 1).Users);
+		Assert.DoesNotContain(userId, entry.reactions.FirstOrDefault(r => r.id == 1).users);
 	}
 
 	[Fact]
-	public void GetFullTranscriptionAsJsonShouldReturnMeetingWithNormalizedTimestampsOverTwoHoursWith100Entries()
+	public async Task GetFullTranscriptionAsJsonShouldReturnMeetingWithNormalizedTimestampsOverTwoHoursWith100Entries()
 	{
 		var userId = Guid.NewGuid();
 		var meetId = Guid.NewGuid().ToString();
@@ -428,16 +451,17 @@ public class MeetingServiceTests
 			_service.InsertBlock(entry);
 		}
 
-		var result = _service.GetFullTranscriptionAsJson(meetId);
+		var result = await _service.GetFullTranscriptionAsJson(meetId);
+		var meeting = result.Data;
 
-		Assert.NotNull(result);
-		Assert.Equal(totalEntries, result.Entries.Count);
+		Assert.NotNull(meeting);
+		Assert.Equal(totalEntries, meeting.entries.Count);
 
-		var entries = result.Entries.ToList();
-		Assert.Equal("00:00:00", entries[0].Timeline);
-		Assert.Equal("00:12:00", entries[10].Timeline);
-		Assert.Equal("00:36:00", entries[30].Timeline);
-		Assert.Equal("01:12:00", entries[60].Timeline);
-		Assert.Equal("01:58:48", entries[99].Timeline);
+		var entries = meeting.entries.ToList();
+		Assert.Equal("00:00:00", entries[0].timeline);
+		Assert.Equal("00:12:00", entries[10].timeline);
+		Assert.Equal("00:36:00", entries[30].timeline);
+		Assert.Equal("01:12:00", entries[60].timeline);
+		Assert.Equal("01:58:48", entries[99].timeline);
 	}
 }

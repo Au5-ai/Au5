@@ -182,7 +182,7 @@ public class MeetingService(IReactionService reactionService) : IMeetingService
 		}
 	}
 
-	public async Task<Result<object>> GetFullTranscriptionAsJson(string meetId, CancellationToken ct = default)
+	public async Task<Result<FullMeetingTranscriptionDto>> GetFullTranscriptionAsJson(string meetId, CancellationToken ct = default)
     {
         var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetId);
         if (meeting is null || meeting.Entries == null || meeting.Entries.Count == 0)

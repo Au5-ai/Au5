@@ -1,3 +1,5 @@
+using Au5.Application.Models.Dtos.MeetingDtos;
+
 namespace Au5.Application.Interfaces;
 
 public interface IMeetingService
@@ -16,7 +18,7 @@ public interface IMeetingService
 
 	void InsertBlock(EntryMessage entry);
 
-	Task<Result<object>> GetFullTranscriptionAsJson(string meetId, CancellationToken ct = default);
+	Task<Result<FullMeetingTranscriptionDto>> GetFullTranscriptionAsJson(string meetId, CancellationToken ct = default);
 
 	void AppliedReaction(ReactionAppliedMessage reaction);
 
