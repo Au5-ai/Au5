@@ -36,7 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const constants_1 = require("./common/constants");
 const botManager_1 = require("./botManager");
 const node_fetch_1 = __importStar(require("node-fetch"));
-const logger_1 = require("./utils/logger");
+const logger_1 = require("./common/utils/logger");
 global.fetch = node_fetch_1.default;
 global.Headers = node_fetch_1.Headers;
 global.Request = node_fetch_1.Request;

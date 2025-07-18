@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CaptionProcessor = void 0;
-const logger_1 = require("../../utils/logger");
+const logger_1 = require("../../common/utils/logger");
 class CaptionProcessor {
     constructor(page) {
         this.page = page;

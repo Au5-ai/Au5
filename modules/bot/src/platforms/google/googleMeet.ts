@@ -4,8 +4,8 @@ import {
   MeetingConfiguration,
   EntryMessage,
 } from "../../types";
-import { logger } from "../../utils/logger";
-import { randomDelay } from "../../utils";
+import { logger } from "../../common/utils/logger";
+import { randomDelay } from "../../common/utils";
 import { CaptionMutationHandler } from "./captionMutationHandler";
 import {
   Google_Caption_Configuration,

@@ -1,5 +1,5 @@
 import { IMeetingPlatform, MeetingConfiguration, EntryMessage } from "./types";
-import { logger } from "./utils/logger";
+import { logger } from "./common/utils/logger";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { chromium } from "playwright-extra";
 import { Browser, Page } from "playwright-core";

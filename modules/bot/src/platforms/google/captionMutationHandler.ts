@@ -2,7 +2,7 @@ import { EntryMessage } from "../../types";
 import { Page } from "playwright-core";
 import { Caption, GoogleCaptionConfiguration, MutationContext } from "./types";
 import { CaptionProcessor } from "./captionProcessor";
-import { logger } from "../../utils/logger";
+import { logger } from "../../common/utils/logger";
 import { CaptionEnabler } from "./captionEnabler";
 
 export class CaptionMutationHandler {

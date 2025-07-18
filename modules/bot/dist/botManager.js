@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.startMeetingBot = startMeetingBot;
-const logger_1 = require("./utils/logger");
+const logger_1 = require("./common/utils/logger");
 const puppeteer_extra_plugin_stealth_1 = __importDefault(require("puppeteer-extra-plugin-stealth"));
 const playwright_extra_1 = require("playwright-extra");
 const constants_1 = require("./common/constants");

@@ -3,7 +3,7 @@ import { startMeetingBot } from "./botManager";
 import { MeetingConfiguration } from "./types";
 
 import fetch, { Headers, Request, Response } from "node-fetch";
-import { logger } from "./utils/logger";
+import { logger } from "./common/utils/logger";
 (global as any).fetch = fetch;
 (global as any).Headers = Headers;
 (global as any).Request = Request;

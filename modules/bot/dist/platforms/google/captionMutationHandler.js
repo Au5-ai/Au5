@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CaptionMutationHandler = void 0;
 const captionProcessor_1 = require("./captionProcessor");
-const logger_1 = require("../../utils/logger");
+const logger_1 = require("../../common/utils/logger");
 const captionEnabler_1 = require("./captionEnabler");
 class CaptionMutationHandler {
     constructor(page, config) {

@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CaptionEnabler = void 0;
-const logger_1 = require("../../utils/logger");
-const utils_1 = require("../../utils");
+const logger_1 = require("../../common/utils/logger");
+const utils_1 = require("../../common/utils");
 /**
  * Class to handle enabling live captions in Google Meet.
  */

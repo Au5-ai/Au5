@@ -1,6 +1,6 @@
 import { ElementHandle, Page } from "playwright";
 import { Caption } from "./types";
-import { logger } from "../../utils/logger";
+import { logger } from "../../common/utils/logger";
 
 export class CaptionProcessor {
   constructor(private page: Page) {}

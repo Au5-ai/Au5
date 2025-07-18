@@ -1,7 +1,7 @@
 {
   "name": "au5-bot",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.2.1",
+  "description": "Real-time transcription of meeting participants",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

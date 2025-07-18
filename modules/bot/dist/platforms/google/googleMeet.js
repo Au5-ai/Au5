@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GoogleMeet = void 0;
-const logger_1 = require("../../utils/logger");
-const utils_1 = require("../../utils");
+const logger_1 = require("../../common/utils/logger");
+const utils_1 = require("../../common/utils");
 const captionMutationHandler_1 = require("./captionMutationHandler");
 const constants_1 = require("./constants");
 class GoogleMeet {
