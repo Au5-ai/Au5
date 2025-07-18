@@ -16,7 +16,7 @@ public interface IMeetingService
 
 	void InsertBlock(EntryMessage entry);
 
-	Meeting GetFullTranscriptionAsJson(string meetId);
+	Task<Result<object>> GetFullTranscriptionAsJson(string meetId);
 
 	void AppliedReaction(ReactionAppliedMessage reaction);
 
