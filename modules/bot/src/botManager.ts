@@ -80,16 +80,12 @@ export async function startMeetingBot(
   }
 
   if (isJoined) {
-    logger.info(
-      `[Program] Bot successfully joined the meeting on platform: ${config.platform}`
-    );
+    logger.info(LogMessages.BotManager.botSuccessfullyJoined);
     hubClient = new MeetingHubClient(config);
     const isConnected = await hubClient.startConnection();
 
     if (!isConnected) {
-      logger.error(
-        `[Program] Failed to connect to the hub service at ${config.hubUrl}`
-      );
+      logger.error(LogMessages.BotManager.hubClientNotInitialized);
       meetingPlatform.leaveMeeting();
       process.exit(1);
     }
@@ -101,7 +97,7 @@ export async function startMeetingBot(
 
 async function handleTranscription(message: EntryMessage): Promise<void> {
   if (!hubClient) {
-    logger.error("[Program] Hub client is not initialized.");
+    logger.error(LogMessages.BotManager.hubClientNotInitialized);
     return;
   }
 
@@ -138,10 +134,10 @@ async function handleTranscription(message: EntryMessage): Promise<void> {
 
 async function registerGracefulShutdownHandler(page: Page): Promise<void> {
   await page.exposeFunction("triggerNodeGracefulLeave", async () => {
-    logger.info(`${LogMessages.Program.browserRequested}`);
+    logger.info(`${LogMessages.BotManager.browserRequested}`);
 
     if (shuttingDown) {
-      logger.info(`${LogMessages.Program.shutdownAlreadyInProgress}`);
+      logger.info(`${LogMessages.BotManager.shutdownAlreadyInProgress}`);
       return;
     }
 
@@ -187,7 +183,7 @@ async function applyAntiDetection(page: Page): Promise<void> {
  */
 const gracefulShutdown = async (signal: string) => {
   if (shuttingDown) {
-    logger.info(LogMessages.Program.shutdownAlreadyInProgress);
+    logger.info(LogMessages.BotManager.shutdownAlreadyInProgress);
     return;
   }
 
@@ -195,7 +191,7 @@ const gracefulShutdown = async (signal: string) => {
 
   try {
     if (browser && browser.isConnected()) {
-      logger.info(LogMessages.Program.closingBrowserInstance);
+      logger.info(LogMessages.BotManager.closingBrowserInstance);
       await browser.close();
     }
   } catch (err) {
@@ -207,7 +203,7 @@ const gracefulShutdown = async (signal: string) => {
 
 async function performGracefulLeave(): Promise<void> {
   if (shuttingDown) {
-    logger.info("[Program] Already in progress, ignoring duplicate call.");
+    logger.info(LogMessages.BotManager.alreadyInProgress);
     return;
   }
   shuttingDown = true;

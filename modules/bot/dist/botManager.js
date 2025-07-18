@@ -69,11 +69,11 @@ async function startMeetingBot(config) {
             throw new Error(`[Program] Unsupported platform: ${config.platform}`);
     }
     if (isJoined) {
-        logger_1.logger.info(`[Program] Bot successfully joined the meeting on platform: ${config.platform}`);
+        logger_1.logger.info(constants_1.LogMessages.BotManager.botSuccessfullyJoined);
         hubClient = new meetingHubClient_1.MeetingHubClient(config);
         const isConnected = await hubClient.startConnection();
         if (!isConnected) {
-            logger_1.logger.error(`[Program] Failed to connect to the hub service at ${config.hubUrl}`);
+            logger_1.logger.error(constants_1.LogMessages.BotManager.hubClientNotInitialized);
             meetingPlatform.leaveMeeting();
             process.exit(1);
         }
@@ -83,7 +83,7 @@ async function startMeetingBot(config) {
 }
 async function handleTranscription(message) {
     if (!hubClient) {
-        logger_1.logger.error("[Program] Hub client is not initialized.");
+        logger_1.logger.error(constants_1.LogMessages.BotManager.hubClientNotInitialized);
         return;
     }
     message.meetId = meetingConfig.meetId;
@@ -116,9 +116,9 @@ async function handleTranscription(message) {
  */
 async function registerGracefulShutdownHandler(page) {
     await page.exposeFunction("triggerNodeGracefulLeave", async () => {
-        logger_1.logger.info(`${constants_1.LogMessages.Program.browserRequested}`);
+        logger_1.logger.info(`${constants_1.LogMessages.BotManager.browserRequested}`);
         if (shuttingDown) {
-            logger_1.logger.info(`${constants_1.LogMessages.Program.shutdownAlreadyInProgress}`);
+            logger_1.logger.info(`${constants_1.LogMessages.BotManager.shutdownAlreadyInProgress}`);
             return;
         }
         await performGracefulLeave();
@@ -161,13 +161,13 @@ async function applyAntiDetection(page) {
  */
 const gracefulShutdown = async (signal) => {
     if (shuttingDown) {
-        logger_1.logger.info(constants_1.LogMessages.Program.shutdownAlreadyInProgress);
+        logger_1.logger.info(constants_1.LogMessages.BotManager.shutdownAlreadyInProgress);
         return;
     }
     shuttingDown = true;
     try {
         if (browser && browser.isConnected()) {
-            logger_1.logger.info(constants_1.LogMessages.Program.closingBrowserInstance);
+            logger_1.logger.info(constants_1.LogMessages.BotManager.closingBrowserInstance);
             await browser.close();
         }
     }
@@ -180,7 +180,7 @@ const gracefulShutdown = async (signal) => {
 };
 async function performGracefulLeave() {
     if (shuttingDown) {
-        logger_1.logger.info("[Program] Already in progress, ignoring duplicate call.");
+        logger_1.logger.info(constants_1.LogMessages.BotManager.alreadyInProgress);
         return;
     }
     shuttingDown = true;

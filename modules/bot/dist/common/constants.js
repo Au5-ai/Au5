@@ -10,10 +10,13 @@ ErrorMessages.RUNNING_BOT = "Error running the bot with the provided configurati
 ErrorMessages.browserCloseError = (err) => `[Program] Error closing browser: ${err}`;
 var LogMessages;
 (function (LogMessages) {
-    LogMessages.Program = {
-        browserRequested: "[Program] Browser requested graceful shutdown.",
-        shutdownAlreadyInProgress: "[Program] Shutdown already in progress.",
-        closingBrowserInstance: "[Program] Closing browser instance.",
+    LogMessages.BotManager = {
+        browserRequested: "[BotManager] Browser requested graceful shutdown.",
+        shutdownAlreadyInProgress: "[BotManager] Shutdown already in progress.",
+        closingBrowserInstance: "[BotManager] Closing browser instance.",
+        alreadyInProgress: "[BotManager] Already in progress, ignoring duplicate call.",
+        hubClientNotInitialized: "[BotManager] Hub client is not initialized.",
+        botSuccessfullyJoined: "[BotManager] Bot successfully joined the meeting on platform",
     };
 })(LogMessages || (exports.LogMessages = LogMessages = {}));
 exports.USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";

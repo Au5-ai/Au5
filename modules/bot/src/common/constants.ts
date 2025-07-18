@@ -10,10 +10,15 @@ export class ErrorMessages {
 }
 
 export namespace LogMessages {
-  export const Program = {
-    browserRequested: "[Program] Browser requested graceful shutdown.",
-    shutdownAlreadyInProgress: "[Program] Shutdown already in progress.",
-    closingBrowserInstance: "[Program] Closing browser instance.",
+  export const BotManager = {
+    browserRequested: "[BotManager] Browser requested graceful shutdown.",
+    shutdownAlreadyInProgress: "[BotManager] Shutdown already in progress.",
+    closingBrowserInstance: "[BotManager] Closing browser instance.",
+    alreadyInProgress:
+      "[BotManager] Already in progress, ignoring duplicate call.",
+    hubClientNotInitialized: "[BotManager] Hub client is not initialized.",
+    botSuccessfullyJoined:
+      "[BotManager] Bot successfully joined the meeting on platform",
   } as const;
 }
 
