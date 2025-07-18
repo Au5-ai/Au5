@@ -15,3 +15,11 @@ This bot is designed to integrate with platforms like Google Meet, Zoom, and oth
 - Configurable meeting settings (language, recording, auto-leave, etc.)
 
   https://github.com/Au5-ai/Au5/tree/main/modules/bot
+
+# Au5 Backend
+
+# Au5 Extension
+
+# Au5 Captain
+
+# Au5 Panel
