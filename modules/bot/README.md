@@ -22,7 +22,7 @@ docker build -t au5-bot .
 Use the following command to start a bot for a specific meeting:
 
 ```sh
-podman run -d --name dzc-awqw-ioi --network=au5 \
+podman run -d --name dzc-afsw-edd --network=au5 \
     -e MEETING_CONFIG='{
         "hubUrl":"http://au5-backend:1366/meetinghub", // hosted backend module
         "platform":"googleMeet",

@@ -13,4 +13,5 @@ This bot is designed to integrate with platforms like Google Meet, Zoom, and oth
 - Supports multiple platforms (Google Meet, Zoom, etc.)
 - Pushes transcriptions to a server via WebSocket
 - Configurable meeting settings (language, recording, auto-leave, etc.)
+
   https://github.com/Au5-ai/Au5/tree/main/modules/bot
