@@ -181,7 +181,7 @@ public class MeetingService(IReactionService reactionService) : IMeetingService
 		}
 	}
 
-	public async Task<Result<object>> GetFullTranscriptionAsJson(string meetId)
+	public async Task<Result<object>> GetFullTranscriptionAsJson(string meetId, CancellationToken ct = default)
 	{
 		var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetId);
 		if (meeting is null || meeting.Entries == null || meeting.Entries.Count == 0)
@@ -194,7 +194,7 @@ public class MeetingService(IReactionService reactionService) : IMeetingService
 			.ToList();
 
 		var baseTime = orderedEntries.First().Timestamp;
-		var reactionsList = await _reationService.GetAllAsync();
+		var reactionsList = await _reationService.GetAllAsync(ct);
 
 		var result = new
 		{
