@@ -1,16 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LiveCaptionsHelper = void 0;
+exports.CaptionEnabler = void 0;
 const logger_1 = require("../../utils/logger");
 const task_1 = require("../../common/task");
 /**
- * Helper class to manage live captions in Google Meet.
+ * Class to handle enabling live captions in Google Meet.
  */
-class LiveCaptionsHelper {
+class CaptionEnabler {
     constructor(page) {
         this.page = page;
     }
-    async enableCaptions(languageValue) {
+    async enable(languageValue) {
         const overlayDismissed = await this.dismissOverlayIfPresent();
         if (!overlayDismissed) {
             logger_1.logger.debug("No overlay dialog present, proceeding.");
@@ -106,4 +106,4 @@ class LiveCaptionsHelper {
         }, languageValue);
     }
 }
-exports.LiveCaptionsHelper = LiveCaptionsHelper;
+exports.CaptionEnabler = CaptionEnabler;

@@ -6,7 +6,7 @@ import {
 } from "../../types";
 import { logger } from "../../utils/logger";
 import { randomDelay } from "../../utils";
-import { TranscriptMutationHandler } from "./transcriptMutationHandler";
+import { CaptionMutationHandler } from "./captionMutationHandler";
 import {
   Google_Caption_Configuration,
   RANDOM_DELAY_MAX,
@@ -92,7 +92,7 @@ export class GoogleMeet implements IMeetingPlatform {
       this.config.meeting_settings.transcription_model == "liveCaption"
     ) {
       Google_Caption_Configuration.language = this.config.language || "en-US";
-      new TranscriptMutationHandler(
+      new CaptionMutationHandler(
         this.page,
         Google_Caption_Configuration
       ).initialize(handler);

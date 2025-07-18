@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DomUtility = void 0;
+exports.CaptionDomUtility = void 0;
 const logger_1 = require("../../utils/logger");
-class DomUtility {
+class CaptionDomUtility {
     constructor(page) {
         this.page = page;
     }
@@ -104,4 +104,4 @@ class DomUtility {
         };
     }
 }
-exports.DomUtility = DomUtility;
+exports.CaptionDomUtility = CaptionDomUtility;

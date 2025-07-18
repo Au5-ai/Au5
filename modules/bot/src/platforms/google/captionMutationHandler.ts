@@ -1,16 +1,16 @@
 import { EntryMessage } from "../../types";
 import { Page } from "playwright-core";
 import { Caption, GoogleCaptionConfiguration, MutationContext } from "./types";
-import { DomUtility } from "./domUtility";
+import { CaptionProcessor } from "./captionProcessor";
 import { logger } from "../../utils/logger";
-import { LiveCaptionsHelper } from "./liveCaptionsHelper";
+import { CaptionEnabler } from "./captionEnabler";
 
-export class TranscriptMutationHandler {
-  private domUtility: DomUtility;
+export class CaptionMutationHandler {
+  private captionProcessor: CaptionProcessor;
   private previousTranscripts: Record<string, string> = {};
 
   constructor(private page: Page, private config: GoogleCaptionConfiguration) {
-    this.domUtility = new DomUtility(page);
+    this.captionProcessor = new CaptionProcessor(page);
   }
 
   async initialize(callback: (message: EntryMessage) => void) {
@@ -23,9 +23,7 @@ export class TranscriptMutationHandler {
     logger.info(
       `[GoogleMeet][Transcription] Activating live captions for language: ${this.config.language}`
     );
-    await new LiveCaptionsHelper(this.page).enableCaptions(
-      this.config.language
-    );
+    await new CaptionEnabler(this.page).enable(this.config.language);
   }
 
   private async findTranscriptContainer(): Promise<MutationContext> {
@@ -34,7 +32,7 @@ export class TranscriptMutationHandler {
       canUseAriaBasedTranscriptSelector: false,
     };
 
-    const dom = await this.domUtility.getCaptionContainer(
+    const dom = await this.captionProcessor.getCaptionContainer(
       this.config.transcriptSelectors.aria,
       this.config.transcriptSelectors.fallback
     );

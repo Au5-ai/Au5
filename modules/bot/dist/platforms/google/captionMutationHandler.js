@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TranscriptMutationHandler = void 0;
-const captionDomUtility_1 = require("./captionDomUtility");
+exports.CaptionMutationHandler = void 0;
+const captionProcessor_1 = require("./captionProcessor");
 const logger_1 = require("../../utils/logger");
-const liveCaptionsHelper_1 = require("./liveCaptionsHelper");
-class TranscriptMutationHandler {
+const captionEnabler_1 = require("./captionEnabler");
+class CaptionMutationHandler {
     constructor(page, config) {
         this.page = page;
         this.config = config;
         this.previousTranscripts = {};
-        this.captionDomUtility = new captionDomUtility_1.CaptionDomUtility(page);
+        this.captionProcessor = new captionProcessor_1.CaptionProcessor(page);
     }
     async initialize(callback) {
         await this.activateCaptions();
@@ -18,14 +18,14 @@ class TranscriptMutationHandler {
     }
     async activateCaptions() {
         logger_1.logger.info(`[GoogleMeet][Transcription] Activating live captions for language: ${this.config.language}`);
-        await new liveCaptionsHelper_1.LiveCaptionsHelper(this.page).enableCaptions(this.config.language);
+        await new captionEnabler_1.CaptionEnabler(this.page).enable(this.config.language);
     }
     async findTranscriptContainer() {
         const ctx = {
             transcriptContainer: null,
             canUseAriaBasedTranscriptSelector: false,
         };
-        const dom = await this.captionDomUtility.getCaptionContainer(this.config.transcriptSelectors.aria, this.config.transcriptSelectors.fallback);
+        const dom = await this.captionProcessor.getCaptionContainer(this.config.transcriptSelectors.aria, this.config.transcriptSelectors.fallback);
         if (!dom)
             throw new Error("Transcript container not found in DOM");
         ctx.transcriptContainer = dom.container;
@@ -130,4 +130,4 @@ class TranscriptMutationHandler {
         logger_1.logger.info("[GoogleMeet][Transcription] Mutation observer initialized.");
     }
 }
-exports.TranscriptMutationHandler = TranscriptMutationHandler;
+exports.CaptionMutationHandler = CaptionMutationHandler;

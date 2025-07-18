@@ -3,12 +3,12 @@ import { logger } from "../../utils/logger";
 import { delay } from "../../common/task";
 
 /**
- * Helper class to manage live captions in Google Meet.
+ * Class to handle enabling live captions in Google Meet.
  */
-export class LiveCaptionsHelper {
+export class CaptionEnabler {
   constructor(private page: Page) {}
 
-  public async enableCaptions(languageValue: string): Promise<void> {
+  public async enable(languageValue: string): Promise<void> {
     const overlayDismissed = await this.dismissOverlayIfPresent();
     if (!overlayDismissed) {
       logger.debug("No overlay dialog present, proceeding.");

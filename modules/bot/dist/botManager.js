@@ -8,7 +8,7 @@ const logger_1 = require("./utils/logger");
 const puppeteer_extra_plugin_stealth_1 = __importDefault(require("puppeteer-extra-plugin-stealth"));
 const playwright_extra_1 = require("playwright-extra");
 const constants_1 = require("./common/constants");
-const google_1 = require("./platforms/google");
+const googleMeet_1 = require("./platforms/google/googleMeet");
 const meetingHubClient_1 = require("./socket/meetingHubClient");
 let shuttingDown = false;
 let browser = null;
@@ -55,7 +55,7 @@ async function startMeetingBot(config) {
     let isJoined = false;
     switch (config.platform) {
         case "googleMeet":
-            meetingPlatform = new google_1.GoogleMeet(config, page);
+            meetingPlatform = new googleMeet_1.GoogleMeet(config, page);
             isJoined = await meetingPlatform.joinMeeting();
             break;
         case "zoom":

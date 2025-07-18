@@ -2,38 +2,8 @@ import { ElementHandle, Page } from "playwright";
 import { Caption } from "./types";
 import { logger } from "../../utils/logger";
 
-export class DomUtility {
+export class CaptionProcessor {
   constructor(private page: Page) {}
-
-  /**
-   * Selects all elements matching the selector and optional regex text.
-   *
-   * @param selector - CSS selector string
-   * @param textPattern - Optional regex pattern to match text content
-   * @returns Array of matching ElementHandles
-   */
-  async selectAllElements(
-    selector: string,
-    textPattern?: string
-  ): Promise<ElementHandle<HTMLElement>[]> {
-    const elements = await this.page.$$(selector);
-
-    if (!textPattern) {
-      return elements as ElementHandle<HTMLElement>[];
-    }
-
-    const regex = new RegExp(textPattern);
-    const matching: ElementHandle<HTMLElement>[] = [];
-
-    for (const el of elements) {
-      const text = await el.textContent();
-      if (text && regex.test(text)) {
-        matching.push(el as ElementHandle<HTMLElement>);
-      }
-    }
-
-    return matching;
-  }
 
   /**
    * Attempts to locate a container using an ARIA selector, falling back to a secondary CSS selector.
