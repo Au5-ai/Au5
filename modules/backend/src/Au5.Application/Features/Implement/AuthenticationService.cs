@@ -28,7 +28,8 @@ public class AuthenticationService(IApplicationDbContext context, ITokenService 
 					participant: new
 					{
 						fullName = user.FullName,
-						pictureUrl = user.PictureUrl
+						pictureUrl = user.PictureUrl,
+						id = user.ExtensionId
 					});
 	}
 
