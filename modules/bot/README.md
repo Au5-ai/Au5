@@ -11,24 +11,31 @@ This bot is designed to integrate with platforms like Google Meet, Zoom, and oth
 
 ## Usage
 
-### 1. Build the Docker Image
+### 1. Install Podman
+
+Make sure you have **Podman** installed on your system.  
+
+### 2. Build the Image
+
+Navigate to the root folder of bot module where the dockerfile file is located.
+Use the following command to build the image.
 
 ```sh
-docker build -t au5-bot .
+podman build -t au5-bot .
 ```
 
-### 2. Run a Container for Each Meeting
+### 3. Run a Container for Each Meeting
 
 Use the following command to start a bot for a specific meeting:
 
 ```sh
-podman run -d --name dzc-afsw-edd --network=au5 \
+podman run -d --name meeting-code --network=au5 \
     -e MEETING_CONFIG='{
         "hubUrl":"http://au5-backend:1366/meetinghub", // hosted backend module
         "platform":"googleMeet",
-        "meetingUrl":"https://meet.google.com/dzc-afsw-edd",
+        "meetingUrl":"https://meet.google.com/meeting-code,
         "botDisplayName":"Cando",
-        "meetId":"dzc-afsw-edd",
+        "meetId":"meeting-code",
         "language":"fa-IR",
         "autoLeave":{
             "waitingEnter":30000,
