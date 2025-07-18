@@ -64,14 +64,6 @@ var app = builder.Build();
 		return Results.Ok(new { Success = true, Message = $"Bot added to meeting {request.MeetId}", Data = result });
 	});
 
-	app.MapGet("/meeting/{meetingId}/transcription", (
-		[FromRoute] string meetingId,
-		[FromServices] IMeetingService meetingService) =>
-	{
-		var transcription = meetingService.GetFullTranscriptionAsJson(meetingId);
-		return Results.Json(transcription);
-	});
-
 	app.MapGet("/reactions", async (IReactionService reactionService, CancellationToken ct) =>
 	{
 		return Results.Ok(await reactionService.GetAllAsync(ct).ConfigureAwait(false));

@@ -7,7 +7,7 @@ public static class ConfigureServices
 {
 	public static IServiceCollection RegisterApplicationServices(this IServiceCollection services)
 	{
-		services.AddSingleton<IMeetingService, MeetingService>();
+		services.AddScoped<IMeetingService, MeetingService>();
 		services.AddScoped<IReactionService, ReactionService>();
 		services.AddScoped<IAuthenticationService, AuthenticationService>();
 

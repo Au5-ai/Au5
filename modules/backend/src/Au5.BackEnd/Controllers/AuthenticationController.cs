@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
 
-[Route("authentication")]
 public class AuthenticationController(IAuthenticationService authenticationService) : BaseController
 {
 	private readonly IAuthenticationService _authenticationService = authenticationService;
