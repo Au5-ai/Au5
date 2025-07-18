@@ -185,7 +185,7 @@ public class MeetingService(IReactionService reactionService) : IMeetingService
 	public async Task<Result<FullMeetingTranscriptionDto>> GetFullTranscriptionAsJson(string meetId, CancellationToken ct = default)
     {
         var meeting = Meetings.FirstOrDefault(m => m.MeetId == meetId);
-        if (meeting is null || meeting.Entries == null || meeting.Entries.Count == 0)
+        if (meeting is null)
         {
             return Error.NotFound(description: "No meeting with this ID was found.");
         }
@@ -194,7 +194,7 @@ public class MeetingService(IReactionService reactionService) : IMeetingService
             .OrderBy(e => e.Timestamp)
             .ToList();
 
-        var baseTime = orderedEntries.First().Timestamp;
+        var baseTime = meeting.CreatedAt;
         var reactionsList = await _reationService.GetAllAsync(ct);
 
         var result = new FullMeetingTranscriptionDto(
