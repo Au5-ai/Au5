@@ -6,7 +6,7 @@ export class ErrorMessages {
   static readonly RUNNING_BOT =
     "Error running the bot with the provided configuration.";
   static browserCloseError = (err: unknown): string =>
-    `[Program] Error closing browser: ${err}`;
+    `[BotManager] Error closing browser: ${err}`;
 }
 
 export namespace LogMessages {

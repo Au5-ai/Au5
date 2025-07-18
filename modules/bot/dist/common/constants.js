@@ -7,7 +7,7 @@ exports.ErrorMessages = ErrorMessages;
 ErrorMessages.MEETING_CONFIG_NOT_SET = "MeetingConfiguration environment variable not set.";
 ErrorMessages.INVALID_MEETING_CONFIG_JSON = "Invalid JSON in MeetingConfiguration environment variable.";
 ErrorMessages.RUNNING_BOT = "Error running the bot with the provided configuration.";
-ErrorMessages.browserCloseError = (err) => `[Program] Error closing browser: ${err}`;
+ErrorMessages.browserCloseError = (err) => `[BotManager] Error closing browser: ${err}`;
 var LogMessages;
 (function (LogMessages) {
     LogMessages.BotManager = {

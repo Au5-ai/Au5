@@ -8,8 +8,8 @@ const logger_1 = require("./utils/logger");
 const puppeteer_extra_plugin_stealth_1 = __importDefault(require("puppeteer-extra-plugin-stealth"));
 const playwright_extra_1 = require("playwright-extra");
 const constants_1 = require("./common/constants");
-const googleMeet_1 = require("./platforms/google/googleMeet");
 const meetingHubClient_1 = require("./socket/meetingHubClient");
+const platformFactory_1 = require("./platforms/platformFactory");
 let shuttingDown = false;
 let browser = null;
 let meetingPlatform;
@@ -52,24 +52,9 @@ async function startMeetingBot(config) {
     const page = await context.newPage();
     await registerGracefulShutdownHandler(page);
     await applyAntiDetection(page);
-    let isJoined = false;
-    switch (config.platform) {
-        case "googleMeet":
-            meetingPlatform = new googleMeet_1.GoogleMeet(config, page);
-            isJoined = await meetingPlatform.joinMeeting();
-            break;
-        case "zoom":
-            // await handleZoom(config, page);
-            break;
-        case "teams":
-            // await handleTeams(config, page);
-            break;
-        default:
-            logger_1.logger.info(`[Program] Error: Unsupported platform received: ${config.platform}`);
-            throw new Error(`[Program] Unsupported platform: ${config.platform}`);
-    }
+    meetingPlatform = (0, platformFactory_1.platformFactory)(config, page);
+    let isJoined = await meetingPlatform.joinMeeting();
     if (isJoined) {
-        logger_1.logger.info(constants_1.LogMessages.BotManager.botSuccessfullyJoined);
         hubClient = new meetingHubClient_1.MeetingHubClient(config);
         const isConnected = await hubClient.startConnection();
         if (!isConnected) {

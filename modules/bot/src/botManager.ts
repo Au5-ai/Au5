@@ -9,8 +9,8 @@ import {
   LogMessages,
   USER_AGENT,
 } from "./common/constants";
-import { GoogleMeet } from "./platforms/google/googleMeet";
 import { MeetingHubClient } from "./socket/meetingHubClient";
+import { platformFactory } from "./platforms/platformFactory";
 
 let shuttingDown = false;
 let browser: Browser | null = null;
@@ -18,6 +18,7 @@ let meetingPlatform: IMeetingPlatform;
 let hubClient: MeetingHubClient;
 let meetingConfig: MeetingConfiguration;
 let meetingHasPaused = false;
+
 /**
  * Starts the meeting bot with the specified configuration.
  *
@@ -60,27 +61,9 @@ export async function startMeetingBot(
   await registerGracefulShutdownHandler(page);
   await applyAntiDetection(page);
 
-  let isJoined = false;
-  switch (config.platform) {
-    case "googleMeet":
-      meetingPlatform = new GoogleMeet(config, page);
-      isJoined = await meetingPlatform.joinMeeting();
-      break;
-    case "zoom":
-      // await handleZoom(config, page);
-      break;
-    case "teams":
-      // await handleTeams(config, page);
-      break;
-    default:
-      logger.info(
-        `[Program] Error: Unsupported platform received: ${config.platform}`
-      );
-      throw new Error(`[Program] Unsupported platform: ${config.platform}`);
-  }
-
+  meetingPlatform = platformFactory(config, page);
+  let isJoined = await meetingPlatform.joinMeeting();
   if (isJoined) {
-    logger.info(LogMessages.BotManager.botSuccessfullyJoined);
     hubClient = new MeetingHubClient(config);
     const isConnected = await hubClient.startConnection();
 
