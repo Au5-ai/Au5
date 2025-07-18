@@ -43,6 +43,8 @@ export class LiveCaptionsHelper {
     if (!languageSelected) {
       logger.error(`Failed to select language option "${languageValue}".`);
     }
+
+    logger.info(`Successfully selected language: ${languageValue}`);
   }
 
   private async dismissOverlayIfPresent(): Promise<boolean> {
