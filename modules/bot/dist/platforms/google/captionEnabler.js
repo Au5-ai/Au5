@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CaptionEnabler = void 0;
 const logger_1 = require("../../utils/logger");
-const task_1 = require("../../common/task");
+const utils_1 = require("../../utils");
 /**
  * Class to handle enabling live captions in Google Meet.
  */
@@ -21,13 +21,13 @@ class CaptionEnabler {
             return;
         }
         await turnOnButton.click({ force: true });
-        await (0, task_1.delay)(700);
+        await (0, utils_1.delay)(700);
         const overlayReady = await this.activateLanguageDropdownOverlay();
         if (!overlayReady) {
             logger_1.logger.warn("Captions language overlay not activated — skipping language selection.");
             return;
         }
-        await (0, task_1.delay)(700);
+        await (0, utils_1.delay)(700);
         const dropdownClicked = await this.clickLanguageDropdown();
         if (!dropdownClicked) {
             logger_1.logger.error("Failed to click on the language dropdown combobox.");

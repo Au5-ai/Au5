@@ -9,7 +9,7 @@ import {
   LogMessages,
   USER_AGENT,
 } from "./common/constants";
-import { MeetingHubClient } from "./socket/meetingHubClient";
+import { MeetingHubClient } from "./hub/meetingHubClient";
 import { platformFactory } from "./platforms/platformFactory";
 
 let shuttingDown = false;

@@ -51,3 +51,13 @@ Replace the values in `MEETING_CONFIG` as needed for your meeting.
 - Each meeting should have its own container instance.
 - Ensure the server URL and network settings are correct for your environment.
 - The bot display name, language, and other settings are customizable.
+
+## Logging
+
+- The default log level is `info`.
+- You can change the log level by setting the `PINO_LOG_LEVEL` environment variable.
+- Example:
+
+  ```sh
+  podman run -e PINO_LOG_LEVEL=debug au5-bot YOURCONFIG
+  ```

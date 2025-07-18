@@ -8,3 +8,7 @@ export function randomDelay(amount: number): number {
   const max = amount + variation;
   return Math.random() * (max - min) + min;
 }
+
+export function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

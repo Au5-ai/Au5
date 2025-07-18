@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MEETING_CONFIG = exports.BROWSER_ARGS = exports.USER_AGENT = exports.LogMessages = exports.ErrorMessages = void 0;
+exports.BROWSER_ARGS = exports.USER_AGENT = exports.LogMessages = exports.ErrorMessages = void 0;
 class ErrorMessages {
 }
 exports.ErrorMessages = ErrorMessages;
@@ -32,22 +32,3 @@ exports.BROWSER_ARGS = [
     "--use-file-for-fake-audio-capture=/dev/null",
     "--allow-running-insecure-content",
 ];
-exports.MEETING_CONFIG = `{
-  "hubUrl": "http://au5-hub:1366/meetinghub",
-  "platform": "googleMeet",
-  "meetingUrl": "https://meet.google.com/kqt-byur-jya",
-  "botDisplayName": "Cando",
-  "meetingId": "kqt-byur-jya",
-  "language": "fa-IR",
-  "autoLeave": {
-    "waitingEnter": 30000,
-    "noParticipant": 60000,
-    "allParticipantsLeft": 120000
-    },
-  "meeting_settings": {
-      "video_recording": true,
-      "audio_recording": true,
-      "transcription": true,
-      "transcription_model": "liveCaption"
-  }
-}`;

@@ -1,6 +1,6 @@
 import { ElementHandle, Page } from "playwright";
 import { logger } from "../../utils/logger";
-import { delay } from "../../common/task";
+import { delay } from "../../utils";
 
 /**
  * Class to handle enabling live captions in Google Meet.
