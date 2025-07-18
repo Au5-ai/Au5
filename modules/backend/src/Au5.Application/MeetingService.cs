@@ -39,6 +39,8 @@ public class MeetingService : IMeetingService
 			meeting.Participants.Add(new ParticipantInMeeting()
 			{
 				UserId = userJoined.User.Id,
+				FullName = userJoined.User.FullName,
+				PictureUrl = userJoined.User.PictureUrl,
 			});
 			return meeting;
 		}
@@ -144,6 +146,7 @@ public class MeetingService : IMeetingService
 				BlockId = entry.BlockId,
 				Content = entry.Content,
 				ParticipantId = entry.Participant.Id,
+				FullName = entry.Participant.FullName,
 				Timestamp = entry.Timestamp,
 				EntryType = entry.EntryType,
 				Reactions = [],
