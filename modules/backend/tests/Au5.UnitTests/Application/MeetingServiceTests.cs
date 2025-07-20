@@ -31,7 +31,9 @@ public class MeetingServiceTests
 	public async Task Should_SetStatusToEnded_When_EndMeetingIsCalled()
 	{
 		var service = CreateServiceWithUser();
+
 		service.EndMeeting(MEETID);
+
 		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
 		Assert.Equal(MeetingStatus.Ended, result.status);
 	}
@@ -40,12 +42,14 @@ public class MeetingServiceTests
 	public void Should_ReturnEmptyString_When_AddBotToNonExistentMeeting()
 	{
 		var service = CreateServiceWithUser();
+
 		var request = new RequestToAddBotMessage
 		{
 			MeetId = Guid.NewGuid().ToString(),
 			BotName = "Bot1",
 			User = new Participant { Id = Guid.NewGuid() }
 		};
+
 		var result = service.RequestToAddBot(request);
 		Assert.Equal(result, string.Empty);
 	}
@@ -54,12 +58,14 @@ public class MeetingServiceTests
 	public void Should_ReturnEmptyString_When_UserNotInMeetingTriesToAddBot()
 	{
 		var service = CreateServiceWithUser();
+
 		var request = new RequestToAddBotMessage
 		{
 			MeetId = Guid.NewGuid().ToString(),
 			BotName = "Bot1",
 			User = new Participant { FullName = "Mohammad Karimi" }
 		};
+
 		var result = service.RequestToAddBot(request);
 		Assert.Equal(result, string.Empty);
 	}
@@ -68,12 +74,14 @@ public class MeetingServiceTests
 	public void Should_ReturnNonEmptyString_When_UserInMeetingAddsBot()
 	{
 		var service = CreateServiceWithUser();
+
 		var request = new RequestToAddBotMessage
 		{
 			MeetId = MEETID,
 			BotName = "Bot1",
 			User = new Participant { Id = _userId }
 		};
+
 		var result = service.RequestToAddBot(request);
 		Assert.NotEqual(result, string.Empty);
 	}
@@ -85,11 +93,14 @@ public class MeetingServiceTests
 	public async Task Should_AddParticipants_When_AddParticipantToMeetIsCalled(string participantNamesCsv)
 	{
 		var service = CreateServiceWithUser();
+
 		var names = participantNamesCsv.Split(',');
 		var participants = names.Select(name => new Participant { FullName = name }).ToList();
 		service.AddParticipantToMeet(participants, MEETID);
+
 		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
 		var participantFullNames = result.participants.Select(x => x.fullName).ToList();
+
 		foreach (var name in names)
 		{
 			Assert.Contains(name, participantFullNames);
@@ -100,6 +111,7 @@ public class MeetingServiceTests
 	public async Task Should_AddUser_When_AddUserToMeetingIsCalledAndMeetingDoesNotExist()
 	{
 		var service = CreateServiceWithUser();
+
 		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
 		Assert.NotNull(result);
 		Assert.Contains(_userId, result.participants.Select(x => x.userId));
@@ -110,12 +122,14 @@ public class MeetingServiceTests
 	{
 		var botName = "Cando";
 		var service = CreateServiceWithUser();
+
 		var hash = service.RequestToAddBot(new RequestToAddBotMessage
 		{
 			MeetId = MEETID,
 			BotName = botName,
 			User = new Participant { Id = _userId }
 		});
+
 		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
 		Assert.NotEqual(hash, string.Empty);
 		Assert.Equal(botName, result.botName);
@@ -127,8 +141,10 @@ public class MeetingServiceTests
 	public async Task Should_AddNewParticipantsOnly_When_AddParticipantToMeetIsCalledMultipleTimes()
 	{
 		var service = CreateServiceWithUser();
+
 		service.AddParticipantToMeet([new Participant() { HasAccount = true, Id = _userId, FullName = "u1" }, new Participant() { FullName = "u2" }], MEETID);
 		service.AddParticipantToMeet([new Participant() { HasAccount = true, Id = _userId, FullName = "u1" }, new Participant() { FullName = "u3" }, new Participant() { FullName = "u2" }], MEETID);
+
 		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
 		Assert.Equal(3, result.participants.Count);
 	}
@@ -137,7 +153,9 @@ public class MeetingServiceTests
 	public async Task Should_ChangeStatusToEnded_When_EndMeetingIsCalled()
 	{
 		var service = CreateServiceWithUser();
+
 		service.EndMeeting(MEETID);
+
 		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
 		Assert.Equal(MeetingStatus.Ended, result.status);
 	}
@@ -147,12 +165,14 @@ public class MeetingServiceTests
 	{
 		var botName = "Cando";
 		var service = CreateServiceWithUser();
+
 		service.RequestToAddBot(new RequestToAddBotMessage
 		{
 			MeetId = MEETID,
 			BotName = botName,
 			User = new Participant { Id = _userId }
 		});
+
 		var botNameFromResponse = service.BotIsAdded(MEETID);
 		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
 		Assert.Equal(botNameFromResponse, botName);
@@ -164,6 +184,7 @@ public class MeetingServiceTests
 	public void Should_ReturnTrue_When_PauseMeetingIsCalledWithTrue()
 	{
 		var service = CreateServiceWithUser();
+
 		var paused = service.PauseMeeting(MEETID, true);
 		Assert.True(paused);
 	}
@@ -172,6 +193,7 @@ public class MeetingServiceTests
 	public async Task Should_InsertOrUpdateEntry_When_UpsertBlockIsCalled()
 	{
 		var service = CreateServiceWithUser();
+
 		var blockId = Guid.NewGuid();
 		var entry = new EntryMessage
 		{
@@ -182,9 +204,12 @@ public class MeetingServiceTests
 			Timestamp = DateTime.UtcNow,
 			EntryType = "Transcription"
 		};
+
 		service.UpsertBlock(entry);
+
 		entry.Content = "Updated";
 		service.UpsertBlock(entry);
+
 		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
 		var updatedEntry = result.entries.FirstOrDefault(e => e.blockId == blockId);
 		Assert.Equal("Updated", updatedEntry.content);
@@ -194,6 +219,7 @@ public class MeetingServiceTests
 	public async Task Should_AddNewEntry_When_InsertBlockIsCalled()
 	{
 		var service = CreateServiceWithUser();
+
 		var blockId = Guid.NewGuid();
 		var entry = new EntryMessage
 		{
@@ -204,7 +230,9 @@ public class MeetingServiceTests
 			Timestamp = DateTime.UtcNow,
 			EntryType = "Chat"
 		};
+
 		service.InsertBlock(entry);
+
 		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
 		Assert.Single(result.entries);
 	}
@@ -213,6 +241,7 @@ public class MeetingServiceTests
 	public async Task Should_AddAndToggleReaction_When_AppliedReactionIsCalledTwice()
 	{
 		var service = CreateServiceWithUser();
+
 		var blockId = Guid.NewGuid();
 		service.InsertBlock(new EntryMessage
 		{
@@ -223,6 +252,7 @@ public class MeetingServiceTests
 			Timestamp = DateTime.UtcNow,
 			EntryType = "Transcription"
 		});
+
 		var reaction = new ReactionAppliedMessage
 		{
 			ReactionId = 1,
@@ -231,8 +261,10 @@ public class MeetingServiceTests
 			ReactionType = "Like",
 			User = new Participant() { Id = _userId }
 		};
+
 		service.AppliedReaction(reaction);
 		service.AppliedReaction(reaction);
+
 		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
 		var entry = result.entries.FirstOrDefault(e => e.blockId == blockId);
 		Assert.DoesNotContain(_userId, entry.reactions.FirstOrDefault(r => r.id == 1).users);
@@ -242,9 +274,11 @@ public class MeetingServiceTests
 	public async Task Should_ReturnMeetingWithNormalizedTimestamps_When_GetFullTranscriptionAsJsonIsCalledWithOverTwoHoursAnd100Entries()
 	{
 		var service = CreateServiceWithUser();
+
 		var start = DateTime.Now;
 		var totalEntries = 100;
 		var intervalSeconds = 2 * 60 * 60 / totalEntries;
+
 		for (var i = 0; i < totalEntries; i++)
 		{
 			var entry = new EntryMessage
@@ -256,12 +290,14 @@ public class MeetingServiceTests
 				Timestamp = start.AddSeconds(i * intervalSeconds),
 				EntryType = "Transcription"
 			};
+
 			service.InsertBlock(entry);
 		}
 
 		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
 		Assert.NotNull(result);
 		Assert.Equal(totalEntries, result.entries.Count);
+
 		var entries = result.entries.ToList();
 		Assert.Equal("00:00:00", entries[0].timeline);
 		Assert.Equal("00:12:00", entries[10].timeline);
@@ -278,8 +314,10 @@ public class MeetingServiceTests
 			new() { Id = 2, Type = "GoodPoint", Emoji = "⭐", ClassName = "reaction-important" },
 			new() { Id = 3, Type = "Goal", Emoji = "🎯", ClassName = "reaction-question" }
 		};
+
 		var reactionServiceMock = new Mock<IReactionService>();
 		reactionServiceMock.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(reactions);
+
 		var service = new MeetingService(reactionServiceMock.Object);
 		service.AddUserToMeeting(new UserJoinedInMeetingMessage
 		{
@@ -287,6 +325,7 @@ public class MeetingServiceTests
 			MeetId = MEETID,
 			Platform = PLATFORM
 		});
+
 		return service;
 	}
 }
