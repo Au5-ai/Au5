@@ -15,7 +15,7 @@ jobs:
         configuration: [Debug, Release]
 
     env:
-      Solution_Name: modules/backend/Au5.BackEnd.sln # Normalized to use forward slashes
+      Solution_Name: modules/backend/Au5.BackEnd.sln
       Test_Project_Path: modules/backend/tests/Au5.UnitTests/Au5.UnitTests.csproj
 
     steps:
@@ -27,7 +27,7 @@ jobs:
       - name: 🛠️ Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.0.x # You can change this based on your target framework
+          dotnet-version: 9.0.x
 
       - name: 📦 Restore NuGet packages
         run: dotnet restore ${{ env.Solution_Name }}

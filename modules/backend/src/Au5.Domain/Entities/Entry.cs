@@ -9,6 +9,8 @@ public class Entry
 
 	public Guid ParticipantId { get; set; }
 
+	public string FullName { get; set; }
+
 	public string Content { get; set; }
 
 	public DateTime Timestamp { get; set; }

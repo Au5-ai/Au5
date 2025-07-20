@@ -358,7 +358,7 @@ class ChatPanel {
     }
     const reactionsHtml = this.reactions.map((reaction) => {
       return `
-      <div class="au5-reaction ${reaction.className}" reaction-type="${reaction.type}" data-blockId="${blockId}">
+      <div class="au5-reaction ${reaction.className}" reaction-Id="${reaction.id}" reaction-type="${reaction.type}" data-blockId="${blockId}">
         <span class="au5-reaction-emoji">${reaction.emoji}</span>
         <div class="au5-reaction-users"></div>
       </div>`;
@@ -3342,7 +3342,8 @@ class MeetingHubClient {
         user: {
           id: this.config.user.id,
           fullName: this.config.user.fullName,
-          pictureUrl: this.config.user.pictureUrl
+          pictureUrl: this.config.user.pictureUrl,
+          hasAccount: this.config.user.hasAccount ?? true
         },
         platform: this.platform.getPlatformName()
       });
@@ -3417,23 +3418,25 @@ class UIHandlers {
   }
   handleReactions() {
     document.addEventListener("click", (event) => {
-      var _a, _b;
+      var _a, _b, _c;
       const target = event.target;
       const reaction = target.closest(".au5-reaction");
       if (reaction) {
+        const reactionId = Number.parseInt(((_a = reaction.getAttribute("reaction-Id")) == null ? void 0 : _a.toString()) || "0");
         const type = reaction.getAttribute("reaction-type");
         const blockId = reaction.getAttribute("data-blockId");
         if (type && blockId) {
-          (_b = this.meetingHubClient) == null ? void 0 : _b.sendMessage({
+          (_c = this.meetingHubClient) == null ? void 0 : _c.sendMessage({
             type: MessageTypes.ReactionApplied,
-            meetId: (_a = this.platform) == null ? void 0 : _a.getMeetId(),
+            meetId: (_b = this.platform) == null ? void 0 : _b.getMeetId(),
             blockId,
             user: {
               id: this.config.user.id,
               fullName: this.config.user.fullName,
               pictureUrl: this.config.user.pictureUrl,
-              hasAccount: this.config.user.hasAccount || true
+              hasAccount: this.config.user.hasAccount
             },
+            reactionId,
             reactionType: type
           });
           this.chatPanel.addReaction({
@@ -3443,8 +3446,9 @@ class UIHandlers {
               id: this.config.user.id,
               fullName: this.config.user.fullName,
               pictureUrl: this.config.user.pictureUrl,
-              hasAccount: this.config.user.hasAccount || true
+              hasAccount: this.config.user.hasAccount
             },
+            reactionId,
             reactionType: type
           });
         }
@@ -3552,7 +3556,7 @@ class UIHandlers {
             id: this.config.user.id,
             fullName: this.config.user.fullName,
             pictureUrl: this.config.user.pictureUrl,
-            hasAccount: this.config.user.hasAccount || true
+            hasAccount: this.config.user.hasAccount
           },
           content: input.value.trim(),
           timestamp: /* @__PURE__ */ new Date(),
@@ -3607,7 +3611,7 @@ class UIHandlers {
           id: this.config.user.id,
           fullName: this.config.user.fullName,
           pictureUrl: this.config.user.pictureUrl,
-          hasAccount: this.config.user.hasAccount || true
+          hasAccount: this.config.user.hasAccount
         }
       };
       this.meetingHubClient.sendMessage(message);
@@ -3623,7 +3627,7 @@ class UIHandlers {
           id: this.config.user.id,
           fullName: this.config.user.fullName,
           pictureUrl: this.config.user.pictureUrl,
-          hasAccount: this.config.user.hasAccount || true
+          hasAccount: this.config.user.hasAccount
         }
       };
       this.meetingHubClient.sendMessage(message);

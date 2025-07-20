@@ -30,6 +30,7 @@ export interface ServiceIntegration {
   hubUrl: string;
   companyName: string;
   botName: string;
+  jwtToken: string;
 }
 
 export interface AppConfiguration {
@@ -70,6 +71,7 @@ export interface ReactionAppliedMessage extends IMessage {
   meetId?: string;
   blockId: string;
   user: Participant;
+  reactionId: number;
   reactionType: string;
 }
 
@@ -112,6 +114,7 @@ export interface RequestAddBotModel {
 }
 
 export interface Reaction {
+  id: number;
   type: string;
   emoji: string;
   className: string;

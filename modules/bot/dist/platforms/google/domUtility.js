@@ -7,28 +7,6 @@ class DomUtility {
         this.page = page;
     }
     /**
-     * Selects all elements matching the selector and optional regex text.
-     *
-     * @param selector - CSS selector string
-     * @param textPattern - Optional regex pattern to match text content
-     * @returns Array of matching ElementHandles
-     */
-    async selectAllElements(selector, textPattern) {
-        const elements = await this.page.$$(selector);
-        if (!textPattern) {
-            return elements;
-        }
-        const regex = new RegExp(textPattern);
-        const matching = [];
-        for (const el of elements) {
-            const text = await el.textContent();
-            if (text && regex.test(text)) {
-                matching.push(el);
-            }
-        }
-        return matching;
-    }
-    /**
      * Attempts to locate a container using an ARIA selector, falling back to a secondary CSS selector.
      *
      * @param ariaSelector - ARIA-based selector (e.g., [aria-label="Transcript"])

@@ -236,6 +236,9 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(75)");
 
+                    b.Property<Guid>("ExtensionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(50)

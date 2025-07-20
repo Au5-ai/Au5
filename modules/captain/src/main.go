@@ -27,7 +27,7 @@ type MeetingConfig struct {
 	Platform        string          `json:"platform"`
 	MeetingUrl      string          `json:"meetingUrl"`
 	BotDisplayName  string          `json:"botDisplayName"`
-	MeetingId       string          `json:"meetingId"`
+	MeetId       	string          `json:"meetId"`
 	Language        string          `json:"language"`
 	AutoLeave       AutoLeaveConfig `json:"autoLeave"`
 	MeetingSettings MeetingSettings `json:"meeting_settings"`
@@ -48,9 +48,10 @@ func handleStartBot(w http.ResponseWriter, r *http.Request) {
 	configStr := string(configBytes)
 
 	// Compose podman command
+	uniqueName := fmt.Sprintf("%s_%d", config.MeetId, int64(r.Context().Value(http.ServerContextKey).(*http.Server).IdleTimeout))
 	cmd := exec.Command("podman", "run", "-d",
-		"--name", config.MeetingId,
-		"--network=au5net",
+		"--name", uniqueName,
+		"--network=au5",
 		"-e", fmt.Sprintf("MEETING_CONFIG=%s", configStr),
 		"au5-bot",
 	)
@@ -65,7 +66,7 @@ func handleStartBot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Bot started for meeting ID: %s\n", config.MeetingId)
+	fmt.Fprintf(w, "Bot started for meeting ID: %s\n", config.MeetId)
 }
 
 func main() {

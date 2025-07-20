@@ -64,11 +64,6 @@ var app = builder.Build();
 		return Results.Ok(new { Success = true, Message = $"Bot added to meeting {request.MeetId}", Data = result });
 	});
 
-	app.MapGet("/reactions", async (IReactionService reactionService, CancellationToken ct) =>
-	{
-		return Results.Ok(await reactionService.GetAllAsync(ct).ConfigureAwait(false));
-	});
-
 	app.MapControllers();
 
 	app.Run();

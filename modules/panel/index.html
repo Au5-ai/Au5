@@ -37,51 +37,96 @@
     </style>
   </head>
   <body>
-    <h2>AU5 Config Panel</h2>
+    <div id="login">
+      <h2>Login</h2>
+      <label for="username">Username</label>
+      <input id="username" type="text" autocomplete="username" />
 
-    <button onclick="checkExtension()">Check Extension Installed</button>
-    <label id="extensionStatus" style="color: #888; margin-bottom: 8px"
-      >Extension not detected</label
-    >
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" />
 
-    <!-- User Info -->
-    <label for="userId">User ID / Token</label>
-    <input id="userId" value="23f45e89-8b5a-5c55-9df7-240d78a3ce15" />
+      <button onclick="login()">Login</button>
+      <div id="loginError" style="color: red; margin-top: 8px"></div>
+    </div>
 
-    <label for="fullName">Full Name</label>
-    <input id="fullName" value="Mohammad Karimi" />
+    <div id="config" style="display: none">
+      <h2>AU5 Config Panel</h2>
 
-    <label for="pictureUrl">Picture URL</label>
-    <input
-      id="pictureUrl"
-      value="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    />
-    <img
-      id="preview"
-      src="https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
-    />
+      <button onclick="checkExtension()">Check Extension Installed</button>
+      <label id="extensionStatus" style="color: #888; margin-bottom: 8px"
+        >Extension not detected</label
+      >
 
-    <!-- Service Info -->
-    <label for="baseUrl">Base URL</label>
-    <input id="baseUrl" value="http://localhost:1366" />
+      <!-- User Info -->
+      <label for="eId">ExtensionId</label>
+      <input id="eId" value="" />
 
-    <label for="panelUrl">Panel URL</label>
-    <input id="panelUrl" value="http://panel.localhost:1366" />
+      <label for="token">jwt Token</label>
+      <input id="token" value="23f45e89-8b5a-5c55-9df7-240d78a3ce15" />
 
-    <label for="hubUrl">Hub URL</label>
-    <input id="hubUrl" value="http://localhost:1366/meetinghub" />
+      <label for="fullName">Full Name</label>
+      <input id="fullName" value="Mohammad Karimi" />
 
-    <label for="companyName">Company Name</label>
-    <input id="companyName" value="Asax Co" />
+      <label for="pictureUrl">Picture URL</label>
+      <input id="pictureUrl" value="" />
+      <img id="preview" src="" />
 
-    <label for="botName">Bot Name</label>
-    <input id="botName" value="Au5 Bot" />
+      <!-- Service Info -->
+      <label for="baseUrl">Base URL</label>
+      <input id="baseUrl" value="http://localhost:1366" />
 
-    <label for="direction">Direction (ltr/rtl)</label>
-    <input id="direction" value="rtl" />
+      <label for="panelUrl">Panel URL</label>
+      <input id="panelUrl" value="http://panel.localhost:1366" />
 
-    <button onclick="sendConfig()">Send Config</button>
+      <label for="hubUrl">Hub URL</label>
+      <input id="hubUrl" value="http://localhost:1366/meetinghub" />
 
+      <label for="companyName">Company Name</label>
+      <input id="companyName" value="Asax Co" />
+
+      <label for="botName">Bot Name</label>
+      <input id="botName" value="Cando" />
+
+      <label for="direction">Direction (ltr/rtl)</label>
+      <input id="direction" value="rtl" />
+
+      <button onclick="sendConfig()">Send Config</button>
+    </div>
+
+    <script>
+      function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const errorDiv = document.getElementById("loginError");
+        errorDiv.textContent = "";
+
+        fetch("http://localhost:1366/authentication/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.accessToken) {
+              document.getElementById("token").value = data.accessToken;
+              document.getElementById("eId").value = data.participant.id || "";
+              document.getElementById("fullName").value =
+                data.participant.fullName || "";
+              document.getElementById("pictureUrl").value =
+                data.participant.pictureUrl || "";
+              document.getElementById("preview").src =
+                data.participant.pictureUrl || "";
+              document.getElementById("login").style.display = "none";
+              document.getElementById("config").style.display = "block";
+            } else {
+              errorDiv.textContent = "Login failed";
+            }
+          })
+          .catch(() => {
+            errorDiv.textContent = "Login error";
+          });
+      }
+    </script>
     <script>
       function checkExtension() {
         // Send message to extension
@@ -117,10 +162,11 @@
       function sendConfig() {
         const config = {
           user: {
-            token: document.getElementById("userId").value,
-            id: document.getElementById("userId").value,
+            id: document.getElementById("eId").value,
+            token: document.getElementById("token").value,
             fullName: document.getElementById("fullName").value,
             pictureUrl: document.getElementById("pictureUrl").value,
+            hasAccount: true,
           },
           service: {
             panelUrl: document.getElementById("panelUrl").value,

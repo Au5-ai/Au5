@@ -1,5 +1,5 @@
 import { IMeetingPlatform, MeetingConfiguration, EntryMessage } from "./types";
-import { logger } from "./utils/logger";
+import { logger } from "./common/utils/logger";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { chromium } from "playwright-extra";
 import { Browser, Page } from "playwright-core";
@@ -9,8 +9,8 @@ import {
   LogMessages,
   USER_AGENT,
 } from "./common/constants";
-import { GoogleMeet } from "./platforms/google";
-import { MeetingHubClient } from "./socket/meetingHubClient";
+import { MeetingHubClient } from "./hub/meetingHubClient";
+import { platformFactory } from "./platforms/platformFactory";
 
 let shuttingDown = false;
 let browser: Browser | null = null;
@@ -18,6 +18,7 @@ let meetingPlatform: IMeetingPlatform;
 let hubClient: MeetingHubClient;
 let meetingConfig: MeetingConfiguration;
 let meetingHasPaused = false;
+
 /**
  * Starts the meeting bot with the specified configuration.
  *
@@ -60,36 +61,14 @@ export async function startMeetingBot(
   await registerGracefulShutdownHandler(page);
   await applyAntiDetection(page);
 
-  let isJoined = false;
-  switch (config.platform) {
-    case "googleMeet":
-      meetingPlatform = new GoogleMeet(config, page);
-      isJoined = await meetingPlatform.joinMeeting();
-      break;
-    case "zoom":
-      // await handleZoom(config, page);
-      break;
-    case "teams":
-      // await handleTeams(config, page);
-      break;
-    default:
-      logger.info(
-        `[Program] Error: Unsupported platform received: ${config.platform}`
-      );
-      throw new Error(`[Program] Unsupported platform: ${config.platform}`);
-  }
-
+  meetingPlatform = platformFactory(config, page);
+  let isJoined = await meetingPlatform.joinMeeting();
   if (isJoined) {
-    logger.info(
-      `[Program] Bot successfully joined the meeting on platform: ${config.platform}`
-    );
     hubClient = new MeetingHubClient(config);
     const isConnected = await hubClient.startConnection();
 
     if (!isConnected) {
-      logger.error(
-        `[Program] Failed to connect to the hub service at ${config.hubUrl}`
-      );
+      logger.error(LogMessages.BotManager.hubClientNotInitialized);
       meetingPlatform.leaveMeeting();
       process.exit(1);
     }
@@ -101,7 +80,7 @@ export async function startMeetingBot(
 
 async function handleTranscription(message: EntryMessage): Promise<void> {
   if (!hubClient) {
-    logger.error("[Program] Hub client is not initialized.");
+    logger.error(LogMessages.BotManager.hubClientNotInitialized);
     return;
   }
 
@@ -138,10 +117,10 @@ async function handleTranscription(message: EntryMessage): Promise<void> {
 
 async function registerGracefulShutdownHandler(page: Page): Promise<void> {
   await page.exposeFunction("triggerNodeGracefulLeave", async () => {
-    logger.info(`${LogMessages.Program.browserRequested}`);
+    logger.info(`${LogMessages.BotManager.browserRequested}`);
 
     if (shuttingDown) {
-      logger.info(`${LogMessages.Program.shutdownAlreadyInProgress}`);
+      logger.info(`${LogMessages.BotManager.shutdownAlreadyInProgress}`);
       return;
     }
 
@@ -187,7 +166,7 @@ async function applyAntiDetection(page: Page): Promise<void> {
  */
 const gracefulShutdown = async (signal: string) => {
   if (shuttingDown) {
-    logger.info(LogMessages.Program.shutdownAlreadyInProgress);
+    logger.info(LogMessages.BotManager.shutdownAlreadyInProgress);
     return;
   }
 
@@ -195,7 +174,7 @@ const gracefulShutdown = async (signal: string) => {
 
   try {
     if (browser && browser.isConnected()) {
-      logger.info(LogMessages.Program.closingBrowserInstance);
+      logger.info(LogMessages.BotManager.closingBrowserInstance);
       await browser.close();
     }
   } catch (err) {
@@ -207,7 +186,7 @@ const gracefulShutdown = async (signal: string) => {
 
 async function performGracefulLeave(): Promise<void> {
   if (shuttingDown) {
-    logger.info("[Program] Already in progress, ignoring duplicate call.");
+    logger.info(LogMessages.BotManager.alreadyInProgress);
     return;
   }
   shuttingDown = true;

@@ -98,6 +98,7 @@ export class UIHandlers {
       const target = event.target as HTMLElement;
       const reaction = target.closest(".au5-reaction");
       if (reaction) {
+        const reactionId = Number.parseInt(reaction.getAttribute("reaction-Id")?.toString() || "0");
         const type = reaction.getAttribute("reaction-type");
         const blockId = reaction.getAttribute("data-blockId");
         if (type && blockId) {
@@ -109,8 +110,9 @@ export class UIHandlers {
               id: this.config.user.id,
               fullName: this.config.user.fullName,
               pictureUrl: this.config.user.pictureUrl,
-              hasAccount: this.config.user.hasAccount || true
+              hasAccount: this.config.user.hasAccount
             },
+            reactionId: reactionId,
             reactionType: type
           } as ReactionAppliedMessage);
           this.chatPanel.addReaction({
@@ -120,8 +122,9 @@ export class UIHandlers {
               id: this.config.user.id,
               fullName: this.config.user.fullName,
               pictureUrl: this.config.user.pictureUrl,
-              hasAccount: this.config.user.hasAccount || true
+              hasAccount: this.config.user.hasAccount
             },
+            reactionId: reactionId,
             reactionType: type
           });
         }
@@ -242,7 +245,7 @@ export class UIHandlers {
             id: this.config.user.id,
             fullName: this.config.user.fullName,
             pictureUrl: this.config.user.pictureUrl,
-            hasAccount: this.config.user.hasAccount || true
+            hasAccount: this.config.user.hasAccount
           },
           content: input.value.trim(),
           timestamp: new Date(),
@@ -303,7 +306,7 @@ export class UIHandlers {
           id: this.config.user.id,
           fullName: this.config.user.fullName,
           pictureUrl: this.config.user.pictureUrl,
-          hasAccount: this.config.user.hasAccount || true
+          hasAccount: this.config.user.hasAccount
         }
       };
       this.meetingHubClient.sendMessage(message);
@@ -320,7 +323,7 @@ export class UIHandlers {
           id: this.config.user.id,
           fullName: this.config.user.fullName,
           pictureUrl: this.config.user.pictureUrl,
-          hasAccount: this.config.user.hasAccount || true
+          hasAccount: this.config.user.hasAccount
         }
       };
       this.meetingHubClient.sendMessage(message);

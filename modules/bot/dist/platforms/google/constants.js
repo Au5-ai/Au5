@@ -8,6 +8,5 @@ exports.Google_Caption_Configuration = {
     transcriptSelectors: {
         aria: 'div[role="region"][tabindex="0"]',
         fallback: ".a4cQT",
-        overlay: ".NmXUuc.P9KVBf.IGXezb",
     },
 };

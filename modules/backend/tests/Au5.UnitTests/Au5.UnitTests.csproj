@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Au5.Application\Au5.Application.csproj" />
+    <ProjectReference Include="..\..\src\Au5.Infrastructure\Au5.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

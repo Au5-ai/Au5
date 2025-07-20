@@ -42,7 +42,8 @@ export class MeetingHubClient {
           user: {
             id: this.config.user.id,
             fullName: this.config.user.fullName,
-            pictureUrl: this.config.user.pictureUrl
+            pictureUrl: this.config.user.pictureUrl,
+            hasAccount: this.config.user.hasAccount
           },
           platform: this.platform.getPlatformName()
         } as UserJoinedInMeetingMessage);

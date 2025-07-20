@@ -1,19 +1,19 @@
-import { ErrorMessages, MEETING_CONFIG } from "./common/constants";
+import { ErrorMessages } from "./common/constants";
 import { startMeetingBot } from "./botManager";
 import { MeetingConfiguration } from "./types";
 
-//process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 import fetch, { Headers, Request, Response } from "node-fetch";
+import { logger } from "./common/utils/logger";
 (global as any).fetch = fetch;
 (global as any).Headers = Headers;
 (global as any).Request = Request;
 (global as any).Response = Response;
 
 async function main() {
-  console.log("Starting Meeting Bot...", process.env.MEETING_CONFIG);
+  logger.info("Starting Meeting Bot...");
   const rawConfig = process.env.MEETING_CONFIG;
   if (!rawConfig) {
-    console.error(ErrorMessages.MEETING_CONFIG_NOT_SET);
+    logger.error(ErrorMessages.MEETING_CONFIG_NOT_SET);
     process.exit(1);
   }
 
@@ -22,14 +22,14 @@ async function main() {
   try {
     parsedConfig = JSON.parse(rawConfig);
   } catch (error) {
-    console.error(ErrorMessages.INVALID_MEETING_CONFIG_JSON, error);
+    logger.error(ErrorMessages.INVALID_MEETING_CONFIG_JSON, error);
     process.exit(1);
   }
 
   try {
     await startMeetingBot(parsedConfig);
   } catch (error) {
-    console.error(ErrorMessages.RUNNING_BOT, error);
+    logger.error(ErrorMessages.RUNNING_BOT, error);
     process.exit(1);
   }
 }

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TranscriptMutationHandler = void 0;
-const domUtility_1 = require("./domUtility");
+const captionDomUtility_1 = require("./captionDomUtility");
 const logger_1 = require("../../utils/logger");
 const liveCaptionsHelper_1 = require("./liveCaptionsHelper");
 class TranscriptMutationHandler {
@@ -9,7 +9,7 @@ class TranscriptMutationHandler {
         this.page = page;
         this.config = config;
         this.previousTranscripts = {};
-        this.domUtility = new domUtility_1.DomUtility(page);
+        this.captionDomUtility = new captionDomUtility_1.CaptionDomUtility(page);
     }
     async initialize(callback) {
         await this.activateCaptions();
@@ -25,7 +25,7 @@ class TranscriptMutationHandler {
             transcriptContainer: null,
             canUseAriaBasedTranscriptSelector: false,
         };
-        const dom = await this.domUtility.getCaptionContainer(this.config.transcriptSelectors.aria, this.config.transcriptSelectors.fallback);
+        const dom = await this.captionDomUtility.getCaptionContainer(this.config.transcriptSelectors.aria, this.config.transcriptSelectors.fallback);
         if (!dom)
             throw new Error("Transcript container not found in DOM");
         ctx.transcriptContainer = dom.container;
@@ -45,7 +45,7 @@ class TranscriptMutationHandler {
             this.previousTranscripts[caption.blockId] = caption.transcript;
             callback({
                 blockId: caption.blockId,
-                speaker: {
+                participant: {
                     fullName: caption.speakerName,
                     pictureUrl: caption.pictureUrl,
                 },

@@ -35,17 +35,17 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const constants_1 = require("./common/constants");
 const botManager_1 = require("./botManager");
-//process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 const node_fetch_1 = __importStar(require("node-fetch"));
+const logger_1 = require("./common/utils/logger");
 global.fetch = node_fetch_1.default;
 global.Headers = node_fetch_1.Headers;
 global.Request = node_fetch_1.Request;
 global.Response = node_fetch_1.Response;
 async function main() {
-    console.log("Starting Meeting Bot...", process.env.MEETING_CONFIG);
+    logger_1.logger.info("Starting Meeting Bot...");
     const rawConfig = process.env.MEETING_CONFIG;
     if (!rawConfig) {
-        console.error(constants_1.ErrorMessages.MEETING_CONFIG_NOT_SET);
+        logger_1.logger.error(constants_1.ErrorMessages.MEETING_CONFIG_NOT_SET);
         process.exit(1);
     }
     let parsedConfig;
@@ -53,14 +53,14 @@ async function main() {
         parsedConfig = JSON.parse(rawConfig);
     }
     catch (error) {
-        console.error(constants_1.ErrorMessages.INVALID_MEETING_CONFIG_JSON, error);
+        logger_1.logger.error(constants_1.ErrorMessages.INVALID_MEETING_CONFIG_JSON, error);
         process.exit(1);
     }
     try {
         await (0, botManager_1.startMeetingBot)(parsedConfig);
     }
     catch (error) {
-        console.error(constants_1.ErrorMessages.RUNNING_BOT, error);
+        logger_1.logger.error(constants_1.ErrorMessages.RUNNING_BOT, error);
         process.exit(1);
     }
 }

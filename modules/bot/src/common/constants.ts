@@ -6,14 +6,19 @@ export class ErrorMessages {
   static readonly RUNNING_BOT =
     "Error running the bot with the provided configuration.";
   static browserCloseError = (err: unknown): string =>
-    `[Program] Error closing browser: ${err}`;
+    `[BotManager] Error closing browser: ${err}`;
 }
 
 export namespace LogMessages {
-  export const Program = {
-    browserRequested: "[Program] Browser requested graceful shutdown.",
-    shutdownAlreadyInProgress: "[Program] Shutdown already in progress.",
-    closingBrowserInstance: "[Program] Closing browser instance.",
+  export const BotManager = {
+    browserRequested: "[BotManager] Browser requested graceful shutdown.",
+    shutdownAlreadyInProgress: "[BotManager] Shutdown already in progress.",
+    closingBrowserInstance: "[BotManager] Closing browser instance.",
+    alreadyInProgress:
+      "[BotManager] Already in progress, ignoring duplicate call.",
+    hubClientNotInitialized: "[BotManager] Hub client is not initialized.",
+    botSuccessfullyJoined:
+      "[BotManager] Bot successfully joined the meeting on platform",
   } as const;
 }
 
@@ -32,23 +37,3 @@ export const BROWSER_ARGS: string[] = [
   "--use-file-for-fake-audio-capture=/dev/null",
   "--allow-running-insecure-content",
 ];
-
-export const MEETING_CONFIG = `{
-  "hubUrl": "http://au5-hub:1366/meetinghub",
-  "platform": "googleMeet",
-  "meetingUrl": "https://meet.google.com/kqt-byur-jya",
-  "botDisplayName": "Cando",
-  "meetingId": "kqt-byur-jya",
-  "language": "fa-IR",
-  "autoLeave": {
-    "waitingEnter": 30000,
-    "noParticipant": 60000,
-    "allParticipantsLeft": 120000
-    },
-  "meeting_settings": {
-      "video_recording": true,
-      "audio_recording": true,
-      "transcription": true,
-      "transcription_model": "liveCaption"
-  }
-}`;

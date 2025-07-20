@@ -11,7 +11,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["http://localhost:62387/*"],
+      "matches": ["http://localhost/*"],
       "js": ["content.js"]
     }
   ],

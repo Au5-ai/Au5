@@ -10,7 +10,8 @@ public record FullMeetingTranscriptionDto(
 	string botName,
 	bool isBotAdded,
 	string createdAt,
-	string status,
+	MeetingStatus status,
+	string statusDescription,
 	IReadOnlyList<ParticipantDto> participants,
 	IReadOnlyList<EntryDto> entries
 );

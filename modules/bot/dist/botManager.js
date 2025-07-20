@@ -4,12 +4,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.startMeetingBot = startMeetingBot;
-const logger_1 = require("./utils/logger");
+const logger_1 = require("./common/utils/logger");
 const puppeteer_extra_plugin_stealth_1 = __importDefault(require("puppeteer-extra-plugin-stealth"));
 const playwright_extra_1 = require("playwright-extra");
 const constants_1 = require("./common/constants");
-const google_1 = require("./platforms/google");
-const meetingHubClient_1 = require("./socket/meetingHubClient");
+const meetingHubClient_1 = require("./hub/meetingHubClient");
+const platformFactory_1 = require("./platforms/platformFactory");
 let shuttingDown = false;
 let browser = null;
 let meetingPlatform;
@@ -52,28 +52,13 @@ async function startMeetingBot(config) {
     const page = await context.newPage();
     await registerGracefulShutdownHandler(page);
     await applyAntiDetection(page);
-    let isJoined = false;
-    switch (config.platform) {
-        case "googleMeet":
-            meetingPlatform = new google_1.GoogleMeet(config, page);
-            isJoined = await meetingPlatform.joinMeeting();
-            break;
-        case "zoom":
-            // await handleZoom(config, page);
-            break;
-        case "teams":
-            // await handleTeams(config, page);
-            break;
-        default:
-            logger_1.logger.info(`[Program] Error: Unsupported platform received: ${config.platform}`);
-            throw new Error(`[Program] Unsupported platform: ${config.platform}`);
-    }
+    meetingPlatform = (0, platformFactory_1.platformFactory)(config, page);
+    let isJoined = await meetingPlatform.joinMeeting();
     if (isJoined) {
-        logger_1.logger.info(`[Program] Bot successfully joined the meeting on platform: ${config.platform}`);
         hubClient = new meetingHubClient_1.MeetingHubClient(config);
-        const isConnected = true; //await hubClient.startConnection();
+        const isConnected = await hubClient.startConnection();
         if (!isConnected) {
-            logger_1.logger.error(`[Program] Failed to connect to the hub service at ${config.hubUrl}`);
+            logger_1.logger.error(constants_1.LogMessages.BotManager.hubClientNotInitialized);
             meetingPlatform.leaveMeeting();
             process.exit(1);
         }
@@ -83,7 +68,7 @@ async function startMeetingBot(config) {
 }
 async function handleTranscription(message) {
     if (!hubClient) {
-        logger_1.logger.error("[Program] Hub client is not initialized.");
+        logger_1.logger.error(constants_1.LogMessages.BotManager.hubClientNotInitialized);
         return;
     }
     message.meetId = meetingConfig.meetId;
@@ -91,14 +76,21 @@ async function handleTranscription(message) {
         await hubClient.sendMessage(message);
     }
 }
-async function handleParticipation(message) {
-    if (!hubClient) {
-        logger_1.logger.error("[Program] [handleParticipation] Hub client is not initialized.");
-        return;
-    }
-    message.meetingId = meetingConfig.meetId;
-    await hubClient.sendMessage(message);
-}
+// async function handleParticipation(message: any): Promise<void> {
+//   if (!hubClient) {
+//     logger.error(
+//       "[Program] [handleParticipation] Hub client is not initialized."
+//     );
+//     return;
+//   }
+//   message.meetingId = meetingConfig.meetId;
+//   logger.info(
+//     `[Program] [handleParticipation] Sending participation message: ${JSON.stringify(
+//       message
+//     )}`
+//   );
+//   await hubClient.sendMessage(message);
+// }
 /**
  * Registers a function named `triggerNodeGracefulLeave` in the browser context,
  * allowing the browser to request a graceful shutdown of the Node.js process.
@@ -109,9 +101,9 @@ async function handleParticipation(message) {
  */
 async function registerGracefulShutdownHandler(page) {
     await page.exposeFunction("triggerNodeGracefulLeave", async () => {
-        logger_1.logger.info(`${constants_1.LogMessages.Program.browserRequested}`);
+        logger_1.logger.info(`${constants_1.LogMessages.BotManager.browserRequested}`);
         if (shuttingDown) {
-            logger_1.logger.info(`${constants_1.LogMessages.Program.shutdownAlreadyInProgress}`);
+            logger_1.logger.info(`${constants_1.LogMessages.BotManager.shutdownAlreadyInProgress}`);
             return;
         }
         await performGracefulLeave();
@@ -154,13 +146,13 @@ async function applyAntiDetection(page) {
  */
 const gracefulShutdown = async (signal) => {
     if (shuttingDown) {
-        logger_1.logger.info(constants_1.LogMessages.Program.shutdownAlreadyInProgress);
+        logger_1.logger.info(constants_1.LogMessages.BotManager.shutdownAlreadyInProgress);
         return;
     }
     shuttingDown = true;
     try {
         if (browser && browser.isConnected()) {
-            logger_1.logger.info(constants_1.LogMessages.Program.closingBrowserInstance);
+            logger_1.logger.info(constants_1.LogMessages.BotManager.closingBrowserInstance);
             await browser.close();
         }
     }
@@ -173,7 +165,7 @@ const gracefulShutdown = async (signal) => {
 };
 async function performGracefulLeave() {
     if (shuttingDown) {
-        logger_1.logger.info("[Program] Already in progress, ignoring duplicate call.");
+        logger_1.logger.info(constants_1.LogMessages.BotManager.alreadyInProgress);
         return;
     }
     shuttingDown = true;
@@ -188,9 +180,6 @@ async function performGracefulLeave() {
         if (browser && browser.isConnected()) {
             await browser.close();
         }
-        else {
-            logger_1.logger.info("[Program] Browser instance already closed or not available.");
-        }
     }
     catch (error) {
         logger_1.logger.error(`[Program] Error closing browser: ${error instanceof Error ? error.message : error}`);
@@ -199,7 +188,6 @@ async function performGracefulLeave() {
         process.exit(0);
     }
     else {
-        logger_1.logger.info("[Program] Leave attempt failed or button not found. Exiting process with code 1 (Failure). Waiting for external termination.");
         process.exit(1);
     }
 }
