@@ -58,6 +58,15 @@ dotnet_diagnostic.CA1725.severity = error
 dotnet_diagnostic.CA2007.severity = none
 dotnet_diagnostic.CA1710.severity = error
 dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CA1700.severity = error
+dotnet_diagnostic.CA1831.severity = error
+dotnet_diagnostic.CA1832.severity = error
+dotnet_diagnostic.CA1833.severity = error
+dotnet_diagnostic.CA1843.severity = error
+dotnet_diagnostic.CA1069.severity = error
+dotnet_diagnostic.CA1068.severity = error
+dotnet_diagnostic.CA1064.severity = error
+dotnet_diagnostic.CA1510.severity = error
 
 # C# Files
 [*.cs]
@@ -717,6 +726,8 @@ dotnet_diagnostic.SX1309S.severity = none
 dotnet_diagnostic.SA1600.severity = none
 dotnet_diagnostic.SA1633.severity = none
 dotnet_diagnostic.SA1027.severity = none
+dotnet_diagnostic.CA1825.severity = error
+dotnet_diagnostic.CA1508.severity = error
 
 [**Tests**/*.cs]
 
