@@ -238,6 +238,41 @@ public class MeetingServiceTests
 	}
 
 	[Fact]
+	public async Task Should_AddReaction_When_AppliedReactionIsCalledFirstTime()
+	{
+		var service = CreateServiceWithUser();
+
+		var blockId = Guid.NewGuid();
+		service.InsertBlock(new EntryMessage
+		{
+			MeetId = MEETID,
+			BlockId = blockId,
+			Content = "Msg",
+			Participant = new Participant { Id = _userId },
+			Timestamp = DateTime.UtcNow,
+			EntryType = "Transcription"
+		});
+
+		var reaction = new ReactionAppliedMessage
+		{
+			ReactionId = 1,
+			MeetId = MEETID,
+			BlockId = blockId,
+			ReactionType = "Like",
+			User = new Participant() { Id = _userId }
+		};
+
+		service.AppliedReaction(reaction);
+
+		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
+		var entry = result.entries.FirstOrDefault(e => e.blockId == blockId);
+		var addedReaction = entry.reactions.FirstOrDefault(r => r.id == 1);
+
+		Assert.NotNull(addedReaction);
+		Assert.Contains(_userId, addedReaction.users);
+	}
+
+	[Fact]
 	public async Task Should_AddAndToggleReaction_When_AppliedReactionIsCalledTwice()
 	{
 		var service = CreateServiceWithUser();
@@ -268,6 +303,66 @@ public class MeetingServiceTests
 		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
 		var entry = result.entries.FirstOrDefault(e => e.blockId == blockId);
 		Assert.DoesNotContain(_userId, entry.reactions.FirstOrDefault(r => r.id == 1).users);
+	}
+
+	[Fact]
+	public async Task Should_KeepReactionFromSecondUser_When_FirstUserRemovesReaction()
+	{
+		var service = CreateServiceWithUser(); // assumes _userId is User1
+		var user1 = _userId;
+		var user2 = Guid.NewGuid(); // Simulate another user
+
+		var blockId = Guid.NewGuid();
+		service.InsertBlock(new EntryMessage
+		{
+			MeetId = MEETID,
+			BlockId = blockId,
+			Content = "Message",
+			Participant = new Participant { Id = user1 },
+			Timestamp = DateTime.UtcNow,
+			EntryType = "Transcription"
+		});
+
+		service.AddUserToMeeting(new UserJoinedInMeetingMessage
+		{
+			User = new Participant { Id = user2 },
+			MeetId = MEETID,
+			Platform = PLATFORM
+		});
+
+		var reactionFromUser1 = new ReactionAppliedMessage
+		{
+			ReactionId = 1,
+			MeetId = MEETID,
+			BlockId = blockId,
+			ReactionType = "Like",
+			User = new Participant() { Id = user1 }
+		};
+
+		var reactionFromUser2 = new ReactionAppliedMessage
+		{
+			ReactionId = 1,
+			MeetId = MEETID,
+			BlockId = blockId,
+			ReactionType = "Like",
+			User = new Participant() { Id = user2 }
+		};
+
+		// Both users add the same reaction
+		service.AppliedReaction(reactionFromUser1);
+		service.AppliedReaction(reactionFromUser2);
+
+		// User1 toggles off their reaction
+		service.AppliedReaction(reactionFromUser1);
+
+		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
+		var entry = result.entries.FirstOrDefault(e => e.blockId == blockId);
+		var reaction = entry.reactions.FirstOrDefault(r => r.id == 1);
+
+		Assert.NotNull(reaction);
+		Assert.DoesNotContain(user1, reaction.users);
+		Assert.Contains(user2, reaction.users);
+		Assert.Single(reaction.users); // Only user2 should remain
 	}
 
 	[Fact]
@@ -310,7 +405,7 @@ public class MeetingServiceTests
 	{
 		var reactions = new List<Reaction>
 		{
-			new() { Id = 1, Type = "Task", Emoji = "⚡", ClassName = "reaction-task" },
+			new() { Id = 1, Type = "Like", Emoji = "⚡", ClassName = "reaction-like" },
 			new() { Id = 2, Type = "GoodPoint", Emoji = "⭐", ClassName = "reaction-important" },
 			new() { Id = 3, Type = "Goal", Emoji = "🎯", ClassName = "reaction-question" }
 		};
