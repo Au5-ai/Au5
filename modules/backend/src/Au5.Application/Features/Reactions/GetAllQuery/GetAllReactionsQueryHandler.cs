@@ -1,7 +1,7 @@
 using Au5.Application.Common.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
-namespace Au5.Application.Features.Reactions.GetAllReactionsQuery;
+namespace Au5.Application.Features.Reactions.GetAllQuery;
 
 public sealed class GetAllReactionsQueryHandler(IApplicationDbContext dbContext)
 	: IRequestHandler<GetAllReactionsQuery, IReadOnlyCollection<Reaction>>

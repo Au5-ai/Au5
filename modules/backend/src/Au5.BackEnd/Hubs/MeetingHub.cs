@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using Au5.Application.Services.Interfaces;
+using Au5.Application.Features.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Hubs;

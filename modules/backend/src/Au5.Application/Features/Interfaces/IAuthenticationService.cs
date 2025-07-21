@@ -1,6 +1,6 @@
 using Au5.Application.Models.Authentication;
 
-namespace Au5.Application.Services.Interfaces
+namespace Au5.Application.Features.Interfaces
 {
 	public interface IAuthenticationService
 	{

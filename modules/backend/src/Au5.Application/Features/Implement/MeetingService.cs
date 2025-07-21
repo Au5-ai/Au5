@@ -1,7 +1,8 @@
 using System.Security.Cryptography;
 using System.Text;
+using Au5.Application.Features.Interfaces;
 
-namespace Au5.Application.Services.Implement;
+namespace Au5.Application.Features.Implement;
 
 public class MeetingService : IMeetingService
 {

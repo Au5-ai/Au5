@@ -1,4 +1,4 @@
-using Au5.Application.Features.Reactions.GetAllReactionsQuery;
+using Au5.Application.Features.Reactions.GetAllQuery;
 using Mediator;
 
 namespace Au5.BackEnd.Controllers;
