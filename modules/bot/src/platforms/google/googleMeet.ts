@@ -13,6 +13,7 @@ import {
   WAIT_FOR_JOIN_BUTTON_TIMEOUT,
   WAIT_FOR_NAME_FIELD_TIMEOUT,
 } from "./constants";
+import { CaptionEnabler } from "./captionEnabler";
 
 export class GoogleMeet implements IMeetingPlatform {
   constructor(private config: MeetingConfiguration, private page: Page) {}
@@ -92,10 +93,13 @@ export class GoogleMeet implements IMeetingPlatform {
       this.config.meeting_settings.transcription_model == "liveCaption"
     ) {
       Google_Caption_Configuration.language = this.config.language || "en-US";
+      await new CaptionEnabler(this.page).activate(
+        Google_Caption_Configuration.language
+      );
       new CaptionMutationHandler(
         this.page,
         Google_Caption_Configuration
-      ).initialize(handler);
+      ).observe(handler);
     }
   }
 

@@ -3,7 +3,6 @@ import { Page } from "playwright-core";
 import { Caption, GoogleCaptionConfiguration, MutationContext } from "./types";
 import { CaptionProcessor } from "./captionProcessor";
 import { logger } from "../../common/utils/logger";
-import { CaptionEnabler } from "./captionEnabler";
 
 export class CaptionMutationHandler {
   private captionProcessor: CaptionProcessor;
@@ -13,17 +12,9 @@ export class CaptionMutationHandler {
     this.captionProcessor = new CaptionProcessor(page);
   }
 
-  async initialize(callback: (message: EntryMessage) => void) {
-    await this.activateCaptions();
+  async observe(pushToHub: (message: EntryMessage) => void) {
     let ctx = await this.findTranscriptContainer();
-    await this.observeTranscriptContainer(ctx, callback);
-  }
-
-  private async activateCaptions(): Promise<void> {
-    logger.info(
-      `[GoogleMeet][Transcription] Activating live captions for language: ${this.config.language}`
-    );
-    await new CaptionEnabler(this.page).enable(this.config.language);
+    await this.observeTranscriptContainer(ctx, pushToHub);
   }
 
   private async findTranscriptContainer(): Promise<MutationContext> {
@@ -45,7 +36,7 @@ export class CaptionMutationHandler {
 
   private async observeTranscriptContainer(
     ctx: MutationContext,
-    callback: (message: EntryMessage) => void
+    pushToHub: (message: EntryMessage) => void
   ): Promise<void> {
     if (!ctx.transcriptContainer) {
       logger.error(
@@ -62,7 +53,7 @@ export class CaptionMutationHandler {
           return;
         this.previousTranscripts[caption.blockId] = caption.transcript;
 
-        callback({
+        pushToHub({
           blockId: caption.blockId,
           participant: {
             fullName: caption.speakerName,

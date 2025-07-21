@@ -10,7 +10,7 @@ class CaptionEnabler {
     constructor(page) {
         this.page = page;
     }
-    async enable(languageValue) {
+    async activate(languageValue) {
         const overlayDismissed = await this.dismissOverlayIfPresent();
         if (!overlayDismissed) {
             logger_1.logger.debug("No overlay dialog present, proceeding.");

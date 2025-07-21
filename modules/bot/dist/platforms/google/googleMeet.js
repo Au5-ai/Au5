@@ -5,6 +5,7 @@ const logger_1 = require("../../common/utils/logger");
 const utils_1 = require("../../common/utils");
 const captionMutationHandler_1 = require("./captionMutationHandler");
 const constants_1 = require("./constants");
+const captionEnabler_1 = require("./captionEnabler");
 class GoogleMeet {
     constructor(config, page) {
         this.config = config;
@@ -63,7 +64,8 @@ class GoogleMeet {
         if (this.config.meeting_settings.transcription &&
             this.config.meeting_settings.transcription_model == "liveCaption") {
             constants_1.Google_Caption_Configuration.language = this.config.language || "en-US";
-            new captionMutationHandler_1.CaptionMutationHandler(this.page, constants_1.Google_Caption_Configuration).initialize(handler);
+            await new captionEnabler_1.CaptionEnabler(this.page).activate(constants_1.Google_Caption_Configuration.language);
+            new captionMutationHandler_1.CaptionMutationHandler(this.page, constants_1.Google_Caption_Configuration).observe(handler);
         }
     }
     async observeParticipations(handler) { }
