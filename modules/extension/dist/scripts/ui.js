@@ -439,12 +439,34 @@ class MeetingPlatformFactory {
     }
   }
 }
+const _ApiRoutes = class _ApiRoutes {
+  constructor(config2) {
+    this.config = config2;
+  }
+  static getInstance(config2) {
+    if (!_ApiRoutes.instance) {
+      _ApiRoutes.instance = new _ApiRoutes(config2);
+    }
+    return _ApiRoutes.instance;
+  }
+  addBot() {
+    return `${this.config.service.baseUrl}/meeting/addBot`;
+  }
+  getReactions() {
+    return `${this.config.service.baseUrl}/reactions`;
+  }
+};
+__publicField(_ApiRoutes, "instance");
+let ApiRoutes = _ApiRoutes;
 async function apiRequest(url, options = {}) {
   const { method = "GET", headers = {}, body, authToken } = options;
-  const finalHeaders = {
+  const finalHeaders = new Headers({
     "Content-Type": "application/json",
     ...headers
-  };
+  });
+  if (authToken) {
+    finalHeaders.set("Authorization", `Bearer ${authToken}`);
+  }
   const response = await fetch(url, {
     method,
     headers: finalHeaders,
@@ -463,27 +485,17 @@ class BackEndApi {
   constructor(config2) {
     this.config = config2;
   }
-  /**
-   * Sends a request to the backend to join a bot in a meeting.
-   * @returns A promise that resolves with the response from the backend.
-   */
   async addBot(body) {
-    const url = this.config.service.baseUrl + "/meeting/addBot";
-    return apiRequest(url, {
+    return apiRequest(ApiRoutes.getInstance(this.config).addBot(), {
       method: "POST",
       body,
-      headers: {
-        "Content-Type": "application/json"
-      }
+      authToken: this.config.user.token
     });
   }
   async getReactions() {
-    const url = this.config.service.baseUrl + "/reactions";
-    return apiRequest(url, {
+    return apiRequest(ApiRoutes.getInstance(this.config).getReactions(), {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      }
+      authToken: this.config.user.token
     });
   }
 }
@@ -3343,7 +3355,7 @@ class MeetingHubClient {
           id: this.config.user.id,
           fullName: this.config.user.fullName,
           pictureUrl: this.config.user.pictureUrl,
-          hasAccount: this.config.user.hasAccount ?? true
+          hasAccount: this.config.user.hasAccount
         },
         platform: this.platform.getPlatformName()
       });

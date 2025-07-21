@@ -1,4 +1,4 @@
-import {BackEndApi} from "../core/network/backend";
+import {BackEndApi} from "../api/backEndApi";
 import {MeetingPlatformFactory} from "../core/platforms/meetingPlatformFactory";
 import StateManager from "../core/stateManager";
 import {
