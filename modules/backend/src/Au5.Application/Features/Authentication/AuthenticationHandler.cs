@@ -1,19 +1,17 @@
 using Au5.Application.Common.Abstractions;
-using Au5.Application.Features.Interfaces;
-using Au5.Application.Models.Authentication;
 using Microsoft.EntityFrameworkCore;
 
-namespace Au5.Application.Features.Implement;
+namespace Au5.Application.Features.Authentication;
 
-public class AuthenticationService(IApplicationDbContext context, ITokenService tokenService) : IAuthenticationService
+public sealed class AuthenticationHandler(IApplicationDbContext dbContext, ITokenService tokenService) : IRequestHandler<LoginRequest, Result<LoginResponse>>
 {
-	private readonly IApplicationDbContext _context = context;
+	private readonly IApplicationDbContext _dbContext = dbContext;
 	private readonly ITokenService _tokenService = tokenService;
 
-	public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request, CancellationToken ct)
+	public async ValueTask<Result<LoginResponse>> Handle(LoginRequest request, CancellationToken cancellationToken)
 	{
-		var user = await _context.Set<User>()
-			.FirstOrDefaultAsync(u => u.Email == request.Username && u.IsActive, ct)
+		var user = await _dbContext.Set<User>()
+			.FirstOrDefaultAsync(u => u.Email == request.Username && u.IsActive, cancellationToken)
 			.ConfigureAwait(false);
 
 		if (user is null || user.Password != HashPassword(request.Password, user.Id))
@@ -24,13 +22,13 @@ public class AuthenticationService(IApplicationDbContext context, ITokenService 
 		var token = _tokenService.GenerateToken(user.Id, user.FullName, "User");
 
 		return new LoginResponse(
-					accessToken: token,
-					refreshToken: string.Empty,
-					participant: new
+					AccessToken: token,
+					Participant: new Participant
 					{
-						fullName = user.FullName,
-						pictureUrl = user.PictureUrl,
-						id = user.Id
+						Id = user.Id,
+						FullName = user.FullName,
+						PictureUrl = user.PictureUrl,
+						HasAccount = true,
 					});
 	}
 

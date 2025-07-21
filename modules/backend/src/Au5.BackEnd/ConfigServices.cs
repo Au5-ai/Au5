@@ -1,5 +1,5 @@
 using System.Text;
-using Au5.Application.Models.Authentication;
+using Au5.Infrastructure.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
