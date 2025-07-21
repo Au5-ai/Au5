@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.startMeetingBot = startMeetingBot;
+exports.addNewBotToMeeting = addNewBotToMeeting;
 const logger_1 = require("./common/utils/logger");
 const puppeteer_extra_plugin_stealth_1 = __importDefault(require("puppeteer-extra-plugin-stealth"));
 const playwright_extra_1 = require("playwright-extra");
@@ -34,7 +34,7 @@ let meetingHasPaused = false;
  *   further commands.
  * @throws {Error} If an unsupported platform is specified in the configuration.
  */
-async function startMeetingBot(config) {
+async function addNewBotToMeeting(config) {
     meetingConfig = config;
     const stealth = (0, puppeteer_extra_plugin_stealth_1.default)();
     stealth.enabledEvasions.delete("iframe.contentWindow");

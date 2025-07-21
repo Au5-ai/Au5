@@ -8,7 +8,7 @@ import { delay } from "../../common/utils";
 export class CaptionEnabler {
   constructor(private page: Page) {}
 
-  public async enable(languageValue: string): Promise<void> {
+  public async activate(languageValue: string): Promise<void> {
     const overlayDismissed = await this.dismissOverlayIfPresent();
     if (!overlayDismissed) {
       logger.debug("No overlay dialog present, proceeding.");

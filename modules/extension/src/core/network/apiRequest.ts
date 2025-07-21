@@ -13,13 +13,13 @@ export async function apiRequest<TResponse, TBody = unknown>(
 ): Promise<TResponse> {
   const {method = "GET", headers = {}, body, authToken} = options;
 
-  const finalHeaders: HeadersInit = {
+  const finalHeaders = new Headers({
     "Content-Type": "application/json",
-    ...headers
-  };
+    ...(headers as Record<string, string>)
+  });
 
   if (authToken) {
-    // finalHeaders["Authorization"] = `Bearer ${authToken}`;
+    finalHeaders.set("Authorization", `Bearer ${authToken}`);
   }
 
   const response = await fetch(url, {

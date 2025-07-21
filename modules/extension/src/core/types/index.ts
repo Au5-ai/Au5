@@ -18,6 +18,7 @@ export interface Entry {
 
 export interface Participant {
   id: string;
+  token?: string;
   fullName: string;
   pictureUrl: string;
   hasAccount: boolean;
@@ -105,12 +106,6 @@ export enum MessageTypes {
   RequestToAddBot = "RequestToAddBot",
   PauseAndPlayTranscription = "PauseAndPlayTranscription",
   MeetingIsActive = "MeetingIsActive"
-}
-
-export interface RequestAddBotModel {
-  meetId: string;
-  botName: string;
-  user: Participant;
 }
 
 export interface Reaction {

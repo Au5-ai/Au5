@@ -37,31 +37,41 @@ const constants_1 = require("./common/constants");
 const botManager_1 = require("./botManager");
 const node_fetch_1 = __importStar(require("node-fetch"));
 const logger_1 = require("./common/utils/logger");
+// Polyfill global fetch (for Node.js)
 global.fetch = node_fetch_1.default;
 global.Headers = node_fetch_1.Headers;
 global.Request = node_fetch_1.Request;
 global.Response = node_fetch_1.Response;
-async function main() {
-    logger_1.logger.info("Starting Meeting Bot...");
+async function loadConfig() {
     const rawConfig = process.env.MEETING_CONFIG;
     if (!rawConfig) {
         logger_1.logger.error(constants_1.ErrorMessages.MEETING_CONFIG_NOT_SET);
         process.exit(1);
     }
-    let parsedConfig;
     try {
-        parsedConfig = JSON.parse(rawConfig);
+        return JSON.parse(rawConfig);
     }
     catch (error) {
-        logger_1.logger.error(constants_1.ErrorMessages.INVALID_MEETING_CONFIG_JSON, error);
-        process.exit(1);
-    }
-    try {
-        await (0, botManager_1.startMeetingBot)(parsedConfig);
-    }
-    catch (error) {
-        logger_1.logger.error(constants_1.ErrorMessages.RUNNING_BOT, error);
+        logger_1.logger.error(`${constants_1.ErrorMessages.INVALID_MEETING_CONFIG_JSON}: ${error instanceof Error ? error.message : error}`);
         process.exit(1);
     }
 }
-main();
+async function bootstrapBot(config) {
+    try {
+        await (0, botManager_1.addNewBotToMeeting)(config);
+    }
+    catch (error) {
+        logger_1.logger.error(`${constants_1.ErrorMessages.RUNNING_BOT}: ${error instanceof Error ? error.message : error}`);
+        process.exit(1);
+    }
+}
+async function main() {
+    logger_1.logger.info("🚀 Starting Meeting Bot...");
+    const config = await loadConfig();
+    await bootstrapBot(config);
+    logger_1.logger.info("✅ Meeting Bot started successfully.");
+}
+main().catch((err) => {
+    logger_1.logger.error("Unexpected error occurred while starting the bot:", err);
+    process.exit(1);
+});

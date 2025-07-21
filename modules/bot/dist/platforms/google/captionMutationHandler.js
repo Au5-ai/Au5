@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CaptionMutationHandler = void 0;
 const captionProcessor_1 = require("./captionProcessor");
 const logger_1 = require("../../common/utils/logger");
-const captionEnabler_1 = require("./captionEnabler");
 class CaptionMutationHandler {
     constructor(page, config) {
         this.page = page;
@@ -11,14 +10,9 @@ class CaptionMutationHandler {
         this.previousTranscripts = {};
         this.captionProcessor = new captionProcessor_1.CaptionProcessor(page);
     }
-    async initialize(callback) {
-        await this.activateCaptions();
+    async observe(pushToHub) {
         let ctx = await this.findTranscriptContainer();
-        await this.observeTranscriptContainer(ctx, callback);
-    }
-    async activateCaptions() {
-        logger_1.logger.info(`[GoogleMeet][Transcription] Activating live captions for language: ${this.config.language}`);
-        await new captionEnabler_1.CaptionEnabler(this.page).enable(this.config.language);
+        await this.observeTranscriptContainer(ctx, pushToHub);
     }
     async findTranscriptContainer() {
         const ctx = {
@@ -32,7 +26,7 @@ class CaptionMutationHandler {
         ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
         return ctx;
     }
-    async observeTranscriptContainer(ctx, callback) {
+    async observeTranscriptContainer(ctx, pushToHub) {
         if (!ctx.transcriptContainer) {
             logger_1.logger.error("[GoogleMeet][Transcription] Transcript container is not available.");
             return;
@@ -43,7 +37,7 @@ class CaptionMutationHandler {
             if (this.previousTranscripts[caption.blockId] === caption.transcript)
                 return;
             this.previousTranscripts[caption.blockId] = caption.transcript;
-            callback({
+            pushToHub({
                 blockId: caption.blockId,
                 participant: {
                     fullName: caption.speakerName,
