@@ -37,7 +37,7 @@ let meetingHasPaused = false;
  *   further commands.
  * @throws {Error} If an unsupported platform is specified in the configuration.
  */
-export async function startMeetingBot(
+export async function addNewBotToMeeting(
   config: MeetingConfiguration
 ): Promise<void> {
   meetingConfig = config;
