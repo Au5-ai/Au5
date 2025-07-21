@@ -1,12 +1,14 @@
 using System.Security.Cryptography;
 using System.Text;
+using Au5.Application.Models.Dtos.MeetingDtos;
 
 namespace Au5.Application;
 
-public class MeetingService : IMeetingService
+public class MeetingService(IReactionService reactionService) : IMeetingService
 {
     private static readonly Lock LockObject = new();
     private readonly List<Meeting> _meetings = [];
+    private readonly IReactionService _reactionService = reactionService;
 
     public Meeting AddUserToMeeting(UserJoinedInMeetingMessage userJoined)
     {
@@ -177,37 +179,62 @@ public class MeetingService : IMeetingService
         }
     }
 
-    public Meeting GetFullTranscriptionAsJson(string meetId)
+    public async Task<Result<FullMeetingTranscriptionDto>> GetFullTranscriptionAsJson(string meetId, CancellationToken ct = default)
     {
         var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetId);
-        if (meeting is null || meeting.Entries.Count == 0)
+        if (meeting is null)
         {
-            return meeting;
+            return Error.NotFound(description: "No meeting with this ID was found.");
         }
 
-        var parsedEntries = meeting.Entries
-            .Select(e => new
-            {
-                Entry = e,
-                ParsedTimestamp = e.Timestamp,
-            })
-            .OrderBy(x => x.ParsedTimestamp)
+        var orderedEntries = meeting.Entries
+            .OrderBy(e => e.Timestamp)
             .ToList();
 
-        if (parsedEntries.Count == 0)
-        {
-            return meeting;
-        }
+        var baseTime = meeting.CreatedAt;
+        var reactionsList = await _reactionService.GetAllAsync(ct);
 
-        var startTime = parsedEntries.First().ParsedTimestamp;
+        var result = new FullMeetingTranscriptionDto(
+            id: meeting.Id,
+            meetingId: meeting.MeetId,
+            creatorUserId: meeting.CreatorUserId,
+            botInviterUserId: meeting.BotInviterUserId,
+            hashToken: meeting.HashToken,
+            platform: meeting.Platform,
+            botName: meeting.BotName,
+            isBotAdded: meeting.IsBotAdded,
+            createdAt: meeting.CreatedAt.ToString("o"),
+            status: meeting.Status,
+            statusDescription: meeting.Status.ToString(),
+            participants: meeting.Participants
+                .Select(p => new ParticipantDto(
+                    userId: p.UserId,
+                    fullName: p.FullName ?? string.Empty,
+                    pictureUrl: p.PictureUrl ?? string.Empty))
+                .ToList()
+                .AsReadOnly(),
+            entries: orderedEntries
+                .Select(entry => new EntryDto(
+                    blockId: entry.BlockId,
+                    participantId: entry.ParticipantId,
+                    content: entry.Content,
+                    timestamp: entry.Timestamp.ToString("o"),
+                    timeline: (entry.Timestamp - baseTime).ToString(@"hh\:mm\:ss"),
+                    entryType: entry.EntryType,
+                    reactions: entry.Reactions.Select(ar =>
+                    {
+                        var reaction = reactionsList.FirstOrDefault(r => r.Id == ar.ReactionId);
+                        return new ReactionDto(
+                            id: ar.ReactionId,
+                            users: ar.Users ?? [],
+                            type: reaction?.Type ?? "unknown",
+                            className: reaction?.ClassName ?? string.Empty,
+                            emoji: reaction?.Emoji ?? string.Empty);
+                    }).ToList().AsReadOnly()))
+                .ToList()
+                .AsReadOnly());
 
-        foreach (var x in parsedEntries)
-        {
-            var elapsed = x.ParsedTimestamp - startTime;
-            x.Entry.Timeline = elapsed.ToString(@"hh\:mm\:ss");
-        }
-
-        return meeting;
+        return result;
     }
 
     public void AppliedReaction(ReactionAppliedMessage reaction)

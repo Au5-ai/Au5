@@ -1,8 +1,9 @@
 using Au5.Application;
+using Au5.Application.Interfaces;
 using Au5.Application.Models.Messages;
+using Au5.Domain.Entities;
 
 namespace Au5.UnitTests.Application;
-
 public class MeetingServiceTests
 {
 	private const string MEETID = "oik-okwe-dew";
@@ -10,7 +11,7 @@ public class MeetingServiceTests
 	private readonly Guid _userId = Guid.NewGuid();
 
 	[Fact]
-	public void Should_NotAddDuplicateUser_When_AddUserToMeetingIsCalledTwiceWithSameUser()
+	public async Task Should_NotAddDuplicateUser_When_AddUserToMeetingIsCalledTwiceWithSameUser()
 	{
 		var service = CreateServiceWithUser();
 
@@ -21,20 +22,20 @@ public class MeetingServiceTests
 			Platform = PLATFORM
 		});
 
-		var meeting = service.GetFullTranscriptionAsJson(MEETID);
-		var participantList = meeting.Participants.Where(u => u.UserId == _userId).ToList();
+		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
+		var participantList = result.participants.Where(u => u.userId == _userId).ToList();
 		Assert.Single(participantList);
 	}
 
 	[Fact]
-	public void Should_SetStatusToEnded_When_EndMeetingIsCalled()
+	public async Task Should_SetStatusToEnded_When_EndMeetingIsCalled()
 	{
 		var service = CreateServiceWithUser();
 
 		service.EndMeeting(MEETID);
 
-		var meeting = service.GetFullTranscriptionAsJson(MEETID);
-		Assert.Equal(MeetingStatus.Ended, meeting.Status);
+		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
+		Assert.Equal(MeetingStatus.Ended, result.status);
 	}
 
 	[Fact]
@@ -50,7 +51,6 @@ public class MeetingServiceTests
 		};
 
 		var result = service.RequestToAddBot(request);
-
 		Assert.Equal(result, string.Empty);
 	}
 
@@ -67,7 +67,6 @@ public class MeetingServiceTests
 		};
 
 		var result = service.RequestToAddBot(request);
-
 		Assert.Equal(result, string.Empty);
 	}
 
@@ -84,7 +83,6 @@ public class MeetingServiceTests
 		};
 
 		var result = service.RequestToAddBot(request);
-
 		Assert.NotEqual(result, string.Empty);
 	}
 
@@ -92,17 +90,16 @@ public class MeetingServiceTests
 	[InlineData("user1,user2")]
 	[InlineData("userA,userB,userC")]
 	[InlineData("singleUser")]
-	public void Should_AddParticipants_When_AddParticipantToMeetIsCalled(string participantNamesCsv)
+	public async Task Should_AddParticipants_When_AddParticipantToMeetIsCalled(string participantNamesCsv)
 	{
 		var service = CreateServiceWithUser();
+
 		var names = participantNamesCsv.Split(',');
-
 		var participants = names.Select(name => new Participant { FullName = name }).ToList();
-
 		service.AddParticipantToMeet(participants, MEETID);
 
-		var meeting = service.GetFullTranscriptionAsJson(MEETID);
-		var participantFullNames = meeting.Participants.Select(x => x.FullName).ToList();
+		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
+		var participantFullNames = result.participants.Select(x => x.fullName).ToList();
 
 		foreach (var name in names)
 		{
@@ -111,18 +108,17 @@ public class MeetingServiceTests
 	}
 
 	[Fact]
-	public void Should_AddUser_When_AddUserToMeetingIsCalledAndMeetingDoesNotExist()
+	public async Task Should_AddUser_When_AddUserToMeetingIsCalledAndMeetingDoesNotExist()
 	{
 		var service = CreateServiceWithUser();
 
-		var result = service.GetFullTranscriptionAsJson(MEETID);
-
+		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
 		Assert.NotNull(result);
-		Assert.Contains(_userId, result.Participants.Select(x => x.UserId));
+		Assert.Contains(_userId, result.participants.Select(x => x.userId));
 	}
 
 	[Fact]
-	public void Should_SetBotNameAndCreator_When_AddBotIsCalled()
+	public async Task Should_SetBotNameAndCreator_When_AddBotIsCalled()
 	{
 		var botName = "Cando";
 		var service = CreateServiceWithUser();
@@ -134,41 +130,38 @@ public class MeetingServiceTests
 			User = new Participant { Id = _userId }
 		});
 
-		var result = service.GetFullTranscriptionAsJson(MEETID);
-
+		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
 		Assert.NotEqual(hash, string.Empty);
-		Assert.Equal(botName, result.BotName);
-		Assert.Equal(_userId, result.CreatorUserId);
-		Assert.Equal(_userId, result.BotInviterUserId);
+		Assert.Equal(botName, result.botName);
+		Assert.Equal(_userId, result.creatorUserId);
+		Assert.Equal(_userId, result.botInviterUserId);
 	}
 
 	[Fact]
-	public void Should_AddNewParticipantsOnly_When_AddParticipantToMeetIsCalledMultipleTimes()
+	public async Task Should_AddNewParticipantsOnly_When_AddParticipantToMeetIsCalledMultipleTimes()
 	{
 		var service = CreateServiceWithUser();
 
 		service.AddParticipantToMeet([new Participant() { HasAccount = true, Id = _userId, FullName = "u1" }, new Participant() { FullName = "u2" }], MEETID);
 		service.AddParticipantToMeet([new Participant() { HasAccount = true, Id = _userId, FullName = "u1" }, new Participant() { FullName = "u3" }, new Participant() { FullName = "u2" }], MEETID);
 
-		var result = service.GetFullTranscriptionAsJson(MEETID);
-
-		Assert.Equal(3, result.Participants.Count);
+		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
+		Assert.Equal(3, result.participants.Count);
 	}
 
 	[Fact]
-	public void Should_ChangeStatusToEnded_When_EndMeetingIsCalled()
+	public async Task Should_ChangeStatusToEnded_When_EndMeetingIsCalled()
 	{
 		var service = CreateServiceWithUser();
 
 		service.EndMeeting(MEETID);
 
-		var result = service.GetFullTranscriptionAsJson(MEETID);
-
-		Assert.Equal(MeetingStatus.Ended, result.Status);
+		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
+		Assert.Equal(MeetingStatus.Ended, result.status);
 	}
 
 	[Fact]
-	public void Should_MarkBotAsAdded_When_BotIsAddedIsCalled()
+	public async Task Should_MarkBotAsAdded_When_BotIsAddedIsCalled()
 	{
 		var botName = "Cando";
 		var service = CreateServiceWithUser();
@@ -181,12 +174,10 @@ public class MeetingServiceTests
 		});
 
 		var botNameFromResponse = service.BotIsAdded(MEETID);
-
-		var result = service.GetFullTranscriptionAsJson(MEETID);
-
+		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
 		Assert.Equal(botNameFromResponse, botName);
-		Assert.True(result.IsBotAdded);
-		Assert.Equal(MeetingStatus.Recording, result.Status);
+		Assert.True(result.isBotAdded);
+		Assert.Equal(MeetingStatus.Recording, result.status);
 	}
 
 	[Fact]
@@ -199,11 +190,11 @@ public class MeetingServiceTests
 	}
 
 	[Fact]
-	public void Should_InsertOrUpdateEntry_When_UpsertBlockIsCalled()
+	public async Task Should_InsertOrUpdateEntry_When_UpsertBlockIsCalled()
 	{
 		var service = CreateServiceWithUser();
-		var blockId = Guid.NewGuid();
 
+		var blockId = Guid.NewGuid();
 		var entry = new EntryMessage
 		{
 			MeetId = MEETID,
@@ -219,18 +210,17 @@ public class MeetingServiceTests
 		entry.Content = "Updated";
 		service.UpsertBlock(entry);
 
-		var result = service.GetFullTranscriptionAsJson(MEETID);
-		var updatedEntry = result.Entries.FirstOrDefault(e => e.BlockId == blockId);
-
-		Assert.Equal("Updated", updatedEntry.Content);
+		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
+		var updatedEntry = result.entries.FirstOrDefault(e => e.blockId == blockId);
+		Assert.Equal("Updated", updatedEntry.content);
 	}
 
 	[Fact]
-	public void Should_AddNewEntry_When_InsertBlockIsCalled()
+	public async Task Should_AddNewEntry_When_InsertBlockIsCalled()
 	{
 		var service = CreateServiceWithUser();
-		var blockId = Guid.NewGuid();
 
+		var blockId = Guid.NewGuid();
 		var entry = new EntryMessage
 		{
 			MeetId = MEETID,
@@ -243,16 +233,51 @@ public class MeetingServiceTests
 
 		service.InsertBlock(entry);
 
-		var result = service.GetFullTranscriptionAsJson(MEETID);
-		Assert.Single(result.Entries);
+		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
+		Assert.Single(result.entries);
 	}
 
 	[Fact]
-	public void Should_AddAndToggleReaction_When_AppliedReactionIsCalledTwice()
+	public async Task Should_AddReaction_When_AppliedReactionIsCalledFirstTime()
 	{
 		var service = CreateServiceWithUser();
-		var blockId = Guid.NewGuid();
 
+		var blockId = Guid.NewGuid();
+		service.InsertBlock(new EntryMessage
+		{
+			MeetId = MEETID,
+			BlockId = blockId,
+			Content = "Msg",
+			Participant = new Participant { Id = _userId },
+			Timestamp = DateTime.UtcNow,
+			EntryType = "Transcription"
+		});
+
+		var reaction = new ReactionAppliedMessage
+		{
+			ReactionId = 1,
+			MeetId = MEETID,
+			BlockId = blockId,
+			ReactionType = "Like",
+			User = new Participant() { Id = _userId }
+		};
+
+		service.AppliedReaction(reaction);
+
+		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
+		var entry = result.entries.FirstOrDefault(e => e.blockId == blockId);
+		var addedReaction = entry.reactions.FirstOrDefault(r => r.id == 1);
+
+		Assert.NotNull(addedReaction);
+		Assert.Contains(_userId, addedReaction.users);
+	}
+
+	[Fact]
+	public async Task Should_AddAndToggleReaction_When_AppliedReactionIsCalledTwice()
+	{
+		var service = CreateServiceWithUser();
+
+		var blockId = Guid.NewGuid();
 		service.InsertBlock(new EntryMessage
 		{
 			MeetId = MEETID,
@@ -275,14 +300,73 @@ public class MeetingServiceTests
 		service.AppliedReaction(reaction);
 		service.AppliedReaction(reaction);
 
-		var result = service.GetFullTranscriptionAsJson(MEETID);
-		var entry = result.Entries.FirstOrDefault(e => e.BlockId == blockId);
-
-		Assert.DoesNotContain(_userId, entry.Reactions.FirstOrDefault(r => r.ReactionId == 1).Users);
+		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
+		var entry = result.entries.FirstOrDefault(e => e.blockId == blockId);
+		Assert.DoesNotContain(_userId, entry.reactions.FirstOrDefault(r => r.id == 1).users);
 	}
 
 	[Fact]
-	public void Should_ReturnMeetingWithNormalizedTimestamps_When_GetFullTranscriptionAsJsonIsCalledWithOverTwoHoursAnd100Entries()
+	public async Task Should_KeepReactionFromSecondUser_When_FirstUserRemovesReaction()
+	{
+		var service = CreateServiceWithUser(); // assumes _userId is User1
+		var user1 = _userId;
+		var user2 = Guid.NewGuid(); // Simulate another user
+
+		var blockId = Guid.NewGuid();
+		service.InsertBlock(new EntryMessage
+		{
+			MeetId = MEETID,
+			BlockId = blockId,
+			Content = "Message",
+			Participant = new Participant { Id = user1 },
+			Timestamp = DateTime.UtcNow,
+			EntryType = "Transcription"
+		});
+
+		service.AddUserToMeeting(new UserJoinedInMeetingMessage
+		{
+			User = new Participant { Id = user2 },
+			MeetId = MEETID,
+			Platform = PLATFORM
+		});
+
+		var reactionFromUser1 = new ReactionAppliedMessage
+		{
+			ReactionId = 1,
+			MeetId = MEETID,
+			BlockId = blockId,
+			ReactionType = "Like",
+			User = new Participant() { Id = user1 }
+		};
+
+		var reactionFromUser2 = new ReactionAppliedMessage
+		{
+			ReactionId = 1,
+			MeetId = MEETID,
+			BlockId = blockId,
+			ReactionType = "Like",
+			User = new Participant() { Id = user2 }
+		};
+
+		// Both users add the same reaction
+		service.AppliedReaction(reactionFromUser1);
+		service.AppliedReaction(reactionFromUser2);
+
+		// User1 toggles off their reaction
+		service.AppliedReaction(reactionFromUser1);
+
+		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
+		var entry = result.entries.FirstOrDefault(e => e.blockId == blockId);
+		var reaction = entry.reactions.FirstOrDefault(r => r.id == 1);
+
+		Assert.NotNull(reaction);
+		Assert.DoesNotContain(user1, reaction.users);
+		Assert.Contains(user2, reaction.users);
+		Assert.Single(reaction.users); // Only user2 should remain
+	}
+
+	[Fact]
+	public async Task Should_ReturnMeetingWithNormalizedTimestamps_When_GetFullTranscriptionAsJsonIsCalledWithOverTwoHoursAnd100Entries()
 	{
 		var service = CreateServiceWithUser();
 
@@ -305,28 +389,38 @@ public class MeetingServiceTests
 			service.InsertBlock(entry);
 		}
 
-		var result = service.GetFullTranscriptionAsJson(MEETID);
-
+		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
 		Assert.NotNull(result);
-		Assert.Equal(totalEntries, result.Entries.Count);
+		Assert.Equal(totalEntries, result.entries.Count);
 
-		var entries = result.Entries.ToList();
-		Assert.Equal("00:00:00", entries[0].Timeline);
-		Assert.Equal("00:12:00", entries[10].Timeline);
-		Assert.Equal("00:36:00", entries[30].Timeline);
-		Assert.Equal("01:12:00", entries[60].Timeline);
-		Assert.Equal("01:58:48", entries[99].Timeline);
+		var entries = result.entries.ToList();
+		Assert.Equal("00:00:00", entries[0].timeline);
+		Assert.Equal("00:12:00", entries[10].timeline);
+		Assert.Equal("00:36:00", entries[30].timeline);
+		Assert.Equal("01:12:00", entries[60].timeline);
+		Assert.Equal("01:58:48", entries[99].timeline);
 	}
 
 	private MeetingService CreateServiceWithUser()
 	{
-		var service = new MeetingService();
+		var reactions = new List<Reaction>
+		{
+			new() { Id = 1, Type = "Like", Emoji = "⚡", ClassName = "reaction-like" },
+			new() { Id = 2, Type = "GoodPoint", Emoji = "⭐", ClassName = "reaction-important" },
+			new() { Id = 3, Type = "Goal", Emoji = "🎯", ClassName = "reaction-question" }
+		};
+
+		var reactionServiceMock = new Mock<IReactionService>();
+		reactionServiceMock.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(reactions);
+
+		var service = new MeetingService(reactionServiceMock.Object);
 		service.AddUserToMeeting(new UserJoinedInMeetingMessage
 		{
 			User = new Participant { Id = _userId },
 			MeetId = MEETID,
 			Platform = PLATFORM
 		});
+
 		return service;
 	}
 }
