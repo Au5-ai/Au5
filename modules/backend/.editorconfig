@@ -67,6 +67,7 @@ dotnet_diagnostic.CA1069.severity = error
 dotnet_diagnostic.CA1068.severity = error
 dotnet_diagnostic.CA1064.severity = error
 dotnet_diagnostic.CA1510.severity = error
+dotnet_diagnostic.CA1848.severity = none
 
 # C# Files
 [*.cs]
@@ -690,7 +691,7 @@ csharp_prefer_system_threading_lock = true:none
 dotnet_diagnostic.SA1009.severity = none
 dotnet_diagnostic.SA1516.severity = error
 dotnet_diagnostic.SA1000.severity = none
-dotnet_diagnostic.SA1313.severity = error
+dotnet_diagnostic.SA1313.severity = none
 dotnet_diagnostic.SA1010.severity = none
 dotnet_diagnostic.SA1011.severity = warning
 dotnet_diagnostic.SA1503.severity = error

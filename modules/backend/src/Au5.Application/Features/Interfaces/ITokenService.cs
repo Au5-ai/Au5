@@ -1,4 +1,4 @@
-namespace Au5.Application.Interfaces;
+namespace Au5.Application.Services.Interfaces;
 
 public interface ITokenService
 {

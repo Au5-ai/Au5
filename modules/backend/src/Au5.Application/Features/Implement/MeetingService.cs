@@ -1,15 +1,14 @@
 using System.Security.Cryptography;
 using System.Text;
-using Au5.Application.Models.Dtos.MeetingDtos;
 
-namespace Au5.Application.Features.Implement;
+namespace Au5.Application.Services.Implement;
 
-public class MeetingService(IReactionService reactionService) : IMeetingService
+public class MeetingService : IMeetingService
 {
 	private static readonly Lock LockObject = new();
 	private readonly List<Meeting> _meetings = [];
-	private readonly IReactionService _reactionService = reactionService;
 
+	// private readonly IReactionService _reactionService;
 	public Meeting AddUserToMeeting(UserJoinedInMeetingMessage userJoined)
 	{
 		lock (LockObject)
@@ -192,7 +191,7 @@ public class MeetingService(IReactionService reactionService) : IMeetingService
 			.ToList();
 
 		var baseTime = meeting.CreatedAt;
-		var reactionsList = await _reactionService.GetAllAsync(ct);
+		List<Reaction> reactionsList = []; // await _reactionService.GetAllAsync(ct);
 
 		var result = new FullMeetingTranscriptionDto(
 			id: meeting.Id,

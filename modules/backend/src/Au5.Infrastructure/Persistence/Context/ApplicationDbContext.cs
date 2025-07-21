@@ -1,5 +1,5 @@
 using System.Reflection;
-using Au5.Application.Common.Interfaces;
+using Au5.Application.Common.Abstractions;
 using Au5.Domain.Common;
 using Au5.Infrastructure.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;

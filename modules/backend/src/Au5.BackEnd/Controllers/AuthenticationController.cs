@@ -1,10 +1,12 @@
 using System.Security.Claims;
 using Au5.Application.Models.Authentication;
+using Au5.Application.Services.Interfaces;
 using Au5.BackEnd.Extensions;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
 
+[Route("authentication")]
 public class AuthenticationController(IAuthenticationService authenticationService) : BaseController
 {
 	private readonly IAuthenticationService _authenticationService = authenticationService;

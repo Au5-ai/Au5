@@ -1,16 +1,16 @@
+using Au5.Application.Features.Reactions.GetAllReactionsQuery;
+using Mediator;
+
 namespace Au5.BackEnd.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class ReactionsController(IReactionService reactionService) : ControllerBase
+public class ReactionsController(ISender mediator) : ControllerBase
 {
-	private readonly IReactionService _reactionService = reactionService;
-
 	[HttpGet]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	public async Task<IActionResult> GetAll(CancellationToken ct)
+	public async ValueTask<IActionResult> GetAll(CancellationToken ct)
 	{
-		var reactions = await _reactionService.GetAllAsync(ct).ConfigureAwait(false);
-		return Ok(reactions);
+		return Ok(await mediator.Send(new GetAllReactionsQuery(), ct));
 	}
 }

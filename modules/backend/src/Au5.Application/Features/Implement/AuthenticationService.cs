@@ -1,8 +1,8 @@
-using Au5.Application.Common.Interfaces;
+using Au5.Application.Common.Abstractions;
 using Au5.Application.Models.Authentication;
 using Microsoft.EntityFrameworkCore;
 
-namespace Au5.Application.Features.Implement;
+namespace Au5.Application.Services.Implement;
 
 public class AuthenticationService(IApplicationDbContext context, ITokenService tokenService) : IAuthenticationService
 {
