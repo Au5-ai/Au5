@@ -1,4 +1,4 @@
-using Au5.Application;
+using Au5.Application.Features.Implement;
 using Au5.Application.Interfaces;
 using Au5.Application.Models.Messages;
 using Au5.Domain.Entities;
@@ -23,7 +23,7 @@ public class MeetingServiceTests
 		});
 
 		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
-		var participantList = result.participants.Where(u => u.userId == _userId).ToList();
+		var participantList = result.participants.Where(u => u.Id == _userId).ToList();
 		Assert.Single(participantList);
 	}
 
@@ -99,7 +99,7 @@ public class MeetingServiceTests
 		service.AddParticipantToMeet(participants, MEETID);
 
 		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
-		var participantFullNames = result.participants.Select(x => x.fullName).ToList();
+		var participantFullNames = result.participants.Select(x => x.FullName).ToList();
 
 		foreach (var name in names)
 		{
@@ -114,7 +114,7 @@ public class MeetingServiceTests
 
 		var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
 		Assert.NotNull(result);
-		Assert.Contains(_userId, result.participants.Select(x => x.userId));
+		Assert.Contains(_userId, result.participants.Select(x => x.Id));
 	}
 
 	[Fact]

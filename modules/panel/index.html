@@ -58,8 +58,8 @@
       >
 
       <!-- User Info -->
-      <label for="eId">ExtensionId</label>
-      <input id="eId" value="" />
+      <label for="Id">User Id</label>
+      <input id="Id" value="" />
 
       <label for="token">jwt Token</label>
       <input id="token" value="23f45e89-8b5a-5c55-9df7-240d78a3ce15" />
@@ -109,7 +109,7 @@
           .then((data) => {
             if (data.accessToken) {
               document.getElementById("token").value = data.accessToken;
-              document.getElementById("eId").value = data.participant.id || "";
+              document.getElementById("Id").value = data.participant.id || "";
               document.getElementById("fullName").value =
                 data.participant.fullName || "";
               document.getElementById("pictureUrl").value =
@@ -162,7 +162,7 @@
       function sendConfig() {
         const config = {
           user: {
-            id: document.getElementById("eId").value,
+            id: document.getElementById("Id").value,
             token: document.getElementById("token").value,
             fullName: document.getElementById("fullName").value,
             pictureUrl: document.getElementById("pictureUrl").value,

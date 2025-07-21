@@ -1,10 +1,19 @@
-using System.Text.Json.Serialization;
-
 namespace Au5.Domain.Common;
 
 public class Participant
 {
-	[JsonIgnore]
+	public Participant()
+	{
+	}
+
+	public Participant(Guid id, string fullName, string pictureUrl, bool hasAccount)
+	{
+		Id = id;
+		FullName = fullName;
+		PictureUrl = pictureUrl;
+		HasAccount = hasAccount;
+	}
+
 	public Guid Id { get; set; }
 
 	public string FullName { get; set; }

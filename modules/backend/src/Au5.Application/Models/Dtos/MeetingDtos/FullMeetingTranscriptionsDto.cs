@@ -12,6 +12,6 @@ public record FullMeetingTranscriptionDto(
 	string createdAt,
 	MeetingStatus status,
 	string statusDescription,
-	IReadOnlyList<ParticipantDto> participants,
+	IReadOnlyList<Participant> participants,
 	IReadOnlyList<EntryDto> entries
 );
