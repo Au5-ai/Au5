@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Au5.UnitTests.Application;
+namespace Au5.UnitTests.Infrastructure.Authentication;
 
 public class TokenServiceTests
 {

@@ -1,4 +1,4 @@
-namespace Au5.Application.Models.Authentication;
+namespace Au5.Infrastructure.Authentication;
 
 public class JwtSettings
 {

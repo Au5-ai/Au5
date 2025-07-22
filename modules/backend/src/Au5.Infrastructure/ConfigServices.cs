@@ -1,6 +1,5 @@
 using Ardalis.GuardClauses;
-using Au5.Application.Common.Interfaces;
-using Au5.Application.Interfaces;
+using Au5.Application.Common.Abstractions;
 using Au5.Infrastructure.Authentication;
 using Au5.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;

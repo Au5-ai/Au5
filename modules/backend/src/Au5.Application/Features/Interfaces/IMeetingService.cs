@@ -1,6 +1,6 @@
 using Au5.Application.Models.Dtos.MeetingDtos;
 
-namespace Au5.Application.Interfaces;
+namespace Au5.Application.Features.Interfaces;
 
 public interface IMeetingService
 {

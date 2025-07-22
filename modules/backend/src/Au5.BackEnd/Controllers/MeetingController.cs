@@ -1,3 +1,5 @@
+using Au5.Application.Features.Interfaces;
+
 namespace Au5.BackEnd.Controllers;
 
 public class MeetingController(IMeetingService meetingService) : BaseController

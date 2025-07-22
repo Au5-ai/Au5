@@ -1,5 +1,4 @@
 using Au5.Application.Features.Implement;
-using Au5.Application.Interfaces;
 using Au5.Application.Models.Messages;
 using Au5.Domain.Entities;
 
@@ -403,17 +402,16 @@ public class MeetingServiceTests
 
 	private MeetingService CreateServiceWithUser()
 	{
-		var reactions = new List<Reaction>
+		_ = new List<Reaction>
 		{
 			new() { Id = 1, Type = "Like", Emoji = "⚡", ClassName = "reaction-like" },
 			new() { Id = 2, Type = "GoodPoint", Emoji = "⭐", ClassName = "reaction-important" },
 			new() { Id = 3, Type = "Goal", Emoji = "🎯", ClassName = "reaction-question" }
 		};
 
-		var reactionServiceMock = new Mock<IReactionService>();
-		reactionServiceMock.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(reactions);
-
-		var service = new MeetingService(reactionServiceMock.Object);
+		// var reactionServiceMock = new Mock<IReactionService>();
+		// reactionServiceMock.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(reactions);
+		var service = new MeetingService();
 		service.AddUserToMeeting(new UserJoinedInMeetingMessage
 		{
 			User = new Participant { Id = _userId },
