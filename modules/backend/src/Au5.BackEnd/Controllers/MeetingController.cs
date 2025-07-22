@@ -1,14 +1,12 @@
-using Au5.Application.Features.Interfaces;
+using Au5.Application.Features.Meetings.GetFullTranscription;
 
 namespace Au5.BackEnd.Controllers;
 
-public class MeetingController(IMeetingService meetingService) : BaseController
+public class MeetingController(ISender mediator) : BaseController
 {
-	private readonly IMeetingService _meetingService = meetingService;
-
 	[HttpGet("{meetingId}/transcription")]
-	public async Task<IActionResult> Transcripitons([FromRoute] string meetingId, CancellationToken ct)
+	public async Task<IActionResult> Transcripitons([FromRoute] string meetingId, CancellationToken cancellationToken)
 	{
-		return Ok(await _meetingService.GetFullTranscriptionAsJson(meetingId, ct));
+		return Ok(await mediator.Send(new GetFullTranscriptionQuery(meetingId), cancellationToken));
 	}
 }

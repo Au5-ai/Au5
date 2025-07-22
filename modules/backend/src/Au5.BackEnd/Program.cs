@@ -1,4 +1,4 @@
-using Au5.Application.Features.Interfaces;
+using Au5.Application.Common.Abstractions;
 using Au5.BackEnd.GlobalHandler;
 
 var builder = WebApplication.CreateBuilder(args);

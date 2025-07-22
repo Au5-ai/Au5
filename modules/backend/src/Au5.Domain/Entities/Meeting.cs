@@ -9,12 +9,10 @@ public class Meeting
 
 	public string MeetId { get; set; }
 
-	public Guid CreatorUserId { get; set; }
-
-	[ForeignKey(nameof(CreatorUserId))]
-	public User User { get; set; }
-
 	public Guid BotInviterUserId { get; set; }
+
+	[ForeignKey(nameof(BotInviterUserId))]
+	public User User { get; set; }
 
 	public string HashToken { get; set; }
 
