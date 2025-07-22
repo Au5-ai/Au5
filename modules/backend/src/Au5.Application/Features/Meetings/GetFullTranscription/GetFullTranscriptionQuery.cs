@@ -1,3 +1,3 @@
-﻿namespace Au5.Application.Features.Meetings.GetFullTranscription;
+namespace Au5.Application.Features.Meetings.GetFullTranscription;
 
-public record GetFullTranscriptionQuery(string MeetId) : IRequest<Result<FullTranscriptionResponse>>;
+public record GetFullTranscriptionQuery(Guid MeetingId, string MeetId) : IRequest<Result<FullTranscriptionResponse>>;

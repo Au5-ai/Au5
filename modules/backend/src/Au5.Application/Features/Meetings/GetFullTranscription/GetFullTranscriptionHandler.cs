@@ -20,7 +20,7 @@ public class GetFullTranscriptionHandler : IRequestHandler<GetFullTranscriptionQ
 			.Include(x => x.Entries)
 			.ThenInclude(ent => ent.Reactions)
 			.ThenInclude(rac => rac.Reaction)
-			.FirstOrDefaultAsync(m => m.MeetId == request.MeetId, cancellationToken);
+			.FirstOrDefaultAsync(m => m.Id == request.MeetingId && m.MeetId == request.MeetId, cancellationToken);
 
 		if (meeting is null)
 		{
@@ -36,7 +36,7 @@ public class GetFullTranscriptionHandler : IRequestHandler<GetFullTranscriptionQ
 		var result = new FullTranscriptionResponse(
 			Id: meeting.Id,
 			MeetingId: meeting.MeetId,
-			BotInviterUser: new Participant() { Id = meeting.BotInviterUserId },
+			BotInviterUser: meeting.User.ToParticipant(),
 			HashToken: meeting.HashToken,
 			Platform: meeting.Platform,
 			BotName: meeting.BotName,
