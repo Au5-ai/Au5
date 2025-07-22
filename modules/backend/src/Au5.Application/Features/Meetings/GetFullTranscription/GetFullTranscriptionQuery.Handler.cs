@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.Meetings.GetFullTranscription;
 
-public class GetFullTranscriptionHandler : IRequestHandler<GetFullTranscriptionQuery, Result<FullTranscriptionResponse>>
+public class GetFullTranscriptionQueryHandler : IRequestHandler<GetFullTranscriptionQuery, Result<FullTranscriptionResponse>>
 {
 	private readonly IApplicationDbContext _dbContext;
 
-	public GetFullTranscriptionHandler(IApplicationDbContext dbContext)
+	public GetFullTranscriptionQueryHandler(IApplicationDbContext dbContext)
 	{
 		_dbContext = dbContext;
 	}

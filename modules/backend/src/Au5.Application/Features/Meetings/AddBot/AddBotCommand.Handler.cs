@@ -2,16 +2,16 @@ using Au5.Application.Common.Abstractions;
 
 namespace Au5.Application.Features.Meetings.AddBot;
 
-public class AddBotHandler : IRequestHandler<AddBotRequest, Result<Guid>>
+public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<Guid>>
 {
 	private readonly IApplicationDbContext _dbContext;
 
-	public AddBotHandler(IApplicationDbContext dbContext)
+	public AddBotCommandHandler(IApplicationDbContext dbContext)
 	{
 		_dbContext = dbContext;
 	}
 
-	public async ValueTask<Result<Guid>> Handle(AddBotRequest request, CancellationToken cancellationToken)
+	public async ValueTask<Result<Guid>> Handle(AddBotCommand request, CancellationToken cancellationToken)
 	{
 		var meetingId = Guid.NewGuid();
 		_dbContext.Set<Meeting>().Add(new Meeting()
