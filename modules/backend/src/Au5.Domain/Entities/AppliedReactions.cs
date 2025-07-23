@@ -16,5 +16,5 @@ public class AppliedReactions
 	/// <summary>
 	/// Gets or sets list of user IDs who applied this reaction to the entry as Json.
 	/// </summary>
-	public List<Guid> Users { get; set; }
+	public List<Participant> Participants { get; set; }
 }

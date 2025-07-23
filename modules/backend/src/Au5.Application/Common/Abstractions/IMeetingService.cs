@@ -1,3 +1,5 @@
+using Au5.Application.Messages;
+
 namespace Au5.Application.Common.Abstractions;
 
 public interface IMeetingService

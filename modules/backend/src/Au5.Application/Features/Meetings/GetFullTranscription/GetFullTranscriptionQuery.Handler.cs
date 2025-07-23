@@ -1,4 +1,5 @@
 using Au5.Application.Common.Abstractions;
+using Au5.Application.Dtos.MeetingDtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.Meetings.GetFullTranscription;
@@ -53,17 +54,17 @@ public class GetFullTranscriptionQueryHandler : IRequestHandler<GetFullTranscrip
 				.AsReadOnly(),
 			Entries: orderedEntries
 				.Select(entry => new EntryDto(
-					blockId: entry.BlockId,
-					participantId: entry.ParticipantId,
-					fullName: entry.FullName ?? string.Empty,
-					content: entry.Content,
-					timestamp: entry.Timestamp.ToString("o"),
-					timeline: (entry.Timestamp - baseTime).ToString(@"hh\:mm\:ss"),
-					entryType: entry.EntryType,
-					reactions: entry.Reactions.Select(ar =>
+					BlockId: entry.BlockId,
+					ParticipantId: entry.ParticipantId,
+					FullName: entry.FullName ?? string.Empty,
+					Content: entry.Content,
+					Timestamp: entry.Timestamp.ToString("o"),
+					Timeline: (entry.Timestamp - baseTime).ToString(@"hh\:mm\:ss"),
+					EntryType: entry.EntryType,
+					Reactions: entry.Reactions.Select(ar =>
 						  new ReactionDto(
 							  Id: ar.ReactionId,
-							  Users: ar.Users,
+							  Participants: ar.Participants,
 							  Type: ar.Reaction.Type,
 							  Emoji: ar.Reaction.Emoji)).ToList().AsReadOnly()))
 				.ToList()

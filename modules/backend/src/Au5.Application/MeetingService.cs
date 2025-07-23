@@ -198,21 +198,21 @@ public class MeetingService : IMeetingService
 				{
 					EntryId = entryBlock.Id,
 					ReactionId = reaction.ReactionId,
-					Users = [reaction.User.Id],
+					Participants = [new Participant() { Id = reaction.User.Id }],
 				};
 				entryBlock.Reactions.Add(existingReaction);
 				return;
 			}
 
-			existingReaction.Users ??= [];
+			existingReaction.Participants ??= [];
 
-			if (!existingReaction.Users.Any(u => u == reaction.User.Id))
+			if (!existingReaction.Participants.Any(u => u.Id == reaction.User.Id))
 			{
-				existingReaction.Users.Add(reaction.User.Id);
+				existingReaction.Participants.Add(new Participant() { Id = reaction.User.Id });
 			}
 			else
 			{
-				existingReaction.Users.RemoveAll(u => u == reaction.User.Id);
+				existingReaction.Participants.RemoveAll(u => u.Id == reaction.User.Id);
 			}
 		}
 	}
