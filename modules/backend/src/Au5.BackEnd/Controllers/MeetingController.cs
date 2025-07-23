@@ -5,17 +5,17 @@ namespace Au5.BackEnd.Controllers;
 
 public class MeetingController(ISender mediator) : BaseController
 {
-	[HttpGet("{meetId}/transcription")]
+	[HttpGet("{meetingId}/{meetId}/transcription")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	public async Task<IActionResult> Transcripitons([FromRoute] string meetId, CancellationToken cancellationToken)
+	public async Task<IActionResult> Transcripitons([FromRoute] Guid meetingId, [FromRoute] string meetId, CancellationToken cancellationToken)
 	{
-		return Ok(await mediator.Send(new GetFullTranscriptionQuery(meetId), cancellationToken));
+		return Ok(await mediator.Send(new GetFullTranscriptionQuery(meetingId, meetId), cancellationToken));
 	}
 
-	[HttpPost("{meetId}/addBot")]
+	[HttpPost("addBot")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	public async Task<IActionResult> AddBot([FromRoute] string meetId, [FromBody] AddBotRequest request, CancellationToken cancellationToken)
+	public async Task<IActionResult> AddBot([FromBody] AddBotCommand request, CancellationToken cancellationToken)
 	{
-		return Ok(await mediator.Send(request with { MeetId = meetId }, cancellationToken));
+		return Ok(await mediator.Send(request, cancellationToken));
 	}
 }

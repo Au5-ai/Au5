@@ -20,7 +20,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<Guid>>
 			MeetId = request.MeetId,
 			BotName = request.BotName,
 			IsBotAdded = false,
-			BotInviterUserId = Guid.Empty, // get from jwt
+			BotInviterUserId = Guid.Parse("EDADA1F7-CBDA-4C13-8504-A57FE72D5960"), // get from jwt
 			CreatedAt = DateTime.UtcNow,
 			Platform = request.Platform,
 			Status = MeetingStatus.NotStarted,

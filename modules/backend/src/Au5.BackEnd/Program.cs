@@ -1,4 +1,4 @@
-using Au5.Application.Common.Abstractions;
+using Au5.BackEnd.Extensions;
 using Au5.BackEnd.GlobalHandler;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,6 +43,11 @@ builder.AddServiceDefaults();
 
 var app = builder.Build();
 {
+	if (app.Environment.IsDevelopment())
+	{
+		await app.InitializeDatabaseAsync();
+	}
+
 	app.UseExceptionHandler();
 	app.MapDefaultEndpoints();
 

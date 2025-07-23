@@ -13,6 +13,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="FluentValidation" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
 		<PackageReference Include="Mediator.Abstractions" />
 		<PackageReference Include="Mediator.SourceGenerator">
 		  <PrivateAssets>all</PrivateAssets>

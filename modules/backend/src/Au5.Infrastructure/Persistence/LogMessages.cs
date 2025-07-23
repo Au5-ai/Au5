@@ -4,11 +4,12 @@ namespace Au5.Infrastructure.Persistence;
 
 public static partial class LogMessages
 {
-	private static readonly Action<ILogger, Exception> _databaseException =
-		LoggerMessage.Define(LogLevel.Error, new EventId(0, "DatabaseException"), "DataBase_Exception");
+	[LoggerMessage(EventId = 0, Level = LogLevel.Error, Message = "DataBase Exception ({@exception})")]
+	public static partial void LogDatabaseException(this ILogger logger, Exception exception);
 
-	public static void LogDatabaseException(this ILogger logger, Exception exception)
-	{
-		_databaseException(logger, exception);
-	}
+	[LoggerMessage(EventId = 0, Level = LogLevel.Information, Message = "Initializing Database Encountered Exception - {message}({@exception})")]
+	public static partial void LogDatabaseInitializationException(this ILogger logger, string message, Exception exception);
+
+	[LoggerMessage(EventId = 0, Level = LogLevel.Information, Message = "{message}")]
+	public static partial void LogDatabaseInitializationInfo(this ILogger logger, string message);
 }
