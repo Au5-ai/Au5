@@ -2,9 +2,7 @@ using Au5.Application.Features.Reactions.GetAllQuery;
 
 namespace Au5.BackEnd.Controllers;
 
-[ApiController]
-[Route("[controller]")]
-public class ReactionsController(ISender mediator) : ControllerBase
+public class ReactionsController(ISender mediator) : BaseController
 {
 	[HttpGet]
 	[ProducesResponseType(StatusCodes.Status200OK)]

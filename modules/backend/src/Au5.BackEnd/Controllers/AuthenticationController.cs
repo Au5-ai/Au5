@@ -1,11 +1,12 @@
 using Au5.Application.Features.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
 
-[Route("authentication")]
 public class AuthenticationController(ISender mediator) : BaseController
 {
 	[HttpPost("login")]
+	[AllowAnonymous]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> Login([FromBody] LoginRequest requestModel, CancellationToken ct)
 	{
