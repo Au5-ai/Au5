@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using Au5.Application.Features.Interfaces;
+using Au5.Application.Common.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Hubs;
@@ -35,12 +35,6 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 
 	public async Task RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage)
 	{
-		if (string.IsNullOrWhiteSpace(requestToAddBotMessage.MeetId) || requestToAddBotMessage.User is null)
-		{
-			return;
-		}
-
-		_ = meetingService.RequestToAddBot(requestToAddBotMessage);
 		await BroadcastToGroupExceptCallerAsync(requestToAddBotMessage.MeetId, requestToAddBotMessage).ConfigureAwait(false);
 	}
 

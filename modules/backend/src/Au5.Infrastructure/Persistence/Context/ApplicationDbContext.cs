@@ -2,26 +2,28 @@ using System.Reflection;
 using Au5.Application.Common.Abstractions;
 using Au5.Domain.Common;
 using Au5.Infrastructure.Persistence.Extensions;
+using Au5.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Au5.Infrastructure.Persistence.Context;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ILogger<ApplicationDbContext> contextLogger)
-	: DbContext(options), IApplicationDbContext
+   : DbContext(options), IApplicationDbContext
 {
 	private readonly ILogger<ApplicationDbContext> _logger = contextLogger;
 
-	public new async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+	public new async Task<Result> SaveChangesAsync(CancellationToken cancellationToken = default)
 	{
 		try
 		{
-			return await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+			var result = await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+			return result is 0 ? Error.Failure("DB.Failure", "SaveChangesFailed") : Result.Success();
 		}
 		catch (Exception ex)
 		{
-			_logger.LogError(ex, "DataBase_Exception");
-			return 0;
+			_logger.LogDatabaseException(ex);
+			return Error.Failure("DB.Failure", "SaveChangesFailed");
 		}
 	}
 

@@ -1,6 +1,4 @@
-using Au5.Application.Models.Dtos.MeetingDtos;
-
-namespace Au5.Application.Features.Interfaces;
+namespace Au5.Application.Common.Abstractions;
 
 public interface IMeetingService
 {
@@ -18,9 +16,5 @@ public interface IMeetingService
 
 	void InsertBlock(EntryMessage entry);
 
-	Task<Result<FullMeetingTranscriptionDto>> GetFullTranscriptionAsJson(string meetId, CancellationToken ct = default);
-
 	void AppliedReaction(ReactionAppliedMessage reaction);
-
-	string RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage);
 }

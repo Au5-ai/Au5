@@ -1,4 +1,3 @@
-global using Au5.Application.Features.Interfaces;
 global using Au5.Application.Models.Dtos.MeetingDtos;
 global using Au5.Application.Models.Messages;
 global using Au5.Domain.Common;

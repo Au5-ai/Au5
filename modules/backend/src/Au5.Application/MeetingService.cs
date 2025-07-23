@@ -1,15 +1,12 @@
-using System.Security.Cryptography;
-using System.Text;
-using Au5.Application.Features.Interfaces;
+using Au5.Application.Common.Abstractions;
 
-namespace Au5.Application.Features.Implement;
+namespace Au5.Application;
 
 public class MeetingService : IMeetingService
 {
 	private static readonly Lock LockObject = new();
-	private readonly List<Meeting> _meetings = [];
+	private static readonly List<Meeting> _meetings = [];
 
-	// private readonly IReactionService _reactionService;
 	public Meeting AddUserToMeeting(UserJoinedInMeetingMessage userJoined)
 	{
 		lock (LockObject)
@@ -27,7 +24,6 @@ public class MeetingService : IMeetingService
 					Platform = userJoined.Platform,
 					Participants = [],
 					Status = MeetingStatus.NotStarted,
-					CreatorUserId = userJoined.User.Id,
 				};
 				_meetings.Add(meeting);
 			}
@@ -179,66 +175,6 @@ public class MeetingService : IMeetingService
 		}
 	}
 
-	public async Task<Result<FullMeetingTranscriptionDto>> GetFullTranscriptionAsJson(string meetId, CancellationToken ct = default)
-	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetId);
-		if (meeting is null)
-		{
-			return Error.NotFound(description: "No meeting with this ID was found.");
-		}
-
-		var orderedEntries = meeting.Entries
-			.OrderBy(e => e.Timestamp)
-			.ToList();
-
-		var baseTime = meeting.CreatedAt;
-		List<Reaction> reactionsList = []; // await _reactionService.GetAllAsync(ct);
-
-		var result = new FullMeetingTranscriptionDto(
-			id: meeting.Id,
-			meetingId: meeting.MeetId,
-			creatorUserId: meeting.CreatorUserId,
-			botInviterUserId: meeting.BotInviterUserId,
-			hashToken: meeting.HashToken,
-			platform: meeting.Platform,
-			botName: meeting.BotName,
-			isBotAdded: meeting.IsBotAdded,
-			createdAt: meeting.CreatedAt.ToString("o"),
-			status: meeting.Status,
-			statusDescription: meeting.Status.ToString(),
-			participants: meeting.Participants
-				.Select(p => new Participant(
-					id: p.UserId,
-					fullName: p.FullName ?? string.Empty,
-					pictureUrl: p.PictureUrl ?? string.Empty,
-					hasAccount: p.UserId != Guid.Empty))
-				.ToList()
-				.AsReadOnly(),
-			entries: orderedEntries
-				.Select(entry => new EntryDto(
-					blockId: entry.BlockId,
-					participantId: entry.ParticipantId,
-					fullName: entry.FullName ?? string.Empty,
-					content: entry.Content,
-					timestamp: entry.Timestamp.ToString("o"),
-					timeline: (entry.Timestamp - baseTime).ToString(@"hh\:mm\:ss"),
-					entryType: entry.EntryType,
-					reactions: entry.Reactions.Select(ar =>
-					{
-						var reaction = reactionsList.FirstOrDefault(r => r.Id == ar.ReactionId);
-						return new ReactionDto(
-							id: ar.ReactionId,
-							users: ar.Users ?? [],
-							type: reaction?.Type ?? "unknown",
-							className: reaction?.ClassName ?? string.Empty,
-							emoji: reaction?.Emoji ?? string.Empty);
-					}).ToList().AsReadOnly()))
-				.ToList()
-				.AsReadOnly());
-
-		return result;
-	}
-
 	public void AppliedReaction(ReactionAppliedMessage reaction)
 	{
 		var meeting = _meetings.FirstOrDefault(m => m.MeetId == reaction.MeetId);
@@ -279,36 +215,5 @@ public class MeetingService : IMeetingService
 				existingReaction.Users.RemoveAll(u => u == reaction.User.Id);
 			}
 		}
-	}
-
-	public string RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage)
-	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetId == requestToAddBotMessage.MeetId);
-		if (meeting is null)
-		{
-			return string.Empty;
-		}
-
-		var userFinded = meeting.Participants.Any(u => u.UserId == requestToAddBotMessage.User.Id);
-		if (!userFinded)
-		{
-			return string.Empty;
-		}
-
-		if (meeting.IsBotAdded)
-		{
-			return meeting.HashToken;
-		}
-
-		var raw = $"{requestToAddBotMessage.User.Id}{DateTime.Now:O}";
-		var bytes = Encoding.UTF8.GetBytes(raw);
-		var hash = SHA256.HashData(bytes);
-		var hashToken = Convert.ToBase64String(hash);
-
-		meeting.HashToken = hashToken;
-		meeting.BotInviterUserId = requestToAddBotMessage.User.Id;
-		meeting.BotName = requestToAddBotMessage.BotName;
-
-		return hashToken;
 	}
 }

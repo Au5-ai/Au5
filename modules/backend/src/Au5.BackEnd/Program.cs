@@ -1,4 +1,4 @@
-using Au5.Application.Features.Interfaces;
+using Au5.BackEnd.Extensions;
 using Au5.BackEnd.GlobalHandler;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,6 +43,11 @@ builder.AddServiceDefaults();
 
 var app = builder.Build();
 {
+	if (app.Environment.IsDevelopment())
+	{
+		await app.InitializeDatabaseAsync();
+	}
+
 	app.UseExceptionHandler();
 	app.MapDefaultEndpoints();
 
@@ -56,16 +61,6 @@ var app = builder.Build();
 	app.MapHub<MeetingHub>("/meetinghub").AllowAnonymous();
 	app.MapGet("/liveness", () => Results.Ok("Healthy"));
 
-	app.MapPost("/meeting/addBot", (
-		[FromBody] RequestToAddBotMessage request,
-		[FromServices] IMeetingService meetingService) =>
-	{
-		var result = meetingService.RequestToAddBot(request);
-
-		return Results.Ok(new { Success = true, Message = $"Bot added to meeting {request.MeetId}", Data = result });
-	});
-
 	app.MapControllers();
-
 	app.Run();
 }
