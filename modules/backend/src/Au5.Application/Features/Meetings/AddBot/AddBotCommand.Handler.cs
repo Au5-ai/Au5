@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using Au5.Application.Common.Abstractions;
 
 namespace Au5.Application.Features.Meetings.AddBot;
@@ -14,6 +16,11 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<Guid>>
 	public async ValueTask<Result<Guid>> Handle(AddBotCommand request, CancellationToken cancellationToken)
 	{
 		var meetingId = Guid.NewGuid();
+		var raw = $"{meetingId}{DateTime.Now:O}";
+		var bytes = Encoding.UTF8.GetBytes(raw);
+		var hash = SHA256.HashData(bytes);
+		var hashToken = Convert.ToBase64String(hash);
+
 		_dbContext.Set<Meeting>().Add(new Meeting()
 		{
 			Id = meetingId,
@@ -24,10 +31,11 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<Guid>>
 			CreatedAt = DateTime.UtcNow,
 			Platform = request.Platform,
 			Status = MeetingStatus.NotStarted,
+			HashToken = hashToken
 		});
 
-		_ = await _dbContext.SaveChangesAsync(cancellationToken); // Check db result
+		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken); // Check db result
 
-		return meetingId;
+		return dbResult.IsSuccess ? (Result<Guid>)meetingId : (Result<Guid>)Error.Failure(description: "Failed to add bot to the meeting.");
 	}
 }

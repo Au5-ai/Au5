@@ -186,7 +186,7 @@ export class UIHandlers {
       const response = await this.backendApi.addBot({
         meetId: meetId,
         botName: this.config.service.botName,
-        user: this.config.user
+        platform: this.platform.getPlatformName()
       });
 
       if (response.success) {

@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Text;
 using Au5.Application.Common.Abstractions;
 
 namespace Au5.Application;
@@ -7,7 +5,7 @@ namespace Au5.Application;
 public class MeetingService : IMeetingService
 {
 	private static readonly Lock LockObject = new();
-	private readonly List<Meeting> _meetings = [];
+	private static readonly List<Meeting> _meetings = [];
 
 	public Meeting AddUserToMeeting(UserJoinedInMeetingMessage userJoined)
 	{
@@ -217,36 +215,5 @@ public class MeetingService : IMeetingService
 				existingReaction.Users.RemoveAll(u => u == reaction.User.Id);
 			}
 		}
-	}
-
-	public string RequestToAddBot(RequestToAddBotMessage requestToAddBotMessage)
-	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetId == requestToAddBotMessage.MeetId);
-		if (meeting is null)
-		{
-			return string.Empty;
-		}
-
-		var userFinded = meeting.Participants.Any(u => u.UserId == requestToAddBotMessage.User.Id);
-		if (!userFinded)
-		{
-			return string.Empty;
-		}
-
-		if (meeting.IsBotAdded)
-		{
-			return meeting.HashToken;
-		}
-
-		var raw = $"{requestToAddBotMessage.User.Id}{DateTime.Now:O}";
-		var bytes = Encoding.UTF8.GetBytes(raw);
-		var hash = SHA256.HashData(bytes);
-		var hashToken = Convert.ToBase64String(hash);
-
-		meeting.HashToken = hashToken;
-		meeting.BotInviterUserId = requestToAddBotMessage.User.Id;
-		meeting.BotName = requestToAddBotMessage.BotName;
-
-		return hashToken;
 	}
 }
