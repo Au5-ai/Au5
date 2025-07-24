@@ -183,13 +183,18 @@ export class UIHandlers {
         return;
       }
       const meetId = this.platform.getMeetId();
-      const response = await this.backendApi.addBot({
-        meetId: meetId,
-        botName: this.config.service.botName,
-        platform: this.platform.getPlatformName()
-      });
+      const response = await this.backendApi
+        .addBot({
+          meetId: meetId,
+          botName: this.config.service.botName,
+          platform: this.platform.getPlatformName()
+        })
+        .catch(error => {
+          showToast("Failed to add bot :(");
+          return;
+        });
 
-      if (response.success) {
+      if (response) {
         const message = {
           type: MessageTypes.RequestToAddBot,
           meetId: meetId,

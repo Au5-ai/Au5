@@ -3515,8 +3515,11 @@ class UIHandlers {
         meetId,
         botName: this.config.service.botName,
         platform: this.platform.getPlatformName()
+      }).catch((error) => {
+        showToast("Failed to add bot :(");
+        return;
       });
-      if (response.success) {
+      if (response) {
         const message = {
           type: MessageTypes.RequestToAddBot,
           meetId,
