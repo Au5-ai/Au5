@@ -489,13 +489,13 @@ class BackEndApi {
     return apiRequest(ApiRoutes.getInstance(this.config).addBot(), {
       method: "POST",
       body,
-      authToken: this.config.user.token
+      authToken: this.config.service.jwtToken
     });
   }
   async getReactions() {
     return apiRequest(ApiRoutes.getInstance(this.config).getReactions(), {
       method: "GET",
-      authToken: this.config.user.token
+      authToken: this.config.service.jwtToken
     });
   }
 }

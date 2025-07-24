@@ -61,6 +61,42 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed To Config Company.
+        /// </summary>
+        internal static string FailedToConfigCompany {
+            get {
+                return ResourceManager.GetString("FailedToConfigCompany", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Direction must be either &apos;ltr&apos; or &apos;rtl&apos;..
+        /// </summary>
+        internal static string InvalidDirection {
+            get {
+                return ResourceManager.GetString("InvalidDirection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to InvalidLanguageFormat.
+        /// </summary>
+        internal static string InvalidLanguageFormat {
+            get {
+                return ResourceManager.GetString("InvalidLanguageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to InvalidUrl.
+        /// </summary>
+        internal static string InvalidUrl {
+            get {
+                return ResourceManager.GetString("InvalidUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to property can not be empty.
         /// </summary>
         internal static string NotBeEmpty {

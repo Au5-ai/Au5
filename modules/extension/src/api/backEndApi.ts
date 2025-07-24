@@ -10,14 +10,14 @@ export class BackEndApi {
     return apiRequest<any, RequestAddBotModel>(ApiRoutes.getInstance(this.config).addBot(), {
       method: "POST",
       body,
-      authToken: this.config.user.token
+      authToken: this.config.service.jwtToken
     });
   }
 
   public async getReactions(): Promise<Reaction[]> {
     return apiRequest<Reaction[]>(ApiRoutes.getInstance(this.config).getReactions(), {
       method: "GET",
-      authToken: this.config.user.token
+      authToken: this.config.service.jwtToken
     });
   }
 }
