@@ -15,4 +15,6 @@ public record InitCompanyCommand : IRequest<Result>
 	public string ServiceBaseUrl { get; init; }
 
 	public string PanelUrl { get; init; }
+
+	public bool ForceUpdate { get; init; } = false;
 }

@@ -8,55 +8,55 @@ public class InitCompanyCommandValiadtor : AbstractValidator<InitCompanyCommand>
 	{
 		RuleFor(x => x.Name)
 			.NotEmpty()
-			.WithMessage(AppResources.NotBeEmpty)
-			.WithErrorCode(nameof(AppResources.NotBeEmpty));
+			.WithMessage(AppResources.Required)
+			.WithErrorCode(nameof(AppResources.Required));
 
 		RuleFor(x => x.BotName)
 		   .NotEmpty()
-		   .WithMessage(AppResources.NotBeEmpty)
-		   .WithErrorCode(nameof(AppResources.NotBeEmpty));
+		   .WithMessage(AppResources.Required)
+		   .WithErrorCode(nameof(AppResources.Required));
 
 		RuleFor(x => x.PanelUrl)
 			.NotEmpty()
-			.WithMessage(AppResources.NotBeEmpty)
-			.WithErrorCode(nameof(AppResources.NotBeEmpty))
+			.WithMessage(AppResources.Required)
+			.WithErrorCode(nameof(AppResources.Required))
 			.Must(uri => Uri.TryCreate(uri, UriKind.Absolute, out var temp) &&
 						 (temp.Scheme == Uri.UriSchemeHttp || temp.Scheme == Uri.UriSchemeHttps))
-			.WithMessage(AppResources.InvalidUrl)
-			.WithErrorCode(nameof(AppResources.InvalidUrl));
+			.WithMessage(AppResources.Invalid_Url)
+			.WithErrorCode(nameof(AppResources.Invalid_Url));
 
 		RuleFor(x => x.Direction)
 			.NotEmpty()
-			.WithMessage(AppResources.NotBeEmpty)
-			.WithErrorCode(nameof(AppResources.NotBeEmpty))
+			.WithMessage(AppResources.Required)
+			.WithErrorCode(nameof(AppResources.Required))
 			.Must(dir => dir is "ltr" or "rtl")
-			.WithMessage(AppResources.InvalidDirection)
-			.WithErrorCode(nameof(AppResources.InvalidDirection));
+			.WithMessage(AppResources.Invalid_Direction)
+			.WithErrorCode(nameof(AppResources.Invalid_Direction));
 
 		RuleFor(x => x.Language)
 			.NotEmpty()
-			.WithMessage(AppResources.NotBeEmpty)
-			.WithErrorCode(nameof(AppResources.NotBeEmpty))
+			.WithMessage(AppResources.Required)
+			.WithErrorCode(nameof(AppResources.Required))
 			.Matches("^[a-z]{2}-[A-Z]{2}$")
-			.WithMessage(AppResources.InvalidLanguageFormat)
-			.WithErrorCode(nameof(AppResources.InvalidLanguageFormat));
+			.WithMessage(AppResources.Invalid_Language_Format)
+			.WithErrorCode(nameof(AppResources.Invalid_Language_Format));
 
 		RuleFor(x => x.ServiceBaseUrl)
 			.NotEmpty()
-			.WithMessage(AppResources.NotBeEmpty)
-			.WithErrorCode(nameof(AppResources.NotBeEmpty))
+			.WithMessage(AppResources.Required)
+			.WithErrorCode(nameof(AppResources.Required))
 			.Must(uri => Uri.TryCreate(uri, UriKind.Absolute, out var temp) &&
 						 (temp.Scheme == Uri.UriSchemeHttp || temp.Scheme == Uri.UriSchemeHttps))
-			.WithMessage(AppResources.InvalidUrl)
-			.WithErrorCode(nameof(AppResources.InvalidUrl));
+			.WithMessage(AppResources.Invalid_Url)
+			.WithErrorCode(nameof(AppResources.Invalid_Url));
 
 		RuleFor(x => x.HubUrl)
 			.NotEmpty()
-			.WithMessage(AppResources.NotBeEmpty)
-			.WithErrorCode(nameof(AppResources.NotBeEmpty))
+			.WithMessage(AppResources.Required)
+			.WithErrorCode(nameof(AppResources.Required))
 			.Must(uri => Uri.TryCreate(uri, UriKind.Absolute, out var temp) &&
 						 (temp.Scheme == Uri.UriSchemeHttp || temp.Scheme == Uri.UriSchemeHttps))
-			.WithMessage(AppResources.InvalidUrl)
-			.WithErrorCode(nameof(AppResources.InvalidUrl));
+			.WithMessage(AppResources.Invalid_Url)
+			.WithErrorCode(nameof(AppResources.Invalid_Url));
 	}
 }

@@ -61,47 +61,56 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CompanyAlreadyConfigured, You can set ForceUpdate=true..
+        /// </summary>
+        internal static string CompanyAlreadyConfigured {
+            get {
+                return ResourceManager.GetString("CompanyAlreadyConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed To Config Company.
         /// </summary>
-        internal static string FailedToConfigCompany {
+        internal static string Failed_To_Config_Company {
             get {
-                return ResourceManager.GetString("FailedToConfigCompany", resourceCulture);
+                return ResourceManager.GetString("Failed_To_Config_Company", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Direction must be either &apos;ltr&apos; or &apos;rtl&apos;..
         /// </summary>
-        internal static string InvalidDirection {
+        internal static string Invalid_Direction {
             get {
-                return ResourceManager.GetString("InvalidDirection", resourceCulture);
+                return ResourceManager.GetString("Invalid_Direction", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to InvalidLanguageFormat.
         /// </summary>
-        internal static string InvalidLanguageFormat {
+        internal static string Invalid_Language_Format {
             get {
-                return ResourceManager.GetString("InvalidLanguageFormat", resourceCulture);
+                return ResourceManager.GetString("Invalid_Language_Format", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to InvalidUrl.
         /// </summary>
-        internal static string InvalidUrl {
+        internal static string Invalid_Url {
             get {
-                return ResourceManager.GetString("InvalidUrl", resourceCulture);
+                return ResourceManager.GetString("Invalid_Url", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to property can not be empty.
         /// </summary>
-        internal static string NotBeEmpty {
+        internal static string Required {
             get {
-                return ResourceManager.GetString("NotBeEmpty", resourceCulture);
+                return ResourceManager.GetString("Required", resourceCulture);
             }
         }
     }
