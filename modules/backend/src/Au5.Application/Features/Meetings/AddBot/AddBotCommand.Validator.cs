@@ -8,17 +8,14 @@ public class AddBotCommandValiadtor : AbstractValidator<AddBotCommand>
 	{
 		RuleFor(x => x.BotName)
 		   .NotEmpty()
-		   .WithMessage(AppResources.Required)
-		   .WithErrorCode(nameof(AppResources.Required));
+		   .WithMessage(AppResources.Required);
 
 		RuleFor(x => x.MeetId)
 		   .NotEmpty()
-		   .WithMessage(AppResources.Required)
-		   .WithErrorCode(nameof(AppResources.Required));
+		   .WithMessage(AppResources.Required);
 
 		RuleFor(x => x.Platform)
 		   .NotEmpty()
-		   .WithMessage(AppResources.Required)
-		   .WithErrorCode(nameof(AppResources.Required));
+		   .WithMessage(AppResources.Required);
 	}
 }

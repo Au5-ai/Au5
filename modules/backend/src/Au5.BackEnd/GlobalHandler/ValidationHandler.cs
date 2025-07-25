@@ -30,8 +30,9 @@ internal sealed class ValidationExceptionHandler(IProblemDetailsService problemD
 		var errors = validationException.Errors
 			.GroupBy(e => e.PropertyName)
 			.ToDictionary(
-				g => g.Key.ToLowerInvariant(),
+				g => g.Key,
 				g => g.Select(e => e.ErrorMessage).ToArray());
+
 		context.ProblemDetails.Extensions.Add("errors", errors);
 
 		return await problemDetailsService.TryWriteAsync(context);
