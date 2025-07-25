@@ -15,7 +15,7 @@ public class InitCompanyCommandHandler : IRequestHandler<InitCompanyCommand, Res
 
 	public async ValueTask<Result> Handle(InitCompanyCommand request, CancellationToken cancellationToken)
 	{
-		var existingConfig = await _dbContext.Set<Company>().FirstAsync(cancellationToken);
+		var existingConfig = await _dbContext.Set<Company>().FirstOrDefaultAsync(cancellationToken);
 
 		if (existingConfig is not null)
 		{

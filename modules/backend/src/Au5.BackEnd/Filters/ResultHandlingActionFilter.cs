@@ -1,74 +1,52 @@
-#nullable disable
-
-using Au5.Shared;
 using Microsoft.AspNetCore.Mvc.Filters;
 using IResult = Au5.Shared.IResult;
 
 namespace Au5.BackEnd.Filters;
 
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
-public class ResultHandlingActionFilterAttribute : Attribute, IAsyncActionFilter
+public sealed class ResultHandlingActionFilter : IAsyncActionFilter
 {
+	private readonly IProblemDetailsService _problemDetailsService;
+
+	public ResultHandlingActionFilter(IProblemDetailsService problemDetailsService)
+	{
+		_problemDetailsService = problemDetailsService;
+	}
+
 	public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 	{
 		var executedContext = await next();
 
-		if (!ShouldProcessResult(executedContext.Result))
+		if (executedContext.Result is not ObjectResult { Value: IResult result })
 		{
 			return;
 		}
 
-		var objectResult = (ObjectResult)executedContext.Result;
-
-		if (objectResult.Value is IResult result)
+		if (result.IsSuccess)
 		{
-			executedContext.Result = result.IsSuccess
-				? CreateSuccessResult(result)
-				: CreateErrorResult(result);
+			executedContext.Result = new OkObjectResult(result.GetData());
 		}
-	}
-
-	private static bool ShouldProcessResult(IActionResult result)
-	{
-		return result is ObjectResult { Value: not null } objectResult && objectResult.Value is IResult;
-	}
-
-	private static OkObjectResult CreateSuccessResult(IResult result)
-		=> new(result.GetData());
-
-	private static ObjectResult CreateErrorResult(IResult result)
-	{
-		var problemDetails = CreateProblemDetails(result.Error);
-		return new ObjectResult(problemDetails) { StatusCode = problemDetails.Status };
-	}
-
-	private static ProblemDetails CreateProblemDetails(Error error)
-	{
-		var problemDetails = new ProblemDetails
+		else
 		{
-			Status = (int)error.Type,
-			Type = error.Type.ToString(),
-			Detail = GetDefaultDetailMessage(error.Type)
-		};
+			var httpContext = context.HttpContext;
+			httpContext.Response.StatusCode = (int)result.Error.Type;
 
-		problemDetails.Extensions["errors"] = new List<object>
-		{
-			new { error.Code, error.Description }
-		};
+			var error = result.Error!;
 
-		return problemDetails;
-	}
+			var problemDetails = new ProblemDetails
+			{
+				Type = $"https://tools.ietf.org/html/rfc9110#section-15.5.1",
+				Title = error.Code,
+				Status = (int)error.Type,
+				Detail = error.Description,
+			};
 
-	private static string GetDefaultDetailMessage(ErrorType errorType)
-	{
-		return errorType switch
-		{
-			ErrorType.Validation => "One or more validation errors has occurred",
-			ErrorType.NotFound => "Required Resource Not Found",
-			ErrorType.Unauthorized => "Authentication is required or has failed",
-			ErrorType.Forbidden => "You do not have permission to access this resource",
-			ErrorType.Failure => "Server Error has occurred",
-			_ => string.Empty
-		};
+			await _problemDetailsService.WriteAsync(new ProblemDetailsContext
+			{
+				HttpContext = httpContext,
+				ProblemDetails = problemDetails
+			});
+
+			executedContext.Result = new EmptyResult();
+		}
 	}
 }

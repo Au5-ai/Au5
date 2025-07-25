@@ -1,8 +1,10 @@
-﻿namespace Au5.Shared;
+using System.Net;
+
+namespace Au5.Shared;
 
 public readonly record struct Error
 {
-	private Error(string code, string description, ErrorType type)
+	private Error(string code, string description, HttpStatusCode type)
 	{
 		Code = code;
 		Description = description;
@@ -13,20 +15,20 @@ public readonly record struct Error
 
 	public string Description { get; }
 
-	public ErrorType Type { get; }
+	public HttpStatusCode Type { get; }
 
 	public static Error Failure(string code = "General.Failure", string description = "A failure has occurred.")
-		=> new(code, description, ErrorType.Failure);
+		=> new(code, description, HttpStatusCode.InternalServerError);
 
 	public static Error Validation(string code = "General.Validation", string description = "A validation error has occurred.")
-		=> new(code, description, ErrorType.Validation);
+		=> new(code, description, HttpStatusCode.BadRequest);
 
 	public static Error NotFound(string code = "General.NotFound", string description = "A 'Not Found' error has occurred.")
-		=> new(code, description, ErrorType.NotFound);
+		=> new(code, description, HttpStatusCode.NotFound);
 
 	public static Error Unauthorized(string code = "General.Unauthorized", string description = "An 'Unauthorized' error has occurred.")
-		=> new(code, description, ErrorType.Unauthorized);
+		=> new(code, description, HttpStatusCode.Unauthorized);
 
 	public static Error Forbidden(string code = "General.Forbidden", string description = "A 'Forbidden' error has occurred.")
-		=> new(code, description, ErrorType.Forbidden);
+		=> new(code, description, HttpStatusCode.Forbidden);
 }
