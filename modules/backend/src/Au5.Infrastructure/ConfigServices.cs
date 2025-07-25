@@ -2,6 +2,7 @@ using Ardalis.GuardClauses;
 using Au5.Application.Common.Abstractions;
 using Au5.Infrastructure.Authentication;
 using Au5.Infrastructure.Persistence.Context;
+using Au5.Infrastructure.Providers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +31,8 @@ public static class ConfigureServices
 		});
 
 		services.AddScoped<ITokenService, TokenService>();
+
+		services.AddSingleton<ICacheProvider, RedisCacheProvider>();
 
 		return services;
 	}
