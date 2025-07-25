@@ -1,5 +1,6 @@
 using Au5.BackEnd.Extensions;
 using Au5.BackEnd.GlobalHandler;
+using Au5.BackEnd.Middlewares;
 using Au5.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -56,6 +57,7 @@ var app = builder.Build();
 	app.UseRouting();
 
 	app.UseAuthentication();
+	app.UseMiddleware<JwtBlacklistMiddleware>();
 	app.UseAuthorization();
 
 	app.UseCors();
