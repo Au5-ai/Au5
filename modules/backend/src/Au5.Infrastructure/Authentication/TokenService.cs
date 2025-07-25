@@ -21,11 +21,14 @@ public class TokenService : ITokenService
 
 	public string GenerateToken(Guid extensionId, string fullName, string role)
 	{
+		var jti = Guid.NewGuid().ToString();
+
 		var claims = new[]
 		{
 			new Claim(ClaimTypes.NameIdentifier, extensionId.ToString()),
 			new Claim(ClaimTypes.Name, fullName ?? string.Empty),
 			new Claim(ClaimTypes.Role, role),
+			new Claim(JwtRegisteredClaimNames.Jti, jti)
 		};
 
 		var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.SecretKey));
