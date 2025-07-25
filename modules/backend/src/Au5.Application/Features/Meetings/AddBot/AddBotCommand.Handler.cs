@@ -34,8 +34,8 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<Guid>>
 			HashToken = hashToken
 		});
 
-		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken); // Check db result
+		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
 
-		return dbResult.IsSuccess ? (Result<Guid>)meetingId : (Result<Guid>)Error.Failure(description: "Failed to add bot to the meeting.");
+		return dbResult.IsSuccess ? meetingId : Error.Failure(description: "Failed to add bot to the meeting.");
 	}
 }

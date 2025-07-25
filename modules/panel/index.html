@@ -90,6 +90,9 @@
       <label for="direction">Direction (ltr/rtl)</label>
       <input id="direction" value="rtl" />
 
+      <label for="language">Language</label>
+      <input id="language" value="fa-IR" />
+
       <button onclick="sendConfig()">Send Config</button>
     </div>
 
@@ -163,15 +166,16 @@
         const config = {
           user: {
             id: document.getElementById("Id").value,
-            token: document.getElementById("token").value,
             fullName: document.getElementById("fullName").value,
             pictureUrl: document.getElementById("pictureUrl").value,
             hasAccount: true,
           },
           service: {
+            jwtToken: document.getElementById("token").value,
             panelUrl: document.getElementById("panelUrl").value,
             baseUrl: document.getElementById("baseUrl").value,
             direction: document.getElementById("direction").value,
+            language: document.getElementById("language").value,
             hubUrl: document.getElementById("hubUrl").value,
             companyName: document.getElementById("companyName").value,
             botName: document.getElementById("botName").value,

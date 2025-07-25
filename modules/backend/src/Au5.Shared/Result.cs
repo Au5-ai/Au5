@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Au5.Shared;
 
-public readonly record struct Result
+public readonly record struct Result : IResult
 {
 	private readonly Error _error;
 
@@ -23,6 +23,11 @@ public readonly record struct Result
 	public static Result Failure(Error error) => new(error);
 
 	public static Result Success() => new();
+
+	public object GetData()
+	{
+		return new { };
+	}
 
 	public static implicit operator Result(Error error) => new(error);
 }

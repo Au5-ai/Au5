@@ -1,4 +1,4 @@
-﻿namespace Au5.Shared;
+namespace Au5.Shared;
 
 public interface IResult
 {

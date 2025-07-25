@@ -21,8 +21,9 @@ internal sealed class GlobalExceptionHandler(IProblemDetailsService problemDetai
 			Exception = exception,
 			ProblemDetails = new ProblemDetails
 			{
-				Type = "Internal Server Error",
-				Title = "An error occured",
+				Status = httpContext.Response.StatusCode,
+				Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+				Title = "Internal Server Error",
 				Detail = exception.Message // must be changed in Production.
 			}
 		});

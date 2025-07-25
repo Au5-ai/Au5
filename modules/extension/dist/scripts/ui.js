@@ -489,13 +489,13 @@ class BackEndApi {
     return apiRequest(ApiRoutes.getInstance(this.config).addBot(), {
       method: "POST",
       body,
-      authToken: this.config.user.token
+      authToken: this.config.service.jwtToken
     });
   }
   async getReactions() {
     return apiRequest(ApiRoutes.getInstance(this.config).getReactions(), {
       method: "GET",
-      authToken: this.config.user.token
+      authToken: this.config.service.jwtToken
     });
   }
 }
@@ -3515,8 +3515,11 @@ class UIHandlers {
         meetId,
         botName: this.config.service.botName,
         platform: this.platform.getPlatformName()
+      }).catch((error) => {
+        showToast("Failed to add bot :(");
+        return;
       });
-      if (response.success) {
+      if (response) {
         const message = {
           type: MessageTypes.RequestToAddBot,
           meetId,

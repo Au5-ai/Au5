@@ -18,7 +18,6 @@ export interface Entry {
 
 export interface Participant {
   id: string;
-  token?: string;
   fullName: string;
   pictureUrl: string;
   hasAccount: boolean;
@@ -28,6 +27,7 @@ export interface ServiceIntegration {
   panelUrl: string;
   baseUrl: string;
   direction: "ltr" | "rtl";
+  language: string;
   hubUrl: string;
   companyName: string;
   botName: string;

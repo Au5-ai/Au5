@@ -1,4 +1,5 @@
 using System.Text;
+using Au5.BackEnd.Filters;
 using Au5.Infrastructure.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -59,6 +60,7 @@ public static class ConfigServices
 			};
 		});
 
+		services.AddScoped<ResultHandlingActionFilter>();
 		return services;
 	}
 }

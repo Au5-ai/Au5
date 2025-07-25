@@ -6,7 +6,7 @@ namespace Au5.BackEnd.Controllers;
 
 [Authorize]
 [ApiController]
-[ResultHandlingActionFilter]
+[ServiceFilter(typeof(ResultHandlingActionFilter))]
 [Route("[controller]")]
 public class BaseController : ControllerBase
 {

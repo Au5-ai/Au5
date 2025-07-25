@@ -3,6 +3,7 @@
 // </copyright>
 
 using Au5.Application.Common.Abstractions;
+using Au5.Application.Messages;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Hubs;

@@ -1,4 +1,4 @@
-namespace Au5.Application.Models.Messages;
+namespace Au5.Application.Messages;
 
 public class PauseAndPlayTranscriptionMessage : Message
 {
