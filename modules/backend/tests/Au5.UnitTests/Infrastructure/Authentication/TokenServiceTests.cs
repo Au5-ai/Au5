@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using Au5.Application.Common.Abstractions;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Au5.UnitTests.Infrastructure.Authentication;
@@ -6,6 +7,7 @@ namespace Au5.UnitTests.Infrastructure.Authentication;
 public class TokenServiceTests
 {
 	private readonly JwtSettings _jwtSettings;
+	private readonly ICacheProvider _caheProvider;
 	private readonly IOptions<JwtSettings> _jwtOptions;
 	private readonly TokenService _tokenService;
 
@@ -19,10 +21,12 @@ public class TokenServiceTests
 			ExpiryMinutes = 60
 		};
 		var optionsMock = new Mock<IOptions<JwtSettings>>();
+		var cacheProviderMock = new Mock<ICacheProvider>();
 		optionsMock.Setup(o => o.Value).Returns(_jwtSettings);
 		_jwtOptions = optionsMock.Object;
+		_caheProvider = cacheProviderMock.Object;
 
-		_tokenService = new TokenService(_jwtOptions);
+		_tokenService = new TokenService(_jwtOptions, _caheProvider);
 	}
 
 	[Fact]
