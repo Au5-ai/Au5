@@ -3391,7 +3391,7 @@ class UIHandlers {
     this.handleMessage = this.handleMessage.bind(this);
   }
   init() {
-    return this.handleJoin().handleReload().handleReactions().handleThemeToggle().handleOptions().handleGithubLink().handleDiscordLink().handleAddBot().handleMessageSend().handleBotPlayPauseActions().handleTooltips();
+    return this.handleJoin().handleReload().handleReactions().handleThemeToggle().handleOptions().handleGithubLink().handleDiscordLink().handleAddIssueLink().handleAddBot().handleMessageSend().handleBotPlayPauseActions().handleTooltips();
   }
   handleJoin() {
     const btn = document.getElementById("au5-btn-joinMeeting");
@@ -3495,6 +3495,11 @@ class UIHandlers {
   handleDiscordLink() {
     const btn = document.getElementById("discord-link");
     btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://discord.com/channels/1385091638422016101", "_blank"));
+    return this;
+  }
+  handleAddIssueLink() {
+    const btn = document.getElementById("issue-link");
+    btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://github.com/Au5-ai/Au5/issues", "_blank"));
     return this;
   }
   handleAddBot() {

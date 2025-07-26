@@ -40,6 +40,7 @@ export class UIHandlers {
       .handleOptions()
       .handleGithubLink()
       .handleDiscordLink()
+      .handleAddIssueLink()
       .handleAddBot()
       .handleMessageSend()
       .handleBotPlayPauseActions()
@@ -167,6 +168,12 @@ export class UIHandlers {
   private handleDiscordLink(): this {
     const btn = document.getElementById("discord-link");
     btn?.addEventListener("click", () => window.open("https://discord.com/channels/1385091638422016101", "_blank"));
+    return this;
+  }
+
+  private handleAddIssueLink(): this {
+    const btn = document.getElementById("issue-link");
+    btn?.addEventListener("click", () => window.open("https://github.com/Au5-ai/Au5/issues", "_blank"));
     return this;
   }
 
