@@ -6,7 +6,6 @@ using Au5.Infrastructure.Providers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using StackExchange.Redis;
 
 namespace Au5.Infrastructure;
 
@@ -33,8 +32,12 @@ public static class ConfigureServices
 
 		services.AddScoped<ICacheProvider, RedisCacheProvider>();
 		services.AddScoped<ITokenService, TokenService>();
-		services.AddSingleton<IConnectionMultiplexer>(sp =>
-			ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis")!));
+
+		services.AddStackExchangeRedisCache(options =>
+		{
+			options.Configuration = configuration.GetConnectionString("Redis")!;
+			options.InstanceName = "Au5:";
+		});
 
 		return services;
 	}
