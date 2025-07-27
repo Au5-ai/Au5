@@ -1,6 +1,5 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using Au5.Application.Common.Abstractions;
+using Au5.Shared;
 
 namespace Au5.BackEnd.Middlewares;
 
@@ -17,8 +16,8 @@ public class JwtBlacklistMiddleware
 	{
 		if (context.User.Identity.IsAuthenticated)
 		{
-			var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-			var jti = context.User.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+			var userId = context.User.FindFirst(ClaimConstants.UserId)?.Value;
+			var jti = context.User.FindFirst(ClaimConstants.Jti)?.Value;
 
 			if (!string.IsNullOrEmpty(userId) && !string.IsNullOrEmpty(jti))
 			{
