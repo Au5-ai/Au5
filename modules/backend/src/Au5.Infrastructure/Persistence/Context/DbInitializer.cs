@@ -28,9 +28,9 @@ public class DBInitialzer
 				{
 					await _dbContext.Database.MigrateAsync(stoppingToken);
 				}
-
-				await TrySeedAsync(stoppingToken);
 			}
+
+			await TrySeedAsync(stoppingToken);
 #endif
 		}
 		catch (Exception e)
