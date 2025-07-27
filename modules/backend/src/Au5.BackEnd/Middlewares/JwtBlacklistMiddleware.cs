@@ -12,7 +12,7 @@ public class JwtBlacklistMiddleware
 		_next = next;
 	}
 
-	public async Task Invoke(HttpContext context, ITokenService tokenService)
+	public async Task Invoke(HttpContext context, ITokenService tokenService, IProblemDetailsService problemDetailsService)
 	{
 		if (context.User.Identity.IsAuthenticated)
 		{
@@ -25,6 +25,19 @@ public class JwtBlacklistMiddleware
 				if (isBlacklisted)
 				{
 					context.Response.StatusCode = 401;
+					await problemDetailsService.WriteAsync(
+						new ProblemDetailsContext
+						{
+							HttpContext = context,
+							ProblemDetails = new ProblemDetails
+							{
+								Status = StatusCodes.Status401Unauthorized,
+								Title = "Unauthorized",
+								Detail = "This token has been blacklisted.",
+								Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1"
+							}
+						});
+
 					return;
 				}
 			}
