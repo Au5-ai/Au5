@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Au5.Application.Common.Abstractions;
-using StackExchange.Redis;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Au5.Infrastructure.Providers;
 
@@ -10,44 +10,60 @@ public class RedisCacheProvider : ICacheProvider
 	{
 		PropertyNameCaseInsensitive = true,
 		ReadCommentHandling = JsonCommentHandling.Skip,
-		AllowTrailingCommas = true,
+		AllowTrailingCommas = true
 	};
 
-	private readonly string _keyPrefix = "Au5_";
+	private readonly IDistributedCache _cache;
 
-	private readonly IDatabase _db;
-
-	public RedisCacheProvider(IConnectionMultiplexer connectionMultiplexer)
+	public RedisCacheProvider(IDistributedCache cache)
 	{
-		_db = connectionMultiplexer.GetDatabase();
+		_cache = cache ?? throw new ArgumentNullException(nameof(cache));
 	}
 
 	public async Task SetAsync<T>(string key, T value, TimeSpan expiration)
+	{
+		ValidateKey(key);
+		ArgumentNullException.ThrowIfNull(value, nameof(value));
+
+		var json = JsonSerializer.Serialize(value, _jsonOptions);
+		var options = new DistributedCacheEntryOptions
+		{
+			AbsoluteExpirationRelativeToNow = expiration
+		};
+
+		await _cache.SetStringAsync(key, json, options);
+	}
+
+	public async Task<T?> GetAsync<T>(string key)
+	{
+		ValidateKey(key);
+
+		var json = await _cache.GetStringAsync(key);
+		return string.IsNullOrEmpty(json)
+			? default
+			: JsonSerializer.Deserialize<T>(json, _jsonOptions);
+	}
+
+	public async Task RemoveAsync(string key)
+	{
+		ValidateKey(key);
+
+		await _cache.RemoveAsync(key);
+	}
+
+	public async Task<bool> ExistsAsync(string key)
+	{
+		ValidateKey(key);
+
+		var value = await _cache.GetStringAsync(key);
+		return !string.IsNullOrEmpty(value);
+	}
+
+	private static void ValidateKey(string key)
 	{
 		if (string.IsNullOrWhiteSpace(key))
 		{
 			throw new ArgumentException("Cache key cannot be null, empty, or whitespace.", nameof(key));
 		}
-
-		var json = JsonSerializer.Serialize(value, _jsonOptions);
-		await _db.StringSetAsync(AddPrefix(key), json, expiration);
 	}
-
-	public async Task<T?> GetAsync<T>(string key)
-	{
-		var value = await _db.StringGetAsync(AddPrefix(key));
-		return value.IsNullOrEmpty ? default : JsonSerializer.Deserialize<T>(value!, _jsonOptions);
-	}
-
-	public async Task RemoveAsync(string key)
-	{
-		await _db.KeyDeleteAsync(AddPrefix(key));
-	}
-
-	public async Task<bool> ExistsAsync(string key)
-	{
-		return await _db.KeyExistsAsync(AddPrefix(key));
-	}
-
-	private string AddPrefix(string key) => $"{_keyPrefix}{key}";
 }
