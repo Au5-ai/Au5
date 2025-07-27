@@ -14,7 +14,7 @@ public sealed class AuthenticationHandler(IApplicationDbContext dbContext, IToke
 			.FirstOrDefaultAsync(u => u.Email == request.Username && u.IsActive, cancellationToken)
 			.ConfigureAwait(false);
 
-		if (user is null || user.Password != HashPassword(request.Password, user.Id))
+		if (user is null || user.Password != HashHelper.HashPassword(request.Password, user.Id))
 		{
 			return Error.Unauthorized(description: "Username or password is incorrect.");
 		}
@@ -30,12 +30,5 @@ public sealed class AuthenticationHandler(IApplicationDbContext dbContext, IToke
 						PictureUrl = user.PictureUrl,
 						HasAccount = true,
 					});
-	}
-
-	private static string HashPassword(string password, Guid salt)
-	{
-		var salted = System.Text.Encoding.UTF8.GetBytes(password + salt);
-		var hash = System.Security.Cryptography.SHA256.HashData(salted);
-		return Convert.ToBase64String(hash);
 	}
 }
