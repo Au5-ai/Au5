@@ -123,6 +123,9 @@
   <data name="Failed_To_Config_Company" xml:space="preserve">
     <value>Failed To Config Company</value>
   </data>
+  <data name="InvalidUsernameOrPassword" xml:space="preserve">
+    <value>Username or password is incorrect.</value>
+  </data>
   <data name="Invalid_Direction" xml:space="preserve">
     <value>Direction must be either 'ltr' or 'rtl'.</value>
   </data>
