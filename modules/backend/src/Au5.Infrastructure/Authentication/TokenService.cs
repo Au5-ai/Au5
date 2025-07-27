@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Au5.Application.Common.Abstractions;
+using Au5.Shared;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -25,10 +26,10 @@ public class TokenService : ITokenService
 
 		var claims = new[]
 		{
-			new Claim(ClaimTypes.NameIdentifier, extensionId.ToString()),
-			new Claim(ClaimTypes.Name, fullName ?? string.Empty),
-			new Claim(ClaimTypes.Role, role),
-			new Claim(JwtRegisteredClaimNames.Jti, jti)
+			new Claim(ClaimConstants.UserId, extensionId.ToString()),
+			new Claim(ClaimConstants.Name, fullName ?? string.Empty),
+			new Claim(ClaimConstants.Role, role),
+			new Claim(ClaimConstants.Jti, jti)
 		};
 
 		var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.SecretKey));

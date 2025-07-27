@@ -1,7 +1,6 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using Au5.Application.Common.Abstractions;
 using Au5.Application.Features.Authentication;
+using Au5.Shared;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
@@ -19,9 +18,9 @@ public class AuthenticationController(ISender mediator, ITokenService tokenServi
 	[HttpPost("logout")]
 	public async Task<IActionResult> Logout()
 	{
-		var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-		var jti = User.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
-		var expUnix = long.Parse(User.FindFirst(JwtRegisteredClaimNames.Exp).Value);
+		var userId = User.FindFirst(ClaimConstants.UserId)?.Value;
+		var jti = User.FindFirst(ClaimConstants.Jti)?.Value;
+		var expUnix = long.Parse(User.FindFirst(ClaimConstants.Exp).Value);
 		var expiry = DateTimeOffset.FromUnixTimeSeconds(expUnix).UtcDateTime;
 
 		await tokenService.BlacklistTokenAsync(userId, jti, expiry);
