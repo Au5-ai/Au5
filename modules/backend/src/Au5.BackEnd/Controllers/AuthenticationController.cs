@@ -20,11 +20,22 @@ public class AuthenticationController(ISender mediator, ITokenService tokenServi
 	{
 		var userId = User.FindFirst(ClaimConstants.UserId)?.Value;
 		var jti = User.FindFirst(ClaimConstants.Jti)?.Value;
-		var expUnix = long.Parse(User.FindFirst(ClaimConstants.Exp).Value);
-		var expiry = DateTimeOffset.FromUnixTimeSeconds(expUnix).UtcDateTime;
+		var expClaim = User.FindFirst(ClaimConstants.Exp)?.Value;
 
+		if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(jti) || string.IsNullOrEmpty(expClaim) || !long.TryParse(expClaim, out var expUnix))
+		{
+			return BadRequest(new ProblemDetails
+			{
+				Title = "Invalid token",
+				Status = StatusCodes.Status400BadRequest,
+				Detail = "The access token is invalid or improperly formatted.",
+				Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1"
+			});
+		}
+
+		var expiry = DateTimeOffset.FromUnixTimeSeconds(expUnix).UtcDateTime;
 		await tokenService.BlacklistTokenAsync(userId, jti, expiry);
 
-		return Ok("Logged out");
+		return Ok(new { message = "Logged out successfully" });
 	}
 }
