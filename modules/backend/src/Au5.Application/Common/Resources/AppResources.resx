@@ -117,22 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CompanyAlreadyConfigured" xml:space="preserve">
-    <value>CompanyAlreadyConfigured, You can set ForceUpdate=true.</value>
+  <data name="OrganizationAlreadyConfigured" xml:space="preserve">
+    <value>Organization Already Configured , You can set ForceUpdate=true.</value>
   </data>
-  <data name="Failed_To_Config_Company" xml:space="preserve">
+  <data name="FailedToConfigOrganization" xml:space="preserve">
     <value>Failed To Config Company</value>
   </data>
   <data name="InvalidUsernameOrPassword" xml:space="preserve">
     <value>Username or password is incorrect.</value>
   </data>
-  <data name="Invalid_Direction" xml:space="preserve">
+  <data name="InvalidDirection" xml:space="preserve">
     <value>Direction must be either 'ltr' or 'rtl'.</value>
   </data>
-  <data name="Invalid_Language_Format" xml:space="preserve">
+  <data name="InvalidLanguageFormat" xml:space="preserve">
     <value>InvalidLanguageFormat</value>
   </data>
-  <data name="Invalid_Url" xml:space="preserve">
+  <data name="InvalidUrl" xml:space="preserve">
     <value>InvalidUrl</value>
   </data>
   <data name="Required" xml:space="preserve">

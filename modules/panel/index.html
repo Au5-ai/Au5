@@ -112,15 +112,28 @@
           .then((data) => {
             if (data.accessToken) {
               document.getElementById("token").value = data.accessToken;
-              document.getElementById("Id").value = data.participant.id || "";
-              document.getElementById("fullName").value =
-                data.participant.fullName || "";
-              document.getElementById("pictureUrl").value =
-                data.participant.pictureUrl || "";
-              document.getElementById("preview").src =
-                data.participant.pictureUrl || "";
               document.getElementById("login").style.display = "none";
               document.getElementById("config").style.display = "block";
+
+              fetch("http://localhost:1366/user/me", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${data.accessToken}`,
+                },
+                body: JSON.stringify({ username, password }),
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                  document.getElementById("Id").value =
+                    data.participant.id || "";
+                  document.getElementById("fullName").value =
+                    data.participant.fullName || "";
+                  document.getElementById("pictureUrl").value =
+                    data.participant.pictureUrl || "";
+                  document.getElementById("preview").src =
+                    data.participant.pictureUrl || "";
+                });
             } else {
               errorDiv.textContent = "Login failed";
             }

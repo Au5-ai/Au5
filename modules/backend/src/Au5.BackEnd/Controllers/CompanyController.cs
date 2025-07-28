@@ -1,16 +1,16 @@
-using Au5.Application.Features.ConfigCompany.Init;
+using Au5.Application.Features.Org.Config;
 
 namespace Au5.BackEnd.Controllers;
 
-public class CompanyController(ISender mediator) : BaseController
+public class OrgController(ISender mediator) : BaseController
 {
 	/// <summary>
 	/// Initializes the company configuration.
 	/// </summary>
 	/// <param name="command">The command containing the company configuration details.</param>
 	/// <returns>A result indicating success or failure.</returns>
-	[HttpPost("init")]
-	public async Task<IActionResult> InitCompany([FromBody] InitCompanyCommand command)
+	[HttpPost("config")]
+	public async Task<IActionResult> InitCompany([FromBody] ConfigOrganizationCommand command)
 	{
 		return Ok(await mediator.Send(command));
 	}
