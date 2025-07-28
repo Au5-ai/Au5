@@ -141,4 +141,7 @@
   <data name="UnAuthorizedAction" xml:space="preserve">
     <value>Unauthorized user, You can't do this action.</value>
   </data>
+  <data name="OrganizationIsNotConfigured" xml:space="preserve">
+    <value>OrganizationIsNotConfigured</value>
+  </data>
 </root>

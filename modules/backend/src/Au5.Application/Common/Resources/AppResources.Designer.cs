@@ -115,6 +115,15 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to OrganizationIsNotConfigured.
+        /// </summary>
+        internal static string OrganizationIsNotConfigured {
+            get {
+                return ResourceManager.GetString("OrganizationIsNotConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to property can not be empty.
         /// </summary>
         internal static string Required {

@@ -1,8 +1,11 @@
+using System.Text.Json.Serialization;
+
 namespace Au5.Domain.Entities;
 
 [Entity]
 public class Organization
 {
+	[JsonIgnore]
 	public Guid Id { get; set; }
 
 	public string Name { get; set; }
@@ -17,6 +20,7 @@ public class Organization
 
 	public string ServiceBaseUrl { get; set; }
 
+	[JsonIgnore]
 	public string OpenAIToken { get; set; }
 
 	public string PanelUrl { get; set; }

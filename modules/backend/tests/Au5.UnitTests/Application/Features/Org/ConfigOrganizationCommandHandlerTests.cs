@@ -40,6 +40,8 @@ public class ConfigOrganizationCommandHandlerTests
 
 		var result = await _handler.Handle(command, CancellationToken.None);
 
+		dbSet.Verify(x => x.Add(It.IsAny<Organization>()), Times.Never);
+		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
 		Assert.False(result.IsSuccess);
 		Assert.Equal("Organization Already Configured , You can set ForceUpdate=true.", result.Error.Description);
 	}
@@ -80,6 +82,8 @@ public class ConfigOrganizationCommandHandlerTests
 		Assert.Equal("http=//service", org.ServiceBaseUrl);
 		Assert.Equal("http=//panel", org.PanelUrl);
 		Assert.Equal("token", org.OpenAIToken);
+		dbSet.Verify(x => x.Add(It.IsAny<Organization>()), Times.Never);
+		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 	}
 
 	[Fact]
@@ -106,6 +110,8 @@ public class ConfigOrganizationCommandHandlerTests
 
 		var result = await _handler.Handle(command, CancellationToken.None);
 
+		dbSet.Verify(x => x.Add(It.IsAny<Organization>()), Times.Once);
+		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 		Assert.True(result.IsSuccess);
 		Assert.Null(result.Error.Description);
 	}
@@ -134,6 +140,8 @@ public class ConfigOrganizationCommandHandlerTests
 
 		var result = await _handler.Handle(command, CancellationToken.None);
 
+		dbSet.Verify(x => x.Add(It.IsAny<Organization>()), Times.Once);
+		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 		Assert.False(result.IsSuccess);
 		Assert.Equal("Failed To Config Company", result.Error.Description);
 	}
