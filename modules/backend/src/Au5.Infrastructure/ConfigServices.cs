@@ -2,6 +2,7 @@ using Ardalis.GuardClauses;
 using Au5.Application.Common.Abstractions;
 using Au5.Infrastructure.Authentication;
 using Au5.Infrastructure.Persistence.Context;
+using Au5.Infrastructure.Providers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,7 +30,14 @@ public static class ConfigureServices
 				(db) => { db.MigrationsHistoryTable("MigrationHistory"); });
 		});
 
+		services.AddScoped<ICacheProvider, RedisCacheProvider>();
 		services.AddScoped<ITokenService, TokenService>();
+
+		services.AddStackExchangeRedisCache(options =>
+		{
+			options.Configuration = configuration.GetConnectionString("Redis")!;
+			options.InstanceName = "Au5:";
+		});
 
 		return services;
 	}

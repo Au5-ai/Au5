@@ -56,6 +56,32 @@ public static class ConfigServices
 					}
 
 					return Task.CompletedTask;
+				},
+
+				OnChallenge = async context =>
+				{
+					if (!context.Handled)
+					{
+						var problemDetailsService = context.HttpContext.RequestServices
+							.GetRequiredService<IProblemDetailsService>();
+
+						context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+						context.Response.ContentType = "application/problem+json";
+
+						await problemDetailsService.WriteAsync(new ProblemDetailsContext
+						{
+							HttpContext = context.HttpContext,
+							ProblemDetails = new ProblemDetails
+							{
+								Status = StatusCodes.Status401Unauthorized,
+								Title = "Unauthorized",
+								Detail = "Authentication token is missing or invalid.",
+								Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1"
+							}
+						});
+
+						context.HandleResponse();
+					}
 				}
 			};
 		});
