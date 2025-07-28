@@ -4,7 +4,7 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace Au5.Infrastructure.Providers;
 
-public class RedisCacheProvider : ICacheProvider
+public class DistributedCacheCacheProvider : ICacheProvider
 {
 	private static readonly JsonSerializerOptions _jsonOptions = new()
 	{
@@ -15,7 +15,7 @@ public class RedisCacheProvider : ICacheProvider
 
 	private readonly IDistributedCache _cache;
 
-	public RedisCacheProvider(IDistributedCache cache)
+	public DistributedCacheCacheProvider(IDistributedCache cache)
 	{
 		_cache = cache ?? throw new ArgumentNullException(nameof(cache));
 	}

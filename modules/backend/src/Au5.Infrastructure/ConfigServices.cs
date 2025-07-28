@@ -30,7 +30,7 @@ public static class ConfigureServices
 				(db) => { db.MigrationsHistoryTable("MigrationHistory"); });
 		});
 
-		services.AddScoped<ICacheProvider, RedisCacheProvider>();
+		services.AddScoped<ICacheProvider, DistributedCacheCacheProvider>();
 		services.AddScoped<ITokenService, TokenService>();
 
 		services.AddStackExchangeRedisCache(options =>
