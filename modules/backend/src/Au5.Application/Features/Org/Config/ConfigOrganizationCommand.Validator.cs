@@ -40,6 +40,10 @@ public class ConfigOrganizationCommandValiadtor : AbstractValidator<ConfigOrgani
 						 (temp.Scheme == Uri.UriSchemeHttp || temp.Scheme == Uri.UriSchemeHttps))
 			.WithMessage(AppResources.InvalidUrl);
 
+		RuleFor(x => x.OpenAIToken)
+			.NotEmpty()
+			.WithMessage(AppResources.Required);
+
 		RuleFor(x => x.HubUrl)
 			.NotEmpty()
 			.WithMessage(AppResources.Required)
