@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Au5.Application.Common.Abstractions;
+using Au5.Application.Features.Authentication;
 using Au5.Shared;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -20,7 +21,7 @@ public class TokenService : ITokenService
 		_cacheProvider = cacheProvider;
 	}
 
-	public string GenerateToken(Guid extensionId, string fullName, string role)
+	public TokenResponse GenerateToken(Guid extensionId, string fullName, string role)
 	{
 		var jti = Guid.NewGuid().ToString();
 
@@ -42,7 +43,7 @@ public class TokenService : ITokenService
 			expires: DateTime.UtcNow.AddMinutes(_jwt.ExpiryMinutes),
 			signingCredentials: creds);
 
-		return new JwtSecurityTokenHandler().WriteToken(token);
+		return new TokenResponse(new JwtSecurityTokenHandler().WriteToken(token), _jwt.ExpiryMinutes * 60, string.Empty, "Bearer");
 	}
 
 	public async Task BlacklistTokenAsync(string userId, string jti, DateTime expiry)

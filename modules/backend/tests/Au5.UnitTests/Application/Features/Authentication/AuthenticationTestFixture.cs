@@ -55,8 +55,7 @@ public class AuthenticationTestFixture
 	public AuthenticationTestFixture WithToken(string token = "fake-token")
 	{
 		MockTokenService.Setup(ts => ts.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()))
-						.Returns(token);
-
+						.Returns(new TokenResponse(token, 3600, string.Empty, "Bearer"));
 		return this;
 	}
 

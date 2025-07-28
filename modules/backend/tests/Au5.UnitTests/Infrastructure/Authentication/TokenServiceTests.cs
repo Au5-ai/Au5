@@ -37,9 +37,9 @@ public class TokenServiceTests
 		var participantName = "Test User";
 		var role = "Admin";
 
-		var token = _tokenService.GenerateToken(participantId, participantName, role);
+		var tokenResponse = _tokenService.GenerateToken(participantId, participantName, role);
 
-		Assert.False(string.IsNullOrWhiteSpace(token));
+		Assert.False(string.IsNullOrWhiteSpace(tokenResponse.AccessToken));
 
 		var handler = new JwtSecurityTokenHandler();
 		var key = Encoding.UTF8.GetBytes(_jwtSettings.SecretKey);
@@ -56,7 +56,7 @@ public class TokenServiceTests
 			ClockSkew = TimeSpan.Zero
 		};
 
-		handler.ValidateToken(token, validationParameters, out var validatedToken);
+		handler.ValidateToken(tokenResponse.AccessToken, validationParameters, out var validatedToken);
 		var jwtToken = (JwtSecurityToken)validatedToken;
 
 		Assert.Equal(_jwtSettings.Issuer, jwtToken.Issuer);

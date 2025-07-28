@@ -122,5 +122,14 @@ namespace Au5.Application.Common.Resources {
                 return ResourceManager.GetString("Required", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unauthorized user, You can&apos;t do this action..
+        /// </summary>
+        internal static string UnAuthorizedAction {
+            get {
+                return ResourceManager.GetString("UnAuthorizedAction", resourceCulture);
+            }
+        }
     }
 }

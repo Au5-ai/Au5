@@ -138,4 +138,7 @@
   <data name="Required" xml:space="preserve">
     <value>property can not be empty</value>
   </data>
+  <data name="UnAuthorizedAction" xml:space="preserve">
+    <value>Unauthorized user, You can't do this action.</value>
+  </data>
 </root>
