@@ -1,10 +1,10 @@
 using Au5.Application.Common.Resources;
 
-namespace Au5.Application.Features.ConfigCompany.Init;
+namespace Au5.Application.Features.Org.Config;
 
-public class InitCompanyCommandValiadtor : AbstractValidator<InitCompanyCommand>
+public class ConfigOrganizationCommandValiadtor : AbstractValidator<ConfigOrganizationCommand>
 {
-	public InitCompanyCommandValiadtor()
+	public ConfigOrganizationCommandValiadtor()
 	{
 		RuleFor(x => x.Name)
 			.NotEmpty()
@@ -19,32 +19,36 @@ public class InitCompanyCommandValiadtor : AbstractValidator<InitCompanyCommand>
 			.WithMessage(AppResources.Required)
 			.Must(uri => Uri.TryCreate(uri, UriKind.Absolute, out var temp) &&
 						 (temp.Scheme == Uri.UriSchemeHttp || temp.Scheme == Uri.UriSchemeHttps))
-			.WithMessage(AppResources.Invalid_Url);
+			.WithMessage(AppResources.InvalidUrl);
 
 		RuleFor(x => x.Direction)
 			.NotEmpty()
 			.WithMessage(AppResources.Required)
 			.Must(dir => dir is "ltr" or "rtl")
-			.WithMessage(AppResources.Invalid_Direction);
+			.WithMessage(AppResources.InvalidDirection);
 
 		RuleFor(x => x.Language)
 			.NotEmpty()
 			.WithMessage(AppResources.Required)
 			.Matches("^[a-z]{2}-[A-Z]{2}$")
-			.WithMessage(AppResources.Invalid_Language_Format);
+			.WithMessage(AppResources.InvalidLanguageFormat);
 
 		RuleFor(x => x.ServiceBaseUrl)
 			.NotEmpty()
 			.WithMessage(AppResources.Required)
 			.Must(uri => Uri.TryCreate(uri, UriKind.Absolute, out var temp) &&
 						 (temp.Scheme == Uri.UriSchemeHttp || temp.Scheme == Uri.UriSchemeHttps))
-			.WithMessage(AppResources.Invalid_Url);
+			.WithMessage(AppResources.InvalidUrl);
+
+		RuleFor(x => x.OpenAIToken)
+			.NotEmpty()
+			.WithMessage(AppResources.Required);
 
 		RuleFor(x => x.HubUrl)
 			.NotEmpty()
 			.WithMessage(AppResources.Required)
 			.Must(uri => Uri.TryCreate(uri, UriKind.Absolute, out var temp) &&
 						 (temp.Scheme == Uri.UriSchemeHttp || temp.Scheme == Uri.UriSchemeHttps))
-			.WithMessage(AppResources.Invalid_Url);
+			.WithMessage(AppResources.InvalidUrl);
 	}
 }

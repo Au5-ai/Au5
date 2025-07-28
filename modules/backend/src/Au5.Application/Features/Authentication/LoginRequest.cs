@@ -1,5 +1,9 @@
 namespace Au5.Application.Features.Authentication;
 
-public record LoginRequest(string Username, string Password) : IRequest<Result<LoginResponse>>;
+public record LoginRequest(string Username, string Password) : IRequest<Result<TokenResponse>>;
 
-public record LoginResponse(string AccessToken, Participant Participant);
+public record TokenResponse(
+    string AccessToken,
+    int ExpiresIn,
+    string? RefreshToken,
+    string TokenType);

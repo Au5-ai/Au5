@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.Authentication;
 
-public sealed class AuthenticationHandler(IApplicationDbContext dbContext, ITokenService tokenService) : IRequestHandler<LoginRequest, Result<LoginResponse>>
+public sealed class AuthenticationHandler(IApplicationDbContext dbContext, ITokenService tokenService) : IRequestHandler<LoginRequest, Result<TokenResponse>>
 {
 	private readonly IApplicationDbContext _dbContext = dbContext;
 	private readonly ITokenService _tokenService = tokenService;
 
-	public async ValueTask<Result<LoginResponse>> Handle(LoginRequest request, CancellationToken cancellationToken)
+	public async ValueTask<Result<TokenResponse>> Handle(LoginRequest request, CancellationToken cancellationToken)
 	{
 		var user = await _dbContext.Set<User>()
 			.FirstOrDefaultAsync(u => u.Email == request.Username && u.IsActive, cancellationToken)
@@ -20,16 +20,6 @@ public sealed class AuthenticationHandler(IApplicationDbContext dbContext, IToke
 			return Error.Unauthorized(description: AppResources.InvalidUsernameOrPassword);
 		}
 
-		var token = _tokenService.GenerateToken(user.Id, user.FullName, "User");
-
-		return new LoginResponse(
-					AccessToken: token,
-					Participant: new Participant
-					{
-						Id = user.Id,
-						FullName = user.FullName,
-						PictureUrl = user.PictureUrl,
-						HasAccount = true,
-					});
+		return _tokenService.GenerateToken(user.Id, user.FullName, "User");
 	}
 }

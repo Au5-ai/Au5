@@ -112,15 +112,49 @@
           .then((data) => {
             if (data.accessToken) {
               document.getElementById("token").value = data.accessToken;
-              document.getElementById("Id").value = data.participant.id || "";
-              document.getElementById("fullName").value =
-                data.participant.fullName || "";
-              document.getElementById("pictureUrl").value =
-                data.participant.pictureUrl || "";
-              document.getElementById("preview").src =
-                data.participant.pictureUrl || "";
               document.getElementById("login").style.display = "none";
               document.getElementById("config").style.display = "block";
+
+              fetch("http://localhost:1366/user/me", {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${data.accessToken}`,
+                },
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                  document.getElementById("Id").value =
+                    data.participant.id || "";
+                  document.getElementById("fullName").value =
+                    data.participant.fullName || "";
+                  document.getElementById("pictureUrl").value =
+                    data.participant.pictureUrl || "";
+                  document.getElementById("preview").src =
+                    data.participant.pictureUrl || "";
+                });
+
+              fetch("http://localhost:1366/organization/config", {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${data.accessToken}`,
+                },
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                  document.getElementById("baseUrl").value = data.baseUrl || "";
+                  document.getElementById("panelUrl").value =
+                    data.panelUrl || "";
+                  document.getElementById("hubUrl").value = data.hubUrl || "";
+                  document.getElementById("companyName").value =
+                    data.companyName || "";
+                  document.getElementById("botName").value = data.botName || "";
+                  document.getElementById("direction").value =
+                    data.direction || "";
+                  document.getElementById("language").value =
+                    data.language || "";
+                });
             } else {
               errorDiv.textContent = "Login failed";
             }

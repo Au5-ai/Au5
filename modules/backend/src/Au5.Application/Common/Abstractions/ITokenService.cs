@@ -1,8 +1,10 @@
+using Au5.Application.Features.Authentication;
+
 namespace Au5.Application.Common.Abstractions;
 
 public interface ITokenService
 {
-	string GenerateToken(Guid extensionId, string fullName, string role);
+	TokenResponse GenerateToken(Guid extensionId, string fullName, string role);
 
 	Task BlacklistTokenAsync(string userId, string jti, DateTime expiry);
 

@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Au5.Infrastructure.Persistence.Config;
 
-public class CompanyConfig : IEntityTypeConfiguration<Company>
+public class CompanyConfig : IEntityTypeConfiguration<Organization>
 {
-	public void Configure(EntityTypeBuilder<Company> builder)
+	public void Configure(EntityTypeBuilder<Organization> builder)
 	{
 		builder.HasKey(t => t.Id)
 			.HasName("PK_dbo_Company");
@@ -32,6 +32,10 @@ public class CompanyConfig : IEntityTypeConfiguration<Company>
 			.HasMaxLength(200);
 
 		builder.Property(t => t.PanelUrl)
+			.IsRequired()
+			.HasMaxLength(200);
+
+		builder.Property(t => t.OpenAIToken)
 			.IsRequired()
 			.HasMaxLength(200);
 
