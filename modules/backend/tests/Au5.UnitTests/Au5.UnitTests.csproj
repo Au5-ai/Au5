@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Application\Features\Meeting\AddBot\" />
+    <Folder Include="Infrastructure\Providers\" />
   </ItemGroup>
 
 </Project>
