@@ -62,10 +62,10 @@
       <input id="Id" value="" />
 
       <label for="token">jwt Token</label>
-      <input id="token" value="23f45e89-8b5a-5c55-9df7-240d78a3ce15" />
+      <input id="token" value="" />
 
       <label for="fullName">Full Name</label>
-      <input id="fullName" value="Mohammad Karimi" />
+      <input id="fullName" value="" />
 
       <label for="pictureUrl">Picture URL</label>
       <input id="pictureUrl" value="" />
@@ -73,25 +73,25 @@
 
       <!-- Service Info -->
       <label for="baseUrl">Base URL</label>
-      <input id="baseUrl" value="http://localhost:1366" />
+      <input id="baseUrl" value="" />
 
       <label for="panelUrl">Panel URL</label>
-      <input id="panelUrl" value="http://panel.localhost:1366" />
+      <input id="panelUrl" value="" />
 
       <label for="hubUrl">Hub URL</label>
-      <input id="hubUrl" value="http://localhost:1366/meetinghub" />
+      <input id="hubUrl" value="" />
 
       <label for="companyName">Company Name</label>
-      <input id="companyName" value="Asax Co" />
+      <input id="companyName" value="" />
 
       <label for="botName">Bot Name</label>
-      <input id="botName" value="Cando" />
+      <input id="botName" value="" />
 
       <label for="direction">Direction (ltr/rtl)</label>
-      <input id="direction" value="rtl" />
+      <input id="direction" value="" />
 
       <label for="language">Language</label>
-      <input id="language" value="fa-IR" />
+      <input id="language" value="" />
 
       <button onclick="sendConfig()">Send Config</button>
     </div>
@@ -124,17 +124,16 @@
               })
                 .then((res) => res.json())
                 .then((data) => {
-                  document.getElementById("Id").value =
-                    data.participant.id || "";
+                  document.getElementById("Id").value = data.id || "";
                   document.getElementById("fullName").value =
-                    data.participant.fullName || "";
+                    data.fullName || "";
                   document.getElementById("pictureUrl").value =
-                    data.participant.pictureUrl || "";
+                    data.pictureUrl || "";
                   document.getElementById("preview").src =
-                    data.participant.pictureUrl || "";
+                    data.pictureUrl || "";
                 });
 
-              fetch("http://localhost:1366/organization/config", {
+              fetch("http://localhost:1366/org/config", {
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json",
@@ -143,12 +142,13 @@
               })
                 .then((res) => res.json())
                 .then((data) => {
-                  document.getElementById("baseUrl").value = data.baseUrl || "";
+                  document.getElementById("baseUrl").value =
+                    data.serviceBaseUrl || "";
                   document.getElementById("panelUrl").value =
                     data.panelUrl || "";
                   document.getElementById("hubUrl").value = data.hubUrl || "";
                   document.getElementById("companyName").value =
-                    data.companyName || "";
+                    data.name || "";
                   document.getElementById("botName").value = data.botName || "";
                   document.getElementById("direction").value =
                     data.direction || "";
