@@ -33,4 +33,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Application\Features\Meeting\AddBot\" />
+  </ItemGroup>
+
 </Project>

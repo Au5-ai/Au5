@@ -49,8 +49,9 @@ public class LoginCommandValidatorTests
 	[Fact]
 	public void Should_NotHaveError_When_ValidIsCommand()
 	{
-		var command = new LoginCommand(Username: string.Empty, Password: "validPass123");
+		var command = new LoginCommand(Username: "mha.karimi@gmail.com", Password: "validPass123");
 		var result = _validator.TestValidate(command);
+
 		result.ShouldNotHaveAnyValidationErrors();
 	}
 }
