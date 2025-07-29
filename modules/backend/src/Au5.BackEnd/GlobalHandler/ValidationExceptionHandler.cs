@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Diagnostics;
 
 namespace Au5.BackEnd.GlobalHandler;
 
-internal sealed class ValidationExceptionHandler(IProblemDetailsService problemDetailsService) : IExceptionHandler
+public sealed class ValidationExceptionHandler(IProblemDetailsService problemDetailsService) : IExceptionHandler
 {
 	public async ValueTask<bool> TryHandleAsync(
 		HttpContext httpContext,
