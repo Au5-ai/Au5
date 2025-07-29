@@ -13,7 +13,7 @@ public class GetMyInfoQueryHandler(IApplicationDbContext applicationDbContext) :
 		var user = await _dbContext.Set<User>().FirstOrDefaultAsync(x => x.Id == request.UserId && x.IsActive, cancellationToken);
 		if (user == null)
 		{
-			Error.Unauthorized(AppResources.UnAuthorizedAction);
+			return	Error.Unauthorized(AppResources.UnAuthorizedAction);
 		}
 
 		return new Participant
