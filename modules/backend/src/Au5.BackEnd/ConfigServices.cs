@@ -13,7 +13,6 @@ public static class ConfigServices
 	public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration config)
 	{
 		services.Configure<JwtSettings>(config.GetSection(JWTSETTING));
-		services.AddSingleton<IUserIdProvider, UserIdProvider>();
 
 		var jwtSettings = config.GetSection(JWTSETTING).Get<JwtSettings>();
 
