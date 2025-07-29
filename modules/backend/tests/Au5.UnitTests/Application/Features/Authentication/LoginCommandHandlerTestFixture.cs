@@ -6,17 +6,17 @@ using MockQueryable.Moq;
 
 namespace Au5.UnitTests.Application.Features.Authentication;
 
-public class AuthenticationTestFixture
+public class LoginCommandHandlerTestFixture
 {
 	public Mock<IApplicationDbContext> MockDbContext { get; } = new();
 
 	public Mock<ITokenService> MockTokenService { get; } = new();
 
-	public AuthenticationHandler Handler { get; private set; }
+	public LoginCommandHandler Handler { get; private set; }
 
 	public User TestUser { get; private set; }
 
-	public AuthenticationTestFixture WithValidUser(string password = "secret")
+	public LoginCommandHandlerTestFixture WithValidUser(string password = "secret")
 	{
 		var userId = Guid.NewGuid();
 		TestUser = new User
@@ -34,7 +34,7 @@ public class AuthenticationTestFixture
 		return this;
 	}
 
-	public AuthenticationTestFixture WithNoActiveUsers(string password = "secret")
+	public LoginCommandHandlerTestFixture WithNoActiveUsers(string password = "secret")
 	{
 		var userId = Guid.NewGuid();
 		TestUser = new User
@@ -52,16 +52,16 @@ public class AuthenticationTestFixture
 		return this;
 	}
 
-	public AuthenticationTestFixture WithToken(string token = "fake-token")
+	public LoginCommandHandlerTestFixture WithToken(string token = "fake-token")
 	{
 		MockTokenService.Setup(ts => ts.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()))
 						.Returns(new TokenResponse(token, 3600, string.Empty, "Bearer"));
 		return this;
 	}
 
-	public AuthenticationHandler BuildHandler()
+	public LoginCommandHandler BuildHandler()
 	{
-		Handler = new AuthenticationHandler(MockDbContext.Object, MockTokenService.Object);
+		Handler = new LoginCommandHandler(MockDbContext.Object, MockTokenService.Object);
 		return Handler;
 	}
 }

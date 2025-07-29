@@ -10,7 +10,7 @@ public class AuthenticationController(ISender mediator, ITokenService tokenServi
 	[HttpPost("login")]
 	[AllowAnonymous]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	public async Task<IActionResult> Login([FromBody] LoginRequest requestModel, CancellationToken ct)
+	public async Task<IActionResult> Login([FromBody] LoginCommand requestModel, CancellationToken ct)
 	{
 		return Ok(await mediator.Send(requestModel, ct));
 	}

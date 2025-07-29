@@ -1,12 +1,8 @@
-using Au5.Application.Messages;
-
 namespace Au5.Application.Common.Abstractions;
 
 public interface IMeetingService
 {
 	Meeting AddUserToMeeting(UserJoinedInMeetingMessage userJoined);
-
-	void EndMeeting(string meetId);
 
 	void AddParticipantToMeet(List<Participant> users, string meetId);
 

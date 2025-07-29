@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.Authentication;
 
-public sealed class AuthenticationHandler(IApplicationDbContext dbContext, ITokenService tokenService) : IRequestHandler<LoginRequest, Result<TokenResponse>>
+public sealed class LoginCommandHandler(IApplicationDbContext dbContext, ITokenService tokenService) : IRequestHandler<LoginCommand, Result<TokenResponse>>
 {
 	private readonly IApplicationDbContext _dbContext = dbContext;
 	private readonly ITokenService _tokenService = tokenService;
 
-	public async ValueTask<Result<TokenResponse>> Handle(LoginRequest request, CancellationToken cancellationToken)
+	public async ValueTask<Result<TokenResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
 	{
 		var user = await _dbContext.Set<User>()
 			.FirstOrDefaultAsync(u => u.Email == request.Username && u.IsActive, cancellationToken)

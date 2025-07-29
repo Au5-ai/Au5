@@ -76,20 +76,6 @@ public class MeetingService : IMeetingService
 		}
 	}
 
-	public void EndMeeting(string meetId)
-	{
-		lock (LockObject)
-		{
-			var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetId);
-			if (meeting is null || meeting.Status == MeetingStatus.Ended)
-			{
-				return;
-			}
-
-			meeting.Status = MeetingStatus.Ended;
-		}
-	}
-
 	public string BotIsAdded(string meetId)
 	{
 		var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetId);

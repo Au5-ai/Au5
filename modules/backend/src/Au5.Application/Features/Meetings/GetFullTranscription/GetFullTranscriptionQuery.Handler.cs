@@ -1,5 +1,4 @@
 using Au5.Application.Common.Abstractions;
-using Au5.Application.Dtos.MeetingDtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.Meetings.GetFullTranscription;

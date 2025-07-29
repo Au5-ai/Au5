@@ -3,17 +3,17 @@ using Au5.Application.Features.Authentication;
 
 namespace Au5.UnitTests.Application.Features.Authentication;
 
-public class AuthenticationHandlerTests
+public class LoginCommandHandlerTests
 {
 	[Fact]
 	public async Task Should_ReturnToken_When_ValidUser()
 	{
-		var fixture = new AuthenticationTestFixture()
+		var fixture = new LoginCommandHandlerTestFixture()
 						.WithValidUser()
 						.WithToken("test-token");
 
 		var result = await fixture.BuildHandler()
-			.Handle(new LoginRequest(fixture.TestUser.Email, "secret"), CancellationToken.None);
+			.Handle(new LoginCommand(fixture.TestUser.Email, "secret"), CancellationToken.None);
 
 		Assert.Equal("test-token", result.Data.AccessToken);
 	}
@@ -21,12 +21,12 @@ public class AuthenticationHandlerTests
 	[Fact]
 	public async Task Should_ReturnUnauthorized_When_PasswordIncorrect()
 	{
-		var fixture = new AuthenticationTestFixture()
+		var fixture = new LoginCommandHandlerTestFixture()
 						.WithValidUser("correct-password")
 						.WithToken();
 
 		var result = await fixture.BuildHandler()
-			.Handle(new LoginRequest(fixture.TestUser.Email, "wrong-password"), CancellationToken.None);
+			.Handle(new LoginCommand(fixture.TestUser.Email, "wrong-password"), CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
 		Assert.Equal(HttpStatusCode.Unauthorized, result.Error.Type);
@@ -35,12 +35,12 @@ public class AuthenticationHandlerTests
 	[Fact]
 	public async Task Should_ReturnUnauthorized_When_UserDoesNotExist()
 	{
-		var fixture = new AuthenticationTestFixture()
+		var fixture = new LoginCommandHandlerTestFixture()
 						.WithValidUser()
 						.WithToken();
 
 		var result = await fixture.BuildHandler()
-			.Handle(new LoginRequest("nonexistent@example.com", "any"), CancellationToken.None);
+			.Handle(new LoginCommand("nonexistent@example.com", "any"), CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
 		Assert.Equal("Username or password is incorrect.", result.Error.Description);
@@ -49,12 +49,12 @@ public class AuthenticationHandlerTests
 	[Fact]
 	public async Task Should_ReturnUnauthorized_When_UserIsNotActive()
 	{
-		var fixture = new AuthenticationTestFixture()
+		var fixture = new LoginCommandHandlerTestFixture()
 						.WithNoActiveUsers()
 						.WithToken();
 
 		var result = await fixture.BuildHandler()
-			.Handle(new LoginRequest("test@example.com", "secret"), CancellationToken.None);
+			.Handle(new LoginCommand("test@example.com", "secret"), CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
 		Assert.Equal("Username or password is incorrect.", result.Error.Description);
