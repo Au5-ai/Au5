@@ -144,4 +144,10 @@
   <data name="OrganizationIsNotConfigured" xml:space="preserve">
     <value>OrganizationIsNotConfigured</value>
   </data>
+  <data name="InvalidUsernameFormat" xml:space="preserve">
+    <value>Invalid Username format.</value>
+  </data>
+  <data name="InvalidPasswordFormat" xml:space="preserve">
+    <value>Password must be at least 6 characters long.</value>
+  </data>
 </root>

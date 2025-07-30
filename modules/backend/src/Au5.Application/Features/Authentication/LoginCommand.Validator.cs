@@ -1,3 +1,5 @@
+using Au5.Application.Common.Resources;
+
 namespace Au5.Application.Features.Authentication;
 
 public class LoginCommandValidator : AbstractValidator<LoginCommand>
@@ -6,14 +8,14 @@ public class LoginCommandValidator : AbstractValidator<LoginCommand>
 	{
 		RuleFor(x => x.Username)
 			.NotEmpty()
-			.WithMessage("Username is required.")
+			.WithMessage(AppResources.Required)
 			.EmailAddress()
-			.WithMessage("Invalid Username format.");
+			.WithMessage(AppResources.InvalidUsernameFormat);
 
 		RuleFor(x => x.Password)
 			.NotEmpty()
-			.WithMessage("Password is required.")
+			.WithMessage(AppResources.Required)
 			.MinimumLength(6)
-			.WithMessage("Password must be at least 6 characters long.");
+			.WithMessage(AppResources.InvalidPasswordFormat);
 	}
 }

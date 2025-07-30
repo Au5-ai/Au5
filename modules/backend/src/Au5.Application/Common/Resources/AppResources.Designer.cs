@@ -88,11 +88,29 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Password must be at least 6 characters long..
+        /// </summary>
+        internal static string InvalidPasswordFormat {
+            get {
+                return ResourceManager.GetString("InvalidPasswordFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to InvalidUrl.
         /// </summary>
         internal static string InvalidUrl {
             get {
                 return ResourceManager.GetString("InvalidUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid Username format..
+        /// </summary>
+        internal static string InvalidUsernameFormat {
+            get {
+                return ResourceManager.GetString("InvalidUsernameFormat", resourceCulture);
             }
         }
         

@@ -64,7 +64,7 @@ public class GetMyInfoQueryHandlerTests
 
 		Assert.False(result.IsSuccess);
 		Assert.Null(result.Data);
-		Assert.Equal("An 'Unauthorized' error has occurred.", result.Error.Description);
+		Assert.Equal(AppResources.UnAuthorizedAction, result.Error.Description);
 	}
 
 	[Fact]
@@ -82,6 +82,6 @@ public class GetMyInfoQueryHandlerTests
 		Assert.False(result.IsSuccess);
 		Assert.Null(result.Data);
 		Assert.Equal(HttpStatusCode.Unauthorized, result.Error.Type);
-		Assert.Equal("An 'Unauthorized' error has occurred.", result.Error.Description);
+		Assert.Equal(AppResources.UnAuthorizedAction, result.Error.Description);
 	}
 }

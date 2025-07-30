@@ -43,7 +43,7 @@ public class ConfigOrganizationCommandHandlerTests
 		dbSet.Verify(x => x.Add(It.IsAny<Organization>()), Times.Never);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
 		Assert.False(result.IsSuccess);
-		Assert.Equal("Organization Already Configured , You can set ForceUpdate=true.", result.Error.Description);
+		Assert.Equal(AppResources.OrganizationAlreadyConfigured, result.Error.Description);
 	}
 
 	[Fact]
@@ -143,6 +143,6 @@ public class ConfigOrganizationCommandHandlerTests
 		dbSet.Verify(x => x.Add(It.IsAny<Organization>()), Times.Once);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 		Assert.False(result.IsSuccess);
-		Assert.Equal("Failed To Config Company", result.Error.Description);
+		Assert.Equal(AppResources.FailedToConfigOrganization, result.Error.Description);
 	}
 }

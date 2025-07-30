@@ -43,7 +43,7 @@ public class LoginCommandHandlerTests
 			.Handle(new LoginCommand("nonexistent@example.com", "any"), CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
-		Assert.Equal("Username or password is incorrect.", result.Error.Description);
+		Assert.Equal(AppResources.InvalidUsernameOrPassword, result.Error.Description);
 	}
 
 	[Fact]
@@ -57,6 +57,6 @@ public class LoginCommandHandlerTests
 			.Handle(new LoginCommand("test@example.com", "secret"), CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
-		Assert.Equal("Username or password is incorrect.", result.Error.Description);
+		Assert.Equal(AppResources.InvalidUsernameOrPassword, result.Error.Description);
 	}
 }

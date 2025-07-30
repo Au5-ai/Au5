@@ -13,17 +13,17 @@ public class LoginCommandValidatorTests
 		var result = _validator.TestValidate(command);
 
 		result.ShouldHaveValidationErrorFor(x => x.Username)
-			.WithErrorMessage("Username is required.");
+			.WithErrorMessage(AppResources.Required);
 	}
 
 	[Fact]
 	public void ShouldHaveError_When_UsernameIsNotEmail()
 	{
-		var command = new LoginCommand(Username: string.Empty, Password: "validPass123");
+		var command = new LoginCommand(Username: "username", Password: "validPass123");
 		var result = _validator.TestValidate(command);
 
 		result.ShouldHaveValidationErrorFor(x => x.Username)
-			.WithErrorMessage("Invalid Username format.");
+			.WithErrorMessage(AppResources.InvalidUsernameFormat);
 	}
 
 	[Fact]
@@ -33,7 +33,7 @@ public class LoginCommandValidatorTests
 		var result = _validator.TestValidate(command);
 
 		result.ShouldHaveValidationErrorFor(x => x.Password)
-			.WithErrorMessage("Password is required.");
+			.WithErrorMessage(AppResources.Required);
 	}
 
 	[Fact]
@@ -43,7 +43,7 @@ public class LoginCommandValidatorTests
 		var result = _validator.TestValidate(command);
 
 		result.ShouldHaveValidationErrorFor(x => x.Password)
-			.WithErrorMessage("Password must be at least 6 characters long.");
+			.WithErrorMessage(AppResources.InvalidPasswordFormat);
 	}
 
 	[Fact]
