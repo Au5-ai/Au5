@@ -28,7 +28,7 @@ public class GetMyInfoQueryHandlerTests
 			IsActive = true
 		};
 
-		var dbSet = new List<User> { user }.AsQueryable().BuildMockDbSet();
+		var dbSet = new List<User> { user }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<User>()).Returns(dbSet.Object);
 
 		var query = new GetMyInfoQuery(userId);
@@ -55,7 +55,7 @@ public class GetMyInfoQueryHandlerTests
 			IsActive = false
 		};
 
-		var dbSet = new List<User> { user }.AsQueryable().BuildMockDbSet();
+		var dbSet = new List<User> { user }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<User>()).Returns(dbSet.Object);
 
 		var query = new GetMyInfoQuery(userId);
@@ -72,7 +72,7 @@ public class GetMyInfoQueryHandlerTests
 	{
 		var userId = Guid.NewGuid();
 
-		var dbSet = new List<User> { }.AsQueryable().BuildMockDbSet();
+		var dbSet = new List<User> { }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<User>()).Returns(dbSet.Object);
 
 		var query = new GetMyInfoQuery(userId);

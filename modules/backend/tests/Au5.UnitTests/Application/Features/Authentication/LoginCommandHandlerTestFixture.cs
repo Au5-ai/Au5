@@ -28,7 +28,7 @@ public class LoginCommandHandlerTestFixture
 			IsActive = true,
 		};
 
-		var dbSet = new List<User> { TestUser }.AsQueryable().BuildMockDbSet();
+		var dbSet = new List<User> { TestUser }.BuildMockDbSet();
 		MockDbContext.Setup(db => db.Set<User>()).Returns(dbSet.Object);
 
 		return this;
@@ -46,7 +46,7 @@ public class LoginCommandHandlerTestFixture
 			IsActive = false,
 		};
 
-		var dbSet = new List<User> { TestUser }.AsQueryable().BuildMockDbSet();
+		var dbSet = new List<User> { TestUser }.BuildMockDbSet();
 		MockDbContext.Setup(db => db.Set<User>()).Returns(dbSet.Object);
 
 		return this;

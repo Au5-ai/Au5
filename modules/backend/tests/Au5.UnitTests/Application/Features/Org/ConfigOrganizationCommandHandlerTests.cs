@@ -22,7 +22,7 @@ public class ConfigOrganizationCommandHandlerTests
 	{
 		var org = new Organization { Id = Guid.NewGuid() };
 
-		var dbSet = new List<Organization> { org }.AsQueryable().BuildMockDbSet();
+		var dbSet = new List<Organization> { org }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<Organization>()).Returns(dbSet.Object);
 
 		var command = new ConfigOrganizationCommand()
@@ -51,7 +51,7 @@ public class ConfigOrganizationCommandHandlerTests
 	{
 		var org = new Organization { Id = Guid.NewGuid() };
 
-		var dbSet = new List<Organization> { org }.AsQueryable().BuildMockDbSet();
+		var dbSet = new List<Organization> { org }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<Organization>()).Returns(dbSet.Object);
 
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
@@ -89,7 +89,7 @@ public class ConfigOrganizationCommandHandlerTests
 	[Fact]
 	public async Task Should_AddsNewConfigAndReturnsSuccess_When_NoExistingConfig()
 	{
-		var dbSet = new List<Organization> { }.AsQueryable().BuildMockDbSet();
+		var dbSet = new List<Organization> { }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<Organization>()).Returns(dbSet.Object);
 
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
@@ -119,7 +119,7 @@ public class ConfigOrganizationCommandHandlerTests
 	[Fact]
 	public async Task Should_ReturnsFailure_When_SaveChangesFails()
 	{
-		var dbSet = new List<Organization> { }.AsQueryable().BuildMockDbSet();
+		var dbSet = new List<Organization> { }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<Organization>()).Returns(dbSet.Object);
 
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
