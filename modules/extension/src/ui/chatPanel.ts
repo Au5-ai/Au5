@@ -10,6 +10,14 @@ import {
 import {DateTime} from "../core/utils/datetime";
 const DEFAULT_AVATAR_URL = "assets/icons/default-avatar.jpg";
 export class ChatPanel {
+  private escapeHtml(text: string): string {
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
   private unauthorizedContainerEl: HTMLElement | null;
   private noActiveMeetingEl: HTMLElement | null;
   private activeMeetingButNotStartedEl: HTMLElement | null;
@@ -106,12 +114,12 @@ export class ChatPanel {
 
     <div class="au5-message-bubble">
       <div class="au5-message-header">
-        <span class="au5-message-sender">${entry.participant.fullName}</span>
+        <span class="au5-message-sender">${this.escapeHtml(entry.participant.fullName)}</span>
         <span class="au5-message-time">${DateTime.toHoursAndMinutes(entry.timestamp)}</span>
       </div>
 
       <div class="au5-message-text" style="direction: ${this.direction};">
-        ${entry.content}
+        ${this.escapeHtml(entry.content)}
       </div>
 
       ${this.getReactionsHtml(entry.blockId)} 
