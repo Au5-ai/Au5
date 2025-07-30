@@ -286,7 +286,7 @@ export class ChatPanel {
         if (url.length > 36) {
           displayUrl = url.slice(0, 36) + "(*)";
         }
-        el.innerHTML = displayUrl;
+        el.textContent = displayUrl;
       }
     });
   }
