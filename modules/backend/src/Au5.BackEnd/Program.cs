@@ -68,8 +68,6 @@ var app = builder.Build();
 	app.Run();
 }
 
-#if DEBUG
 public partial class Program
 {
 }
-#endif
