@@ -325,6 +325,17 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("User");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("edada1f7-cbda-4c13-8504-a57fe72d5960"),
+                            Email = "mha.karimi@gmail.com",
+                            FullName = "Mohammad Karimi",
+                            IsActive = true,
+                            Password = "0PVQk0Qiwb8gY3iUipZQKhBQgDMJ/1PJfmIDhG5hbrA=",
+                            PictureUrl = "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+                        });
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.AppliedReactions", b =>

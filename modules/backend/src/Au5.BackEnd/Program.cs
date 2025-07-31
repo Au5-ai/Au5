@@ -67,3 +67,9 @@ var app = builder.Build();
 	app.MapControllers();
 	app.Run();
 }
+
+#if DEBUG
+public partial class Program
+{
+}
+#endif

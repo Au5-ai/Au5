@@ -12,7 +12,7 @@ public static class ModelBuilderExtension
 {
 	public static void RegisterEntities(this ModelBuilder modelBuilder, params Assembly[] assemblies)
 	{
-		IEnumerable<Type> types = assemblies.SelectMany(x => x.GetExportedTypes())
+		var types = assemblies.SelectMany(x => x.GetExportedTypes())
 			.Where(x => x.IsClass
 						&& !x.IsAbstract
 						&& x.IsPublic
@@ -27,8 +27,26 @@ public static class ModelBuilderExtension
 	public static void SeedData(this ModelBuilder builder)
 	{
 		SeedReactions(builder);
+		SeedUsers(builder);
 
-		void SeedReactions(ModelBuilder modelBuilder)
+		static void SeedUsers(ModelBuilder builder)
+		{
+			builder.Entity<User>().HasData(
+	[
+	new()
+			{
+					Email = "mha.karimi@gmail.com",
+					IsActive = true,
+					FullName = "Mohammad Karimi",
+					Id = Guid.Parse("EDADA1F7-CBDA-4C13-8504-A57FE72D5960"),
+					PictureUrl = "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo",
+					Password = "0PVQk0Qiwb8gY3iUipZQKhBQgDMJ/1PJfmIDhG5hbrA="
+			}
+
+	]);
+		}
+
+		static void SeedReactions(ModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<Reaction>().HasData(
 				new Reaction { Id = 1, Type = "Task", Emoji = "⚡", ClassName = "reaction-task" },

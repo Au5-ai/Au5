@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250712162653_Edit.ReactionConfigs")]
-    partial class EditReactionConfigs
+    [Migration("20250731103455_InitDb")]
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,12 +39,12 @@ namespace Au5.Infrastructure.Migrations
                     b.Property<int>("ReactionId")
                         .HasColumnType("int");
 
-                    b.PrimitiveCollection<string>("Users")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_dbo_AppliedReactions");
 
                     b.HasIndex("EntryId");
+
+                    b.HasIndex("ReactionId");
 
                     b.ToTable("AppliedReactions");
                 });
@@ -66,6 +66,11 @@ namespace Au5.Infrastructure.Migrations
                         .HasColumnType("varchar(200)");
 
                     b.Property<string>("EntryType")
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("FullName")
                         .HasMaxLength(200)
                         .IsUnicode(false)
                         .HasColumnType("varchar(200)");
@@ -109,9 +114,6 @@ namespace Au5.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("CreatorUserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("HashToken")
                         .HasMaxLength(200)
                         .IsUnicode(false)
@@ -136,9 +138,69 @@ namespace Au5.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("PK_dbo_Meeting");
 
-                    b.HasIndex("CreatorUserId");
+                    b.HasIndex("BotInviterUserId");
 
                     b.ToTable("Meeting");
+                });
+
+            modelBuilder.Entity("Au5.Domain.Entities.Organization", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BotName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("Direction")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<string>("HubUrl")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("OpenAIToken")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("PanelUrl")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("ServiceBaseUrl")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
+
+                    b.HasKey("Id")
+                        .HasName("PK_dbo_Company");
+
+                    b.ToTable("Organization");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.ParticipantInMeeting", b =>
@@ -202,6 +264,29 @@ namespace Au5.Infrastructure.Migrations
                         .HasName("PK_dbo_Reaction");
 
                     b.ToTable("Reaction");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ClassName = "reaction-task",
+                            Emoji = "⚡",
+                            Type = "Task"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ClassName = "reaction-important",
+                            Emoji = "⭐",
+                            Type = "GoodPoint"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ClassName = "reaction-question",
+                            Emoji = "🎯",
+                            Type = "Goal"
+                        });
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.User", b =>
@@ -243,15 +328,73 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("User");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("edada1f7-cbda-4c13-8504-a57fe72d5960"),
+                            Email = "mha.karimi@gmail.com",
+                            FullName = "Mohammad Karimi",
+                            IsActive = true,
+                            Password = "0PVQk0Qiwb8gY3iUipZQKhBQgDMJ/1PJfmIDhG5hbrA=",
+                            PictureUrl = "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo"
+                        });
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.AppliedReactions", b =>
                 {
-                    b.HasOne("Au5.Domain.Entities.Entry", null)
+                    b.HasOne("Au5.Domain.Entities.Entry", "Entry")
                         .WithMany("Reactions")
                         .HasForeignKey("EntryId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("Au5.Domain.Entities.Reaction", "Reaction")
+                        .WithMany()
+                        .HasForeignKey("ReactionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.OwnsMany("Au5.Domain.Common.Participant", "Participants", b1 =>
+                        {
+                            b1.Property<int>("AppliedReactionsId")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            b1.Property<string>("FullName")
+                                .HasMaxLength(200)
+                                .IsUnicode(false)
+                                .HasColumnType("varchar(200)");
+
+                            b1.Property<bool>("HasAccount")
+                                .HasColumnType("bit");
+
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("PictureUrl")
+                                .HasMaxLength(200)
+                                .IsUnicode(false)
+                                .HasColumnType("varchar(200)");
+
+                            b1.HasKey("AppliedReactionsId", "__synthesizedOrdinal");
+
+                            b1.ToTable("AppliedReactions");
+
+                            b1.ToJson("Participants");
+
+                            b1.WithOwner()
+                                .HasForeignKey("AppliedReactionsId");
+                        });
+
+                    b.Navigation("Entry");
+
+                    b.Navigation("Participants");
+
+                    b.Navigation("Reaction");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.Entry", b =>
@@ -266,7 +409,7 @@ namespace Au5.Infrastructure.Migrations
                 {
                     b.HasOne("Au5.Domain.Entities.User", "User")
                         .WithMany("Meetings")
-                        .HasForeignKey("CreatorUserId")
+                        .HasForeignKey("BotInviterUserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
