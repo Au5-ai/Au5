@@ -21,7 +21,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import confetti from "canvas-confetti";
-import { CelebrationMessage } from "./celebration-message";
+import { CelebrationMessage } from "../components/celebration-message";
 
 const steps = [
   {
