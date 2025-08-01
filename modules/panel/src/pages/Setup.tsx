@@ -122,7 +122,6 @@ export default function SetUpPage() {
   const isLastStep = currentStep === steps.length;
 
   const handleCelebration = () => {
-    // Fire confetti from multiple angles
     const duration = 3000;
     const animationEnd = Date.now() + duration;
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
@@ -131,7 +130,7 @@ export default function SetUpPage() {
       return Math.random() * (max - min) + min;
     }
 
-    const interval: NodeJS.Timeout = setInterval(() => {
+    const interval = setInterval(() => {
       const timeLeft = animationEnd - Date.now();
 
       if (timeLeft <= 0) {
@@ -139,15 +138,12 @@ export default function SetUpPage() {
       }
 
       const particleCount = 50 * (timeLeft / duration);
-
-      // Fire from the left
       confetti({
         ...defaults,
         particleCount,
         origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
       });
 
-      // Fire from the right
       confetti({
         ...defaults,
         particleCount,
@@ -185,6 +181,24 @@ export default function SetUpPage() {
     }, 1000);
   };
 
+  const handleSendConfigsToExtension = () => {
+    window.postMessage(
+      {
+        source: "AU5_BACKOFFICE",
+        type: "CONFIG_UPDATE",
+        payload: JSON.parse(localStorage.getItem("au5-config") || "{}"),
+      },
+      "*"
+    );
+
+    // window.postMessage(
+    //   {
+    //     source: "AU5_BACKOFFICE",
+    //     type: "OPEN_SIDEPANEL",
+    //   },
+    //   "*"
+    // );
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-4xl mx-auto">
@@ -300,9 +314,13 @@ export default function SetUpPage() {
                           Configuration Panel
                         </p>
                       </div>
-                      <Button size="lg" className="w-full">
+                      <Button
+                        size="lg"
+                        className="w-full"
+                        onClick={() => handleSendConfigsToExtension()}
+                      >
                         <Settings className="h-4 w-4 mr-2" />
-                        Open Settings
+                        Config Extension
                       </Button>
                     </div>
                   )}

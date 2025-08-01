@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Sparkles, Trophy, Star } from "lucide-react"
+import { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Sparkles, Trophy, Star } from "lucide-react";
 
 interface CelebrationMessageProps {
-  show: boolean
-  onClose: () => void
+  show: boolean;
+  onClose: () => void;
 }
 
 export function CelebrationMessage({ show, onClose }: CelebrationMessageProps) {
-  const [isVisible, setIsVisible] = useState(false)
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     if (show) {
-      setIsVisible(true)
+      setIsVisible(true);
     }
-  }, [show])
+  }, [show]);
 
-  if (!isVisible) return null
+  if (!isVisible) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -33,11 +33,14 @@ export function CelebrationMessage({ show, onClose }: CelebrationMessageProps) {
             </div>
           </div>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">🎉 Congratulations! 🎉</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            🎉 Congratulations! 🎉
+          </h2>
 
           <p className="text-gray-600 mb-6">
-            You've successfully completed the onboarding process! Welcome to our amazing platform. You're now ready to
-            explore all the incredible features we have to offer.
+            You've successfully completed the onboarding process! Welcome to our
+            amazing platform. You're now ready to explore all the incredible
+            features we have to offer.
           </p>
 
           <div className="space-y-3">
@@ -46,13 +49,15 @@ export function CelebrationMessage({ show, onClose }: CelebrationMessageProps) {
               className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
             >
               <Sparkles className="h-4 w-4 mr-2" />
-              Start Exploring
+              Go to Dashboard
             </Button>
 
-            <p className="text-sm text-gray-500">🚀 Ready to take off? Let's build something amazing together!</p>
+            <p className="text-sm text-gray-500">
+              🚀 Ready to take off? Let's build something amazing together!
+            </p>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

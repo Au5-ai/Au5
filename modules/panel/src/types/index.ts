@@ -1,59 +1,28 @@
-export interface Meeting {
+export interface LoginCredentials {
+  username: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  accessToken?: string;
+  expiresIn?: number;
+  refreshToken?: string;
+  tokenType?: string;
+}
+
+export interface User {
   id: string;
-  title: string;
-  url: string;
-  platform: "google" | "zoom" | "teams";
-  status: "scheduled" | "active" | "completed" | "cancelled";
-  startTime: string;
-  endTime?: string;
-  participants: number;
-  botDisplayName: string;
-  language: string;
-  settings: MeetingSettings;
+  fullname: string;
+  pictureUrl: string;
+  hasAccount: boolean;
 }
 
-export interface MeetingSettings {
-  videoRecording: boolean;
-  audioRecording: boolean;
-  transcription: boolean;
-  transcriptionModel: string;
-}
-
-export interface Transcription {
-  id: string;
-  meetingId: string;
-  content: string;
-  timestamp: string;
-  speaker?: string;
-  confidence: number;
-}
-
-export interface BotConfig {
+export interface OrgConfig {
+  name: string;
+  botName: string;
   hubUrl: string;
-  platform: string;
-  meetingUrl: string;
-  botDisplayName: string;
-  meetId: string;
+  direction: string;
   language: string;
-  autoLeave: {
-    waitingEnter: number;
-    noParticipant: number;
-    allParticipantsLeft: number;
-  };
-  meetingSettings: MeetingSettings;
-}
-
-export interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
+  serviceBaseUrl: string;
+  panelUrl: string;
 }
