@@ -126,7 +126,6 @@ export const useLogin = () => {
 export const useCurrentUser = () => {
   return useQuery({
     queryKey: ["currentUser"],
-    queryFn: api.getCurrentUser,
     retry: false,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
