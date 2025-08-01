@@ -80,7 +80,7 @@ npm run dev
 Create a `.env` file in the root directory:
 
 ```env
-VITE_API_BASE_URL=http://localhost:1380
+VITE_API_BASE_URL=http://localhost:1366
 ```
 
 ## Available Scripts
