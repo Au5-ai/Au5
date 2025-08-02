@@ -84,7 +84,6 @@ export const authApi = {
     }),
 };
 
-// Token management utilities
 export const tokenStorage = {
   set: (token: string) => {
     localStorage.setItem("access_token", token);
@@ -103,12 +102,11 @@ export const tokenStorage = {
     if (!token) return false;
 
     try {
-      // Basic JWT expiration check (optional)
       const payload = JSON.parse(atob(token.split(".")[1]));
       const now = Date.now() / 1000;
       return payload.exp ? payload.exp > now : true;
     } catch {
-      return true; // If we can't parse, assume it's valid (let server validate)
+      return true;
     }
   },
 };

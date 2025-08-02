@@ -186,7 +186,13 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div
+      className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4"
+      style={{
+        background:
+          "linear-gradient(to bottom, #f8fbff 0%, #f4f0ec 28%, #f4eae7 66%, #f4e8ec 100%)",
+      }}
+    >
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">

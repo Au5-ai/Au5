@@ -23,7 +23,11 @@ export function useLogin() {
       // Invalidate queries that might need the new token
       queryClient.invalidateQueries();
 
-      // Redirect to dashboard or main page
+      const setup = localStorage.getItem("setup");
+      if (!setup) {
+        router.push("/setup");
+        return;
+      }
       router.push("/dashboard");
     },
     onError: (error) => {
