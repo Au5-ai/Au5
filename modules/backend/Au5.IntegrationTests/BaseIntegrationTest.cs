@@ -1,3 +1,4 @@
+using Au5.Application.Common.Abstractions;
 using Mediator;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,7 +13,10 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebApp>
 	{
 		_scope = factory.Services.CreateScope();
 		_serviceProvider = _scope.ServiceProvider;
+		DbContext = _serviceProvider.GetRequiredService<IApplicationDbContext>();
 	}
+
+	protected IApplicationDbContext DbContext { get; set; }
 
 	/// <summary>
 	/// Gets the application mediator for sending commands/queries.

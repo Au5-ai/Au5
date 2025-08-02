@@ -5,5 +5,5 @@ public record LoginCommand(string Username, string Password) : IRequest<Result<T
 public record TokenResponse(
     string AccessToken,
     int ExpiresIn,
-    string? RefreshToken,
+    string RefreshToken,
     string TokenType);
