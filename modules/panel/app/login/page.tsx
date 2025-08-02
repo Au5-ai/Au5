@@ -1,6 +1,6 @@
-import { GalleryVerticalEnd } from "lucide-react"
+import { GalleryVerticalEnd } from "lucide-react";
 
-import { LoginForm } from "@/components/login-form"
+import { LoginForm } from "@/components/login-form";
 
 export default function LoginPage() {
   return (
@@ -11,7 +11,7 @@ export default function LoginPage() {
             <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
               <GalleryVerticalEnd className="size-4" />
             </div>
-            Acme Inc.
+            Au5 Inc.
           </a>
         </div>
         <div className="flex flex-1 items-center justify-center">
@@ -20,13 +20,30 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      <div className="bg-muted relative hidden lg:block">
-        <img
-          src="/placeholder.svg"
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
+      <div
+        className="relative hidden lg:block flex flex-col items-center justify-center p-8"
+        style={{
+          background:
+            "linear-gradient(to bottom, #f8fbff 0%, #f4f0ec 28%, #f4eae7 66%, #f4e8ec 100%)",
+          color: "black",
+          display: "flex",
+        }}
+      >
+        <div className="flex flex-col items-center justify-center h-full max-w-md text-center">
+          <h2 className="text-3xl font-bold mb-8">Welcome Back</h2>
+          <div className="mb-8">
+            <img
+              src="/hi5.png"
+              alt="Welcome illustration"
+              className="w-48 h-48 object-contain"
+            />
+          </div>
+          <p className="text-black-100 text-lg leading-relaxed">
+            Empower your meetings with real-time transcription, smart
+            automation, and seamless integrations.
+          </p>
+        </div>
       </div>
     </div>
-  )
+  );
 }
