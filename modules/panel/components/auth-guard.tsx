@@ -1,8 +1,8 @@
 "use client";
 
+import { tokenStorageService } from "@/lib/services";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { tokenStorage } from "@/lib/api";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -15,7 +15,7 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
 
   useEffect(() => {
     const checkAuth = () => {
-      const isValid = tokenStorage.isValid();
+      const isValid = tokenStorageService.isValid();
       setIsAuthenticated(isValid);
 
       if (!isValid) {

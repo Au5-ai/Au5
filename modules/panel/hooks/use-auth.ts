@@ -3,8 +3,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { authApi, tokenStorage } from "@/lib/api";
-import { LoginRequest, LoginResponse } from "@/type";
+import { authApi } from "@/lib/api";
+import { ApiError, LoginRequest, LoginResponse } from "@/type";
+import { tokenStorageService } from "@/lib/services";
 
 export function useLogin() {
   const queryClient = useQueryClient();
@@ -13,7 +14,7 @@ export function useLogin() {
   return useMutation({
     mutationFn: (credentials: LoginRequest) => authApi.login(credentials),
     onSuccess: (data: LoginResponse) => {
-      tokenStorage.set(data.accessToken);
+      tokenStorageService.set(data.accessToken);
       queryClient.invalidateQueries();
 
       const setup = localStorage.getItem("setup");
@@ -24,8 +25,13 @@ export function useLogin() {
       router.push("/dashboard");
     },
     onError: (error) => {
-      error.message = "Invalid username or password";
-      tokenStorage.remove();
+      console.error("Login error:", error);
+      if (error instanceof ApiError) {
+        error.message = error.problemDetails.detail || error.title;
+      } else {
+        error.message = "Unexpected error";
+      }
+      tokenStorageService.remove();
     },
   });
 }
@@ -37,12 +43,12 @@ export function useLogout() {
   return useMutation({
     mutationFn: () => authApi.logout(),
     onSuccess: () => {
-      tokenStorage.remove();
+      tokenStorageService.remove();
       queryClient.clear();
       router.push("/login");
     },
     onError: () => {
-      tokenStorage.remove();
+      tokenStorageService.remove();
       queryClient.clear();
       router.push("/login");
     },
@@ -55,7 +61,7 @@ export function useIsAuthenticated() {
 
   useEffect(() => {
     const checkAuth = () => {
-      setIsAuthenticated(tokenStorage.isValid());
+      setIsAuthenticated(tokenStorageService.isValid());
     };
     checkAuth();
     window.addEventListener("storage", checkAuth);

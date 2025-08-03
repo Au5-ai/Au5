@@ -24,7 +24,12 @@ internal sealed class GlobalExceptionHandler(IProblemDetailsService problemDetai
 				Status = httpContext.Response.StatusCode,
 				Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
 				Title = "Internal Server Error",
-				Detail = exception.Message // must be changed in Production.
+#if DEBUG
+				Detail = "An unexpected error occurred. Please try again later."
+#else
+
+				Detail = "An unexpected error occurred. Please try again later."
+#endif
 			}
 		});
 	}

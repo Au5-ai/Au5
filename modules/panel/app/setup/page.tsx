@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,13 +16,15 @@ import {
   CheckCircle,
   Download,
   Settings,
-  Play,
   Sparkles,
   ArrowRight,
   ArrowLeft,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { CelebrationMessage } from "@/components/celebration-message";
+import { userApi, orgApi } from "@/lib/api";
+import { tokenStorageService } from "@/lib/services";
+import { useRouter } from "next/navigation";
 
 const steps = [
   {
@@ -60,22 +63,6 @@ const steps = [
   },
   {
     id: 3,
-    title: "Watch New Features",
-    description: "Learn about our latest features and updates",
-    icon: Play,
-    content: {
-      heading: "Discover New Features",
-      subheading: "Watch our quick tutorial to learn about the latest updates",
-      features: [
-        "Advanced analytics",
-        "Team collaboration",
-        "Automated workflows",
-        "Smart insights",
-      ],
-    },
-  },
-  {
-    id: 4,
     title: "Finish Onboarding",
     description: "Complete your setup and start using the platform",
     icon: Sparkles,
@@ -93,9 +80,12 @@ const steps = [
 ];
 
 export default function OnboardingPage() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [isConfiguring, setIsConfiguring] = useState(false);
+  const queryClient = useQueryClient();
 
   const progress = (currentStep / steps.length) * 100;
   const currentStepData = steps.find((step) => step.id === currentStep)!;
@@ -121,8 +111,59 @@ export default function OnboardingPage() {
   const isCurrentStep = (stepId: number) => currentStep === stepId;
   const isLastStep = currentStep === steps.length;
 
+  const handleSendConfigs = async () => {
+    setIsConfiguring(true);
+    try {
+      const [user, orgConfig] = await Promise.all([
+        userApi.me(),
+        orgApi.getConfig(),
+      ]);
+
+      if (user && orgConfig) {
+        const config = {
+          user: {
+            id: user.id,
+            fullName: user.fullname,
+            pictureUrl: user.pictureUrl,
+            hasAccount: user.hasAccount,
+          },
+          service: {
+            jwtToken: tokenStorageService.get(),
+            panelUrl: orgConfig.panelUrl,
+            baseUrl: orgConfig.serviceBaseUrl,
+            direction: orgConfig.direction,
+            language: orgConfig.language,
+            hubUrl: orgConfig.hubUrl,
+            companyName: orgConfig.name,
+            botName: orgConfig.botName,
+          },
+        };
+
+        window.postMessage(
+          {
+            source: "AU5_BACKOFFICE",
+            type: "CONFIG_UPDATE",
+            payload: config,
+          },
+          "*"
+        );
+
+        queryClient.setQueryData(["currentUser"], {
+          ...user,
+          hasAccount: user.hasAccount,
+        });
+
+        setCompletedSteps((prev) => [...prev, currentStep]);
+        setCurrentStep(currentStep + 1);
+      }
+    } catch (error) {
+      console.error("Failed to configure:", error);
+    } finally {
+      setIsConfiguring(false);
+    }
+  };
+
   const handleCelebration = () => {
-    // Fire confetti from multiple angles
     const duration = 3000;
     const animationEnd = Date.now() + duration;
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
@@ -306,27 +347,18 @@ export default function OnboardingPage() {
                           Configuration Panel
                         </p>
                       </div>
-                      <Button size="lg" className="w-full">
+                      <Button
+                        size="lg"
+                        className="w-full"
+                        onClick={handleSendConfigs}
+                        disabled={isConfiguring}
+                      >
                         <Settings className="h-4 w-4 mr-2" />
-                        Open Settings
+                        {isConfiguring ? "Configuring..." : "Open Settings"}
                       </Button>
                     </div>
                   )}
                   {currentStep === 3 && (
-                    <div className="space-y-4">
-                      <div className="bg-gray-100 p-6 rounded-lg">
-                        <Play className="h-12 w-12 text-blue-600 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">
-                          Feature Tutorial
-                        </p>
-                      </div>
-                      <Button size="lg" className="w-full">
-                        <Play className="h-4 w-4 mr-2" />
-                        Watch Tutorial
-                      </Button>
-                    </div>
-                  )}
-                  {currentStep === 4 && (
                     <div className="space-y-4">
                       <div className="bg-green-100 p-6 rounded-lg">
                         <Sparkles className="h-12 w-12 text-green-600 mx-auto mb-2" />
@@ -387,7 +419,10 @@ export default function OnboardingPage() {
         {/* Celebration Modal */}
         <CelebrationMessage
           show={showCelebration}
-          onClose={() => setShowCelebration(false)}
+          onClose={() => {
+            setShowCelebration(false);
+            router.push("/dashboard");
+          }}
         />
       </div>
     </div>

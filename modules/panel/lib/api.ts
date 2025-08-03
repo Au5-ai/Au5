@@ -1,15 +1,15 @@
-import { LoginRequest, LoginResponse } from "@/type";
+import {
+  ApiError,
+  LoginRequest,
+  LoginResponse,
+  User,
+  OrganizationConfig,
+  ProblemDetails,
+} from "@/type";
 
 // API configuration
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:1366";
-
-export class ApiError extends Error {
-  constructor(public status: number, message: string) {
-    super(message);
-    this.name = "ApiError";
-  }
-}
 
 // Generic API request function
 export async function apiRequest<T>(
@@ -26,7 +26,6 @@ export async function apiRequest<T>(
     ...options,
   };
 
-  // Add authorization header if token exists
   const token = localStorage.getItem("access_token");
   if (token) {
     config.headers = {
@@ -39,12 +38,16 @@ export async function apiRequest<T>(
     const response = await fetch(url, config);
 
     if (!response.ok) {
-      const errorData = await response
-        .json()
-        .catch(() => ({ message: "Unknown error" }));
+      const errorData: ProblemDetails = await response.json().catch(() => ({
+        title: "Unknown Error",
+        detail: "An unknown error occurred.",
+        status: response.status,
+      }));
+
       throw new ApiError(
         response.status,
-        errorData.message || `HTTP ${response.status}: ${response.statusText}`
+        errorData.title || "HTTP Error",
+        errorData
       );
     }
 
@@ -53,10 +56,14 @@ export async function apiRequest<T>(
     if (error instanceof ApiError) {
       throw error;
     }
-    throw new ApiError(
-      0,
-      error instanceof Error ? error.message : "Network error"
-    );
+
+    throw new ApiError(0, "Network Error", {
+      title: "Network Error",
+      detail:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred during the request.",
+    });
   }
 }
 
@@ -74,29 +81,16 @@ export const authApi = {
     }),
 };
 
-export const tokenStorage = {
-  set: (token: string) => {
-    localStorage.setItem("access_token", token);
-  },
+export const userApi = {
+  me: (): Promise<User> =>
+    apiRequest<User>("/user/me", {
+      method: "GET",
+    }),
+};
 
-  get: (): string | null => {
-    return localStorage.getItem("access_token");
-  },
-
-  remove: () => {
-    localStorage.removeItem("access_token");
-  },
-
-  isValid: (): boolean => {
-    const token = tokenStorage.get();
-    if (!token) return false;
-
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      const now = Date.now() / 1000;
-      return payload.exp ? payload.exp > now : true;
-    } catch {
-      return true;
-    }
-  },
+export const orgApi = {
+  getConfig: (): Promise<OrganizationConfig> =>
+    apiRequest<OrganizationConfig>("/org/config", {
+      method: "GET",
+    }),
 };
