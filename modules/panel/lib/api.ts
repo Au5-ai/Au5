@@ -1,18 +1,8 @@
+import { LoginRequest, LoginResponse } from "@/type";
+
 // API configuration
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:1366";
-
-// Types for API requests and responses
-export interface LoginRequest {
-  username: string;
-  password: string;
-}
-
-export interface LoginResponse {
-  access_token: string;
-  token_type?: string;
-  expires_in?: number;
-}
 
 export class ApiError extends Error {
   constructor(public status: number, message: string) {
