@@ -2,10 +2,8 @@
 
 import * as React from "react";
 import {
-  AudioWaveform,
   BookOpen,
   Bot,
-  Command,
   Frame,
   GalleryVerticalEnd,
   Map,
@@ -29,17 +27,10 @@ import {
 // This is sample data.
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: "Mohammad Karimi",
+    companyName: "Asax Co",
+    pictureUrl: "/avatars/shadcn.jpg",
   },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-  ],
   navMain: [
     {
       title: "Playground",
@@ -158,8 +149,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <GalleryVerticalEnd className="size-4" />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-medium">Mohammad Karimi</span>
-            <span className="truncate text-xs">mha.karimi@gmail.com</span>
+            <span className="truncate font-medium">{data.user.name}</span>
+            <span className="truncate text-xs">{data.user.companyName}</span>
           </div>
         </SidebarMenuButton>
       </SidebarHeader>

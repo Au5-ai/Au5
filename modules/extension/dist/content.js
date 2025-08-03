@@ -1,5 +1,5 @@
 const CONFIGURATION_KEY = "configuration";
-const MESSAGE_SOURCE = "AU5_BACKOFFICE";
+const MESSAGE_SOURCE = "AU5_PANEL";
 const EXTENSION_SOURCE = "AU5_EXTENSION";
 function isValidMessage(event) {
   return event.source === window && !!event.data && event.data.source === MESSAGE_SOURCE;

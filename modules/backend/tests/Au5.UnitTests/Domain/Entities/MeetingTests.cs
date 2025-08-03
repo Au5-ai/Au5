@@ -5,7 +5,7 @@ namespace Au5.UnitTests.Domain.Entities;
 public class MeetingTests
 {
 	[Fact]
-	public void IsActive_Should_ReturnsTrue_WhenStatusIsRecording()
+	public void IsActive_Should_ReturnsTrue_When_StatusIsRecording()
 	{
 		var meeting = new Meeting { Status = MeetingStatus.Recording };
 
@@ -15,7 +15,7 @@ public class MeetingTests
 	}
 
 	[Fact]
-	public void IsActive_Should_ReturnsTrue_WhenStatusIsPaused()
+	public void IsActive_Should_ReturnsTrue_When_StatusIsPaused()
 	{
 		var meeting = new Meeting { Status = MeetingStatus.Paused };
 
@@ -27,7 +27,7 @@ public class MeetingTests
 	[Theory]
 	[InlineData(MeetingStatus.NotStarted)]
 	[InlineData(MeetingStatus.Ended)]
-	public void IsActive_Should_ReturnsFalse_WhenStatusIsNotActive(MeetingStatus status)
+	public void IsActive_Should_ReturnsFalse_When_StatusIsNotActive(MeetingStatus status)
 	{
 		var meeting = new Meeting { Status = status };
 
@@ -37,7 +37,7 @@ public class MeetingTests
 	}
 
 	[Fact]
-	public void IsPaused_Should_ReturnsTrue_WhenStatusIsPaused()
+	public void IsPaused_Should_ReturnsTrue_When_StatusIsPaused()
 	{
 		var meeting = new Meeting { Status = MeetingStatus.Paused };
 
@@ -49,7 +49,7 @@ public class MeetingTests
 	[Theory]
 	[InlineData(MeetingStatus.Recording)]
 	[InlineData(MeetingStatus.Ended)]
-	public void IsPaused_Should_ReturnsFalse_WhenStatusIsNotPaused(MeetingStatus status)
+	public void IsPaused_Should_ReturnsFalse_When_StatusIsNotPaused(MeetingStatus status)
 	{
 		var meeting = new Meeting { Status = status };
 
@@ -59,7 +59,7 @@ public class MeetingTests
 	}
 
 	[Fact]
-	public void IsRecording_Should_ReturnsTrue_WhenStatusIsRecording()
+	public void IsRecording_Should_ReturnsTrue_When_StatusIsRecording()
 	{
 		var meeting = new Meeting { Status = MeetingStatus.Recording };
 
@@ -69,7 +69,7 @@ public class MeetingTests
 	}
 
 	[Fact]
-	public void IsRecording_Should_ReturnsFalse_WhenStatusIsNotRecording()
+	public void IsRecording_Should_ReturnsFalse_When_StatusIsNotRecording()
 	{
 		var meeting = new Meeting { Status = MeetingStatus.Ended };
 
@@ -79,7 +79,7 @@ public class MeetingTests
 	}
 
 	[Fact]
-	public void IsEnded_Should_ReturnsTrue_WhenStatusIsEnded()
+	public void IsEnded_Should_ReturnsTrue_When_StatusIsEnded()
 	{
 		var meeting = new Meeting { Status = MeetingStatus.Ended };
 
@@ -89,7 +89,7 @@ public class MeetingTests
 	}
 
 	[Fact]
-	public void IsEnded_Should_ReturnsFalse_WhenStatusIsNotEnded()
+	public void IsEnded_Should_ReturnsFalse_When_StatusIsNotEnded()
 	{
 		var meeting = new Meeting { Status = MeetingStatus.Paused };
 

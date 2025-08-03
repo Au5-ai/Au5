@@ -18,7 +18,7 @@ public class ConfigOrganizationCommandHandlerTests
 	}
 
 	[Fact]
-	public async Task Hhould_ReturnFailure_When_ExistingConfigAndForceUpdateFalse()
+	public async Task Should_ReturnFailure_When_ExistingConfigAndForceUpdateFalse()
 	{
 		var org = new Organization { Id = Guid.NewGuid() };
 

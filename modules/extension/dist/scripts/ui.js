@@ -93,6 +93,9 @@ class ChatPanel {
       ".au5-transcriptions-container"
     );
   }
+  escapeHtml(text) {
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
   setDirection(direction) {
     this.direction = direction;
   }
@@ -161,12 +164,12 @@ class ChatPanel {
 
     <div class="au5-message-bubble">
       <div class="au5-message-header">
-        <span class="au5-message-sender">${entry.participant.fullName}</span>
+        <span class="au5-message-sender">${this.escapeHtml(entry.participant.fullName)}</span>
         <span class="au5-message-time">${DateTime.toHoursAndMinutes(entry.timestamp)}</span>
       </div>
 
       <div class="au5-message-text" style="direction: ${this.direction};">
-        ${entry.content}
+        ${this.escapeHtml(entry.content)}
       </div>
 
       ${this.getReactionsHtml(entry.blockId)} 
@@ -315,7 +318,7 @@ class ChatPanel {
         if (url.length > 36) {
           displayUrl = url.slice(0, 36) + "(*)";
         }
-        el.innerHTML = displayUrl;
+        el.textContent = displayUrl;
       }
     });
   }

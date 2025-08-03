@@ -141,13 +141,14 @@ export default function OnboardingPage() {
 
         window.postMessage(
           {
-            source: "AU5_BACKOFFICE",
+            source: "AU5_PANEL",
             type: "CONFIG_UPDATE",
             payload: config,
           },
           "*"
         );
-
+        localStorage.setItem("setup", "true");
+        localStorage.setItem("config", JSON.stringify(config));
         queryClient.setQueryData(["currentUser"], {
           ...user,
           hasAccount: user.hasAccount,
