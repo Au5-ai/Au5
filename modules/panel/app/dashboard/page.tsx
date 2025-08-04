@@ -41,7 +41,7 @@ export default function Page() {
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem>
-                    <BreadcrumbPage>Your Transcriptions</BreadcrumbPage>
+                    <BreadcrumbPage>My Meetings</BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
