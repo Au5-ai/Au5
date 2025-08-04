@@ -1,18 +1,9 @@
 "use client";
 
 import * as React from "react";
-import {
-  BookOpen,
-  Bot,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react";
+import { Bot, Frame, GalleryVerticalEnd } from "lucide-react";
 import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
+import { NavSpaces } from "@/components/nav-spaces";
 import { NavUser } from "@/components/nav-user";
 import { User } from "@/type";
 import {
@@ -28,106 +19,46 @@ import {
 const data = {
   navMain: [
     {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
+      title: "My Meetings",
       url: "#",
       icon: Frame,
     },
     {
-      name: "Sales & Marketing",
+      title: "Shared With Me",
       url: "#",
-      icon: PieChart,
+      icon: Frame,
     },
     {
-      name: "Travel",
+      title: "AI Tools",
       url: "#",
-      icon: Map,
+      icon: Bot,
+    },
+    {
+      title: "Archived Transcripts",
+      url: "#",
+      icon: Bot,
+    },
+  ],
+  spaces: [
+    {
+      name: "Automation Team",
+      url: "#",
+      icon: Frame,
+    },
+    {
+      name: "My Agah",
+      url: "#",
+      icon: Frame,
+    },
+    {
+      name: "ENS Team",
+      url: "#",
+      icon: Frame,
+    },
+    {
+      name: "ISS Team",
+      url: "#",
+      icon: Frame,
     },
   ],
 };
@@ -159,7 +90,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavSpaces spaces={data.spaces} />
       </SidebarContent>
       <SidebarFooter>{user && <NavUser {...user} />}</SidebarFooter>
       <SidebarRail />
