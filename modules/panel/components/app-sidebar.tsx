@@ -1,7 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { Bot, Frame, GalleryVerticalEnd } from "lucide-react";
+import {
+  Bot,
+  Frame,
+  GalleryVerticalEnd,
+  icons,
+  Settings,
+  SquareTerminal,
+} from "lucide-react";
 import { NavMain } from "@/components/nav-main";
 import { NavSpaces } from "@/components/nav-spaces";
 import { NavUser } from "@/components/nav-user";
@@ -14,6 +21,7 @@ import {
   SidebarMenuButton,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { NavWithSubMenu } from "./nav-withSubMenu";
 
 // This is sample data.
 const data = {
@@ -61,6 +69,28 @@ const data = {
       icon: Frame,
     },
   ],
+  navWithSubMenu: [
+    {
+      title: "Account & Settings",
+      url: "#",
+      icon: SquareTerminal,
+      isActive: true,
+      items: [
+        {
+          title: "Settings",
+          url: "#",
+        },
+        {
+          title: "Starred",
+          url: "#",
+        },
+        {
+          title: "Settings",
+          url: "#",
+        },
+      ],
+    },
+  ],
 };
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
@@ -91,6 +121,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavSpaces spaces={data.spaces} />
+        <NavWithSubMenu items={data.navWithSubMenu} />
       </SidebarContent>
       <SidebarFooter>{user && <NavUser {...user} />}</SidebarFooter>
       <SidebarRail />
