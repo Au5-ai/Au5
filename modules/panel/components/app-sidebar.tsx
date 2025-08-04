@@ -28,7 +28,7 @@ import {
 const data = {
   user: {
     name: "Mohammad Karimi",
-    companyName: "Asax Co",
+    email: "mohammad.karimi@asax.com",
     pictureUrl: "/avatars/shadcn.jpg",
   },
   navMain: [
@@ -150,7 +150,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-medium">{data.user.name}</span>
-            <span className="truncate text-xs">{data.user.companyName}</span>
+            <span className="truncate text-xs">{data.user.email}</span>
           </div>
         </SidebarMenuButton>
       </SidebarHeader>

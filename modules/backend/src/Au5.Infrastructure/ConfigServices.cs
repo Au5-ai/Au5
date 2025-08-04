@@ -22,7 +22,6 @@ public static class ConfigureServices
 
 		Guard.Against.Null(connectionString, message: "Connection string 'DefaultConnection' not found.");
 
-		services.AddScoped<DBInitialzer>();
 		services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(opt =>
 		{
 			opt.UseSqlServer(

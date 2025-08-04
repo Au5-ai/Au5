@@ -25,7 +25,7 @@ export function NavUser({
 }: {
   user: {
     name: string;
-    companyName: string;
+    email: string;
     pictureUrl: string;
   };
 }) {
@@ -44,12 +44,12 @@ export function NavUser({
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.pictureUrl} alt={user.name} />
                 <AvatarFallback className="rounded-lg">
-                  {user.companyName.charAt(0)}
+                  {user.name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs">{user.companyName}</span>
+                <span className="truncate text-xs">{user.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -65,12 +65,12 @@ export function NavUser({
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.pictureUrl} alt={user.name} />
                   <AvatarFallback className="rounded-lg">
-                    {user.companyName.charAt(0)}
+                    {user.name.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs">{user.companyName}</span>
+                  <span className="truncate text-xs">{user.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>

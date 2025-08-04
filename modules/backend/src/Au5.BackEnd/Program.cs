@@ -45,11 +45,6 @@ builder.AddServiceDefaults();
 
 var app = builder.Build();
 {
-	if (app.Environment.IsDevelopment())
-	{
-		await app.InitializeDatabaseAsync();
-	}
-
 	app.UseExceptionHandler();
 	app.MapDefaultEndpoints();
 

@@ -47,6 +47,7 @@ public class GetFullTranscriptionQueryHandler : IRequestHandler<GetFullTranscrip
 				.Select(p => new Participant(
 					id: p.UserId,
 					fullName: p.FullName ?? string.Empty,
+					email: string.Empty,
 					pictureUrl: p.PictureUrl ?? string.Empty,
 					hasAccount: p.UserId != Guid.Empty))
 				.ToList()

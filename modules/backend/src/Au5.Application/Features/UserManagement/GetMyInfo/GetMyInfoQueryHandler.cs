@@ -19,6 +19,7 @@ public class GetMyInfoQueryHandler(IApplicationDbContext applicationDbContext) :
 				FullName = user.FullName,
 				PictureUrl = user.PictureUrl,
 				HasAccount = true,
+				Email = user.Email
 			};
 	}
 }
