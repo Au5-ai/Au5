@@ -25,6 +25,7 @@ public class GetMyInfoQueryHandlerTests
 			Id = userId,
 			FullName = "Test User",
 			PictureUrl = "http://pic",
+			Email = "mha.karimi@gmail.com",
 			IsActive = true
 		};
 
@@ -40,6 +41,7 @@ public class GetMyInfoQueryHandlerTests
 		Assert.Equal(userId, result.Data.Id);
 		Assert.Equal("Test User", result.Data.FullName);
 		Assert.Equal("http://pic", result.Data.PictureUrl);
+		Assert.Equal("mha.karimi@gmail.com", result.Data.Email);
 		Assert.True(result.Data.HasAccount);
 	}
 

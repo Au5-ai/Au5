@@ -11,10 +11,10 @@ import {
   Settings2,
   SquareTerminal,
 } from "lucide-react";
-
 import { NavMain } from "@/components/nav-main";
 import { NavProjects } from "@/components/nav-projects";
 import { NavUser } from "@/components/nav-user";
+import { User } from "@/type";
 import {
   Sidebar,
   SidebarContent,
@@ -26,11 +26,6 @@ import {
 
 // This is sample data.
 const data = {
-  user: {
-    name: "Mohammad Karimi",
-    companyName: "Asax Co",
-    pictureUrl: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Playground",
@@ -137,7 +132,12 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  user?: User;
+}
+
+export function AppSidebar({ user, ...props }: AppSidebarProps) {
+  console.log("AppSidebar rendered with user:", user);
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -149,8 +149,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <GalleryVerticalEnd className="size-4" />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-medium">{data.user.name}</span>
-            <span className="truncate text-xs">{data.user.companyName}</span>
+            <span className="truncate font-medium">
+              {user?.fullName || "User"}
+            </span>
+            <span className="truncate text-xs">
+              {user?.email || "email@example.com"}
+            </span>
           </div>
         </SidebarMenuButton>
       </SidebarHeader>
@@ -158,9 +162,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
+      <SidebarFooter>{user && <NavUser {...user} />}</SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

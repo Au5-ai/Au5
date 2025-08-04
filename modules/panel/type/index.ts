@@ -32,9 +32,10 @@ export interface LoginResponse {
 
 export interface User {
   id: string;
-  fullname: string;
+  fullName: string;
   pictureUrl?: string;
   hasAccount: boolean;
+  email: string;
 }
 
 export interface OrganizationConfig {

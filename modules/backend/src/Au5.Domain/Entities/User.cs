@@ -24,7 +24,8 @@ public class User
 			Id = Id,
 			FullName = FullName,
 			PictureUrl = PictureUrl,
-			HasAccount = true
+			HasAccount = true,
+			Email = Email
 		};
 	}
 }
