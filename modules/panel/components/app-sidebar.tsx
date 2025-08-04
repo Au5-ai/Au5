@@ -137,7 +137,6 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 }
 
 export function AppSidebar({ user, ...props }: AppSidebarProps) {
-  console.log("AppSidebar rendered with user:", user);
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
