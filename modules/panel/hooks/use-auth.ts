@@ -1,11 +1,22 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { authApi } from "@/lib/api";
+import { authApi, userApi } from "@/lib/api";
 import { ApiError, LoginRequest, LoginResponse } from "@/type";
 import { tokenStorageService } from "@/lib/services";
+
+// Hook to get current user data
+export function useUser() {
+  return useQuery({
+    queryKey: ["user"],
+    queryFn: () => userApi.me(),
+    enabled: tokenStorageService.isValid(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: false,
+  });
+}
 
 export function useLogin() {
   const queryClient = useQueryClient();
@@ -15,13 +26,14 @@ export function useLogin() {
     mutationFn: (credentials: LoginRequest) => authApi.login(credentials),
     onSuccess: (data: LoginResponse) => {
       tokenStorageService.set(data.accessToken);
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ["user"] });
 
       const setup = localStorage.getItem("setup");
       if (!setup) {
         router.push("/setup");
         return;
       }
+
       router.push("/dashboard");
     },
     onError: (error) => {
