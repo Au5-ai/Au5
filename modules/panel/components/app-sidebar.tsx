@@ -2,11 +2,14 @@
 
 import * as React from "react";
 import {
+  ArchiveIcon,
   Bot,
   Frame,
   GalleryVerticalEnd,
   icons,
   Settings,
+  Settings2,
+  SettingsIcon,
   SquareTerminal,
 } from "lucide-react";
 import { NavMain } from "@/components/nav-main";
@@ -44,7 +47,7 @@ const data = {
     {
       title: "Archived Transcripts",
       url: "#",
-      icon: Bot,
+      icon: ArchiveIcon,
     },
   ],
   spaces: [
@@ -73,17 +76,9 @@ const data = {
     {
       title: "Account & Settings",
       url: "#",
-      icon: SquareTerminal,
+      icon: SettingsIcon,
       isActive: true,
       items: [
-        {
-          title: "Settings",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
         {
           title: "Settings",
           url: "#",
