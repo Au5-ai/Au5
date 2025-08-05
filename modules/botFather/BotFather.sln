@@ -1,10 +1,27 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.36227.10 d17.12
+VisualStudioVersion = 17.12.36227.10
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3F8534AA-BCC2-413A-9B2F-DCEE124EF8F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotFather.API", "src\BotFather.API\BotFather.API.csproj", "{F83C97CE-5B18-464A-89D8-D511BABD38B0}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F83C97CE-5B18-464A-89D8-D511BABD38B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F83C97CE-5B18-464A-89D8-D511BABD38B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F83C97CE-5B18-464A-89D8-D511BABD38B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F83C97CE-5B18-464A-89D8-D511BABD38B0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F83C97CE-5B18-464A-89D8-D511BABD38B0} = {3F8534AA-BCC2-413A-9B2F-DCEE124EF8F5}
 	EndGlobalSection
 EndGlobal
