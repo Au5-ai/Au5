@@ -14,7 +14,7 @@ public class ContainersController : ControllerBase
     public ContainersController()
     {
         _dockerClient = new DockerClientConfiguration(
-            new Uri("unix:///var/run/docker.sock")
+           new Uri("unix:///run/user/1000/podman/podman.sock")
         ).CreateClient();
     }
 
