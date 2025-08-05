@@ -14,8 +14,15 @@ public class ContainersController : ControllerBase
     public ContainersController()
     {
         _dockerClient = new DockerClientConfiguration(
-           new Uri("unix:///run/user/1000/podman/podman.sock")
+           //new Uri("unix:///run/user/1000/podman/podman.sock")
+            new Uri("unix:///var/run/docker.sock")
         ).CreateClient();
+    }
+
+    [HttpGet("liveness")]
+    public IActionResult LivenessCheck()
+    {
+        return Ok("Service is alive");
     }
 
     [HttpPost("run")]
