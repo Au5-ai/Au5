@@ -42,10 +42,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Au5.Application\Au5.Application.csproj" />
-    <ProjectReference Include="..\src\Au5.BackEnd\Au5.BackEnd.csproj" />
-    <ProjectReference Include="..\src\Au5.Domain\Au5.Domain.csproj" />
-    <ProjectReference Include="..\src\Au5.Infrastructure\Au5.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Au5.Application\Au5.Application.csproj" />
+    <ProjectReference Include="..\..\src\Au5.BackEnd\Au5.BackEnd.csproj" />
+    <ProjectReference Include="..\..\src\Au5.Domain\Au5.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Au5.Infrastructure\Au5.Infrastructure.csproj" />
   </ItemGroup>
   
 </Project>
