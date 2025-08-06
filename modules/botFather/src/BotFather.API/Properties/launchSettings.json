@@ -23,8 +23,7 @@
         "ASPNETCORE_HTTPS_PORTS": "5189",
         "ASPNETCORE_HTTP_PORTS": "5188"
       },
-      "publishAllPorts": true,
-      "useSSL": true
+      "publishAllPorts": true
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json"
