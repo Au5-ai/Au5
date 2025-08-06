@@ -1,30 +1,16 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+FROM golang:1.24-alpine
 
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
 
+COPY go.mod go.sum* ./
 
-# This stage is used to build the service project
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["src/BotFather.API/BotFather.API.csproj", "src/BotFather.API/"]
-RUN dotnet restore "./src/BotFather.API/BotFather.API.csproj"
+RUN go mod download
+
 COPY . .
-WORKDIR "/src/src/BotFather.API"
-RUN dotnet build "./BotFather.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# This stage is used to publish the service project to be copied to the final stage
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./BotFather.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN go build -o bot-father bot-father.go
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "BotFather.API.dll"]
+# Expose the port the app runs on
+EXPOSE 8080
+
+CMD ["./bot-father"]
