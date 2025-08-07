@@ -67,10 +67,9 @@ func createContainerHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	response, err := cli.ContainerCreate(ctx, &container.Config{
-		
 		Image: "redis",
 		Env:   envVars,
-	}, nil, nil, nil, meetingConfig.MeetId+randomSuffix)
+	}, nil, nil, nil, meetingConfig.MeetId+"--"+randomSuffix)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
