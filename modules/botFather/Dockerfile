@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o bot-father bot-father.go
+RUN go build -o bot-father bot-father.go container_handler.go types.go
 
 # Expose the port the app runs on
 EXPOSE 8080

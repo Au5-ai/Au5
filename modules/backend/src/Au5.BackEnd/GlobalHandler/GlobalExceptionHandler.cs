@@ -25,7 +25,7 @@ internal sealed class GlobalExceptionHandler(IProblemDetailsService problemDetai
 				Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
 				Title = "Internal Server Error",
 #if DEBUG
-				Detail = "An unexpected error occurred. Please try again later."
+				Detail = exception.Message,
 #else
 
 				Detail = "An unexpected error occurred. Please try again later."

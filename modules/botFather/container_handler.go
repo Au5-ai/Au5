@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -9,6 +10,23 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 )
+
+const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+func SecureRandomString(n int) (string, error) {
+	b := make([]byte, n)
+	charLen := byte(len(charset))
+
+	for i := range b {
+		num := make([]byte, 1)
+		if _, err := rand.Read(num); err != nil {
+			return "", err
+		}
+		b[i] = charset[num[0]%charLen]
+	}
+
+	return string(b), nil
+}
 
 func createContainerHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -42,10 +60,17 @@ func createContainerHandler(w http.ResponseWriter, r *http.Request) {
 		"MEETING_CONFIG=" + string(meetingConfigJSON),
 	}
 
+	randomSuffix, err := SecureRandomString(8)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to generate random string: %v", err), http.StatusInternalServerError)
+		return
+	}
+	
 	response, err := cli.ContainerCreate(ctx, &container.Config{
-		Image: "<image_name>", // Replace with your Docker image name
+		
+		Image: "redis",
 		Env:   envVars,
-	}, nil, nil, nil, "")
+	}, nil, nil, nil, meetingConfig.MeetId+randomSuffix)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

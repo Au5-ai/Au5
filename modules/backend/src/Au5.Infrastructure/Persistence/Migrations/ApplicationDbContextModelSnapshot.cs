@@ -43,7 +43,7 @@ namespace Au5.Infrastructure.Migrations
 
                     b.HasIndex("ReactionId");
 
-                    b.ToTable("AppliedReactions");
+                    b.ToTable("AppliedReactions", (string)null);
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.Entry", b =>
@@ -91,7 +91,7 @@ namespace Au5.Infrastructure.Migrations
 
                     b.HasIndex("MeetingId");
 
-                    b.ToTable("Entry");
+                    b.ToTable("Entry", (string)null);
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.Meeting", b =>
@@ -137,7 +137,7 @@ namespace Au5.Infrastructure.Migrations
 
                     b.HasIndex("BotInviterUserId");
 
-                    b.ToTable("Meeting");
+                    b.ToTable("Meeting", (string)null);
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.Organization", b =>
@@ -197,7 +197,7 @@ namespace Au5.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("PK_dbo_Company");
 
-                    b.ToTable("Organization");
+                    b.ToTable("Organization", (string)null);
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.ParticipantInMeeting", b =>
@@ -228,7 +228,7 @@ namespace Au5.Infrastructure.Migrations
 
                     b.HasIndex("MeetingId");
 
-                    b.ToTable("ParticipantInMeeting");
+                    b.ToTable("ParticipantInMeeting", (string)null);
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.Reaction", b =>
@@ -260,7 +260,7 @@ namespace Au5.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("PK_dbo_Reaction");
 
-                    b.ToTable("Reaction");
+                    b.ToTable("Reaction", (string)null);
 
                     b.HasData(
                         new
@@ -324,7 +324,7 @@ namespace Au5.Infrastructure.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("User");
+                    b.ToTable("User", (string)null);
 
                     b.HasData(
                         new
@@ -379,7 +379,7 @@ namespace Au5.Infrastructure.Migrations
 
                             b1.HasKey("AppliedReactionsId", "__synthesizedOrdinal");
 
-                            b1.ToTable("AppliedReactions");
+                            b1.ToTable("AppliedReactions", (string)null);
 
                             b1.ToJson("Participants");
 

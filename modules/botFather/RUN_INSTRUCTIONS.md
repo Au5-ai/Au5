@@ -30,7 +30,7 @@ systemctl --user start podman.socket
 Then run the container:
 
 ```bash
-podman run -d -p 8080:8080 -v $XDG_RUNTIME_DIR/podman/podman.sock:/var/run/docker.sock au5-botfather
+ podman run --name au5-botfather --network=au5  -d -p 1368:8080 -v /run/podman/podman.sock:/var/run/docker.sock au5-botfather
 ```
 
 ## Alternative: Docker-in-Docker (DinD)
