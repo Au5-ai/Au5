@@ -43,7 +43,7 @@ func createContainerHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response, err := cli.ContainerCreate(ctx, &container.Config{
-		Image: "redis", // You might want to make this configurable based on the meeting config
+		Image: "<image_name>", // Replace with your Docker image name
 		Env:   envVars,
 	}, nil, nil, nil, "")
 
@@ -58,8 +58,6 @@ func createContainerHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	startOptions := container.StartOptions{
-		// CheckpointID: "checkpoint-id",     // Optional: ID of checkpoint to restore from
-		// CheckpointDir: "/path/to/checkpoint", // Optional: Directory containing checkpoint files
 	}
 
 	err = cli.ContainerStart(ctx, response.ID, startOptions)
@@ -69,10 +67,9 @@ func createContainerHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Return success response with container ID and meeting config
-	response_data := map[string]interface{}{
-		"container_id": response.ID,
-		"message":      "Container created and started successfully",
-		"meeting_config": meetingConfig,
+	response_data := map[string]any{
+		"container_id":  response.ID,
+		"message":       "Container created and started successfully",
 	}
 
 	w.Header().Set("Content-Type", "application/json")

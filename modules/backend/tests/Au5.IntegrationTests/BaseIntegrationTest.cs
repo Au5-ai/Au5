@@ -1,5 +1,6 @@
-using Au5.Application.Common.Abstractions;
+using Au5.Infrastructure.Persistence.Context;
 using Mediator;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Au5.IntegrationTests;
@@ -13,10 +14,14 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebApp>
 	{
 		_scope = factory.Services.CreateScope();
 		_serviceProvider = _scope.ServiceProvider;
-		DbContext = _serviceProvider.GetRequiredService<IApplicationDbContext>();
+		DbContext = _serviceProvider.GetRequiredService<ApplicationDbContext>();
+		if (DbContext.Database.GetPendingMigrations().Any())
+		{
+			DbContext.Database.Migrate();
+		}
 	}
 
-	protected IApplicationDbContext DbContext { get; set; }
+	protected ApplicationDbContext DbContext { get; set; }
 
 	/// <summary>
 	/// Gets the application mediator for sending commands/queries.

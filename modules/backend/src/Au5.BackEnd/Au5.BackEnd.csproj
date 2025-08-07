@@ -30,11 +30,4 @@
 		<ProjectReference Include="..\Au5.ServiceDefaults\Au5.ServiceDefaults.csproj" />
 		<ProjectReference Include="..\Au5.Shared\Au5.Shared.csproj" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="StyleCop.Analyzers">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
 </Project>

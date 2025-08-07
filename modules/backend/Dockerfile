@@ -4,8 +4,8 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 USER $APP_UID
 WORKDIR /app
-EXPOSE 1366
-EXPOSE 1367
+EXPOSE 8080
+EXPOSE 8081
 
 
 # This stage is used to build the service project
@@ -32,4 +32,4 @@ RUN dotnet publish "./Au5.BackEnd.csproj" -c $BUILD_CONFIGURATION -o /app/publis
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Au5.BackEnd.dll", "--urls=http://0.0.0.0:1366"]
+ENTRYPOINT ["dotnet", "Au5.BackEnd.dll"]
