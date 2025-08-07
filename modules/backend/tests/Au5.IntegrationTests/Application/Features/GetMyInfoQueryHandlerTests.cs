@@ -63,18 +63,19 @@ public class GetMyInfoQueryHandlerTests : BaseIntegrationTest
 	[Fact]
 	public async Task Handle_Should_ReturnUnauthorize_When_UserExistsButNotActive()
 	{
+		var userId = Guid.NewGuid();
 		DbContext.Set<User>().Add(new User()
 		{
-			Email = "mha.karimi@gmail.com",
+			Email = "Email@email.com",
 			IsActive = false,
 			FullName = "Mohammad Karimi",
-			Id = _userId,
+			Id = userId,
 			PictureUrl = "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo",
 			Password = "0PVQk0Qiwb8gY3iUipZQKhBQgDMJ/1PJfmIDhG5hbrA="
 		});
 		await DbContext.SaveChangesAsync(CancellationToken.None);
 
-		var query = new GetMyInfoQuery(_userId);
+		var query = new GetMyInfoQuery(userId);
 
 		var result = await Mediator.Send(query);
 

@@ -1,4 +1,3 @@
-using Au5.BackEnd.Extensions;
 using Au5.BackEnd.GlobalHandler;
 using Au5.BackEnd.Middlewares;
 using Au5.ServiceDefaults;
@@ -63,6 +62,9 @@ var app = builder.Build();
 	app.Run();
 }
 
+/// <summary>
+/// Entry point for the application.
+/// </summary>
 public partial class Program
 {
 }
