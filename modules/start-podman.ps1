@@ -7,8 +7,7 @@ podman pod create --name au5-pod `
   -p 1433:1433 `
   -p 6379:6379 `
   -p 1366:8080 `
-  -p 1367:8080 `
-  -p 1368:3000
+  -p 1367:8081
 
 # Create volumes
 Write-Host "Creating volumes..."
@@ -21,11 +20,24 @@ podman run -d `
   --name au5-sqlserver `
   --pod au5-pod `
   -e ACCEPT_EULA=Y `
-  -e "SA_PASSWORD==FgBGa)>:Gc-U>#gL@~1" `
+  -e "SA_PASSWORD=FgBGa1@23Gc@U#gL@1" `
   -e MSSQL_PID=Express `
   -v sqlserver_data:/var/opt/mssql `
   --restart unless-stopped `
   mcr.microsoft.com/mssql/server:2022-latest
+
+podman exec -it au5-sqlserver /opt/mssql-tools/bin/sqlcmd \
+  -S localhost -U SA -P 'FgBGa1@23Gc@U#gL@1' \
+  -Q "CREATE DATABASE Au5Db;"
+
+podman exec -it au5-sqlserver /opt/mssql-tools/bin/sqlcmd \
+  -S localhost -U SA -P 'FgBGa1@23Gc@U#gL@1' \
+  -d Au5Db \
+  -Q "CREATE LOGIN Au5 WITH PASSWORD = 'Au5UserStrong!Pass123';
+      CREATE USER Au5 FOR LOGIN Au5;
+      ALTER ROLE db_datareader ADD MEMBER Au5;
+      ALTER ROLE db_datawriter ADD MEMBER Au5;"
+
 
 # Start Redis
 Write-Host "Starting Redis..."
@@ -47,7 +59,7 @@ podman run -d `
   --name au5-backend `
   --pod au5-pod `
   -e ASPNETCORE_ENVIRONMENT=Production `
-  -e "ConnectionStrings__ApplicationDbContext=Server=localhost,1433;Database=Au5Db;User Id=sa;Password==FgBGa)>:Gc-U>#gL@~1;TrustServerCertificate=true" `
+  -e "ConnectionStrings__ApplicationDbContext=Server=localhost,1433;Database=Au5Db;User Id=Au5;Password=Au5UserStrong!Pass123;TrustServerCertificate=true" `
   -e "ConnectionStrings__Redis=localhost:6379" `
   --restart unless-stopped `
   au5-backend
@@ -58,7 +70,7 @@ podman build -t au5-botfather ./botFather
 podman run -d `
   --name au5-botfather `
   --pod au5-pod `
-  -v /run/podman/podman.sock:/var/run/docker.sock
+  -v /run/podman/podman.sock:/var/run/docker.sock `
   --restart unless-stopped `
   au5-botfather
 

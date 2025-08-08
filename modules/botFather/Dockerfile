@@ -11,6 +11,6 @@ COPY . .
 RUN go build -o bot-father bot-father.go container_handler.go types.go
 
 # Expose the port the app runs on
-EXPOSE 8080
+EXPOSE 8081
 
 CMD ["./bot-father"]
