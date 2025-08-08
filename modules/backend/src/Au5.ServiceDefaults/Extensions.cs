@@ -1,5 +1,7 @@
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
@@ -15,25 +17,15 @@ public static class Extensions
 	public static TBuilder AddServiceDefaults<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
 	{
 		builder.ConfigureOpenTelemetry();
-
 		builder.AddDefaultHealthChecks();
 
 		builder.Services.AddServiceDiscovery();
 
 		builder.Services.ConfigureHttpClientDefaults(http =>
 		{
-			// Turn on resilience by default
 			http.AddStandardResilienceHandler();
-
-			// Turn on service discovery by default
 			http.AddServiceDiscovery();
 		});
-
-		// Uncomment the following to restrict the allowed schemes for service discovery.
-		// builder.Services.Configure<ServiceDiscoveryOptions>(options =>
-		// {
-		//     options.AllowedSchemes = ["https"];
-		// });
 
 		return builder;
 	}
@@ -79,25 +71,56 @@ public static class Extensions
 		return builder;
 	}
 
-	public static TBuilder AddDefaultHealthChecks<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
+	public static IHostApplicationBuilder AddDefaultHealthChecks(this IHostApplicationBuilder builder)
 	{
+		builder.Services.AddRequestTimeouts(
+			configure: timeouts =>
+				timeouts.AddPolicy("HealthChecks", TimeSpan.FromSeconds(5)));
+
+		builder.Services.AddOutputCache(
+			configureOptions: caching =>
+				caching.AddPolicy("HealthChecks",
+				build: static policy => policy.Expire(TimeSpan.FromSeconds(10))));
+
 		builder.Services.AddHealthChecks()
-			// Add a default liveness check to ensure app is responsive
-			.AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
+			.AddCheck("self", () => HealthCheckResult.Healthy(), ["live"])
+			.AddSqlServer(
+				connectionString: builder.Configuration.GetConnectionString("ApplicationDbContext") ?? "",
+				name: "database",
+				tags: ["ready"])
+
+			.AddRedis(
+				redisConnectionString: builder.Configuration.GetConnectionString("Redis") ?? "",
+				name: "redis_cache",
+				tags: ["ready"]);
 
 		return builder;
 	}
 
 	public static WebApplication MapDefaultEndpoints(this WebApplication app)
 	{
-		if (app.Environment.IsDevelopment())
+		var healthChecks = app.MapGroup("");
+
+		healthChecks
+			  .CacheOutput(policyName: "HealthChecks")
+			  .WithRequestTimeout(policyName: "HealthChecks");
+
+		healthChecks.MapHealthChecks("/health", new HealthCheckOptions
 		{
-			app.MapHealthChecks("/health");
-			app.MapHealthChecks("/alive", new HealthCheckOptions
-			{
-				Predicate = r => r.Tags.Contains("live")
-			});
-		}
+			ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+		});
+
+		healthChecks.MapHealthChecks("/health/live", new HealthCheckOptions
+		{
+			ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+			Predicate = static r => r.Tags.Contains("live")
+		});
+
+		healthChecks.MapHealthChecks("/health/ready", new HealthCheckOptions
+		{
+			ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+			Predicate = static r => r.Tags.Contains("ready")
+		});
 
 		return app;
 	}

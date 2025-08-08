@@ -56,9 +56,9 @@ var app = builder.Build();
 
 	app.UseCors();
 	app.MapHub<MeetingHub>("/meetinghub").AllowAnonymous();
-	app.MapGet("/liveness", () => Results.Ok("Healthy"));
 
 	app.MapControllers();
+
 	app.Run();
 }
 
