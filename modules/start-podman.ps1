@@ -47,7 +47,7 @@ podman run -d `
   --name au5-backend `
   --pod au5-pod `
   -e ASPNETCORE_ENVIRONMENT=Production `
-  -e "ConnectionStrings__DefaultConnection=Server=localhost,1433;Database=Au5Db;User Id=sa;Password==FgBGa)>:Gc-U>#gL@~1;TrustServerCertificate=true" `
+  -e "ConnectionStrings__ApplicationDbContext=Server=localhost,1433;Database=Au5Db;User Id=sa;Password==FgBGa)>:Gc-U>#gL@~1;TrustServerCertificate=true" `
   -e "ConnectionStrings__Redis=localhost:6379" `
   --restart unless-stopped `
   au5-backend
@@ -58,20 +58,23 @@ podman build -t au5-botfather ./botFather
 podman run -d `
   --name au5-botfather `
   --pod au5-pod `
-  -e DISPLAY=:99 `
+  -v /run/podman/podman.sock:/var/run/docker.sock
   --restart unless-stopped `
   au5-botfather
 
+# OR Use this command if you want to expose Bot Father on a specific port
+#podman run --name au5-botfather --network=au5 --pod au5-pod -d -p 1368:8080 -v /run/podman/podman.sock:/var/run/docker.sock au5-botfather
+
 # Build and start Panel
-Write-Host "Building and starting Panel..."
-podman build -t au5-panel ./panel
-podman run -d `
-  --name au5-panel `
-  --pod au5-pod `
-  -e NODE_ENV=production `
-  -e NEXT_PUBLIC_API_URL=http://localhost:1366 `
-  --restart unless-stopped `
-  au5-panel
+# Write-Host "Building and starting Panel..."
+# podman build -t au5-panel ./panel
+# podman run -d `
+#   --name au5-panel `
+#   --pod au5-pod `
+#   -e NODE_ENV=production `
+#   -e NEXT_PUBLIC_API_URL=http://localhost:1366 `
+#   --restart unless-stopped `
+#   au5-panel
 
 Write-Host "Au5 services are starting up!"
 Write-Host "Services will be available at:"
