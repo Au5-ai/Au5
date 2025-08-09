@@ -26,19 +26,6 @@ podman run -d `
   --restart unless-stopped `
   mcr.microsoft.com/mssql/server:2022-latest
 
-podman exec -it au5-sqlserver /opt/mssql-tools/bin/sqlcmd \
-  -S localhost -U SA -P 'FgBGa1@23Gc@U#gL@1' \
-  -Q "CREATE DATABASE Au5Db;"
-
-podman exec -it au5-sqlserver /opt/mssql-tools/bin/sqlcmd \
-  -S localhost -U SA -P 'FgBGa1@23Gc@U#gL@1' \
-  -d Au5Db \
-  -Q "CREATE LOGIN Au5 WITH PASSWORD = 'Au5UserStrong!Pass123';
-      CREATE USER Au5 FOR LOGIN Au5;
-      ALTER ROLE db_datareader ADD MEMBER Au5;
-      ALTER ROLE db_datawriter ADD MEMBER Au5;"
-
-
 # Start Redis
 Write-Host "Starting Redis..."
 podman run -d `
