@@ -1,6 +1,6 @@
 param(
     [string]$ContainerName = "au5-sqlserver",
-    [string]$Password = "Mohammad!11393",
+    [string]$Password = "SAStrong!Pass123",
     [int]$MaxRetries = 30,
     [int]$RetryInterval = 5
 )

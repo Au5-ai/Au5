@@ -2,7 +2,7 @@
 
 Write-Host "Creating Au5 pod..."
 podman pod create --name au5-pod `
-  -p 1433:1433 `
+  -p 15433:1433 `
   -p 6379:6379 `
   -p 1366:8080 `
   -p 1367:8081
@@ -19,44 +19,43 @@ podman run -d `
   --name au5-sqlserver `
   --pod au5-pod `
   -e ACCEPT_EULA=Y `
-  -e SA_PASSWORD='Mohammad!11393' `
-  -p 1433:1433 `
+  -e SA_PASSWORD='SAStrong!Pass123' `
   mcr.microsoft.com/mssql/server:2022-latest
 
 # # Start Redis
-# Write-Host "Starting Redis..."
-# podman run -d `
-#   --name au5-redis `
-#   --pod au5-pod `
-#   -v redis_data:/data `
-#   --restart unless-stopped `
-#   redis:7-alpine redis-server --appendonly yes
+Write-Host "Starting Redis..."
+podman run -d `
+  --name au5-redis `
+  --pod au5-pod `
+  -v redis_data:/data `
+  --restart unless-stopped `
+  redis:7-alpine redis-server --appendonly yes
 
 # # Wait a moment for databases to initialize
-# Write-Host "Waiting for databases to initialize..."
-# Start-Sleep -Seconds 15
+Write-Host "Waiting for databases to initialize..."
+Start-Sleep -Seconds 15
 
 # # Build and start Backend
-# Write-Host "Building and starting Backend..."
-# podman build -t au5-backend ./backend
-# podman run -d `
-#   --name au5-backend `
-#   --pod au5-pod `
-#   -e ASPNETCORE_ENVIRONMENT=Production `
-#   -e "ConnectionStrings__DefaultConnection=Server=localhost,1433;Database=Au5Db;User Id=Au5User;Password=Au5UserStrong!Pass123;TrustServerCertificate=true" `
-#   -e "ConnectionStrings__Redis=localhost:6379" `
-#   --restart unless-stopped `
-#   au5-backend
+Write-Host "Building and starting Backend..."
+podman build -t au5-backend ./backend
+podman run -d `
+  --name au5-backend `
+  --pod au5-pod `
+  -e ASPNETCORE_ENVIRONMENT=Production `
+  -e "ConnectionStrings__ApplicationDbContext=Server=localhost,1433;Database=Au5Db;User Id=Au5User;Password=Au5UserStrong!Pass123;TrustServerCertificate=true" `
+  -e "ConnectionStrings__Redis=localhost:6379" `
+  --restart unless-stopped `
+  au5-backend
 
 # # Build and start Bot Father
-# Write-Host "Building and starting Bot Father..."
-# podman build -t au5-botfather ./botFather
-# podman run -d `
-#   --name au5-botfather `
-#   --pod au5-pod `
-#   -v /run/podman/podman.sock:/var/run/docker.sock `
-#   --restart unless-stopped `
-#   au5-botfather
+Write-Host "Building and starting Bot Father..."
+podman build -t au5-botfather ./botFather
+podman run -d `
+  --name au5-botfather `
+  --pod au5-pod `
+  -v /run/podman/podman.sock:/var/run/docker.sock `
+  --restart unless-stopped `
+  au5-botfather
 
 # OR Use this command if you want to expose Bot Father on a specific port
 #podman run --name au5-botfather --network=au5 --pod au5-pod -d -p 1368:8080 -v /run/podman/podman.sock:/var/run/docker.sock au5-botfather
