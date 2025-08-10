@@ -15,11 +15,13 @@ podman volume create redis_data
 # Start SQL Server
 Write-Host "Starting SQL Server..."
 podman run -d `
-  --network=au5 `
   --name au5-sqlserver `
   --pod au5-pod `
   -e ACCEPT_EULA=Y `
   -e SA_PASSWORD='SAStrong!Pass123' `
+  -e MSSQL_PID=Express `
+  --restart unless-stopped `
+  -v sqlserver_data:/var/opt/mssql `
   mcr.microsoft.com/mssql/server:2022-latest
 
 # # Start Redis
