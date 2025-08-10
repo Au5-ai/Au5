@@ -1,36 +1,91 @@
 version: "3.9"
 
 services:
-  meetinghub:
-    build:
-      context: .
-      dockerfile: hub/hub.Dockerfile # Or use the path to your .NET Dockerfile
-    container_name: meetinghub
+  # SQL Server Database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: au5-sqlserver
     ports:
-      - "8080:8080" # exposed by your app
-      - "8081:8081"
-    networks:
-      - appnet
+      - "1433:1433"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD==FgBGa)>:Gc-U>#gL@~1
+      - MSSQL_PID=Express
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - au5
     restart: unless-stopped
 
-  playwrightbot:
-    build:
-      context: .
-      dockerfile: bot/bot.Dockerfile # Or use the path to your Playwright Dockerfile
-    container_name: playwrightbot
-    depends_on:
-      - meetinghub
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: au5-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
     networks:
-      - appnet
+      - au5
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # Backend API
+  au5-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: au5-backend
+    ports:
+      - "1366:8080"
+    depends_on:
+      - sqlserver
+      - redis
+    networks:
+      - au5
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=Au5Db;User Id=sa;Password==FgBGa)>:Gc-U>#gL@~1;TrustServerCertificate=true
+      - ConnectionStrings__Redis=redis:6379
+    restart: unless-stopped
+
+  # Bot Father Service
+  au5-botfather:
+    build:
+      context: ./botFather
+      dockerfile: Dockerfile
+    container_name: au5-botfather
+    ports:
+      - "1367:8080"
+    depends_on:
+      - au5-backend
+    networks:
+      - au5
     environment:
       - DISPLAY=:99
     restart: unless-stopped
-    # Optional: expose a port if you want to access the bot externally
-    # ports:
-    #   - "3000:3000"
+
+  # Panel Frontend
+  au5-panel:
+    build:
+      context: ./panel
+      dockerfile: Dockerfile
+    container_name: au5-panel
+    ports:
+      - "1368:3000"
+    depends_on:
+      - au5-backend
+    networks:
+      - au5
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://localhost:1366
+    restart: unless-stopped
+
+volumes:
+  sqlserver_data:
+  redis_data:
 
 networks:
-  appnet:
+  au5:
     driver: bridge

@@ -10,4 +10,6 @@ public class Reaction
 	public string Emoji { get; set; }
 
 	public string ClassName { get; set; }
+
+	public bool IsActive { get; set; }
 }

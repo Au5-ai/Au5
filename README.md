@@ -18,6 +18,10 @@ This bot is designed to integrate with platforms like Google Meet, Zoom, and oth
 
 # Au5 Backend
 
+## Start SqlServer
+
+docker run --network=au5 -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=!qaz@wsx" -p 1433:1433 --name sqlserver -d mcr.microsoft.com/mssql/server:2022-lts
+
 ## 🔌 Redis Setup (with Docker or Podman)
 
 This project uses Redis for caching or other services. If you don't have a Redis instance running already, you can start one using Docker or Podman.
@@ -29,20 +33,23 @@ This project uses Redis for caching or other services. If you don't have a Redis
 ```bash
 docker run -d --name redis -p 6379:6379 redis
 ```
+
 **Using Podman:**
 
 ```bash
 podman run -d --name redis -p 6379:6379 docker.io/library/redis
 ```
-This will run a Redis container accessible at localhost:6379.
 
+This will run a Redis container accessible at localhost:6379.
 
 🛠️ Configuration Notes
 
 The application is set up to connect to Redis at:
+
 ```bash
 localhost:6379
 ```
+
 If you are running Redis on a different host or port or
 using a Docker network or a cloud Redis provider (like Azure Redis, AWS ElastiCache, etc.),
 
