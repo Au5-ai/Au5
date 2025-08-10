@@ -18,6 +18,7 @@ public static class ConfigureServices
 
 		services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 		services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
+		services.AddScoped(typeof(IPipelineBehavior<,>), typeof(UserContextBehavior<,>));
 
 		return services;
 	}

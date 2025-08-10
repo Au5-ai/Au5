@@ -80,7 +80,7 @@ public static class Extensions
 		builder.Services.AddOutputCache(
 			configureOptions: caching =>
 				caching.AddPolicy("HealthChecks",
-				build: static policy => policy.Expire(TimeSpan.FromSeconds(10))));
+				build: static policy => policy.Expire(TimeSpan.FromSeconds(30))));
 
 		builder.Services.AddHealthChecks()
 			.AddCheck("self", () => HealthCheckResult.Healthy(), ["live"])
