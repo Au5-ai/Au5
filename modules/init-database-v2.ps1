@@ -7,59 +7,6 @@ param(
 
 Write-Host "Initializing Au5 Database..." -ForegroundColor Green
 
-# SQL Script content embedded in PowerShell
-$sqlScript = @"
--- Initialize Au5 Database and User
-USE master;
-
--- Create the Au5 database if it doesn't exist
-IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'Au5Db')
-BEGIN
-    CREATE DATABASE [Au5Db];
-    PRINT 'Database Au5Db created successfully.';
-END
-ELSE
-BEGIN
-    PRINT 'Database Au5Db already exists.';
-END
-
--- Use the Au5 database
-USE [Au5Db];
-
--- Create a login for the Au5 user
-IF NOT EXISTS (SELECT name FROM sys.server_principals WHERE name = N'Au5User')
-BEGIN
-    CREATE LOGIN [Au5User] WITH PASSWORD = N'Au5UserStrong!Pass123', 
-        DEFAULT_DATABASE = [Au5Db],
-        CHECK_EXPIRATION = OFF,
-        CHECK_POLICY = OFF;
-    PRINT 'Login Au5User created successfully.';
-END
-ELSE
-BEGIN
-    PRINT 'Login Au5User already exists.';
-END
-
--- Create a database user for the login
-USE [Au5Db];
-
-IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name = N'Au5User')
-BEGIN
-    CREATE USER [Au5User] FOR LOGIN [Au5User];
-    PRINT 'User Au5User created successfully.';
-END
-ELSE
-BEGIN
-    PRINT 'User Au5User already exists.';
-END
-
--- Grant necessary permissions to the Au5User
-ALTER ROLE [db_owner] ADD MEMBER [Au5User];
-PRINT 'Permissions granted to Au5User.';
-
-PRINT 'Database initialization completed successfully!';
-"@
-
 # Wait for SQL Server to be ready
 Write-Host "Waiting for SQL Server to be ready..." -ForegroundColor Yellow
 $retryCount = 0
