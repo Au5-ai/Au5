@@ -45,7 +45,7 @@ services:
       - au5
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=Au5Db;User Id=sa;Password==FgBGa)>:Gc-U>#gL@~1;TrustServerCertificate=true
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=Au5Db;User Id=Au5User;Password=Au5UserStrong!Pass123;TrustServerCertificate=true
       - ConnectionStrings__Redis=redis:6379
     restart: unless-stopped
 
