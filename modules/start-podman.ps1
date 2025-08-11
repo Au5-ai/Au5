@@ -1,11 +1,12 @@
 # Au5 Podman Deployment Script
 
-Write-Host "Creating Au5 pod..."
-podman pod create --name au5-pod `
+podman pod create --name au5-pod --network au5 `
   -p 15433:1433 `
   -p 6379:6379 `
   -p 1366:8080 `
   -p 1367:8081
+
+Write-Host "Creating Au5 pod..."
 
 # Create volumes
 Write-Host "Creating volumes..."
