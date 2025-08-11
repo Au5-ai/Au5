@@ -43,7 +43,7 @@ namespace Au5.Infrastructure.Migrations
 
                     b.HasIndex("ReactionId");
 
-                    b.ToTable("AppliedReactions", (string)null);
+                    b.ToTable("AppliedReactions");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.Entry", b =>
@@ -91,7 +91,7 @@ namespace Au5.Infrastructure.Migrations
 
                     b.HasIndex("MeetingId");
 
-                    b.ToTable("Entry", (string)null);
+                    b.ToTable("Entry");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.Meeting", b =>
@@ -137,7 +137,7 @@ namespace Au5.Infrastructure.Migrations
 
                     b.HasIndex("BotInviterUserId");
 
-                    b.ToTable("Meeting", (string)null);
+                    b.ToTable("Meeting");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.Organization", b =>
@@ -197,7 +197,7 @@ namespace Au5.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("PK_dbo_Company");
 
-                    b.ToTable("Organization", (string)null);
+                    b.ToTable("Organization");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.ParticipantInMeeting", b =>
@@ -228,7 +228,7 @@ namespace Au5.Infrastructure.Migrations
 
                     b.HasIndex("MeetingId");
 
-                    b.ToTable("ParticipantInMeeting", (string)null);
+                    b.ToTable("ParticipantInMeeting");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.Reaction", b =>
@@ -251,6 +251,9 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(10)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -260,7 +263,7 @@ namespace Au5.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("PK_dbo_Reaction");
 
-                    b.ToTable("Reaction", (string)null);
+                    b.ToTable("Reaction");
 
                     b.HasData(
                         new
@@ -268,6 +271,7 @@ namespace Au5.Infrastructure.Migrations
                             Id = 1,
                             ClassName = "reaction-task",
                             Emoji = "⚡",
+                            IsActive = false,
                             Type = "Task"
                         },
                         new
@@ -275,6 +279,7 @@ namespace Au5.Infrastructure.Migrations
                             Id = 2,
                             ClassName = "reaction-important",
                             Emoji = "⭐",
+                            IsActive = false,
                             Type = "GoodPoint"
                         },
                         new
@@ -282,6 +287,7 @@ namespace Au5.Infrastructure.Migrations
                             Id = 3,
                             ClassName = "reaction-question",
                             Emoji = "🎯",
+                            IsActive = false,
                             Type = "Goal"
                         });
                 });
@@ -324,7 +330,7 @@ namespace Au5.Infrastructure.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("User", (string)null);
+                    b.ToTable("User");
 
                     b.HasData(
                         new
@@ -361,6 +367,11 @@ namespace Au5.Infrastructure.Migrations
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("int");
 
+                            b1.Property<string>("Email")
+                                .HasMaxLength(200)
+                                .IsUnicode(false)
+                                .HasColumnType("varchar(200)");
+
                             b1.Property<string>("FullName")
                                 .HasMaxLength(200)
                                 .IsUnicode(false)
@@ -379,7 +390,7 @@ namespace Au5.Infrastructure.Migrations
 
                             b1.HasKey("AppliedReactionsId", "__synthesizedOrdinal");
 
-                            b1.ToTable("AppliedReactions", (string)null);
+                            b1.ToTable("AppliedReactions");
 
                             b1.ToJson("Participants");
 

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250731103455_InitDb")]
-    partial class InitDb
+    [Migration("20250811085456_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -254,6 +254,9 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(10)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -271,6 +274,7 @@ namespace Au5.Infrastructure.Migrations
                             Id = 1,
                             ClassName = "reaction-task",
                             Emoji = "⚡",
+                            IsActive = false,
                             Type = "Task"
                         },
                         new
@@ -278,6 +282,7 @@ namespace Au5.Infrastructure.Migrations
                             Id = 2,
                             ClassName = "reaction-important",
                             Emoji = "⭐",
+                            IsActive = false,
                             Type = "GoodPoint"
                         },
                         new
@@ -285,6 +290,7 @@ namespace Au5.Infrastructure.Migrations
                             Id = 3,
                             ClassName = "reaction-question",
                             Emoji = "🎯",
+                            IsActive = false,
                             Type = "Goal"
                         });
                 });
@@ -363,6 +369,11 @@ namespace Au5.Infrastructure.Migrations
                             b1.Property<int>("__synthesizedOrdinal")
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("int");
+
+                            b1.Property<string>("Email")
+                                .HasMaxLength(200)
+                                .IsUnicode(false)
+                                .HasColumnType("varchar(200)");
 
                             b1.Property<string>("FullName")
                                 .HasMaxLength(200)
