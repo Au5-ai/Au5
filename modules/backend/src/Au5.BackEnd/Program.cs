@@ -2,6 +2,7 @@ using Au5.BackEnd.GlobalHandler;
 using Au5.BackEnd.Middlewares;
 using Au5.Infrastructure.Persistence.Context;
 using Au5.ServiceDefaults;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,15 @@ builder.AddServiceDefaults();
 
 var app = builder.Build();
 {
+	using (var scope = app.Services.CreateScope())
+	{
+		var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+		if(db.Database.GetPendingMigrations().Any())
+		{
+			db.Database.Migrate();
+		}
+	}
+
 	app.UseExceptionHandler();
 	app.MapDefaultEndpoints();
 

@@ -43,7 +43,7 @@ func createContainerHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response, err := cli.ContainerCreate(ctx, &container.Config{
-		Image: "redis",
+		Image: "au5-bot",
 		Env:   envVars,
 	}, nil, nil, nil, meetingConfig.MeetId+"--"+meetingConfig.HashToken)
 
