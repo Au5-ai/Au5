@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Au5.Application.Common.Abstractions;
+using Au5.Application.Common.Resources;
 
 namespace Au5.Application.Features.Meetings.AddBot;
 
@@ -27,7 +28,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<Guid>>
 			MeetId = request.MeetId,
 			BotName = request.BotName,
 			IsBotAdded = false,
-			BotInviterUserId = Guid.Parse("EDADA1F7-CBDA-4C13-8504-A57FE72D5960"),
+			BotInviterUserId = request.UserId,
 			CreatedAt = DateTime.UtcNow,
 			Platform = request.Platform,
 			Status = MeetingStatus.NotStarted,
@@ -36,6 +37,6 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<Guid>>
 
 		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
 
-		return dbResult.IsSuccess ? meetingId : Error.Failure(description: "Failed to add bot to the meeting.");
+		return dbResult.IsSuccess ? meetingId : Error.Failure(description: AppResources.FailedToAddBot);
 	}
 }
