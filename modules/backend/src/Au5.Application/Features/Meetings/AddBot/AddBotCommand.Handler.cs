@@ -11,11 +11,13 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<Guid>>
 {
 	private readonly IApplicationDbContext _dbContext;
 	private readonly IHttpClientFactory _httpClientFactory;
+	private readonly IMeetingUrlService _meetingUrlService;
 
-	public AddBotCommandHandler(IApplicationDbContext dbContext, IHttpClientFactory httpClientFactory)
+	public AddBotCommandHandler(IApplicationDbContext dbContext, IHttpClientFactory httpClientFactory, IMeetingUrlService meetingUrlService)
 	{
 		_dbContext = dbContext;
 		_httpClientFactory = httpClientFactory;
+		_meetingUrlService = meetingUrlService;
 	}
 
 	public async ValueTask<Result<Guid>> Handle(AddBotCommand request, CancellationToken cancellationToken)
@@ -26,9 +28,8 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<Guid>>
 		var hash = SHA256.HashData(bytes);
 		var hashToken = Convert.ToBase64String(hash);
 
-		// Get organization settings
 		var organization = await _dbContext.Set<Organization>().FirstOrDefaultAsync(cancellationToken);
-		if (organization == null)
+		if (organization is null)
 		{
 			return Error.Failure(description: "Organization not configured");
 		}
@@ -54,7 +55,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<Guid>>
 			{
 				hubUrl = organization.HubUrl,
 				platform = request.Platform,
-				meetingUrl = $"https://meet.google.com/{request.MeetId}",
+				meetingUrl = _meetingUrlService.GetMeetingUrl(request.Platform, request.MeetId),
 				botDisplayName = organization.BotName,
 				meetId = request.MeetId,
 				hashToken,
