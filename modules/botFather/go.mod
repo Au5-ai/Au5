@@ -4,7 +4,7 @@ go 1.23.0
 
 toolchain go1.24.5
 
-require github.com/docker/docker v25.0.0+incompatible
+require github.com/docker/docker v26.1.5+incompatible
 
 require (
 	github.com/Microsoft/go-winio v0.4.14 // indirect
@@ -16,6 +16,7 @@ require (
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
+	github.com/moby/docker-image-spec v1.3.1 // indirect
 	github.com/moby/term v0.5.2 // indirect
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
