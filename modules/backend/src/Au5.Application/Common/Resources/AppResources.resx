@@ -150,4 +150,7 @@
   <data name="InvalidPasswordFormat" xml:space="preserve">
     <value>Password must be at least 6 characters long.</value>
   </data>
+  <data name="FailedToAddBot" xml:space="preserve">
+    <value>Failed to add bot to meeting</value>
+  </data>
 </root>

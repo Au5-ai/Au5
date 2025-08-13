@@ -1,5 +1,7 @@
 using System.Text;
+using Au5.Application.Common.Abstractions;
 using Au5.BackEnd.Filters;
+using Au5.BackEnd.Services;
 using Au5.Infrastructure.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -13,6 +15,9 @@ public static class ConfigServices
 	public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration config)
 	{
 		services.Configure<JwtSettings>(config.GetSection(JWTSETTING));
+
+		services.AddHttpContextAccessor();
+		services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 		var jwtSettings = config.GetSection(JWTSETTING).Get<JwtSettings>();
 

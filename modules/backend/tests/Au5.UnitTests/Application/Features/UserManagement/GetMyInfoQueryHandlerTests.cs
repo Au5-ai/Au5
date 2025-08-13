@@ -32,7 +32,7 @@ public class GetMyInfoQueryHandlerTests
 		var dbSet = new List<User> { user }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<User>()).Returns(dbSet.Object);
 
-		var query = new GetMyInfoQuery(userId);
+		var query = new GetMyInfoQuery { UserId = userId };
 
 		var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -60,7 +60,7 @@ public class GetMyInfoQueryHandlerTests
 		var dbSet = new List<User> { user }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<User>()).Returns(dbSet.Object);
 
-		var query = new GetMyInfoQuery(userId);
+		var query = new GetMyInfoQuery { UserId = userId };
 
 		var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -77,7 +77,7 @@ public class GetMyInfoQueryHandlerTests
 		var dbSet = new List<User> { }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<User>()).Returns(dbSet.Object);
 
-		var query = new GetMyInfoQuery(userId);
+		var query = new GetMyInfoQuery { UserId = userId };
 
 		var result = await _handler.Handle(query, CancellationToken.None);
 

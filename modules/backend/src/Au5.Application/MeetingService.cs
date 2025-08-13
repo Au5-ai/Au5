@@ -88,6 +88,7 @@ public class MeetingService : IMeetingService
 		{
 			if (!meeting.IsBotAdded)
 			{
+				meeting.BotName = "Cando";
 				meeting.IsBotAdded = true;
 				meeting.Status = MeetingStatus.Recording;
 			}

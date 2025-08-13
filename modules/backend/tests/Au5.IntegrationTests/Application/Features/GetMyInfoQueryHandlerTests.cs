@@ -26,7 +26,7 @@ public class GetMyInfoQueryHandlerTests : BaseIntegrationTest
 		});
 		await DbContext.SaveChangesAsync(CancellationToken.None);
 
-		var query = new GetMyInfoQuery(_userId);
+		var query = new GetMyInfoQuery();
 
 		var result = await Mediator.Send(query);
 
@@ -51,7 +51,7 @@ public class GetMyInfoQueryHandlerTests : BaseIntegrationTest
 		});
 		await DbContext.SaveChangesAsync(CancellationToken.None);
 
-		var query = new GetMyInfoQuery(Guid.NewGuid());
+		var query = new GetMyInfoQuery();
 
 		var result = await Mediator.Send(query);
 
@@ -75,7 +75,7 @@ public class GetMyInfoQueryHandlerTests : BaseIntegrationTest
 		});
 		await DbContext.SaveChangesAsync(CancellationToken.None);
 
-		var query = new GetMyInfoQuery(userId);
+		var query = new GetMyInfoQuery();
 
 		var result = await Mediator.Send(query);
 

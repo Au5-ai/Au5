@@ -7,7 +7,7 @@ namespace Au5.BackEnd.Controllers
 		[Route("me")]
 		public async Task<IActionResult> GetMyInfo()
 		{
-			return Ok(await mediator.Send(new GetMyInfoQuery(CurrentUserId)));
+			return Ok(await mediator.Send(new GetMyInfoQuery()));
 		}
 	}
 }

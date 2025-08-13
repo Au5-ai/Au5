@@ -61,6 +61,15 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to add bot to meeting.
+        /// </summary>
+        internal static string FailedToAddBot {
+            get {
+                return ResourceManager.GetString("FailedToAddBot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed To Config Company.
         /// </summary>
         internal static string FailedToConfigOrganization {
