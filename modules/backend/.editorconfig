@@ -244,7 +244,7 @@ dotnet_diagnostic.CA1812.severity = warning
 dotnet_diagnostic.CA1859.severity = warning
 
 #Use the LoggerMessage delegates
-dotnet_diagnostic.CA1848.severity = warning
+dotnet_diagnostic.CA1848.severity = none
 
 #https://github.com/dotnet/roslyn-analyzers/issues/5530
 #https://github.com/dotnet/roslyn-analyzers/issues/5712
