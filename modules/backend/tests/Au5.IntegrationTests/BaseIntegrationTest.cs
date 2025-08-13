@@ -10,9 +10,10 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebApp>
 	private readonly IServiceScope _scope;
 	private readonly IServiceProvider _serviceProvider;
 
-	protected BaseIntegrationTest(IntegrationTestWebApp factory)
+	protected BaseIntegrationTest(IntegrationTestWebApp webApp)
 	{
-		_scope = factory.Services.CreateScope();
+		WebApp = webApp;
+		_scope = webApp.Services.CreateScope();
 		_serviceProvider = _scope.ServiceProvider;
 		DbContext = _serviceProvider.GetRequiredService<ApplicationDbContext>();
 		if (DbContext.Database.GetPendingMigrations().Any())
@@ -20,6 +21,8 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebApp>
 			DbContext.Database.Migrate();
 		}
 	}
+
+	protected IntegrationTestWebApp WebApp { get; }
 
 	protected ApplicationDbContext DbContext { get; set; }
 

@@ -1,3 +1,4 @@
+using Au5.Application.Common.Abstractions;
 using Au5.Infrastructure.Persistence.Context;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -8,9 +9,17 @@ using Testcontainers.MsSql;
 
 namespace Au5.IntegrationTests;
 
+public class TestCurrentUserService : ICurrentUserService
+{
+	public Guid UserId { get; set; } = Guid.Empty;
+
+	public bool IsAuthenticated { get; set; } = false;
+}
+
 public class IntegrationTestWebApp : WebApplicationFactory<Program>, IAsyncLifetime
 {
 	private readonly MsSqlContainer _dbContainer;
+	private readonly TestCurrentUserService _testCurrentUserService = new();
 
 	public IntegrationTestWebApp()
 	{
@@ -21,6 +30,8 @@ public class IntegrationTestWebApp : WebApplicationFactory<Program>, IAsyncLifet
 			.WithPassword("P@ssw0rd")
 			.Build();
 	}
+
+	public TestCurrentUserService TestCurrentUserService => _testCurrentUserService;
 
 	public async Task InitializeAsync()
 	{
@@ -34,7 +45,24 @@ public class IntegrationTestWebApp : WebApplicationFactory<Program>, IAsyncLifet
 
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
 	{
-		builder.ConfigureTestServices(ConfigureTestDb);
+		builder.ConfigureTestServices(services =>
+		{
+			ConfigureTestDb(services);
+			ConfigureTestServices(services);
+		});
+	}
+
+	private void ConfigureTestServices(IServiceCollection services)
+	{
+		var existingCurrentUserDescriptor = services.SingleOrDefault(
+			s => s.ServiceType == typeof(ICurrentUserService));
+
+		if (existingCurrentUserDescriptor is not null)
+		{
+			services.Remove(existingCurrentUserDescriptor);
+		}
+
+		services.AddSingleton<ICurrentUserService>(_testCurrentUserService);
 	}
 
 	private void ConfigureTestDb(IServiceCollection services)
