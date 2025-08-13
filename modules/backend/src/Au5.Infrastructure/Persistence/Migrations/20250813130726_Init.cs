@@ -11,25 +11,6 @@ namespace Au5.Infrastructure.Migrations
 		protected override void Up(MigrationBuilder migrationBuilder)
 		{
 			migrationBuilder.CreateTable(
-				name: "Organization",
-				columns: table => new
-				{
-					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-					Name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
-					BotName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-					HubUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
-					Direction = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
-					Language = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
-					ServiceBaseUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
-					OpenAIToken = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
-					PanelUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false)
-				},
-				constraints: table =>
-				{
-					table.PrimaryKey("PK_dbo_Company", x => x.Id);
-				});
-
-			migrationBuilder.CreateTable(
 				name: "Reaction",
 				columns: table => new
 				{
@@ -43,6 +24,25 @@ namespace Au5.Infrastructure.Migrations
 				constraints: table =>
 				{
 					table.PrimaryKey("PK_dbo_Reaction", x => x.Id);
+				});
+
+			migrationBuilder.CreateTable(
+				name: "SystemConfig",
+				columns: table => new
+				{
+					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+					OrganizationName = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
+					BotName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+					HubUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
+					Direction = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
+					Language = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+					ServiceBaseUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
+					OpenAIToken = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
+					PanelUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false)
+				},
+				constraints: table =>
+				{
+					table.PrimaryKey("PK_dbo_SystemConfig", x => x.Id);
 				});
 
 			migrationBuilder.CreateTable(
@@ -211,10 +211,10 @@ namespace Au5.Infrastructure.Migrations
 				name: "AppliedReactions");
 
 			migrationBuilder.DropTable(
-				name: "Organization");
+				name: "ParticipantInMeeting");
 
 			migrationBuilder.DropTable(
-				name: "ParticipantInMeeting");
+				name: "SystemConfig");
 
 			migrationBuilder.DropTable(
 				name: "Entry");

@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Au5.Infrastructure.Persistence.Config;
 
-public class CompanyConfig : IEntityTypeConfiguration<Organization>
+public class SystemDbConfig : IEntityTypeConfiguration<SystemConfig>
 {
-	public void Configure(EntityTypeBuilder<Organization> builder)
+	public void Configure(EntityTypeBuilder<SystemConfig> builder)
 	{
 		builder.HasKey(t => t.Id)
-			.HasName("PK_dbo_Company");
+			.HasName("PK_dbo_SystemConfig");
 
-		builder.Property(t => t.Name)
+		builder.Property(t => t.OrganizationName)
 			.IsRequired()
 			.HasMaxLength(100);
 

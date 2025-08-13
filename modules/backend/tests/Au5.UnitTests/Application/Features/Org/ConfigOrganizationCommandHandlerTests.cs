@@ -6,15 +6,15 @@ using MockQueryable.Moq;
 
 namespace Au5.UnitTests.Application.Features.Org;
 
-public class ConfigOrganizationCommandHandlerTests
+public class SystemConfigCommandHandlerTests
 {
 	private readonly Mock<IApplicationDbContext> _dbContextMock;
-	private readonly ConfigOrganizationCommandHandler _handler;
+	private readonly SystemConfigCommandHandler _handler;
 
-	public ConfigOrganizationCommandHandlerTests()
+	public SystemConfigCommandHandlerTests()
 	{
 		_dbContextMock = new();
-		_handler = new ConfigOrganizationCommandHandler(_dbContextMock.Object);
+		_handler = new SystemConfigCommandHandler(_dbContextMock.Object);
 	}
 
 	[Fact]
@@ -25,9 +25,9 @@ public class ConfigOrganizationCommandHandlerTests
 		var dbSet = new List<SystemConfig> { org }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<SystemConfig>()).Returns(dbSet.Object);
 
-		var command = new ConfigOrganizationCommand()
+		var command = new SystemConfigCommand()
 		{
-			Name = "TestOrg",
+			OrganizationName = "TestOrg",
 			BotName = "Bot",
 			HubUrl = "http=//hub",
 			Direction = "Inbound",
@@ -40,26 +40,26 @@ public class ConfigOrganizationCommandHandlerTests
 
 		var result = await _handler.Handle(command, CancellationToken.None);
 
-		dbSet.Verify(x => x.Add(It.IsAny<Organization>()), Times.Never);
+		dbSet.Verify(x => x.Add(It.IsAny<SystemConfig>()), Times.Never);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
 		Assert.False(result.IsSuccess);
-		Assert.Equal(AppResources.OrganizationAlreadyConfigured, result.Error.Description);
+		Assert.Equal(AppResources.SystemAlreadyConfigured, result.Error.Description);
 	}
 
 	[Fact]
 	public async Task Should_UpdatesConfigAndReturnsSuccess_When_ExistingConfigForceUpdateTrue()
 	{
-		var org = new Organization { Id = Guid.NewGuid() };
+		var org = new SystemConfig { Id = Guid.NewGuid() };
 
-		var dbSet = new List<Organization> { org }.BuildMockDbSet();
-		_dbContextMock.Setup(db => db.Set<Organization>()).Returns(dbSet.Object);
+		var dbSet = new List<SystemConfig> { org }.BuildMockDbSet();
+		_dbContextMock.Setup(db => db.Set<SystemConfig>()).Returns(dbSet.Object);
 
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success());
 
-		var command = new ConfigOrganizationCommand()
+		var command = new SystemConfigCommand()
 		{
-			Name = "TestOrg",
+			OrganizationName = "TestOrg",
 			BotName = "Bot",
 			HubUrl = "http=//hub",
 			Direction = "Inbound",
@@ -74,7 +74,7 @@ public class ConfigOrganizationCommandHandlerTests
 
 		Assert.True(result.IsSuccess);
 		Assert.Null(result.Error.Description);
-		Assert.Equal("TestOrg", org.Name);
+		Assert.Equal("TestOrg", org.OrganizationName);
 		Assert.Equal("Bot", org.BotName);
 		Assert.Equal("http=//hub", org.HubUrl);
 		Assert.Equal("Inbound", org.Direction);
@@ -82,22 +82,22 @@ public class ConfigOrganizationCommandHandlerTests
 		Assert.Equal("http=//service", org.ServiceBaseUrl);
 		Assert.Equal("http=//panel", org.PanelUrl);
 		Assert.Equal("token", org.OpenAIToken);
-		dbSet.Verify(x => x.Add(It.IsAny<Organization>()), Times.Never);
+		dbSet.Verify(x => x.Add(It.IsAny<SystemConfig>()), Times.Never);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 	}
 
 	[Fact]
 	public async Task Should_AddsNewConfigAndReturnsSuccess_When_NoExistingConfig()
 	{
-		var dbSet = new List<Organization> { }.BuildMockDbSet();
-		_dbContextMock.Setup(db => db.Set<Organization>()).Returns(dbSet.Object);
+		var dbSet = new List<SystemConfig> { }.BuildMockDbSet();
+		_dbContextMock.Setup(db => db.Set<SystemConfig>()).Returns(dbSet.Object);
 
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success());
 
-		var command = new ConfigOrganizationCommand
+		var command = new SystemConfigCommand
 		{
-			Name = "TestOrg",
+			OrganizationName = "TestOrg",
 			BotName = "Bot",
 			HubUrl = "http=//hub",
 			Direction = "Inbound",
@@ -110,7 +110,7 @@ public class ConfigOrganizationCommandHandlerTests
 
 		var result = await _handler.Handle(command, CancellationToken.None);
 
-		dbSet.Verify(x => x.Add(It.IsAny<Organization>()), Times.Once);
+		dbSet.Verify(x => x.Add(It.IsAny<SystemConfig>()), Times.Once);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 		Assert.True(result.IsSuccess);
 		Assert.Null(result.Error.Description);
@@ -119,15 +119,15 @@ public class ConfigOrganizationCommandHandlerTests
 	[Fact]
 	public async Task Should_ReturnsFailure_When_SaveChangesFails()
 	{
-		var dbSet = new List<Organization> { }.BuildMockDbSet();
-		_dbContextMock.Setup(db => db.Set<Organization>()).Returns(dbSet.Object);
+		var dbSet = new List<SystemConfig> { }.BuildMockDbSet();
+		_dbContextMock.Setup(db => db.Set<SystemConfig>()).Returns(dbSet.Object);
 
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			   .ReturnsAsync(Error.Failure(description: "Failed To Config Company"));
 
-		var command = new ConfigOrganizationCommand
+		var command = new SystemConfigCommand
 		{
-			Name = "TestOrg",
+			OrganizationName = "TestOrg",
 			BotName = "Bot",
 			HubUrl = "http=//hub",
 			Direction = "Inbound",
@@ -140,9 +140,9 @@ public class ConfigOrganizationCommandHandlerTests
 
 		var result = await _handler.Handle(command, CancellationToken.None);
 
-		dbSet.Verify(x => x.Add(It.IsAny<Organization>()), Times.Once);
+		dbSet.Verify(x => x.Add(It.IsAny<SystemConfig>()), Times.Once);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 		Assert.False(result.IsSuccess);
-		Assert.Equal(AppResources.FailedToConfigOrganization, result.Error.Description);
+		Assert.Equal(AppResources.FailedToConfigSystem, result.Error.Description);
 	}
 }

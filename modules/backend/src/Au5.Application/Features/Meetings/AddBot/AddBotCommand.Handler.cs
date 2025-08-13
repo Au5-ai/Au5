@@ -34,8 +34,8 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 		var meetingId = Guid.NewGuid();
 		var hashToken = GenerateHashToken(meetingId);
 
-		var organization = await GetOrganizationAsync(cancellationToken);
-		if (organization is null)
+		var config = await GetSystemConfigAsync(cancellationToken);
+		if (config is null)
 		{
 			return Error.Failure(description: "Organization not configured");
 		}
@@ -48,7 +48,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 			return Error.Failure(description: AppResources.FailedToAddBot);
 		}
 
-		var payload = BuildBotPayload(request, organization, hashToken);
+		var payload = BuildBotPayload(request, config, hashToken);
 		var httpResult = await SendBotCreationRequestAsync(payload, cancellationToken);
 
 		return httpResult.IsSuccess ? Result.Success() : httpResult;
@@ -62,8 +62,8 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 		return Convert.ToBase64String(hash);
 	}
 
-	private Task<Organization> GetOrganizationAsync(CancellationToken cancellationToken) =>
-		_dbContext.Set<Organization>().FirstOrDefaultAsync(cancellationToken);
+	private Task<SystemConfig> GetSystemConfigAsync(CancellationToken cancellationToken) =>
+		_dbContext.Set<SystemConfig>().FirstOrDefaultAsync(cancellationToken);
 
 	private void AddMeetingToContext(AddBotCommand request, Guid meetingId, string hashToken)
 	{
@@ -82,16 +82,16 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 		});
 	}
 
-	private object BuildBotPayload(AddBotCommand request, Organization organization, string hashToken) =>
+	private object BuildBotPayload(AddBotCommand request, SystemConfig config, string hashToken) =>
 		new
 		{
-			hubUrl = organization.HubUrl,
+			hubUrl = config.HubUrl,
 			platform = request.Platform,
 			meetingUrl = _meetingUrlService.GetMeetingUrl(request.Platform, request.MeetId),
-			botDisplayName = organization.BotName,
+			botDisplayName = config.BotName,
 			meetId = request.MeetId,
 			hashToken,
-			language = organization.Language,
+			language = config.Language,
 			autoLeave = new
 			{
 				waitingEnter = 30000,

@@ -70,11 +70,11 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed To Config Company.
+        ///   Looks up a localized string similar to Failed To Config System.
         /// </summary>
-        internal static string FailedToConfigOrganization {
+        internal static string FailedToConfigSystem {
             get {
-                return ResourceManager.GetString("FailedToConfigOrganization", resourceCulture);
+                return ResourceManager.GetString("FailedToConfigSystem", resourceCulture);
             }
         }
         
@@ -133,29 +133,29 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Organization Already Configured , You can set ForceUpdate=true..
-        /// </summary>
-        internal static string OrganizationAlreadyConfigured {
-            get {
-                return ResourceManager.GetString("OrganizationAlreadyConfigured", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to OrganizationIsNotConfigured.
-        /// </summary>
-        internal static string OrganizationIsNotConfigured {
-            get {
-                return ResourceManager.GetString("OrganizationIsNotConfigured", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to property can not be empty.
         /// </summary>
         internal static string Required {
             get {
                 return ResourceManager.GetString("Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to System Already Configured , You can set ForceUpdate=true..
+        /// </summary>
+        internal static string SystemAlreadyConfigured {
+            get {
+                return ResourceManager.GetString("SystemAlreadyConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SystemIsNotConfigured.
+        /// </summary>
+        internal static string SystemIsNotConfigured {
+            get {
+                return ResourceManager.GetString("SystemIsNotConfigured", resourceCulture);
             }
         }
         

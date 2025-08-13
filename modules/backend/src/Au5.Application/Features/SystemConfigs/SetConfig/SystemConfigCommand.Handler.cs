@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.SystemConfigs.SetConfig;
 
-public class ConfigOrganizationCommandHandler : IRequestHandler<SystemConfigCommand, Result>
+public class SystemConfigCommandHandler : IRequestHandler<SystemConfigCommand, Result>
 {
 	private readonly IApplicationDbContext _dbContext;
 
-	public ConfigOrganizationCommandHandler(IApplicationDbContext dbContext)
+	public SystemConfigCommandHandler(IApplicationDbContext dbContext)
 	{
 		_dbContext = dbContext;
 	}
@@ -21,7 +21,7 @@ public class ConfigOrganizationCommandHandler : IRequestHandler<SystemConfigComm
 		{
 			if (!request.ForceUpdate)
 			{
-				return Error.Failure(description: AppResources.OrganizationAlreadyConfigured);
+				return Error.Failure(description: AppResources.SystemAlreadyConfigured);
 			}
 
 			existingConfig.OrganizationName = request.OrganizationName;
@@ -50,6 +50,6 @@ public class ConfigOrganizationCommandHandler : IRequestHandler<SystemConfigComm
 		}
 
 		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
-		return dbResult.IsSuccess ? Result.Success() : Error.Failure(description: AppResources.FailedToConfigOrganization);
+		return dbResult.IsSuccess ? Result.Success() : Error.Failure(description: AppResources.FailedToConfigSystem);
 	}
 }

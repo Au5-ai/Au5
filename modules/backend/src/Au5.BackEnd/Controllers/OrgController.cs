@@ -1,5 +1,5 @@
-using Au5.Application.Features.Org.Config;
-using Au5.Application.Features.Org.GetConfig;
+using Au5.Application.Features.SystemConfigs.GetConfig;
+using Au5.Application.Features.SystemConfigs.SetConfig;
 
 namespace Au5.BackEnd.Controllers;
 
@@ -11,7 +11,7 @@ public class OrgController(ISender mediator) : BaseController
 	/// <param name="command">The command containing the company configuration details.</param>
 	/// <returns>A result indicating success or failure.</returns>
 	[HttpPost("config")]
-	public async Task<IActionResult> InitConfig([FromBody] ConfigOrganizationCommand command)
+	public async Task<IActionResult> InitConfig([FromBody] SystemConfigCommand command)
 	{
 		return Ok(await mediator.Send(command));
 	}
@@ -19,6 +19,6 @@ public class OrgController(ISender mediator) : BaseController
 	[HttpGet("config")]
 	public async Task<IActionResult> GetConfig()
 	{
-		return Ok(await mediator.Send(new ConfigOrganizationQuery()));
+		return Ok(await mediator.Send(new SystemConfigQuery()));
 	}
 }

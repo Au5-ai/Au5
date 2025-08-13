@@ -19,7 +19,7 @@ public class SystemConfigQueryHandler : IRequestHandler<SystemConfigQuery, Resul
 
 		if (existingConfig is not null)
 		{
-			Error.Failure(description: AppResources.OrganizationIsNotConfigured);
+			Error.Failure(description: AppResources.SystemIsNotConfigured);
 		}
 
 		return existingConfig;
