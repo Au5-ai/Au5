@@ -2,9 +2,9 @@ using Au5.Application.Common.Abstractions;
 using Au5.Application.Common.Resources;
 using Microsoft.EntityFrameworkCore;
 
-namespace Au5.Application.Features.Org.Config;
+namespace Au5.Application.Features.SystemConfigs.SetConfig;
 
-public class ConfigOrganizationCommandHandler : IRequestHandler<ConfigOrganizationCommand, Result>
+public class ConfigOrganizationCommandHandler : IRequestHandler<SystemConfigCommand, Result>
 {
 	private readonly IApplicationDbContext _dbContext;
 
@@ -13,9 +13,9 @@ public class ConfigOrganizationCommandHandler : IRequestHandler<ConfigOrganizati
 		_dbContext = dbContext;
 	}
 
-	public async ValueTask<Result> Handle(ConfigOrganizationCommand request, CancellationToken cancellationToken)
+	public async ValueTask<Result> Handle(SystemConfigCommand request, CancellationToken cancellationToken)
 	{
-		var existingConfig = await _dbContext.Set<Organization>().FirstOrDefaultAsync(cancellationToken);
+		var existingConfig = await _dbContext.Set<SystemConfig>().FirstOrDefaultAsync(cancellationToken);
 
 		if (existingConfig is not null)
 		{
@@ -24,7 +24,7 @@ public class ConfigOrganizationCommandHandler : IRequestHandler<ConfigOrganizati
 				return Error.Failure(description: AppResources.OrganizationAlreadyConfigured);
 			}
 
-			existingConfig.Name = request.Name;
+			existingConfig.OrganizationName = request.OrganizationName;
 			existingConfig.BotName = request.BotName;
 			existingConfig.HubUrl = request.HubUrl;
 			existingConfig.Direction = request.Direction;
@@ -35,10 +35,10 @@ public class ConfigOrganizationCommandHandler : IRequestHandler<ConfigOrganizati
 		}
 		else
 		{
-			_dbContext.Set<Organization>().Add(new Organization()
+			_dbContext.Set<SystemConfig>().Add(new SystemConfig()
 			{
 				Id = Guid.NewGuid(),
-				Name = request.Name,
+				OrganizationName = request.OrganizationName,
 				BotName = request.BotName,
 				HubUrl = request.HubUrl,
 				Direction = request.Direction,

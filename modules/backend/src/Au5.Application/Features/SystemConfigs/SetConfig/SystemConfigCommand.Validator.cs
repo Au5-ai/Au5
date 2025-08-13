@@ -1,12 +1,12 @@
 using Au5.Application.Common.Resources;
 
-namespace Au5.Application.Features.Org.Config;
+namespace Au5.Application.Features.SystemConfigs.SetConfig;
 
-public class ConfigOrganizationCommandValiadtor : AbstractValidator<ConfigOrganizationCommand>
+public class SystemConfigCommandValidator : AbstractValidator<SystemConfigCommand>
 {
-	public ConfigOrganizationCommandValiadtor()
+	public SystemConfigCommandValidator()
 	{
-		RuleFor(x => x.Name)
+		RuleFor(x => x.OrganizationName)
 			.NotEmpty()
 			.WithMessage(AppResources.Required);
 

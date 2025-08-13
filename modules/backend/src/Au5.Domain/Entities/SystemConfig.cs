@@ -3,12 +3,12 @@ using System.Text.Json.Serialization;
 namespace Au5.Domain.Entities;
 
 [Entity]
-public class Organization
+public class SystemConfig
 {
 	[JsonIgnore]
 	public Guid Id { get; set; }
 
-	public string Name { get; set; }
+	public string OrganizationName { get; set; }
 
 	public string BotName { get; set; }
 

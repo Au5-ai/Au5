@@ -16,10 +16,10 @@ namespace Au5.Infrastructure.Migrations
 				{
 					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					Name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
-					BotName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+					BotName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
 					HubUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
 					Direction = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
-					Language = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
+					Language = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
 					ServiceBaseUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
 					OpenAIToken = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
 					PanelUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false)
@@ -36,7 +36,7 @@ namespace Au5.Infrastructure.Migrations
 					Id = table.Column<int>(type: "int", nullable: false)
 						.Annotation("SqlServer:Identity", "1, 1"),
 					Type = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
-					Emoji = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
+					Emoji = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
 					ClassName = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
 					IsActive = table.Column<bool>(type: "bit", nullable: false)
 				},
@@ -67,10 +67,11 @@ namespace Au5.Infrastructure.Migrations
 				{
 					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					MeetId = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
+					MeetName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
 					BotInviterUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-					HashToken = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
-					Platform = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
-					BotName = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
+					HashToken = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
+					Platform = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
+					BotName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
 					IsBotAdded = table.Column<bool>(type: "bit", nullable: false),
 					CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
 					Status = table.Column<int>(type: "int", nullable: false)
@@ -93,11 +94,11 @@ namespace Au5.Infrastructure.Migrations
 						.Annotation("SqlServer:Identity", "1, 1"),
 					BlockId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					ParticipantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-					FullName = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
-					Content = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
+					FullName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+					Content = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: false),
 					Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
-					Timeline = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
-					EntryType = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
+					Timeline = table.Column<string>(type: "varchar(8)", unicode: false, maxLength: 8, nullable: true),
+					EntryType = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
 					MeetingId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
 				},
 				constraints: table =>
@@ -118,12 +119,12 @@ namespace Au5.Infrastructure.Migrations
 						.Annotation("SqlServer:Identity", "1, 1"),
 					MeetingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-					FullName = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
+					FullName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
 					PictureUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true)
 				},
 				constraints: table =>
 				{
-					table.PrimaryKey("PK_ParticipantInMeeting", x => x.Id);
+					table.PrimaryKey("PK_dbo_ParticipantInMeeting", x => x.Id);
 					table.ForeignKey(
 						name: "FK_ParticipantInMeeting_Meeting_MeetingId",
 						column: x => x.MeetingId,

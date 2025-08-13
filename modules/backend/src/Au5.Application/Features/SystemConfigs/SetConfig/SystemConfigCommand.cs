@@ -1,8 +1,8 @@
-namespace Au5.Application.Features.Org.Config;
+namespace Au5.Application.Features.SystemConfigs.SetConfig;
 
-public record ConfigOrganizationCommand : IRequest<Result>
+public record SystemConfigCommand : IRequest<Result>
 {
-	public string Name { get; init; }
+	public string OrganizationName { get; init; }
 
 	public string BotName { get; init; }
 

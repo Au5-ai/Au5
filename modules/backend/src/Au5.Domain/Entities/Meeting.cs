@@ -9,6 +9,8 @@ public class Meeting
 
 	public string MeetId { get; set; }
 
+	public string MeetName { get; set; }
+
 	public Guid BotInviterUserId { get; set; }
 
 	[ForeignKey(nameof(BotInviterUserId))]

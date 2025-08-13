@@ -71,6 +71,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 		{
 			Id = meetingId,
 			MeetId = request.MeetId,
+			MeetName = "Meeting Transcription",
 			BotName = request.BotName,
 			IsBotAdded = false,
 			BotInviterUserId = request.UserId,

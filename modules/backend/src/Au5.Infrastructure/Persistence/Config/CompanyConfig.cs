@@ -16,6 +16,7 @@ public class CompanyConfig : IEntityTypeConfiguration<Organization>
 			.HasMaxLength(100);
 
 		builder.Property(t => t.BotName)
+			.IsUnicode(true)
 			.IsRequired()
 			.HasMaxLength(50);
 
@@ -41,6 +42,6 @@ public class CompanyConfig : IEntityTypeConfiguration<Organization>
 
 		builder.Property(t => t.Language)
 			.IsRequired()
-			.HasMaxLength(10);
+			.HasMaxLength(5);
 	}
 }

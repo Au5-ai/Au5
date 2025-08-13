@@ -1,5 +1,5 @@
 using Au5.Application.Common.Abstractions;
-using Au5.Application.Features.Org.Config;
+using Au5.Application.Features.SystemConfigs.SetConfig;
 using Au5.Domain.Entities;
 using Au5.Shared;
 using MockQueryable.Moq;
@@ -20,10 +20,10 @@ public class ConfigOrganizationCommandHandlerTests
 	[Fact]
 	public async Task Should_ReturnFailure_When_ExistingConfigAndForceUpdateFalse()
 	{
-		var org = new Organization { Id = Guid.NewGuid() };
+		var org = new SystemConfig { Id = Guid.NewGuid() };
 
-		var dbSet = new List<Organization> { org }.BuildMockDbSet();
-		_dbContextMock.Setup(db => db.Set<Organization>()).Returns(dbSet.Object);
+		var dbSet = new List<SystemConfig> { org }.BuildMockDbSet();
+		_dbContextMock.Setup(db => db.Set<SystemConfig>()).Returns(dbSet.Object);
 
 		var command = new ConfigOrganizationCommand()
 		{
