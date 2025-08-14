@@ -37,14 +37,15 @@ public class MeetingService : IMeetingService
 			meeting.Participants.Add(new ParticipantInMeeting()
 			{
 				UserId = userJoined.User.Id,
-				FullName = userJoined.User.FullName,
-				PictureUrl = userJoined.User.PictureUrl,
 			});
 			return meeting;
 		}
 	}
 
-	public void AddParticipantToMeet(List<Participant> users, string meetId)
+	/// <summary>
+	/// this method is used to add Guests to a meeting.
+	/// </summary>
+	public void AddGuestsToMeet(List<Participant> users, string meetId)
 	{
 		lock (LockObject)
 		{
@@ -58,14 +59,14 @@ public class MeetingService : IMeetingService
 			{
 				var existingParticipant = true;
 
-				if (!item.HasAccount && !meeting.Participants.Any(x => x.FullName == item.FullName))
+				if (!item.HasAccount && !meeting.Guests.Any(x => x.FullName == item.FullName))
 				{
 					existingParticipant = false;
 				}
 
 				if (!existingParticipant)
 				{
-					meeting.Participants.Add(new ParticipantInMeeting
+					meeting.Guests.Add(new GuestsInMeeting
 					{
 						MeetingId = meeting.Id,
 						FullName = item.HasAccount ? string.Empty : item.FullName,

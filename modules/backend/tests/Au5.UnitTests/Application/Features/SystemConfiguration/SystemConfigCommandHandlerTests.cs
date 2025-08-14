@@ -4,7 +4,7 @@ using Au5.Domain.Entities;
 using Au5.Shared;
 using MockQueryable.Moq;
 
-namespace Au5.UnitTests.Application.Features.Org;
+namespace Au5.UnitTests.Application.Features.SystemConfiguration;
 
 public class SystemConfigCommandHandlerTests
 {
@@ -20,9 +20,9 @@ public class SystemConfigCommandHandlerTests
 	[Fact]
 	public async Task Should_ReturnFailure_When_ExistingConfigAndForceUpdateFalse()
 	{
-		var org = new SystemConfig { Id = Guid.NewGuid() };
+		var config = new SystemConfig { Id = Guid.NewGuid() };
 
-		var dbSet = new List<SystemConfig> { org }.BuildMockDbSet();
+		var dbSet = new List<SystemConfig> { config }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<SystemConfig>()).Returns(dbSet.Object);
 
 		var command = new SystemConfigCommand()
@@ -49,9 +49,9 @@ public class SystemConfigCommandHandlerTests
 	[Fact]
 	public async Task Should_UpdatesConfigAndReturnsSuccess_When_ExistingConfigForceUpdateTrue()
 	{
-		var org = new SystemConfig { Id = Guid.NewGuid() };
+		var config = new SystemConfig { Id = Guid.NewGuid() };
 
-		var dbSet = new List<SystemConfig> { org }.BuildMockDbSet();
+		var dbSet = new List<SystemConfig> { config }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<SystemConfig>()).Returns(dbSet.Object);
 
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
@@ -74,14 +74,14 @@ public class SystemConfigCommandHandlerTests
 
 		Assert.True(result.IsSuccess);
 		Assert.Null(result.Error.Description);
-		Assert.Equal("TestOrg", org.OrganizationName);
-		Assert.Equal("Bot", org.BotName);
-		Assert.Equal("http=//hub", org.HubUrl);
-		Assert.Equal("Inbound", org.Direction);
-		Assert.Equal("en", org.Language);
-		Assert.Equal("http=//service", org.ServiceBaseUrl);
-		Assert.Equal("http=//panel", org.PanelUrl);
-		Assert.Equal("token", org.OpenAIToken);
+		Assert.Equal("TestOrg", config.OrganizationName);
+		Assert.Equal("Bot", config.BotName);
+		Assert.Equal("http=//hub", config.HubUrl);
+		Assert.Equal("Inbound", config.Direction);
+		Assert.Equal("en", config.Language);
+		Assert.Equal("http=//service", config.ServiceBaseUrl);
+		Assert.Equal("http=//panel", config.PanelUrl);
+		Assert.Equal("token", config.OpenAIToken);
 		dbSet.Verify(x => x.Add(It.IsAny<SystemConfig>()), Times.Never);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 	}

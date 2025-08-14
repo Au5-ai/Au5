@@ -13,5 +13,6 @@ public record FullTranscriptionResponse(
 	string CreatedAt,
 	string Status,
 	IReadOnlyList<Participant> Participants,
+	IReadOnlyList<Participant> Guests,
 	IReadOnlyList<EntryDto> Entries
 );

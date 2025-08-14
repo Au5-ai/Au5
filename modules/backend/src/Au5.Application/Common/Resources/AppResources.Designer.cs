@@ -124,7 +124,7 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to InvalidUrl.
+        ///   Looks up a localized string similar to Invalid Url.
         /// </summary>
         internal static string InvalidUrl {
             get {

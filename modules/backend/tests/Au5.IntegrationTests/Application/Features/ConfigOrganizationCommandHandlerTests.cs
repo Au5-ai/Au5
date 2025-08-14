@@ -25,7 +25,15 @@ public class SystemConfigCommandHandlerTests : BaseIntegrationTest
 			PanelUrl = "https://example.com/panel",
 			ServiceBaseUrl = "https://example.com/api",
 			OpenAIToken = "sk-test-token",
-			ForceUpdate = false
+			ForceUpdate = false,
+			AutoLeaveWaitingEnter = 10,
+			AutoLeaveNoParticipant = 5,
+			AutoLeaveAllParticipantsLeft = 2,
+			MeetingVideoRecording = true,
+			BotFatherUrl = "https://botfather.example.com",
+			MeetingAudioRecording = true,
+			MeetingTranscription = true,
+			MeetingTranscriptionModel = "liveCaption"
 		};
 
 		_ = await Mediator.Send(command);
@@ -56,6 +64,14 @@ public class SystemConfigCommandHandlerTests : BaseIntegrationTest
 			PanelUrl = "https://example.com/panel",
 			ServiceBaseUrl = "https://example.com/api",
 			OpenAIToken = "sk-test-token",
+			AutoLeaveWaitingEnter = 10,
+			AutoLeaveNoParticipant = 5,
+			AutoLeaveAllParticipantsLeft = 2,
+			MeetingVideoRecording = true,
+			BotFatherUrl = "https://botfather.example.com",
+			MeetingAudioRecording = true,
+			MeetingTranscription = true,
+			MeetingTranscriptionModel = "liveCaption"
 		});
 		await DbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -69,6 +85,14 @@ public class SystemConfigCommandHandlerTests : BaseIntegrationTest
 			ServiceBaseUrl = "https://new.service",
 			PanelUrl = "https://new.panel",
 			OpenAIToken = "new-token",
+			AutoLeaveWaitingEnter = 10,
+			AutoLeaveNoParticipant = 5,
+			AutoLeaveAllParticipantsLeft = 2,
+			MeetingVideoRecording = true,
+			BotFatherUrl = "https://botfather.example.com",
+			MeetingAudioRecording = true,
+			MeetingTranscription = true,
+			MeetingTranscriptionModel = "liveCaption",
 			ForceUpdate = true
 		};
 
@@ -101,6 +125,14 @@ public class SystemConfigCommandHandlerTests : BaseIntegrationTest
 			PanelUrl = "https://example.com/panel",
 			ServiceBaseUrl = "https://example.com/api",
 			OpenAIToken = "sk-test-token",
+			AutoLeaveWaitingEnter = 10,
+			AutoLeaveNoParticipant = 5,
+			AutoLeaveAllParticipantsLeft = 2,
+			MeetingVideoRecording = true,
+			BotFatherUrl = "https://botfather.example.com",
+			MeetingAudioRecording = true,
+			MeetingTranscription = true,
+			MeetingTranscriptionModel = "liveCaption"
 		});
 		await DbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -114,6 +146,14 @@ public class SystemConfigCommandHandlerTests : BaseIntegrationTest
 			ServiceBaseUrl = "https://new.service",
 			PanelUrl = "https://new.panel",
 			OpenAIToken = "new-token",
+			AutoLeaveWaitingEnter = 10,
+			AutoLeaveNoParticipant = 5,
+			AutoLeaveAllParticipantsLeft = 2,
+			MeetingVideoRecording = true,
+			BotFatherUrl = "https://botfather.example.com",
+			MeetingAudioRecording = true,
+			MeetingTranscription = true,
+			MeetingTranscriptionModel = "liveCaption",
 			ForceUpdate = false
 		};
 

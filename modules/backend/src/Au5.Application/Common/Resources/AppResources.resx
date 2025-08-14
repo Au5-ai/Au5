@@ -133,7 +133,7 @@
     <value>InvalidLanguageFormat</value>
   </data>
   <data name="InvalidUrl" xml:space="preserve">
-    <value>InvalidUrl</value>
+    <value>Invalid Url</value>
   </data>
   <data name="Required" xml:space="preserve">
     <value>property can not be empty</value>

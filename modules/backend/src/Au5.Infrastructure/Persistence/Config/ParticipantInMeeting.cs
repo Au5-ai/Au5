@@ -10,9 +10,5 @@ public class ParticipantInMeetingConfig : IEntityTypeConfiguration<ParticipantIn
 	{
 		builder.HasKey(t => t.Id)
 			.HasName("PK_dbo_ParticipantInMeeting");
-
-		builder.Property(m => m.FullName)
-			.IsUnicode(true)
-			.HasMaxLength(50);
 	}
 }

@@ -2,7 +2,6 @@ using Au5.Application.Common.Abstractions;
 using Au5.Application.Common.Resources;
 using Au5.Application.Services.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Au5.Application.Features.Meetings.AddBot;
 
@@ -11,18 +10,15 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 	private readonly IApplicationDbContext _dbContext;
 	private readonly IBotFatherService _botFather;
 	private readonly IMeetingUrlService _meetingUrlService;
-	private readonly ILogger<AddBotCommandHandler> _logger;
 
 	public AddBotCommandHandler(
 		IApplicationDbContext dbContext,
 		IBotFatherService botFather,
-		IMeetingUrlService meetingUrlService,
-		ILogger<AddBotCommandHandler> logger)
+		IMeetingUrlService meetingUrlService)
 	{
 		_dbContext = dbContext;
 		_botFather = botFather;
 		_meetingUrlService = meetingUrlService;
-		_logger = logger;
 	}
 
 	public async ValueTask<Result> Handle(AddBotCommand request, CancellationToken cancellationToken)

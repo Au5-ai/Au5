@@ -5,8 +5,7 @@ namespace Au5.Application.Features.Meetings.MyMeeting;
 public record MyMeetingQuery() : BaseUserCommand<Result<IReadOnlyCollection<MyMeetingResponse>>>;
 
 public record class MyMeetingResponse(
-	Guid Id,
-	string MeetingId,
+	Guid MeetingId,
 	string MeetId,
 	string MeetName,
 	string Platform,
