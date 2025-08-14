@@ -32,6 +32,12 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 				x.CreatedAt.ToString("HH:mm:ss"),
 				x.Status.ToString(),
 				string.IsNullOrEmpty(x.Duration) ? "0h 0m" : x.Duration,
+				x.Guests.Select(g => new Participant()
+				{
+					FullName = g.FullName,
+					HasAccount = false,
+					PictureUrl = g.PictureUrl
+				}).ToList(),
 				x.Participants.Select(p => p.User.ToParticipant()).ToList()))
 			.ToListAsync(cancellationToken);
 		return meetings;

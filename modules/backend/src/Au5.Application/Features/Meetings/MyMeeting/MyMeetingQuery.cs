@@ -14,5 +14,6 @@ public record class MyMeetingResponse(
 	string CreatedAtTime,
 	string Status,
 	string Duration,
+	IReadOnlyList<Participant> Guests,
 	IReadOnlyList<Participant> Participants
 );

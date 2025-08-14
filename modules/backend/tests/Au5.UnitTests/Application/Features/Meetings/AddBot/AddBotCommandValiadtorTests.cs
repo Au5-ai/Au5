@@ -1,7 +1,7 @@
 using Au5.Application.Features.Meetings.AddBot;
 using FluentValidation.TestHelper;
 
-namespace Au5.UnitTests.Application.Features.Meeting.AddBot;
+namespace Au5.UnitTests.Application.Features.Meetings.AddBot;
 
 public class AddBotCommandValiadtorTests
 {
