@@ -43,5 +43,9 @@ public class SystemDbConfig : IEntityTypeConfiguration<SystemConfig>
 		builder.Property(t => t.Language)
 			.IsRequired()
 			.HasMaxLength(5);
+
+		builder.Property(t => t.MeetingTranscriptionModel)
+			.IsRequired()
+			.HasMaxLength(20);
 	}
 }

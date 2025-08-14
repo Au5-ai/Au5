@@ -31,6 +31,13 @@ public class SystemConfigCommandHandler : IRequestHandler<SystemConfigCommand, R
 			existingConfig.Language = request.Language;
 			existingConfig.ServiceBaseUrl = request.ServiceBaseUrl;
 			existingConfig.PanelUrl = request.PanelUrl;
+			existingConfig.AutoLeaveWaitingEnter = request.AutoLeaveWaitingEnter;
+			existingConfig.AutoLeaveNoParticipant = request.AutoLeaveNoParticipant;
+			existingConfig.AutoLeaveAllParticipantsLeft = request.AutoLeaveAllParticipantsLeft;
+			existingConfig.MeetingVideoRecording = request.MeetingVideoRecording;
+			existingConfig.MeetingAudioRecording = request.MeetingAudioRecording;
+			existingConfig.MeetingTranscription = request.MeetingTranscription;
+			existingConfig.MeetingTranscriptionModel = request.MeetingTranscriptionModel;
 			existingConfig.OpenAIToken = request.OpenAIToken;
 		}
 		else
@@ -45,7 +52,14 @@ public class SystemConfigCommandHandler : IRequestHandler<SystemConfigCommand, R
 				Language = request.Language,
 				ServiceBaseUrl = request.ServiceBaseUrl,
 				PanelUrl = request.PanelUrl,
-				OpenAIToken = request.OpenAIToken
+				OpenAIToken = request.OpenAIToken,
+				AutoLeaveWaitingEnter = request.AutoLeaveWaitingEnter,
+				AutoLeaveNoParticipant = request.AutoLeaveNoParticipant,
+				AutoLeaveAllParticipantsLeft = request.AutoLeaveAllParticipantsLeft,
+				MeetingVideoRecording = request.MeetingVideoRecording,
+				MeetingAudioRecording = request.MeetingAudioRecording,
+				MeetingTranscription = request.MeetingTranscription,
+				MeetingTranscriptionModel = request.MeetingTranscriptionModel
 			});
 		}
 

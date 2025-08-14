@@ -61,6 +61,15 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error communicating with BotFather.
+        /// </summary>
+        internal static string FailedCommunicateWithBotFather {
+            get {
+                return ResourceManager.GetString("FailedCommunicateWithBotFather", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to add bot to meeting.
         /// </summary>
         internal static string FailedToAddBot {
@@ -93,6 +102,15 @@ namespace Au5.Application.Common.Resources {
         internal static string InvalidLanguageFormat {
             get {
                 return ResourceManager.GetString("InvalidLanguageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Model Must be liveCaption or liveAudio.
+        /// </summary>
+        internal static string InvalidMeetingTranscriptionModel {
+            get {
+                return ResourceManager.GetString("InvalidMeetingTranscriptionModel", resourceCulture);
             }
         }
         

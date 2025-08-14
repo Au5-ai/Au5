@@ -153,4 +153,10 @@
   <data name="FailedToAddBot" xml:space="preserve">
     <value>Failed to add bot to meeting</value>
   </data>
+  <data name="FailedCommunicateWithBotFather" xml:space="preserve">
+    <value>Error communicating with BotFather</value>
+  </data>
+  <data name="InvalidMeetingTranscriptionModel" xml:space="preserve">
+    <value>Model Must be liveCaption or liveAudio</value>
+  </data>
 </root>

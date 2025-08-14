@@ -24,4 +24,18 @@ public class SystemConfig
 	public string OpenAIToken { get; set; }
 
 	public string PanelUrl { get; set; }
+
+	public int AutoLeaveWaitingEnter { get; set; }
+
+	public int AutoLeaveNoParticipant { get; set; }
+
+	public int AutoLeaveAllParticipantsLeft { get; set; }
+
+	public bool MeetingVideoRecording { get; set; }
+
+	public bool MeetingAudioRecording { get; set; }
+
+	public bool MeetingTranscription { get; set; }
+
+	public string MeetingTranscriptionModel { get; set; }
 }

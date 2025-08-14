@@ -50,5 +50,11 @@ public class SystemConfigCommandValidator : AbstractValidator<SystemConfigComman
 			.Must(uri => Uri.TryCreate(uri, UriKind.Absolute, out var temp) &&
 						 (temp.Scheme == Uri.UriSchemeHttp || temp.Scheme == Uri.UriSchemeHttps))
 			.WithMessage(AppResources.InvalidUrl);
+
+		RuleFor(x => x.MeetingTranscriptionModel)
+			.NotEmpty()
+			.WithMessage(AppResources.Required)
+			.Must(dir => dir is "liveCaption" or "liveAudio")
+			.WithMessage(AppResources.InvalidMeetingTranscriptionModel);
 	}
 }

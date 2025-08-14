@@ -94,16 +94,16 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 			language = config.Language,
 			autoLeave = new
 			{
-				waitingEnter = 30000,
-				noParticipant = 60000,
-				allParticipantsLeft = 120000
+				waitingEnter = config.AutoLeaveWaitingEnter,
+				noParticipant = config.AutoLeaveNoParticipant,
+				allParticipantsLeft = config.AutoLeaveAllParticipantsLeft
 			},
 			meeting_settings = new
 			{
-				video_recording = true,
-				audio_recording = true,
-				transcription = true,
-				transcription_model = "liveCaption"
+				video_recording = config.MeetingVideoRecording,
+				audio_recording = config.MeetingAudioRecording,
+				transcription = config.MeetingTranscription,
+				transcription_model = config.MeetingTranscriptionModel,
 			}
 		};
 
@@ -121,7 +121,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 			{
 				var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
 				_logger.LogError("Failed to create bot: {Error}", errorContent);
-				return Error.Failure(description: $"Failed to create bot: {errorContent}");
+				return Error.Failure(description: AppResources.FailedToAddBot);
 			}
 
 			return Result.Success();
@@ -129,7 +129,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 		catch (Exception ex)
 		{
 			_logger.LogError(ex, "Error communicating with BotFather.");
-			return Error.Failure(description: $"Error communicating with BotFather: {ex.Message}");
+			return Error.Failure(description: AppResources.FailedCommunicateWithBotFather);
 		}
 	}
 }
