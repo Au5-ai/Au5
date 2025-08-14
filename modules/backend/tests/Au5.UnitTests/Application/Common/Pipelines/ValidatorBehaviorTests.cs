@@ -26,7 +26,7 @@ public class ValidatorBehaviorTests
 			return ValueTask.FromResult(expectedResponse);
 		}
 
-		var result = await behavior.Handle(new TestRequest("FakeData"), CancellationToken.None, Next);
+		var result = await behavior.Handle(new TestRequest("FakeData"), Next, CancellationToken.None);
 
 		Assert.Equal(result, expectedResponse);
 	}
@@ -53,7 +53,7 @@ public class ValidatorBehaviorTests
 
 		async Task Act()
 		{
-			await behavior.Handle(new TestRequest(string.Empty), CancellationToken.None, Next);
+			await behavior.Handle(new TestRequest(string.Empty), Next, CancellationToken.None);
 		}
 
 		var exception = await Assert.ThrowsAsync<ValidationException>(Act);

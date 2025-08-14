@@ -5,7 +5,7 @@ public class ValidatorBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequ
 {
 	private readonly IEnumerable<IValidator<TRequest>> _validators = validators;
 
-	public async ValueTask<TResponse> Handle(TRequest message, CancellationToken cancellationToken, MessageHandlerDelegate<TRequest, TResponse> next)
+	public async ValueTask<TResponse> Handle(TRequest message, MessageHandlerDelegate<TRequest, TResponse> next, CancellationToken cancellationToken)
 	{
 		var validations = await Task.WhenAll(_validators.Select(v => v.ValidateAsync(message)));
 
