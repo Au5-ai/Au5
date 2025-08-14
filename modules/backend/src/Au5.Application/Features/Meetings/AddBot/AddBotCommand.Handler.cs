@@ -1,8 +1,6 @@
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
 using Au5.Application.Common.Abstractions;
 using Au5.Application.Common.Resources;
+using Au5.Application.Services.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -10,21 +8,19 @@ namespace Au5.Application.Features.Meetings.AddBot;
 
 public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 {
-	private const string BotFatherUrl = "http://host.containers.internal:1367/create-container";
-
 	private readonly IApplicationDbContext _dbContext;
-	private readonly IHttpClientFactory _httpClientFactory;
+	private readonly IBotFatherService _botFather;
 	private readonly IMeetingUrlService _meetingUrlService;
 	private readonly ILogger<AddBotCommandHandler> _logger;
 
 	public AddBotCommandHandler(
 		IApplicationDbContext dbContext,
-		IHttpClientFactory httpClientFactory,
+		IBotFatherService botFather,
 		IMeetingUrlService meetingUrlService,
 		ILogger<AddBotCommandHandler> logger)
 	{
 		_dbContext = dbContext;
-		_httpClientFactory = httpClientFactory;
+		_botFather = botFather;
 		_meetingUrlService = meetingUrlService;
 		_logger = logger;
 	}
@@ -32,41 +28,14 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 	public async ValueTask<Result> Handle(AddBotCommand request, CancellationToken cancellationToken)
 	{
 		var meetingId = Guid.NewGuid();
-		var hashToken = GenerateHashToken(meetingId);
+		var hashToken = HashHelper.Hash(meetingId.ToString());
 
-		var config = await GetSystemConfigAsync(cancellationToken);
+		var config = await _dbContext.Set<SystemConfig>().AsNoTracking().FirstOrDefaultAsync(cancellationToken);
 		if (config is null)
 		{
-			return Error.Failure(description: "Organization not configured");
+			return Error.Failure(AppResources.SystemIsNotConfigured);
 		}
 
-		AddMeetingToContext(request, meetingId, hashToken);
-
-		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
-		if (!dbResult.IsSuccess)
-		{
-			return Error.Failure(description: AppResources.FailedToAddBot);
-		}
-
-		var payload = BuildBotPayload(request, config, hashToken);
-		var httpResult = await SendBotCreationRequestAsync(payload, cancellationToken);
-
-		return httpResult.IsSuccess ? Result.Success() : httpResult;
-	}
-
-	private static string GenerateHashToken(Guid meetingId)
-	{
-		var raw = $"{meetingId}{DateTime.UtcNow:O}";
-		var bytes = Encoding.UTF8.GetBytes(raw);
-		var hash = SHA256.HashData(bytes);
-		return Convert.ToBase64String(hash);
-	}
-
-	private Task<SystemConfig> GetSystemConfigAsync(CancellationToken cancellationToken) =>
-		_dbContext.Set<SystemConfig>().FirstOrDefaultAsync(cancellationToken);
-
-	private void AddMeetingToContext(AddBotCommand request, Guid meetingId, string hashToken)
-	{
 		_dbContext.Set<Meeting>().Add(new Meeting
 		{
 			Id = meetingId,
@@ -77,59 +46,42 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 			BotInviterUserId = request.UserId,
 			CreatedAt = DateTime.UtcNow,
 			Platform = request.Platform,
-			Status = MeetingStatus.NotStarted,
+			Status = MeetingStatus.AddingBot,
 			HashToken = hashToken
 		});
+
+		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
+		if (!dbResult.IsSuccess)
+		{
+			return Error.Failure(description: AppResources.FailedToAddBot);
+		}
+
+		var payload = BuildBotPayload(request, config, hashToken);
+		return await _botFather.CreateBotAsync(config.BotFatherUrl, payload, cancellationToken);
 	}
 
-	private object BuildBotPayload(AddBotCommand request, SystemConfig config, string hashToken) =>
-		new
+	private BotPayload BuildBotPayload(AddBotCommand request, SystemConfig config, string hashToken) =>
+		new()
 		{
-			hubUrl = config.HubUrl,
-			platform = request.Platform,
-			meetingUrl = _meetingUrlService.GetMeetingUrl(request.Platform, request.MeetId),
-			botDisplayName = config.BotName,
-			meetId = request.MeetId,
-			hashToken,
-			language = config.Language,
-			autoLeave = new
+			HubUrl = config.HubUrl,
+			Platform = request.Platform,
+			MeetingUrl = _meetingUrlService.GetMeetingUrl(request.Platform, request.MeetId),
+			BotDisplayName = config.BotName,
+			MeetId = request.MeetId,
+			HashToken = hashToken,
+			Language = config.Language,
+			AutoLeaveSettings = new()
 			{
-				waitingEnter = config.AutoLeaveWaitingEnter,
-				noParticipant = config.AutoLeaveNoParticipant,
-				allParticipantsLeft = config.AutoLeaveAllParticipantsLeft
+				WaitingEnter = config.AutoLeaveWaitingEnter,
+				NoParticipant = config.AutoLeaveNoParticipant,
+				AllParticipantsLeft = config.AutoLeaveAllParticipantsLeft
 			},
-			meeting_settings = new
+			MeetingSettings = new()
 			{
-				video_recording = config.MeetingVideoRecording,
-				audio_recording = config.MeetingAudioRecording,
-				transcription = config.MeetingTranscription,
-				transcription_model = config.MeetingTranscriptionModel,
+				VideoRecording = config.MeetingVideoRecording,
+				AudioRecording = config.MeetingAudioRecording,
+				Transcription = config.MeetingTranscription,
+				TranscriptionModel = config.MeetingTranscriptionModel,
 			}
 		};
-
-	private async Task<Result> SendBotCreationRequestAsync(object payload, CancellationToken cancellationToken)
-	{
-		var json = JsonSerializer.Serialize(payload);
-		var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-		var httpClient = _httpClientFactory.CreateClient();
-
-		try
-		{
-			var response = await httpClient.PostAsync(BotFatherUrl, content, cancellationToken);
-			if (!response.IsSuccessStatusCode)
-			{
-				var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-				_logger.LogError("Failed to create bot: {Error}", errorContent);
-				return Error.Failure(description: AppResources.FailedToAddBot);
-			}
-
-			return Result.Success();
-		}
-		catch (Exception ex)
-		{
-			_logger.LogError(ex, "Error communicating with BotFather.");
-			return Error.Failure(description: AppResources.FailedCommunicateWithBotFather);
-		}
-	}
 }

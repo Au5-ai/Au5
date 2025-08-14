@@ -14,6 +14,8 @@ public record SystemConfigCommand : IRequest<Result>
 
 	public string ServiceBaseUrl { get; init; }
 
+	public string BotFatherUrl { get; set; }
+
 	public string PanelUrl { get; init; }
 
 	public string OpenAIToken { get; init; }

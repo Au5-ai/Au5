@@ -23,7 +23,7 @@ public class MeetingService : IMeetingService
 					CreatedAt = DateTime.Now,
 					Platform = userJoined.Platform,
 					Participants = [],
-					Status = MeetingStatus.NotStarted,
+					Status = MeetingStatus.AddingBot,
 				};
 				_meetings.Add(meeting);
 			}

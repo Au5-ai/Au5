@@ -8,7 +8,7 @@ public enum MeetingStatus
     /// <summary>
     /// The meeting has not started yet.
     /// </summary>
-    NotStarted,
+    AddingBot,
 
     /// <summary>
     /// The meeting is currently in progress and being recorded.

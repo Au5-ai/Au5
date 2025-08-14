@@ -32,6 +32,10 @@ public class SystemDbConfig : IEntityTypeConfiguration<SystemConfig>
 			.IsRequired()
 			.HasMaxLength(200);
 
+		builder.Property(t => t.BotFatherUrl)
+			.IsRequired()
+			.HasMaxLength(200);
+
 		builder.Property(t => t.PanelUrl)
 			.IsRequired()
 			.HasMaxLength(200);

@@ -10,7 +10,7 @@ public class GetMyInfoQueryHandler(IApplicationDbContext applicationDbContext) :
 
 	public async ValueTask<Result<Participant>> Handle(GetMyInfoQuery request, CancellationToken cancellationToken)
 	{
-		var user = await _dbContext.Set<User>().FirstOrDefaultAsync(x => x.Id == request.UserId && x.IsActive, cancellationToken);
+		var user = await _dbContext.Set<User>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == request.UserId && x.IsActive, cancellationToken);
 		return user == null
 			? Error.Unauthorized(description: AppResources.UnAuthorizedAction)
 			: new Participant

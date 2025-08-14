@@ -20,6 +20,8 @@ public class SystemConfig
 
 	public string ServiceBaseUrl { get; set; }
 
+	public string BotFatherUrl { get; set; }
+
 	[JsonIgnore]
 	public string OpenAIToken { get; set; }
 
