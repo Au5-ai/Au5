@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250814043701_AddSomeFieldInSystemConfig")]
-    partial class AddSomeFieldInSystemConfig
+    [Migration("20250814110717_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -98,6 +98,35 @@ namespace Au5.Infrastructure.Migrations
                     b.ToTable("Entry");
                 });
 
+            modelBuilder.Entity("Au5.Domain.Entities.GuestsInMeeting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FullName")
+                        .HasMaxLength(50)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<Guid>("MeetingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PictureUrl")
+                        .HasMaxLength(250)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.HasKey("Id")
+                        .HasName("PK_dbo_GuestsInMeeting");
+
+                    b.HasIndex("MeetingId");
+
+                    b.ToTable("GuestsInMeeting");
+                });
+
             modelBuilder.Entity("Au5.Domain.Entities.Meeting", b =>
                 {
                     b.Property<Guid>("Id")
@@ -114,6 +143,11 @@ namespace Au5.Infrastructure.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Duration")
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
 
                     b.Property<string>("HashToken")
                         .HasMaxLength(100)
@@ -157,18 +191,8 @@ namespace Au5.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("FullName")
-                        .HasMaxLength(50)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<Guid>("MeetingId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("PictureUrl")
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -177,6 +201,8 @@ namespace Au5.Infrastructure.Migrations
                         .HasName("PK_dbo_ParticipantInMeeting");
 
                     b.HasIndex("MeetingId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("ParticipantInMeeting");
                 });
@@ -256,6 +282,12 @@ namespace Au5.Infrastructure.Migrations
 
                     b.Property<int>("AutoLeaveWaitingEnter")
                         .HasColumnType("int");
+
+                    b.Property<string>("BotFatherUrl")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
 
                     b.Property<string>("BotName")
                         .IsRequired()
@@ -447,6 +479,17 @@ namespace Au5.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
                 });
 
+            modelBuilder.Entity("Au5.Domain.Entities.GuestsInMeeting", b =>
+                {
+                    b.HasOne("Au5.Domain.Entities.Meeting", "Meeting")
+                        .WithMany("Guests")
+                        .HasForeignKey("MeetingId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Meeting");
+                });
+
             modelBuilder.Entity("Au5.Domain.Entities.Meeting", b =>
                 {
                     b.HasOne("Au5.Domain.Entities.User", "User")
@@ -466,7 +509,15 @@ namespace Au5.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("Au5.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Meeting");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.Entry", b =>
@@ -477,6 +528,8 @@ namespace Au5.Infrastructure.Migrations
             modelBuilder.Entity("Au5.Domain.Entities.Meeting", b =>
                 {
                     b.Navigation("Entries");
+
+                    b.Navigation("Guests");
 
                     b.Navigation("Participants");
                 });

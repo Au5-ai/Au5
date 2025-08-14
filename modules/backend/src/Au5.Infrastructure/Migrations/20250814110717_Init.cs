@@ -37,8 +37,16 @@ namespace Au5.Infrastructure.Migrations
 					Direction = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
 					Language = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
 					ServiceBaseUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
+					BotFatherUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
 					OpenAIToken = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
-					PanelUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false)
+					PanelUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
+					AutoLeaveWaitingEnter = table.Column<int>(type: "int", nullable: false),
+					AutoLeaveNoParticipant = table.Column<int>(type: "int", nullable: false),
+					AutoLeaveAllParticipantsLeft = table.Column<int>(type: "int", nullable: false),
+					MeetingVideoRecording = table.Column<bool>(type: "bit", nullable: false),
+					MeetingAudioRecording = table.Column<bool>(type: "bit", nullable: false),
+					MeetingTranscription = table.Column<bool>(type: "bit", nullable: false),
+					MeetingTranscriptionModel = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false)
 				},
 				constraints: table =>
 				{
@@ -74,6 +82,7 @@ namespace Au5.Infrastructure.Migrations
 					BotName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
 					IsBotAdded = table.Column<bool>(type: "bit", nullable: false),
 					CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+					Duration = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
 					Status = table.Column<int>(type: "int", nullable: false)
 				},
 				constraints: table =>
@@ -112,15 +121,33 @@ namespace Au5.Infrastructure.Migrations
 				});
 
 			migrationBuilder.CreateTable(
+				name: "GuestsInMeeting",
+				columns: table => new
+				{
+					Id = table.Column<int>(type: "int", nullable: false)
+						.Annotation("SqlServer:Identity", "1, 1"),
+					MeetingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+					FullName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+					PictureUrl = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true)
+				},
+				constraints: table =>
+				{
+					table.PrimaryKey("PK_dbo_GuestsInMeeting", x => x.Id);
+					table.ForeignKey(
+						name: "FK_GuestsInMeeting_Meeting_MeetingId",
+						column: x => x.MeetingId,
+						principalTable: "Meeting",
+						principalColumn: "Id");
+				});
+
+			migrationBuilder.CreateTable(
 				name: "ParticipantInMeeting",
 				columns: table => new
 				{
 					Id = table.Column<int>(type: "int", nullable: false)
 						.Annotation("SqlServer:Identity", "1, 1"),
 					MeetingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-					UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-					FullName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-					PictureUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true)
+					UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
 				},
 				constraints: table =>
 				{
@@ -129,6 +156,11 @@ namespace Au5.Infrastructure.Migrations
 						name: "FK_ParticipantInMeeting_Meeting_MeetingId",
 						column: x => x.MeetingId,
 						principalTable: "Meeting",
+						principalColumn: "Id");
+					table.ForeignKey(
+						name: "FK_ParticipantInMeeting_User_UserId",
+						column: x => x.UserId,
+						principalTable: "User",
 						principalColumn: "Id");
 				});
 
@@ -188,6 +220,11 @@ namespace Au5.Infrastructure.Migrations
 				column: "MeetingId");
 
 			migrationBuilder.CreateIndex(
+				name: "IX_GuestsInMeeting_MeetingId",
+				table: "GuestsInMeeting",
+				column: "MeetingId");
+
+			migrationBuilder.CreateIndex(
 				name: "IX_Meeting_BotInviterUserId",
 				table: "Meeting",
 				column: "BotInviterUserId");
@@ -196,6 +233,11 @@ namespace Au5.Infrastructure.Migrations
 				name: "IX_ParticipantInMeeting_MeetingId",
 				table: "ParticipantInMeeting",
 				column: "MeetingId");
+
+			migrationBuilder.CreateIndex(
+				name: "IX_ParticipantInMeeting_UserId",
+				table: "ParticipantInMeeting",
+				column: "UserId");
 
 			migrationBuilder.CreateIndex(
 				name: "IX_User_Email",
@@ -209,6 +251,9 @@ namespace Au5.Infrastructure.Migrations
 		{
 			migrationBuilder.DropTable(
 				name: "AppliedReactions");
+
+			migrationBuilder.DropTable(
+				name: "GuestsInMeeting");
 
 			migrationBuilder.DropTable(
 				name: "ParticipantInMeeting");
