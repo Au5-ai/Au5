@@ -159,4 +159,7 @@
   <data name="InvalidMeetingTranscriptionModel" xml:space="preserve">
     <value>Model Must be liveCaption or liveAudio</value>
   </data>
+  <data name="MustBeMoreThanZero" xml:space="preserve">
+    <value>Value must be greater than Zero.</value>
+  </data>
 </root>

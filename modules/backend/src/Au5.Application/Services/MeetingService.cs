@@ -1,6 +1,6 @@
 using Au5.Application.Common.Abstractions;
 
-namespace Au5.Application;
+namespace Au5.Application.Services;
 
 public class MeetingService : IMeetingService
 {

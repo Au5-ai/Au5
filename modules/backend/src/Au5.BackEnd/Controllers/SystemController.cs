@@ -3,7 +3,7 @@ using Au5.Application.Features.SystemConfigs.SetConfig;
 
 namespace Au5.BackEnd.Controllers;
 
-public class OrgController(ISender mediator) : BaseController
+public class SystemController(ISender mediator) : BaseController
 {
 	/// <summary>
 	/// Initializes the company configuration.

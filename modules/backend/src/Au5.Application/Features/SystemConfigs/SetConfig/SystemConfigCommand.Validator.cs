@@ -63,5 +63,23 @@ public class SystemConfigCommandValidator : AbstractValidator<SystemConfigComman
 			.WithMessage(AppResources.Required)
 			.Must(dir => dir is "liveCaption" or "liveAudio")
 			.WithMessage(AppResources.InvalidMeetingTranscriptionModel);
+
+		RuleFor(x => x.AutoLeaveNoParticipant)
+			.NotEmpty()
+			.WithMessage(AppResources.Required)
+			.Must(value => value > 0)
+			.WithMessage(AppResources.MustBeMoreThanZero);
+
+		RuleFor(x => x.AutoLeaveAllParticipantsLeft)
+			.NotEmpty()
+			.WithMessage(AppResources.Required)
+			.Must(value => value > 0)
+			.WithMessage(AppResources.MustBeMoreThanZero);
+
+		RuleFor(x => x.AutoLeaveWaitingEnter)
+			.NotEmpty()
+			.WithMessage(AppResources.Required)
+			.Must(value => value > 0)
+			.WithMessage(AppResources.MustBeMoreThanZero);
 	}
 }

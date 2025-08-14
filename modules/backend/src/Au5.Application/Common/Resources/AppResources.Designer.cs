@@ -151,6 +151,15 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Value must be greater than Zero..
+        /// </summary>
+        internal static string MustBeMoreThanZero {
+            get {
+                return ResourceManager.GetString("MustBeMoreThanZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to property can not be empty.
         /// </summary>
         internal static string Required {
