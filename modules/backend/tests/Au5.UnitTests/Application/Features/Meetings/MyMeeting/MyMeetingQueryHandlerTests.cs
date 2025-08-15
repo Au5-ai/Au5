@@ -11,6 +11,60 @@ public class MyMeetingQueryHandlerTests
 	public async Task Handle_Should_Return_Meetings_For_User()
 	{
 		var userId = Guid.NewGuid();
+		var meetings = GetMeetings(userId);
+
+		var mockContext = new Mock<IApplicationDbContext>();
+		mockContext.Setup(x => x.Set<Meeting>()).Returns(meetings.BuildMockDbSet().Object);
+
+		var handler = new MyMeetingQueryHandler(mockContext.Object);
+
+		var query = new MyMeetingQuery
+		{
+			UserId = userId
+		};
+
+		var result = await handler.Handle(query, CancellationToken.None);
+
+		Assert.True(result.IsSuccess);
+		Assert.NotNull(result.Data);
+		Assert.Single(result.Data);
+
+		var meetingResponse = result.Data.First();
+		Assert.Equal("meet123", meetingResponse.MeetId);
+		Assert.Equal("2025-08-14", meetingResponse.CreatedAtDate);
+		Assert.Equal("14:30:00", meetingResponse.CreatedAtTime);
+		Assert.Equal("1h 15m", meetingResponse.Duration);
+		Assert.Single(meetingResponse.Participants, p => p.FullName == "Mohammad");
+		Assert.Equal("Test Meeting", meetingResponse.MeetName);
+		Assert.Equal("Google Meet", meetingResponse.Platform);
+		Assert.Equal("Bot1", meetingResponse.BotName);
+		Assert.Equal("Ended", meetingResponse.Status);
+		Assert.Equal("1h 15m", meetingResponse.Duration);
+		Assert.Empty(meetingResponse.Guests);
+	}
+
+	[Fact]
+	public async Task Handle_Should_Return_Empty_When_User_Not_In_Meetings()
+	{
+		var meetings = GetMeetings(Guid.NewGuid());
+		var mockContext = new Mock<IApplicationDbContext>();
+		mockContext.Setup(x => x.Set<Meeting>()).Returns(meetings.BuildMockDbSet().Object);
+
+		var handler = new MyMeetingQueryHandler(mockContext.Object);
+
+		var query = new MyMeetingQuery
+		{
+			UserId = Guid.NewGuid()
+		};
+
+		var result = await handler.Handle(query, CancellationToken.None);
+
+		Assert.True(result.IsSuccess);
+		Assert.Empty(result.Data);
+	}
+
+	private List<Meeting> GetMeetings(Guid userId)
+	{
 		var meetingId = Guid.NewGuid();
 		var meetingId2 = Guid.NewGuid();
 		var meetings = new List<Meeting>
@@ -70,56 +124,6 @@ public class MyMeetingQueryHandlerTests
 				Guests = []
 			}
 		};
-
-		var mockContext = new Mock<IApplicationDbContext>();
-		mockContext.Setup(x => x.Set<Meeting>()).Returns(meetings.BuildMockDbSet().Object);
-
-		var handler = new MyMeetingQueryHandler(mockContext.Object);
-
-		var query = new MyMeetingQuery
-		{
-			UserId = userId
-		};
-
-		var result = await handler.Handle(query, CancellationToken.None);
-
-		Assert.True(result.IsSuccess);
-		Assert.NotNull(result.Data);
-		Assert.Single(result.Data);
-
-		var meetingResponse = result.Data.First();
-		Assert.Equal("meet123", meetingResponse.MeetId);
-		Assert.Equal("2025-08-14", meetingResponse.CreatedAtDate);
-		Assert.Equal("14:30:00", meetingResponse.CreatedAtTime);
-		Assert.Equal("1h 15m", meetingResponse.Duration);
-		Assert.Single(meetingResponse.Participants, p => p.FullName == "Mohammad");
-		Assert.Equal("Test Meeting", meetingResponse.MeetName);
-		Assert.Equal("Google Meet", meetingResponse.Platform);
-		Assert.Equal("Bot1", meetingResponse.BotName);
-		Assert.Equal("Ended", meetingResponse.Status);
-		Assert.Equal("1h 15m", meetingResponse.Duration);
-		Assert.Empty(meetingResponse.Guests);
+		return meetings;
 	}
-
-	// [Fact]
-	// public async Task Handle_Should_Return_Empty_When_User_Not_In_Meetings()
-	// {
-	// // Arrange
-	// var mockContext = new Mock<IApplicationDbContext>();
-	// mockContext.Setup(x => x.Set<Meeting>()).ReturnsDbSet([]);
-
-	// var handler = new MyMeetingQueryHandler(mockContext.Object);
-
-	// var query = new MyMeetingQuery
-	// {
-	// UserId = Guid.NewGuid()
-	// };
-
-	// // Act
-	// var result = await handler.Handle(query, CancellationToken.None);
-
-	// // Assert
-	// result.IsSuccess.Should().BeTrue();
-	// result.Value.Should().BeEmpty();
-	// }
 }
