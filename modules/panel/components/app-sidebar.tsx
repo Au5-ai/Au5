@@ -31,7 +31,7 @@ const data = {
   navMain: [
     {
       title: "My Meetings",
-      url: "#",
+      url: "/myMeeting",
       icon: Frame,
     },
     {

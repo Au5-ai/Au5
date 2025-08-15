@@ -115,6 +115,13 @@ public class SystemConfigCommandValidatorTests
 		BotFatherUrl = "https://botfather.example.com",
 		OpenAIToken = "token123",
 		HubUrl = "https://hub.example.com",
-		MeetingTranscriptionModel = "liveCaption"
+		MeetingTranscriptionModel = "liveCaption",
+		AutoLeaveAllParticipantsLeft = 5,
+		AutoLeaveNoParticipant = 10,
+		AutoLeaveWaitingEnter = 15,
+		MeetingVideoRecording = true,
+		MeetingAudioRecording = true,
+		MeetingTranscription = true,
+		ForceUpdate = false
 	};
 }

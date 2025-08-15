@@ -30,17 +30,18 @@ public class MyMeetingQueryHandlerTests
 		Assert.Single(result.Data);
 
 		var meetingResponse = result.Data.First();
-		Assert.Equal("meet123", meetingResponse.MeetId);
-		Assert.Equal("2025-08-14", meetingResponse.CreatedAtDate);
-		Assert.Equal("14:30:00", meetingResponse.CreatedAtTime);
-		Assert.Equal("1h 15m", meetingResponse.Duration);
-		Assert.Single(meetingResponse.Participants, p => p.FullName == "Mohammad");
-		Assert.Equal("Test Meeting", meetingResponse.MeetName);
-		Assert.Equal("Google Meet", meetingResponse.Platform);
-		Assert.Equal("Bot1", meetingResponse.BotName);
-		Assert.Equal("Ended", meetingResponse.Status);
-		Assert.Equal("1h 15m", meetingResponse.Duration);
-		Assert.Empty(meetingResponse.Guests);
+
+		Assert.Equal("Thursday, August 14", meetingResponse.Date);
+
+		var meeting = meetingResponse.Items.First();
+		Assert.Equal("meet123", meeting.MeetId);
+		Assert.Equal("2:30 PM", meeting.Time);
+		Assert.Single(meeting.Participants, p => p == "Mohammad");
+		Assert.Equal("Test Meeting", meeting.MeetName);
+		Assert.Equal("Google Meet", meeting.Platform);
+		Assert.Equal("Bot1", meeting.BotName);
+		Assert.Equal("Ended", meeting.Status);
+		Assert.Equal("15m", meeting.Duration);
 	}
 
 	[Fact]
@@ -78,7 +79,7 @@ public class MyMeetingQueryHandlerTests
 				BotName = "Bot1",
 				CreatedAt = new DateTime(2025, 8, 14, 14, 30, 0),
 				Status = MeetingStatus.Ended,
-				Duration = "1h 15m",
+				Duration = "15m",
 				Participants =
 				[
 					new()
