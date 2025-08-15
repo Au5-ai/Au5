@@ -83,7 +83,7 @@ namespace Au5.Infrastructure.Migrations
 					IsBotAdded = table.Column<bool>(type: "bit", nullable: false),
 					CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
 					Duration = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
-					Status = table.Column<int>(type: "int", nullable: false)
+					Status = table.Column<byte>(type: "tinyint", nullable: false)
 				},
 				constraints: table =>
 				{
@@ -107,7 +107,7 @@ namespace Au5.Infrastructure.Migrations
 					Content = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: false),
 					Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
 					Timeline = table.Column<string>(type: "varchar(8)", unicode: false, maxLength: 8, nullable: true),
-					EntryType = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+					EntryType = table.Column<string>(type: "nvarchar(14)", maxLength: 14, nullable: true),
 					MeetingId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
 				},
 				constraints: table =>

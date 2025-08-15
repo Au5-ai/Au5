@@ -28,6 +28,6 @@ public class EntryConfig : IEntityTypeConfiguration<Entry>
 
 		builder.Property(e => e.EntryType)
 			.IsUnicode(true)
-			.HasMaxLength(10);
+			.HasMaxLength(14);
 	}
 }
