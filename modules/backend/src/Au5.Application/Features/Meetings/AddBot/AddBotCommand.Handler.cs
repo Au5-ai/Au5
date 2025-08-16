@@ -24,7 +24,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 	public async ValueTask<Result> Handle(AddBotCommand request, CancellationToken cancellationToken)
 	{
 		var meetingId = Guid.NewGuid();
-		var hashToken = HashHelper.Hash(meetingId.ToString());
+		var hashToken = HashHelper.HashSafe(meetingId.ToString());
 
 		var config = await _dbContext.Set<SystemConfig>().AsNoTracking().FirstOrDefaultAsync(cancellationToken);
 		if (config is null)
@@ -59,7 +59,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 	private BotPayload BuildBotPayload(AddBotCommand request, SystemConfig config, string hashToken) =>
 		new()
 		{
-			HubUrl = config.HubUrl,
+			HubUrl = config.BotHubUrl,
 			Platform = request.Platform,
 			MeetingUrl = _meetingUrlService.GetMeetingUrl(request.Platform, request.MeetId),
 			BotDisplayName = config.BotName,

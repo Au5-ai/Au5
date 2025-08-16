@@ -12,10 +12,10 @@ public static class HashHelper
 		return Convert.ToBase64String(hash);
 	}
 
-	public static string Hash(string data)
+	public static string HashSafe(string data)
 	{
 		var bytes = Encoding.UTF8.GetBytes(data);
 		var hash = SHA256.HashData(bytes);
-		return Convert.ToBase64String(hash);
+		return Convert.ToHexString(hash);
 	}
 }

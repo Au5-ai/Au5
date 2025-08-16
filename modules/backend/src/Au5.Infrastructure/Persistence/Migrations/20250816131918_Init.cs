@@ -38,6 +38,7 @@ namespace Au5.Infrastructure.Migrations
 					Language = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
 					ServiceBaseUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
 					BotFatherUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
+					BotHubUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
 					OpenAIToken = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
 					PanelUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
 					AutoLeaveWaitingEnter = table.Column<int>(type: "int", nullable: false),

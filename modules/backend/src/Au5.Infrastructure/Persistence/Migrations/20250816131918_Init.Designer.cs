@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250815024756_Init")]
+    [Migration("20250816131918_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -285,6 +285,11 @@ namespace Au5.Infrastructure.Migrations
 
                     b.Property<string>("BotFatherUrl")
                         .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("BotHubUrl")
                         .HasMaxLength(200)
                         .IsUnicode(false)
                         .HasColumnType("varchar(200)");
