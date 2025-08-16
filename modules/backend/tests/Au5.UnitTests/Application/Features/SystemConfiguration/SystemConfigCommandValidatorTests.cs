@@ -113,6 +113,7 @@ public class SystemConfigCommandValidatorTests
 		Language = "en-US",
 		ServiceBaseUrl = "https://service.example.com",
 		BotFatherUrl = "https://botfather.example.com",
+		BotHubUrl = "https://buthub.example.com",
 		OpenAIToken = "token123",
 		HubUrl = "https://hub.example.com",
 		MeetingTranscriptionModel = "liveCaption",

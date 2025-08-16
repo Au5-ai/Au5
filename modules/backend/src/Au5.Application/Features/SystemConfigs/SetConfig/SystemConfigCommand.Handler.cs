@@ -32,6 +32,7 @@ public class SystemConfigCommandHandler : IRequestHandler<SystemConfigCommand, R
 			existingConfig.ServiceBaseUrl = request.ServiceBaseUrl;
 			existingConfig.PanelUrl = request.PanelUrl;
 			existingConfig.BotFatherUrl = request.BotFatherUrl;
+			existingConfig.BotHubUrl = request.BotHubUrl;
 			existingConfig.AutoLeaveWaitingEnter = request.AutoLeaveWaitingEnter;
 			existingConfig.AutoLeaveNoParticipant = request.AutoLeaveNoParticipant;
 			existingConfig.AutoLeaveAllParticipantsLeft = request.AutoLeaveAllParticipantsLeft;
@@ -53,6 +54,7 @@ public class SystemConfigCommandHandler : IRequestHandler<SystemConfigCommand, R
 				Language = request.Language,
 				ServiceBaseUrl = request.ServiceBaseUrl,
 				BotFatherUrl = request.BotFatherUrl,
+				BotHubUrl = request.BotHubUrl,
 				PanelUrl = request.PanelUrl,
 				OpenAIToken = request.OpenAIToken,
 				AutoLeaveWaitingEnter = request.AutoLeaveWaitingEnter,

@@ -422,7 +422,7 @@ export default function OnboardingPage() {
           show={showCelebration}
           onClose={() => {
             setShowCelebration(false);
-            router.push("/dashboard");
+            router.push("/playground");
           }}
         />
       </div>

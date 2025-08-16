@@ -20,7 +20,6 @@ public record class MyMeetingItem
 	public string Status { get; init; }
 	public string Duration { get; init; }
 	public string Time { get; init; }
-	public string Title { get; init; }
+	public string PictureUrl { get; init; }
 	public IReadOnlyList<string> Participants { get; init; }
-	public string Avatar { get; init; }
 }

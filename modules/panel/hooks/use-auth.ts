@@ -34,7 +34,7 @@ export function useLogin() {
         return;
       }
 
-      router.push("/dashboard");
+      router.push("/playground");
     },
     onError: (error) => {
       console.error("Login error:", error);

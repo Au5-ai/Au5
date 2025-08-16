@@ -17,9 +17,9 @@ public class SystemConfigQueryHandler : IRequestHandler<SystemConfigQuery, Resul
 	{
 		var existingConfig = await _dbContext.Set<SystemConfig>().FirstOrDefaultAsync(cancellationToken);
 
-		if (existingConfig is not null)
+		if (existingConfig is null)
 		{
-			Error.Failure(description: AppResources.SystemIsNotConfigured);
+			return Error.Failure(description: AppResources.SystemIsNotConfigured);
 		}
 
 		return existingConfig;

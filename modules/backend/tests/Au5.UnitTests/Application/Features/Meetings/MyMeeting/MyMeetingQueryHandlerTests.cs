@@ -33,7 +33,7 @@ public class MyMeetingQueryHandlerTests
 
 		Assert.Equal("Thursday, August 14", meetingResponse.Date);
 
-		var meeting = meetingResponse.Items.First();
+		var meeting = meetingResponse.Items[0];
 		Assert.Equal("meet123", meeting.MeetId);
 		Assert.Equal("2:30 PM", meeting.Time);
 		Assert.Single(meeting.Participants, p => p == "Mohammad");

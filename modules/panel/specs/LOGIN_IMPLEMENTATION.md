@@ -41,7 +41,7 @@ modules/panel/
 1. User enters email/password in the login form
 2. Form submits to `authApi.login()` via React Query mutation
 3. On successful response, access_token is saved to localStorage
-4. User is redirected to /dashboard
+4. User is redirected to /playground
 5. Errors are displayed in the form
 
 ### 2. Token Management

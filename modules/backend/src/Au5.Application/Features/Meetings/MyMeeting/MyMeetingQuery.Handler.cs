@@ -31,15 +31,14 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 			x.BotName,
 			Status = x.Status.ToString(),
 			Date = x.CreatedAt.ToString("dddd, MMMM dd"),
-			Duration = string.IsNullOrEmpty(x.Duration) ? "0m" : x.Duration,
 			Time = x.CreatedAt.ToString("h:mm tt"),
-			Title = x.MeetName,
+			Duration = string.IsNullOrEmpty(x.Duration) ? "0m" : x.Duration,
 			Participants = x.Guests
 				.Select(g => g.FullName)
 				.Concat(x.Participants.Select(p => p.User.FullName))
 				.Distinct()
 				.ToList(),
-			Avatar = x.Participants.FirstOrDefault().User.PictureUrl
+			x.Participants.FirstOrDefault().User.PictureUrl
 		})
 		.ToListAsync(cancellationToken);
 
@@ -57,10 +56,9 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 				BotName = m.BotName,
 				Duration = m.Duration,
 				Time = m.Time,
-				Title = m.Title,
 				Status = m.Status,
 				Participants = m.Participants,
-				Avatar = m.Avatar
+				PictureUrl = m.PictureUrl
 			}).ToList()
 		}).ToList();
 

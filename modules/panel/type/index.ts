@@ -38,13 +38,13 @@ export interface User {
   email: string;
 }
 
-export interface OrganizationConfig {
+export interface SystemConfig {
   panelUrl: string;
   serviceBaseUrl: string;
   direction: string;
   language: string;
   hubUrl: string;
-  name: string;
+  organizationName: string;
   botName: string;
 }
 
