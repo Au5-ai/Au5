@@ -21,5 +21,6 @@ public record class MyMeetingItem
 	public string Duration { get; init; }
 	public string Time { get; init; }
 	public string PictureUrl { get; init; }
-	public IReadOnlyList<string> Participants { get; init; }
+	public IReadOnlyList<string> Guests { get; init; }
+	public IReadOnlyList<Participant> Participants { get; init; }
 }
