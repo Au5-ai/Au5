@@ -89,6 +89,7 @@ export class ChatPanel {
   }
 
   public addEntry(entry: Entry): void {
+    console.log("Adding entry:", entry);
     if (!this.transcriptionsContainerEl) {
       return;
     }

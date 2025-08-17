@@ -140,6 +140,7 @@ class ChatPanel {
     this.stateManager.setPage(PageState.ActiveMeeting);
   }
   addEntry(entry) {
+    console.log("Adding entry:", entry);
     if (!this.transcriptionsContainerEl) {
       return;
     }
