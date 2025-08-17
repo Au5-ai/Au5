@@ -1,6 +1,7 @@
 using Au5.Application.Features.Meetings.AddBot;
 using Au5.Application.Features.Meetings.GetFullTranscription;
 using Au5.Application.Features.Meetings.MyMeeting;
+using Au5.Domain.Common;
 
 namespace Au5.BackEnd.Controllers;
 
@@ -24,6 +25,13 @@ public class MeetingController(ISender mediator) : BaseController
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> MyMeetings(CancellationToken cancellationToken)
 	{
-		return Ok(await mediator.Send(new MyMeetingQuery(), cancellationToken));
+		return Ok(await mediator.Send(new MyMeetingQuery(MeetingStatus.Ended), cancellationToken));
+	}
+
+	[HttpGet("archived")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> MyArchivedMeetings(CancellationToken cancellationToken)
+	{
+		return Ok(await mediator.Send(new MyMeetingQuery(MeetingStatus.Archived), cancellationToken));
 	}
 }

@@ -2,7 +2,7 @@ using Au5.Application.Common.Abstractions;
 
 namespace Au5.Application.Features.Meetings.MyMeeting;
 
-public record MyMeetingQuery() : BaseUserCommand<Result<IReadOnlyCollection<MyMeetingsGroupedResponse>>>;
+public record MyMeetingQuery(MeetingStatus Status) : BaseUserCommand<Result<IReadOnlyCollection<MyMeetingsGroupedResponse>>>;
 
 public record class MyMeetingsGroupedResponse
 {

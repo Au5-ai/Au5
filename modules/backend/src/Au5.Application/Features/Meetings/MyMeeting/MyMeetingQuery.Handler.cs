@@ -14,14 +14,18 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 
 	public async ValueTask<Result<IReadOnlyCollection<MyMeetingsGroupedResponse>>> Handle(MyMeetingQuery request, CancellationToken cancellationToken)
 	{
-		var meetings = await _dbContext.Set<Meeting>()
+		var query = _dbContext.Set<Meeting>()
 		.Include(x => x.Guests)
 		.Include(x => x.Participants)
 			.ThenInclude(x => x.User)
 		.AsNoTracking()
-		.Where(x => x.Participants.Any(p => p.UserId == request.UserId))
-		.Where(x => x.Status == MeetingStatus.Ended || x.Status == MeetingStatus.AddingBot)
-		.OrderByDescending(x => x.CreatedAt)
+		.Where(x => x.Participants.Any(p => p.UserId == request.UserId));
+
+		query = request.Status == MeetingStatus.Archived
+			? query.Where(x => x.Status == MeetingStatus.Archived)
+			: query.Where(x => x.Status != MeetingStatus.Archived);
+
+		var meetings = await query.OrderByDescending(x => x.CreatedAt)
 		.Select(x => new
 		{
 			x.Id,
