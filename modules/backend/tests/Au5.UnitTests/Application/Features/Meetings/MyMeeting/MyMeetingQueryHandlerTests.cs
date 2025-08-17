@@ -65,7 +65,7 @@ public class MyMeetingQueryHandlerTests
 		Assert.Equal("Friday, August 15", result.Data.First().Date);
 		Assert.Equal("Thursday, August 14", result.Data.Last().Date);
 
-		Assert.Equal(0, result.Data.First().Items[0].Guests.Count);
+		Assert.Empty(result.Data.First().Items[0].Guests);
 		Assert.Equal(2, result.Data.Last().Items[0].Guests.Count);
 	}
 
