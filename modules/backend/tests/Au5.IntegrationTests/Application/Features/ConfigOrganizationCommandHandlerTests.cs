@@ -31,6 +31,7 @@ public class SystemConfigCommandHandlerTests : BaseIntegrationTest
 			AutoLeaveAllParticipantsLeft = 2,
 			MeetingVideoRecording = true,
 			BotFatherUrl = "https://botfather.example.com",
+			BotHubUrl = "https://bot-hub.example.com",
 			MeetingAudioRecording = true,
 			MeetingTranscription = true,
 			MeetingTranscriptionModel = "liveCaption"
@@ -69,6 +70,7 @@ public class SystemConfigCommandHandlerTests : BaseIntegrationTest
 			AutoLeaveAllParticipantsLeft = 2,
 			MeetingVideoRecording = true,
 			BotFatherUrl = "https://botfather.example.com",
+			BotHubUrl = "https://bot-hub.example.com",
 			MeetingAudioRecording = true,
 			MeetingTranscription = true,
 			MeetingTranscriptionModel = "liveCaption"
@@ -90,6 +92,7 @@ public class SystemConfigCommandHandlerTests : BaseIntegrationTest
 			AutoLeaveAllParticipantsLeft = 2,
 			MeetingVideoRecording = true,
 			BotFatherUrl = "https://botfather.example.com",
+			BotHubUrl = "https://bot-hub.example.com",
 			MeetingAudioRecording = true,
 			MeetingTranscription = true,
 			MeetingTranscriptionModel = "liveCaption",
@@ -130,6 +133,7 @@ public class SystemConfigCommandHandlerTests : BaseIntegrationTest
 			AutoLeaveAllParticipantsLeft = 2,
 			MeetingVideoRecording = true,
 			BotFatherUrl = "https://botfather.example.com",
+			BotHubUrl = "https://bot-hub.example.com",
 			MeetingAudioRecording = true,
 			MeetingTranscription = true,
 			MeetingTranscriptionModel = "liveCaption"
@@ -151,6 +155,7 @@ public class SystemConfigCommandHandlerTests : BaseIntegrationTest
 			AutoLeaveAllParticipantsLeft = 2,
 			MeetingVideoRecording = true,
 			BotFatherUrl = "https://botfather.example.com",
+			BotHubUrl = "https://bot-hub.example.com",
 			MeetingAudioRecording = true,
 			MeetingTranscription = true,
 			MeetingTranscriptionModel = "liveCaption",
