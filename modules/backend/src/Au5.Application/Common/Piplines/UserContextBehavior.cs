@@ -17,7 +17,7 @@ public class UserContextBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
 		_currentUserService = currentUserService;
 	}
 
-	public async ValueTask<TResponse> Handle(TRequest message, CancellationToken cancellationToken, MessageHandlerDelegate<TRequest, TResponse> next)
+	public async ValueTask<TResponse> Handle(TRequest message, MessageHandlerDelegate<TRequest, TResponse> next, CancellationToken cancellationToken)
 	{
 		if (message is IUserContextRequest userContextRequest)
 		{

@@ -3,8 +3,8 @@ import {
   LoginRequest,
   LoginResponse,
   User,
-  OrganizationConfig,
   ProblemDetails,
+  SystemConfig,
 } from "@/type";
 
 // API configuration
@@ -89,8 +89,8 @@ export const userApi = {
 };
 
 export const orgApi = {
-  getConfig: (): Promise<OrganizationConfig> =>
-    apiRequest<OrganizationConfig>("/org/config", {
+  getConfig: (): Promise<SystemConfig> =>
+    apiRequest<SystemConfig>("/system/config", {
       method: "GET",
     }),
 };

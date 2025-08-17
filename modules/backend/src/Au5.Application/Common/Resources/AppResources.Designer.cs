@@ -61,6 +61,15 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error communicating with BotFather.
+        /// </summary>
+        internal static string FailedCommunicateWithBotFather {
+            get {
+                return ResourceManager.GetString("FailedCommunicateWithBotFather", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to add bot to meeting.
         /// </summary>
         internal static string FailedToAddBot {
@@ -70,11 +79,11 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed To Config Company.
+        ///   Looks up a localized string similar to Failed To Config System.
         /// </summary>
-        internal static string FailedToConfigOrganization {
+        internal static string FailedToConfigSystem {
             get {
-                return ResourceManager.GetString("FailedToConfigOrganization", resourceCulture);
+                return ResourceManager.GetString("FailedToConfigSystem", resourceCulture);
             }
         }
         
@@ -97,6 +106,15 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Model Must be liveCaption or liveAudio.
+        /// </summary>
+        internal static string InvalidMeetingTranscriptionModel {
+            get {
+                return ResourceManager.GetString("InvalidMeetingTranscriptionModel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password must be at least 6 characters long..
         /// </summary>
         internal static string InvalidPasswordFormat {
@@ -106,7 +124,7 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to InvalidUrl.
+        ///   Looks up a localized string similar to Invalid Url.
         /// </summary>
         internal static string InvalidUrl {
             get {
@@ -133,20 +151,11 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Organization Already Configured , You can set ForceUpdate=true..
+        ///   Looks up a localized string similar to Value must be greater than Zero..
         /// </summary>
-        internal static string OrganizationAlreadyConfigured {
+        internal static string MustBeMoreThanZero {
             get {
-                return ResourceManager.GetString("OrganizationAlreadyConfigured", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to OrganizationIsNotConfigured.
-        /// </summary>
-        internal static string OrganizationIsNotConfigured {
-            get {
-                return ResourceManager.GetString("OrganizationIsNotConfigured", resourceCulture);
+                return ResourceManager.GetString("MustBeMoreThanZero", resourceCulture);
             }
         }
         
@@ -156,6 +165,24 @@ namespace Au5.Application.Common.Resources {
         internal static string Required {
             get {
                 return ResourceManager.GetString("Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to System Already Configured , You can set ForceUpdate=true..
+        /// </summary>
+        internal static string SystemAlreadyConfigured {
+            get {
+                return ResourceManager.GetString("SystemAlreadyConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SystemIsNotConfigured.
+        /// </summary>
+        internal static string SystemIsNotConfigured {
+            get {
+                return ResourceManager.GetString("SystemIsNotConfigured", resourceCulture);
             }
         }
         

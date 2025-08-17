@@ -28,7 +28,7 @@ public class UserContextBehaviorTests
 			return new ValueTask<string>("success");
 		}
 
-		var result = await behavior.Handle(request, CancellationToken.None, Next);
+		var result = await behavior.Handle(request, Next, CancellationToken.None);
 
 		Assert.True(wasNextCalled);
 		Assert.Equal(userId, request.UserId);
@@ -55,7 +55,7 @@ public class UserContextBehaviorTests
 			return new ValueTask<string>("success");
 		}
 
-		var result = await behavior.Handle(request, CancellationToken.None, Next);
+		var result = await behavior.Handle(request, Next, CancellationToken.None);
 
 		Assert.True(wasNextCalled);
 		Assert.Equal(userId, request.UserId);
@@ -78,7 +78,7 @@ public class UserContextBehaviorTests
 		}
 
 		await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
-			behavior.Handle(request, CancellationToken.None, Next).AsTask());
+			behavior.Handle(request, Next, CancellationToken.None).AsTask());
 	}
 
 	[Fact]
@@ -97,7 +97,7 @@ public class UserContextBehaviorTests
 			return new ValueTask<string>("next-called");
 		}
 
-		var result = await behavior.Handle(request, CancellationToken.None, Next);
+		var result = await behavior.Handle(request, Next, CancellationToken.None);
 
 		Assert.True(wasNextCalled);
 		Assert.Equal("next-called", result);

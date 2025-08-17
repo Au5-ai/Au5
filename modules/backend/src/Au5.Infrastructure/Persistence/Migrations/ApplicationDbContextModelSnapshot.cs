@@ -17,7 +17,7 @@ namespace Au5.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.7")
+                .HasAnnotation("ProductVersion", "9.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -58,19 +58,20 @@ namespace Au5.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Content")
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(4000)");
 
                     b.Property<string>("EntryType")
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
+                        .HasMaxLength(14)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(14)");
 
                     b.Property<string>("FullName")
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
+                        .HasMaxLength(50)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<Guid?>("MeetingId")
                         .HasColumnType("uniqueidentifier");
@@ -79,9 +80,9 @@ namespace Au5.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Timeline")
-                        .HasMaxLength(200)
+                        .HasMaxLength(8)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("varchar(8)");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
@@ -92,6 +93,35 @@ namespace Au5.Infrastructure.Migrations
                     b.HasIndex("MeetingId");
 
                     b.ToTable("Entry");
+                });
+
+            modelBuilder.Entity("Au5.Domain.Entities.GuestsInMeeting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FullName")
+                        .HasMaxLength(50)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<Guid>("MeetingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PictureUrl")
+                        .HasMaxLength(250)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.HasKey("Id")
+                        .HasName("PK_dbo_GuestsInMeeting");
+
+                    b.HasIndex("MeetingId");
+
+                    b.ToTable("GuestsInMeeting");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.Meeting", b =>
@@ -105,16 +135,21 @@ namespace Au5.Infrastructure.Migrations
 
                     b.Property<string>("BotName")
                         .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("HashToken")
+                    b.Property<string>("Duration")
                         .HasMaxLength(200)
                         .IsUnicode(false)
                         .HasColumnType("varchar(200)");
+
+                    b.Property<string>("HashToken")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("IsBotAdded")
                         .HasColumnType("bit");
@@ -124,13 +159,18 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(200)");
 
-                    b.Property<string>("Platform")
+                    b.Property<string>("MeetName")
                         .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(200)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Platform")
+                        .HasMaxLength(20)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<byte>("Status")
+                        .HasColumnType("tinyint");
 
                     b.HasKey("Id")
                         .HasName("PK_dbo_Meeting");
@@ -138,66 +178,6 @@ namespace Au5.Infrastructure.Migrations
                     b.HasIndex("BotInviterUserId");
 
                     b.ToTable("Meeting");
-                });
-
-            modelBuilder.Entity("Au5.Domain.Entities.Organization", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("BotName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("Direction")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("HubUrl")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("OpenAIToken")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("PanelUrl")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("ServiceBaseUrl")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
-
-                    b.HasKey("Id")
-                        .HasName("PK_dbo_Company");
-
-                    b.ToTable("Organization");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.ParticipantInMeeting", b =>
@@ -208,25 +188,18 @@ namespace Au5.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("FullName")
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
-
                     b.Property<Guid>("MeetingId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("PictureUrl")
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_dbo_ParticipantInMeeting");
 
                     b.HasIndex("MeetingId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("ParticipantInMeeting");
                 });
@@ -248,8 +221,8 @@ namespace Au5.Infrastructure.Migrations
                     b.Property<string>("Emoji")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(10)");
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -290,6 +263,101 @@ namespace Au5.Infrastructure.Migrations
                             IsActive = false,
                             Type = "Goal"
                         });
+                });
+
+            modelBuilder.Entity("Au5.Domain.Entities.SystemConfig", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AutoLeaveAllParticipantsLeft")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AutoLeaveNoParticipant")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AutoLeaveWaitingEnter")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BotFatherUrl")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("BotHubUrl")
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("BotName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Direction")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<string>("HubUrl")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(5)");
+
+                    b.Property<bool>("MeetingAudioRecording")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("MeetingTranscription")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MeetingTranscriptionModel")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<bool>("MeetingVideoRecording")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("OpenAIToken")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("OrganizationName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("PanelUrl")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("ServiceBaseUrl")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
+
+                    b.HasKey("Id")
+                        .HasName("PK_dbo_SystemConfig");
+
+                    b.ToTable("SystemConfig");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.User", b =>
@@ -413,6 +481,17 @@ namespace Au5.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
                 });
 
+            modelBuilder.Entity("Au5.Domain.Entities.GuestsInMeeting", b =>
+                {
+                    b.HasOne("Au5.Domain.Entities.Meeting", "Meeting")
+                        .WithMany("Guests")
+                        .HasForeignKey("MeetingId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Meeting");
+                });
+
             modelBuilder.Entity("Au5.Domain.Entities.Meeting", b =>
                 {
                     b.HasOne("Au5.Domain.Entities.User", "User")
@@ -432,7 +511,15 @@ namespace Au5.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("Au5.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Meeting");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.Entry", b =>
@@ -443,6 +530,8 @@ namespace Au5.Infrastructure.Migrations
             modelBuilder.Entity("Au5.Domain.Entities.Meeting", b =>
                 {
                     b.Navigation("Entries");
+
+                    b.Navigation("Guests");
 
                     b.Navigation("Participants");
                 });

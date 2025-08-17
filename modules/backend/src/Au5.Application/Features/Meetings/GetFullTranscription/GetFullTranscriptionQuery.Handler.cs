@@ -17,6 +17,7 @@ public class GetFullTranscriptionQueryHandler : IRequestHandler<GetFullTranscrip
 		var meeting = await _dbContext.Set<Meeting>()
 			.Include(x => x.User)
 			.Include(x => x.Participants)
+			.ThenInclude(p => p.User)
 			.Include(x => x.Entries)
 			.ThenInclude(ent => ent.Reactions)
 			.ThenInclude(rac => rac.Reaction)
@@ -44,14 +45,10 @@ public class GetFullTranscriptionQueryHandler : IRequestHandler<GetFullTranscrip
 			CreatedAt: meeting.CreatedAt.ToString("o"),
 			Status: meeting.Status.ToString(),
 			Participants: meeting.Participants
-				.Select(p => new Participant(
-					id: p.UserId,
-					fullName: p.FullName ?? string.Empty,
-					email: string.Empty,
-					pictureUrl: p.PictureUrl ?? string.Empty,
-					hasAccount: p.UserId != Guid.Empty))
+				.Select(p => p.User.ToParticipant())
 				.ToList()
 				.AsReadOnly(),
+			Guests: [],
 			Entries: orderedEntries
 				.Select(entry => new EntryDto(
 					BlockId: entry.BlockId,

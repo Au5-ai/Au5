@@ -9,6 +9,8 @@ public class Meeting
 
 	public string MeetId { get; set; }
 
+	public string MeetName { get; set; }
+
 	public Guid BotInviterUserId { get; set; }
 
 	[ForeignKey(nameof(BotInviterUserId))]
@@ -24,9 +26,13 @@ public class Meeting
 
 	public DateTime CreatedAt { get; set; }
 
+	public string Duration { get; set; }
+
 	public MeetingStatus Status { get; set; }
 
 	public ICollection<ParticipantInMeeting> Participants { get; set; }
+
+	public ICollection<GuestsInMeeting> Guests { get; set; }
 
 	public ICollection<Entry> Entries { get; set; }
 

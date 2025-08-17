@@ -123,7 +123,7 @@ export default function OnboardingPage() {
         const config = {
           user: {
             id: user.id,
-            fullName: user.fullname,
+            fullName: user.fullName,
             pictureUrl: user.pictureUrl,
             hasAccount: user.hasAccount,
           },
@@ -422,7 +422,7 @@ export default function OnboardingPage() {
           show={showCelebration}
           onClose={() => {
             setShowCelebration(false);
-            router.push("/dashboard");
+            router.push("/playground");
           }}
         />
       </div>

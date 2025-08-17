@@ -1,6 +1,7 @@
 import { GalleryVerticalEnd } from "lucide-react";
 
 import { LoginForm } from "@/components/login-form";
+import Image from "next/image";
 
 export default function LoginPage() {
   return (
@@ -32,10 +33,12 @@ export default function LoginPage() {
         <div className="flex flex-col items-center justify-center h-full max-w-md text-center">
           <h2 className="text-3xl font-bold mb-8">Welcome Back</h2>
           <div className="mb-8">
-            <img
+            <Image
               src="/hi5.png"
               alt="Welcome illustration"
-              className="w-48 h-48 object-contain"
+              width={192}
+              height={192}
+              className="object-contain"
             />
           </div>
           <p className="text-black-100 text-lg leading-relaxed">

@@ -16,6 +16,7 @@ public class ReactionConfig : IEntityTypeConfiguration<Reaction>
 			.HasMaxLength(100);
 
 		builder.Property(r => r.Emoji)
+			.IsUnicode(true)
 			.IsRequired()
 			.HasMaxLength(10);
 

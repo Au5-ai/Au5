@@ -47,7 +47,7 @@ func createContainerHandler(w http.ResponseWriter, r *http.Request) {
 		Env:   envVars,
 	},  &container.HostConfig{
         NetworkMode: container.NetworkMode("au5"),
-    }, nil, nil, meetingConfig.MeetId+"--"+meetingConfig.HashToken)
+    }, nil, nil, "Bot--"+meetingConfig.MeetId+"--"+meetingConfig.HashToken)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

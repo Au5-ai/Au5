@@ -4,7 +4,7 @@ public interface IMeetingService
 {
 	Meeting AddUserToMeeting(UserJoinedInMeetingMessage userJoined);
 
-	void AddParticipantToMeet(List<Participant> users, string meetId);
+	void AddGuestsToMeet(List<Participant> users, string meetId);
 
 	string BotIsAdded(string meetId);
 
