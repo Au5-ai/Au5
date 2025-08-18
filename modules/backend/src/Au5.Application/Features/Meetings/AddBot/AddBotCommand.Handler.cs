@@ -8,12 +8,12 @@ namespace Au5.Application.Features.Meetings.AddBot;
 public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 {
 	private readonly IApplicationDbContext _dbContext;
-	private readonly IBotFatherService _botFather;
+	private readonly IBotFatherAdapter _botFather;
 	private readonly IMeetingUrlService _meetingUrlService;
 
 	public AddBotCommandHandler(
 		IApplicationDbContext dbContext,
-		IBotFatherService botFather,
+		IBotFatherAdapter botFather,
 		IMeetingUrlService meetingUrlService)
 	{
 		_dbContext = dbContext;
