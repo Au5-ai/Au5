@@ -2,15 +2,15 @@ namespace Au5.Application.Common.Abstractions;
 
 public interface IMeetingRepository
 {
-	Task<Meeting> GetMeetingAsync(string meetId);
+	Task<Meeting> GetMeetingAsync(string meetId, CancellationToken ct = default);
 
-	Task SaveMeetingAsync(Meeting meeting);
+	Task SaveMeetingAsync(Meeting meeting, CancellationToken ct = default);
 
-	Task AddEntryAsync(string meetId, Entry entry);
+	Task AddEntryAsync(string meetId, Entry entry, CancellationToken ct = default);
 
-	Task UpdateEntryAsync(string meetId, Entry entry);
+	Task UpdateEntryAsync(string meetId, Entry entry, CancellationToken ct = default);
 
-	Task ApplyReactionAsync(string meetId, string blockId, AppliedReactions reaction);
+	Task ApplyReactionAsync(string meetId, string blockId, AppliedReactions reaction, CancellationToken ct = default);
 
-	Task EndMeetingAsync(string meetId);
+	Task EndMeetingAsync(string meetId, CancellationToken ct = default);
 }

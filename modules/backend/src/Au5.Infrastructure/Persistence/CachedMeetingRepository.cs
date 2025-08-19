@@ -15,25 +15,25 @@ public class CachedMeetingRepository : IMeetingRepository
 		_defaultExpiration = defaultExpiration ?? TimeSpan.FromHours(6);
 	}
 
-	public async Task<Meeting> GetMeetingAsync(string meetId)
+	public async Task<Meeting> GetMeetingAsync(string meetId, CancellationToken ct = default)
 	{
-		var meeting = await _cache.GetAsync<Meeting>(Key(meetId));
+		var meeting = await _cache.GetAsync<Meeting>(Key(meetId), ct);
 		return meeting is null ? throw new KeyNotFoundException($"Meeting '{meetId}' not found.") : meeting;
 	}
 
-	public Task SaveMeetingAsync(Meeting meeting)
-		=> _cache.SetAsync(Key(meeting.MeetId), meeting, _defaultExpiration);
+	public Task SaveMeetingAsync(Meeting meeting, CancellationToken ct = default)
+		=> _cache.SetAsync(Key(meeting.MeetId), meeting, _defaultExpiration, ct);
 
-	public async Task AddEntryAsync(string meetId, Entry entry)
+	public async Task AddEntryAsync(string meetId, Entry entry, CancellationToken ct = default)
 	{
-		var meeting = await GetMeetingAsync(meetId);
+		var meeting = await GetMeetingAsync(meetId, ct);
 		meeting.Entries.Add(entry);
-		await SaveMeetingAsync(meeting);
+		await SaveMeetingAsync(meeting, ct);
 	}
 
-	public async Task UpdateEntryAsync(string meetId, Entry entry)
+	public async Task UpdateEntryAsync(string meetId, Entry entry, CancellationToken ct = default)
 	{
-		var meeting = await GetMeetingAsync(meetId);
+		var meeting = await GetMeetingAsync(meetId, ct);
 		var existing = meeting.Entries.FirstOrDefault(e => e.BlockId == entry.BlockId);
 		if (existing is null)
 		{
@@ -51,12 +51,12 @@ public class CachedMeetingRepository : IMeetingRepository
 			// Keep existing.Reactions as-is (don’t overwrite unless you intend to)
 		}
 
-		await SaveMeetingAsync(meeting);
+		await SaveMeetingAsync(meeting, ct);
 	}
 
-	public async Task ApplyReactionAsync(string meetId, string blockId, AppliedReactions reaction)
+	public async Task ApplyReactionAsync(string meetId, string blockId, AppliedReactions reaction, CancellationToken ct = default)
 	{
-		var meeting = await GetMeetingAsync(meetId);
+		var meeting = await GetMeetingAsync(meetId, ct);
 		var entry = meeting.Entries.FirstOrDefault(e => e.BlockId.ToString() == blockId);
 		if (entry is null)
 		{
@@ -71,7 +71,7 @@ public class CachedMeetingRepository : IMeetingRepository
 			{
 				EntryId = entry.Id,
 				ReactionId = reaction.ReactionId,
-				Participants = reaction.Participants?.ToList() ?? new List<Participant>()
+				Participants = reaction.Participants?.ToList() ?? []
 			});
 		}
 		else
@@ -92,14 +92,14 @@ public class CachedMeetingRepository : IMeetingRepository
 			}
 		}
 
-		await SaveMeetingAsync(meeting);
+		await SaveMeetingAsync(meeting, ct);
 	}
 
-	public async Task EndMeetingAsync(string meetId)
+	public async Task EndMeetingAsync(string meetId, CancellationToken ct = default)
 	{
-		var meeting = await GetMeetingAsync(meetId);
+		var meeting = await GetMeetingAsync(meetId, ct);
 		meeting.Status = MeetingStatus.Ended;
-		await SaveMeetingAsync(meeting);
+		await SaveMeetingAsync(meeting, ct);
 
 		// await _cache.RemoveAsync(Key(meetId));
 	}
