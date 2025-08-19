@@ -54,10 +54,10 @@ public class CachedMeetingRepository : IMeetingRepository
 		await SaveMeetingAsync(meeting, ct);
 	}
 
-	public async Task ApplyReactionAsync(string meetId, string blockId, AppliedReactions reaction, CancellationToken ct = default)
+	public async Task ApplyReactionAsync(string meetId, Guid blockId, AppliedReactions reaction, CancellationToken ct = default)
 	{
 		var meeting = await GetMeetingAsync(meetId, ct);
-		var entry = meeting.Entries.FirstOrDefault(e => e.BlockId.ToString() == blockId);
+		var entry = meeting.Entries.FirstOrDefault(e => e.BlockId == blockId);
 		if (entry is null)
 		{
 			return;

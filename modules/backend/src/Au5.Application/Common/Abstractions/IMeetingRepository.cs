@@ -10,7 +10,7 @@ public interface IMeetingRepository
 
 	Task UpdateEntryAsync(string meetId, Entry entry, CancellationToken ct = default);
 
-	Task ApplyReactionAsync(string meetId, string blockId, AppliedReactions reaction, CancellationToken ct = default);
+	Task ApplyReactionAsync(string meetId, Guid blockId, AppliedReactions reaction, CancellationToken ct = default);
 
 	Task EndMeetingAsync(string meetId, CancellationToken ct = default);
 }
