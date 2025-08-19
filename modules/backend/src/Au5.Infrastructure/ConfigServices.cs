@@ -1,6 +1,7 @@
 using Ardalis.GuardClauses;
 using Au5.Application.Common.Abstractions;
 using Au5.Infrastructure.Authentication;
+using Au5.Infrastructure.Events;
 using Au5.Infrastructure.Persistence;
 using Au5.Infrastructure.Persistence.Context;
 using Au5.Infrastructure.Providers;
@@ -40,6 +41,7 @@ public static class ConfigureServices
 		});
 
 		services.AddScoped<IMeetingRepository, CachedMeetingRepository>();
+		services.AddScoped<IIntegrationEventPublisher, MediatRIntegrationEventPublisher>();
 
 		return services;
 	}

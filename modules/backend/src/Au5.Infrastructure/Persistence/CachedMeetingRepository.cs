@@ -100,8 +100,11 @@ public class CachedMeetingRepository : IMeetingRepository
 		var meeting = await GetMeetingAsync(meetId, ct);
 		meeting.Status = MeetingStatus.Ended;
 		await SaveMeetingAsync(meeting, ct);
+	}
 
-		// await _cache.RemoveAsync(Key(meetId));
+	public async Task RemoveMeetingAsync(string meetId, CancellationToken ct = default)
+	{
+		await _cache.RemoveAsync(Key(meetId), ct);
 	}
 
 	private static string Key(string meetId) => $"meeting:{meetId}";

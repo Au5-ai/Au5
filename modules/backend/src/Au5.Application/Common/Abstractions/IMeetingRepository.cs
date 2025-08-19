@@ -13,4 +13,6 @@ public interface IMeetingRepository
 	Task ApplyReactionAsync(string meetId, Guid blockId, AppliedReactions reaction, CancellationToken ct = default);
 
 	Task EndMeetingAsync(string meetId, CancellationToken ct = default);
+
+	Task RemoveMeetingAsync(string meetId, CancellationToken ct = default);
 }
