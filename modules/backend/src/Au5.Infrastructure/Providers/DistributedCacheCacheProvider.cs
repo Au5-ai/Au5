@@ -20,7 +20,7 @@ public class DistributedCacheCacheProvider : ICacheProvider
 		_cache = cache ?? throw new ArgumentNullException(nameof(cache));
 	}
 
-	public async Task SetAsync<T>(string key, T value, TimeSpan expiration, CancellationToken cancellationToken = default)
+	public async Task SetAsync<T>(string key, T value, TimeSpan expiration, CancellationToken ct = default)
 	{
 		ValidateKey(key);
 		ArgumentNullException.ThrowIfNull(value, nameof(value));
@@ -31,30 +31,30 @@ public class DistributedCacheCacheProvider : ICacheProvider
 			AbsoluteExpirationRelativeToNow = expiration
 		};
 
-		await _cache.SetStringAsync(key, json, options, cancellationToken);
+		await _cache.SetStringAsync(key, json, options, ct);
 	}
 
-	public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default)
+	public async Task<T> GetAsync<T>(string key, CancellationToken ct = default)
 	{
 		ValidateKey(key);
 
-		var json = await _cache.GetStringAsync(key, cancellationToken);
+		var json = await _cache.GetStringAsync(key, ct);
 		return string.IsNullOrEmpty(json)
 			? default
 			: JsonSerializer.Deserialize<T>(json, _jsonOptions);
 	}
 
-	public async Task RemoveAsync(string key, CancellationToken cancellationToken = default)
+	public async Task RemoveAsync(string key, CancellationToken ct = default)
 	{
 		ValidateKey(key);
-		await _cache.RemoveAsync(key, cancellationToken);
+		await _cache.RemoveAsync(key, ct);
 	}
 
-	public async Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default)
+	public async Task<bool> ExistsAsync(string key, CancellationToken ct = default)
 	{
 		ValidateKey(key);
 
-		var value = await _cache.GetStringAsync(key, cancellationToken);
+		var value = await _cache.GetStringAsync(key, ct);
 		return !string.IsNullOrEmpty(value);
 	}
 

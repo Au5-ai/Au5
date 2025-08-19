@@ -1,3 +1,4 @@
+global using Au5.Application.Common.Abstractions;
 global using Au5.Application.Dtos.MeetingDtos;
 global using Au5.Application.Messages;
 global using Au5.Domain.Common;
