@@ -1,6 +1,7 @@
 using Ardalis.GuardClauses;
 using Au5.Application.Common.Abstractions;
 using Au5.Infrastructure.Authentication;
+using Au5.Infrastructure.Persistence;
 using Au5.Infrastructure.Persistence.Context;
 using Au5.Infrastructure.Providers;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,8 @@ public static class ConfigureServices
 			options.Configuration = configuration.GetConnectionString("Redis")!;
 			options.InstanceName = "Au5:";
 		});
+
+		services.AddScoped<IMeetingRepository, CachedMeetingRepository>();
 
 		return services;
 	}
