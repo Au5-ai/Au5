@@ -22,7 +22,7 @@ public class UpsertBlockHandler : IRequestHandler<UpsertBlockCommand, bool>
 			FullName = request.Entry.Participant.FullName,
 			Timestamp = request.Entry.Timestamp,
 			EntryType = request.Entry.EntryType,
-			Reactions = new List<AppliedReactions>()
+			Reactions = []
 		};
 
 		await _repo.UpdateEntryAsync(request.Entry.MeetId, entry, cancellationToken);
