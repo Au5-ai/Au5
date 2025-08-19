@@ -345,7 +345,7 @@ dotnet_diagnostic.IDE0034.severity = warning
 dotnet_diagnostic.IDE0035.severity = warning
 
 #Order modifiers
-dotnet_diagnostic.IDE0036.severity = warning
+dotnet_diagnostic.IDE0036.severity =  none
 
 #Use inferred member name
 dotnet_diagnostic.IDE0037.severity = warning

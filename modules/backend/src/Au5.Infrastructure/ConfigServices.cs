@@ -1,5 +1,6 @@
 using Ardalis.GuardClauses;
 using Au5.Application.Common.Abstractions;
+using Au5.Infrastructure.Adapters;
 using Au5.Infrastructure.Authentication;
 using Au5.Infrastructure.Persistence.Context;
 using Au5.Infrastructure.Providers;
@@ -31,6 +32,7 @@ public static class ConfigureServices
 
 		services.AddScoped<ICacheProvider, DistributedCacheCacheProvider>();
 		services.AddScoped<ITokenService, TokenService>();
+		services.AddScoped<IBotFatherAdapter, BotFatherAdapter>();
 
 		services.AddStackExchangeRedisCache(options =>
 		{

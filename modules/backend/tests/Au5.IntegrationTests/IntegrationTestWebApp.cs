@@ -1,5 +1,6 @@
 using Au5.Application.Common.Abstractions;
 using Au5.Infrastructure.Persistence.Context;
+using Au5.IntegrationTests.TestHelpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -9,17 +10,9 @@ using Testcontainers.MsSql;
 
 namespace Au5.IntegrationTests;
 
-public class TestCurrentUserService : ICurrentUserService
-{
-	public Guid UserId { get; set; } = Guid.Empty;
-
-	public bool IsAuthenticated { get; set; } = false;
-}
-
 public class IntegrationTestWebApp : WebApplicationFactory<Program>, IAsyncLifetime
 {
 	private readonly MsSqlContainer _dbContainer;
-	private readonly TestCurrentUserService _testCurrentUserService = new();
 
 	public IntegrationTestWebApp()
 	{
@@ -30,8 +23,6 @@ public class IntegrationTestWebApp : WebApplicationFactory<Program>, IAsyncLifet
 			.WithPassword("P@ssw0rd")
 			.Build();
 	}
-
-	public TestCurrentUserService TestCurrentUserService => _testCurrentUserService;
 
 	public async Task InitializeAsync()
 	{
@@ -62,7 +53,14 @@ public class IntegrationTestWebApp : WebApplicationFactory<Program>, IAsyncLifet
 			services.Remove(existingCurrentUserDescriptor);
 		}
 
-		services.AddSingleton<ICurrentUserService>(_testCurrentUserService);
+		services.AddScoped<ICurrentUserService, TestCurrentUserServiceFake>();
+
+		services.AddSingleton<FakeHttpClientHandler>();
+		services.AddSingleton<IHttpClientFactory>(provider =>
+		{
+			var fakeHandler = provider.GetRequiredService<FakeHttpClientHandler>();
+			return new TestHttpClientFactory(fakeHandler);
+		});
 	}
 
 	private void ConfigureTestDb(IServiceCollection services)

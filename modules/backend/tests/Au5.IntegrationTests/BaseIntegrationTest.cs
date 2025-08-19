@@ -1,3 +1,4 @@
+using Au5.Application.Common.Abstractions;
 using Au5.Infrastructure.Persistence.Context;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,9 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebApp>
 		}
 	}
 
-	protected IntegrationTestWebApp WebApp { get; }
+	protected static Guid UserId => Guid.Parse("EDADA1F7-CBDA-4C13-8504-A57FE72D5960");
+
+	protected IntegrationTestWebApp WebApp { get; set; }
 
 	protected ApplicationDbContext DbContext { get; set; }
 
@@ -30,6 +33,9 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebApp>
 	/// Gets the application mediator for sending commands/queries.
 	/// </summary>
 	protected ISender Mediator => _serviceProvider.GetRequiredService<ISender>();
+
+	protected TestCurrentUserServiceFake TestCurrentUserService =>
+		(TestCurrentUserServiceFake)_serviceProvider.GetRequiredService<ICurrentUserService>();
 
 	public void Dispose()
 	{
