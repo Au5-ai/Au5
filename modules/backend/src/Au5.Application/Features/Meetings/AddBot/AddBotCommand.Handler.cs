@@ -53,7 +53,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 		}
 
 		var payload = BuildBotPayload(request, config, hashToken);
-		var response = await _botFather.CreateBotAsync(config.BotFatherUrl, payload, cancellationToken);
+		var respone = await _botFather.CreateBotAsync(config.BotFatherUrl, payload, cancellationToken);
 
 		return Result.Success();
 	}

@@ -7,15 +7,15 @@ namespace Au5.IntegrationTests.Application.Features;
 
 public class AddBotCommandHandlerTests : BaseIntegrationTest
 {
-	private const string BaseApiAddress = "https://borfatherapi";
+	private const string BaseApiAddress = "https://botfatherapi";
 
 	public AddBotCommandHandlerTests(IntegrationTestWebApp webApp)
 		: base(webApp)
 	{
 	}
 
-	private FakeHttpMessageHandler FakeHttpHandler =>
-		WebApp.Services.GetRequiredService<FakeHttpMessageHandler>();
+	private FakeHttpClientHandler FakeHttpHandler =>
+		WebApp.Services.GetRequiredService<FakeHttpClientHandler>();
 
 	[Fact]
 	public async Task Should_AddBot_Successfully_When_SystemConfigExists()
@@ -47,25 +47,24 @@ public class AddBotCommandHandlerTests : BaseIntegrationTest
 		});
 		await DbContext.SaveChangesAsync(CancellationToken.None);
 
-		FakeHttpHandler.AddExpectation(new HttpRequestWithJsonResponse()
+		var expectedResponse = new HttpRequestWithJsonResponse()
 		{
 			ResponseContent = "{\"meetingUrl\":\"FakeMeetId\",\"title\":\"Cando\"}",
 			Method = HttpMethod.Post,
 			RequestAddress = BaseApiAddress + "/create-container",
-		});
+		};
+
+		FakeHttpHandler.AddExpectation(expectedResponse);
 
 		var command = new AddBotCommand("GoogleMeet", "Cando", "FakeMeetId");
 		var response = await Mediator.Send(command);
 
 		Assert.True(response.IsSuccess);
 
-		// var meeting = await Context.Meetings.FirstOrDefaultAsync();
-		// Assert.NotNull(meeting);
-		// Assert.Equal(command.MeetingUrl, meeting.MeetingUrl);
-		// Assert.Equal(command.Title, meeting.Title);
-		// Assert.Equal(userId, meeting.CreatedBy);
-		// Assert.Equal(MeetingStatus.AddingBot, meeting.Status);
-		// Assert.Equal(expectedResponse.ContainerId, meeting.ContainerId);
-		// Assert.Equal(expectedResponse.BotUrl, meeting.BotUrl);
-	}
+		var getRequest = FakeHttpHandler.CallHistory
+			.Where(x => x.UniqueCode == expectedResponse.GetUniqueCode())
+			.ToList();
+
+		Assert.Single(getRequest);
+    }
 }

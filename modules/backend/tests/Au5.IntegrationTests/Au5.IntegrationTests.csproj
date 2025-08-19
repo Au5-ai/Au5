@@ -11,6 +11,14 @@
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="TestFiles\Meeting\AddBotCommand_Response.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="TestFiles\Meeting\AddBotCommand_Response.json" />
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="coverlet.collector">
