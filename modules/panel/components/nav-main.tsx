@@ -25,7 +25,7 @@ export function NavMain({
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
           {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
+            <SidebarMenuItem key={item.title} className="cursor-pointer">
               <SidebarMenuButton
                 tooltip={item.title}
                 className="cursor-pointer"

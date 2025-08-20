@@ -4,68 +4,35 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link, Share2, Trash2 } from "lucide-react";
-
-const meetings = [
-  {
-    date: "Saturday, June 7",
-    items: [
-      {
-        duration: "3m",
-        time: "10:51 PM",
-        title: "Meeting Transcription",
-        participants: ["You"],
-        avatar: "/avatar1.jpg",
-      },
-    ],
-  },
-  {
-    date: "Monday, May 12",
-    items: [
-      {
-        duration: "0m",
-        time: "4:08 PM",
-        title: "Meeting Transcription",
-        participants: ["You"],
-        avatar: "/avatar1.jpg",
-      },
-      {
-        duration: "4m",
-        time: "4:03 PM",
-        title: "Meeting Transcription",
-        participants: ["You"],
-        avatar: "/avatar1.jpg",
-      },
-    ],
-  },
-  {
-    date: "Tuesday, April 29",
-    items: [
-      {
-        duration: "41m",
-        time: "9:00 PM",
-        title: "WebEngage Technical Discussion",
-        participants: ["Ajay", "Behnam", "Bharath", "Mohammad", "You"],
-        avatar: "/avatar2.jpg",
-      },
-      {
-        duration: "1m",
-        time: "8:22 PM",
-        title: "Meeting Transcription",
-        participants: ["You"],
-        avatar: "/avatar1.jpg",
-      },
-      {
-        duration: "4m",
-        time: "8:10 PM",
-        title: "Meeting Transcription",
-        participants: ["You"],
-        avatar: "/avatar1.jpg",
-      },
-    ],
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import { meetingApi } from "@/lib/api";
+import { MeetingListSkeleton } from "@/components/meeting-list-skeleton";
 
 export default function MyMeetingPage() {
+  const {
+    data: meetings = [],
+    isLoading: loading,
+    error,
+  } = useQuery({
+    queryKey: ["meetings", "my"],
+    queryFn: meetingApi.my,
+  });
+
+  if (loading) {
+    return <MeetingListSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-sm text-red-500">
+          Error:{" "}
+          {error instanceof Error ? error.message : "Failed to fetch meetings"}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {meetings.map((group, groupIndex) => (
@@ -94,13 +61,13 @@ export default function MyMeetingPage() {
                     </div>
                   </div>
                   <Avatar className="h-10 w-10">
-                    <AvatarImage src={item.avatar} alt={item.title} />
-                    <AvatarFallback>{item.title[0]}</AvatarFallback>
+                    <AvatarImage src={item.pictureUrl} alt={item.meetName} />
+                    <AvatarFallback>{item.meetName[0]}</AvatarFallback>
                   </Avatar>
                   <div className="ml-3">
-                    <p className="font-medium">{item.title}</p>
+                    <p className="font-medium">{item.meetName}</p>
                     <p className="text-xs text-muted-foreground">
-                      {item.participants.join(", ")}
+                      {item.guests.join(", ")}
                     </p>
                   </div>
                 </div>

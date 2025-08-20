@@ -8,6 +8,7 @@ export function LogoutButton() {
 
   return (
     <Button
+      className="cursor-pointer"
       variant="outline"
       onClick={() => logoutMutation.mutate()}
       disabled={logoutMutation.isPending}

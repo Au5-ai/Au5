@@ -38,7 +38,7 @@ export function NavUser(user: User) {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.pictureUrl} alt={user.fullName} />
@@ -75,11 +75,11 @@ export function NavUser(user: User) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
                 <BadgeCheck />
                 Request a feature
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
                 <Settings />
                 Settings
               </DropdownMenuItem>
@@ -89,7 +89,9 @@ export function NavUser(user: User) {
               onClick={() => logoutMutation.mutate()}
               disabled={logoutMutation.isPending}
               className={
-                logoutMutation.isPending ? "opacity-50 pointer-events-none" : ""
+                logoutMutation.isPending
+                  ? "opacity-50 pointer-events-none cursor-pointer"
+                  : "cursor-pointer"
               }
             >
               <LogOut />
