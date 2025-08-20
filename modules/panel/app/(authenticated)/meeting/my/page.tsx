@@ -7,8 +7,12 @@ import { Link, Share2, Trash2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { meetingApi } from "@/lib/api";
 import { MeetingListSkeleton } from "@/components/meeting-list-skeleton";
+import { useRouter } from "next/navigation";
+import { MeetingItem } from "@/type";
 
 export default function MyMeetingPage() {
+  const router = useRouter();
+
   const {
     data: meetings = [],
     isLoading: loading,
@@ -17,6 +21,12 @@ export default function MyMeetingPage() {
     queryKey: ["meetings", "my"],
     queryFn: meetingApi.my,
   });
+
+  const handleMeetingClick = (item: MeetingItem) => {
+    const meetingId = item.meetingId;
+    const meetId = item.meetId;
+    router.push(`/meeting/${meetingId}/${meetId}/transcription`);
+  };
 
   if (loading) {
     return <MeetingListSkeleton />;
@@ -45,6 +55,7 @@ export default function MyMeetingPage() {
               <CardContent
                 key={index}
                 className="flex items-center justify-between px-3 py-3 hover:bg-gray-50 cursor-pointer transition-colors"
+                onClick={() => handleMeetingClick(item)}
               >
                 <div className="flex items-center">
                   <div className="flex h-full w-16 min-w-16 max-w-16 flex-col-reverse items-start justify-between truncate pl-1">
@@ -78,6 +89,10 @@ export default function MyMeetingPage() {
                       size="icon"
                       title="Open"
                       className="cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle open action here
+                      }}
                     >
                       <Link className="h-4 w-4" />
                     </Button>
@@ -86,6 +101,10 @@ export default function MyMeetingPage() {
                       size="icon"
                       title="Share"
                       className="cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle share action here
+                      }}
                     >
                       <Share2 className="h-4 w-4" />
                     </Button>
@@ -94,6 +113,10 @@ export default function MyMeetingPage() {
                       size="icon"
                       title="Delete"
                       className="cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle delete action here
+                      }}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
