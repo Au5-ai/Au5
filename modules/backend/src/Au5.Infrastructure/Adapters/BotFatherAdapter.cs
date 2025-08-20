@@ -1,18 +1,19 @@
 using System.Text;
 using System.Text.Json;
 using Au5.Application.Common.Abstractions;
-using Au5.Application.Common.Resources;
 using Au5.Application.Services.Models;
+using Au5.Infrastructure.Common;
+using Au5.Shared;
 using Microsoft.Extensions.Logging;
 
-namespace Au5.Application.Services;
+namespace Au5.Infrastructure.Adapters;
 
-public class BotFatherService(IHttpClientFactory httpClientFactory, ILogger<BotFatherService> logger) : IBotFatherService
+public class BotFatherAdapter(IHttpClientFactory httpClientFactory, ILogger<BotFatherAdapter> logger) : IBotFatherAdapter
 {
 	private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
-	private readonly ILogger<BotFatherService> _logger = logger;
+	private readonly ILogger<BotFatherAdapter> _logger = logger;
 
-	public async Task<Result> CreateBotAsync(string baseUrl, BotPayload payload, CancellationToken cancellationToken)
+	public async Task<Result<string>> CreateBotAsync(string baseUrl, BotPayload payload, CancellationToken cancellationToken)
 	{
 		var url = baseUrl + "/create-container";
 		var json = JsonSerializer.Serialize(payload);
@@ -30,12 +31,12 @@ public class BotFatherService(IHttpClientFactory httpClientFactory, ILogger<BotF
 				return Error.Failure(description: AppResources.FailedToAddBot);
 			}
 
-			return Result.Success();
+			return await response.Content.ReadAsStringAsync(cancellationToken);
 		}
 		catch (Exception ex)
 		{
 			_logger.LogError(ex, "Error communicating with BotFather.");
-			return Error.Failure(description: ex.Message); // AppResources.FailedCommunicateWithBotFather);
+			return Error.Failure(description: AppResources.FailedCommunicateWithBotFather);
 		}
 	}
 }

@@ -1,14 +1,17 @@
+using Au5.Application.Common.Abstractions;
 using Au5.Infrastructure.Persistence.Context;
+using Au5.IntegrationTests.TestHelpers;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Au5.IntegrationTests;
 
-public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebApp>, IDisposable
+public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebApp>
 {
 	private readonly IServiceScope _scope;
 	private readonly IServiceProvider _serviceProvider;
+	private readonly FakeHttpMessageHandler _fakeHttpHandler;
 
 	protected BaseIntegrationTest(IntegrationTestWebApp webApp)
 	{
@@ -20,9 +23,13 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebApp>
 		{
 			DbContext.Database.Migrate();
 		}
+
+		_fakeHttpHandler = WebApp.Services.GetRequiredService<FakeHttpMessageHandler>();
 	}
 
-	protected IntegrationTestWebApp WebApp { get; }
+	protected static Guid UserId => Guid.Parse("EDADA1F7-CBDA-4C13-8504-A57FE72D5960");
+
+	protected IntegrationTestWebApp WebApp { get; set; }
 
 	protected ApplicationDbContext DbContext { get; set; }
 
@@ -31,8 +38,11 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebApp>
 	/// </summary>
 	protected ISender Mediator => _serviceProvider.GetRequiredService<ISender>();
 
-	public void Dispose()
+	protected TestCurrentUserServiceFake TestCurrentUserService =>
+		(TestCurrentUserServiceFake)_serviceProvider.GetRequiredService<ICurrentUserService>();
+
+	protected void AddExceptedResponse(BaseResponseExpectation expectedResponse)
 	{
-		_scope?.Dispose();
+		_fakeHttpHandler.AddExpectation(expectedResponse);
 	}
 }

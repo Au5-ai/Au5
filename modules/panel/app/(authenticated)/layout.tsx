@@ -93,9 +93,7 @@ export default function AuthenticatedLayout({
               />
               {generateBreadcrumbs()}
             </div>
-            <div className="ml-auto px-4">
-              <LogoutButton />
-            </div>
+            <div className="ml-auto px-4"></div>
           </header>
           <div className="flex flex-1 flex-col">{children}</div>
         </SidebarInset>

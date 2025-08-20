@@ -5,6 +5,7 @@ import {
   User,
   ProblemDetails,
   SystemConfig,
+  MeetingData,
 } from "@/type";
 
 // API configuration
@@ -88,9 +89,18 @@ export const userApi = {
     }),
 };
 
-export const orgApi = {
+export const systemApi = {
   getConfig: (): Promise<SystemConfig> =>
     apiRequest<SystemConfig>("/system/config", {
       method: "GET",
     }),
+};
+
+export const meetingApi = {
+  my: (): Promise<MeetingData> => {
+    debugger;
+    return apiRequest<MeetingData>("/meeting/my", {
+      method: "GET",
+    });
+  },
 };

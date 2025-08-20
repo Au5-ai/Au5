@@ -1,17 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  ArchiveIcon,
-  Bot,
-  Frame,
-  GalleryVerticalEnd,
-  icons,
-  Settings,
-  Settings2,
-  SettingsIcon,
-  SquareTerminal,
-} from "lucide-react";
+import { ArchiveIcon, Bot, Frame, GalleryVerticalEnd } from "lucide-react";
 import { NavMain } from "@/components/nav-main";
 import { NavSpaces } from "@/components/nav-spaces";
 import { NavUser } from "@/components/nav-user";
@@ -24,14 +14,13 @@ import {
   SidebarMenuButton,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { NavWithSubMenu } from "./nav-withSubMenu";
 
 // This is sample data.
 const data = {
   navMain: [
     {
       title: "My Meetings",
-      url: "/myMeeting",
+      url: "/meeting/my",
       icon: Frame,
     },
     {
@@ -72,20 +61,20 @@ const data = {
       icon: Frame,
     },
   ],
-  navWithSubMenu: [
-    {
-      title: "Account & Settings",
-      url: "#",
-      icon: SettingsIcon,
-      isActive: true,
-      items: [
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-  ],
+  // navWithSubMenu: [
+  //   {
+  //     title: "Account & Settings",
+  //     url: "#",
+  //     icon: SettingsIcon,
+  //     isActive: true,
+  //     items: [
+  //       {
+  //         title: "Settings",
+  //         url: "#",
+  //       },
+  //     ],
+  //   },
+  // ],
 };
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
@@ -116,7 +105,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavSpaces spaces={data.spaces} />
-        <NavWithSubMenu items={data.navWithSubMenu} />
+        {/* <NavWithSubMenu items={data.navWithSubMenu} /> */}
       </SidebarContent>
       <SidebarFooter>{user && <NavUser {...user} />}</SidebarFooter>
       <SidebarRail />

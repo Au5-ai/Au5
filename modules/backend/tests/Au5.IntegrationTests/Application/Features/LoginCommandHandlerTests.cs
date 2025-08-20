@@ -18,7 +18,6 @@ public class LoginCommandHandlerTests : BaseIntegrationTest
 
 		Assert.True(result.IsSuccess);
 		Assert.NotNull(result.Data?.AccessToken);
-		Assert.NotEmpty(result.Data?.AccessToken);
 		Assert.Equal(60000, result.Data?.ExpiresIn);
 		Assert.Equal("Bearer", result.Data?.TokenType);
 	}

@@ -66,3 +66,32 @@ export interface AppConfig {
     botName: string;
   };
 }
+
+export interface Participant {
+  id: string;
+  fullName: string;
+  pictureUrl: string;
+  email: string;
+  hasAccount: boolean;
+}
+
+export interface MeetingItem {
+  meetingId: string;
+  meetId: string;
+  meetName: string;
+  platform: string;
+  botName: string;
+  status: string;
+  duration: string;
+  time: string;
+  pictureUrl: string;
+  guests: string[];
+  participants: Participant[];
+}
+
+export interface MeetingGroup {
+  date: string;
+  items: MeetingItem[];
+}
+
+export type MeetingData = MeetingGroup[];

@@ -8,12 +8,12 @@ namespace Au5.Application.Features.Meetings.AddBot;
 public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 {
 	private readonly IApplicationDbContext _dbContext;
-	private readonly IBotFatherService _botFather;
+	private readonly IBotFatherAdapter _botFather;
 	private readonly IMeetingUrlService _meetingUrlService;
 
 	public AddBotCommandHandler(
 		IApplicationDbContext dbContext,
-		IBotFatherService botFather,
+		IBotFatherAdapter botFather,
 		IMeetingUrlService meetingUrlService)
 	{
 		_dbContext = dbContext;
@@ -53,7 +53,8 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 		}
 
 		var payload = BuildBotPayload(request, config, hashToken);
-		return await _botFather.CreateBotAsync(config.BotFatherUrl, payload, cancellationToken);
+		await _botFather.CreateBotAsync(config.BotFatherUrl, payload, cancellationToken);
+		return Result.Success();
 	}
 
 	private BotPayload BuildBotPayload(AddBotCommand request, SystemConfig config, string hashToken) =>

@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { CelebrationMessage } from "@/components/celebration-message";
-import { userApi, orgApi } from "@/lib/api";
+import { userApi, systemApi } from "@/lib/api";
 import { tokenStorageService } from "@/lib/services";
 import { useRouter } from "next/navigation";
 
@@ -114,12 +114,12 @@ export default function OnboardingPage() {
   const handleSendConfigs = async () => {
     setIsConfiguring(true);
     try {
-      const [user, orgConfig] = await Promise.all([
+      const [user, systemConfig] = await Promise.all([
         userApi.me(),
-        orgApi.getConfig(),
+        systemApi.getConfig(),
       ]);
 
-      if (user && orgConfig) {
+      if (user && systemConfig) {
         const config = {
           user: {
             id: user.id,
@@ -129,13 +129,13 @@ export default function OnboardingPage() {
           },
           service: {
             jwtToken: tokenStorageService.get(),
-            panelUrl: orgConfig.panelUrl,
-            baseUrl: orgConfig.serviceBaseUrl,
-            direction: orgConfig.direction,
-            language: orgConfig.language,
-            hubUrl: orgConfig.hubUrl,
-            companyName: orgConfig.name,
-            botName: orgConfig.botName,
+            panelUrl: systemConfig.panelUrl,
+            baseUrl: systemConfig.serviceBaseUrl,
+            direction: systemConfig.direction,
+            language: systemConfig.language,
+            hubUrl: systemConfig.hubUrl,
+            companyName: systemConfig.organizationName,
+            botName: systemConfig.botName,
           },
         };
 

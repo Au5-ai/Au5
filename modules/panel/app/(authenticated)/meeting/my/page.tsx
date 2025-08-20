@@ -4,68 +4,45 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link, Share2, Trash2 } from "lucide-react";
-
-const meetings = [
-  {
-    date: "Saturday, June 7",
-    items: [
-      {
-        duration: "3m",
-        time: "10:51 PM",
-        title: "Meeting Transcription",
-        participants: ["You"],
-        avatar: "/avatar1.jpg",
-      },
-    ],
-  },
-  {
-    date: "Monday, May 12",
-    items: [
-      {
-        duration: "0m",
-        time: "4:08 PM",
-        title: "Meeting Transcription",
-        participants: ["You"],
-        avatar: "/avatar1.jpg",
-      },
-      {
-        duration: "4m",
-        time: "4:03 PM",
-        title: "Meeting Transcription",
-        participants: ["You"],
-        avatar: "/avatar1.jpg",
-      },
-    ],
-  },
-  {
-    date: "Tuesday, April 29",
-    items: [
-      {
-        duration: "41m",
-        time: "9:00 PM",
-        title: "WebEngage Technical Discussion",
-        participants: ["Ajay", "Behnam", "Bharath", "Mohammad", "You"],
-        avatar: "/avatar2.jpg",
-      },
-      {
-        duration: "1m",
-        time: "8:22 PM",
-        title: "Meeting Transcription",
-        participants: ["You"],
-        avatar: "/avatar1.jpg",
-      },
-      {
-        duration: "4m",
-        time: "8:10 PM",
-        title: "Meeting Transcription",
-        participants: ["You"],
-        avatar: "/avatar1.jpg",
-      },
-    ],
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import { meetingApi } from "@/lib/api";
+import { MeetingListSkeleton } from "@/components/meeting-list-skeleton";
+import { useRouter } from "next/navigation";
+import { MeetingItem } from "@/type";
 
 export default function MyMeetingPage() {
+  const router = useRouter();
+
+  const {
+    data: meetings = [],
+    isLoading: loading,
+    error,
+  } = useQuery({
+    queryKey: ["meetings", "my"],
+    queryFn: meetingApi.my,
+  });
+
+  const handleMeetingClick = (item: MeetingItem) => {
+    const meetingId = item.meetingId;
+    const meetId = item.meetId;
+    router.push(`/meeting/${meetingId}/${meetId}/transcription`);
+  };
+
+  if (loading) {
+    return <MeetingListSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-sm text-red-500">
+          Error:{" "}
+          {error instanceof Error ? error.message : "Failed to fetch meetings"}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {meetings.map((group, groupIndex) => (
@@ -78,6 +55,7 @@ export default function MyMeetingPage() {
               <CardContent
                 key={index}
                 className="flex items-center justify-between px-3 py-3 hover:bg-gray-50 cursor-pointer transition-colors"
+                onClick={() => handleMeetingClick(item)}
               >
                 <div className="flex items-center">
                   <div className="flex h-full w-16 min-w-16 max-w-16 flex-col-reverse items-start justify-between truncate pl-1">
@@ -94,13 +72,13 @@ export default function MyMeetingPage() {
                     </div>
                   </div>
                   <Avatar className="h-10 w-10">
-                    <AvatarImage src={item.avatar} alt={item.title} />
-                    <AvatarFallback>{item.title[0]}</AvatarFallback>
+                    <AvatarImage src={item.pictureUrl} alt={item.meetName} />
+                    <AvatarFallback>{item.meetName[0]}</AvatarFallback>
                   </Avatar>
                   <div className="ml-3">
-                    <p className="font-medium">{item.title}</p>
+                    <p className="font-medium">{item.meetName}</p>
                     <p className="text-xs text-muted-foreground">
-                      {item.participants.join(", ")}
+                      {item.guests.join(", ")}
                     </p>
                   </div>
                 </div>
@@ -111,6 +89,10 @@ export default function MyMeetingPage() {
                       size="icon"
                       title="Open"
                       className="cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle open action here
+                      }}
                     >
                       <Link className="h-4 w-4" />
                     </Button>
@@ -119,6 +101,10 @@ export default function MyMeetingPage() {
                       size="icon"
                       title="Share"
                       className="cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle share action here
+                      }}
                     >
                       <Share2 className="h-4 w-4" />
                     </Button>
@@ -127,6 +113,10 @@ export default function MyMeetingPage() {
                       size="icon"
                       title="Delete"
                       className="cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle delete action here
+                      }}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
