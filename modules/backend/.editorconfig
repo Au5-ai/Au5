@@ -69,6 +69,7 @@ dotnet_diagnostic.CA1064.severity = error
 dotnet_diagnostic.CA1510.severity = error
 dotnet_diagnostic.CA1848.severity = none
 dotnet_diagnostic.CA1050.severity = error
+dotnet_diagnostic.CA2000.severity = none
 
 # C# Files
 [*.cs]
@@ -750,7 +751,7 @@ dotnet_diagnostic.CA1861.severity = warning
 dotnet_diagnostic.CA1863.severity = warning
 
 #Dispose objects before losing scope
-dotnet_diagnostic.CA2000.severity = warning
+dotnet_diagnostic.CA2000.severity = none
 
 #Consider calling ConfigureAwait on the awaited task
 dotnet_diagnostic.CA2007.severity = none

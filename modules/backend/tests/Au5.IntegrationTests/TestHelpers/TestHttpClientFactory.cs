@@ -1,16 +1,28 @@
+using Microsoft.AspNetCore.Http;
+
 namespace Au5.IntegrationTests.TestHelpers;
 
 public class TestHttpClientFactory : IHttpClientFactory
 {
-	private readonly FakeHttpClientHandler _fakeHttpClientHandler;
+	private readonly FakeHttpMessageHandler _fakeHttpMessageHandler;
+	private readonly IHttpContextAccessor _httpContextAccessor;
 
-	public TestHttpClientFactory(FakeHttpClientHandler fakeHandler)
+	public TestHttpClientFactory(FakeHttpMessageHandler fakeHandler, IHttpContextAccessor httpContextAccessor)
 	{
-		_fakeHttpClientHandler = fakeHandler;
+		_fakeHttpMessageHandler = fakeHandler;
+		_httpContextAccessor = httpContextAccessor;
 	}
 
 	public HttpClient CreateClient(string name)
 	{
-		return new HttpClient(_fakeHttpClientHandler, disposeHandler: false);
+		// Create a chain of handlers: TestContextHandler -> FakeHttpMessageHandler
+		var testContextHandler = new TestContextHandler(_httpContextAccessor)
+		{
+			InnerHandler = _fakeHttpMessageHandler
+		};
+
+		// HttpClient will dispose the handler when the client is disposed
+		var httpClient = new HttpClient(testContextHandler, disposeHandler: true);
+		return httpClient;
 	}
 }

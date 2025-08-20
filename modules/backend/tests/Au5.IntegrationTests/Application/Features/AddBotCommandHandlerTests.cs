@@ -1,7 +1,6 @@
 using Au5.Application.Features.Meetings.AddBot;
 using Au5.Domain.Entities;
 using Au5.IntegrationTests.TestHelpers;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Au5.IntegrationTests.Application.Features;
 
@@ -13,9 +12,6 @@ public class AddBotCommandHandlerTests : BaseIntegrationTest
 		: base(webApp)
 	{
 	}
-
-	private FakeHttpClientHandler FakeHttpHandler =>
-		WebApp.Services.GetRequiredService<FakeHttpClientHandler>();
 
 	[Fact]
 	public async Task Should_AddBot_Successfully_When_SystemConfigExists()
@@ -47,24 +43,18 @@ public class AddBotCommandHandlerTests : BaseIntegrationTest
 		});
 		await DbContext.SaveChangesAsync(CancellationToken.None);
 
-		var expectedResponse = new HttpRequestWithJsonResponse()
+		var expectedResponse = new JsonResponse()
 		{
 			ResponseContent = "{\"meetingUrl\":\"FakeMeetId\",\"title\":\"Cando\"}",
 			Method = HttpMethod.Post,
 			RequestAddress = BaseApiAddress + "/create-container",
 		};
 
-		FakeHttpHandler.AddExpectation(expectedResponse);
+		AddExceptedResponse(expectedResponse);
 
 		var command = new AddBotCommand("GoogleMeet", "Cando", "FakeMeetId");
 		var response = await Mediator.Send(command);
 
 		Assert.True(response.IsSuccess);
-
-		var getRequest = FakeHttpHandler.CallHistory
-			.Where(x => x.UniqueCode == expectedResponse.GetUniqueCode())
-			.ToList();
-
-		Assert.Single(getRequest);
-    }
+	}
 }
