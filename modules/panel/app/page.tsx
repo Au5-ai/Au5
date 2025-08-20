@@ -2,8 +2,6 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import CTASection from "@/components/landing/CTASection";
-import Footer from "@/components/landing/Footer";
 import HeroSection from "@/components/landing/HeroSection";
 import { Mic } from "lucide-react";
 import { useRouter } from "next/navigation";
