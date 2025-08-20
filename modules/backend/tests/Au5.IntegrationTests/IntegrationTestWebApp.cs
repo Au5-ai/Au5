@@ -2,7 +2,6 @@ using Au5.Application.Common.Abstractions;
 using Au5.Infrastructure.Persistence.Context;
 using Au5.IntegrationTests.TestHelpers;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
@@ -60,8 +59,7 @@ public class IntegrationTestWebApp : WebApplicationFactory<Program>, IAsyncLifet
 		services.AddSingleton<IHttpClientFactory>(provider =>
 		{
 			var fakeHandler = provider.GetRequiredService<FakeHttpMessageHandler>();
-			var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
-			return new TestHttpClientFactory(fakeHandler, httpContextAccessor);
+			return new TestHttpClientFactory(fakeHandler);
 		});
 	}
 

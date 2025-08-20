@@ -4,6 +4,8 @@ namespace Au5.IntegrationTests.TestHelpers;
 
 public abstract class BaseResponseExpectation
 {
+	public string ExpectedRequest { get; set; } = string.Empty;
+
 	required public HttpMethod Method { get; init; }
 
 	required public string RequestAddress { get; init; }
@@ -11,11 +13,6 @@ public abstract class BaseResponseExpectation
 	public HttpStatusCode ResponseStatusCode { get; init; } = HttpStatusCode.OK;
 
 	public bool OneTimeUse { get; set; } = true;
-
-	/// <summary>
-	/// Gets or sets the test context identifier to isolate responses per test case.
-	/// </summary>
-	public string? TestContext { get; set; }
 
 	public abstract HttpResponseMessage ToHttpResponseMessage(HttpRequestMessage request);
 }
