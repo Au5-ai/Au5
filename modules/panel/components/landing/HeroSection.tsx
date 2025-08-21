@@ -110,9 +110,9 @@ export default function HeroSection() {
           </div>
 
           <div className="relative">
-            <div className="relative bg-gradient-to-br from-blue-50 to-indigo-100 rounded-3xl p-8 shadow-2xl">
-              <Image
-                src="https://cdn.prod.website-files.com/61120cb2509e011efcf0b1e4/65ac906369c2257a1dc77f4f_Frame%2020139%402x.png"
+            <div className="relative bg-gradient-to-br rounded-3xl p-8 shadow-1xl">
+              <img
+                src="https://shadcnuikit.com/not-selected-chat.svg"
                 loading="lazy"
                 sizes="100vw"
                 alt=""
