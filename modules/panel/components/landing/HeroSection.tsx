@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Mic, CheckCircle } from "lucide-react";
+import Image from "next/image";
 
 export default function HeroSection() {
   return (
@@ -110,11 +111,10 @@ export default function HeroSection() {
 
           <div className="relative">
             <div className="relative bg-gradient-to-br from-blue-50 to-indigo-100 rounded-3xl p-8 shadow-2xl">
-              <img
+              <Image
                 src="https://cdn.prod.website-files.com/61120cb2509e011efcf0b1e4/65ac906369c2257a1dc77f4f_Frame%2020139%402x.png"
                 loading="lazy"
                 sizes="100vw"
-                srcset="https://cdn.prod.website-files.com/61120cb2509e011efcf0b1e4/65ac906369c2257a1dc77f4f_Frame%2020139%402x-p-500.png 500w, https://cdn.prod.website-files.com/61120cb2509e011efcf0b1e4/65ac906369c2257a1dc77f4f_Frame%2020139%402x-p-800.png 800w, https://cdn.prod.website-files.com/61120cb2509e011efcf0b1e4/65ac906369c2257a1dc77f4f_Frame%2020139%402x-p-1080.png 1080w, https://cdn.prod.website-files.com/61120cb2509e011efcf0b1e4/65ac906369c2257a1dc77f4f_Frame%2020139%402x-p-1600.png 1600w, https://cdn.prod.website-files.com/61120cb2509e011efcf0b1e4/65ac906369c2257a1dc77f4f_Frame%2020139%402x-p-2000.png 2000w, https://cdn.prod.website-files.com/61120cb2509e011efcf0b1e4/65ac906369c2257a1dc77f4f_Frame%2020139%402x.png 2446w"
                 alt=""
                 className="layout3_image"
               />

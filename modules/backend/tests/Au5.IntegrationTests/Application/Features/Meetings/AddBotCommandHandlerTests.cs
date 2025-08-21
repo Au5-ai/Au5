@@ -2,7 +2,7 @@ using Au5.Application.Features.Meetings.AddBot;
 using Au5.Domain.Entities;
 using Au5.IntegrationTests.TestHelpers;
 
-namespace Au5.IntegrationTests.Application.Features;
+namespace Au5.IntegrationTests.Application.Features.Meetings;
 
 public class AddBotCommandHandlerTests : BaseIntegrationTest
 {

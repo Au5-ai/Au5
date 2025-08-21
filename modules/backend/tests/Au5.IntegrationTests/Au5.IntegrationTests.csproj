@@ -11,6 +11,14 @@
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="TestFiles\AddMeetingDataAsSeed.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="TestFiles\Infrastructure\Persistence\AddMeetingDataAsSeed.sql" />
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="coverlet.collector">
