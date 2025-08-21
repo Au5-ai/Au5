@@ -98,8 +98,12 @@ export const systemApi = {
 
 export const meetingApi = {
   my: (): Promise<MeetingData> => {
-    debugger;
     return apiRequest<MeetingData>("/meeting/my", {
+      method: "GET",
+    });
+  },
+  archived: (): Promise<MeetingData> => {
+    return apiRequest<MeetingData>("/meeting/archived", {
       method: "GET",
     });
   },

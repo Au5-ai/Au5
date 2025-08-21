@@ -35,7 +35,7 @@ const data = {
     },
     {
       title: "Archived Transcripts",
-      url: "#",
+      url: "/meeting/archived",
       icon: ArchiveIcon,
     },
   ],
