@@ -5,6 +5,7 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
@@ -17,6 +18,8 @@ export function NavMain({
     title: string;
     url: string;
     icon?: LucideIcon;
+    showBadge?: boolean;
+    badge?: string;
   }[];
 }) {
   return (
@@ -34,6 +37,10 @@ export function NavMain({
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
               </SidebarMenuButton>
+
+              {item.showBadge && (
+                <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
+              )}
             </SidebarMenuItem>
           ))}
         </SidebarMenu>

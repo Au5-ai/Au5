@@ -3,7 +3,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import HeroSection from "@/components/landing/HeroSection";
-import { Mic } from "lucide-react";
+import { GalleryVerticalEnd, Mic } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -22,13 +22,11 @@ export default function Home() {
       }}
     >
       <nav className="fixed top-0 w-full z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <Mic className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-slate-900">Au5-ai</span>
+              <GalleryVerticalEnd className="size-4" />
+              <span className="text-xl font-bold text-slate-900">Au5.ai</span>
             </div>
             <div className="hidden md:flex items-center space-x-8">
               <Button onClick={() => signIn()} className="cursor-pointer">

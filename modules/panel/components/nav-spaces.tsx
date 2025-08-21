@@ -1,28 +1,14 @@
 "use client";
 
-import {
-  Folder,
-  Forward,
-  MoreHorizontal,
-  Trash2,
-  type LucideIcon,
-} from "lucide-react";
+import { type LucideIcon } from "lucide-react";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar";
 
 export function NavSpaces({
@@ -32,10 +18,10 @@ export function NavSpaces({
     name: string;
     url: string;
     icon: LucideIcon;
+    showBadge?: boolean;
+    badge?: string;
   }[];
 }) {
-  const { isMobile } = useSidebar();
-
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Spaces</SidebarGroupLabel>
@@ -48,6 +34,9 @@ export function NavSpaces({
                 <span>{item.name}</span>
               </a>
             </SidebarMenuButton>
+            {item.showBadge && (
+              <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
+            )}
             {/* <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuAction showOnHover>

@@ -24,19 +24,23 @@ const data = {
       icon: Frame,
     },
     {
+      title: "Archived Transcripts",
+      url: "/meeting/archived",
+      icon: ArchiveIcon,
+    },
+    {
       title: "Shared With Me",
       url: "#",
       icon: Frame,
+      showBadge: true,
+      badge: "soon",
     },
     {
       title: "AI Tools",
       url: "#",
       icon: Bot,
-    },
-    {
-      title: "Archived Transcripts",
-      url: "/meeting/archived",
-      icon: ArchiveIcon,
+      showBadge: true,
+      badge: "soon",
     },
   ],
   spaces: [
@@ -44,21 +48,29 @@ const data = {
       name: "Automation Team",
       url: "#",
       icon: Frame,
+      showBadge: true,
+      badge: "soon",
     },
     {
       name: "My Agah",
       url: "#",
       icon: Frame,
+      showBadge: true,
+      badge: "soon",
     },
     {
       name: "ENS Team",
       url: "#",
       icon: Frame,
+      showBadge: true,
+      badge: "soon",
     },
     {
       name: "ISS Team",
       url: "#",
       icon: Frame,
+      showBadge: true,
+      badge: "soon",
     },
   ],
   // navWithSubMenu: [
