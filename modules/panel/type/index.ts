@@ -95,3 +95,23 @@ export interface MeetingGroup {
 }
 
 export type MeetingData = MeetingGroup[];
+
+export interface SystemSettings {
+  OrganizationName: string;
+  BotName: string;
+  BotFatherUrl: string;
+  BotHubUrl: string;
+  HubUrl: string;
+  ServiceBaseUrl: string;
+  PanelUrl: string;
+  Direction: string;
+  Language: string;
+  OpenAIToken: string;
+  MeetingTranscriptionModel: string;
+  AutoLeaveWaitingEnter: number;
+  AutoLeaveNoParticipant: number;
+  AutoLeaveAllParticipantsLeft: number;
+  MeetingVideoRecording: boolean;
+  MeetingAudioRecording: boolean;
+  MeetingTranscription: boolean;
+}
