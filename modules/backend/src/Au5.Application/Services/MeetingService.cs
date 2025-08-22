@@ -42,9 +42,6 @@ public class MeetingService : IMeetingService
 		}
 	}
 
-	/// <summary>
-	/// this method is used to add Guests to a meeting.
-	/// </summary>
 	public void AddGuestsToMeet(List<Participant> users, string meetId)
 	{
 		lock (LockObject)
