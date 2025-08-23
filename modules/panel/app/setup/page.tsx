@@ -116,7 +116,7 @@ export default function OnboardingPage() {
     try {
       const [user, systemConfig] = await Promise.all([
         userApi.me(),
-        systemApi.getConfig(),
+        systemApi.getExtensionConfig(),
       ]);
 
       if (user && systemConfig) {

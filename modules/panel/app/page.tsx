@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import HeroSection from "@/components/landing/HeroSection";
 import { GalleryVerticalEnd, Mic } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Logo from "@/components/logo";
 
 export default function Home() {
   const router = useRouter();
@@ -25,7 +26,9 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
-              <GalleryVerticalEnd className="size-4" />
+              <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+                <Logo />
+              </div>
               <span className="text-xl font-bold text-slate-900">Au5.ai</span>
             </div>
             <div className="hidden md:flex items-center space-x-8">

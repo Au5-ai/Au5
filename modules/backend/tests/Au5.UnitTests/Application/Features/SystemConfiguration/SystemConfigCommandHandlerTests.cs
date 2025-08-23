@@ -18,36 +18,7 @@ public class SystemConfigCommandHandlerTests
 	}
 
 	[Fact]
-	public async Task Should_ReturnFailure_When_ExistingConfigAndForceUpdateFalse()
-	{
-		var config = new SystemConfig { Id = Guid.NewGuid() };
-
-		var dbSet = new List<SystemConfig> { config }.BuildMockDbSet();
-		_dbContextMock.Setup(db => db.Set<SystemConfig>()).Returns(dbSet.Object);
-
-		var command = new SystemConfigCommand()
-		{
-			OrganizationName = "TestOrg",
-			BotName = "Bot",
-			HubUrl = "http=//hub",
-			Direction = "Inbound",
-			Language = "en",
-			ServiceBaseUrl = "http=//service",
-			PanelUrl = "http=//panel",
-			OpenAIToken = "token",
-			ForceUpdate = false
-		};
-
-		var result = await _handler.Handle(command, CancellationToken.None);
-
-		dbSet.Verify(x => x.Add(It.IsAny<SystemConfig>()), Times.Never);
-		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
-		Assert.False(result.IsSuccess);
-		Assert.Equal(AppResources.SystemAlreadyConfigured, result.Error.Description);
-	}
-
-	[Fact]
-	public async Task Should_UpdatesConfigAndReturnsSuccess_When_ExistingConfigForceUpdateTrue()
+	public async Task Should_UpdatesConfigAndReturnsSuccess_When_ExistingConfig()
 	{
 		var config = new SystemConfig { Id = Guid.NewGuid() };
 
@@ -67,7 +38,6 @@ public class SystemConfigCommandHandlerTests
 			ServiceBaseUrl = "http=//service",
 			PanelUrl = "http=//panel",
 			OpenAIToken = "token",
-			ForceUpdate = true
 		};
 
 		var result = await _handler.Handle(command, CancellationToken.None);
@@ -105,7 +75,6 @@ public class SystemConfigCommandHandlerTests
 			ServiceBaseUrl = "http=//service",
 			PanelUrl = "http=//panel",
 			OpenAIToken = "token",
-			ForceUpdate = false
 		};
 
 		var result = await _handler.Handle(command, CancellationToken.None);
@@ -135,7 +104,6 @@ public class SystemConfigCommandHandlerTests
 			ServiceBaseUrl = "http=//service",
 			PanelUrl = "http=//panel",
 			OpenAIToken = "token",
-			ForceUpdate = false
 		};
 
 		var result = await _handler.Handle(command, CancellationToken.None);

@@ -19,11 +19,6 @@ public class SystemConfigCommandHandler : IRequestHandler<SystemConfigCommand, R
 
 		if (existingConfig is not null)
 		{
-			if (!request.ForceUpdate)
-			{
-				return Error.Failure(description: AppResources.SystemAlreadyConfigured);
-			}
-
 			existingConfig.OrganizationName = request.OrganizationName;
 			existingConfig.BotName = request.BotName;
 			existingConfig.HubUrl = request.HubUrl;

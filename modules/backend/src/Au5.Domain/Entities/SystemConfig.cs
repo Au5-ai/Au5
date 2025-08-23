@@ -24,7 +24,6 @@ public class SystemConfig
 
 	public string BotHubUrl { get; set; }
 
-	[JsonIgnore]
 	public string OpenAIToken { get; set; }
 
 	public string PanelUrl { get; set; }
