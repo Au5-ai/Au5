@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
-import BreadcrumbLayout from "./breadcrumb-layout";
+import BreadcrumbLayout from "../../../components/breadcrumb-layout";
 import { Separator } from "@radix-ui/react-separator";
-import { SidebarInset, SidebarTrigger } from "./ui/sidebar";
+import { SidebarInset, SidebarTrigger } from "../../../components/ui/sidebar";
 
 export function MeetingListSkeleton() {
   return (
