@@ -19,7 +19,6 @@ import { Separator } from "@/components/ui/separator";
 import { SystemConfigs } from "@/type";
 import { validateUrl } from "@/lib/utils";
 import { systemApi } from "@/lib/api";
-import { Languages } from "@/components/languages";
 
 const defaultConfigs: SystemConfigs = {
   organizationName: "",
@@ -43,6 +42,8 @@ const defaultConfigs: SystemConfigs = {
 
 export default function SystemConfigPage() {
   const [configs, setConfigs] = useState<SystemConfigs>(defaultConfigs);
+  const [originalConfigs, setOriginalConfigs] =
+    useState<SystemConfigs>(defaultConfigs);
   const [isLoading, setIsLoading] = useState(true);
 
   const [errors, setErrors] = useState<
@@ -56,11 +57,13 @@ export default function SystemConfigPage() {
         const configData = await systemApi.getConfig();
         if (configData) {
           setConfigs(configData);
+          setOriginalConfigs(configData);
           console.log("Loaded system configs:", configData);
         }
-      } catch (error) {
+      } catch {
         toast.info("Using default configuration values.");
         setConfigs(defaultConfigs);
+        setOriginalConfigs(defaultConfigs);
       } finally {
         setIsLoading(false);
       }
@@ -69,14 +72,19 @@ export default function SystemConfigPage() {
     loadConfig();
   }, []);
 
+  // Check if configs have changed from original
+  const hasConfigsChanged = () => {
+    return JSON.stringify(configs) !== JSON.stringify(originalConfigs);
+  };
+
   const validateField = (
     field: keyof SystemConfigs,
-    value: any
+    value: string | number | boolean
   ): string | null => {
     switch (field) {
       case "organizationName":
       case "botName":
-        return !value || value.trim().length < 2
+        return !value || (typeof value === "string" && value.trim().length < 2)
           ? "Must be at least 2 characters"
           : null;
 
@@ -85,17 +93,17 @@ export default function SystemConfigPage() {
       case "hubUrl":
       case "serviceBaseUrl":
       case "panelUrl":
-        return !validateUrl(value) ? "Must be a valid URL" : null;
+        return !validateUrl(value as string) ? "Must be a valid URL" : null;
 
       case "openAIToken":
-        return !value || value.trim().length < 10
+        return !value || (typeof value === "string" && value.trim().length < 10)
           ? "Token must be at least 10 characters"
           : null;
 
       case "autoLeaveWaitingEnter":
       case "autoLeaveNoParticipant":
       case "autoLeaveAllParticipantsLeft":
-        return value < 1000 || value > 300000
+        return typeof value === "number" && (value < 1000 || value > 300000)
           ? "Must be between 1000 and 300000 milliseconds"
           : null;
 
@@ -104,7 +112,10 @@ export default function SystemConfigPage() {
     }
   };
 
-  const handleInputChange = (field: keyof SystemConfigs, value: any) => {
+  const handleInputChange = (
+    field: keyof SystemConfigs,
+    value: string | number | boolean
+  ) => {
     setConfigs((prev) => ({ ...prev, [field]: value }));
 
     const error = validateField(field, value);
@@ -130,6 +141,7 @@ export default function SystemConfigPage() {
       systemApi
         .setConfig(configs)
         .then(() => {
+          setOriginalConfigs(configs); // Update original configs after successful save
           toast.success("Your system settings have been updated successfully.");
         })
         .catch(() => {
@@ -141,8 +153,9 @@ export default function SystemConfigPage() {
   };
 
   const handleReset = () => {
+    setConfigs(originalConfigs);
     setErrors({});
-    toast.info("All settings have been reset to default values.");
+    toast.info("All settings have been reset to last saved values.");
   };
 
   return (
@@ -658,7 +671,9 @@ export default function SystemConfigPage() {
               <Button variant="outline" onClick={handleReset}>
                 Reset to Default
               </Button>
-              <Button onClick={handleSave}>Save Configs</Button>
+              <Button onClick={handleSave} disabled={!hasConfigsChanged()}>
+                Save Configs
+              </Button>
             </div>
           </div>
         )}
