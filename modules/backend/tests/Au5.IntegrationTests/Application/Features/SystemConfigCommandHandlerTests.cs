@@ -25,7 +25,6 @@ public class SystemConfigCommandHandlerTests : BaseIntegrationTest
 			PanelUrl = "https://example.com/panel",
 			ServiceBaseUrl = "https://example.com/api",
 			OpenAIToken = "sk-test-token",
-			ForceUpdate = false,
 			AutoLeaveWaitingEnter = 10,
 			AutoLeaveNoParticipant = 5,
 			AutoLeaveAllParticipantsLeft = 2,
@@ -96,7 +95,6 @@ public class SystemConfigCommandHandlerTests : BaseIntegrationTest
 			MeetingAudioRecording = true,
 			MeetingTranscription = true,
 			MeetingTranscriptionModel = "liveCaption",
-			ForceUpdate = true
 		};
 
 		_ = await Mediator.Send(command);
@@ -115,60 +113,6 @@ public class SystemConfigCommandHandlerTests : BaseIntegrationTest
 	}
 
 	[Fact]
-	public async Task Should_Fail_When_OrganizationExists_And_ForceUpdate_IsFalse()
-	{
-		DbContext.Set<SystemConfig>().Add(new SystemConfig
-		{
-			Id = Guid.NewGuid(),
-			BotName = "TestBot",
-			Direction = "ltr",
-			HubUrl = "https://example.com/hub",
-			Language = "fa-IR",
-			OrganizationName = "Test Organization",
-			PanelUrl = "https://example.com/panel",
-			ServiceBaseUrl = "https://example.com/api",
-			OpenAIToken = "sk-test-token",
-			AutoLeaveWaitingEnter = 10,
-			AutoLeaveNoParticipant = 5,
-			AutoLeaveAllParticipantsLeft = 2,
-			MeetingVideoRecording = true,
-			BotFatherUrl = "https://botfather.example.com",
-			BotHubUrl = "https://bot-hub.example.com",
-			MeetingAudioRecording = true,
-			MeetingTranscription = true,
-			MeetingTranscriptionModel = "liveCaption"
-		});
-		await DbContext.SaveChangesAsync(CancellationToken.None);
-
-		var command = new SystemConfigCommand
-		{
-			OrganizationName = "NewOrg",
-			BotName = "NewBot",
-			HubUrl = "https://newhub.com",
-			Direction = "rtl",
-			Language = "en-EN",
-			ServiceBaseUrl = "https://new.service",
-			PanelUrl = "https://new.panel",
-			OpenAIToken = "new-token",
-			AutoLeaveWaitingEnter = 10,
-			AutoLeaveNoParticipant = 5,
-			AutoLeaveAllParticipantsLeft = 2,
-			MeetingVideoRecording = true,
-			BotFatherUrl = "https://botfather.example.com",
-			BotHubUrl = "https://bot-hub.example.com",
-			MeetingAudioRecording = true,
-			MeetingTranscription = true,
-			MeetingTranscriptionModel = "liveCaption",
-			ForceUpdate = false
-		};
-
-		var result = await Mediator.Send(command);
-
-		Assert.False(result.IsSuccess);
-		Assert.Equal(AppResources.ConfigAlreadyExist, result.Error.Description);
-	}
-
-	[Fact]
 	public async Task Should_ValidationError_When_OrganizationIsNotCorrect()
 	{
 		var invalidCommand = new SystemConfigCommand
@@ -181,7 +125,6 @@ public class SystemConfigCommandHandlerTests : BaseIntegrationTest
 			ServiceBaseUrl = "https://new.service",
 			PanelUrl = "https://new.panel",
 			OpenAIToken = "new-token",
-			ForceUpdate = true
 		};
 
 		await Assert.ThrowsAsync<ValidationException>(async () => await Mediator.Send(invalidCommand));

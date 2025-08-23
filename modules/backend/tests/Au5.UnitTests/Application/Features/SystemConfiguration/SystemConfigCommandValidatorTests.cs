@@ -123,6 +123,5 @@ public class SystemConfigCommandValidatorTests
 		MeetingVideoRecording = true,
 		MeetingAudioRecording = true,
 		MeetingTranscription = true,
-		ForceUpdate = false
 	};
 }

@@ -1,4 +1,5 @@
 using Au5.Application.Features.SystemConfigs.ExtensionConfig;
+using Au5.Application.Features.SystemConfigs.GetConfig;
 using Au5.Application.Features.SystemConfigs.SetConfig;
 
 namespace Au5.BackEnd.Controllers;
@@ -18,6 +19,12 @@ public class SystemController(ISender mediator) : BaseController
 
 	[HttpGet("config")]
 	public async Task<IActionResult> GetConfig()
+	{
+		return Ok(await mediator.Send(new SystemConfigQuery()));
+	}
+
+	[HttpGet("extension-config")]
+	public async Task<IActionResult> GetExtensionConfig()
 	{
 		return Ok(await mediator.Send(new ExtensionConfigQuery()));
 	}

@@ -35,6 +35,4 @@ public record SystemConfigCommand : IRequest<Result>
 	public bool MeetingTranscription { get; set; }
 
 	public string MeetingTranscriptionModel { get; set; }
-
-	public bool ForceUpdate { get; init; } = false;
 }

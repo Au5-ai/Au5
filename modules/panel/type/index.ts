@@ -38,7 +38,7 @@ export interface User {
   email: string;
 }
 
-export interface SystemConfig {
+export interface ExtensionConfig {
   panelUrl: string;
   serviceBaseUrl: string;
   direction: string;
@@ -96,22 +96,22 @@ export interface MeetingGroup {
 
 export type MeetingData = MeetingGroup[];
 
-export interface SystemSettings {
-  OrganizationName: string;
-  BotName: string;
-  BotFatherUrl: string;
-  BotHubUrl: string;
-  HubUrl: string;
-  ServiceBaseUrl: string;
-  PanelUrl: string;
-  Direction: string;
-  Language: string;
-  OpenAIToken: string;
-  MeetingTranscriptionModel: string;
-  AutoLeaveWaitingEnter: number;
-  AutoLeaveNoParticipant: number;
-  AutoLeaveAllParticipantsLeft: number;
-  MeetingVideoRecording: boolean;
-  MeetingAudioRecording: boolean;
-  MeetingTranscription: boolean;
+export interface SystemConfigs {
+  organizationName: string;
+  botName: string;
+  botFatherUrl: string;
+  botHubUrl: string;
+  hubUrl: string;
+  serviceBaseUrl: string;
+  panelUrl: string;
+  direction: string;
+  language: string;
+  openAIToken: string;
+  meetingTranscriptionModel: string;
+  autoLeaveWaitingEnter: number;
+  autoLeaveNoParticipant: number;
+  autoLeaveAllParticipantsLeft: number;
+  meetingVideoRecording: boolean;
+  meetingAudioRecording: boolean;
+  meetingTranscription: boolean;
 }
