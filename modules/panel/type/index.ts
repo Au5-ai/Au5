@@ -38,6 +38,10 @@ export interface User {
   email: string;
 }
 
+export interface HelloAdminResponse {
+  helloFromAdmin: boolean;
+}
+
 export interface ExtensionConfig {
   panelUrl: string;
   serviceBaseUrl: string;

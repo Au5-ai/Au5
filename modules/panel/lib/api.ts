@@ -7,6 +7,7 @@ import {
   SystemConfigs,
   MeetingData,
   ExtensionConfig,
+  HelloAdminResponse,
 } from "@/type";
 
 // API configuration
@@ -78,8 +79,13 @@ export const authApi = {
     }),
 
   logout: (): Promise<void> =>
-    apiRequest<void>("/auth/logout", {
+    apiRequest<void>("/authentication/logout", {
       method: "POST",
+    }),
+
+  helloAdmin: (): Promise<HelloAdminResponse> =>
+    apiRequest<HelloAdminResponse>("/authentication/hello-admin", {
+      method: "GET",
     }),
 };
 

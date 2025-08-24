@@ -5,6 +5,7 @@ import BreadcrumbLayout from "@/components/breadcrumb-layout";
 import { Separator } from "@/components/ui/separator";
 import { SystemConfigsTab } from "./system-config";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Settings, Target } from "lucide-react";
 
 export default function SystemConfigPage() {
   return (
@@ -32,14 +33,18 @@ export default function SystemConfigPage() {
         <Tabs defaultValue="SystemConfigsTab" className="w-full">
           <TabsList>
             <TabsTrigger value="SystemConfigsTab">
-              System Configuration
+              <Settings className="mr-1 h-4 w-4" /> System Configuration
             </TabsTrigger>
-            <TabsTrigger value="password">Password</TabsTrigger>
+            <TabsTrigger value="Reactions">
+              <Target className="mr-1 h-4 w-4" /> Reactions
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="SystemConfigsTab">
             <SystemConfigsTab />
           </TabsContent>
-          <TabsContent value="password">Change your password here.</TabsContent>
+          <TabsContent value="Reactions">
+            Manage your reactions here.
+          </TabsContent>
         </Tabs>
       </div>
     </SidebarInset>

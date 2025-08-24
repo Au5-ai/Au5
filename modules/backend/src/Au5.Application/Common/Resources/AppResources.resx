@@ -162,4 +162,7 @@
   <data name="MustBeMoreThanZero" xml:space="preserve">
     <value>Value must be greater than Zero.</value>
   </data>
+  <data name="ThereIsNoAdmin" xml:space="preserve">
+    <value>There Is not Admin User.</value>
+  </data>
 </root>

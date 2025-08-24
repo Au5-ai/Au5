@@ -15,6 +15,14 @@ public class User
 
 	public bool IsActive { get; set; }
 
+	public DateTime CreatedAt { get; set; }
+
+	public DateTime? LastLoginAt { get; set; }
+
+	public DateTime? LastPasswordChangeAt { get; set; }
+
+	public RoleTypes Role { get; set; }
+
 	public ICollection<Meeting> Meetings { get; set; }
 
 	public Participant ToParticipant()

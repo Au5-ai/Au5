@@ -187,6 +187,15 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There Is not Admin User..
+        /// </summary>
+        internal static string ThereIsNoAdmin {
+            get {
+                return ResourceManager.GetString("ThereIsNoAdmin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unauthorized user, You can&apos;t do this action..
         /// </summary>
         internal static string UnAuthorizedAction {

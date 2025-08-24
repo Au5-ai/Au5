@@ -1,5 +1,6 @@
 using System.Net;
 using Au5.Application.Features.Authentication;
+using Au5.Domain.Entities;
 
 namespace Au5.UnitTests.Application.Features.Authentication;
 
@@ -16,6 +17,8 @@ public class LoginCommandHandlerTests
 			.Handle(new LoginCommand(fixture.TestUser.Email, "secret"), CancellationToken.None);
 
 		Assert.Equal("test-token", result.Data.AccessToken);
+		fixture.MockDbContext.Verify(db => db.Set<User>(), Times.Once);
+		fixture.MockDbContext.Verify(db => db.SaveChangesAsync(CancellationToken.None), Times.Once);
 	}
 
 	[Fact]

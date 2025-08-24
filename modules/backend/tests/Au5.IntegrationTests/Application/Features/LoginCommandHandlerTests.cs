@@ -1,5 +1,6 @@
 using System.Net;
 using Au5.Application.Features.Authentication;
+using Au5.Domain.Entities;
 
 namespace Au5.IntegrationTests.Application.Features;
 
@@ -20,6 +21,10 @@ public class LoginCommandHandlerTests : BaseIntegrationTest
 		Assert.NotNull(result.Data?.AccessToken);
 		Assert.Equal(60000, result.Data?.ExpiresIn);
 		Assert.Equal("Bearer", result.Data?.TokenType);
+
+		var user = DbContext.Set<User>().FirstOrDefault(u => u.Email == command.Username);
+		Assert.NotNull(user);
+		Assert.NotNull(user.LastLoginAt);
 	}
 
 	[Fact]
