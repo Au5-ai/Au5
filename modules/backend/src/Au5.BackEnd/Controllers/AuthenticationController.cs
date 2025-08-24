@@ -1,5 +1,6 @@
 using Au5.Application.Common.Abstractions;
 using Au5.Application.Features.Authentication;
+using Au5.Application.Features.Authentication.AddAdmin;
 using Au5.Application.Features.Authentication.HelloAdmin;
 using Au5.Shared;
 using Microsoft.AspNetCore.Authorization;
@@ -49,8 +50,8 @@ public class AuthenticationController(ISender mediator, ITokenService tokenServi
 
 	[HttpPost("hello-admin")]
 	[AllowAnonymous]
-	public async Task<IActionResult> AddAdmin()
+	public async Task<IActionResult> AddAdmin([FromBody] AddAdminCommand command)
 	{
-		return Ok(await mediator.Send(new HelloAdminQuery()));
+		return Ok(await mediator.Send(command));
 	}
 }
