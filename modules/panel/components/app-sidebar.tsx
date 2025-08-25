@@ -1,7 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { ArchiveIcon, Bot, Frame, GalleryVerticalEnd } from "lucide-react";
+import {
+  ArchiveIcon,
+  Brain,
+  ClosedCaption,
+  Frame,
+  Waypoints,
+} from "lucide-react";
 import { NavMain } from "@/components/nav-main";
 import { NavSpaces } from "@/components/nav-spaces";
 import { NavUser } from "@/components/nav-user";
@@ -22,7 +28,7 @@ const data = {
     {
       title: "My Meetings",
       url: "/meeting/my",
-      icon: Frame,
+      icon: ClosedCaption,
     },
     {
       title: "Archived Transcripts",
@@ -32,14 +38,14 @@ const data = {
     {
       title: "Shared With Me",
       url: "#",
-      icon: Frame,
+      icon: Waypoints,
       showBadge: true,
       badge: "soon",
     },
     {
       title: "AI Tools",
       url: "#",
-      icon: Bot,
+      icon: Brain,
       showBadge: true,
       badge: "soon",
     },

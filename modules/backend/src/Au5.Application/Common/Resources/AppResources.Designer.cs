@@ -70,6 +70,15 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Signup was not completed successfully.
+        /// </summary>
+        internal static string FailedToAddAdmin {
+            get {
+                return ResourceManager.GetString("FailedToAddAdmin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to add bot to meeting.
         /// </summary>
         internal static string FailedToAddBot {
@@ -183,6 +192,15 @@ namespace Au5.Application.Common.Resources {
         internal static string SystemIsNotConfigured {
             get {
                 return ResourceManager.GetString("SystemIsNotConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There Is not Admin User..
+        /// </summary>
+        internal static string ThereIsNoAdmin {
+            get {
+                return ResourceManager.GetString("ThereIsNoAdmin", resourceCulture);
             }
         }
         

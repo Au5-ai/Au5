@@ -3,14 +3,13 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import HeroSection from "@/components/landing/HeroSection";
-import { GalleryVerticalEnd, Mic } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Logo from "@/components/logo";
 
 export default function Home() {
   const router = useRouter();
-  function signIn() {
-    router.push("/login");
+  function letsGo() {
+    router.push("/signup");
   }
 
   return (
@@ -32,8 +31,8 @@ export default function Home() {
               <span className="text-xl font-bold text-slate-900">Au5.ai</span>
             </div>
             <div className="hidden md:flex items-center space-x-8">
-              <Button onClick={() => signIn()} className="cursor-pointer">
-                Login
+              <Button onClick={() => letsGo()} className="cursor-pointer">
+                Let's Go
               </Button>
             </div>
           </div>

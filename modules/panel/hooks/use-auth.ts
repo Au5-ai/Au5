@@ -4,8 +4,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { authApi, userApi } from "@/lib/api";
-import { ApiError, LoginRequest, LoginResponse } from "@/type";
+import {
+  ApiError,
+  LoginRequest,
+  LoginResponse,
+  AddAdminRequest,
+  AddAdminResponse,
+} from "@/type";
 import { tokenStorageService } from "@/lib/services";
+import { toast } from "sonner";
 
 // Hook to get current user data
 export function useUser() {
@@ -18,32 +25,48 @@ export function useUser() {
   });
 }
 
+// --- Hooks ---
 export function useLogin() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  return useMutation({
-    mutationFn: (credentials: LoginRequest) => authApi.login(credentials),
-    onSuccess: (data: LoginResponse) => {
-      tokenStorageService.set(data.accessToken);
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+  return useMutation<LoginResponse, unknown, LoginRequest>({
+    mutationFn: authApi.login,
+    onSuccess: (data) => handleAuthSuccess(data, false, queryClient, router),
+    onError: (error) => {
+      tokenStorageService.remove();
+      const message = handleAuthError(error);
+      toast.error(message);
+    },
+  });
+}
 
-      const setup = localStorage.getItem("setup");
-      if (!setup) {
-        router.push("/setup");
-        return;
+export function useSignup() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation<AddAdminResponse, unknown, AddAdminRequest>({
+    mutationFn: authApi.addAdmin,
+    onSuccess: async (response, signupData) => {
+      if (!response.isDone) {
+        throw new Error("Signup was not completed successfully");
       }
 
-      router.push("/playground");
+      try {
+        const loginResponse = await authApi.login({
+          username: signupData.email,
+          password: signupData.password,
+        });
+
+        handleAuthSuccess(loginResponse, true, queryClient, router);
+      } catch (loginError) {
+        console.error("Auto-login after signup failed:", loginError);
+        router.push("/login");
+      }
     },
     onError: (error) => {
-      console.error("Login error:", error);
-      if (error instanceof ApiError) {
-        error.message = error.problemDetails.detail || error.title;
-      } else {
-        error.message = "Unexpected error";
-      }
-      tokenStorageService.remove();
+      const message = handleAuthError(error);
+      toast.error(message);
     },
   });
 }
@@ -84,4 +107,30 @@ export function useIsAuthenticated() {
   }, []);
 
   return isAuthenticated;
+}
+
+function handleAuthSuccess(
+  data: LoginResponse,
+  isAdmin: boolean,
+  queryClient: ReturnType<typeof useQueryClient>,
+  router: ReturnType<typeof useRouter>
+) {
+  tokenStorageService.set(data.accessToken);
+  queryClient.invalidateQueries({ queryKey: ["user"] });
+
+  if (isAdmin) {
+    router.push("/playground");
+  } else {
+    const setup = localStorage.getItem("setup");
+    router.push(setup ? "/playground" : "/setup");
+  }
+}
+
+function handleAuthError(error: unknown) {
+  if (error instanceof ApiError) {
+    return (
+      error.problemDetails?.detail || error.title || "Authentication failed"
+    );
+  }
+  return "Unexpected error";
 }
