@@ -5,6 +5,7 @@ public class AddAdminCommandValidator : AbstractValidator<AddAdminCommand>
 	public AddAdminCommandValidator()
 	{
 		RuleFor(x => x.FullName)
+			.MaximumLength(50).WithMessage("MaxLength is 50")
 			.NotEmpty().WithMessage("Full name is required.");
 
 		RuleFor(x => x.Email)

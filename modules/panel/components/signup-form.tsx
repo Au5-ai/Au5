@@ -62,8 +62,12 @@ export function SignupForm({
     // Full name validation
     if (!formData.fullname.trim()) {
       newErrors.fullname = "Full name is required";
-    } else if (formData.fullname.trim().length < 2) {
-      newErrors.fullname = "Full name must be at least 2 characters";
+    } else if (
+      formData.fullname.trim().length < 2 ||
+      formData.fullname.trim().length > 50
+    ) {
+      newErrors.fullname =
+        "Full name must be at least 2 characters and at most 50 characters";
     }
 
     // Password validation
@@ -126,6 +130,10 @@ export function SignupForm({
                   {errors.email && (
                     <p className="text-sm text-red-500 mt-1">{errors.email}</p>
                   )}
+                  <p className="text-xs text-gray-500 mt-1">
+                    Please use your work or organization email. This account is
+                    for business purposes only.
+                  </p>
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="fullname">Full Name</Label>

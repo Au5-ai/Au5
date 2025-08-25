@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  BadgeCheck,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Settings,
-} from "lucide-react";
+import { ChevronsUpDown, Gem, LogOut, Settings } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -26,10 +20,12 @@ import {
 import { DropdownMenuGroup } from "@radix-ui/react-dropdown-menu";
 import { useLogout } from "@/hooks/use-auth";
 import { User } from "@/type";
+import { useRouter } from "next/navigation";
 
 export function NavUser(user: User) {
   const { isMobile } = useSidebar();
   const logoutMutation = useLogout();
+  const router = useRouter();
 
   return (
     <SidebarMenu>
@@ -76,10 +72,13 @@ export function NavUser(user: User) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem className="cursor-pointer">
-                <BadgeCheck />
+                <Gem />
                 Request a feature
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem
+                onClick={() => router.push("/system")}
+                className="cursor-pointer"
+              >
                 <Settings />
                 Settings
               </DropdownMenuItem>

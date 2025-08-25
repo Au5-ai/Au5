@@ -32,7 +32,7 @@ export function useLogin() {
 
   return useMutation<LoginResponse, unknown, LoginRequest>({
     mutationFn: authApi.login,
-    onSuccess: (data) => handleAuthSuccess(data, queryClient, router),
+    onSuccess: (data) => handleAuthSuccess(data, false, queryClient, router),
     onError: (error) => {
       tokenStorageService.remove();
       const message = handleAuthError(error);
@@ -58,7 +58,7 @@ export function useSignup() {
           password: signupData.password,
         });
 
-        handleAuthSuccess(loginResponse, queryClient, router);
+        handleAuthSuccess(loginResponse, true, queryClient, router);
       } catch (loginError) {
         console.error("Auto-login after signup failed:", loginError);
         router.push("/login");
@@ -111,14 +111,19 @@ export function useIsAuthenticated() {
 
 function handleAuthSuccess(
   data: LoginResponse,
+  isAdmin: boolean,
   queryClient: ReturnType<typeof useQueryClient>,
   router: ReturnType<typeof useRouter>
 ) {
   tokenStorageService.set(data.accessToken);
   queryClient.invalidateQueries({ queryKey: ["user"] });
 
-  const setup = localStorage.getItem("setup");
-  router.push(setup ? "/playground" : "/setup");
+  if (isAdmin) {
+    router.push("/playground");
+  } else {
+    const setup = localStorage.getItem("setup");
+    router.push(setup ? "/playground" : "/setup");
+  }
 }
 
 function handleAuthError(error: unknown) {
