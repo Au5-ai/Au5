@@ -22,12 +22,13 @@ public class AddAdminQueryHandler : IRequestHandler<AddAdminCommand, Result<AddA
 			return Error.Unauthorized(description: AppResources.UnAuthorizedAction);
 		}
 
+		var userId = Guid.NewGuid();
 		admin = new User
 		{
-			Id = Guid.NewGuid(),
+			Id = userId,
 			Email = request.Email,
 			FullName = request.FullName,
-			Password = HashHelper.HashPassword(request.Password, Guid.NewGuid()),
+			Password = HashHelper.HashPassword(request.Password, userId),
 			IsActive = true,
 			Role = RoleTypes.Admin,
 			CreatedAt = DateTime.UtcNow,
@@ -37,9 +38,11 @@ public class AddAdminQueryHandler : IRequestHandler<AddAdminCommand, Result<AddA
 		_dbContext.Set<User>().Add(admin);
 		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
 
-		return new AddAdminResponse
-		{
-			IsDone = dbResult.IsSuccess
-		};
+		return dbResult.IsFailure
+			? (Result<AddAdminResponse>)Error.Failure(description: AppResources.FailedToAddAdmin)
+			: (Result<AddAdminResponse>)new AddAdminResponse
+			{
+				IsDone = dbResult.IsSuccess
+			};
 	}
 }

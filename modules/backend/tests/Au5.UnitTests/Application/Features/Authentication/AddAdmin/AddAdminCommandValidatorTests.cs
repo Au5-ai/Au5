@@ -19,7 +19,7 @@ public class AddAdminCommandValidatorTests
 			Email: "valid.user@test.com",
 			FullName: "Valid User",
 			Password: "StrongP@ss1",
-			RepeatedPassowrd: "StrongP@ss1");
+			RepeatedPassword: "StrongP@ss1");
 
 		var result = _validator.TestValidate(command);
 
@@ -33,7 +33,7 @@ public class AddAdminCommandValidatorTests
 			Email: "valid@test.com",
 			FullName: string.Empty,
 			Password: "StrongP@ss1",
-			RepeatedPassowrd: "StrongP@ss1");
+			RepeatedPassword: "StrongP@ss1");
 
 		var result = _validator.TestValidate(command);
 
@@ -48,7 +48,7 @@ public class AddAdminCommandValidatorTests
 			Email: "not-an-email",
 			FullName: "Test User",
 			Password: "StrongP@ss1",
-			RepeatedPassowrd: "StrongP@ss1");
+			RepeatedPassword: "StrongP@ss1");
 
 		var result = _validator.TestValidate(command);
 
@@ -68,7 +68,7 @@ public class AddAdminCommandValidatorTests
 			Email: "valid@test.com",
 			FullName: "Test User",
 			Password: password,
-			RepeatedPassowrd: password);
+			RepeatedPassword: password);
 
 		var result = _validator.TestValidate(command);
 
@@ -83,11 +83,11 @@ public class AddAdminCommandValidatorTests
 			Email: "valid@test.com",
 			FullName: "Test User",
 			Password: "StrongP@ss1",
-			RepeatedPassowrd: "Mismatch1!");
+			RepeatedPassword: "Mismatch1!");
 
 		var result = _validator.TestValidate(command);
 
 		Assert.False(result.IsValid);
-		Assert.Contains(result.Errors, e => e.PropertyName == "RepeatedPassowrd");
+		Assert.Contains(result.Errors, e => e.PropertyName == "RepeatedPassword");
 	}
 }

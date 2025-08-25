@@ -12,6 +12,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import { useSignup } from "@/hooks/use-auth";
+import { AddAdminRequest } from "@/type";
 
 export function SignupForm({
   className,
@@ -30,6 +32,8 @@ export function SignupForm({
     password: "",
     confirmPassword: "",
   });
+
+  const signupMutation = useSignup();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -84,7 +88,14 @@ export function SignupForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      // Form is valid, proceed with signup
+      const signupData: AddAdminRequest = {
+        email: formData.email,
+        fullName: formData.fullname,
+        password: formData.password,
+        repeatedPassword: formData.confirmPassword,
+      };
+
+      signupMutation.mutate(signupData);
     }
   };
 
@@ -176,8 +187,13 @@ export function SignupForm({
                     </p>
                   )}
                 </div>
-                <Button type="submit" className="w-full">
-                  Sign Up
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={signupMutation.isPending}
+                >
+                  {signupMutation.isPending ? "Signing Up..." : "Sign Up"}
                 </Button>
               </div>
             </div>

@@ -19,7 +19,7 @@ public class AddAdminCommandValidator : AbstractValidator<AddAdminCommand>
 			.Matches(@"\d").WithMessage("Password must contain at least one number.")
 			.Matches(@"[\W_]").WithMessage("Password must contain at least one special character.");
 
-		RuleFor(x => x.RepeatedPassowrd)
+		RuleFor(x => x.RepeatedPassword)
 			.NotEmpty().WithMessage("Repeated password is required.")
 			.Equal(x => x.Password).WithMessage("Passwords do not match.");
 	}

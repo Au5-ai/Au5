@@ -165,4 +165,7 @@
   <data name="ThereIsNoAdmin" xml:space="preserve">
     <value>There Is not Admin User.</value>
   </data>
+  <data name="FailedToAddAdmin" xml:space="preserve">
+    <value>Signup was not completed successfully</value>
+  </data>
 </root>
