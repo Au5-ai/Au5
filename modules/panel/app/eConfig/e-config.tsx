@@ -3,26 +3,28 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Circle } from "lucide-react";
-import Image from "next/image";
+import { CheckCircle2, ChevronLeft, ChevronRight, Circle } from "lucide-react";
+import { DownloadStep } from "./download-step";
+import { ConfigureStep } from "./configure-step";
+import { CompleteStep } from "./complete-step";
 
 const steps = [
   {
     id: 1,
-    title: "Welcome",
-    description: "Introduction to the platform",
-    component: <WelcomeStep />,
+    title: "Download Extension",
+    description: "Get the latest version of the extension",
+    component: <DownloadStep />,
   },
   {
     id: 2,
-    title: "Download Extension",
-    description: "Get Latest Version",
-    component: <DownloadStep />,
+    title: "Configure Extension",
+    description: "Configure the extension settings",
+    component: <ConfigureStep />,
   },
   {
     id: 3,
     title: "Let's Go",
-    description: "Complete Extension Configuration",
+    description: "Complete the setup",
     component: <CompleteStep />,
   },
 ];
@@ -108,69 +110,24 @@ export default function EConfigPanel() {
           </div>
           <div className="flex justify-between">
             <Button
+              className="cursor-pointer"
               variant="outline"
               onClick={prevStep}
               disabled={currentStep === 1}
             >
+              <ChevronLeft />
               Back
             </Button>
             {currentStep === steps.length ? (
-              <Button>Finish</Button>
+              <Button className="cursor-pointer">Finish</Button>
             ) : (
-              <Button onClick={nextStep}>Next</Button>
+              <Button className="cursor-pointer" onClick={nextStep}>
+                Next <ChevronRight />
+              </Button>
             )}
           </div>
         </CardContent>
       </Card>
     </div>
   );
-}
-
-function WelcomeStep() {
-  return (
-    <div>
-      <Image
-        src="/extension-install.png"
-        width={480}
-        height={400}
-        alt="Welcome"
-        className="rounded-lg"
-        style={{ height: "auto" }}
-      />
-      <div className="flex justify-between py-6">
-        <Button variant="outline">Add to Chrome - It's free!</Button>
-        <Image
-          src="/meets.svg"
-          alt="Download Extension"
-          className="rounded-lg cursor-pointer"
-          width={100}
-          height={100}
-          style={{ height: "auto" }}
-        />
-      </div>
-    </div>
-  );
-}
-
-function DownloadStep() {
-  return (
-    <div>
-      <Image
-        src="/welcome.png"
-        alt="Download Extension"
-        className="rounded-lg"
-        width={480}
-        height={100}
-        style={{ height: "auto" }}
-      />
-
-      <div className="flex justify-between py-6">
-        <Button variant="outline">Send Config To Extension</Button>
-      </div>
-    </div>
-  );
-}
-
-function CompleteStep() {
-  return <div>Complete the setup process.</div>;
 }

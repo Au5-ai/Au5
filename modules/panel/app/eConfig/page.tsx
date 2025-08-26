@@ -1,6 +1,6 @@
 "use client";
 import Logo from "@/components/logo";
-import EConfigPanel from "./eConfigPanel";
+import EConfigPanel from "./e-config";
 
 export default function OnboardingPage() {
   return (
@@ -33,86 +33,3 @@ export default function OnboardingPage() {
     </div>
   );
 }
-
-// const router = useRouter();
-// const [currentStep, setCurrentStep] = useState(1);
-// const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-// const [isConfiguring, setIsConfiguring] = useState(false);
-// const queryClient = useQueryClient();
-
-// const progress = (currentStep / steps.length) * 100;
-// const currentStepData = steps.find((step) => step.id === currentStep)!;
-
-// const handleNext = () => {
-//   if (currentStep < steps.length) {
-//     setCompletedSteps((prev) => [...prev, currentStep]);
-//     setCurrentStep(currentStep + 1);
-//   }
-// };
-
-// const handlePrevious = () => {
-//   if (currentStep > 1) {
-//     setCurrentStep(currentStep - 1);
-//   }
-// };
-
-// const handleStepClick = (stepId: number) => {
-//   setCurrentStep(stepId);
-// };
-
-// const isStepCompleted = (stepId: number) => completedSteps.includes(stepId);
-// const isCurrentStep = (stepId: number) => currentStep === stepId;
-// const isLastStep = currentStep === steps.length;
-
-// const handleSendConfigs = async () => {
-//   setIsConfiguring(true);
-//   try {
-//     const [user, systemConfig] = await Promise.all([
-//       userApi.me(),
-//       systemApi.getExtensionConfig(),
-//     ]);
-
-//     if (user && systemConfig) {
-//       const config = {
-//         user: {
-//           id: user.id,
-//           fullName: user.fullName,
-//           pictureUrl: user.pictureUrl,
-//           hasAccount: user.hasAccount,
-//         },
-//         service: {
-//           jwtToken: tokenStorageService.get(),
-//           panelUrl: systemConfig.panelUrl,
-//           baseUrl: systemConfig.serviceBaseUrl,
-//           direction: systemConfig.direction,
-//           language: systemConfig.language,
-//           hubUrl: systemConfig.hubUrl,
-//           companyName: systemConfig.organizationName,
-//           botName: systemConfig.botName,
-//         },
-//       };
-
-//       window.postMessage(
-//         {
-//           source: "AU5_PANEL",
-//           type: "CONFIG_UPDATE",
-//           payload: config,
-//         },
-//         "*"
-//       );
-//       localStorage.setItem("eConfig", "true");
-//       localStorage.setItem("config", JSON.stringify(config));
-//       queryClient.setQueryData(["currentUser"], {
-//         ...user,
-//         hasAccount: user.hasAccount,
-//       });
-
-//       setCompletedSteps((prev) => [...prev, currentStep]);
-//       setCurrentStep(currentStep + 1);
-//     }
-//   } catch (error) {
-//     console.error("Failed to configure:", error);
-//   } finally {
-//     setIsConfiguring(false);
-//   }
-// };
