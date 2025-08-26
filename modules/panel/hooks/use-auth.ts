@@ -121,8 +121,8 @@ function handleAuthSuccess(
   if (isAdmin) {
     router.push("/playground");
   } else {
-    const setup = localStorage.getItem("setup");
-    router.push(setup ? "/playground" : "/setup");
+    const setup = localStorage.getItem("eConfig");
+    router.push(setup ? "/playground" : "/eConfig");
   }
 }
 
