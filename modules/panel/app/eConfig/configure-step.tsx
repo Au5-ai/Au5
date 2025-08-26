@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { systemApi, userApi } from "@/lib/api";
 import { tokenStorageService } from "@/lib/services";
-import { QueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Settings } from "lucide-react";
 import Image from "next/image";
+import { toast } from "sonner";
 
 export function ConfigureStep() {
+  const queryClient = useQueryClient();
   const handleSendConfigs = async () => {
     try {
       const [user, systemConfig] = await Promise.all([
@@ -43,35 +45,44 @@ export function ConfigureStep() {
         );
         localStorage.setItem("eConfig", "true");
         localStorage.setItem("config", JSON.stringify(config));
-        ueryClient.setQueryData(["currentUser"], {
+        queryClient.setQueryData(["currentUser"], {
           ...user,
           hasAccount: user.hasAccount,
         });
+        toast.success("Configuration sent to extension!");
       }
     } catch (error) {
       console.error("Failed to configure:", error);
-    } finally {
-      setIsConfiguring(false);
     }
   };
 
   return (
-    <div>
-      <Image
-        src="/welcome.png"
-        alt="Configure Extension"
-        className="rounded-lg"
-        width={480}
-        height={100}
-        style={{ height: "auto" }}
-      />
+    <>
+      <h2 className="text-xl font-semibold mb-2">Configure Extension</h2>
+      <p className="text-muted-foreground mb-6">
+        Configure the extension settings
+      </p>
+      <div>
+        <Image
+          src="/welcome.png"
+          alt="Configure Extension"
+          className="rounded-lg"
+          width={480}
+          height={100}
+          style={{ height: "auto" }}
+        />
 
-      <div className="flex justify-between py-6">
-        <Button variant="outline" className="cursor-pointer">
-          <Settings />
-          Send Config To Extension
-        </Button>
+        <div className="flex justify-between py-6">
+          <Button
+            variant="outline"
+            className="cursor-pointer"
+            onClick={handleSendConfigs}
+          >
+            <Settings />
+            Send Config To Extension
+          </Button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

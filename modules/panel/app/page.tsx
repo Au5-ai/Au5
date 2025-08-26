@@ -9,7 +9,7 @@ import Logo from "@/components/logo";
 export default function Home() {
   const router = useRouter();
   function letsGo() {
-    router.push("/signup");
+    router.push("/setup");
   }
 
   return (

@@ -198,7 +198,7 @@ export function SignupForm({
 
                 <Button
                   type="submit"
-                  className="w-full"
+                  className="w-full cursor-pointer"
                   disabled={signupMutation.isPending}
                 >
                   {signupMutation.isPending ? "Signing Up..." : "Sign Up"}

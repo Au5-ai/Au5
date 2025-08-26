@@ -7,6 +7,8 @@ import { CheckCircle2, ChevronLeft, ChevronRight, Circle } from "lucide-react";
 import { DownloadStep } from "./download-step";
 import { ConfigureStep } from "./configure-step";
 import { CompleteStep } from "./complete-step";
+import { handleCelebration } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const steps = [
   {
@@ -30,6 +32,7 @@ const steps = [
 ];
 
 export default function EConfigPanel() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
 
   const nextStep = () => {
@@ -99,15 +102,7 @@ export default function EConfigPanel() {
       {/* Step Content */}
       <Card className="flex-1 shadow-none border-0 py-0">
         <CardContent className="p-6 h-full flex flex-col justify-between">
-          <div>
-            <h2 className="text-xl font-semibold mb-2">
-              {steps[currentStep - 1].title}
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              {steps[currentStep - 1].description}
-            </p>
-            {steps[currentStep - 1].component}
-          </div>
+          <div>{steps[currentStep - 1].component}</div>
           <div className="flex justify-between">
             <Button
               className="cursor-pointer"
@@ -119,7 +114,18 @@ export default function EConfigPanel() {
               Back
             </Button>
             {currentStep === steps.length ? (
-              <Button className="cursor-pointer">Finish</Button>
+              <Button
+                className="cursor-pointer"
+                onClick={() => {
+                  handleCelebration();
+
+                  setTimeout(() => {
+                    router.push("/playground");
+                  }, 3000);
+                }}
+              >
+                Enjoy 🎉🎉
+              </Button>
             ) : (
               <Button className="cursor-pointer" onClick={nextStep}>
                 Next <ChevronRight />
