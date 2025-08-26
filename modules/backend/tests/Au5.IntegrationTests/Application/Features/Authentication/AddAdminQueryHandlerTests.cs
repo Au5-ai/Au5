@@ -1,6 +1,6 @@
 using System.Net;
 using Au5.Application.Common;
-using Au5.Application.Features.Authentication.AddAdmin;
+using Au5.Application.Features.Setup.AddAdmin;
 using Au5.Domain.Common;
 using Au5.Domain.Entities;
 

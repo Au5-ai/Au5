@@ -1,5 +1,5 @@
-using Au5.Application.Features.Administration.AddAdmin;
-using Au5.Application.Features.Administration.HelloAdmin;
+using Au5.Application.Features.Setup.AddAdmin;
+using Au5.Application.Features.Setup.HelloAdmin;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;

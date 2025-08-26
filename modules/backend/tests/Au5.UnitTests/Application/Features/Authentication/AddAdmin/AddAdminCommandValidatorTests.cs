@@ -1,4 +1,4 @@
-using Au5.Application.Features.Administration.AddAdmin;
+using Au5.Application.Features.Setup.AddAdmin;
 using FluentValidation.TestHelper;
 
 namespace Au5.UnitTests.Application.Features.Authentication.AddAdmin;

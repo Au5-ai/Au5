@@ -3,7 +3,7 @@ using Au5.Application.Common.Abstractions;
 using Au5.Application.Common.Resources;
 using Microsoft.EntityFrameworkCore;
 
-namespace Au5.Application.Features.Administration.AddAdmin;
+namespace Au5.Application.Features.Setup.AddAdmin;
 
 public class AddAdminQueryHandler : IRequestHandler<AddAdminCommand, Result<AddAdminResponse>>
 {
@@ -39,8 +39,8 @@ public class AddAdminQueryHandler : IRequestHandler<AddAdminCommand, Result<AddA
 		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
 
 		return dbResult.IsFailure
-			? (Result<AddAdminResponse>)Error.Failure(description: AppResources.FailedToAddAdmin)
-			: (Result<AddAdminResponse>)new AddAdminResponse
+			? Error.Failure(description: AppResources.FailedToSetup)
+			: new AddAdminResponse
 			{
 				IsDone = dbResult.IsSuccess
 			};

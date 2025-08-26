@@ -1,4 +1,4 @@
-namespace Au5.Application.Features.Administration.HelloAdmin;
+namespace Au5.Application.Features.Setup.HelloAdmin;
 
 public record HelloAdminQuery : IRequest<Result<HelloAdminResponse>>;
 
