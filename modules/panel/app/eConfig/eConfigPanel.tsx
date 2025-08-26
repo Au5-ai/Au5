@@ -4,15 +4,30 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Circle } from "lucide-react";
+import Image from "next/image";
 
 const steps = [
-  { id: 1, title: "Welcome", description: "Introduction to the platform" },
-  { id: 2, title: "Profile Setup", description: "Fill in personal details" },
-  { id: 3, title: "Preferences", description: "Choose your preferences" },
-  { id: 4, title: "Finish", description: "Complete onboarding" },
+  {
+    id: 1,
+    title: "Welcome",
+    description: "Introduction to the platform",
+    component: <WelcomeStep />,
+  },
+  {
+    id: 2,
+    title: "Download Extension",
+    description: "Get Latest Version",
+    component: <DownloadStep />,
+  },
+  {
+    id: 3,
+    title: "Let's Go",
+    description: "Complete Extension Configuration",
+    component: <CompleteStep />,
+  },
 ];
 
-export default function EConfigDialog() {
+export default function EConfigPanel() {
   const [currentStep, setCurrentStep] = useState(1);
 
   const nextStep = () => {
@@ -28,7 +43,7 @@ export default function EConfigDialog() {
   };
 
   return (
-    <div className="flex rounded-xl border shadow-sm w-full h-[600px] gap-6 bg-card text-card-foreground">
+    <div className="flex rounded-xl border shadow-sm w-full h-[600px] gap-2 bg-card text-card-foreground">
       {/* Sidebar Steps */}
       <div className="w-64 p-4 bg-muted rounded-tr-none rounded-br-none rounded-xl">
         <div className="flex flex-col">
@@ -52,6 +67,7 @@ export default function EConfigDialog() {
                         className={`h-5 w-5 ${
                           isActive ? "text-primary" : "text-muted-foreground"
                         } bg-muted rounded-full`}
+                        style={isActive ? { strokeWidth: 5 } : {}}
                       />
                     )}
                   </div>
@@ -78,17 +94,18 @@ export default function EConfigDialog() {
           })}
         </div>
       </div>
-
       {/* Step Content */}
-      <Card className="flex-1 shadow-none border-0">
-        <CardContent className="p-6">
-          <h2 className="text-xl font-semibold mb-4">
-            {steps[currentStep - 1].title}
-          </h2>
-          <p className="text-muted-foreground mb-6">
-            {steps[currentStep - 1].description}
-          </p>
-
+      <Card className="flex-1 shadow-none border-0 py-0">
+        <CardContent className="p-6 h-full flex flex-col justify-between">
+          <div>
+            <h2 className="text-xl font-semibold mb-2">
+              {steps[currentStep - 1].title}
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              {steps[currentStep - 1].description}
+            </p>
+            {steps[currentStep - 1].component}
+          </div>
           <div className="flex justify-between">
             <Button
               variant="outline"
@@ -107,4 +124,53 @@ export default function EConfigDialog() {
       </Card>
     </div>
   );
+}
+
+function WelcomeStep() {
+  return (
+    <div>
+      <Image
+        src="/extension-install.png"
+        width={480}
+        height={400}
+        alt="Welcome"
+        className="rounded-lg"
+        style={{ height: "auto" }}
+      />
+      <div className="flex justify-between py-6">
+        <Button variant="outline">Add to Chrome - It's free!</Button>
+        <Image
+          src="/meets.svg"
+          alt="Download Extension"
+          className="rounded-lg cursor-pointer"
+          width={100}
+          height={100}
+          style={{ height: "auto" }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function DownloadStep() {
+  return (
+    <div>
+      <Image
+        src="/welcome.png"
+        alt="Download Extension"
+        className="rounded-lg"
+        width={480}
+        height={100}
+        style={{ height: "auto" }}
+      />
+
+      <div className="flex justify-between py-6">
+        <Button variant="outline">Send Config To Extension</Button>
+      </div>
+    </div>
+  );
+}
+
+function CompleteStep() {
+  return <div>Complete the setup process.</div>;
 }

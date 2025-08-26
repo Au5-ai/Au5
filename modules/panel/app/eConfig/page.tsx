@@ -1,6 +1,6 @@
 "use client";
-import EConfigDialog from "./eConfigDialog";
 import Logo from "@/components/logo";
+import EConfigPanel from "./eConfigPanel";
 
 export default function OnboardingPage() {
   return (
@@ -21,7 +21,13 @@ export default function OnboardingPage() {
           Au5.ai
         </a>
         <div className="flex items-center justify-center w-[800px]">
-          <EConfigDialog />
+          <EConfigPanel />
+        </div>
+        <div className="p-2 text-center text-sm items-center justify-center text-muted-foreground">
+          if you already configured the extention{" "}
+          <a href="#" className="underline underline-offset-4">
+            skip here
+          </a>
         </div>
       </div>
     </div>
