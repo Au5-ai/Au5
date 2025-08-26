@@ -1,7 +1,7 @@
 using Au5.Application.Common.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
-namespace Au5.Application.Features.Authentication.HelloAdmin;
+namespace Au5.Application.Features.Administration.HelloAdmin;
 
 public class HelloAdminQueryHandler : IRequestHandler<HelloAdminQuery, Result<HelloAdminResponse>>
 {

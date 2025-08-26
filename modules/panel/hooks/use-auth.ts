@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { authApi, userApi } from "@/lib/api";
+import { authApi, setUpApi, userApi } from "@/lib/api";
 import {
   ApiError,
   LoginRequest,
@@ -46,7 +46,7 @@ export function useSignup() {
   const router = useRouter();
 
   return useMutation<AddAdminResponse, unknown, AddAdminRequest>({
-    mutationFn: authApi.addAdmin,
+    mutationFn: setUpApi.addAdmin,
     onSuccess: async (response, signupData) => {
       if (!response.isDone) {
         throw new Error("Signup was not completed successfully");

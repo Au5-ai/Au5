@@ -1,7 +1,5 @@
 using Au5.Application.Common.Abstractions;
 using Au5.Application.Features.Authentication;
-using Au5.Application.Features.Authentication.AddAdmin;
-using Au5.Application.Features.Authentication.HelloAdmin;
 using Au5.Shared;
 using Microsoft.AspNetCore.Authorization;
 
@@ -39,19 +37,5 @@ public class AuthenticationController(ISender mediator, ITokenService tokenServi
 		await tokenService.BlacklistTokenAsync(userId, jti, expiry);
 
 		return Ok(new { message = "Logged out successfully" });
-	}
-
-	[HttpGet("hello-admin")]
-	[AllowAnonymous]
-	public async Task<IActionResult> HelloAdmin()
-	{
-		return Ok(await mediator.Send(new HelloAdminQuery()));
-	}
-
-	[HttpPost("hello-admin")]
-	[AllowAnonymous]
-	public async Task<IActionResult> AddAdmin([FromBody] AddAdminCommand command)
-	{
-		return Ok(await mediator.Send(command));
 	}
 }

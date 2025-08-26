@@ -3,7 +3,7 @@ using Au5.Application.Common.Abstractions;
 using Au5.Application.Common.Resources;
 using Microsoft.EntityFrameworkCore;
 
-namespace Au5.Application.Features.Authentication.AddAdmin;
+namespace Au5.Application.Features.Administration.AddAdmin;
 
 public class AddAdminQueryHandler : IRequestHandler<AddAdminCommand, Result<AddAdminResponse>>
 {

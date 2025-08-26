@@ -1,5 +1,5 @@
 using Au5.Application.Common.Abstractions;
-using Au5.Application.Features.Authentication.AddAdmin;
+using Au5.Application.Features.Administration.AddAdmin;
 using Au5.Domain.Entities;
 using Au5.Shared;
 using Microsoft.EntityFrameworkCore;

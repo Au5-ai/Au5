@@ -84,13 +84,15 @@ export const authApi = {
     apiRequest<void>("/authentication/logout", {
       method: "POST",
     }),
+};
 
+export const setUpApi = {
   helloAdmin: (): Promise<HelloAdminResponse> =>
-    apiRequest<HelloAdminResponse>("/authentication/hello-admin", {
+    apiRequest<HelloAdminResponse>("/setUp/hello-admin", {
       method: "GET",
     }),
   addAdmin: (data: AddAdminRequest): Promise<AddAdminResponse> =>
-    apiRequest<AddAdminResponse>("/authentication/hello-admin", {
+    apiRequest<AddAdminResponse>("/setUp/hello-admin", {
       method: "POST",
       body: JSON.stringify(data),
     }),

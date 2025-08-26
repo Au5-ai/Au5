@@ -1,4 +1,4 @@
-namespace Au5.Application.Features.Authentication.AddAdmin;
+namespace Au5.Application.Features.Administration.AddAdmin;
 
 public class AddAdminCommandValidator : AbstractValidator<AddAdminCommand>
 {
