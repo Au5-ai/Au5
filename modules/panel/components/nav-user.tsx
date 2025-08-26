@@ -71,7 +71,13 @@ export function NavUser(user: User) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() =>
+                  (window.location.href =
+                    "https://github.com/Au5-ai/au5-issues/issues")
+                }
+              >
                 <Gem />
                 Request a feature
               </DropdownMenuItem>

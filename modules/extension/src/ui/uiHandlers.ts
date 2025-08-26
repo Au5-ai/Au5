@@ -161,7 +161,7 @@ export class UIHandlers {
 
   private handleGithubLink(): this {
     const btn = document.getElementById("github-link");
-    btn?.addEventListener("click", () => window.open("https://github.com/Au5-ai/Au5", "_blank"));
+    btn?.addEventListener("click", () => window.open("https://github.com/Au5-ai/au5-issues/issues", "_blank"));
     return this;
   }
 
@@ -173,7 +173,7 @@ export class UIHandlers {
 
   private handleAddIssueLink(): this {
     const btn = document.getElementById("issue-link");
-    btn?.addEventListener("click", () => window.open("https://github.com/Au5-ai/Au5/issues", "_blank"));
+    btn?.addEventListener("click", () => window.open("https://github.com/Au5-ai/au5-issues/issues", "_blank"));
     return this;
   }
 
