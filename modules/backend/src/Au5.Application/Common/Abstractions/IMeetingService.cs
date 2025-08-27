@@ -2,9 +2,9 @@ namespace Au5.Application.Common.Abstractions;
 
 public interface IMeetingService
 {
-	Meeting AddUserToMeeting(UserJoinedInMeetingMessage userJoined);
+	Task<Meeting> AddUserToMeeting(UserJoinedInMeetingMessage userJoined);
 
-	void AddGuestsToMeet(List<Participant> users, string meetId);
+	Task AddGuestsToMeet(List<Participant> users, string meetId);
 
 	string BotIsAdded(string meetId);
 
