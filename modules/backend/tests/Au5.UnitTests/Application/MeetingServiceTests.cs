@@ -26,7 +26,7 @@ public class MeetingServiceTests
 			User = new Participant
 			{
 				Id = Guid.NewGuid(),
-				FullName = "John Doe",
+				FullName = "Mohammad K",
 				PictureUrl = "https://example.com/picture.jpg",
 				HasAccount = true
 			}
@@ -65,7 +65,7 @@ public class MeetingServiceTests
 			User = new Participant
 			{
 				Id = Guid.NewGuid(),
-				FullName = "John Doe",
+				FullName = "Mohammad K",
 				PictureUrl = "https://example.com/picture.jpg",
 				HasAccount = true
 			}
@@ -146,7 +146,7 @@ public class MeetingServiceTests
 			User = new Participant
 			{
 				Id = userId,
-				FullName = "John Doe",
+				FullName = "Mohammad K",
 				PictureUrl = "https://example.com/john.jpg",
 				HasAccount = true
 			}
@@ -473,7 +473,7 @@ public class MeetingServiceTests
 			MeetId = "meet123",
 			BlockId = Guid.NewGuid(),
 			Content = "Test content",
-			Participant = new Participant { Id = Guid.NewGuid(), FullName = "John Doe" },
+			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Mohammad K" },
 			Timestamp = DateTime.UtcNow,
 			EntryType = "Transcription"
 		};
@@ -502,7 +502,7 @@ public class MeetingServiceTests
 			MeetId = "meet123",
 			BlockId = Guid.NewGuid(),
 			Content = "Test content",
-			Participant = new Participant { Id = Guid.NewGuid(), FullName = "John Doe" },
+			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Mohammad K" },
 			Timestamp = DateTime.UtcNow,
 			EntryType = "Transcription"
 		};
@@ -527,7 +527,7 @@ public class MeetingServiceTests
 			BlockId = blockId,
 			Content = "Original content",
 			ParticipantId = participantId,
-			FullName = "John Doe",
+			FullName = "Mohammad K",
 			Timestamp = DateTime.UtcNow.AddMinutes(-5),
 			EntryType = "Transcription",
 			Reactions = []
@@ -546,7 +546,7 @@ public class MeetingServiceTests
 			MeetId = "meet123",
 			BlockId = blockId,
 			Content = "Updated content",
-			Participant = new Participant { Id = participantId, FullName = "John Doe" },
+			Participant = new Participant { Id = participantId, FullName = "Mohammad K" },
 			Timestamp = DateTime.UtcNow,
 			EntryType = "Transcription"
 		};
@@ -610,7 +610,7 @@ public class MeetingServiceTests
 			MeetId = "meet123",
 			BlockId = Guid.NewGuid(),
 			Content = "Test content",
-			Participant = new Participant { Id = Guid.NewGuid(), FullName = "John Doe" },
+			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Mohammad K" },
 			Timestamp = DateTime.UtcNow,
 			EntryType = "Transcription"
 		};
@@ -669,7 +669,7 @@ public class MeetingServiceTests
 			MeetId = "meet123",
 			BlockId = Guid.NewGuid(),
 			ReactionId = 1,
-			User = new Participant { Id = Guid.NewGuid(), FullName = "John Doe" },
+			User = new Participant { Id = Guid.NewGuid(), FullName = "Mohammad K" },
 			ReactionType = "👍"
 		};
 
@@ -697,7 +697,7 @@ public class MeetingServiceTests
 			MeetId = "meet123",
 			BlockId = Guid.NewGuid(),
 			ReactionId = 1,
-			User = new Participant { Id = Guid.NewGuid(), FullName = "John Doe" },
+			User = new Participant { Id = Guid.NewGuid(), FullName = "Mohammad K" },
 			ReactionType = "👍"
 		};
 
@@ -737,7 +737,7 @@ public class MeetingServiceTests
 			MeetId = "meet123",
 			BlockId = blockId,
 			ReactionId = 1,
-			User = new Participant { Id = participantId, FullName = "John Doe" },
+			User = new Participant { Id = participantId, FullName = "Mohammad K" },
 			ReactionType = "👍"
 		};
 
@@ -822,7 +822,7 @@ public class MeetingServiceTests
 			EntryId = 1,
 			Participants =
 			[
-				new() { Id = participantId, FullName = "John Doe" }
+				new() { Id = participantId, FullName = "Mohammad K" }
 			]
 		};
 
@@ -848,7 +848,7 @@ public class MeetingServiceTests
 			MeetId = "meet123",
 			BlockId = blockId,
 			ReactionId = 1,
-			User = new Participant { Id = participantId, FullName = "John Doe" },
+			User = new Participant { Id = participantId, FullName = "Mohammad K" },
 			ReactionType = "👍"
 		};
 
