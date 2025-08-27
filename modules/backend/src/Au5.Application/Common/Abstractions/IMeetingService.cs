@@ -6,13 +6,13 @@ public interface IMeetingService
 
 	Task AddGuestsToMeet(List<Participant> users, string meetId);
 
-	string BotIsAdded(string meetId);
+	Task<string> BotIsAdded(string meetId);
 
-	bool PauseMeeting(string meetId, bool isPause);
+	Task<bool> PauseMeeting(string meetId, bool isPause);
 
-	bool UpsertBlock(EntryMessage entry);
+	Task<bool> UpsertBlock(EntryMessage entry);
 
-	void InsertBlock(EntryMessage entry);
+	Task InsertBlock(EntryMessage entry);
 
-	void AppliedReaction(ReactionAppliedMessage reaction);
+	Task AppliedReaction(ReactionAppliedMessage reaction);
 }
