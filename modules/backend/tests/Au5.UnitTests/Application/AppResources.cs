@@ -16,4 +16,6 @@ public class AppResources
 	public const string InvalidPasswordFormat = "Password must be at least 6 characters long.";
 
 	public const string InvalidMeetingTranscriptionModel = "Model Must be liveCaption or liveAudio";
+
+	public const string FailedToAddBot = "Failed to add bot to meeting";
 }

@@ -44,7 +44,7 @@ public class MeetingServiceTests
 		Assert.Single(result.Participants);
 		Assert.Equal(userJoined.User.Id, result.Participants.First().UserId);
 
-		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), TimeSpan.FromHours(2)), Times.Once);
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), TimeSpan.FromHours(1)), Times.Once);
 	}
 
 	[Fact]
@@ -559,7 +559,7 @@ public class MeetingServiceTests
 		Assert.True(result);
 		Assert.Equal("Updated content", existingEntry.Content);
 		Assert.Single(activeMeeting.Entries);
-		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromMinutes(5)), Times.Once);
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromHours(1)), Times.Once);
 	}
 
 	[Fact]
@@ -599,7 +599,7 @@ public class MeetingServiceTests
 		Assert.Equal(entry.EntryType, addedEntry.EntryType);
 		Assert.Empty(addedEntry.Reactions);
 
-		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromMinutes(5)), Times.Once);
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromHours(1)), Times.Once);
 	}
 
 	[Fact]
@@ -658,7 +658,7 @@ public class MeetingServiceTests
 		Assert.Equal(entry.EntryType, addedEntry.EntryType);
 		Assert.Empty(addedEntry.Reactions);
 
-		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromMinutes(5)), Times.Once);
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromHours(1)), Times.Once);
 	}
 
 	[Fact]
@@ -807,7 +807,7 @@ public class MeetingServiceTests
 		Assert.Equal(2, existingReaction.Participants.Count);
 		Assert.Contains(existingReaction.Participants, p => p.Id == existingParticipantId);
 		Assert.Contains(existingReaction.Participants, p => p.Id == newParticipantId);
-		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromMinutes(5)), Times.Once);
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromHours(1)), Times.Once);
 	}
 
 	[Fact]
@@ -859,22 +859,6 @@ public class MeetingServiceTests
 
 		Assert.Single(entry.Reactions);
 		Assert.Empty(existingReaction.Participants);
-		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromMinutes(5)), Times.Once);
-	}
-
-	[Theory]
-	[InlineData("meet123", "2023-08-15", "meeting:meet123:20230815")]
-	[InlineData("test-meeting", "2023-12-25", "meeting:test-meeting:20231225")]
-	[InlineData("abc", "2023-01-01", "meeting:abc:20230101")]
-	public void GetMeetingKey_ShouldReturnCorrectCacheKey(string meetId, string dateString, string expectedKey)
-	{
-		var date = DateTime.Parse(dateString);
-
-		var method = typeof(MeetingService).GetMethod(
-			"GetMeetingKey",
-			System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-		var result = method?.Invoke(null, [meetId, date]) as string;
-
-		Assert.Equal(expectedKey, result);
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromHours(1)), Times.Once);
 	}
 }

@@ -31,4 +31,7 @@ public readonly record struct Error
 
 	public static Error Forbidden(string code = "General.Forbidden", string description = "A 'Forbidden' error has occurred.")
 		=> new(code, description, HttpStatusCode.Forbidden);
+
+	public static Error BadRequest(string code = "General.BadRequest", string description = "A 'BadRequest' error has occurred.")
+		=> new(code, description, HttpStatusCode.BadRequest);
 }

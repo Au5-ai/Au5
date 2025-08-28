@@ -15,4 +15,6 @@ public interface IMeetingService
 	Task InsertBlock(EntryMessage entry);
 
 	Task AppliedReaction(ReactionAppliedMessage reaction);
+
+	Task<Meeting> StopMeeting(string meetId, CancellationToken cancellationToken);
 }

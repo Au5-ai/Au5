@@ -202,6 +202,8 @@ export class UIHandlers {
         });
 
       if (response) {
+        console.log(response);
+        localStorage.setItem("au5-meetingId", JSON.stringify(response));
         const message = {
           type: MessageTypes.RequestToAddBot,
           meetId: meetId,
