@@ -4,7 +4,7 @@ namespace Au5.Application.Services;
 
 public class MeetingService : IMeetingService
 {
-	private const string DefaultBotName = "Cando";
+	private const string DefaultBotName = "Cando"; // TODO: Get the name from config
 	private static readonly TimeSpan CacheExpiration = TimeSpan.FromHours(1);
 
 	private readonly SemaphoreSlim _lock = new(1, 1);
@@ -90,7 +90,7 @@ public class MeetingService : IMeetingService
 
 		if (!meeting.IsBotAdded)
 		{
-			meeting.BotName = DefaultBotName; // Get the name from config
+			meeting.BotName = DefaultBotName;
 			meeting.IsBotAdded = true;
 			meeting.Status = MeetingStatus.Recording;
 		}
@@ -139,28 +139,6 @@ public class MeetingService : IMeetingService
 
 			await _cacheProvider.SetAsync(key, meeting, CacheExpiration);
 			return true;
-		}
-		finally
-		{
-			_lock.Release();
-		}
-	}
-
-	public async Task InsertBlock(EntryMessage entry)
-	{
-		var key = GetMeetingKey(entry.MeetId);
-		var meeting = await _cacheProvider.GetAsync<Meeting>(key);
-
-		if (meeting is null)
-		{
-			return;
-		}
-
-		await _lock.WaitAsync();
-		try
-		{
-			meeting.Entries.Add(CreateEntryFromMessage(entry));
-			await _cacheProvider.SetAsync(key, meeting, CacheExpiration);
 		}
 		finally
 		{
@@ -230,8 +208,7 @@ public class MeetingService : IMeetingService
 			return null;
 		}
 
-		meeting.Status = MeetingStatus.Ended;
-		await _cacheProvider.SetAsync(key, meeting, CacheExpiration);
+		await _cacheProvider.RemoveAsync(key);
 		return meeting;
 	}
 

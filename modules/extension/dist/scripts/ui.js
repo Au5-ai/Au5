@@ -3493,7 +3493,7 @@ class UIHandlers {
   }
   handleGithubLink() {
     const btn = document.getElementById("github-link");
-    btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://github.com/Au5-ai/Au5", "_blank"));
+    btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://github.com/Au5-ai/au5-issues/issues", "_blank"));
     return this;
   }
   handleDiscordLink() {
@@ -3503,7 +3503,7 @@ class UIHandlers {
   }
   handleAddIssueLink() {
     const btn = document.getElementById("issue-link");
-    btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://github.com/Au5-ai/Au5/issues", "_blank"));
+    btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://github.com/Au5-ai/au5-issues/issues", "_blank"));
     return this;
   }
   handleAddBot() {
@@ -3529,6 +3529,8 @@ class UIHandlers {
         return;
       });
       if (response) {
+        console.log(response);
+        localStorage.setItem("au5-meetingId", JSON.stringify(response));
         const message = {
           type: MessageTypes.RequestToAddBot,
           meetId,

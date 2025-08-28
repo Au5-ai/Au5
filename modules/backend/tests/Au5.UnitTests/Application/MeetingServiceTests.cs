@@ -603,65 +603,6 @@ public class MeetingServiceTests
 	}
 
 	[Fact]
-	public async Task InsertBlock_WhenMeetingDoesNotExist_ShouldNotInsertBlock()
-	{
-		var entry = new EntryMessage
-		{
-			MeetId = "meet123",
-			BlockId = Guid.NewGuid(),
-			Content = "Test content",
-			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Mohammad K" },
-			Timestamp = DateTime.UtcNow,
-			EntryType = "Transcription"
-		};
-
-		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
-			.ReturnsAsync((Meeting)null);
-
-		await _meetingService.InsertBlock(entry);
-
-		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), It.IsAny<TimeSpan>()), Times.Never);
-	}
-
-	[Fact]
-	public async Task InsertBlock_WhenMeetingExists_ShouldInsertNewBlock()
-	{
-		var activeMeeting = new Meeting
-		{
-			Id = Guid.NewGuid(),
-			MeetId = "meet123",
-			Status = MeetingStatus.Recording,
-			Entries = []
-		};
-
-		var entry = new EntryMessage
-		{
-			MeetId = "meet123",
-			BlockId = Guid.NewGuid(),
-			Content = "New content",
-			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Jane Doe" },
-			Timestamp = DateTime.UtcNow,
-			EntryType = "Chat"
-		};
-
-		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
-			.ReturnsAsync(activeMeeting);
-
-		await _meetingService.InsertBlock(entry);
-
-		Assert.Single(activeMeeting.Entries);
-
-		var addedEntry = activeMeeting.Entries.First();
-		Assert.Equal(entry.BlockId, addedEntry.BlockId);
-		Assert.Equal(entry.Content, addedEntry.Content);
-		Assert.Equal(entry.Participant.Id, addedEntry.ParticipantId);
-		Assert.Equal(entry.EntryType, addedEntry.EntryType);
-		Assert.Empty(addedEntry.Reactions);
-
-		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromHours(1)), Times.Once);
-	}
-
-	[Fact]
 	public async Task AppliedReaction_WhenMeetingDoesNotExist_ShouldNotApplyReaction()
 	{
 		var reaction = new ReactionAppliedMessage

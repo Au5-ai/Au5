@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.Meetings.AddBot;
 
-public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<Guid>>
+public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBotCommandResponse>>
 {
 	private readonly IApplicationDbContext _dbContext;
 	private readonly IBotFatherAdapter _botFather;
@@ -25,7 +25,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<Guid>>
 		_cacheProvider = cacheProvider;
 	}
 
-	public async ValueTask<Result<Guid>> Handle(AddBotCommand request, CancellationToken cancellationToken)
+	public async ValueTask<Result<AddBotCommandResponse>> Handle(AddBotCommand request, CancellationToken cancellationToken)
 	{
 		var meetingId = Guid.NewGuid();
 		var hashToken = HashHelper.HashSafe(meetingId.ToString());
@@ -47,7 +47,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<Guid>>
 			CreatedAt = DateTime.UtcNow,
 			Platform = request.Platform,
 			Status = MeetingStatus.AddingBot,
-			HashToken = hashToken
+			HashToken = hashToken,
 		};
 
 		_dbContext.Set<Meeting>().Add(meeting);
@@ -60,18 +60,19 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<Guid>>
 
 		var cachedMeeting = await _cacheProvider.GetAsync<Meeting>(MeetingService.GetMeetingKey(request.MeetId));
 
-		if (cachedMeeting is null)
+		if (cachedMeeting is null || cachedMeeting.Status == MeetingStatus.Ended)
 		{
 			await _cacheProvider.SetAsync(MeetingService.GetMeetingKey(request.MeetId), meeting, TimeSpan.FromHours(1));
 		}
 		else
 		{
 			cachedMeeting.Id = meetingId;
+			await _cacheProvider.SetAsync(MeetingService.GetMeetingKey(request.MeetId), cachedMeeting, TimeSpan.FromHours(1));
 		}
 
 		var payload = BuildBotPayload(request, config, hashToken);
 		await _botFather.CreateBotAsync(config.BotFatherUrl, payload, cancellationToken);
-		return meetingId;
+		return new AddBotCommandResponse(meetingId);
 	}
 
 	private BotPayload BuildBotPayload(AddBotCommand request, SystemConfig config, string hashToken) =>
