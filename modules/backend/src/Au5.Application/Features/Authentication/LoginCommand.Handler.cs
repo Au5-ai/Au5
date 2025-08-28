@@ -20,7 +20,7 @@ public sealed class LoginCommandHandler(IApplicationDbContext dbContext, ITokenS
 			return Error.Unauthorized(description: AppResources.InvalidUsernameOrPassword);
 		}
 
-		user.LastLoginAt = DateTime.UtcNow;
+		user.LastLoginAt = DateTime.Now;
 		await _dbContext.SaveChangesAsync(cancellationToken);
 		return _tokenService.GenerateToken(user.Id, user.FullName, "User");
 	}

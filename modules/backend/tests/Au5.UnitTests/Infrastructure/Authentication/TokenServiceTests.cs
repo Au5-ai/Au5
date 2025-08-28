@@ -108,7 +108,7 @@ public class TokenServiceTests
 		// Arrange
 		var userId = Guid.NewGuid().ToString();
 		var jti = Guid.NewGuid().ToString();
-		var expired = DateTime.UtcNow.AddSeconds(-10);
+		var expired = DateTime.Now.AddSeconds(-10);
 
 		// Act
 		await _tokenService.BlacklistTokenAsync(userId, jti, expired);
@@ -123,7 +123,7 @@ public class TokenServiceTests
 		// Arrange
 		var userId = Guid.NewGuid().ToString();
 		var jti = Guid.NewGuid().ToString();
-		var expiry = DateTime.UtcNow.AddMinutes(10);
+		var expiry = DateTime.Now.AddMinutes(10);
 		var expectedKey = $"jwt_bl_{userId}_{jti}";
 
 		// Act

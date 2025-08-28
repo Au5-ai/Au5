@@ -30,9 +30,8 @@ public class StopMeetingByUserCommandHandler : IRequestHandler<StopMeetingByUser
 		{
 			meeting.Status = MeetingStatus.Ended;
 			meeting.Duration = "1h 23m";
-
-			// TODO: Calculate Timeline in each entry
-			meeting.Entries = meetingContent.Entries;
+			meeting.StopedAt = DateTime.Now;
+			meeting.Entries = meetingContent.Entries; // TODO: Calculate Timeline in each entry
 			meeting.Participants = meetingContent.Participants;
 			meeting.Guests = meetingContent.Guests;
 			var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);

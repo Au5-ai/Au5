@@ -17,7 +17,7 @@ public class MeetingService : IMeetingService
 
 	public static string GetMeetingKey(string meetId)
 	{
-		var today = DateTime.UtcNow.Date;
+		var today = DateTime.Now.Date;
 		return $"meeting:{meetId}:{today:yyyyMMdd}";
 	}
 
@@ -236,7 +236,7 @@ public class MeetingService : IMeetingService
 			Id = meetingId,
 			MeetId = userJoined.MeetId,
 			Entries = [],
-			CreatedAt = DateTime.UtcNow,
+			CreatedAt = DateTime.Now,
 			Platform = userJoined.Platform,
 			Participants = [],
 			Guests = [],

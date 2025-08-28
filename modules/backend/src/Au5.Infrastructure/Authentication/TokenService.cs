@@ -40,7 +40,7 @@ public class TokenService : ITokenService
 			issuer: _jwt.Issuer,
 			audience: _jwt.Audience,
 			claims: claims,
-			expires: DateTime.UtcNow.AddMinutes(_jwt.ExpiryMinutes),
+			expires: DateTime.Now.AddMinutes(_jwt.ExpiryMinutes),
 			signingCredentials: creds);
 
 		return new TokenResponse(new JwtSecurityTokenHandler().WriteToken(token), _jwt.ExpiryMinutes * 60, string.Empty, "Bearer");
@@ -59,7 +59,7 @@ public class TokenService : ITokenService
 		}
 
 		var key = BuildKey(userId, jti);
-		var ttl = expiry - DateTime.UtcNow;
+		var ttl = expiry - DateTime.Now;
 
 		if (ttl <= TimeSpan.Zero)
 		{

@@ -474,7 +474,7 @@ public class MeetingServiceTests
 			BlockId = Guid.NewGuid(),
 			Content = "Test content",
 			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Mohammad K" },
-			Timestamp = DateTime.UtcNow,
+			Timestamp = DateTime.Now,
 			EntryType = "Transcription"
 		};
 
@@ -503,7 +503,7 @@ public class MeetingServiceTests
 			BlockId = Guid.NewGuid(),
 			Content = "Test content",
 			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Mohammad K" },
-			Timestamp = DateTime.UtcNow,
+			Timestamp = DateTime.Now,
 			EntryType = "Transcription"
 		};
 
@@ -528,7 +528,7 @@ public class MeetingServiceTests
 			Content = "Original content",
 			ParticipantId = participantId,
 			FullName = "Mohammad K",
-			Timestamp = DateTime.UtcNow.AddMinutes(-5),
+			Timestamp = DateTime.Now.AddMinutes(-5),
 			EntryType = "Transcription",
 			Reactions = []
 		};
@@ -547,7 +547,7 @@ public class MeetingServiceTests
 			BlockId = blockId,
 			Content = "Updated content",
 			Participant = new Participant { Id = participantId, FullName = "Mohammad K" },
-			Timestamp = DateTime.UtcNow,
+			Timestamp = DateTime.Now,
 			EntryType = "Transcription"
 		};
 
@@ -579,7 +579,7 @@ public class MeetingServiceTests
 			BlockId = Guid.NewGuid(),
 			Content = "New content",
 			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Jane Doe" },
-			Timestamp = DateTime.UtcNow,
+			Timestamp = DateTime.Now,
 			EntryType = "Transcription"
 		};
 
