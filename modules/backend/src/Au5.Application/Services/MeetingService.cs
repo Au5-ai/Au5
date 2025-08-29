@@ -198,7 +198,7 @@ public class MeetingService : IMeetingService
 		}
 	}
 
-	public async Task<Meeting> StopMeeting(string meetId, CancellationToken cancellationToken)
+	public async Task<Meeting> CloseMeeting(string meetId, CancellationToken cancellationToken)
 	{
 		var key = GetMeetingKey(meetId);
 		var meeting = await _cacheProvider.GetAsync<Meeting>(key);

@@ -1,7 +1,7 @@
 using Au5.Application.Features.Meetings.AddBot;
+using Au5.Application.Features.Meetings.CloseMeetingByUser;
 using Au5.Application.Features.Meetings.GetFullTranscription;
 using Au5.Application.Features.Meetings.MyMeeting;
-using Au5.Application.Features.Meetings.StopMeetingByUser;
 using Au5.Domain.Common;
 
 namespace Au5.BackEnd.Controllers;
@@ -36,10 +36,10 @@ public class MeetingController(ISender mediator) : BaseController
 		return Ok(await mediator.Send(new MyMeetingQuery(MeetingStatus.Archived), cancellationToken));
 	}
 
-	[HttpPost("{meetingId}/{meetId}/stop")]
+	[HttpPost("{meetingId}/{meetId}/close")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	public async Task<IActionResult> StopMeeting([FromRoute] Guid meetingId, [FromRoute] string meetId, CancellationToken cancellationToken)
+	public async Task<IActionResult> CloseMeeting([FromRoute] Guid meetingId, [FromRoute] string meetId, CancellationToken cancellationToken)
 	{
-		return Ok(await mediator.Send(new StopMeetingByUserCommand(meetingId, meetId), cancellationToken));
+		return Ok(await mediator.Send(new CloseMeetingByUserCommand(meetingId, meetId), cancellationToken));
 	}
 }

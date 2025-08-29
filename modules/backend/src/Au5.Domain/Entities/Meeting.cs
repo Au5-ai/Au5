@@ -28,7 +28,7 @@ public class Meeting
 
 	public DateTime CreatedAt { get; set; }
 
-	public DateTime StopedAt { get; set; }
+	public DateTime ClosedAt { get; set; }
 
 	public string Duration { get; set; }
 
