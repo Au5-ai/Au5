@@ -4,171 +4,160 @@ namespace Au5.Application.Services;
 
 public class MeetingService : IMeetingService
 {
-	private static readonly Lock LockObject = new();
-	private static readonly List<Meeting> _meetings = [];
+	private const string DefaultBotName = "Cando"; // TODO: Get the name from config
+	private static readonly TimeSpan CacheExpiration = TimeSpan.FromHours(1);
 
-	public Meeting AddUserToMeeting(UserJoinedInMeetingMessage userJoined)
+	private readonly SemaphoreSlim _lock = new(1, 1);
+	private readonly ICacheProvider _cacheProvider;
+
+	public MeetingService(ICacheProvider cacheProvider)
 	{
-		lock (LockObject)
+		_cacheProvider = cacheProvider ?? throw new ArgumentNullException(nameof(cacheProvider));
+	}
+
+	public static string GetMeetingKey(string meetId)
+	{
+		var today = DateTime.Now.Date;
+		return $"meeting:{meetId}:{today:yyyyMMdd}";
+	}
+
+	public async Task<Meeting> AddUserToMeeting(UserJoinedInMeetingMessage userJoined)
+	{
+		var cacheKey = GetMeetingKey(userJoined.MeetId);
+
+		await _lock.WaitAsync();
+		try
 		{
-			var meeting = _meetings.FirstOrDefault(m => m.MeetId == userJoined.MeetId && m.CreatedAt.Date == DateTime.Now.Date);
+			var meeting = await _cacheProvider.GetAsync<Meeting>(cacheKey);
 
 			if (meeting is null || meeting.IsEnded())
 			{
-				meeting = new Meeting
+				meeting = CreateNewMeeting(userJoined);
+			}
+
+			if (!meeting.Participants.Any(u => u.UserId == userJoined.User.Id))
+			{
+				meeting.Participants.Add(new ParticipantInMeeting
 				{
-					Id = Guid.NewGuid(),
-					MeetId = userJoined.MeetId,
-					Entries = [],
-					CreatedAt = DateTime.Now,
-					Platform = userJoined.Platform,
-					Participants = [],
-					Status = MeetingStatus.AddingBot,
-				};
-				_meetings.Add(meeting);
+					UserId = userJoined.User.Id
+				});
 			}
 
-			var existingUser = meeting.Participants.Any(u => u.UserId == userJoined.User.Id);
-			if (existingUser)
-			{
-				return meeting;
-			}
-
-			meeting.Participants.Add(new ParticipantInMeeting()
-			{
-				UserId = userJoined.User.Id,
-			});
+			await _cacheProvider.SetAsync(cacheKey, meeting, CacheExpiration);
 			return meeting;
 		}
-	}
-
-	public void AddGuestsToMeet(List<Participant> users, string meetId)
-	{
-		lock (LockObject)
+		finally
 		{
-			var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetId);
-			if (meeting is null)
-			{
-				return;
-			}
-
-			foreach (var item in users)
-			{
-				var existingParticipant = true;
-
-				if (!item.HasAccount && !meeting.Guests.Any(x => x.FullName == item.FullName))
-				{
-					existingParticipant = false;
-				}
-
-				if (!existingParticipant)
-				{
-					meeting.Guests.Add(new GuestsInMeeting
-					{
-						MeetingId = meeting.Id,
-						FullName = item.HasAccount ? string.Empty : item.FullName,
-						PictureUrl = item.HasAccount ? string.Empty : item.PictureUrl
-					});
-				}
-			}
+			_lock.Release();
 		}
 	}
 
-	public string BotIsAdded(string meetId)
+	public async Task AddGuestsToMeet(List<Participant> users, string meetId)
 	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetId);
-		if (meeting is null)
+		var key = GetMeetingKey(meetId);
+		var meeting = await _cacheProvider.GetAsync<Meeting>(key);
+
+		if (meeting is null || meeting.IsEnded())
+		{
+			return;
+		}
+
+		foreach (var user in users)
+		{
+			if (!user.HasAccount && !meeting.Guests.Any(g => g.FullName == user.FullName))
+			{
+				meeting.Guests.Add(new GuestsInMeeting
+				{
+					MeetingId = meeting.Id,
+					FullName = user.FullName,
+					PictureUrl = user.PictureUrl
+				});
+			}
+		}
+
+		await _cacheProvider.SetAsync(key, meeting, CacheExpiration);
+	}
+
+	public async Task<string> BotIsAdded(string meetId)
+	{
+		var key = GetMeetingKey(meetId);
+		var meeting = await _cacheProvider.GetAsync<Meeting>(key);
+
+		if (meeting is null || meeting.IsEnded())
 		{
 			return string.Empty;
 		}
 
-		lock (LockObject)
+		if (!meeting.IsBotAdded)
 		{
-			if (!meeting.IsBotAdded)
-			{
-				meeting.BotName = "Cando";
-				meeting.IsBotAdded = true;
-				meeting.Status = MeetingStatus.Recording;
-			}
-
-			return meeting.BotName;
+			meeting.BotName = DefaultBotName;
+			meeting.IsBotAdded = true;
+			meeting.Status = MeetingStatus.Recording;
 		}
+
+		await _cacheProvider.SetAsync(key, meeting, CacheExpiration);
+		return meeting.BotName;
 	}
 
-	public bool PauseMeeting(string meetId, bool isPause)
+	public async Task<bool> PauseMeeting(string meetId, bool isPause)
 	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetId == meetId);
-		if (meeting is null)
+		var key = GetMeetingKey(meetId);
+		var meeting = await _cacheProvider.GetAsync<Meeting>(key);
+
+		if (meeting is null || meeting.IsEnded())
 		{
 			return false;
 		}
 
 		meeting.Status = isPause ? MeetingStatus.Paused : MeetingStatus.Recording;
+		await _cacheProvider.SetAsync(key, meeting, CacheExpiration);
 		return true;
 	}
 
-	public bool UpsertBlock(EntryMessage entry)
+	public async Task<bool> UpsertBlock(EntryMessage entry)
 	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetId == entry.MeetId);
+		var key = GetMeetingKey(entry.MeetId);
+		var meeting = await _cacheProvider.GetAsync<Meeting>(key);
+
 		if (meeting is null || meeting.IsPaused())
 		{
 			return false;
 		}
 
-		lock (LockObject)
+		await _lock.WaitAsync();
+		try
 		{
-			var entryBlock = meeting.Entries.FirstOrDefault(e => e.BlockId == entry.BlockId);
-			if (entryBlock is not null)
+			var existingEntry = meeting.Entries.FirstOrDefault(e => e.BlockId == entry.BlockId);
+			if (existingEntry is not null)
 			{
-				entryBlock.Content = entry.Content;
-				return true;
+				existingEntry.Content = entry.Content;
+			}
+			else
+			{
+				meeting.Entries.Add(CreateEntryFromMessage(entry));
 			}
 
-			meeting.Entries.Add(new Entry()
-			{
-				BlockId = entry.BlockId,
-				Content = entry.Content,
-				ParticipantId = entry.Participant.Id,
-				FullName = entry.Participant.FullName,
-				Timestamp = entry.Timestamp,
-				EntryType = entry.EntryType,
-				Reactions = [],
-			});
+			await _cacheProvider.SetAsync(key, meeting, CacheExpiration);
 			return true;
 		}
+		finally
+		{
+			_lock.Release();
+		}
 	}
 
-	public void InsertBlock(EntryMessage entry)
+	public async Task AppliedReaction(ReactionAppliedMessage reaction)
 	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetId == entry.MeetId);
+		var key = GetMeetingKey(reaction.MeetId);
+		var meeting = await _cacheProvider.GetAsync<Meeting>(key);
+
 		if (meeting is null)
 		{
 			return;
 		}
 
-		lock (LockObject)
-		{
-			meeting.Entries.Add(new Entry()
-			{
-				BlockId = entry.BlockId,
-				Content = entry.Content,
-				ParticipantId = entry.Participant.Id,
-				Timestamp = entry.Timestamp,
-				EntryType = entry.EntryType,
-				Reactions = [],
-			});
-		}
-	}
-
-	public void AppliedReaction(ReactionAppliedMessage reaction)
-	{
-		var meeting = _meetings.FirstOrDefault(m => m.MeetId == reaction.MeetId);
-		if (meeting is null)
-		{
-			return;
-		}
-
-		lock (LockObject)
+		await _lock.WaitAsync();
+		try
 		{
 			var entryBlock = meeting.Entries.FirstOrDefault(e => e.BlockId == reaction.BlockId);
 			if (entryBlock is null)
@@ -186,19 +175,73 @@ public class MeetingService : IMeetingService
 					Participants = [new Participant() { Id = reaction.User.Id }],
 				};
 				entryBlock.Reactions.Add(existingReaction);
-				return;
-			}
-
-			existingReaction.Participants ??= [];
-
-			if (!existingReaction.Participants.Any(u => u.Id == reaction.User.Id))
-			{
-				existingReaction.Participants.Add(new Participant() { Id = reaction.User.Id });
 			}
 			else
 			{
-				existingReaction.Participants.RemoveAll(u => u.Id == reaction.User.Id);
+				existingReaction.Participants ??= [];
+
+				if (!existingReaction.Participants.Any(u => u.Id == reaction.User.Id))
+				{
+					existingReaction.Participants.Add(new Participant() { Id = reaction.User.Id });
+				}
+				else
+				{
+					existingReaction.Participants.RemoveAll(u => u.Id == reaction.User.Id);
+				}
 			}
+
+			await _cacheProvider.SetAsync(key, meeting, CacheExpiration);
 		}
+		finally
+		{
+			_lock.Release();
+		}
+	}
+
+	public async Task<Meeting> CloseMeeting(string meetId, CancellationToken cancellationToken)
+	{
+		var key = GetMeetingKey(meetId);
+		var meeting = await _cacheProvider.GetAsync<Meeting>(key);
+
+		if (meeting is null)
+		{
+			return null;
+		}
+
+		await _cacheProvider.RemoveAsync(key);
+		return meeting;
+	}
+
+	private Entry CreateEntryFromMessage(EntryMessage entry)
+	{
+		return new Entry
+		{
+			BlockId = entry.BlockId,
+			Content = entry.Content,
+			ParticipantId = entry.Participant.Id,
+			FullName = entry.Participant.FullName,
+			Timestamp = entry.Timestamp,
+			EntryType = entry.EntryType,
+			Reactions = [],
+		};
+	}
+
+	private Meeting CreateNewMeeting(UserJoinedInMeetingMessage userJoined)
+	{
+		var meetingId = Guid.NewGuid();
+		var hashToken = HashHelper.HashSafe(meetingId.ToString());
+
+		return new Meeting
+		{
+			Id = meetingId,
+			MeetId = userJoined.MeetId,
+			Entries = [],
+			CreatedAt = DateTime.Now,
+			Platform = userJoined.Platform,
+			Participants = [],
+			Guests = [],
+			HashToken = hashToken,
+			Status = MeetingStatus.AddingBot,
+		};
 	}
 }

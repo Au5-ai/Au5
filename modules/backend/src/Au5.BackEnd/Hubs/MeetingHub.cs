@@ -19,7 +19,7 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 			return;
 		}
 
-		var meeting = meetingService.AddUserToMeeting(msg);
+		var meeting = await meetingService.AddUserToMeeting(msg);
 		if (meeting is not null && meeting.IsActive() && meeting.IsBotAdded)
 		{
 			await Clients.Caller.SendAsync(METHOD, new MeetingIsActiveMessage()
@@ -40,7 +40,7 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 
 	public async Task BotJoinedInMeeting(string meetId)
 	{
-		var botName = meetingService.BotIsAdded(meetId);
+		var botName = await meetingService.BotIsAdded(meetId);
 		if (string.IsNullOrWhiteSpace(botName))
 		{
 			return;
@@ -51,7 +51,7 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 
 	public async Task Entry(EntryMessage transcription)
 	{
-		var canBroadcast = meetingService.UpsertBlock(transcription);
+		var canBroadcast = await meetingService.UpsertBlock(transcription);
 		if (canBroadcast)
 		{
 			await BroadcastToGroupExceptCallerAsync(transcription.MeetId, transcription).ConfigureAwait(false);
@@ -60,13 +60,13 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 
 	public async Task ReactionApplied(ReactionAppliedMessage reaction)
 	{
-		meetingService.AppliedReaction(reaction);
+		await meetingService.AppliedReaction(reaction);
 		await BroadcastToGroupExceptCallerAsync(reaction.MeetId, reaction).ConfigureAwait(false);
 	}
 
 	public async Task PauseAndPlayTranscription(PauseAndPlayTranscriptionMessage message)
 	{
-		_ = meetingService.PauseMeeting(message.MeetId, message.IsPaused);
+		_ = await meetingService.PauseMeeting(message.MeetId, message.IsPaused);
 		await BroadcastToGroupExceptCallerAsync(message.MeetId, message).ConfigureAwait(false);
 	}
 

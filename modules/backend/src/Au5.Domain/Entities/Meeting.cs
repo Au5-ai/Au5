@@ -11,6 +11,8 @@ public class Meeting
 
 	public string MeetName { get; set; }
 
+	public Guid ClosedMeetingUserId { get; set; }
+
 	public Guid BotInviterUserId { get; set; }
 
 	[ForeignKey(nameof(BotInviterUserId))]
@@ -25,6 +27,8 @@ public class Meeting
 	public bool IsBotAdded { get; set; }
 
 	public DateTime CreatedAt { get; set; }
+
+	public DateTime ClosedAt { get; set; }
 
 	public string Duration { get; set; }
 
