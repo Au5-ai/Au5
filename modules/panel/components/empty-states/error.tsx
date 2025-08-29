@@ -70,7 +70,7 @@ export default function ErrorState({
   const currentVariant = variants[variant];
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center py-16 px-6 text-center">
+    <div className="w-full h-screen flex flex-col items-center justify-center py-16 px-6 text-center">
       <div
         className={`
               w-20 h-20 rounded-2xl ${currentVariant.iconBg} 

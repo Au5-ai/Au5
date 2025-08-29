@@ -1,3 +1,4 @@
+using Au5.Application.Common;
 using Au5.Application.Common.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,7 +30,7 @@ public class StopMeetingByUserCommandHandler : IRequestHandler<StopMeetingByUser
 		if (meetingContent is not null)
 		{
 			meeting.Status = MeetingStatus.Ended;
-			meeting.Duration = "1h 23m";
+			meeting.Duration = meeting.CreatedAt.DiffTo(DateTime.Now).ToReadableString();
 			meeting.StopedAt = DateTime.Now;
 			meeting.Entries = meetingContent.Entries; // TODO: Calculate Timeline in each entry
 			meeting.Participants = meetingContent.Participants;
