@@ -458,6 +458,9 @@ const _ApiRoutes = class _ApiRoutes {
   getReactions() {
     return `${this.config.service.baseUrl}/reactions`;
   }
+  closeMeeting(meetingId, meetId) {
+    return `${this.config.service.baseUrl}/meeting/${meetingId}/${meetId}/close`;
+  }
 };
 __publicField(_ApiRoutes, "instance");
 let ApiRoutes = _ApiRoutes;
@@ -498,6 +501,12 @@ class BackEndApi {
   async getReactions() {
     return apiRequest(ApiRoutes.getInstance(this.config).getReactions(), {
       method: "GET",
+      authToken: this.config.service.jwtToken
+    });
+  }
+  async closeMeeting(body) {
+    return apiRequest(ApiRoutes.getInstance(this.config).closeMeeting(body.meetingId, body.meetId), {
+      method: "POST",
       authToken: this.config.service.jwtToken
     });
   }
@@ -3528,7 +3537,6 @@ class UIHandlers {
         return;
       });
       if (response) {
-        console.log(response);
         localStorage.setItem("au5-meetingId", JSON.stringify(response));
         const message = {
           type: MessageTypes.RequestToAddBot,
@@ -3663,9 +3671,20 @@ class UIHandlers {
   handleMeetingCloseActions() {
     const meetingCloseAction = document.getElementById("au5-meeting-closeAction");
     meetingCloseAction == null ? void 0 : meetingCloseAction.addEventListener("click", () => {
-      alert(
-        "Closing the meeting will disconnect all participants and end the session. Are you sure you want to proceed?"
-      );
+      var _a;
+      if (!this.platform || !this.meetingHubClient) return;
+      const meetingId = localStorage.getItem("au5-meetingId");
+      if (!meetingId) {
+        return;
+      }
+      const meetingModel = {
+        meetId: (_a = this.platform) == null ? void 0 : _a.getMeetId(),
+        meetingId
+      };
+      this.backendApi.closeMeeting(meetingModel).catch((error) => {
+        showToast("Failed to close meeting :(");
+        return;
+      });
     });
     return this;
   }

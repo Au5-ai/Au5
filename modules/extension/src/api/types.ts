@@ -3,3 +3,8 @@ export interface RequestAddBotModel {
   botName: string;
   platform: string;
 }
+
+export interface CloseMeetingModel {
+  meetId: string;
+  meetingId: string;
+}

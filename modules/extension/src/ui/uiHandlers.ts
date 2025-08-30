@@ -1,4 +1,5 @@
 import {BackEndApi} from "../api/backEndApi";
+import {CloseMeetingModel} from "../api/types";
 import {MeetingPlatformFactory} from "../core/platforms/meetingPlatformFactory";
 import StateManager from "../core/stateManager";
 import {
@@ -203,7 +204,6 @@ export class UIHandlers {
         });
 
       if (response) {
-        console.log(response);
         localStorage.setItem("au5-meetingId", JSON.stringify(response));
         const message = {
           type: MessageTypes.RequestToAddBot,
@@ -352,9 +352,20 @@ export class UIHandlers {
     const meetingCloseAction = document.getElementById("au5-meeting-closeAction") as HTMLDivElement | null;
 
     meetingCloseAction?.addEventListener("click", () => {
-      alert(
-        "Closing the meeting will disconnect all participants and end the session. Are you sure you want to proceed?"
-      );
+      if (!this.platform || !this.meetingHubClient) return;
+
+      const meetingId = localStorage.getItem("au5-meetingId");
+      if (!meetingId) {
+        return;
+      }
+      const meetingModel: CloseMeetingModel = {
+        meetId: this.platform?.getMeetId(),
+        meetingId: meetingId
+      };
+      this.backendApi.closeMeeting(meetingModel).catch(error => {
+        showToast("Failed to close meeting :(");
+        return;
+      });
     });
     return this;
   }
