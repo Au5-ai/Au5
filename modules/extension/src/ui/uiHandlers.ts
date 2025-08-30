@@ -1,4 +1,5 @@
 import {BackEndApi} from "../api/backEndApi";
+import {CloseMeetingModel} from "../api/types";
 import {MeetingPlatformFactory} from "../core/platforms/meetingPlatformFactory";
 import StateManager from "../core/stateManager";
 import {
@@ -44,6 +45,7 @@ export class UIHandlers {
       .handleAddBot()
       .handleMessageSend()
       .handleBotPlayPauseActions()
+      .handleMeetingCloseActions()
       .handleTooltips();
   }
 
@@ -202,7 +204,6 @@ export class UIHandlers {
         });
 
       if (response) {
-        console.log(response);
         localStorage.setItem("au5-meetingId", JSON.stringify(response));
         const message = {
           type: MessageTypes.RequestToAddBot,
@@ -308,7 +309,7 @@ export class UIHandlers {
 
   private handleBotPlayPauseActions(): this {
     const botPlayAction = document.getElementById("au5-bot-playAction") as HTMLDivElement | null;
-    const botPauseAction = document.getElementById("au5-bot-puaseAction") as HTMLDivElement | null;
+    const botPauseAction = document.getElementById("au5-bot-pauseAction") as HTMLDivElement | null;
 
     botPlayAction?.addEventListener("click", () => {
       if (!this.platform || !this.meetingHubClient) return;
@@ -344,6 +345,37 @@ export class UIHandlers {
       this.chatPanel.pauseAndPlay(message);
     });
 
+    return this;
+  }
+
+  private handleMeetingCloseActions(): this {
+    const meetingCloseAction = document.getElementById("au5-meeting-closeAction") as HTMLDivElement | null;
+
+    meetingCloseAction?.addEventListener("click", () => {
+      if (!this.platform || !this.meetingHubClient) return;
+
+      const meeting = JSON.parse(localStorage.getItem("au5-meetingId") || "null");
+      if (!meeting) {
+        return;
+      }
+      const meetingModel: CloseMeetingModel = {
+        meetId: this.platform?.getMeetId(),
+        meetingId: meeting.meetingId
+      };
+      this.backendApi
+        .closeMeeting(meetingModel)
+        .then(() => {
+          localStorage.removeItem("au5-meetingId");
+          chrome.runtime.sendMessage({
+            action: "CLOSE_SIDEPANEL",
+            panelUrl: this.config.service.panelUrl + "/meeting/my"
+          });
+        })
+        .catch(error => {
+          showToast("Failed to close meeting :(");
+          return;
+        });
+    });
     return this;
   }
 

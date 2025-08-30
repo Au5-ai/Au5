@@ -89,7 +89,6 @@ export class ChatPanel {
   }
 
   public addEntry(entry: Entry): void {
-    console.log("Adding entry:", entry);
     if (!this.transcriptionsContainerEl) {
       return;
     }
@@ -154,6 +153,7 @@ export class ChatPanel {
       this.stateManager.disableBotContainer();
     }
   }
+
   public usersJoined(fullName: string): void {
     this.addUserJoinedOrLeaved(fullName, true);
   }
@@ -269,7 +269,7 @@ export class ChatPanel {
     }
 
     const botPlayAction = this.activeMeetingEl.querySelector("#au5-bot-playAction") as HTMLDivElement;
-    const botPauseAction = this.activeMeetingEl.querySelector("#au5-bot-puaseAction") as HTMLDivElement;
+    const botPauseAction = this.activeMeetingEl.querySelector("#au5-bot-pauseAction") as HTMLDivElement;
     if (!botPlayAction || !botPauseAction) {
       return;
     }

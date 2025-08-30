@@ -19,4 +19,8 @@ export class ApiRoutes {
   public getReactions(): string {
     return `${this.config.service.baseUrl}/reactions`;
   }
+
+  public closeMeeting(meetingId: string, meetId: string): string {
+    return `${this.config.service.baseUrl}/meeting/${meetingId}/${meetId}/close`;
+  }
 }

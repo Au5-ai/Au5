@@ -1,7 +1,7 @@
 import {ApiRoutes} from "./apiRoutes";
 import {AppConfiguration, Reaction} from "../core/types";
 import {apiRequest} from "../core/network/apiRequest";
-import {RequestAddBotModel} from "./types";
+import {CloseMeetingModel, RequestAddBotModel} from "./types";
 
 export class BackEndApi {
   constructor(private config: AppConfiguration) {}
@@ -17,6 +17,13 @@ export class BackEndApi {
   public async getReactions(): Promise<Reaction[]> {
     return apiRequest<Reaction[]>(ApiRoutes.getInstance(this.config).getReactions(), {
       method: "GET",
+      authToken: this.config.service.jwtToken
+    });
+  }
+
+  public async closeMeeting(body: CloseMeetingModel): Promise<any> {
+    return apiRequest<any>(ApiRoutes.getInstance(this.config).closeMeeting(body.meetingId, body.meetId), {
+      method: "POST",
       authToken: this.config.service.jwtToken
     });
   }
