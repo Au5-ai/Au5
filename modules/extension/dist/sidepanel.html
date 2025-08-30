@@ -134,7 +134,7 @@
                               <div>
                                 <div
                                   id="au5-bot-playContainer"
-                                  class="chat-input-top-bar px-3 gap-2 py-2 flex justify-start items-center hidden"
+                                  class="chat-input-top-bar px-3 gap-2 py-2 flex justify-start items-center"
                                 >
                                   <div class="flex gap-[6px] min-w-[90px] max-w-[calc(100%-40px)]">
                                     <div class="text-xs overflow-hidden">
@@ -157,56 +157,47 @@
                                                 fill="none"
                                                 xmlns="http://www.w3.org/2000/svg"
                                               >
-                                                <rect width="16" height="16" rx="2" fill="currentColor" />
-                                                <rect
-                                                  x="5.89062"
-                                                  y="2.26562"
-                                                  width="8.28125"
-                                                  height="1.45229"
-                                                  rx="0.726144"
-                                                  fill="white"
-                                                  stroke="black"
-                                                  stroke-width="0.03125"
+                                                <path
+                                                  d="M7.99992 3.99992V1.33325H5.33325"
+                                                  stroke="currentColor"
+                                                  stroke-width="1.33333"
+                                                  stroke-linecap="round"
+                                                  stroke-linejoin="round"
                                                 />
-                                                <rect
-                                                  x="1.89062"
-                                                  y="4.76562"
-                                                  width="7.875"
-                                                  height="1.4375"
-                                                  rx="0.71875"
-                                                  fill="white"
-                                                  stroke="black"
-                                                  stroke-width="0.03125"
+                                                <path
+                                                  d="M10 7.33325V8.66659"
+                                                  stroke="currentColor"
+                                                  stroke-width="1.33333"
+                                                  stroke-linecap="round"
+                                                  stroke-linejoin="round"
                                                 />
-                                                <rect
-                                                  x="6.89062"
-                                                  y="7.26562"
-                                                  width="6.75"
-                                                  height="1.4375"
-                                                  rx="0.71875"
-                                                  fill="white"
-                                                  stroke="black"
-                                                  stroke-width="0.03125"
+                                                <path
+                                                  d="M1.33325 8H2.66659"
+                                                  stroke="currentColor"
+                                                  stroke-width="1.33333"
+                                                  stroke-linecap="round"
+                                                  stroke-linejoin="round"
                                                 />
-                                                <rect
-                                                  x="2.01562"
-                                                  y="9.76562"
-                                                  width="10.4375"
-                                                  height="1.45229"
-                                                  rx="0.726144"
-                                                  fill="white"
-                                                  stroke="black"
-                                                  stroke-width="0.03125"
+                                                <path
+                                                  d="M13.3333 8H14.6666"
+                                                  stroke="currentColor"
+                                                  stroke-width="1.33333"
+                                                  stroke-linecap="round"
+                                                  stroke-linejoin="round"
                                                 />
-                                                <rect
-                                                  x="3.89062"
-                                                  y="12.2656"
-                                                  width="9.96875"
-                                                  height="1.45229"
-                                                  rx="0.726144"
-                                                  fill="white"
-                                                  stroke="black"
-                                                  stroke-width="0.03125"
+                                                <path
+                                                  d="M13.3334 10.6667C13.3334 11.0203 13.1929 11.3594 12.9429 11.6095C12.6928 11.8595 12.3537 12 12.0001 12H5.88541C5.53182 12.0001 5.19274 12.1406 4.94275 12.3907L3.47475 13.8587C3.40855 13.9249 3.32422 13.9699 3.23241 13.9882C3.1406 14.0064 3.04544 13.9971 2.95895 13.9612C2.87247 13.9254 2.79855 13.8648 2.74654 13.7869C2.69453 13.7091 2.66676 13.6176 2.66675 13.524V5.33333C2.66675 4.97971 2.80722 4.64057 3.05727 4.39052C3.30732 4.14048 3.64646 4 4.00008 4H12.0001C12.3537 4 12.6928 4.14048 12.9429 4.39052C13.1929 4.64057 13.3334 4.97971 13.3334 5.33333V10.6667Z"
+                                                  stroke="currentColor"
+                                                  stroke-width="1.33333"
+                                                  stroke-linecap="round"
+                                                  stroke-linejoin="round"
+                                                />
+                                                <path
+                                                  d="M6 7.33325V8.66659"
+                                                  stroke="currentColor"
+                                                  stroke-width="1.33333"
+                                                  stroke-linecap="round"
+                                                  stroke-linejoin="round"
                                                 />
                                               </svg>
                                             </span>
@@ -221,8 +212,8 @@
                                   </div>
                                   <div id="au5-bot-actionContainer" class="flex items-center ms-auto">
                                     <div
-                                      id="au5-bot-stopAction"
-                                      data-tooltip="Stop (Soon)"
+                                      id="au5-meeting-closeAction"
+                                      data-tooltip="Close Meeting"
                                       class="topbar-btn size-[30px] model-btn model-btn-no-bg overflow-hidden flex-center text-xs p-[5px] rounded-lg"
                                     >
                                       <svg
@@ -242,7 +233,7 @@
                                     </div>
 
                                     <div
-                                      id="au5-bot-puaseAction"
+                                      id="au5-bot-pauseAction"
                                       data-tooltip="Pause"
                                       class="topbar-btn size-[30px] model-btn model-btn-no-bg overflow-hidden flex-center text-xs p-[5px] rounded-lg"
                                     >

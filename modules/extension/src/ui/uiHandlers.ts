@@ -44,6 +44,7 @@ export class UIHandlers {
       .handleAddBot()
       .handleMessageSend()
       .handleBotPlayPauseActions()
+      .handleMeetingCloseActions()
       .handleTooltips();
   }
 
@@ -308,7 +309,7 @@ export class UIHandlers {
 
   private handleBotPlayPauseActions(): this {
     const botPlayAction = document.getElementById("au5-bot-playAction") as HTMLDivElement | null;
-    const botPauseAction = document.getElementById("au5-bot-puaseAction") as HTMLDivElement | null;
+    const botPauseAction = document.getElementById("au5-bot-pauseAction") as HTMLDivElement | null;
 
     botPlayAction?.addEventListener("click", () => {
       if (!this.platform || !this.meetingHubClient) return;
@@ -344,6 +345,17 @@ export class UIHandlers {
       this.chatPanel.pauseAndPlay(message);
     });
 
+    return this;
+  }
+
+  private handleMeetingCloseActions(): this {
+    const meetingCloseAction = document.getElementById("au5-meeting-closeAction") as HTMLDivElement | null;
+
+    meetingCloseAction?.addEventListener("click", () => {
+      alert(
+        "Closing the meeting will disconnect all participants and end the session. Are you sure you want to proceed?"
+      );
+    });
     return this;
   }
 
