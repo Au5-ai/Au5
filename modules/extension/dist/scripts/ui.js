@@ -3683,7 +3683,10 @@ class UIHandlers {
       };
       this.backendApi.closeMeeting(meetingModel).then(() => {
         localStorage.removeItem("au5-meetingId");
-        chrome.runtime.sendMessage({ action: "CLOSE_SIDEPANEL" });
+        chrome.runtime.sendMessage({
+          action: "CLOSE_SIDEPANEL",
+          panelUrl: this.config.service.panelUrl + "/meeting/my"
+        });
       }).catch((error) => {
         showToast("Failed to close meeting :(");
         return;

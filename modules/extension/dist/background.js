@@ -23,6 +23,9 @@ chrome.runtime.onMessage.addListener((message, sender) => {
           enabled: false
         });
       }
+      chrome.tabs.create({
+        url: message.panelUrl
+      });
     });
   }
 });
