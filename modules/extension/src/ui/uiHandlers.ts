@@ -354,18 +354,25 @@ export class UIHandlers {
     meetingCloseAction?.addEventListener("click", () => {
       if (!this.platform || !this.meetingHubClient) return;
 
-      const meetingId = localStorage.getItem("au5-meetingId");
-      if (!meetingId) {
+      const meeting = JSON.parse(localStorage.getItem("au5-meetingId") || "null");
+      if (!meeting) {
         return;
       }
       const meetingModel: CloseMeetingModel = {
         meetId: this.platform?.getMeetId(),
-        meetingId: meetingId
+        meetingId: meeting.meetingId
       };
-      this.backendApi.closeMeeting(meetingModel).catch(error => {
-        showToast("Failed to close meeting :(");
-        return;
-      });
+      this.backendApi
+        .closeMeeting(meetingModel)
+        .then(() => {
+          // window.open(this.config.service.panelUrl + "/meeting/my", "_blank");
+          localStorage.removeItem("au5-meetingId");
+          chrome.runtime.sendMessage({action: "CLOSE_SIDEPANEL"});
+        })
+        .catch(error => {
+          showToast("Failed to close meeting :(");
+          return;
+        });
     });
     return this;
   }

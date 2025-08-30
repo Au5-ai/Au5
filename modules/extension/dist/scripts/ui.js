@@ -3673,15 +3673,18 @@ class UIHandlers {
     meetingCloseAction == null ? void 0 : meetingCloseAction.addEventListener("click", () => {
       var _a;
       if (!this.platform || !this.meetingHubClient) return;
-      const meetingId = localStorage.getItem("au5-meetingId");
-      if (!meetingId) {
+      const meeting = JSON.parse(localStorage.getItem("au5-meetingId") || "null");
+      if (!meeting) {
         return;
       }
       const meetingModel = {
         meetId: (_a = this.platform) == null ? void 0 : _a.getMeetId(),
-        meetingId
+        meetingId: meeting.meetingId
       };
-      this.backendApi.closeMeeting(meetingModel).catch((error) => {
+      this.backendApi.closeMeeting(meetingModel).then(() => {
+        localStorage.removeItem("au5-meetingId");
+        chrome.runtime.sendMessage({ action: "CLOSE_SIDEPANEL" });
+      }).catch((error) => {
         showToast("Failed to close meeting :(");
         return;
       });
