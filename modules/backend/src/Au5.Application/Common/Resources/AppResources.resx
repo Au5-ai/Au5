@@ -172,7 +172,7 @@
     <value>FailedToRemoveBot</value>
   </data>
   <data name="MeetingNotFound" xml:space="preserve">
-    <value>MeetingNotFound</value>
+    <value>Meeting not found</value>
   </data>
   <data name="FailedToCloseMeeting" xml:space="preserve">
     <value>Failed to close meeting</value>

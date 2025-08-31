@@ -178,7 +178,7 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MeetingNotFound.
+        ///   Looks up a localized string similar to Meeting not found.
         /// </summary>
         internal static string MeetingNotFound {
             get {
