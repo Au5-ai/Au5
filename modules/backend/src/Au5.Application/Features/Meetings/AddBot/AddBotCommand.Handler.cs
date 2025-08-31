@@ -69,7 +69,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 		// await _cacheProvider.SetAsync(MeetingService.GetMeetingKey(request.MeetId), cachedMeeting, TimeSpan.FromHours(1));
 		// }
 		var payload = BuildBotPayload(request, config, hashToken);
-		await _botFather.CreateBotAsync(config.BotFatherUrl, payload, cancellationToken);
+		await _botFather.CreateBotContainerAsync(config.BotFatherUrl, payload, cancellationToken);
 		return new AddBotCommandResponse(meetingId);
 	}
 

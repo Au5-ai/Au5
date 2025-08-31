@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Au5.ai",
   "short_name": "Au5.ai",
-  "version": "0.1.1",
+  "version": "1.2.5",
   "action": {
     "default_title": "Open Side Panel"
   },

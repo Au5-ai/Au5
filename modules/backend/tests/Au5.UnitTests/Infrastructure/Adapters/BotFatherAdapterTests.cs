@@ -18,7 +18,7 @@ public class BotFatherAdapterTests
 	}
 
 	[Fact]
-	public async Task CreateBotAsync_ShouldReturnSuccess_WhenHttpClientReturnsOk()
+	public async Task CreateBotContainerAsync_ShouldReturnSuccess_WhenHttpClientReturnsOk()
 	{
 		var payload = new BotPayload { BotDisplayName = "TestBot" };
 		var expectedContent = "bot-created";
@@ -34,14 +34,14 @@ public class BotFatherAdapterTests
 
 		var adapter = new BotFatherAdapter(_httpClientFactoryMock.Object, _loggerMock.Object);
 
-		var result = await adapter.CreateBotAsync("http://localhost", payload, CancellationToken.None);
+		var result = await adapter.CreateBotContainerAsync("http://localhost", payload, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
 		Assert.Equal(expectedContent, result.Data);
 	}
 
 	[Fact]
-	public async Task CreateBotAsync_ShouldReturnFailure_WhenHttpClientReturnsError()
+	public async Task CreateBotContainerAsync_ShouldReturnFailure_WhenHttpClientReturnsError()
 	{
 		var payload = new BotPayload { BotDisplayName = "TestBot" };
 		var errorMessage = "something went wrong";
@@ -57,14 +57,14 @@ public class BotFatherAdapterTests
 
 		var adapter = new BotFatherAdapter(_httpClientFactoryMock.Object, _loggerMock.Object);
 
-		var result = await adapter.CreateBotAsync("http://localhost", payload, CancellationToken.None);
+		var result = await adapter.CreateBotContainerAsync("http://localhost", payload, CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
 		Assert.Equal(AppResources.FailedToAddBot, result.Error.Description);
 	}
 
 	[Fact]
-	public async Task CreateBotAsync_ShouldReturnFailure_WhenExceptionThrown()
+	public async Task CreateBotContainerAsync_ShouldReturnFailure_WhenExceptionThrown()
 	{
 		var payload = new BotPayload { BotDisplayName = "TestBot" };
 
@@ -74,7 +74,7 @@ public class BotFatherAdapterTests
 
 		var adapter = new BotFatherAdapter(_httpClientFactoryMock.Object, _loggerMock.Object);
 
-		var result = await adapter.CreateBotAsync("http://localhost", payload, CancellationToken.None);
+		var result = await adapter.CreateBotContainerAsync("http://localhost", payload, CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
 		Assert.Equal(AppResources.FailedCommunicateWithBotFather, result.Error.Description);

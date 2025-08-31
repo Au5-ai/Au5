@@ -56,7 +56,7 @@ public class AddBotCommandHandlerTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync((Meeting)null);
 
-		_botFatherMock.Setup(x => x.CreateBotAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()))
+		_botFatherMock.Setup(x => x.CreateBotContainerAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()))
 			.ReturnsAsync((Result<string>)"bot-created");
 
 		var result = await _handler.Handle(command, CancellationToken.None);
@@ -65,7 +65,7 @@ public class AddBotCommandHandlerTests
 		_dbContextMock.Verify(x => x.Set<Meeting>(), Times.Once);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 		_meetingDbSetMock.Verify(x => x.Add(It.IsAny<Meeting>()), Times.Once);
-		_botFatherMock.Verify(x => x.CreateBotAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()), Times.Once);
+		_botFatherMock.Verify(x => x.CreateBotContainerAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()), Times.Once);
 
 		//_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), It.IsAny<TimeSpan>()), Times.Once);
 	}
@@ -89,7 +89,7 @@ public class AddBotCommandHandlerTests
 		Assert.Equal(AppResources.SystemIsNotConfigured, result.Error.Description);
 		_dbContextMock.Verify(x => x.Set<Meeting>(), Times.Never);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
-		_botFatherMock.Verify(x => x.CreateBotAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()), Times.Never);
+		_botFatherMock.Verify(x => x.CreateBotContainerAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()), Times.Never);
 	}
 
 	[Fact]
@@ -114,7 +114,7 @@ public class AddBotCommandHandlerTests
 		Assert.False(result.IsSuccess);
 		Assert.Equal(AppResources.FailedToAddBot, result.Error.Description);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-		_botFatherMock.Verify(x => x.CreateBotAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()), Times.Never);
+		_botFatherMock.Verify(x => x.CreateBotContainerAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()), Times.Never);
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), It.IsAny<TimeSpan>()), Times.Never);
 	}
 
@@ -146,7 +146,7 @@ public class AddBotCommandHandlerTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync((Meeting)null);
 
-		_botFatherMock.Setup(x => x.CreateBotAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()))
+		_botFatherMock.Setup(x => x.CreateBotContainerAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()))
 			.ReturnsAsync((Result<string>)"bot-created");
 
 		var result = await _handler.Handle(command, CancellationToken.None);
@@ -178,7 +178,7 @@ public class AddBotCommandHandlerTests
 		var systemConfigDbSet = systemConfigs.BuildMockDbSet();
 
 		BotPayload capturedPayload = null;
-		_botFatherMock.Setup(x => x.CreateBotAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()))
+		_botFatherMock.Setup(x => x.CreateBotContainerAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()))
 			.Callback<string, BotPayload, CancellationToken>((url, payload, ct) => capturedPayload = payload)
 			.ReturnsAsync((Result<string>)"bot-created");
 
@@ -237,7 +237,7 @@ public class AddBotCommandHandlerTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync((Meeting)null);
 
-		_botFatherMock.Setup(x => x.CreateBotAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()))
+		_botFatherMock.Setup(x => x.CreateBotContainerAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()))
 			.ReturnsAsync((Result<string>)"bot-created");
 
 		var result = await _handler.Handle(command, CancellationToken.None);
@@ -279,7 +279,7 @@ public class AddBotCommandHandlerTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync(existingCachedMeeting);
 
-		_botFatherMock.Setup(x => x.CreateBotAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()))
+		_botFatherMock.Setup(x => x.CreateBotContainerAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()))
 			.ReturnsAsync((Result<string>)"bot-created");
 
 		var result = await _handler.Handle(command, CancellationToken.None);
@@ -315,13 +315,13 @@ public class AddBotCommandHandlerTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync((Meeting)null);
 
-		_botFatherMock.Setup(x => x.CreateBotAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()))
+		_botFatherMock.Setup(x => x.CreateBotContainerAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()))
 			.ReturnsAsync((Result<string>)"bot-created");
 
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		_botFatherMock.Verify(x => x.CreateBotAsync("https://bot-father.example.com", It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()), Times.Once);
+		_botFatherMock.Verify(x => x.CreateBotContainerAsync("https://bot-father.example.com", It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()), Times.Once);
 	}
 
 	private static SystemConfig CreateSystemConfig()
