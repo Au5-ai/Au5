@@ -171,4 +171,13 @@
   <data name="FailedToRemoveBot" xml:space="preserve">
     <value>FailedToRemoveBot</value>
   </data>
+  <data name="MeetingNotFound" xml:space="preserve">
+    <value>MeetingNotFound</value>
+  </data>
+  <data name="FailedToCloseMeeting" xml:space="preserve">
+    <value>Failed to close meeting</value>
+  </data>
+  <data name="NoMeetingContent" xml:space="preserve">
+    <value>There is No Meeting Content</value>
+  </data>
 </root>

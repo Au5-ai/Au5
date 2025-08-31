@@ -34,7 +34,7 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 
 		if (meeting is null)
 		{
-			return Error.BadRequest(description: "Meeting not found");
+			return Error.BadRequest(description: AppResources.MeetingNotFound);
 		}
 
 		var meetingContent = await _meetingService.CloseMeeting(request.MeetId, cancellationToken);
@@ -53,24 +53,14 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 
 			if (dbResult.IsSuccess)
 			{
-				_ = _botFather.RemoveBotContainerAsync(config.BotFatherUrl, meeting.MeetId, meeting.HashToken, cancellationToken)
-								.ContinueWith(
-									t =>
-								{
-									if (t.IsFaulted)
-									{
-										_logger.LogError(t.Exception, "Failed to remove bot container for meeting {MeetingId}", meeting.MeetId);
-									}
-								}, TaskContinuationOptions.OnlyOnFaulted);
-
 				await _botFather.RemoveBotContainerAsync(config.BotFatherUrl, meeting.MeetId, meeting.HashToken, cancellationToken);
 			}
 
 			return dbResult.IsSuccess
 				? true
-				: Error.Failure(description: "Failed to close meeting");
+				: Error.Failure(description: AppResources.FailedToCloseMeeting);
 		}
 
-		return Error.Failure(description: "There is No Meeting Content");
+		return Error.Failure(description: AppResources.NoMeetingContent);
 	}
 }

@@ -79,6 +79,15 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to close meeting.
+        /// </summary>
+        internal static string FailedToCloseMeeting {
+            get {
+                return ResourceManager.GetString("FailedToCloseMeeting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed To Config System.
         /// </summary>
         internal static string FailedToConfigSystem {
@@ -169,11 +178,29 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to MeetingNotFound.
+        /// </summary>
+        internal static string MeetingNotFound {
+            get {
+                return ResourceManager.GetString("MeetingNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Value must be greater than Zero..
         /// </summary>
         internal static string MustBeMoreThanZero {
             get {
                 return ResourceManager.GetString("MustBeMoreThanZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is No Meeting Content.
+        /// </summary>
+        internal static string NoMeetingContent {
+            get {
+                return ResourceManager.GetString("NoMeetingContent", resourceCulture);
             }
         }
         
