@@ -46,6 +46,7 @@ public class BotFatherAdapter(IHttpClientFactory httpClientFactory, ILogger<BotF
 
 		try
 		{
+			httpClient.Timeout = TimeSpan.FromSeconds(60);
 			var response = await httpClient.PostAsync(url, content, cancellationToken);
 
 			if (!response.IsSuccessStatusCode)
