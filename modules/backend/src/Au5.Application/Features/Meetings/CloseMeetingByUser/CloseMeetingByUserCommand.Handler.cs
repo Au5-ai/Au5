@@ -2,6 +2,7 @@ using Au5.Application.Common;
 using Au5.Application.Common.Abstractions;
 using Au5.Application.Common.Resources;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Au5.Application.Features.Meetings.CloseMeetingByUser;
 
@@ -10,12 +11,14 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 	private readonly IApplicationDbContext _dbContext;
 	private readonly IMeetingService _meetingService;
 	private readonly IBotFatherAdapter _botFather;
+	private readonly ILogger<CloseMeetingByUserCommandHandler> _logger;
 
-	public CloseMeetingByUserCommandHandler(IApplicationDbContext dbContext, IMeetingService meetingService, IBotFatherAdapter botFather)
+	public CloseMeetingByUserCommandHandler(ILogger<CloseMeetingByUserCommandHandler> logger, IApplicationDbContext dbContext, IMeetingService meetingService, IBotFatherAdapter botFather)
 	{
 		_meetingService = meetingService;
 		_dbContext = dbContext;
 		_botFather = botFather;
+		_logger = logger;
 	}
 
 	public async ValueTask<Result<bool>> Handle(CloseMeetingByUserCommand request, CancellationToken cancellationToken)
@@ -50,6 +53,16 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 
 			if (dbResult.IsSuccess)
 			{
+				_ = _botFather.RemoveBotContainerAsync(config.BotFatherUrl, meeting.MeetId, meeting.HashToken, cancellationToken)
+								.ContinueWith(
+									t =>
+								{
+									if (t.IsFaulted)
+									{
+										_logger.LogError(t.Exception, "Failed to remove bot container for meeting {MeetingId}", meeting.MeetId);
+									}
+								}, TaskContinuationOptions.OnlyOnFaulted);
+
 				await _botFather.RemoveBotContainerAsync(config.BotFatherUrl, meeting.MeetId, meeting.HashToken, cancellationToken);
 			}
 
