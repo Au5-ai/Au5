@@ -1,5 +1,6 @@
 using Au5.Application.Common.Abstractions;
 using Au5.Application.Common.Resources;
+using Au5.Application.Services;
 using Au5.Application.Services.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -57,17 +58,18 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 			return Error.Failure(description: AppResources.FailedToAddBot);
 		}
 
-		// var cachedMeeting = await _cacheProvider.GetAsync<Meeting>(MeetingService.GetMeetingKey(request.MeetId));
+		var cachedMeeting = await _cacheProvider.GetAsync<Meeting>(MeetingService.GetMeetingKey(request.MeetId));
 
-		// if (cachedMeeting is null || cachedMeeting.Status == MeetingStatus.Ended)
-		// {
-		// await _cacheProvider.SetAsync(MeetingService.GetMeetingKey(request.MeetId), meeting, TimeSpan.FromHours(1));
-		// }
-		////else
-		// {
-		// cachedMeeting.Id = meetingId;
-		// await _cacheProvider.SetAsync(MeetingService.GetMeetingKey(request.MeetId), cachedMeeting, TimeSpan.FromHours(1));
-		// }
+		if (cachedMeeting is null || cachedMeeting.Status == MeetingStatus.Ended)
+		{
+			await _cacheProvider.SetAsync(MeetingService.GetMeetingKey(request.MeetId), meeting, TimeSpan.FromHours(1));
+		}
+		else
+		{
+			cachedMeeting.Id = meetingId;
+			await _cacheProvider.SetAsync(MeetingService.GetMeetingKey(request.MeetId), cachedMeeting, TimeSpan.FromHours(1));
+		}
+
 		var payload = BuildBotPayload(request, config, hashToken);
 		await _botFather.CreateBotContainerAsync(config.BotFatherUrl, payload, cancellationToken);
 		return new AddBotCommandResponse(meetingId);
