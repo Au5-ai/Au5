@@ -88,6 +88,15 @@ namespace Au5.Application.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FailedToRemoveBot.
+        /// </summary>
+        internal static string FailedToRemoveBot {
+            get {
+                return ResourceManager.GetString("FailedToRemoveBot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to setup was not completed successfully.
         /// </summary>
         internal static string FailedToSetup {

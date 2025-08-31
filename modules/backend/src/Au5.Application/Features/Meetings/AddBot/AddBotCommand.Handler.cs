@@ -1,27 +1,31 @@
 using Au5.Application.Common.Abstractions;
 using Au5.Application.Common.Resources;
+using Au5.Application.Services;
 using Au5.Application.Services.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.Meetings.AddBot;
 
-public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
+public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBotCommandResponse>>
 {
 	private readonly IApplicationDbContext _dbContext;
 	private readonly IBotFatherAdapter _botFather;
 	private readonly IMeetingUrlService _meetingUrlService;
+	private readonly ICacheProvider _cacheProvider;
 
 	public AddBotCommandHandler(
 		IApplicationDbContext dbContext,
 		IBotFatherAdapter botFather,
-		IMeetingUrlService meetingUrlService)
+		IMeetingUrlService meetingUrlService,
+		ICacheProvider cacheProvider)
 	{
 		_dbContext = dbContext;
 		_botFather = botFather;
 		_meetingUrlService = meetingUrlService;
+		_cacheProvider = cacheProvider;
 	}
 
-	public async ValueTask<Result> Handle(AddBotCommand request, CancellationToken cancellationToken)
+	public async ValueTask<Result<AddBotCommandResponse>> Handle(AddBotCommand request, CancellationToken cancellationToken)
 	{
 		var meetingId = Guid.NewGuid();
 		var hashToken = HashHelper.HashSafe(meetingId.ToString());
@@ -29,10 +33,10 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 		var config = await _dbContext.Set<SystemConfig>().AsNoTracking().FirstOrDefaultAsync(cancellationToken);
 		if (config is null)
 		{
-			return Error.Failure(AppResources.SystemIsNotConfigured);
+			return Error.Failure(description: AppResources.SystemIsNotConfigured);
 		}
 
-		_dbContext.Set<Meeting>().Add(new Meeting
+		var meeting = new Meeting
 		{
 			Id = meetingId,
 			MeetId = request.MeetId,
@@ -40,11 +44,13 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 			BotName = request.BotName,
 			IsBotAdded = false,
 			BotInviterUserId = request.UserId,
-			CreatedAt = DateTime.UtcNow,
+			CreatedAt = DateTime.Now,
 			Platform = request.Platform,
 			Status = MeetingStatus.AddingBot,
-			HashToken = hashToken
-		});
+			HashToken = hashToken,
+		};
+
+		_dbContext.Set<Meeting>().Add(meeting);
 
 		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
 		if (!dbResult.IsSuccess)
@@ -52,9 +58,21 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result>
 			return Error.Failure(description: AppResources.FailedToAddBot);
 		}
 
+		var cachedMeeting = await _cacheProvider.GetAsync<Meeting>(MeetingService.GetMeetingKey(request.MeetId));
+
+		if (cachedMeeting is null || cachedMeeting.Status == MeetingStatus.Ended)
+		{
+			await _cacheProvider.SetAsync(MeetingService.GetMeetingKey(request.MeetId), meeting, TimeSpan.FromHours(1));
+		}
+		else
+		{
+			cachedMeeting.Id = meetingId;
+			await _cacheProvider.SetAsync(MeetingService.GetMeetingKey(request.MeetId), cachedMeeting, TimeSpan.FromHours(1));
+		}
+
 		var payload = BuildBotPayload(request, config, hashToken);
-		await _botFather.CreateBotAsync(config.BotFatherUrl, payload, cancellationToken);
-		return Result.Success();
+		await _botFather.CreateBotContainerAsync(config.BotFatherUrl, payload, cancellationToken);
+		return new AddBotCommandResponse(meetingId);
 	}
 
 	private BotPayload BuildBotPayload(AddBotCommand request, SystemConfig config, string hashToken) =>

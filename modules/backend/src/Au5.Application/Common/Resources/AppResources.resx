@@ -168,4 +168,7 @@
   <data name="FailedToSetup" xml:space="preserve">
     <value>setup was not completed successfully</value>
   </data>
+  <data name="FailedToRemoveBot" xml:space="preserve">
+    <value>FailedToRemoveBot</value>
+  </data>
 </root>

@@ -5,7 +5,7 @@ using Au5.Shared;
 using Microsoft.EntityFrameworkCore;
 using MockQueryable.Moq;
 
-namespace Au5.UnitTests.Application.Features.Authentication.AddAdmin;
+namespace Au5.UnitTests.Application.Features.Setup.AddAdmin;
 
 public class AddAdminQueryHandlerTests
 {

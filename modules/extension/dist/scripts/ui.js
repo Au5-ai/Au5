@@ -140,7 +140,6 @@ class ChatPanel {
     this.stateManager.setPage(PageState.ActiveMeeting);
   }
   addEntry(entry) {
-    console.log("Adding entry:", entry);
     if (!this.transcriptionsContainerEl) {
       return;
     }
@@ -296,7 +295,7 @@ class ChatPanel {
       return;
     }
     const botPlayAction = this.activeMeetingEl.querySelector("#au5-bot-playAction");
-    const botPauseAction = this.activeMeetingEl.querySelector("#au5-bot-puaseAction");
+    const botPauseAction = this.activeMeetingEl.querySelector("#au5-bot-pauseAction");
     if (!botPlayAction || !botPauseAction) {
       return;
     }
@@ -459,6 +458,9 @@ const _ApiRoutes = class _ApiRoutes {
   getReactions() {
     return `${this.config.service.baseUrl}/reactions`;
   }
+  closeMeeting(meetingId, meetId) {
+    return `${this.config.service.baseUrl}/meeting/${meetingId}/${meetId}/close`;
+  }
 };
 __publicField(_ApiRoutes, "instance");
 let ApiRoutes = _ApiRoutes;
@@ -499,6 +501,12 @@ class BackEndApi {
   async getReactions() {
     return apiRequest(ApiRoutes.getInstance(this.config).getReactions(), {
       method: "GET",
+      authToken: this.config.service.jwtToken
+    });
+  }
+  async closeMeeting(body) {
+    return apiRequest(ApiRoutes.getInstance(this.config).closeMeeting(body.meetingId, body.meetId), {
+      method: "POST",
       authToken: this.config.service.jwtToken
     });
   }
@@ -3395,7 +3403,7 @@ class UIHandlers {
     this.handleMessage = this.handleMessage.bind(this);
   }
   init() {
-    return this.handleJoin().handleReload().handleReactions().handleThemeToggle().handleOptions().handleGithubLink().handleDiscordLink().handleAddIssueLink().handleAddBot().handleMessageSend().handleBotPlayPauseActions().handleTooltips();
+    return this.handleJoin().handleReload().handleReactions().handleThemeToggle().handleOptions().handleGithubLink().handleDiscordLink().handleAddIssueLink().handleAddBot().handleMessageSend().handleBotPlayPauseActions().handleMeetingCloseActions().handleTooltips();
   }
   handleJoin() {
     const btn = document.getElementById("au5-btn-joinMeeting");
@@ -3493,7 +3501,7 @@ class UIHandlers {
   }
   handleGithubLink() {
     const btn = document.getElementById("github-link");
-    btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://github.com/Au5-ai/Au5", "_blank"));
+    btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://github.com/Au5-ai/au5-issues/issues", "_blank"));
     return this;
   }
   handleDiscordLink() {
@@ -3503,7 +3511,7 @@ class UIHandlers {
   }
   handleAddIssueLink() {
     const btn = document.getElementById("issue-link");
-    btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://github.com/Au5-ai/Au5/issues", "_blank"));
+    btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://github.com/Au5-ai/au5-issues/issues", "_blank"));
     return this;
   }
   handleAddBot() {
@@ -3529,6 +3537,7 @@ class UIHandlers {
         return;
       });
       if (response) {
+        localStorage.setItem("au5-meetingId", JSON.stringify(response));
         const message = {
           type: MessageTypes.RequestToAddBot,
           meetId,
@@ -3624,7 +3633,7 @@ class UIHandlers {
   }
   handleBotPlayPauseActions() {
     const botPlayAction = document.getElementById("au5-bot-playAction");
-    const botPauseAction = document.getElementById("au5-bot-puaseAction");
+    const botPauseAction = document.getElementById("au5-bot-pauseAction");
     botPlayAction == null ? void 0 : botPlayAction.addEventListener("click", () => {
       if (!this.platform || !this.meetingHubClient) return;
       const message = {
@@ -3656,6 +3665,32 @@ class UIHandlers {
       };
       this.meetingHubClient.sendMessage(message);
       this.chatPanel.pauseAndPlay(message);
+    });
+    return this;
+  }
+  handleMeetingCloseActions() {
+    const meetingCloseAction = document.getElementById("au5-meeting-closeAction");
+    meetingCloseAction == null ? void 0 : meetingCloseAction.addEventListener("click", () => {
+      var _a;
+      if (!this.platform || !this.meetingHubClient) return;
+      const meeting = JSON.parse(localStorage.getItem("au5-meetingId") || "null");
+      if (!meeting) {
+        return;
+      }
+      const meetingModel = {
+        meetId: (_a = this.platform) == null ? void 0 : _a.getMeetId(),
+        meetingId: meeting.meetingId
+      };
+      this.backendApi.closeMeeting(meetingModel).then(() => {
+        localStorage.removeItem("au5-meetingId");
+        chrome.runtime.sendMessage({
+          action: "CLOSE_SIDEPANEL",
+          panelUrl: this.config.service.panelUrl + "/meeting/my"
+        });
+      }).catch((error) => {
+        showToast("Failed to close meeting :(");
+        return;
+      });
     });
     return this;
   }

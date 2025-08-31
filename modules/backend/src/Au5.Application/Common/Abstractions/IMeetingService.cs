@@ -2,17 +2,17 @@ namespace Au5.Application.Common.Abstractions;
 
 public interface IMeetingService
 {
-	Meeting AddUserToMeeting(UserJoinedInMeetingMessage userJoined);
+	Task<Meeting> AddUserToMeeting(UserJoinedInMeetingMessage userJoined);
 
-	void AddGuestsToMeet(List<Participant> users, string meetId);
+	Task AddGuestsToMeet(List<Participant> users, string meetId);
 
-	string BotIsAdded(string meetId);
+	Task<string> BotIsAdded(string meetId);
 
-	bool PauseMeeting(string meetId, bool isPause);
+	Task<bool> PauseMeeting(string meetId, bool isPause);
 
-	bool UpsertBlock(EntryMessage entry);
+	Task<bool> UpsertBlock(EntryMessage entry);
 
-	void InsertBlock(EntryMessage entry);
+	Task AppliedReaction(ReactionAppliedMessage reaction);
 
-	void AppliedReaction(ReactionAppliedMessage reaction);
+	Task<Meeting> CloseMeeting(string meetId, CancellationToken cancellationToken);
 }

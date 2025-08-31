@@ -4,5 +4,7 @@ namespace Au5.Application.Common.Abstractions;
 
 public interface IBotFatherAdapter
 {
-	Task<Result<string>> CreateBotAsync(string baseUrl, BotPayload payload, CancellationToken cancellationToken);
+	Task<Result<string>> CreateBotContainerAsync(string baseUrl, BotPayload payload, CancellationToken cancellationToken);
+
+	Task<Result<string>> RemoveBotContainerAsync(string baseUrl, string meetId, string hashToken, CancellationToken cancellationToken);
 }

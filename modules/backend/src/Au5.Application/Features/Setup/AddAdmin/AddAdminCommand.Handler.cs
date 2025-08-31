@@ -31,7 +31,7 @@ public class AddAdminQueryHandler : IRequestHandler<AddAdminCommand, Result<AddA
 			Password = HashHelper.HashPassword(request.Password, userId),
 			IsActive = true,
 			Role = RoleTypes.Admin,
-			CreatedAt = DateTime.UtcNow,
+			CreatedAt = DateTime.Now,
 			PictureUrl = Constants.DefaultPictureUrl
 		};
 

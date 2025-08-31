@@ -83,3 +83,50 @@ curl -X POST http://localhost:8080/create-container \
     }
   }'
 ```
+
+## Remove Container Endpoint
+
+**Endpoint**: `POST /remove-container`
+
+**Description**: Finds and removes a Docker container based on the provided meetId and hashToken. The container is first stopped (if running) and then removed.
+
+### Request Body
+
+Send a JSON object with the following structure:
+
+```json
+{
+  "meetId": "dzc-awqw-ioi",
+  "hashToken": "abc123"
+}
+```
+
+### Response
+
+On success, returns a JSON object:
+
+```json
+{
+  "container_id": "abc123def456",
+  "message": "Container stopped and removed successfully",
+  "meetId": "dzc-awqw-ioi",
+  "hashToken": "abc123"
+}
+```
+
+### Error Responses
+
+- **404 Not Found**: If no container is found with the provided meetId and hashToken
+- **400 Bad Request**: If meetId or hashToken is missing from the request
+- **500 Internal Server Error**: If there's an error with Docker operations
+
+### Example cURL Command
+
+```bash
+curl -X POST http://localhost:8081/remove-container \
+  -H "Content-Type: application/json" \
+  -d '{
+    "meetId": "dzc-awqw-ioi",
+    "hashToken": "abc123"
+  }'
+```

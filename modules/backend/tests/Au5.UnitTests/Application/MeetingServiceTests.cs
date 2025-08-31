@@ -1,423 +1,805 @@
-// using Au5.Application;
-// using Au5.Application.Models.Messages;
-// using Au5.Domain.Entities;
-
-// namespace Au5.UnitTests.Application;
-// public class MeetingServiceTests
-// {
-// private const string MEETID = "oik-okwe-dew";
-// private const string PLATFORM = "Google Meet";
-// private readonly Guid _userId = Guid.NewGuid();
-
-// [Fact]
-// public async Task Should_NotAddDuplicateUser_When_AddUserToMeetingIsCalledTwiceWithSameUser()
-// {
-// var service = CreateServiceWithUser();
-
-// service.AddUserToMeeting(new UserJoinedInMeetingMessage()
-// {
-// User = new Participant() { Id = _userId },
-// MeetId = MEETID,
-// Platform = PLATFORM
-// });
-
-// var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
-// var participantList = result.participants.Where(u => u.Id == _userId).ToList();
-// Assert.Single(participantList);
-// }
-
-// [Fact]
-// public async Task Should_SetStatusToEnded_When_EndMeetingIsCalled()
-// {
-// var service = CreateServiceWithUser();
-
-// service.EndMeeting(MEETID);
-
-// var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
-// Assert.Equal(MeetingStatus.Ended, result.status);
-// }
-
-// [Fact]
-// public void Should_ReturnEmptyString_When_AddBotToNonExistentMeeting()
-// {
-// var service = CreateServiceWithUser();
-
-// var request = new RequestToAddBotMessage
-// {
-// MeetId = Guid.NewGuid().ToString(),
-// BotName = "Bot1",
-// User = new Participant { Id = Guid.NewGuid() }
-// };
-
-// var result = service.RequestToAddBot(request);
-// Assert.Equal(result, string.Empty);
-// }
-
-// [Fact]
-// public void Should_ReturnEmptyString_When_UserNotInMeetingTriesToAddBot()
-// {
-// var service = CreateServiceWithUser();
-
-// var request = new RequestToAddBotMessage
-// {
-// MeetId = Guid.NewGuid().ToString(),
-// BotName = "Bot1",
-// User = new Participant { FullName = "Mohammad Karimi" }
-// };
-
-// var result = service.RequestToAddBot(request);
-// Assert.Equal(result, string.Empty);
-// }
-
-// [Fact]
-// public void Should_ReturnNonEmptyString_When_UserInMeetingAddsBot()
-// {
-// var service = CreateServiceWithUser();
-
-// var request = new RequestToAddBotMessage
-// {
-// MeetId = MEETID,
-// BotName = "Bot1",
-// User = new Participant { Id = _userId }
-// };
-
-// var result = service.RequestToAddBot(request);
-// Assert.NotEqual(result, string.Empty);
-// }
-
-// [Theory]
-// [InlineData("user1,user2")]
-// [InlineData("userA,userB,userC")]
-// [InlineData("singleUser")]
-// public async Task Should_AddParticipants_When_AddParticipantToMeetIsCalled(string participantNamesCsv)
-// {
-// var service = CreateServiceWithUser();
-
-// var names = participantNamesCsv.Split(',');
-// var participants = names.Select(name => new Participant { FullName = name }).ToList();
-// service.AddParticipantToMeet(participants, MEETID);
-
-// var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
-// var participantFullNames = result.participants.Select(x => x.FullName).ToList();
-
-// foreach (var name in names)
-// {
-// Assert.Contains(name, participantFullNames);
-// }
-// }
-
-// [Fact]
-// public async Task Should_AddUser_When_AddUserToMeetingIsCalledAndMeetingDoesNotExist()
-// {
-// var service = CreateServiceWithUser();
-
-// var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
-// Assert.NotNull(result);
-// Assert.Contains(_userId, result.participants.Select(x => x.Id));
-// }
-
-// [Fact]
-// public async Task Should_SetBotNameAndCreator_When_AddBotIsCalled()
-// {
-// var botName = "Cando";
-// var service = CreateServiceWithUser();
-
-// var hash = service.RequestToAddBot(new RequestToAddBotMessage
-// {
-// MeetId = MEETID,
-// BotName = botName,
-// User = new Participant { Id = _userId }
-// });
-
-// var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
-// Assert.NotEqual(hash, string.Empty);
-// Assert.Equal(botName, result.botName);
-// Assert.Equal(_userId, result.creatorUserId);
-// Assert.Equal(_userId, result.botInviterUserId);
-// }
-
-// [Fact]
-// public async Task Should_AddNewParticipantsOnly_When_AddParticipantToMeetIsCalledMultipleTimes()
-// {
-// var service = CreateServiceWithUser();
-
-// service.AddParticipantToMeet([new Participant() { HasAccount = true, Id = _userId, FullName = "u1" }, new Participant() { FullName = "u2" }], MEETID);
-// service.AddParticipantToMeet([new Participant() { HasAccount = true, Id = _userId, FullName = "u1" }, new Participant() { FullName = "u3" }, new Participant() { FullName = "u2" }], MEETID);
-
-// var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
-// Assert.Equal(3, result.participants.Count);
-// }
-
-// [Fact]
-// public async Task Should_ChangeStatusToEnded_When_EndMeetingIsCalled()
-// {
-// var service = CreateServiceWithUser();
-
-// service.EndMeeting(MEETID);
-
-// var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
-// Assert.Equal(MeetingStatus.Ended, result.status);
-// }
-
-// [Fact]
-// public async Task Should_MarkBotAsAdded_When_BotIsAddedIsCalled()
-// {
-// var botName = "Cando";
-// var service = CreateServiceWithUser();
-
-// service.RequestToAddBot(new RequestToAddBotMessage
-// {
-// MeetId = MEETID,
-// BotName = botName,
-// User = new Participant { Id = _userId }
-// });
-
-// var botNameFromResponse = service.BotIsAdded(MEETID);
-// var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
-// Assert.Equal(botNameFromResponse, botName);
-// Assert.True(result.isBotAdded);
-// Assert.Equal(MeetingStatus.Recording, result.status);
-// }
-
-// [Fact]
-// public void Should_ReturnTrue_When_PauseMeetingIsCalledWithTrue()
-// {
-// var service = CreateServiceWithUser();
-
-// var paused = service.PauseMeeting(MEETID, true);
-// Assert.True(paused);
-// }
-
-// [Fact]
-// public async Task Should_InsertOrUpdateEntry_When_UpsertBlockIsCalled()
-// {
-// var service = CreateServiceWithUser();
-
-// var blockId = Guid.NewGuid();
-// var entry = new EntryMessage
-// {
-// MeetId = MEETID,
-// BlockId = blockId,
-// Content = "Initial",
-// Participant = new Participant { Id = _userId, FullName = "Mohammad Karimi" },
-// Timestamp = DateTime.UtcNow,
-// EntryType = "Transcription"
-// };
-
-// service.UpsertBlock(entry);
-
-// entry.Content = "Updated";
-// service.UpsertBlock(entry);
-
-// var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
-// var updatedEntry = result.entries.FirstOrDefault(e => e.blockId == blockId);
-// Assert.Equal("Updated", updatedEntry.content);
-// }
-
-// [Fact]
-// public async Task Should_AddNewEntry_When_InsertBlockIsCalled()
-// {
-// var service = CreateServiceWithUser();
-
-// var blockId = Guid.NewGuid();
-// var entry = new EntryMessage
-// {
-// MeetId = MEETID,
-// BlockId = blockId,
-// Content = "Text",
-// Participant = new Participant { Id = _userId, FullName = "Tester" },
-// Timestamp = DateTime.UtcNow,
-// EntryType = "Chat"
-// };
-
-// service.InsertBlock(entry);
-
-// var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
-// Assert.Single(result.entries);
-// }
-
-// [Fact]
-// public async Task Should_AddReaction_When_AppliedReactionIsCalledFirstTime()
-// {
-// var service = CreateServiceWithUser();
-
-// var blockId = Guid.NewGuid();
-// service.InsertBlock(new EntryMessage
-// {
-// MeetId = MEETID,
-// BlockId = blockId,
-// Content = "Msg",
-// Participant = new Participant { Id = _userId },
-// Timestamp = DateTime.UtcNow,
-// EntryType = "Transcription"
-// });
-
-// var reaction = new ReactionAppliedMessage
-// {
-// ReactionId = 1,
-// MeetId = MEETID,
-// BlockId = blockId,
-// ReactionType = "Like",
-// User = new Participant() { Id = _userId }
-// };
-
-// service.AppliedReaction(reaction);
-
-// var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
-// var entry = result.entries.FirstOrDefault(e => e.blockId == blockId);
-// var addedReaction = entry.reactions.FirstOrDefault(r => r.id == 1);
-
-// Assert.NotNull(addedReaction);
-// Assert.Contains(_userId, addedReaction.users);
-// }
-
-// [Fact]
-// public async Task Should_AddAndToggleReaction_When_AppliedReactionIsCalledTwice()
-// {
-// var service = CreateServiceWithUser();
-
-// var blockId = Guid.NewGuid();
-// service.InsertBlock(new EntryMessage
-// {
-// MeetId = MEETID,
-// BlockId = blockId,
-// Content = "Msg",
-// Participant = new Participant { Id = _userId },
-// Timestamp = DateTime.UtcNow,
-// EntryType = "Transcription"
-// });
-
-// var reaction = new ReactionAppliedMessage
-// {
-// ReactionId = 1,
-// MeetId = MEETID,
-// BlockId = blockId,
-// ReactionType = "Like",
-// User = new Participant() { Id = _userId }
-// };
-
-// service.AppliedReaction(reaction);
-// service.AppliedReaction(reaction);
-
-// var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
-// var entry = result.entries.FirstOrDefault(e => e.blockId == blockId);
-// Assert.DoesNotContain(_userId, entry.reactions.FirstOrDefault(r => r.id == 1).users);
-// }
-
-// [Fact]
-// public async Task Should_KeepReactionFromSecondUser_When_FirstUserRemovesReaction()
-// {
-// var service = CreateServiceWithUser(); // assumes _userId is User1
-// var user1 = _userId;
-// var user2 = Guid.NewGuid(); // Simulate another user
-
-// var blockId = Guid.NewGuid();
-// service.InsertBlock(new EntryMessage
-// {
-// MeetId = MEETID,
-// BlockId = blockId,
-// Content = "Message",
-// Participant = new Participant { Id = user1 },
-// Timestamp = DateTime.UtcNow,
-// EntryType = "Transcription"
-// });
-
-// service.AddUserToMeeting(new UserJoinedInMeetingMessage
-// {
-// User = new Participant { Id = user2 },
-// MeetId = MEETID,
-// Platform = PLATFORM
-// });
-
-// var reactionFromUser1 = new ReactionAppliedMessage
-// {
-// ReactionId = 1,
-// MeetId = MEETID,
-// BlockId = blockId,
-// ReactionType = "Like",
-// User = new Participant() { Id = user1 }
-// };
-
-// var reactionFromUser2 = new ReactionAppliedMessage
-// {
-// ReactionId = 1,
-// MeetId = MEETID,
-// BlockId = blockId,
-// ReactionType = "Like",
-// User = new Participant() { Id = user2 }
-// };
-
-// // Both users add the same reaction
-// service.AppliedReaction(reactionFromUser1);
-// service.AppliedReaction(reactionFromUser2);
-
-// // User1 toggles off their reaction
-// service.AppliedReaction(reactionFromUser1);
-
-// var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
-// var entry = result.entries.FirstOrDefault(e => e.blockId == blockId);
-// var reaction = entry.reactions.FirstOrDefault(r => r.id == 1);
-
-// Assert.NotNull(reaction);
-// Assert.DoesNotContain(user1, reaction.users);
-// Assert.Contains(user2, reaction.users);
-// Assert.Single(reaction.users); // Only user2 should remain
-// }
-
-// // [Fact]
-// // public async Task Should_ReturnMeetingWithNormalizedTimestamps_When_GetFullTranscriptionAsJsonIsCalledWithOverTwoHoursAnd100Entries()
-// // {
-// // var service = CreateServiceWithUser();
-
-// // var start = DateTime.Now;
-// // var totalEntries = 100;
-// // var intervalSeconds = 2 * 60 * 60 / totalEntries;
-
-// // for (var i = 0; i < totalEntries; i++)
-// // {
-// // var entry = new EntryMessage
-// // {
-// // MeetId = MEETID,
-// // BlockId = Guid.NewGuid(),
-// // Content = $"Entry {i + 1}",
-// // Participant = new Participant { Id = _userId, FullName = "User1" },
-// // Timestamp = start.AddSeconds(i * intervalSeconds),
-// // EntryType = "Transcription"
-// // };
-
-// // service.InsertBlock(entry);
-// // }
-
-// // var result = (await service.GetFullTranscriptionAsJson(MEETID)).Data;
-// // Assert.NotNull(result);
-// // Assert.Equal(totalEntries, result.entries.Count);
-
-// // var entries = result.entries.ToList();
-// // Assert.Equal("00:00:00", entries[0].timeline);
-// // Assert.Equal("00:12:00", entries[10].timeline);
-// // Assert.Equal("00:36:00", entries[30].timeline);
-// // Assert.Equal("01:12:00", entries[60].timeline);
-// // Assert.Equal("01:58:48", entries[99].timeline);
-// // }
-// private MeetingService CreateServiceWithUser()
-// {
-// _ = new List<Reaction>
-// {
-// new() { Id = 1, Type = "Like", Emoji = "⚡", ClassName = "reaction-like" },
-// new() { Id = 2, Type = "GoodPoint", Emoji = "⭐", ClassName = "reaction-important" },
-// new() { Id = 3, Type = "Goal", Emoji = "🎯", ClassName = "reaction-question" }
-// };
-
-// // var reactionServiceMock = new Mock<IReactionService>();
-// // reactionServiceMock.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(reactions);
-// var service = new MeetingService();
-// service.AddUserToMeeting(new UserJoinedInMeetingMessage
-// {
-// User = new Participant { Id = _userId },
-// MeetId = MEETID,
-// Platform = PLATFORM
-// });
-
-// return service;
-// }
-// }
+using Au5.Application.Common.Abstractions;
+using Au5.Application.Messages;
+using Au5.Application.Services;
+using Au5.Domain.Entities;
+
+namespace Au5.UnitTests.Application;
+
+public class MeetingServiceTests
+{
+	private readonly Mock<ICacheProvider> _cacheProviderMock;
+	private readonly MeetingService _meetingService;
+
+	public MeetingServiceTests()
+	{
+		_cacheProviderMock = new Mock<ICacheProvider>();
+		_meetingService = new MeetingService(_cacheProviderMock.Object);
+	}
+
+	[Fact]
+	public async Task AddUserToMeeting_WhenMeetingDoesNotExist_ShouldCreateNewMeeting()
+	{
+		var userJoined = new UserJoinedInMeetingMessage
+		{
+			MeetId = "meet123",
+			Platform = "GoogleMeet",
+			User = new Participant
+			{
+				Id = Guid.NewGuid(),
+				FullName = "Mohammad K",
+				PictureUrl = "https://example.com/picture.jpg",
+				HasAccount = true
+			}
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync((Meeting)null);
+
+		var result = await _meetingService.AddUserToMeeting(userJoined);
+
+		Assert.NotNull(result);
+		Assert.Equal(userJoined.MeetId, result.MeetId);
+		Assert.Equal(userJoined.Platform, result.Platform);
+		Assert.Equal(MeetingStatus.AddingBot, result.Status);
+		Assert.Single(result.Participants);
+		Assert.Equal(userJoined.User.Id, result.Participants.First().UserId);
+
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), TimeSpan.FromHours(1)), Times.Once);
+	}
+
+	[Fact]
+	public async Task AddUserToMeeting_WhenMeetingIsEnded_ShouldCreateNewMeeting()
+	{
+		var existingMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Ended,
+			Participants = []
+		};
+
+		var userJoined = new UserJoinedInMeetingMessage
+		{
+			MeetId = "meet123",
+			Platform = "GoogleMeet",
+			User = new Participant
+			{
+				Id = Guid.NewGuid(),
+				FullName = "Mohammad K",
+				PictureUrl = "https://example.com/picture.jpg",
+				HasAccount = true
+			}
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(existingMeeting);
+
+		var result = await _meetingService.AddUserToMeeting(userJoined);
+
+		Assert.NotNull(result);
+		Assert.Equal(userJoined.MeetId, result.MeetId);
+		Assert.Equal(MeetingStatus.AddingBot, result.Status);
+		Assert.NotEqual(existingMeeting.Id, result.Id); // Should be a new meeting
+	}
+
+	[Fact]
+	public async Task AddUserToMeeting_WhenMeetingExistsAndUserNotInMeeting_ShouldAddUserToExistingMeeting()
+	{
+		var existingParticipantId = Guid.NewGuid();
+		var newUserId = Guid.NewGuid();
+
+		var existingMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Recording,
+			Participants =
+			[
+				new() { UserId = existingParticipantId }
+			]
+		};
+
+		var userJoined = new UserJoinedInMeetingMessage
+		{
+			MeetId = "meet123",
+			Platform = "GoogleMeet",
+			User = new Participant
+			{
+				Id = newUserId,
+				FullName = "Jane Doe",
+				PictureUrl = "https://example.com/jane.jpg",
+				HasAccount = true
+			}
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(existingMeeting);
+
+		var result = await _meetingService.AddUserToMeeting(userJoined);
+
+		Assert.NotNull(result);
+		Assert.Equal(2, result.Participants.Count);
+		Assert.Contains(result.Participants, p => p.UserId == existingParticipantId);
+		Assert.Contains(result.Participants, p => p.UserId == newUserId);
+	}
+
+	[Fact]
+	public async Task AddUserToMeeting_WhenUserAlreadyInMeeting_ShouldNotAddDuplicateUser()
+	{
+		var userId = Guid.NewGuid();
+
+		var existingMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Recording,
+			Participants =
+			[
+				new() { UserId = userId }
+			]
+		};
+
+		var userJoined = new UserJoinedInMeetingMessage
+		{
+			MeetId = "meet123",
+			Platform = "GoogleMeet",
+			User = new Participant
+			{
+				Id = userId,
+				FullName = "Mohammad K",
+				PictureUrl = "https://example.com/john.jpg",
+				HasAccount = true
+			}
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(existingMeeting);
+
+		var result = await _meetingService.AddUserToMeeting(userJoined);
+
+		Assert.NotNull(result);
+		Assert.Single(result.Participants);
+		Assert.Equal(userId, result.Participants.First().UserId);
+	}
+
+	[Fact]
+	public async Task AddGuestsToMeet_WhenMeetingDoesNotExist_ShouldNotAddGuests()
+	{
+		var guests = new List<Participant>
+		{
+			new()
+			{
+				Id = Guid.NewGuid(),
+				FullName = "Guest User",
+				HasAccount = false,
+				PictureUrl = "https://example.com/guest.jpg"
+			}
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync((Meeting)null);
+
+		await _meetingService.AddGuestsToMeet(guests, "meet123");
+
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), It.IsAny<TimeSpan>()), Times.Never);
+	}
+
+	[Fact]
+	public async Task AddGuestsToMeet_WhenMeetingIsEnded_ShouldNotAddGuests()
+	{
+		var endedMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Ended,
+			Guests = []
+		};
+
+		var guests = new List<Participant>
+		{
+			new()
+			{
+				Id = Guid.NewGuid(),
+				FullName = "Guest User",
+				HasAccount = false,
+				PictureUrl = "https://example.com/guest.jpg"
+			}
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(endedMeeting);
+
+		await _meetingService.AddGuestsToMeet(guests, "meet123");
+
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), It.IsAny<TimeSpan>()), Times.Never);
+	}
+
+	[Fact]
+	public async Task AddGuestsToMeet_WhenValidGuestsWithoutAccount_ShouldAddGuestsToMeeting()
+	{
+		var activeMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Recording,
+			Guests = []
+		};
+
+		var guests = new List<Participant>
+		{
+			new()
+			{
+				Id = Guid.NewGuid(),
+				FullName = "Guest User 1",
+				HasAccount = false,
+				PictureUrl = "https://example.com/guest1.jpg"
+			},
+			new()
+			{
+				Id = Guid.NewGuid(),
+				FullName = "Guest User 2",
+				HasAccount = false,
+				PictureUrl = "https://example.com/guest2.jpg"
+			}
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(activeMeeting);
+
+		await _meetingService.AddGuestsToMeet(guests, "meet123");
+
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.Is<Meeting>(m => m.Guests.Count == 2), TimeSpan.FromHours(1)), Times.Once);
+	}
+
+	[Fact]
+	public async Task AddGuestsToMeet_WhenGuestAlreadyExists_ShouldNotAddDuplicateGuest()
+	{
+		var existingGuestName = "Existing Guest";
+		var activeMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Recording,
+			Guests =
+			[
+				new()
+				{
+					MeetingId = Guid.NewGuid(),
+					FullName = existingGuestName,
+					PictureUrl = "https://example.com/existing.jpg"
+				},
+			]
+		};
+
+		var guests = new List<Participant>
+		{
+			new()
+			{
+				Id = Guid.NewGuid(),
+				FullName = existingGuestName,
+				HasAccount = false,
+				PictureUrl = "https://example.com/guest.jpg"
+			}
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(activeMeeting);
+
+		await _meetingService.AddGuestsToMeet(guests, "meet123");
+
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.Is<Meeting>(m => m.Guests.Count == 1), TimeSpan.FromHours(1)), Times.Once);
+	}
+
+	[Fact]
+	public async Task AddGuestsToMeet_WhenGuestHasAccount_ShouldNotAddGuest()
+	{
+		var activeMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Recording,
+			Guests = []
+		};
+
+		var guests = new List<Participant>
+		{
+			new()
+			{
+				Id = Guid.NewGuid(),
+				FullName = "User With Account",
+				HasAccount = true,
+				PictureUrl = "https://example.com/user.jpg"
+			}
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(activeMeeting);
+
+		await _meetingService.AddGuestsToMeet(guests, "meet123");
+
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.Is<Meeting>(m => m.Guests.Count == 0), TimeSpan.FromHours(1)), Times.Once);
+	}
+
+	[Fact]
+	public async Task BotIsAdded_WhenMeetingDoesNotExist_ShouldReturnEmptyString()
+	{
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync((Meeting)null);
+
+		var result = await _meetingService.BotIsAdded("meet123");
+
+		Assert.Equal(string.Empty, result);
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), It.IsAny<TimeSpan>()), Times.Never);
+	}
+
+	[Fact]
+	public async Task BotIsAdded_WhenMeetingIsEnded_ShouldReturnEmptyString()
+	{
+		var endedMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Ended,
+			IsBotAdded = false
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(endedMeeting);
+
+		var result = await _meetingService.BotIsAdded("meet123");
+
+		Assert.Equal(string.Empty, result);
+	}
+
+	[Fact]
+	public async Task BotIsAdded_WhenBotNotYetAdded_ShouldAddBotAndReturnBotName()
+	{
+		var activeMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.AddingBot,
+			IsBotAdded = false,
+			BotName = null
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(activeMeeting);
+
+		var result = await _meetingService.BotIsAdded("meet123");
+
+		Assert.Equal("Cando", result);
+		Assert.True(activeMeeting.IsBotAdded);
+		Assert.Equal("Cando", activeMeeting.BotName);
+		Assert.Equal(MeetingStatus.Recording, activeMeeting.Status);
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromHours(1)), Times.Once);
+	}
+
+	[Fact]
+	public async Task BotIsAdded_WhenBotAlreadyAdded_ShouldReturnExistingBotName()
+	{
+		var activeMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Recording,
+			IsBotAdded = true,
+			BotName = "Cando"
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(activeMeeting);
+
+		var result = await _meetingService.BotIsAdded("meet123");
+
+		Assert.Equal("Cando", result);
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromHours(1)), Times.Once);
+	}
+
+	[Fact]
+	public async Task PauseMeeting_WhenMeetingDoesNotExist_ShouldReturnFalse()
+	{
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync((Meeting)null);
+
+		var result = await _meetingService.PauseMeeting("meet123", true);
+
+		Assert.False(result);
+	}
+
+	[Fact]
+	public async Task PauseMeeting_WhenMeetingIsEnded_ShouldReturnFalse()
+	{
+		var endedMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Ended
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(endedMeeting);
+
+		var result = await _meetingService.PauseMeeting("meet123", true);
+
+		Assert.False(result);
+	}
+
+	[Fact]
+	public async Task PauseMeeting_WhenPausingActiveMeeting_ShouldPauseMeetingAndReturnTrue()
+	{
+		var activeMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Recording
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(activeMeeting);
+
+		var result = await _meetingService.PauseMeeting("meet123", true);
+
+		Assert.True(result);
+		Assert.Equal(MeetingStatus.Paused, activeMeeting.Status);
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromHours(1)), Times.Once);
+	}
+
+	[Fact]
+	public async Task PauseMeeting_WhenResumingPausedMeeting_ShouldResumeMeetingAndReturnTrue()
+	{
+		var pausedMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Paused
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(pausedMeeting);
+
+		var result = await _meetingService.PauseMeeting("meet123", false);
+
+		Assert.True(result);
+		Assert.Equal(MeetingStatus.Recording, pausedMeeting.Status);
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), pausedMeeting, TimeSpan.FromHours(1)), Times.Once);
+	}
+
+	[Fact]
+	public async Task UpsertBlock_WhenMeetingDoesNotExist_ShouldReturnFalse()
+	{
+		var entry = new EntryMessage
+		{
+			MeetId = "meet123",
+			BlockId = Guid.NewGuid(),
+			Content = "Test content",
+			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Mohammad K" },
+			Timestamp = DateTime.Now,
+			EntryType = "Transcription"
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync((Meeting)null);
+
+		var result = await _meetingService.UpsertBlock(entry);
+
+		Assert.False(result);
+	}
+
+	[Fact]
+	public async Task UpsertBlock_WhenMeetingIsPaused_ShouldReturnFalse()
+	{
+		var pausedMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Paused,
+			Entries = []
+		};
+
+		var entry = new EntryMessage
+		{
+			MeetId = "meet123",
+			BlockId = Guid.NewGuid(),
+			Content = "Test content",
+			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Mohammad K" },
+			Timestamp = DateTime.Now,
+			EntryType = "Transcription"
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(pausedMeeting);
+
+		var result = await _meetingService.UpsertBlock(entry);
+
+		Assert.False(result);
+	}
+
+	[Fact]
+	public async Task UpsertBlock_WhenBlockExists_ShouldUpdateExistingBlockAndReturnTrue()
+	{
+		var blockId = Guid.NewGuid();
+		var participantId = Guid.NewGuid();
+
+		var existingEntry = new Entry
+		{
+			Id = 1,
+			BlockId = blockId,
+			Content = "Original content",
+			ParticipantId = participantId,
+			FullName = "Mohammad K",
+			Timestamp = DateTime.Now.AddMinutes(-5),
+			EntryType = "Transcription",
+			Reactions = []
+		};
+
+		var activeMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Recording,
+			Entries = [existingEntry]
+		};
+
+		var entry = new EntryMessage
+		{
+			MeetId = "meet123",
+			BlockId = blockId,
+			Content = "Updated content",
+			Participant = new Participant { Id = participantId, FullName = "Mohammad K" },
+			Timestamp = DateTime.Now,
+			EntryType = "Transcription"
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(activeMeeting);
+
+		var result = await _meetingService.UpsertBlock(entry);
+
+		Assert.True(result);
+		Assert.Equal("Updated content", existingEntry.Content);
+		Assert.Single(activeMeeting.Entries);
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromHours(1)), Times.Once);
+	}
+
+	[Fact]
+	public async Task UpsertBlock_WhenBlockDoesNotExist_ShouldCreateNewBlockAndReturnTrue()
+	{
+		var activeMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Recording,
+			Entries = []
+		};
+
+		var entry = new EntryMessage
+		{
+			MeetId = "meet123",
+			BlockId = Guid.NewGuid(),
+			Content = "New content",
+			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Jane Doe" },
+			Timestamp = DateTime.Now,
+			EntryType = "Transcription"
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(activeMeeting);
+
+		var result = await _meetingService.UpsertBlock(entry);
+
+		Assert.True(result);
+		Assert.Single(activeMeeting.Entries);
+
+		var addedEntry = activeMeeting.Entries.First();
+		Assert.Equal(entry.BlockId, addedEntry.BlockId);
+		Assert.Equal(entry.Content, addedEntry.Content);
+		Assert.Equal(entry.Participant.Id, addedEntry.ParticipantId);
+		Assert.Equal(entry.Participant.FullName, addedEntry.FullName);
+		Assert.Equal(entry.EntryType, addedEntry.EntryType);
+		Assert.Empty(addedEntry.Reactions);
+
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromHours(1)), Times.Once);
+	}
+
+	[Fact]
+	public async Task AppliedReaction_WhenMeetingDoesNotExist_ShouldNotApplyReaction()
+	{
+		var reaction = new ReactionAppliedMessage
+		{
+			MeetId = "meet123",
+			BlockId = Guid.NewGuid(),
+			ReactionId = 1,
+			User = new Participant { Id = Guid.NewGuid(), FullName = "Mohammad K" },
+			ReactionType = "👍"
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync((Meeting)null);
+
+		await _meetingService.AppliedReaction(reaction);
+
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), It.IsAny<TimeSpan>()), Times.Never);
+	}
+
+	[Fact]
+	public async Task AppliedReaction_WhenBlockDoesNotExist_ShouldNotApplyReaction()
+	{
+		var activeMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Recording,
+			Entries = []
+		};
+
+		var reaction = new ReactionAppliedMessage
+		{
+			MeetId = "meet123",
+			BlockId = Guid.NewGuid(),
+			ReactionId = 1,
+			User = new Participant { Id = Guid.NewGuid(), FullName = "Mohammad K" },
+			ReactionType = "👍"
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(activeMeeting);
+
+		await _meetingService.AppliedReaction(reaction);
+
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), It.IsAny<TimeSpan>()), Times.Never);
+	}
+
+	[Fact]
+	public async Task AppliedReaction_WhenReactionDoesNotExist_ShouldCreateNewReaction()
+	{
+		var blockId = Guid.NewGuid();
+		var participantId = Guid.NewGuid();
+
+		var entry = new Entry
+		{
+			Id = 1,
+			BlockId = blockId,
+			Content = "Test content",
+			ParticipantId = Guid.NewGuid(),
+			Reactions = []
+		};
+
+		var activeMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Recording,
+			Entries = [entry]
+		};
+
+		var reaction = new ReactionAppliedMessage
+		{
+			MeetId = "meet123",
+			BlockId = blockId,
+			ReactionId = 1,
+			User = new Participant { Id = participantId, FullName = "Mohammad K" },
+			ReactionType = "👍"
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(activeMeeting);
+
+		await _meetingService.AppliedReaction(reaction);
+
+		Assert.Single(entry.Reactions);
+
+		var addedReaction = entry.Reactions.First();
+		Assert.Equal(reaction.ReactionId, addedReaction.ReactionId);
+		Assert.Equal(entry.Id, addedReaction.EntryId);
+		Assert.Single(addedReaction.Participants);
+		Assert.Equal(participantId, addedReaction.Participants.First().Id);
+	}
+
+	[Fact]
+	public async Task AppliedReaction_WhenReactionExistsAndUserNotInParticipants_ShouldAddUserToReaction()
+	{
+		var blockId = Guid.NewGuid();
+		var existingParticipantId = Guid.NewGuid();
+		var newParticipantId = Guid.NewGuid();
+
+		var existingReaction = new AppliedReactions
+		{
+			ReactionId = 1,
+			EntryId = 1,
+			Participants =
+			[
+				new() { Id = existingParticipantId, FullName = "Existing User" }
+			]
+		};
+
+		var entry = new Entry
+		{
+			Id = 1,
+			BlockId = blockId,
+			Content = "Test content",
+			ParticipantId = Guid.NewGuid(),
+			Reactions = [existingReaction]
+		};
+
+		var activeMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Recording,
+			Entries = [entry]
+		};
+
+		var reaction = new ReactionAppliedMessage
+		{
+			MeetId = "meet123",
+			BlockId = blockId,
+			ReactionId = 1,
+			User = new Participant { Id = newParticipantId, FullName = "New User" },
+			ReactionType = "👍"
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(activeMeeting);
+
+		await _meetingService.AppliedReaction(reaction);
+
+		Assert.Single(entry.Reactions);
+		Assert.Equal(2, existingReaction.Participants.Count);
+		Assert.Contains(existingReaction.Participants, p => p.Id == existingParticipantId);
+		Assert.Contains(existingReaction.Participants, p => p.Id == newParticipantId);
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromHours(1)), Times.Once);
+	}
+
+	[Fact]
+	public async Task AppliedReaction_WhenReactionExistsAndUserAlreadyInParticipants_ShouldRemoveUserFromReaction()
+	{
+		var blockId = Guid.NewGuid();
+		var participantId = Guid.NewGuid();
+
+		var existingReaction = new AppliedReactions
+		{
+			ReactionId = 1,
+			EntryId = 1,
+			Participants =
+			[
+				new() { Id = participantId, FullName = "Mohammad K" }
+			]
+		};
+
+		var entry = new Entry
+		{
+			Id = 1,
+			BlockId = blockId,
+			Content = "Test content",
+			ParticipantId = Guid.NewGuid(),
+			Reactions = [existingReaction]
+		};
+
+		var activeMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Recording,
+			Entries = [entry]
+		};
+
+		var reaction = new ReactionAppliedMessage
+		{
+			MeetId = "meet123",
+			BlockId = blockId,
+			ReactionId = 1,
+			User = new Participant { Id = participantId, FullName = "Mohammad K" },
+			ReactionType = "👍"
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(activeMeeting);
+
+		await _meetingService.AppliedReaction(reaction);
+
+		Assert.Single(entry.Reactions);
+		Assert.Empty(existingReaction.Participants);
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromHours(1)), Times.Once);
+	}
+}
