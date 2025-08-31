@@ -1,5 +1,5 @@
+using Au5.Application.Common;
 using Au5.Application.Common.Abstractions;
-using Au5.Application.Common.Resources;
 using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.UserManagement.GetMyInfo;
@@ -12,7 +12,7 @@ public class GetMyInfoQueryHandler(IApplicationDbContext applicationDbContext) :
 	{
 		var user = await _dbContext.Set<User>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == request.UserId && x.IsActive, cancellationToken);
 		return user == null
-			? Error.Unauthorized(description: AppResources.UnAuthorizedAction)
+			? Error.Unauthorized(description: AppResources.Auth.UnAuthorizedAction)
 			: new Participant
 			{
 				Id = user.Id,

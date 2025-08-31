@@ -39,7 +39,7 @@ public class SystemConfigCommandValidatorTests
 		var result = _validator.TestValidate(model);
 
 		result.ShouldHaveValidationErrorFor(propertyName)
-			  .WithErrorMessage(AppResources.Required);
+			  .WithErrorMessage(AppResources.Validation.Required);
 	}
 
 	[Theory]
@@ -55,7 +55,7 @@ public class SystemConfigCommandValidatorTests
 		var result = _validator.TestValidate(model);
 
 		result.ShouldHaveValidationErrorFor(propertyName)
-			  .WithErrorMessage(AppResources.InvalidUrl);
+			  .WithErrorMessage(AppResources.Validation.InvalidUrl);
 	}
 
 	[Theory]
@@ -70,7 +70,7 @@ public class SystemConfigCommandValidatorTests
 		var result = _validator.TestValidate(model);
 
 		result.ShouldHaveValidationErrorFor(x => x.Direction)
-			  .WithErrorMessage(AppResources.InvalidDirection);
+			  .WithErrorMessage(AppResources.Validation.InvalidDirection);
 	}
 
 	[Theory]
@@ -86,7 +86,7 @@ public class SystemConfigCommandValidatorTests
 		var result = _validator.TestValidate(model);
 
 		result.ShouldHaveValidationErrorFor(x => x.Language)
-			  .WithErrorMessage(AppResources.InvalidLanguageFormat);
+			  .WithErrorMessage(AppResources.Validation.InvalidLanguageFormat);
 	}
 
 	[Theory]
@@ -101,7 +101,7 @@ public class SystemConfigCommandValidatorTests
 		var result = _validator.TestValidate(model);
 
 		result.ShouldHaveValidationErrorFor(x => x.MeetingTranscriptionModel)
-			  .WithErrorMessage(AppResources.InvalidMeetingTranscriptionModel);
+			  .WithErrorMessage(AppResources.Validation.InvalidMeetingTranscriptionModel);
 	}
 
 	private SystemConfigCommand CreateValidCommand() => new()

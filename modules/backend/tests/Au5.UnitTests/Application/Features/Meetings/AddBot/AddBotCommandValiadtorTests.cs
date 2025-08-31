@@ -5,7 +5,6 @@ namespace Au5.UnitTests.Application.Features.Meetings.AddBot;
 
 public class AddBotCommandValiadtorTests
 {
-	private const string RequiredMessage = "property can not be empty";
 	private readonly AddBotCommandValiadtor _validator = new();
 
 	[Theory]
@@ -28,7 +27,7 @@ public class AddBotCommandValiadtorTests
 		var result = _validator.TestValidate(command);
 
 		result.ShouldHaveValidationErrorFor(propertyName)
-			.WithErrorMessage(RequiredMessage);
+			.WithErrorMessage(AppResources.Validation.Required);
 	}
 
 	[Fact]

@@ -42,7 +42,7 @@ public class CloseMeetingByUserCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
-		Assert.Equal("Meeting not found", result.Error.Description);
+		Assert.Equal(AppResources.Meeting.NotFound, result.Error.Description);
 	}
 
 	[Fact]
@@ -75,7 +75,7 @@ public class CloseMeetingByUserCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
-		Assert.Equal("There is No Meeting Content", result.Error.Description);
+		Assert.Equal(AppResources.Meeting.NoContent, result.Error.Description);
 	}
 
 	[Fact]
@@ -158,14 +158,14 @@ public class CloseMeetingByUserCommandHandlerTests
 			.ReturnsAsync(meetingContent);
 
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
-			.ReturnsAsync(Result.Failure(Error.Failure(description: "Failed to close meeting")));
+			.ReturnsAsync(Result.Failure(Error.Failure(description: AppResources.Meeting.FailedToClose)));
 
 		var command = new CloseMeetingByUserCommand(meeting.Id, meeting.MeetId);
 
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
-		Assert.Equal("Failed to close meeting", result.Error.Description);
+		Assert.Equal(AppResources.Meeting.FailedToClose, result.Error.Description);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 	}
 
@@ -197,7 +197,7 @@ public class CloseMeetingByUserCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
-		Assert.Equal(AppResources.SystemIsNotConfigured, result.Error.Description);
+		Assert.Equal(AppResources.System.IsNotConfigured, result.Error.Description);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
 		_botFatherAdapter.Verify(x => x.RemoveBotContainerAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 	}

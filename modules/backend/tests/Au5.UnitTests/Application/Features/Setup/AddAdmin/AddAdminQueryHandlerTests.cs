@@ -44,7 +44,7 @@ public class AddAdminQueryHandlerTests
 		var result = await _handler.Handle(request, CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
-		Assert.Equal(AppResources.UnAuthorizedAction, result.Error.Description);
+		Assert.Equal(AppResources.Auth.UnAuthorizedAction, result.Error.Description);
 	}
 
 	[Fact]

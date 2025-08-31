@@ -111,6 +111,6 @@ public class SystemConfigCommandHandlerTests
 		dbSet.Verify(x => x.Add(It.IsAny<SystemConfig>()), Times.Once);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 		Assert.False(result.IsSuccess);
-		Assert.Equal(AppResources.FailedToConfigSystem, result.Error.Description);
+		Assert.Equal(AppResources.System.FailedToConfig, result.Error.Description);
 	}
 }

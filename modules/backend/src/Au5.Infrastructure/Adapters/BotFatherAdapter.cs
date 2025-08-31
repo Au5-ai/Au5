@@ -17,22 +17,22 @@ public class BotFatherAdapter(IHttpClientFactory httpClientFactory, ILogger<BotF
 		string baseUrl,
 		BotPayload payload,
 		CancellationToken cancellationToken) =>
-		PostJsonAsync(
-			url: $"{baseUrl}/create-container",
-			payload: payload,
-			failureMessage: AppResources.FailedToAddBot,
-			cancellationToken: cancellationToken);
+	PostJsonAsync(
+		url: $"{baseUrl}/create-container",
+		payload: payload,
+		failureMessage: AppResources.BotFather.FailedToAdd,
+		cancellationToken: cancellationToken);
 
 	public Task<Result<string>> RemoveBotContainerAsync(
 		string baseUrl,
 		string meetId,
 		string hashToken,
 		CancellationToken cancellationToken) =>
-		PostJsonAsync(
-			url: $"{baseUrl}/remove-container",
-			payload: new { MeetId = meetId, HashToken = hashToken },
-			failureMessage: AppResources.FailedToRemoveBot,
-			cancellationToken: cancellationToken);
+	PostJsonAsync(
+		url: $"{baseUrl}/remove-container",
+		payload: new { MeetId = meetId, HashToken = hashToken },
+		failureMessage: AppResources.BotFather.FailedToRemove,
+		cancellationToken: cancellationToken);
 
 	private async Task<Result<string>> PostJsonAsync<T>(
 		string url,
@@ -65,7 +65,7 @@ public class BotFatherAdapter(IHttpClientFactory httpClientFactory, ILogger<BotF
 		catch (Exception ex)
 		{
 			_logger.LogError(ex, "Error communicating with BotFather at {Url}", url);
-			return Error.Failure(description: AppResources.FailedCommunicateWithBotFather);
+			return Error.Failure(description: AppResources.BotFather.FailedCommunicateWithBotFather);
 		}
 	}
 }

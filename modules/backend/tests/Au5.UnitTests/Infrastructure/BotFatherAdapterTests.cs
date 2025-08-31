@@ -1,10 +1,9 @@
 using System.Net;
 using Au5.Application.Services.Models;
 using Au5.Infrastructure.Adapters;
-using Au5.Infrastructure.Common;
 using Microsoft.Extensions.Logging;
 
-namespace Au5.UnitTests.Infrastructure.Adapters;
+namespace Au5.UnitTests.Infrastructure;
 
 public class BotFatherAdapterTests
 {
@@ -60,7 +59,7 @@ public class BotFatherAdapterTests
 		var result = await adapter.CreateBotContainerAsync("http://localhost", payload, CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
-		Assert.Equal(AppResources.FailedToAddBot, result.Error.Description);
+		Assert.Equal(AppResources.BotFather.FailedToAdd, result.Error.Description);
 	}
 
 	[Fact]
@@ -77,7 +76,7 @@ public class BotFatherAdapterTests
 		var result = await adapter.CreateBotContainerAsync("http://localhost", payload, CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
-		Assert.Equal(AppResources.FailedCommunicateWithBotFather, result.Error.Description);
+		Assert.Equal(AppResources.BotFather.FailedCommunicateWithBotFather, result.Error.Description);
 	}
 
 	// --- Test Helpers ---

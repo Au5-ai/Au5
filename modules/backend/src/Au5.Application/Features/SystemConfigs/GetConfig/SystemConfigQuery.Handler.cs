@@ -1,5 +1,5 @@
+using Au5.Application.Common;
 using Au5.Application.Common.Abstractions;
-using Au5.Application.Common.Resources;
 using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.SystemConfigs.GetConfig;
@@ -19,7 +19,7 @@ public class SystemConfigQueryHandler : IRequestHandler<SystemConfigQuery, Resul
 
 		if (existingConfig is null)
 		{
-			return Error.Failure(description: AppResources.SystemIsNotConfigured);
+			return Error.Failure(description: AppResources.System.IsNotConfigured);
 		}
 
 		return existingConfig;

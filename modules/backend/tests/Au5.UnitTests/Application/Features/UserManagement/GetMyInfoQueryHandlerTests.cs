@@ -66,7 +66,7 @@ public class GetMyInfoQueryHandlerTests
 
 		Assert.False(result.IsSuccess);
 		Assert.Null(result.Data);
-		Assert.Equal(AppResources.UnAuthorizedAction, result.Error.Description);
+		Assert.Equal(AppResources.Auth.UnAuthorizedAction, result.Error.Description);
 	}
 
 	[Fact]
@@ -84,6 +84,6 @@ public class GetMyInfoQueryHandlerTests
 		Assert.False(result.IsSuccess);
 		Assert.Null(result.Data);
 		Assert.Equal(HttpStatusCode.Unauthorized, result.Error.Type);
-		Assert.Equal(AppResources.UnAuthorizedAction, result.Error.Description);
+		Assert.Equal(AppResources.Auth.UnAuthorizedAction, result.Error.Description);
 	}
 }

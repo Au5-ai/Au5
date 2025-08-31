@@ -1,5 +1,5 @@
+using Au5.Application.Common;
 using Au5.Application.Common.Abstractions;
-using Au5.Application.Common.Resources;
 using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.SystemConfigs.SetConfig;
@@ -63,6 +63,6 @@ public class SystemConfigCommandHandler : IRequestHandler<SystemConfigCommand, R
 		}
 
 		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
-		return dbResult.IsSuccess ? Result.Success() : Error.Failure(description: AppResources.FailedToConfigSystem);
+		return dbResult.IsSuccess ? Result.Success() : Error.Failure(description: AppResources.System.FailedToConfig);
 	}
 }

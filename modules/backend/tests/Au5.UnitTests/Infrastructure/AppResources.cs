@@ -1,12 +1,12 @@
-namespace Au5.Infrastructure.Common;
+namespace Au5.UnitTests.Infrastructure;
 
 /// <summary>
 /// Infrastructure layer resource strings organized by category and component.
 /// </summary>
-internal static class AppResources
+public static class AppResources
 {
 	/// <summary>
-	/// Bot management related messages.
+	/// Bot management and communication related errors.
 	/// </summary>
 	internal static class BotFather
 	{

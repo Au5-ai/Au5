@@ -1,6 +1,5 @@
 using Au5.Application.Common;
 using Au5.Application.Common.Abstractions;
-using Au5.Application.Common.Resources;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -26,7 +25,7 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 		var config = await _dbContext.Set<SystemConfig>().AsNoTracking().FirstOrDefaultAsync(cancellationToken);
 		if (config is null)
 		{
-			return Error.Failure(description: AppResources.SystemIsNotConfigured);
+			return Error.Failure(description: AppResources.System.IsNotConfigured);
 		}
 
 		var meeting = await _dbContext.Set<Meeting>()
@@ -34,7 +33,7 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 
 		if (meeting is null)
 		{
-			return Error.BadRequest(description: AppResources.MeetingNotFound);
+			return Error.BadRequest(description: AppResources.Meeting.NotFound);
 		}
 
 		var meetingContent = await _meetingService.CloseMeeting(request.MeetId, cancellationToken);
@@ -58,9 +57,9 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 
 			return dbResult.IsSuccess
 				? true
-				: Error.Failure(description: AppResources.FailedToCloseMeeting);
+				: Error.Failure(description: AppResources.Meeting.FailedToClose);
 		}
 
-		return Error.Failure(description: AppResources.NoMeetingContent);
+		return Error.Failure(description: AppResources.Meeting.NoContent);
 	}
 }

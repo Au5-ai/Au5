@@ -13,7 +13,7 @@ public class LoginCommandValidatorTests
 		var result = _validator.TestValidate(command);
 
 		result.ShouldHaveValidationErrorFor(x => x.Username)
-			.WithErrorMessage(AppResources.Required);
+			.WithErrorMessage(AppResources.Validation.Required);
 	}
 
 	[Fact]
@@ -23,7 +23,7 @@ public class LoginCommandValidatorTests
 		var result = _validator.TestValidate(command);
 
 		result.ShouldHaveValidationErrorFor(x => x.Username)
-			.WithErrorMessage(AppResources.InvalidUsernameFormat);
+			.WithErrorMessage(AppResources.Validation.InvalidUsernameFormat);
 	}
 
 	[Fact]
@@ -33,7 +33,7 @@ public class LoginCommandValidatorTests
 		var result = _validator.TestValidate(command);
 
 		result.ShouldHaveValidationErrorFor(x => x.Password)
-			.WithErrorMessage(AppResources.Required);
+			.WithErrorMessage(AppResources.Validation.Required);
 	}
 
 	[Fact]
@@ -43,7 +43,7 @@ public class LoginCommandValidatorTests
 		var result = _validator.TestValidate(command);
 
 		result.ShouldHaveValidationErrorFor(x => x.Password)
-			.WithErrorMessage(AppResources.InvalidPasswordFormat);
+			.WithErrorMessage(AppResources.Validation.InvalidPasswordFormat);
 	}
 
 	[Fact]

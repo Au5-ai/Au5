@@ -1,6 +1,5 @@
 using Au5.Application.Common;
 using Au5.Application.Common.Abstractions;
-using Au5.Application.Common.Resources;
 using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.Setup.AddAdmin;
@@ -19,7 +18,7 @@ public class AddAdminQueryHandler : IRequestHandler<AddAdminCommand, Result<AddA
 		var admin = await _dbContext.Set<User>().FirstOrDefaultAsync(x => x.Role == RoleTypes.Admin && x.IsActive, cancellationToken);
 		if (admin is not null)
 		{
-			return Error.Unauthorized(description: AppResources.UnAuthorizedAction);
+			return Error.Unauthorized(description: AppResources.Auth.UnAuthorizedAction);
 		}
 
 		var userId = Guid.NewGuid();
@@ -39,7 +38,7 @@ public class AddAdminQueryHandler : IRequestHandler<AddAdminCommand, Result<AddA
 		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
 
 		return dbResult.IsFailure
-			? Error.Failure(description: AppResources.FailedToSetup)
+			? Error.Failure(description: AppResources.System.FailedToSetup)
 			: new AddAdminResponse
 			{
 				IsDone = dbResult.IsSuccess

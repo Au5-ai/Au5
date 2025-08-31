@@ -1,4 +1,4 @@
-namespace Au5.UnitTests.Application;
+namespace Au5.Application.Common;
 
 /// <summary>
 /// Application resource strings organized by category.

@@ -1,5 +1,5 @@
+using Au5.Application.Common;
 using Au5.Application.Common.Abstractions;
-using Au5.Application.Common.Resources;
 using Au5.Application.Services;
 using Au5.Application.Services.Models;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +33,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 		var config = await _dbContext.Set<SystemConfig>().AsNoTracking().FirstOrDefaultAsync(cancellationToken);
 		if (config is null)
 		{
-			return Error.Failure(description: AppResources.SystemIsNotConfigured);
+			return Error.Failure(description: AppResources.System.IsNotConfigured);
 		}
 
 		var meeting = new Meeting
@@ -55,7 +55,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
 		if (!dbResult.IsSuccess)
 		{
-			return Error.Failure(description: AppResources.FailedToAddBot);
+			return Error.Failure(description: AppResources.Meeting.FailedToAddBot);
 		}
 
 		var cachedMeeting = await _cacheProvider.GetAsync<Meeting>(MeetingService.GetMeetingKey(request.MeetId));

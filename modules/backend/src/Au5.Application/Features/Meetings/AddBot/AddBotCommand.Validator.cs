@@ -1,4 +1,4 @@
-using Au5.Application.Common.Resources;
+using Au5.Application.Common;
 
 namespace Au5.Application.Features.Meetings.AddBot;
 
@@ -8,14 +8,14 @@ public class AddBotCommandValiadtor : AbstractValidator<AddBotCommand>
 	{
 		RuleFor(x => x.BotName)
 		   .NotEmpty()
-		   .WithMessage(AppResources.Required);
+		   .WithMessage(AppResources.Validation.Required);
 
 		RuleFor(x => x.MeetId)
 		   .NotEmpty()
-		   .WithMessage(AppResources.Required);
+		   .WithMessage(AppResources.Validation.Required);
 
 		RuleFor(x => x.Platform)
 		   .NotEmpty()
-		   .WithMessage(AppResources.Required);
+		   .WithMessage(AppResources.Validation.Required);
 	}
 }
