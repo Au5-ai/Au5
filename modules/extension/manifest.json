@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "Au5.ai",
   "short_name": "Au5.ai",
+  "description": "Meeting note taker and AI transcription for Google Meet.",
   "version": "1.2.5",
   "action": {
     "default_title": "Open Side Panel"
