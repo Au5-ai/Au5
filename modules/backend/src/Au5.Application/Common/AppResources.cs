@@ -10,7 +10,6 @@ internal static class AppResources
 	/// </summary>
 	internal static class System
 	{
-		public const string AlreadyConfigured = "The system is already configured. To reconfigure, set ForceUpdate=true.";
 		public const string FailedToConfig = "Failed to configure the system. Please check your settings and try again.";
 		public const string IsNotConfigured = "The system has not been configured yet. Please complete the initial setup.";
 		public const string FailedToSetup = "System setup was not completed successfully. Please review the configuration and try again.";
