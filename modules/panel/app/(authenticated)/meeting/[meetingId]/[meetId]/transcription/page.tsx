@@ -47,7 +47,9 @@ import React, { useState, useEffect, useMemo } from "react";
 import TranscriptionHeader from "@/components/transcription/transcriptionHeader";
 import TranscriptionFilters from "@/components/transcription/transcriptionFilters";
 import TranscriptionEntry from "@/components/transcription/transcriptionEntry";
-import { NoSearchResults } from "@/components/empty-states/no-record";
+import NoRecordsState, {
+  NoSearchResults,
+} from "@/components/empty-states/no-record";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import BreadcrumbLayout from "@/components/breadcrumb-layout";
@@ -152,15 +154,10 @@ export default function TranscriptionsPage() {
     return (
       <div className="min-h-screen w-full flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4 mx-auto">
-            <span className="text-2xl text-gray-400">📝</span>
-          </div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            No Transcriptions Found
-          </h2>
-          <p className="text-gray-600">
-            Upload a meeting transcription to get started.
-          </p>
+          <NoRecordsState
+            title="No transcriptions found."
+            description="Select a different meeting or upload a new transcription."
+          />
         </div>
       </div>
     );

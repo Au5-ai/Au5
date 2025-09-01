@@ -2,21 +2,14 @@
 
 import * as React from "react";
 import {
-  ArrowDown,
-  ArrowUp,
-  Bell,
-  Copy,
-  CornerUpLeft,
-  CornerUpRight,
-  FileText,
-  GalleryVerticalEnd,
-  LineChart,
+  AtSign,
+  Blocks,
   Link,
   MoreHorizontal,
-  Settings2,
+  Pencil,
+  Share2,
   Star,
   Trash,
-  Trash2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -38,12 +31,12 @@ import {
 const data = [
   [
     {
-      label: "Customize Page",
-      icon: Settings2,
+      label: "Rename",
+      icon: Pencil,
     },
     {
-      label: "Turn into wiki",
-      icon: FileText,
+      label: "Add to space",
+      icon: Blocks,
     },
   ],
   [
@@ -52,48 +45,12 @@ const data = [
       icon: Link,
     },
     {
-      label: "Duplicate",
-      icon: Copy,
+      label: "Email",
+      icon: AtSign,
     },
     {
-      label: "Move to",
-      icon: CornerUpRight,
-    },
-    {
-      label: "Move to Trash",
-      icon: Trash2,
-    },
-  ],
-  [
-    {
-      label: "Undo",
-      icon: CornerUpLeft,
-    },
-    {
-      label: "View analytics",
-      icon: LineChart,
-    },
-    {
-      label: "Version History",
-      icon: GalleryVerticalEnd,
-    },
-    {
-      label: "Show delete pages",
+      label: "Move to Archived",
       icon: Trash,
-    },
-    {
-      label: "Notifications",
-      icon: Bell,
-    },
-  ],
-  [
-    {
-      label: "Import",
-      icon: ArrowUp,
-    },
-    {
-      label: "Export",
-      icon: ArrowDown,
     },
   ],
 ];
@@ -103,10 +60,19 @@ export function NavActions() {
 
   return (
     <div className="flex items-center gap-2 text-sm">
-      <div className="text-muted-foreground hidden font-medium md:inline-block">
-        Edit Oct 08
-      </div>
-      <Button variant="ghost" size="icon" className="h-7 w-7">
+      <Button variant="ghost" size="icon" className="h-7 w-32 cursor-pointer">
+        <Blocks />
+        Add to space
+      </Button>
+      <Button variant="ghost" size="icon" className="h-7 w-21 cursor-pointer">
+        <Share2 />
+        Share
+      </Button>
+      <Button variant="ghost" size="icon" className="h-7 w-24 cursor-pointer">
+        <Link />
+        Copy Link
+      </Button>
+      <Button variant="ghost" size="icon" className="h-7 w-7 cursor-pointer">
         <Star />
       </Button>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -114,7 +80,7 @@ export function NavActions() {
           <Button
             variant="ghost"
             size="icon"
-            className="data-[state=open]:bg-accent h-7 w-7"
+            className="data-[state=open]:bg-accent h-7 w-7 cursor-pointer"
           >
             <MoreHorizontal />
           </Button>
@@ -131,7 +97,7 @@ export function NavActions() {
                     <SidebarMenu>
                       {group.map((item, index) => (
                         <SidebarMenuItem key={index}>
-                          <SidebarMenuButton>
+                          <SidebarMenuButton className="cursor-pointer">
                             <item.icon /> <span>{item.label}</span>
                           </SidebarMenuButton>
                         </SidebarMenuItem>

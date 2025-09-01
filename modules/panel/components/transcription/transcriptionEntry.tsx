@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { MessageSquare, Mic } from "lucide-react";
+import { MessageCircle, MessageSquare, Mic } from "lucide-react";
 import { format } from "date-fns";
 import SpeakerAvatar from "./speakerAvatar";
 import ReactionBadges from "./reactionLabs";
@@ -32,7 +32,7 @@ export default function TranscriptionEntry({ entry, index }) {
               <div className="flex items-center gap-2">
                 {isChat ? (
                   <div className="flex items-center gap-1 text-indigo-600">
-                    <MessageSquare className="w-3.5 h-3.5" />
+                    <MessageCircle className="w-3.5 h-3.5" />
                     <span className="text-xs font-medium">Chat</span>
                   </div>
                 ) : (

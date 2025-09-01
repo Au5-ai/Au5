@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, MessageSquare, Mic, Users } from "lucide-react";
+import { Search, Mic, Users, MessageCircle } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -22,7 +22,7 @@ export default function TranscriptionFilters({
   const filterButtons = [
     { key: "all", label: "All", icon: null },
     { key: "transcription", label: "Transcription", icon: Mic },
-    { key: "chat", label: "Chat", icon: MessageSquare },
+    { key: "chat", label: "Chat", icon: MessageCircle },
   ];
 
   return (
