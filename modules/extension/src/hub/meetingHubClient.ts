@@ -24,7 +24,6 @@ export class MeetingHubClient {
       .build();
 
     this.connection.onclose(err => {
-      console.log("onclose fired");
       this.chatPanel.isOffline();
     });
 

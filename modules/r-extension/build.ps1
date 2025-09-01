@@ -21,27 +21,24 @@ if ($LASTEXITCODE -eq 0) {
     
     # Create icons directory and copy placeholder icons
     New-Item -ItemType Directory -Force -Path "dist/icons" | Out-Null
-    
+    New-Item -ItemType Directory -Force -Path "dist/fonts" | Out-Null
+    New-Item -ItemType Directory -Force -Path "dist/images" | Out-Null
+
     # Copy icon placeholders from public if they exist, otherwise create placeholders
     if (Test-Path "public/icons") {
         Copy-Item "public/icons/*" "dist/icons/" -ErrorAction SilentlyContinue
     }
-    
-    # Create placeholder icon files if they don't exist
-    $iconSizes = @(16, 32, 48, 128)
-    foreach ($size in $iconSizes) {
-        $iconPath = "dist/icons/icon$size.png"
-        if (!(Test-Path $iconPath)) {
-            "# Placeholder icon $size x $size`n# Replace with actual PNG file" | Out-File -FilePath $iconPath -Encoding utf8
-        }
+
+    if (Test-Path "public/fonts") {
+        Copy-Item "public/fonts/*" "dist/fonts/" -ErrorAction SilentlyContinue
+    }
+
+    if (Test-Path "public/images") {
+        Copy-Item "public/images/*" "dist/images/" -ErrorAction SilentlyContinue
     }
     
     Write-Host "Extension built successfully!" -ForegroundColor Green
     Write-Host "Files are ready in the 'dist' directory." -ForegroundColor Cyan
-    Write-Host "To load in Chrome:" -ForegroundColor Yellow
-    Write-Host "1. Open Chrome and go to chrome://extensions/" -ForegroundColor White
-    Write-Host "2. Enable 'Developer mode'" -ForegroundColor White
-    Write-Host "3. Click 'Load unpacked' and select the 'dist' folder" -ForegroundColor White
 } else {
     Write-Host "Build failed!" -ForegroundColor Red
     exit 1

@@ -66,7 +66,7 @@ var app = builder.Build();
 	app.UseAuthorization();
 
 	app.UseCors();
-	app.MapHub<MeetingHub>("/meetinghub").RequireAuthorization();
+	app.MapHub<MeetingHub>("/meetinghub").AllowAnonymous();
 
 	app.MapControllers();
 

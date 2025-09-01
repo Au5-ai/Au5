@@ -13,7 +13,7 @@ export default defineConfig({
     outDir: "dist",
     rollupOptions: {
       input: {
-        popup: resolve(process.cwd(), "src/popup/popup.html"),
+        sidePanel: resolve(process.cwd(), "src/sidePanel/sidepanel.html"),
         background: resolve(process.cwd(), "src/background.ts"),
         content: resolve(process.cwd(), "src/content.ts"),
       },
@@ -26,8 +26,8 @@ export default defineConfig({
         },
         chunkFileNames: "assets/[name]-[hash].js",
         assetFileNames: (assetInfo: any) => {
-          if (assetInfo?.name === "popup.css") {
-            return "src/popup/popup.css";
+          if (assetInfo?.name === "sidepanel.css") {
+            return "src/sidePanel/sidepanel.css";
           }
           if (assetInfo?.name === "content.css") {
             return "src/content.css";

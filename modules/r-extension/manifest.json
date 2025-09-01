@@ -1,40 +1,30 @@
 {
   "manifest_version": 3,
-  "name": "Au5 Extension",
-  "version": "1.0.0",
-  "description": "Au5 Chrome Extension built with React",
-  "permissions": ["activeTab", "storage", "tabs"],
-  "host_permissions": ["http://localhost:*/*", "https://localhost:*/*"],
+  "name": "r-Au5.ai",
+  "short_name": "r-Au5.ai",
+  "description": "Meeting note taker and AI transcription for Google Meet.",
+  "version": "1.2.5",
+  "action": {
+    "default_title": "Open Side Panel"
+  },
   "background": {
-    "service_worker": "src/background.js",
-    "type": "module"
+    "service_worker": "src/background.js"
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["http://localhost/*"],
       "js": ["src/content.js"]
     }
   ],
-  "action": {
-    "default_popup": "src/popup/popup.html",
-    "default_title": "Au5 Extension",
-    "default_icon": {
-      "16": "icons/icon16.png",
-      "32": "icons/icon32.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
-    }
+  "side_panel": {
+    "default_path": "src/sidePanel/sidepanel.html"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self';"
   },
   "icons": {
-    "16": "icons/icon16.png",
-    "32": "icons/icon32.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
+    "128": "icons/128x.png"
   },
-  "web_accessible_resources": [
-    {
-      "resources": ["src/content.css"],
-      "matches": ["<all_urls>"]
-    }
-  ]
+  "permissions": ["sidePanel", "storage"],
+  "host_permissions": ["<all_urls>"]
 }
