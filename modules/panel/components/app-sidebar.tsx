@@ -6,6 +6,7 @@ import {
   Brain,
   ClosedCaption,
   Frame,
+  Settings,
   Waypoints,
 } from "lucide-react";
 import { NavMain } from "@/components/nav-main";
@@ -48,6 +49,11 @@ const data = {
       icon: Brain,
       showBadge: true,
       badge: "soon",
+    },
+    {
+      title: "System Settings",
+      url: "/system",
+      icon: Settings,
     },
   ],
   spaces: [
