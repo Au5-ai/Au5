@@ -15,7 +15,11 @@ export class MeetingHubClient {
     this.meetId = platform.getMeetId();
     this.chatPanel = chatPanel;
     this.connection = new signalR.HubConnectionBuilder()
-      .withUrl(this.config.service.hubUrl)
+      .withUrl(this.config.service.hubUrl, {
+        accessTokenFactory: () => {
+          return this.config.service.jwtToken || "";
+        }
+      })
       .withAutomaticReconnect()
       .build();
 

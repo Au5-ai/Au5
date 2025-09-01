@@ -49,7 +49,7 @@ var app = builder.Build();
 	using (var scope = app.Services.CreateScope())
 	{
 		var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-		if(db.Database.GetPendingMigrations().Any())
+		if (db.Database.GetPendingMigrations().Any())
 		{
 			db.Database.Migrate();
 		}
@@ -66,7 +66,7 @@ var app = builder.Build();
 	app.UseAuthorization();
 
 	app.UseCors();
-	app.MapHub<MeetingHub>("/meetinghub").AllowAnonymous();
+	app.MapHub<MeetingHub>("/meetinghub").RequireAuthorization();
 
 	app.MapControllers();
 

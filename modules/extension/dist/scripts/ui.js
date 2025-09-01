@@ -3347,7 +3347,11 @@ class MeetingHubClient {
     this.platform = platform2;
     this.meetId = platform2.getMeetId();
     this.chatPanel = chatPanel2;
-    this.connection = new HubConnectionBuilder().withUrl(this.config.service.hubUrl).withAutomaticReconnect().build();
+    this.connection = new HubConnectionBuilder().withUrl(this.config.service.hubUrl, {
+      accessTokenFactory: () => {
+        return this.config.service.jwtToken || "";
+      }
+    }).withAutomaticReconnect().build();
     this.connection.onclose((err) => {
       console.log("onclose fired");
       this.chatPanel.isOffline();
