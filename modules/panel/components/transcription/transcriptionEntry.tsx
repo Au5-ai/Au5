@@ -17,19 +17,27 @@ export default function TranscriptionEntry({ entry, index }) {
         isChat ? "border-r-transparent bg-indigo-50/30" : "border-r-transparent"
       }`}
     >
-      <div className="flex gap-4">
+      <div className="flex gap-2">
         {/* Avatar */}
         <SpeakerAvatar speaker={entry.speaker} />
 
         {/* Content */}
         <div className="flex-1 min-w-0">
           {/* Header */}
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-3">
+          <div className="flex justify-between mb-2">
+            <div className="flex flex-col gap-1">
               <h3 className="font-semibold text-gray-900 text-sm">
                 {entry.speaker.fullName}
               </h3>
-              <div className="flex items-center gap-2">
+              <div className="flex gap-2 text-xs text-gray-500">
+                <span className="font-mono">{entry.time}</span>
+                <span className="text-gray-300">•</span>
+                <span>{format(new Date(entry.timestamp), "HH:mm")}</span>
+              </div>
+            </div>
+
+            <div className="flex items-center items-start gap-2 text-xs text-gray-500">
+              <div className="flex items-center gap-2  bg-gray-50 p-2 rounded-xl">
                 {isChat ? (
                   <div className="flex items-center gap-1 text-indigo-600">
                     <MessageCircle className="w-3.5 h-3.5" />
@@ -42,13 +50,6 @@ export default function TranscriptionEntry({ entry, index }) {
                   </div>
                 )}
               </div>
-            </div>
-
-            {/* Timestamp */}
-            <div className="flex items-center gap-2 text-xs text-gray-500">
-              <span className="font-mono">{entry.time}</span>
-              <span className="text-gray-300">•</span>
-              <span>{format(new Date(entry.timestamp), "HH:mm")}</span>
             </div>
           </div>
 

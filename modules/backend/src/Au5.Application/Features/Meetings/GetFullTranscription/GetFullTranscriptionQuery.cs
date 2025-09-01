@@ -4,6 +4,7 @@ public record GetFullTranscriptionQuery(Guid MeetingId, string MeetId) : IReques
 
 public record FullTranscriptionResponse(
 	Guid Id,
+	string Title,
 	string MeetingId,
 	Participant BotInviterUser,
 	string HashToken,

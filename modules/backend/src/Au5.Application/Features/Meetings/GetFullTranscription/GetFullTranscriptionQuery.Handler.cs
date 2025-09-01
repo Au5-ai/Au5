@@ -36,6 +36,7 @@ public class GetFullTranscriptionQueryHandler : IRequestHandler<GetFullTranscrip
 
 		var result = new FullTranscriptionResponse(
 			Id: meeting.Id,
+			Title: meeting.MeetName,
 			MeetingId: meeting.MeetId,
 			BotInviterUser: meeting.User.ToParticipant(),
 			HashToken: meeting.HashToken,
