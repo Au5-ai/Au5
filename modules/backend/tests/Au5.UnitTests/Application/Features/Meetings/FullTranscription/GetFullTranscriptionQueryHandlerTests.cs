@@ -98,6 +98,8 @@ public class GetFullTranscriptionQueryHandlerTests
 		{
 			Id = meetingId,
 			MeetId = "dzc-awqw-ioi",
+			MeetName = "TranscriptionMeeting",
+			BotInviterUserId = userId,
 			User = user,
 			HashToken = "D45EE09FC19733549FA1A91E7E7176F572D7BF22F17F712C3C12C3C91FFF7330",
 			Platform = "GoogleMeet",
@@ -106,6 +108,7 @@ public class GetFullTranscriptionQueryHandlerTests
 			CreatedAt = createdAt,
 			Status = MeetingStatus.Ended,
 			Participants = [participant],
+			Guests = [new GuestsInMeeting() { FullName = "Ali A", MeetingId = meetingId, Id = 1, PictureUrl = "PicUrl" }],
 			Entries = entries
 		};
 
@@ -120,15 +123,16 @@ public class GetFullTranscriptionQueryHandlerTests
 		var response = result.Data;
 		Assert.Equal(meetingId, response.Id);
 		Assert.Equal("dzc-awqw-ioi", response.MeetingId);
-		Assert.Equal("Mohammad Karimi", response.BotInviterUser.FullName);
+		Assert.Equal("Mohammad Karimi", response.UserRecorder.FullName);
 		Assert.Equal("GoogleMeet", response.Platform);
 		Assert.Equal("Candoo", response.BotName);
 		Assert.False(response.IsBotAdded);
 		Assert.Equal(createdAt.ToString("o"), response.CreatedAt);
 		Assert.Equal("Ended", response.Status);
 		Assert.Single(response.Participants);
-		Assert.Empty(response.Guests);
+		Assert.Single(response.Guests);
 		Assert.Single(response.Entries);
+		Assert.Equal("TranscriptionMeeting", response.Title);
 
 		var entryDto = response.Entries[0];
 		Assert.Equal("Sfdljadf", entryDto.Content);

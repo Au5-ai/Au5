@@ -10,6 +10,16 @@ import {
   SelectValue,
 } from "../ui/select";
 
+type TranscriptionFiltersProps = {
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+  filterType: string;
+  setFilterType: (type: string) => void;
+  selectedSpeaker: string;
+  setSelectedSpeaker: (speaker: string) => void;
+  participants: string[];
+};
+
 export default function TranscriptionFilters({
   searchQuery,
   setSearchQuery,
@@ -17,8 +27,8 @@ export default function TranscriptionFilters({
   setFilterType,
   selectedSpeaker,
   setSelectedSpeaker,
-  speakers,
-}) {
+  participants,
+}: TranscriptionFiltersProps) {
   const filterButtons = [
     { key: "all", label: "All", icon: null },
     { key: "transcription", label: "Transcription", icon: Mic },
@@ -74,10 +84,10 @@ export default function TranscriptionFilters({
                 <SelectValue placeholder="All Speakers" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Speakers</SelectItem>
-                {speakers.map((speaker) => (
-                  <SelectItem key={speaker} value={speaker}>
-                    {speaker}
+                <SelectItem value="all">All Participants</SelectItem>
+                {participants.map((participant, index) => (
+                  <SelectItem key={index} value={participant}>
+                    {participant}
                   </SelectItem>
                 ))}
               </SelectContent>

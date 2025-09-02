@@ -1,11 +1,18 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { MessageCircle, MessageSquare, Mic } from "lucide-react";
+import { MessageCircle, Mic } from "lucide-react";
 import { format } from "date-fns";
-import SpeakerAvatar from "./speakerAvatar";
-import ReactionBadges from "./reactionLabs";
+import ReactionBadges from "./reactionBadges";
+import { Entry } from "@/type";
+import ParticipantAvatar from "./participantAvatar";
 
-export default function TranscriptionEntry({ entry, index }) {
+export default function TranscriptionEntry({
+  entry,
+  index,
+}: {
+  entry: Entry;
+  index: number;
+}) {
   const isChat = entry.entryType === "Chat";
 
   return (
@@ -19,7 +26,10 @@ export default function TranscriptionEntry({ entry, index }) {
     >
       <div className="flex gap-2">
         {/* Avatar */}
-        <SpeakerAvatar speaker={entry.speaker} />
+        <ParticipantAvatar
+          fullName={entry.fullName}
+          pictureUrl={entry.pictureUrl}
+        />
 
         {/* Content */}
         <div className="flex-1 min-w-0">
@@ -27,10 +37,10 @@ export default function TranscriptionEntry({ entry, index }) {
           <div className="flex justify-between mb-2">
             <div className="flex flex-col gap-1">
               <h3 className="font-semibold text-gray-900 text-sm">
-                {entry.speaker.fullName}
+                {entry.fullName}
               </h3>
               <div className="flex gap-2 text-xs text-gray-500">
-                <span className="font-mono">{entry.time}</span>
+                <span className="font-mono">{entry.timeline}</span>
                 <span className="text-gray-300">•</span>
                 <span>{format(new Date(entry.timestamp), "HH:mm")}</span>
               </div>

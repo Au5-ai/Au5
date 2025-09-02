@@ -1,6 +1,15 @@
+import Image from "next/image";
 import React from "react";
 
-export default function SpeakerAvatar({ speaker, size = "md" }) {
+export default function ParticipantAvatar({
+  fullName,
+  pictureUrl,
+  size = "md",
+}: {
+  fullName: string;
+  pictureUrl: string;
+  size?: "sm" | "md" | "lg";
+}) {
   const sizeClasses = {
     sm: "w-8 h-8",
     md: "w-10 h-10",
@@ -13,9 +22,9 @@ export default function SpeakerAvatar({ speaker, size = "md" }) {
     lg: "text-base",
   };
 
-  const getInitials = (name) => {
-    return name
-      .split(" ")
+  const getInitials = (fullName: string) => {
+    return fullName
+      ?.split(" ")
       .map((part) => part[0])
       .join("")
       .toUpperCase()
@@ -24,17 +33,17 @@ export default function SpeakerAvatar({ speaker, size = "md" }) {
 
   return (
     <div className="relative flex-shrink-0">
-      {speaker.pictureUrl ? (
+      {pictureUrl ? (
         <img
-          src={speaker.pictureUrl}
-          alt={speaker.fullName}
+          src={pictureUrl}
+          alt={fullName}
           className={`${sizeClasses[size]} rounded-full object-cover ring-2 ring-white shadow-sm`}
         />
       ) : (
         <div
           className={`${sizeClasses[size]} rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-medium ${textSizeClasses[size]} shadow-sm`}
         >
-          {getInitials(speaker.fullName)}
+          {getInitials(fullName)}
         </div>
       )}
     </div>
