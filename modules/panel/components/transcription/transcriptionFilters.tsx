@@ -36,7 +36,7 @@ export default function TranscriptionFilters({
   ];
 
   return (
-    <div className="bg-white border-b border-gray-100 sticky top-[4px] z-10">
+    <div className="bg-white border-b border-gray-100 sticky top-0 z-10">
       <div className="px-6 py-4">
         <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
           {/* Search */}
@@ -80,13 +80,19 @@ export default function TranscriptionFilters({
               value={selectedSpeaker || "all"}
               onValueChange={setSelectedSpeaker}
             >
-              <SelectTrigger className="w-[180px] border-0 bg-gray-50 focus:border transition-colors cursor-pointer">
+              <SelectTrigger className="w-[180px] border-0 bg-gray-50 focus:border hover:border transition-colors cursor-pointer">
                 <SelectValue placeholder="All Speakers" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Participants</SelectItem>
+                <SelectItem value="all" className="cursor-pointer">
+                  All Participants
+                </SelectItem>
                 {participants.map((participant, index) => (
-                  <SelectItem key={index} value={participant}>
+                  <SelectItem
+                    key={index}
+                    value={participant}
+                    className="cursor-pointer"
+                  >
                     {participant}
                   </SelectItem>
                 ))}

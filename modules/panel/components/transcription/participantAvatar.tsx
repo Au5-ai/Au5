@@ -1,5 +1,5 @@
-import Image from "next/image";
 import React from "react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export default function ParticipantAvatar({
   fullName,
@@ -32,20 +32,25 @@ export default function ParticipantAvatar({
   };
 
   return (
-    <div className="relative flex-shrink-0">
-      {pictureUrl ? (
-        <img
-          src={pictureUrl}
-          alt={fullName}
-          className={`${sizeClasses[size]} rounded-full object-cover ring-2 ring-white shadow-sm`}
-        />
-      ) : (
-        <div
-          className={`${sizeClasses[size]} rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-medium ${textSizeClasses[size]} shadow-sm`}
-        >
-          {getInitials(fullName)}
+    <Tooltip>
+      <TooltipTrigger className="flex items-start">
+        <div className="relative flex-shrink-0">
+          {pictureUrl ? (
+            <img
+              src={pictureUrl}
+              alt={fullName}
+              className={`${sizeClasses[size]} rounded-full object-cover ring-2 ring-white shadow-sm`}
+            />
+          ) : (
+            <div
+              className={`${sizeClasses[size]} rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-medium ${textSizeClasses[size]} shadow-sm`}
+            >
+              {getInitials(fullName)}
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </TooltipTrigger>
+      <TooltipContent>{fullName}</TooltipContent>
+    </Tooltip>
   );
 }

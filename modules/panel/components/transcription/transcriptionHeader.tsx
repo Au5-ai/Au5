@@ -38,9 +38,7 @@ export default function TranscriptionHeader({ meeting }: { meeting: Meeting }) {
               <div className="w-1 h-1 rounded-full bg-gray-300" />
               <div className="flex items-center gap-1">
                 <Clock className="w-3 h-3" />
-                <span className="font-mono">
-                  {formatDuration(meeting.duration)}
-                </span>
+                <span className="font-mono">{meeting.duration}</span>
               </div>
               <div className="w-1 h-1 rounded-full bg-gray-300" />
               <span>{meeting.botName}</span>
