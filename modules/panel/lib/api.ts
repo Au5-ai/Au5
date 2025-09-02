@@ -10,6 +10,7 @@ import {
   HelloAdminResponse,
   AddAdminResponse,
   AddAdminRequest,
+  Meeting,
 } from "@/type";
 
 // API configuration
@@ -133,5 +134,13 @@ export const meetingApi = {
     return apiRequest<MeetingData>("/meeting/archived", {
       method: "GET",
     });
+  },
+  getTranscription: (meetingId: string, meetId: string): Promise<Meeting> => {
+    return apiRequest<Meeting>(
+      `/meeting/${meetingId}/${meetId}/transcription`,
+      {
+        method: "GET",
+      }
+    );
   },
 };

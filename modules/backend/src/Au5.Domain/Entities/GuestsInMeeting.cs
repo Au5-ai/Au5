@@ -1,4 +1,4 @@
-﻿namespace Au5.Domain.Entities;
+namespace Au5.Domain.Entities;
 
 [Entity]
 public class GuestsInMeeting
@@ -20,4 +20,11 @@ public class GuestsInMeeting
 	/// If the participant does not have an account in the system, this will have value.
 	/// </summary>
 	public string PictureUrl { get; set; }
+
+	public Participant ToParticipant()
+		=> new()
+		{
+			FullName = FullName,
+			PictureUrl = PictureUrl
+		};
 }

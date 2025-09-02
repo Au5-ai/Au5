@@ -95,12 +95,12 @@ export default function NoRecordsState({
 }
 
 // Pre-configured variants for common use cases
-export function NoSearchResults({ query, onClear }: NoSearchResultsProps) {
+export function NoSearchResults({ onClear }: NoSearchResultsProps) {
   return (
     <NoRecordsState
       icon={Search}
       title="No results found"
-      description={`We couldn't find anything matching "${query}". Try adjusting your search terms.`}
+      description={`We couldn't find anything matching. Try adjusting your search terms.`}
       actionLabel="Clear Search"
       onAction={onClear}
       variant="search"

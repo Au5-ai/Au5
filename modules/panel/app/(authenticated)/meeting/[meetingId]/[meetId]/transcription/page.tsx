@@ -1,15 +1,132 @@
 "use client";
-
+import React, { useState, useEffect, useMemo } from "react";
+import { useParams } from "next/navigation";
+import TranscriptionHeader from "@/components/transcription/transcriptionHeader";
+import TranscriptionFilters from "@/components/transcription/transcriptionFilters";
+import TranscriptionEntry from "@/components/transcription/transcriptionEntry";
+import NoRecordsState, {
+  NoSearchResults,
+} from "@/components/empty-states/no-record";
+import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
 import BreadcrumbLayout from "@/components/breadcrumb-layout";
 import { NavActions } from "@/components/navActions";
-import { Separator } from "@/components/ui/separator";
-import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { useParams } from "next/navigation";
+import { Meeting } from "@/type";
+import { meetingApi } from "@/lib/api";
 
 export default function TranscriptionPage() {
+  const [transcription, setTranscription] = useState<Meeting>();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterType, setFilterType] = useState("all");
+  const [selectedSpeaker, setSelectedSpeaker] = useState("");
+
   const params = useParams();
   const meetingId = params.meetingId as string;
   const meetId = params.meetId as string;
+
+  useEffect(() => {
+    const loadTranscription = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await meetingApi.getTranscription(meetingId, meetId);
+        setTranscription(data);
+      } catch (error) {
+        console.error("Failed to load transcription:", error);
+        setError("Failed to load transcription data. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (meetingId && meetId) {
+      loadTranscription();
+    }
+  }, [meetingId, meetId]);
+
+  const participants: string[] = useMemo(() => {
+    if (!transcription?.entries) return [];
+
+    const uniqueParticipants = new Set<string>();
+    transcription.participants.forEach((participant) => {
+      if (participant?.fullName) {
+        uniqueParticipants.add(participant.fullName);
+      }
+    });
+
+    transcription.guests.forEach((guest) => {
+      if (guest?.fullName) {
+        uniqueParticipants.add(guest.fullName);
+      }
+    });
+
+    return Array.from(uniqueParticipants).sort();
+  }, [transcription]);
+
+  const filteredEntries = useMemo(() => {
+    if (!transcription?.entries) return [];
+    let filtered = transcription.entries;
+    if (filterType !== "all") {
+      const targetType =
+        filterType === "transcription" ? "Transcription" : "Chat";
+      filtered = filtered.filter((entry) => entry.entryType === targetType);
+    }
+
+    if (selectedSpeaker && selectedSpeaker !== "all") {
+      filtered = filtered.filter(
+        (entry) => entry?.fullName === selectedSpeaker
+      );
+    }
+
+    if (searchQuery) {
+      filtered = filtered.filter(
+        (entry) =>
+          entry.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          entry?.fullName.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    return filtered;
+  }, [transcription, filterType, selectedSpeaker, searchQuery]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 font-medium">Loading Transcription...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center">
+        <div className="text-center">
+          <NoRecordsState
+            title="Error loading transcription"
+            description={error}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (!transcription) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center">
+        <div className="text-center">
+          <NoRecordsState
+            title="No transcriptions found."
+            description="Select a different meeting or upload a new transcription."
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <SidebarInset>
@@ -26,17 +143,33 @@ export default function TranscriptionPage() {
           <NavActions />
         </div>
       </header>
-      <div className="flex flex-1 flex-col">
-        <div className="container mx-auto p-2 px-4">
-          <h1 className="text-2xl font-bold mb-1">Meeting Transcription</h1>
-        </div>
-        <div className="container mx-auto p-4 text-sm text-muted-foreground">
-          <p>
-            Meeting ID: <span className="font-mono">{meetingId}</span>
-          </p>
-          <p>
-            Meet ID: <span className="font-mono">{meetId}</span>
-          </p>
+      <div className="min-h-screen w-full">
+        <TranscriptionHeader meeting={transcription} />
+        <TranscriptionFilters
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          filterType={filterType}
+          setFilterType={setFilterType}
+          selectedSpeaker={selectedSpeaker}
+          setSelectedSpeaker={setSelectedSpeaker}
+          participants={participants}
+        />
+        <div className="w-[800px]">
+          <div className="bg-white overflow-hidden">
+            {filteredEntries.length > 0 ? (
+              <div className="divide-y divide-gray-100">
+                {filteredEntries.map((entry, index) => (
+                  <TranscriptionEntry
+                    key={entry.blockId}
+                    entry={entry}
+                    index={index}
+                  />
+                ))}
+              </div>
+            ) : (
+              <NoSearchResults />
+            )}
+          </div>
         </div>
       </div>
     </SidebarInset>

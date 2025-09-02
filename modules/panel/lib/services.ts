@@ -4,11 +4,14 @@ export const tokenStorageService = {
   },
 
   get: (): string | null => {
-    return localStorage.getItem("access_token");
+    if (localStorage) {
+      return localStorage.getItem("access_token");
+    }
+    return null;
   },
 
   remove: () => {
-    localStorage.removeItem("access_token");
+    localStorage?.removeItem("access_token");
   },
 
   isValid: (): boolean => {

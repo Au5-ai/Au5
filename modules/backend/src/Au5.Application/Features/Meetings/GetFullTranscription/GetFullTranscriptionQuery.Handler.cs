@@ -16,11 +16,12 @@ public class GetFullTranscriptionQueryHandler : IRequestHandler<GetFullTranscrip
 	{
 		var meeting = await _dbContext.Set<Meeting>()
 			.Include(x => x.User)
+			.Include(x => x.Guests)
 			.Include(x => x.Participants)
-			.ThenInclude(p => p.User)
+				.ThenInclude(p => p.User)
 			.Include(x => x.Entries)
-			.ThenInclude(ent => ent.Reactions)
-			.ThenInclude(rac => rac.Reaction)
+				.ThenInclude(ent => ent.Reactions)
+				.ThenInclude(rac => rac.Reaction)
 			.FirstOrDefaultAsync(m => m.Id == request.MeetingId && m.MeetId == request.MeetId, cancellationToken);
 
 		if (meeting is null)
@@ -34,38 +35,51 @@ public class GetFullTranscriptionQueryHandler : IRequestHandler<GetFullTranscrip
 
 		var baseTime = meeting.CreatedAt;
 
-		var result = new FullTranscriptionResponse(
-			Id: meeting.Id,
-			MeetingId: meeting.MeetId,
-			BotInviterUser: meeting.User.ToParticipant(),
-			HashToken: meeting.HashToken,
-			Platform: meeting.Platform,
-			BotName: meeting.BotName,
-			IsBotAdded: meeting.IsBotAdded,
-			CreatedAt: meeting.CreatedAt.ToString("o"),
-			Status: meeting.Status.ToString(),
-			Participants: meeting.Participants
-				.Select(p => p.User.ToParticipant())
+		var result = new FullTranscriptionResponse
+		{
+			Id = meeting.Id,
+			Title = meeting.MeetName,
+			MeetingId = meeting.MeetId,
+			UserRecorder = meeting.User.ToParticipant(),
+			Platform = meeting.Platform,
+			BotName = meeting.BotName,
+			IsBotAdded = meeting.IsBotAdded,
+			CreatedAt = meeting.CreatedAt.ToString("o"),
+			ClosedAt = meeting.ClosedAt.ToString("o"),
+			Duration = meeting.Duration,
+			Status = meeting.Status.ToString(),
+			Participants = meeting.Participants
+										.Select(p => p.User.ToParticipant())
+										.ToList()
+										.AsReadOnly(),
+			Guests = meeting.Guests?.Select(g => g.ToParticipant())
+									.ToList()
+									.AsReadOnly(),
+			Entries = orderedEntries.Select(entry => new EntryDto
+			{
+				BlockId = entry.BlockId,
+				ParticipantId = entry.ParticipantId,
+				FullName = entry.FullName ?? string.Empty,
+				PictureUrl = string.Empty, // TODO: Add PictureUrl From Participant with Id entry.ParticipantId
+				Content = entry.Content,
+				Timestamp = entry.Timestamp.ToString("o"),
+				Timeline = (entry.Timestamp - baseTime).ToString(@"hh\:mm\:ss"),
+				EntryType = entry.EntryType,
+				Reactions = entry.Reactions.Select(ar =>
+					new ReactionDto
+					{
+						Id = ar.ReactionId,
+						Participants = ar.Participants,
+						Type = ar.Reaction.Type,
+						Emoji = ar.Reaction.Emoji,
+						ClassName = ar.Reaction.ClassName
+					})
 				.ToList()
-				.AsReadOnly(),
-			Guests: [],
-			Entries: orderedEntries
-				.Select(entry => new EntryDto(
-					BlockId: entry.BlockId,
-					ParticipantId: entry.ParticipantId,
-					FullName: entry.FullName ?? string.Empty,
-					Content: entry.Content,
-					Timestamp: entry.Timestamp.ToString("o"),
-					Timeline: (entry.Timestamp - baseTime).ToString(@"hh\:mm\:ss"),
-					EntryType: entry.EntryType,
-					Reactions: entry.Reactions.Select(ar =>
-						  new ReactionDto(
-							  Id: ar.ReactionId,
-							  Participants: ar.Participants,
-							  Type: ar.Reaction.Type,
-							  Emoji: ar.Reaction.Emoji)).ToList().AsReadOnly()))
-				.ToList()
-				.AsReadOnly());
+				.AsReadOnly()
+			})
+			.ToList()
+			.AsReadOnly()
+		};
 
 		return result;
 	}

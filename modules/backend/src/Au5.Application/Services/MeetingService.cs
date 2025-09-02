@@ -165,6 +165,12 @@ public class MeetingService : IMeetingService
 				return;
 			}
 
+			var participant = meeting.Participants.FirstOrDefault(x => x.UserId == reaction.User.Id);
+			if (participant is null)
+			{
+				return;
+			}
+
 			var existingReaction = entryBlock.Reactions.FirstOrDefault(r => r.ReactionId == reaction.ReactionId);
 			if (existingReaction is null)
 			{
@@ -172,7 +178,14 @@ public class MeetingService : IMeetingService
 				{
 					EntryId = entryBlock.Id,
 					ReactionId = reaction.ReactionId,
-					Participants = [new Participant() { Id = reaction.User.Id }],
+					Participants = [new Participant()
+					{
+						Id = reaction.User.Id,
+						FullName = reaction.User.FullName,
+						PictureUrl = reaction.User.PictureUrl
+					}
+
+],
 				};
 				entryBlock.Reactions.Add(existingReaction);
 			}
@@ -182,7 +195,12 @@ public class MeetingService : IMeetingService
 
 				if (!existingReaction.Participants.Any(u => u.Id == reaction.User.Id))
 				{
-					existingReaction.Participants.Add(new Participant() { Id = reaction.User.Id });
+					existingReaction.Participants.Add(new Participant()
+					{
+						Id = reaction.User.Id,
+						FullName = reaction.User.FullName,
+						PictureUrl = reaction.User.PictureUrl
+					});
 				}
 				else
 				{
