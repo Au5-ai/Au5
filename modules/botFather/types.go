@@ -24,3 +24,11 @@ type MeetingConfig struct {
 	AutoLeave       AutoLeaveConfig `json:"autoLeave"`
 	MeetingSettings MeetingSettings `json:"meeting_settings"`
 }
+
+// RemovalStatus represents the status of a container removal operation
+type RemovalStatus struct {
+	Status    string `json:"status"` // "processing", "completed", "failed"
+	Message   string `json:"message"`
+	Error     string `json:"error,omitempty"`
+	Timestamp int64  `json:"timestamp"`
+}

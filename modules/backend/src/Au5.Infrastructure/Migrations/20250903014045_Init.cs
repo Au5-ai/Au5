@@ -63,7 +63,11 @@ namespace Au5.Infrastructure.Migrations
 					PictureUrl = table.Column<string>(type: "varchar(250)", unicode: false, maxLength: 250, nullable: true),
 					Email = table.Column<string>(type: "varchar(75)", unicode: false, maxLength: 75, nullable: false),
 					Password = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
-					IsActive = table.Column<bool>(type: "bit", nullable: false)
+					IsActive = table.Column<bool>(type: "bit", nullable: false),
+					CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+					LastLoginAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+					LastPasswordChangeAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+					Role = table.Column<byte>(type: "tinyint", nullable: false)
 				},
 				constraints: table =>
 				{
@@ -77,12 +81,14 @@ namespace Au5.Infrastructure.Migrations
 					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					MeetId = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
 					MeetName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+					ClosedMeetingUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					BotInviterUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					HashToken = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
 					Platform = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
 					BotName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
 					IsBotAdded = table.Column<bool>(type: "bit", nullable: false),
 					CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+					ClosedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
 					Duration = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
 					Status = table.Column<byte>(type: "tinyint", nullable: false)
 				},
@@ -195,15 +201,15 @@ namespace Au5.Infrastructure.Migrations
 				columns: new[] { "Id", "ClassName", "Emoji", "IsActive", "Type" },
 				values: new object[,]
 				{
-					{ 1, "reaction-task", "⚡", false, "Task" },
-					{ 2, "reaction-important", "⭐", false, "GoodPoint" },
-					{ 3, "reaction-question", "🎯", false, "Goal" }
+					{ 1, "reaction-task bg-blue-100 text-blue-700 border-blue-200", "⚡", false, "Task" },
+					{ 2, "reaction-important bg-amber-100 text-amber-700 border-amber-200", "⭐", false, "GoodPoint" },
+					{ 3, "reaction-bug bg-rose-100 text-rose-700 border-rose-200", "🐞", false, "Bug" }
 				});
 
 			migrationBuilder.InsertData(
 				table: "User",
-				columns: new[] { "Id", "Email", "FullName", "IsActive", "Password", "PictureUrl" },
-				values: new object[] { new Guid("edada1f7-cbda-4c13-8504-a57fe72d5960"), "mha.karimi@gmail.com", "Mohammad Karimi", true, "0PVQk0Qiwb8gY3iUipZQKhBQgDMJ/1PJfmIDhG5hbrA=", "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo" });
+				columns: new[] { "Id", "CreatedAt", "Email", "FullName", "IsActive", "LastLoginAt", "LastPasswordChangeAt", "Password", "PictureUrl", "Role" },
+				values: new object[] { new Guid("edada1f7-cbda-4c13-8504-a57fe72d5960"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "mha.karimi@gmail.com", "Mohammad Karimi", true, null, null, "0PVQk0Qiwb8gY3iUipZQKhBQgDMJ/1PJfmIDhG5hbrA=", "https://i.imgur.com/ESenFCJ.jpeg", (byte)2 });
 
 			migrationBuilder.CreateIndex(
 				name: "IX_AppliedReactions_EntryId",

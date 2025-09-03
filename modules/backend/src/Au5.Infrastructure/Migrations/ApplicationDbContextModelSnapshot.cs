@@ -4,7 +4,6 @@ using Au5.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,11 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250824124900_AddRoleInUserEntity")]
-    partial class AddRoleInUserEntity
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -141,6 +138,12 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<DateTime>("ClosedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ClosedMeetingUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -245,7 +248,7 @@ namespace Au5.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            ClassName = "reaction-task",
+                            ClassName = "reaction-task bg-blue-100 text-blue-700 border-blue-200",
                             Emoji = "⚡",
                             IsActive = false,
                             Type = "Task"
@@ -253,7 +256,7 @@ namespace Au5.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            ClassName = "reaction-important",
+                            ClassName = "reaction-important bg-amber-100 text-amber-700 border-amber-200",
                             Emoji = "⭐",
                             IsActive = false,
                             Type = "GoodPoint"
@@ -261,10 +264,10 @@ namespace Au5.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            ClassName = "reaction-question",
-                            Emoji = "🎯",
+                            ClassName = "reaction-bug bg-rose-100 text-rose-700 border-rose-200",
+                            Emoji = "🐞",
                             IsActive = false,
-                            Type = "Goal"
+                            Type = "Bug"
                         });
                 });
 
@@ -424,8 +427,8 @@ namespace Au5.Infrastructure.Migrations
                             FullName = "Mohammad Karimi",
                             IsActive = true,
                             Password = "0PVQk0Qiwb8gY3iUipZQKhBQgDMJ/1PJfmIDhG5hbrA=",
-                            PictureUrl = "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo",
-                            Role = (byte)0
+                            PictureUrl = "https://i.imgur.com/ESenFCJ.jpeg",
+                            Role = (byte)2
                         });
                 });
 

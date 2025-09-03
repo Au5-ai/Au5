@@ -1,166 +1,3 @@
-// package main
-
-// import (
-// 	"context"
-// 	"encoding/json"
-// 	"fmt"
-// 	"net/http"
-
-// 	"github.com/docker/docker/api/types/container"
-// 	"github.com/docker/docker/client"
-// )
-
-// func createContainerHandler(w http.ResponseWriter, r *http.Request) {
-// 	if r.Method != http.MethodPost {
-// 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-// 		return
-// 	}
-
-// 	var meetingConfig MeetingConfig
-// 	if err := json.NewDecoder(r.Body).Decode(&meetingConfig); err != nil {
-// 		http.Error(w, fmt.Sprintf("Invalid JSON: %v", err), http.StatusBadRequest)
-// 		return
-// 	}
-
-// 	ctx := context.Background()
-
-// 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// 	defer cli.Close()
-
-// 	// Convert MeetingConfig to a single JSON environment variable
-// 	meetingConfigJSON, err := json.Marshal(meetingConfig)
-// 	if err != nil {
-// 		http.Error(w, fmt.Sprintf("Failed to marshal meeting config: %v", err), http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	envVars := []string{
-// 		"MEETING_CONFIG=" + string(meetingConfigJSON),
-// 	}
-
-// 	response, err := cli.ContainerCreate(ctx, &container.Config{
-// 		Image: "au5-bot",
-// 		Env:   envVars,
-// 	},  &container.HostConfig{
-//         NetworkMode: container.NetworkMode("au5"),
-//     }, nil, nil, "Bot--" + meetingConfig.MeetId+"--"+meetingConfig.HashToken)
-
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	if response.ID == "" {
-// 		http.Error(w, "Failed to create container", http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	startOptions := container.StartOptions{
-// 	}
-
-// 	err = cli.ContainerStart(ctx, response.ID, startOptions)
-// 	if err != nil {
-// 		http.Error(w, fmt.Sprintf("Failed to start container: %v", err), http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	// Return success response with container ID and meeting config
-// 	response_data := map[string]any{
-// 		"container_id":  response.ID,
-// 		"message":       "Container created and started successfully",
-// 	}
-
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.NewEncoder(w).Encode(response_data)
-// }
-
-// func removeContainerHandler(w http.ResponseWriter, r *http.Request) {
-// 	if r.Method != http.MethodPost {
-// 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-// 		return
-// 	}
-
-// 	var removeRequest struct {
-// 		MeetId    string `json:"meetId"`
-// 		HashToken string `json:"hashToken"`
-// 	}
-
-// 	if err := json.NewDecoder(r.Body).Decode(&removeRequest); err != nil {
-// 		http.Error(w, fmt.Sprintf("Invalid JSON: %v", err), http.StatusBadRequest)
-// 		return
-// 	}
-
-// 	if removeRequest.MeetId == "" || removeRequest.HashToken == "" {
-// 		http.Error(w, "meetId and hashToken are required", http.StatusBadRequest)
-// 		return
-// 	}
-
-// 	ctx := context.Background()
-
-// 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// 	defer cli.Close()
-
-// 	// Construct the container name based on the pattern used in creation
-// 	containerName := "Bot--" + removeRequest.MeetId + "--" + removeRequest.HashToken
-
-// 	// Find the container by name
-// 	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
-// 	if err != nil {
-// 		http.Error(w, fmt.Sprintf("Failed to list containers: %v", err), http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	var containerID string
-// 	for _, cont := range containers {
-// 		for _, name := range cont.Names {
-// 			// Container names include a leading '/', so we need to check with and without it
-// 			if name == "/"+containerName || name == containerName {
-// 				containerID = cont.ID
-// 				break
-// 			}
-// 		}
-// 		if containerID != "" {
-// 			break
-// 		}
-// 	}
-
-// 	if containerID == "" {
-// 		http.Error(w, fmt.Sprintf("Container not found for meetId: %s and hashToken: %s", removeRequest.MeetId, removeRequest.HashToken), http.StatusNotFound)
-// 		return
-// 	}
-
-// 	// Stop the container first (if it's running)
-// 	if err := cli.ContainerStop(ctx, containerID, container.StopOptions{}); err != nil {
-// 		// Log the error but continue with removal - container might already be stopped
-// 		fmt.Printf("Warning: Failed to stop container %s: %v\n", containerID, err)
-// 	}
-
-// 	// Remove the container
-// 	if err := cli.ContainerRemove(ctx, containerID, container.RemoveOptions{Force: true}); err != nil {
-// 		http.Error(w, fmt.Sprintf("Failed to remove container: %v", err), http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	// Return success response
-// 	response_data := map[string]any{
-// 		"container_id": containerID,
-// 		"message":      "Container stopped and removed successfully",
-// 		"meetId":       removeRequest.MeetId,
-// 		"hashToken":    removeRequest.HashToken,
-// 	}
-
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.NewEncoder(w).Encode(response_data)
-// }
-
 package main
 
 import (
@@ -169,10 +6,32 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sync"
+	"time"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 )
+
+// Global status tracker for removal operations
+var (
+	removalStatuses = make(map[string]*RemovalStatus)
+	statusMutex     = sync.RWMutex{}
+)
+
+// Helper functions for status tracking
+func setRemovalStatus(containerName string, status *RemovalStatus) {
+	statusMutex.Lock()
+	defer statusMutex.Unlock()
+	removalStatuses[containerName] = status
+}
+
+func getRemovalStatus(containerName string) (*RemovalStatus, bool) {
+	statusMutex.RLock()
+	defer statusMutex.RUnlock()
+	status, exists := removalStatuses[containerName]
+	return status, exists
+}
 
 // ---------- Utility Helpers ----------
 
@@ -260,7 +119,11 @@ func removeContainerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req MeetingConfig
+	var req struct {
+		MeetId    string `json:"meetId"`
+		HashToken string `json:"hashToken"`
+	}
+	
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		jsonError(w, http.StatusBadRequest, fmt.Sprintf("Invalid JSON: %v", err))
 		return
@@ -270,31 +133,95 @@ func removeContainerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	name := containerName(req.MeetId, req.HashToken)
+
+	// Respond immediately to client
+	jsonResponse(w, http.StatusAccepted, map[string]any{
+		"container_name": name,
+		"message":        "Container removal initiated",
+		"meetId":         req.MeetId,
+		"hashToken":      req.HashToken,
+		"status":         "processing",
+	})
+
+	// Handle container removal asynchronously
+	go func() {
+		// Set initial status
+		setRemovalStatus(name, &RemovalStatus{
+			Status:    "processing",
+			Message:   "Container removal in progress",
+			Timestamp: time.Now().Unix(),
+		})
+
+		if err := removeContainerAsync(name); err != nil {
+			log.Printf("Error removing container %s: %v", name, err)
+			setRemovalStatus(name, &RemovalStatus{
+				Status:    "failed",
+				Message:   "Container removal failed",
+				Error:     err.Error(),
+				Timestamp: time.Now().Unix(),
+			})
+		} else {
+			log.Printf("Successfully removed container %s", name)
+			setRemovalStatus(name, &RemovalStatus{
+				Status:    "completed",
+				Message:   "Container removed successfully",
+				Timestamp: time.Now().Unix(),
+			})
+		}
+	}()
+}
+
+// removeContainerAsync handles the actual container removal process
+func removeContainerAsync(containerName string) error {
 	ctx := context.Background()
 	cli, err := newDockerClient()
 	if err != nil {
-		jsonError(w, http.StatusInternalServerError, err.Error())
-		return
+		return fmt.Errorf("failed to create docker client: %v", err)
 	}
 	defer cli.Close()
 
-	name := containerName(req.MeetId, req.HashToken)
-
-	// Try stopping container
-	if err := cli.ContainerStop(ctx, name, container.StopOptions{}); err != nil {
-		log.Printf("Warning: Failed to stop container %s: %v\n", name, err)
+	// Try stopping container first
+	if err := cli.ContainerStop(ctx, containerName, container.StopOptions{}); err != nil {
+		log.Printf("Warning: Failed to stop container %s: %v", containerName, err)
+		// Continue with removal even if stop fails
 	}
 
 	// Remove container
-	if err := cli.ContainerRemove(ctx, name, container.RemoveOptions{Force: true}); err != nil {
-		jsonError(w, http.StatusInternalServerError, fmt.Sprintf("Failed to remove container: %v", err))
+	if err := cli.ContainerRemove(ctx, containerName, container.RemoveOptions{Force: true}); err != nil {
+		return fmt.Errorf("failed to remove container %s: %v", containerName, err)
+	}
+
+	return nil
+}
+
+// checkRemovalStatusHandler allows clients to check the status of a removal operation
+func checkRemovalStatusHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		jsonError(w, http.StatusMethodNotAllowed, "Method not allowed")
+		return
+	}
+
+	meetId := r.URL.Query().Get("meetId")
+	hashToken := r.URL.Query().Get("hashToken")
+
+	if meetId == "" || hashToken == "" {
+		jsonError(w, http.StatusBadRequest, "meetId and hashToken query parameters are required")
+		return
+	}
+
+	name := containerName(meetId, hashToken)
+	status, exists := getRemovalStatus(name)
+
+	if !exists {
+		jsonError(w, http.StatusNotFound, "No removal operation found for this container")
 		return
 	}
 
 	jsonResponse(w, http.StatusOK, map[string]any{
-		"container_id": name,
-		"message":      "Container stopped and removed successfully",
-		"meetId":       req.MeetId,
-		"hashToken":    req.HashToken,
+		"container_name": name,
+		"meetId":         meetId,
+		"hashToken":      hashToken,
+		"removal_status": status,
 	})
 }

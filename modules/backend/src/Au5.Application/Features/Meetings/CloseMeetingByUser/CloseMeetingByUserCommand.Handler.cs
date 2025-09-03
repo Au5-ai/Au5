@@ -52,7 +52,7 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 
 			if (dbResult.IsSuccess)
 			{
-				await _botFather.RemoveBotContainerAsync(config.BotFatherUrl, meeting.MeetId, meeting.HashToken, cancellationToken);
+					await _botFather.RemoveBotContainerAsync(config.BotFatherUrl, meeting.MeetId, meeting.HashToken, cancellationToken);
 			}
 
 			return dbResult.IsSuccess

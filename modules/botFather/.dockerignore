@@ -28,3 +28,14 @@ README.md
 !.git/config
 !.git/packed-refs
 !.git/refs/heads/**
+
+# Go specific
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+docs/

@@ -28,28 +28,31 @@ public static class ModelBuilderExtension
 	{
 		SeedReactions(builder);
 
-		//SeedUsers(builder);
-		// static void SeedUsers(ModelBuilder builder)
-		// {
-		// builder.Entity<User>().HasData(
-		// [
-		// new()
-		// {
-		// Email = "mha.karimi@gmail.com",
-		// IsActive = true,
-		// FullName = "Mohammad Karimi",
-		// Id = Guid.Parse("EDADA1F7-CBDA-4C13-8504-A57FE72D5960"),
-		// PictureUrl = "https://lh3.googleusercontent.com/ogw/AF2bZyiAms4ctDeBjEnl73AaUCJ9KbYj2alS08xcAYgAJhETngQ=s64-c-mo",
-		// Password = "0PVQk0Qiwb8gY3iUipZQKhBQgDMJ/1PJfmIDhG5hbrA="
-		// }
-		// ]);
-		// }
+		SeedUsers(builder);
+		static void SeedUsers(ModelBuilder builder)
+		{
+			builder.Entity<User>().HasData(
+			[
+			new()
+				 {
+					 Email = "mha.karimi@gmail.com",
+					 IsActive = true,
+					 FullName = "Mohammad Karimi",
+					 Id = Guid.Parse("EDADA1F7-CBDA-4C13-8504-A57FE72D5960"),
+					 PictureUrl = "https://i.imgur.com/ESenFCJ.jpeg",
+					 Password = "0PVQk0Qiwb8gY3iUipZQKhBQgDMJ/1PJfmIDhG5hbrA=",
+					 Role = RoleTypes.User
+				 }
+
+			]);
+		}
+
 		static void SeedReactions(ModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<Reaction>().HasData(
-				new Reaction { Id = 1, Type = "Task", Emoji = "⚡", ClassName = "reaction-task" },
-				new Reaction { Id = 2, Type = "GoodPoint", Emoji = "⭐", ClassName = "reaction-important" },
-				new Reaction { Id = 3, Type = "Goal", Emoji = "🎯", ClassName = "reaction-question" });
+				new Reaction { Id = 1, Type = "Task", Emoji = "⚡", ClassName = "reaction-task bg-blue-100 text-blue-700 border-blue-200" },
+				new Reaction { Id = 2, Type = "GoodPoint", Emoji = "⭐", ClassName = "reaction-important bg-amber-100 text-amber-700 border-amber-200" },
+				new Reaction { Id = 3, Type = "Bug", Emoji = "🐞", ClassName = "reaction-bug bg-rose-100 text-rose-700 border-rose-200" });
 		}
 	}
 }

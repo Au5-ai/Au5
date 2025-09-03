@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250829144753_CloseMeeting")]
-    partial class CloseMeeting
+    [Migration("20250903014045_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -251,7 +251,7 @@ namespace Au5.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            ClassName = "reaction-task",
+                            ClassName = "reaction-task bg-blue-100 text-blue-700 border-blue-200",
                             Emoji = "⚡",
                             IsActive = false,
                             Type = "Task"
@@ -259,7 +259,7 @@ namespace Au5.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            ClassName = "reaction-important",
+                            ClassName = "reaction-important bg-amber-100 text-amber-700 border-amber-200",
                             Emoji = "⭐",
                             IsActive = false,
                             Type = "GoodPoint"
@@ -267,10 +267,10 @@ namespace Au5.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            ClassName = "reaction-question",
-                            Emoji = "🎯",
+                            ClassName = "reaction-bug bg-rose-100 text-rose-700 border-rose-200",
+                            Emoji = "🐞",
                             IsActive = false,
-                            Type = "Goal"
+                            Type = "Bug"
                         });
                 });
 
@@ -420,6 +420,19 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("User");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("edada1f7-cbda-4c13-8504-a57fe72d5960"),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "mha.karimi@gmail.com",
+                            FullName = "Mohammad Karimi",
+                            IsActive = true,
+                            Password = "0PVQk0Qiwb8gY3iUipZQKhBQgDMJ/1PJfmIDhG5hbrA=",
+                            PictureUrl = "https://i.imgur.com/ESenFCJ.jpeg",
+                            Role = (byte)2
+                        });
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.AppliedReactions", b =>
