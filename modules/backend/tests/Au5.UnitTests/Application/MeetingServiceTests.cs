@@ -670,7 +670,8 @@ public class MeetingServiceTests
 			Id = Guid.NewGuid(),
 			MeetId = "meet123",
 			Status = MeetingStatus.Recording,
-			Entries = [entry]
+			Entries = [entry],
+			Participants = [new ParticipantInMeeting() { UserId = participantId }]
 		};
 
 		var reaction = new ReactionAppliedMessage
@@ -678,7 +679,7 @@ public class MeetingServiceTests
 			MeetId = "meet123",
 			BlockId = blockId,
 			ReactionId = 1,
-			User = new Participant { Id = participantId, FullName = "Mohammad K" },
+			User = new Participant { Id = participantId, FullName = "Mohammad K", PictureUrl = "Pic" },
 			ReactionType = "👍"
 		};
 
@@ -694,6 +695,47 @@ public class MeetingServiceTests
 		Assert.Equal(entry.Id, addedReaction.EntryId);
 		Assert.Single(addedReaction.Participants);
 		Assert.Equal(participantId, addedReaction.Participants.First().Id);
+	}
+
+	[Fact]
+	public async Task AppliedReaction_Should_ReturnNull_WhenParticipantNotExist()
+	{
+		var blockId = Guid.NewGuid();
+		var participantId = Guid.NewGuid();
+
+		var entry = new Entry
+		{
+			Id = 1,
+			BlockId = blockId,
+			Content = "Test content",
+			ParticipantId = Guid.NewGuid(),
+			Reactions = []
+		};
+
+		var activeMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Recording,
+			Entries = [entry],
+			Participants = []
+		};
+
+		var reaction = new ReactionAppliedMessage
+		{
+			MeetId = "meet123",
+			BlockId = blockId,
+			ReactionId = 1,
+			User = new Participant { Id = participantId, FullName = "Mohammad K", PictureUrl = "Pic" },
+			ReactionType = "👍"
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(activeMeeting);
+
+		await _meetingService.AppliedReaction(reaction);
+
+		Assert.Empty(entry.Reactions);
 	}
 
 	[Fact]
@@ -727,7 +769,8 @@ public class MeetingServiceTests
 			Id = Guid.NewGuid(),
 			MeetId = "meet123",
 			Status = MeetingStatus.Recording,
-			Entries = [entry]
+			Entries = [entry],
+			Participants = [new ParticipantInMeeting { UserId = newParticipantId }]
 		};
 
 		var reaction = new ReactionAppliedMessage
@@ -781,7 +824,8 @@ public class MeetingServiceTests
 			Id = Guid.NewGuid(),
 			MeetId = "meet123",
 			Status = MeetingStatus.Recording,
-			Entries = [entry]
+			Entries = [entry],
+			Participants = [new ParticipantInMeeting { UserId = participantId }]
 		};
 
 		var reaction = new ReactionAppliedMessage
