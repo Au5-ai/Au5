@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { Meeting } from "@/type";
 import ParticipantAvatarGroup from "./participantAvatarGroup";
+import ParticipantAvatar from "./participantAvatar";
 
 export default function TranscriptionHeader({ meeting }: { meeting: Meeting }) {
   const uniqueSpeakers = new Set();
@@ -53,9 +54,11 @@ export default function TranscriptionHeader({ meeting }: { meeting: Meeting }) {
         {/* Recording Info and Speaker Avatars */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 text-sm text-gray-600">
-            <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">
-              {meeting.userRecorder.fullName.charAt(0).toUpperCase()}
-            </div>
+            <ParticipantAvatar
+              fullName={meeting.userRecorder.fullName}
+              pictureUrl={meeting.userRecorder.pictureUrl}
+              size="sm"
+            />
             <span>
               Recorded by{" "}
               <span className="font-medium text-gray-900">
