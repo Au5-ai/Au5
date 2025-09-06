@@ -2,7 +2,6 @@ import React from "react";
 import { Clock, Gem } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { formatDuration } from "@/lib/utils";
 import { Meeting } from "@/type";
 import ParticipantAvatarGroup from "./participantAvatarGroup";
 
@@ -34,11 +33,11 @@ export default function TranscriptionHeader({ meeting }: { meeting: Meeting }) {
               {meeting.title}
             </h1>
             <div className="flex items-center gap-3 text-sm text-gray-600">
-              <span className="font-mono font-medium">{meeting.meetingId}</span>
+              <span className="font-medium">{meeting.meetingId}</span>
               <div className="w-1 h-1 rounded-full bg-gray-300" />
               <div className="flex items-center gap-1">
                 <Clock className="w-3 h-3" />
-                <span className="font-mono">{meeting.duration}</span>
+                <span>{meeting.duration}</span>
               </div>
               <div className="w-1 h-1 rounded-full bg-gray-300" />
               <span>{meeting.botName}</span>

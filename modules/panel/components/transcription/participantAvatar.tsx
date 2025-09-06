@@ -1,5 +1,6 @@
 import React from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 export default function ParticipantAvatar({
   fullName,
@@ -35,7 +36,7 @@ export default function ParticipantAvatar({
     <Tooltip>
       <TooltipTrigger className="flex items-start">
         <div className="relative flex-shrink-0">
-          {pictureUrl ? (
+          {/* {pictureUrl ? (
             <img
               src={pictureUrl}
               alt={fullName}
@@ -47,7 +48,14 @@ export default function ParticipantAvatar({
             >
               {getInitials(fullName)}
             </div>
-          )}
+          )} */}
+
+          <Avatar className="h-8 w-8 rounded-lg">
+            <AvatarImage src={pictureUrl} alt={fullName} />
+            <AvatarFallback className="rounded-lg">
+              {fullName.charAt(0)}
+            </AvatarFallback>
+          </Avatar>
         </div>
       </TooltipTrigger>
       <TooltipContent>{fullName}</TooltipContent>
