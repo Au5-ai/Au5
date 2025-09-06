@@ -36,20 +36,6 @@ export default function ParticipantAvatar({
     <Tooltip>
       <TooltipTrigger className="flex items-start">
         <div className="relative flex-shrink-0">
-          {/* {pictureUrl ? (
-            <img
-              src={pictureUrl}
-              alt={fullName}
-              className={`${sizeClasses[size]} rounded-full object-cover ring-2 ring-white shadow-sm`}
-            />
-          ) : (
-            <div
-              className={`${sizeClasses[size]} rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-medium ${textSizeClasses[size]} shadow-sm`}
-            >
-              {getInitials(fullName)}
-            </div>
-          )} */}
-
           <Avatar className="h-8 w-8 rounded-lg">
             <AvatarImage src={pictureUrl} alt={fullName} />
             <AvatarFallback className="rounded-lg">
