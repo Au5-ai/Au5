@@ -62,6 +62,12 @@ export default function TranscriptionPage() {
       }
     });
 
+    transcription.entries.forEach((entry) => {
+      if (entry?.fullName) {
+        uniqueParticipants.add(entry.fullName);
+      }
+    });
+
     return Array.from(uniqueParticipants).sort();
   }, [transcription]);
 
