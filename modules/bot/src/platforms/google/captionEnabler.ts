@@ -83,9 +83,35 @@ export class CaptionEnabler {
 
   private async activateLanguageDropdownOverlay(): Promise<boolean> {
     return await this.page.evaluate(() => {
-      const overlay = document.querySelector(
-        ".NmXUuc.P9KVBf.IGXezb"
-      ) as HTMLElement;
+      const findOverlay = (): HTMLElement | null => {
+        // Priority 1: Exact class combination
+        const exactSelector = ".NmXUuc.P9KVBf.IGXezb";
+        let overlay = document.querySelector(exactSelector) as HTMLElement;
+        if (overlay) return overlay;
+
+        // Priority 2: Individual classes present
+        overlay = document.querySelector(
+          '[class*="NmXUuc"][class*="P9KVBf"][class*="IGXezb"]'
+        ) as HTMLElement;
+        if (overlay) return overlay;
+
+        // Priority 3: Unique attributes
+        overlay = document.querySelector(
+          '[jscontroller="rRafu"][tooltip-id="ucc-21"]'
+        ) as HTMLElement;
+        if (overlay) return overlay;
+
+        // Priority 4: Any of the classes
+        const classSelectors = [".NmXUuc", ".P9KVBf", ".IGXezb"];
+        for (const selector of classSelectors) {
+          overlay = document.querySelector(selector) as HTMLElement;
+          if (overlay) return overlay;
+        }
+
+        return null;
+      };
+
+      const overlay = findOverlay();
 
       if (overlay) {
         overlay.style.opacity = "1";
