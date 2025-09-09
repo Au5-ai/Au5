@@ -70,6 +70,11 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 		await BroadcastToGroupExceptCallerAsync(message.MeetId, message).ConfigureAwait(false);
 	}
 
+	public async Task CloseMeeting(CloseMeetingMessage closeMeetingMessage)
+	{
+		await BroadcastToGroupExceptCallerAsync(closeMeetingMessage.MeetId, closeMeetingMessage).ConfigureAwait(false);
+	}
+
 	/// <inheritdoc/>
 	public override async Task OnDisconnectedAsync(Exception exception)
 	{
