@@ -7,19 +7,6 @@ import ParticipantAvatarGroup from "./participantAvatarGroup";
 import ParticipantAvatar from "./participantAvatar";
 
 export default function TranscriptionHeader({ meeting }: { meeting: Meeting }) {
-  const uniqueSpeakers = new Set();
-  meeting.participants?.forEach((participant) => {
-    if (participant?.fullName) {
-      uniqueSpeakers.add(participant.fullName);
-    }
-  });
-
-  meeting.guests?.forEach((guest) => {
-    if (guest?.fullName) {
-      uniqueSpeakers.add(guest.fullName);
-    }
-  });
-
   const recordingDate = meeting.entries?.[0]?.timestamp
     ? new Date(meeting.entries[0].timestamp)
     : new Date(meeting.createdAt || Date.now());

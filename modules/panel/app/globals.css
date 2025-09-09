@@ -121,3 +121,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Apply Vazirmatn to all RTL and auto-direction elements */
+[dir="auto"],
+[dir="rtl"] {
+  font-family: var(--font-vazirmatn) !important;
+}

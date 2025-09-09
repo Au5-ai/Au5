@@ -51,12 +51,10 @@ export default function TranscriptionEntry({
                 {isChat ? (
                   <div className="flex items-center gap-1 text-indigo-600">
                     <MessageCircle className="w-3.5 h-3.5" />
-                    <span className="text-xs font-medium">Chat</span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-1 text-gray-500">
                     <Mic className="w-3.5 h-3.5" />
-                    <span className="text-xs font-medium">Transcription</span>
                   </div>
                 )}
               </div>

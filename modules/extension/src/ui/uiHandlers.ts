@@ -374,11 +374,7 @@ export class UIHandlers {
 
           this.meetingHubClient.sendMessage(message);
 
-          localStorage.removeItem("au5-meetingId");
-          chrome.runtime.sendMessage({
-            action: "CLOSE_SIDEPANEL",
-            panelUrl: this.config.service.panelUrl + "/meeting/my"
-          });
+          this.closeSidePanel(this.config.service.panelUrl);
         })
         .catch(error => {
           showToast("Failed to close meeting :(");
@@ -386,6 +382,20 @@ export class UIHandlers {
         });
     });
     return this;
+  }
+
+  private closeSidePanel(panelUrl: string, meetingId: string = "", meetId: string = "") {
+    localStorage.removeItem("au5-meetingId");
+
+    if (meetingId && meetId) {
+      panelUrl = panelUrl + `/meeting/${meetingId}/${meetId}/transcription`;
+    } else {
+      panelUrl = panelUrl + "/meeting/my";
+    }
+    chrome.runtime.sendMessage({
+      action: "CLOSE_SIDEPANEL",
+      panelUrl: panelUrl
+    });
   }
 
   private handleMessage(msg: IMessage): void {
@@ -437,7 +447,14 @@ export class UIHandlers {
         const meetingIsActive = msg as MeetingIsActiveMessage;
         this.chatPanel.botJoined(meetingIsActive.botName);
         break;
-
+      case MessageTypes.CloseMeeting:
+        const closeMeeting = msg as CloseMeetingMessage;
+        this.closeSidePanel(
+          this.config.service.panelUrl,
+          localStorage.getItem("au5-meetingId") ?? "",
+          closeMeeting.meetId
+        );
+        break;
       default:
         break;
     }

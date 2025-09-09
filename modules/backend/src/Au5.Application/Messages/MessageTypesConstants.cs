@@ -10,4 +10,5 @@ public static class MessageTypesConstants
 	public const string RequestToAddBot = "RequestToAddBot";
 	public const string PauseAndPlayTranscription = "PauseAndPlayTranscription";
 	public const string MeetingIsActive = "MeetingIsActive";
+	public const string CloseMeeting = "CloseMeeting";
 }
