@@ -46,21 +46,10 @@ export default function TranscriptionPage() {
     }
   }, [meetingId, meetId]);
 
-  const participants: string[] = useMemo(() => {
+  const speakers: string[] = useMemo(() => {
     if (!transcription?.entries) return [];
 
     const uniqueParticipants = new Set<string>();
-    transcription.participants.forEach((participant) => {
-      if (participant?.fullName) {
-        uniqueParticipants.add(participant.fullName);
-      }
-    });
-
-    transcription.guests.forEach((guest) => {
-      if (guest?.fullName) {
-        uniqueParticipants.add(guest.fullName);
-      }
-    });
 
     transcription.entries.forEach((entry) => {
       if (entry?.fullName) {
@@ -158,7 +147,7 @@ export default function TranscriptionPage() {
           setFilterType={setFilterType}
           selectedSpeaker={selectedSpeaker}
           setSelectedSpeaker={setSelectedSpeaker}
-          participants={participants}
+          speakers={speakers}
         />
         <div className="w-[800px]">
           <div className="bg-white overflow-hidden">
