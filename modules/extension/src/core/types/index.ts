@@ -50,6 +50,11 @@ export interface UserJoinedInMeetingMessage extends IMessage {
   platform: string;
 }
 
+export interface CloseMeetingMessage extends IMessage {
+  readonly type: MessageTypes.CloseMeeting;
+  meetId: string;
+}
+
 export interface RequestToAddBotMessage extends IMessage {
   readonly type: MessageTypes.RequestToAddBot;
   meetId: string;
@@ -105,7 +110,8 @@ export enum MessageTypes {
   GeneralMessage = "GeneralMessage",
   RequestToAddBot = "RequestToAddBot",
   PauseAndPlayTranscription = "PauseAndPlayTranscription",
-  MeetingIsActive = "MeetingIsActive"
+  MeetingIsActive = "MeetingIsActive",
+  CloseMeeting = "CloseMeeting"
 }
 
 export interface Reaction {

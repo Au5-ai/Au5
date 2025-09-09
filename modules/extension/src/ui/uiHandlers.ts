@@ -5,6 +5,7 @@ import StateManager from "../core/stateManager";
 import {
   AppConfiguration,
   BotJoinedInMeetingMessage,
+  CloseMeetingMessage,
   EntryMessage,
   IMeetingPlatform,
   IMessage,
@@ -358,13 +359,21 @@ export class UIHandlers {
       if (!meeting) {
         return;
       }
+      const meetId = this.platform?.getMeetId();
       const meetingModel: CloseMeetingModel = {
-        meetId: this.platform?.getMeetId(),
+        meetId: meetId,
         meetingId: meeting.meetingId
       };
       this.backendApi
         .closeMeeting(meetingModel)
         .then(() => {
+          const message = {
+            type: MessageTypes.CloseMeeting,
+            meetId: meetId
+          } as CloseMeetingMessage;
+
+          this.meetingHubClient.sendMessage(message);
+
           localStorage.removeItem("au5-meetingId");
           chrome.runtime.sendMessage({
             action: "CLOSE_SIDEPANEL",
