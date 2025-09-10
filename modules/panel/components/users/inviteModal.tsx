@@ -30,7 +30,7 @@ import {
   XCircle,
   CheckCircle2,
 } from "lucide-react";
-import { getRoleDisplay, getRoleType } from "@/lib/utils";
+import { getRoleDisplay, getRoleType, validateEmail } from "@/lib/utils";
 import { userApi } from "@/lib/api";
 
 interface Invite {
@@ -57,10 +57,6 @@ export default function InviteModal({
     failed: string[];
   } | null>(null);
 
-  const isValidEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
   const validateAndAddEmail = () => {
     const trimmedEmail = currentEmail.trim().toLowerCase();
     setEmailError(null);
@@ -68,7 +64,7 @@ export default function InviteModal({
       setEmailError("Please enter an email address");
       return;
     }
-    if (!isValidEmail(trimmedEmail)) {
+    if (!validateEmail(trimmedEmail)) {
       setEmailError("Please enter a valid email address");
       return;
     }

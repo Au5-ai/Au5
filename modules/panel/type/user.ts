@@ -1,4 +1,4 @@
-export type UserRole = "admin" | "user";
+export type UserRole = 1 | 2;
 
 export interface User {
   id: string;
@@ -21,10 +21,10 @@ export interface UserList {
   email: string;
   pictureUrl?: string;
   role: UserRole;
-  createdAt: string;
-  lastLoginAt?: string;
-  lastPasswordChangeAt?: string;
-  isValid: boolean;
+  createdAt: Date;
+  lastLoginAt?: Date;
+  lastPasswordChangeAt?: Date;
+  isActive: boolean;
 }
 
 export interface InviteUserRequest {

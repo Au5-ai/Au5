@@ -6,11 +6,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import {
   IconDotsVertical,
-  IconSearch,
   IconEdit,
   IconUserX,
   IconUserCheck,
-  IconActivity,
   IconArrowsUpDown,
 } from "@tabler/icons-react";
 
@@ -19,14 +17,11 @@ import {
   Button,
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  Input,
   Table,
   TableBody,
   TableCell,
@@ -40,24 +35,11 @@ import {
 import { UserList } from "@/type";
 import { getRoleDisplay } from "@/lib/utils";
 
-// Define the user type based on your requirements
-interface User {
-  id: string;
-  fullName: string;
-  email: string;
-  pictureUrl?: string;
-  role: 1 | 2;
-  createdAt: string;
-  lastLoginAt?: string;
-  lastPasswordChangeAt?: string;
-  isActive: boolean;
-}
-
 interface UserGridProps {
   users: UserList[];
   isLoading: boolean;
-  onEditUser: (user: User) => void;
-  onToggleUserStatus: (user: User) => void;
+  onEditUser: (user: UserList) => void;
+  onToggleUserStatus: (user: UserList) => void;
 }
 
 export default function UserGrid({
@@ -66,23 +48,18 @@ export default function UserGrid({
   onEditUser,
   onToggleUserStatus,
 }: UserGridProps) {
-  const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
     key: "createdAt",
     direction: "desc",
   });
 
   const filteredAndSortedUsers = React.useMemo(() => {
-    const filtered: User[] = users.filter(
-      (user) =>
-        user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filtered: UserList[] = users;
 
     if (sortConfig.key) {
       filtered.sort((a, b) => {
-        let aValue = a[sortConfig.key as keyof User];
-        let bValue = b[sortConfig.key as keyof User];
+        let aValue = a[sortConfig.key as keyof UserList];
+        let bValue = b[sortConfig.key as keyof UserList];
 
         if (
           sortConfig.key === "createdAt" ||
@@ -92,6 +69,8 @@ export default function UserGrid({
           aValue = aValue ? new Date(aValue as string) : new Date(0);
           bValue = bValue ? new Date(bValue as string) : new Date(0);
         }
+
+        if (aValue === undefined || bValue === undefined) return 0;
 
         if (aValue < bValue) {
           return sortConfig.direction === "asc" ? -1 : 1;
@@ -104,7 +83,7 @@ export default function UserGrid({
     }
 
     return filtered;
-  }, [users, searchTerm, sortConfig]);
+  }, [users, sortConfig]);
 
   const handleSort = (key: string) => {
     setSortConfig((current) => ({
@@ -112,23 +91,6 @@ export default function UserGrid({
       direction:
         current.key === key && current.direction === "asc" ? "desc" : "asc",
     }));
-  };
-
-  const getActivityStatus = (user: User) => {
-    if (!user.lastLoginAt)
-      return { label: "Never", color: "bg-gray-100 text-gray-600" };
-
-    const lastLogin = new Date(user.lastLoginAt);
-    const now = new Date();
-    const daysDiff = Math.floor(
-      (now.getTime() - lastLogin.getTime()) / (1000 * 60 * 60 * 24)
-    );
-
-    if (daysDiff <= 7)
-      return { label: "Active", color: "bg-green-100 text-green-800" };
-    if (daysDiff <= 30)
-      return { label: "Recent", color: "bg-blue-100 text-blue-800" };
-    return { label: "Inactive", color: "bg-red-100 text-red-800" };
   };
 
   return (
@@ -214,7 +176,6 @@ export default function UserGrid({
                         </TableRow>
                       ))
                   : filteredAndSortedUsers.map((user) => {
-                      const activityStatus = getActivityStatus(user);
                       const roleDisplay = getRoleDisplay(user.role);
                       const RoleIcon = roleDisplay.icon;
 
