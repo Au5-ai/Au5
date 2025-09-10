@@ -7,6 +7,7 @@ import {
   ClosedCaption,
   Frame,
   Settings,
+  UserPlus,
   Waypoints,
 } from "lucide-react";
 import { NavMain } from "@/components/nav-main";
@@ -54,6 +55,11 @@ const data = {
       title: "System Settings",
       url: "/system",
       icon: Settings,
+    },
+    {
+      title: "User Management",
+      url: "/users",
+      icon: UserPlus,
     },
   ],
   spaces: [
