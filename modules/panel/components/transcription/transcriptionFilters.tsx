@@ -17,7 +17,7 @@ type TranscriptionFiltersProps = {
   setFilterType: (type: string) => void;
   selectedSpeaker: string;
   setSelectedSpeaker: (speaker: string) => void;
-  participants: string[];
+  speakers: string[];
 };
 
 export default function TranscriptionFilters({
@@ -27,7 +27,7 @@ export default function TranscriptionFilters({
   setFilterType,
   selectedSpeaker,
   setSelectedSpeaker,
-  participants,
+  speakers,
 }: TranscriptionFiltersProps) {
   const filterButtons = [
     { key: "all", label: "All", icon: null },
@@ -85,15 +85,15 @@ export default function TranscriptionFilters({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all" className="cursor-pointer">
-                  All Participants
+                  All Speakers
                 </SelectItem>
-                {participants.map((participant, index) => (
+                {speakers.map((speaker, index) => (
                   <SelectItem
                     key={index}
-                    value={participant}
+                    value={speaker}
                     className="cursor-pointer"
                   >
-                    {participant}
+                    {speaker}
                   </SelectItem>
                 ))}
               </SelectContent>

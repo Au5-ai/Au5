@@ -95,12 +95,14 @@ export function NavUser(user: User) {
               disabled={logoutMutation.isPending}
               className={
                 logoutMutation.isPending
-                  ? "opacity-50 pointer-events-none cursor-pointer"
-                  : "cursor-pointer"
+                  ? "opacity-50 pointer-events-none cursor-pointer text-red-600 focus:text-red-600"
+                  : "cursor-pointer text-red-600 focus:text-red-600"
               }
             >
-              <LogOut />
-              {logoutMutation.isPending ? "Logging out..." : "Log out"}
+              <span className="text-red-600">
+                <LogOut color="lab(48.4493% 77.4328 61.5452)" />
+              </span>
+              {logoutMutation.isPending ? "Sign Out..." : "Sign Out"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

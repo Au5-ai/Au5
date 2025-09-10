@@ -59,7 +59,7 @@ export default function MyMeetingPage() {
       {meetings.length === 0 && <NoRecordsState />}
       {meetings.length > 0 && (
         <div className="flex flex-1 flex-col">
-          <div className="container mx-auto p-2 px-4">
+          <div className="container mx-auto px-6 py-4">
             <h1 className="text-2xl font-bold mb-1">Meeting Transcription</h1>
           </div>
 
