@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Au5.Domain.Entities;
 
 [Entity]
@@ -11,6 +13,7 @@ public class User
 
 	public string Email { get; set; }
 
+	[JsonIgnore]
 	public string Password { get; set; }
 
 	public bool IsActive { get; set; }

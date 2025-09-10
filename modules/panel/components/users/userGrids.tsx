@@ -50,7 +50,7 @@ interface User {
   createdAt: string;
   lastLoginAt?: string;
   lastPasswordChangeAt?: string;
-  isValid: boolean;
+  isActive: boolean;
 }
 
 interface UserGridProps {
@@ -155,7 +155,7 @@ export default function UserGrid({
           <Table>
             <TableHeader className="bg-gray-50">
               <TableRow className="border-b border-gray-100">
-                <TableHead className="font-medium text-gray-700">
+                <TableHead className="font-medium text-gray-700 px-4">
                   User
                 </TableHead>
                 <TableHead className="font-medium text-gray-700">
@@ -279,12 +279,12 @@ export default function UserGrid({
                           <TableCell>
                             <Badge
                               className={`${
-                                user.isValid
+                                user.isActive
                                   ? "bg-green-100 text-green-800"
                                   : "bg-red-100 text-red-800"
                               } border-0 font-medium`}
                             >
-                              {user.isValid ? "Active" : "Disabled"}
+                              {user.isActive ? "Active" : "Disabled"}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-sm text-gray-600">
@@ -317,16 +317,12 @@ export default function UserGrid({
                                   <IconEdit className="w-4 h-4 mr-2" />
                                   Edit User
                                 </DropdownMenuItem>
-                                <DropdownMenuItem className="cursor-pointer">
-                                  <IconActivity className="w-4 h-4 mr-2" />
-                                  View Activity
-                                </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
                                   onClick={() => onToggleUserStatus(user)}
                                   className="cursor-pointer"
                                 >
-                                  {user.isValid ? (
+                                  {user.isActive ? (
                                     <>
                                       <IconUserX className="w-4 h-4 mr-2 text-red-600" />
                                       Disable User

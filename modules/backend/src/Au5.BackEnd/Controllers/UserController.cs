@@ -1,14 +1,14 @@
-using Au5.Application.Features.UserManagement;
 using Au5.Application.Features.UserManagement.EditUser;
 using Au5.Application.Features.UserManagement.GetMyInfo;
 using Au5.Application.Features.UserManagement.GetUsers;
 using Au5.Application.Features.UserManagement.InviteUsers;
 using Au5.Application.Features.UserManagement.Search;
+using Au5.Application.Features.UserManagement.ToggleStatus;
 using Au5.Application.Features.UserManagement.UserStats;
 
 namespace Au5.BackEnd.Controllers;
 
-public class UserController(ISender mediator) : BaseController
+public class UsersController(ISender mediator) : BaseController
 {
 	[Route("me")]
 	public async Task<IActionResult> GetMyInfo()

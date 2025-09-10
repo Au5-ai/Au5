@@ -1,10 +1,11 @@
 import { User, UserList } from "@/type";
 import { apiRequest } from "./client";
 
-const API_BASE = "/api/users";
+const API_BASE = "/users";
 
 export const userApi = {
-  me: (): Promise<User> => apiRequest<User>("/user/me", { method: "GET" }),
+  me: (): Promise<User> =>
+    apiRequest<User>(`${API_BASE}/me`, { method: "GET" }),
 
   fetchUsers: (): Promise<UserList[]> =>
     apiRequest<UserList[]>(API_BASE, { method: "GET" }),
