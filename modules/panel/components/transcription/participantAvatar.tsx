@@ -5,41 +5,33 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 export default function ParticipantAvatar({
   fullName,
   pictureUrl,
-  size = "md",
 }: {
   fullName: string;
   pictureUrl: string;
-  size?: "sm" | "md" | "lg";
 }) {
-  const sizeClasses = {
-    sm: "w-8 h-8",
-    md: "w-10 h-10",
-    lg: "w-12 h-12",
+  const getColorFromName = (fullName: string) => {
+    if (!fullName) return "#6b7280";
+    let hash = 0;
+    for (let i = 0; i < fullName.length; i++) {
+      hash = fullName.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const hue = hash % 360;
+    return `hsl(${hue}, 70%, 65%)`;
   };
 
-  const textSizeClasses = {
-    sm: "text-xs",
-    md: "text-sm",
-    lg: "text-base",
-  };
-
-  const getInitials = (fullName: string) => {
-    return fullName
-      ?.split(" ")
-      .map((part) => part[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  };
+  const fallbackColor = getColorFromName(fullName);
 
   return (
     <Tooltip>
       <TooltipTrigger className="flex items-start">
-        <div className="relative flex-shrink-0">
-          <Avatar className="h-8 w-8 rounded-lg">
+        <div className="avatar-container">
+          <Avatar className="avatar-rounded">
             <AvatarImage src={pictureUrl} alt={fullName} />
-            <AvatarFallback className="rounded-lg">
-              {fullName.charAt(0)}
+            <AvatarFallback
+              className="avatar-rounded text-white"
+              style={{ backgroundColor: fallbackColor }}
+            >
+              {fullName?.charAt(0)?.toUpperCase() || "U"}
             </AvatarFallback>
           </Avatar>
         </div>
