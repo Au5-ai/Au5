@@ -7,7 +7,6 @@ import { UserPlus } from "lucide-react";
 import StatsCards from "@/components/users/statsCards";
 import UserGrid from "@/components/users/userGrids";
 import InviteModal from "@/components/users/inviteModal";
-import EditModal from "@/components/users/editModal";
 import BreadcrumbLayout from "@/components/breadcrumb-layout";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@radix-ui/react-separator";
@@ -17,11 +16,8 @@ export default function UsersManagemnetPage() {
   const [users, setUsers] = useState<UserList[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showInviteModal, setShowInviteModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
-    setSelectedUser(null);
     loadUsers();
   }, []);
 
@@ -34,31 +30,6 @@ export default function UsersManagemnetPage() {
       console.error("Error loading users:", error);
     }
     setIsLoading(false);
-  };
-
-  const handleEditUser = (user) => {
-    setSelectedUser(user);
-    setShowEditModal(true);
-  };
-
-  const handleSaveUser = async (userData: UserList) => {
-    try {
-      await userApi.editUser(userData.id, userData);
-      setShowEditModal(false);
-      setSelectedUser(null);
-      await loadUsers();
-    } catch (error) {
-      console.error("Error updating user:", error);
-    }
-  };
-
-  const handleToggleUserStatus = async (user: UserList) => {
-    try {
-      await userApi.toggleUserStatus(user.id, !user.isValid);
-      await loadUsers();
-    } catch (error) {
-      console.error("Error toggling user status:", error);
-    }
   };
 
   return (
@@ -97,25 +68,13 @@ export default function UsersManagemnetPage() {
         <div className="min-h-screen w-full">
           <div className="max-w-7xl mx-auto">
             <StatsCards users={users} isLoading={isLoading} />
-            <UserGrid
-              users={users}
-              isLoading={isLoading}
-              onEditUser={handleEditUser}
-              onToggleUserStatus={handleToggleUserStatus}
-            />
+            <UserGrid users={users} isLoading={isLoading} />
 
             {/* Modals */}
             <InviteModal
               open={showInviteModal}
               onOpenChange={setShowInviteModal}
               onReloadData={loadUsers}
-            />
-
-            <EditModal
-              user={selectedUser}
-              open={showEditModal}
-              onOpenChange={setShowEditModal}
-              onSave={handleSaveUser}
             />
           </div>
         </div>

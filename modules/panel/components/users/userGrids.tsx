@@ -4,24 +4,13 @@ import * as React from "react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
-import {
-  IconDotsVertical,
-  IconEdit,
-  IconUserX,
-  IconUserCheck,
-  IconArrowsUpDown,
-} from "@tabler/icons-react";
+import { IconArrowsUpDown } from "@tabler/icons-react";
 
 import {
   Badge,
   Button,
   Card,
   CardContent,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
   Table,
   TableBody,
   TableCell,
@@ -35,19 +24,13 @@ import {
 import { UserList } from "@/type";
 import { getRoleDisplay } from "@/lib/utils";
 
-interface UserGridProps {
-  users: UserList[];
-  isLoading: boolean;
-  onEditUser: (user: UserList) => void;
-  onToggleUserStatus: (user: UserList) => void;
-}
-
 export default function UserGrid({
   users,
   isLoading,
-  onEditUser,
-  onToggleUserStatus,
-}: UserGridProps) {
+}: {
+  users: UserList[];
+  isLoading: boolean;
+}) {
   const [sortConfig, setSortConfig] = useState({
     key: "createdAt",
     direction: "desc",
@@ -243,7 +226,7 @@ export default function UserGrid({
                             {format(new Date(user.createdAt), "MMM d, yyyy")}
                           </TableCell>
                           <TableCell>
-                            <DropdownMenu>
+                            {/* <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button
                                   variant="ghost"
@@ -279,7 +262,7 @@ export default function UserGrid({
                                   )}
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
-                            </DropdownMenu>
+                            </DropdownMenu> */}
                           </TableCell>
                         </motion.tr>
                       );
