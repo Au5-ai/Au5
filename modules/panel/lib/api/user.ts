@@ -10,19 +10,6 @@ export const userApi = {
   fetchUsers: (): Promise<UserList[]> =>
     apiRequest<UserList[]>(API_BASE, { method: "GET" }),
 
-  fetchUserStats: (): Promise<{
-    total: number;
-    active: number;
-    admins: number;
-    inactive: number;
-  }> =>
-    apiRequest<{
-      total: number;
-      active: number;
-      admins: number;
-      inactive: number;
-    }>(`${API_BASE}/stats`, { method: "GET" }),
-
   inviteUsers: (
     invites: { email: string; role: number }[]
   ): Promise<{ success: string[]; failed: string[] }> =>
@@ -39,23 +26,10 @@ export const userApi = {
       headers: { "Content-Type": "application/json" },
     }),
 
-  toggleUserStatus: (userId: string, isValid: boolean): Promise<User> =>
+  toggleUserStatus: (userId: string, isActive: boolean): Promise<User> =>
     apiRequest<User>(`${API_BASE}/${userId}/status`, {
       method: "PATCH",
-      body: JSON.stringify({ isValid }),
+      body: JSON.stringify({ isActive }),
       headers: { "Content-Type": "application/json" },
     }),
-
-  searchUsers: (
-    query: string,
-    filters: Record<string, unknown>
-  ): Promise<UserList[]> => {
-    const params = new URLSearchParams({
-      query,
-      ...(filters as Record<string, string>),
-    });
-    return apiRequest<UserList[]>(`${API_BASE}/search?${params}`, {
-      method: "GET",
-    });
-  },
 };

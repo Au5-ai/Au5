@@ -1,8 +1,15 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, UserCheck, Shield, UserX } from "lucide-react";
+import { UserList } from "@/type";
 
-export default function StatsCards({ users, isLoading }) {
+export default function StatsCards({
+  users,
+  isLoading,
+}: {
+  users: UserList[];
+  isLoading: boolean;
+}) {
   const calculateStats = () => {
     if (!users.length) {
       return {
@@ -12,26 +19,9 @@ export default function StatsCards({ users, isLoading }) {
         inactive: 0,
       };
     }
-
-    const now = new Date();
-    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-    const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-
-    const active = users.filter(
-      (user) =>
-        user.isValid &&
-        user.lastLoginAt &&
-        new Date(user.lastLoginAt) >= thirtyDaysAgo
-    ).length;
-
-    const administrators = users.filter((user) => user.role === "admin").length;
-
-    const inactive = users.filter(
-      (user) =>
-        !user.isValid ||
-        !user.lastLoginAt ||
-        new Date(user.lastLoginAt) < ninetyDaysAgo
-    ).length;
+    const active = users.filter((user) => user.isActive).length;
+    const administrators = users.filter((user) => user.role === 1).length;
+    const inactive = users.filter((user) => !user.isActive).length;
 
     return {
       total: users.length,

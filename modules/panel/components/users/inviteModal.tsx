@@ -41,9 +41,11 @@ interface Invite {
 export default function InviteModal({
   open,
   onOpenChange,
+  onReloadData,
 }: {
   open: boolean;
   onOpenChange: (state: boolean) => void;
+  onReloadData: () => void;
 }) {
   const [invites, setInvites] = useState<Invite[]>([]);
   const [currentEmail, setCurrentEmail] = useState("");
@@ -328,7 +330,7 @@ export default function InviteModal({
             <h3 className="font-medium text-gray-900 mb-1">
               Invitations Sent!
             </h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <div className="text-sm text-gray-600 mb-4">
               {invitationsSent} invitation{invitationsSent !== 1 ? "s" : ""}{" "}
               sent.
               <br />
@@ -370,9 +372,12 @@ export default function InviteModal({
                   )}
                 </>
               )}
-            </p>
+            </div>
             <Button
-              onClick={() => onOpenChange(false)}
+              onClick={() => {
+                onOpenChange(false);
+                onReloadData();
+              }}
               className="bg-black hover:bg-gray-800 text-white mt-8"
             >
               Done

@@ -51,6 +51,7 @@ export default function UsersManagemnetPage() {
       console.error("Error updating user:", error);
     }
   };
+
   const handleToggleUserStatus = async (user: UserList) => {
     try {
       await userApi.toggleUserStatus(user.id, !user.isValid);
@@ -107,6 +108,7 @@ export default function UsersManagemnetPage() {
             <InviteModal
               open={showInviteModal}
               onOpenChange={setShowInviteModal}
+              onReloadData={loadUsers}
             />
 
             <EditModal
