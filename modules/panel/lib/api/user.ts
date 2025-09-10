@@ -23,12 +23,11 @@ export const userApi = {
     }>(`${API_BASE}/stats`, { method: "GET" }),
 
   inviteUsers: (
-    emails: string[],
-    role: string
+    invites: { email: string; role: string }[]
   ): Promise<{ success: string[]; failed: string[] }> =>
     apiRequest<{ success: string[]; failed: string[] }>(`${API_BASE}/invite`, {
       method: "POST",
-      body: JSON.stringify({ emails, role }),
+      body: JSON.stringify(invites),
       headers: { "Content-Type": "application/json" },
     }),
 
