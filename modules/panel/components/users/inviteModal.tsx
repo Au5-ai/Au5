@@ -138,7 +138,7 @@ export default function InviteModal({
     }
   }, [open]);
 
-  const roleDisplay = getRoleDisplay(selectedRole);
+  const roleDisplay = getRoleDisplay(getRoleType(selectedRole));
   const RoleIcon = roleDisplay.icon;
 
   return (
