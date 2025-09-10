@@ -1,4 +1,4 @@
-import { User } from "@/type";
+import { User, UserList } from "@/type";
 import { apiRequest } from "./client";
 
 const API_BASE = "/api/users";
@@ -6,8 +6,8 @@ const API_BASE = "/api/users";
 export const userApi = {
   me: (): Promise<User> => apiRequest<User>("/user/me", { method: "GET" }),
 
-  fetchUsers: (): Promise<User[]> =>
-    apiRequest<User[]>(API_BASE, { method: "GET" }),
+  fetchUsers: (): Promise<UserList[]> =>
+    apiRequest<UserList[]>(API_BASE, { method: "GET" }),
 
   fetchUserStats: (): Promise<{
     total: number;
@@ -49,12 +49,12 @@ export const userApi = {
   searchUsers: (
     query: string,
     filters: Record<string, unknown>
-  ): Promise<User[]> => {
+  ): Promise<UserList[]> => {
     const params = new URLSearchParams({
       query,
       ...(filters as Record<string, string>),
     });
-    return apiRequest<User[]>(`${API_BASE}/search?${params}`, {
+    return apiRequest<UserList[]>(`${API_BASE}/search?${params}`, {
       method: "GET",
     });
   },

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { userApi } from "@/lib/api/user";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 import StatsCards from "@/components/users/statsCards";
@@ -25,7 +26,7 @@ export default function UsersManagemnetPage() {
   const loadUsers = async () => {
     setIsLoading(true);
     try {
-      const fetchedUsers = [];
+      const fetchedUsers = await userApi.fetchUsers();
       setUsers(fetchedUsers);
     } catch (error) {
       console.error("Error loading users:", error);

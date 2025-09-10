@@ -4,7 +4,6 @@ export interface User {
   id: string;
   fullName: string;
   pictureUrl?: string;
-  hasAccount: boolean;
   email: string;
 }
 
@@ -16,17 +15,17 @@ export interface Participant {
   hasAccount: boolean;
 }
 
-// export interface User {
-//   id: string;
-//   fullName: string;
-//   email: string;
-//   pictureUrl?: string;
-//   role: UserRole;
-//   createdAt: string;
-//   lastLoginAt?: string;
-//   lastPasswordChangeAt?: string;
-//   isValid: boolean;
-// }
+export interface UserList {
+  id: string;
+  fullName: string;
+  email: string;
+  pictureUrl?: string;
+  role: UserRole;
+  createdAt: string;
+  lastLoginAt?: string;
+  lastPasswordChangeAt?: string;
+  isValid: boolean;
+}
 
 export interface InviteUserRequest {
   email: string;

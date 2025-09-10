@@ -19,10 +19,21 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { User as UserIcon, Save, X, Crown, User } from "lucide-react";
+import { UserList } from "@/type";
 
-export default function EditModal({ user, open, onOpenChange, onSave }) {
+export default function EditModal({
+  user,
+  open,
+  onOpenChange,
+  onSave,
+}: {
+  user: UserList;
+  open: boolean;
+  onOpenChange: (state: boolean) => void;
+  onSave: (data: UserList) => void;
+}) {
   const [formData, setFormData] = useState({
-    full_name: "",
+    fullName: "",
     email: "",
     role: "user",
     isValid: true,
@@ -32,7 +43,7 @@ export default function EditModal({ user, open, onOpenChange, onSave }) {
   React.useEffect(() => {
     if (user) {
       setFormData({
-        full_name: user.full_name || "",
+        fullName: user.fullName || "",
         email: user.email || "",
         role: user.role || "user",
         isValid: user.isValid !== undefined ? user.isValid : true,
@@ -63,9 +74,9 @@ export default function EditModal({ user, open, onOpenChange, onSave }) {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="flex items-center gap-4">
             <Avatar className="w-16 h-16 border border-gray-200">
-              <AvatarImage src={formData.pictureUrl} alt={formData.full_name} />
+              <AvatarImage src={formData.pictureUrl} alt={formData.fullName} />
               <AvatarFallback className="bg-gray-100 text-gray-700 font-medium text-lg">
-                {formData.full_name
+                {formData.fullName
                   ?.split(" ")
                   .map((n) => n[0])
                   .join("")
@@ -97,18 +108,18 @@ export default function EditModal({ user, open, onOpenChange, onSave }) {
           <div className="grid grid-cols-1 gap-4">
             <div>
               <Label
-                htmlFor="full_name"
+                htmlFor="fullName"
                 className="text-sm font-medium text-gray-700"
               >
                 Full Name
               </Label>
               <Input
-                id="full_name"
-                value={formData.full_name}
+                id="fullName"
+                value={formData.fullName}
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
-                    full_name: e.target.value,
+                    fullName: e.target.value,
                   }))
                 }
                 required

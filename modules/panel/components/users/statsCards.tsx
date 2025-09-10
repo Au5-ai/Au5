@@ -1,5 +1,4 @@
 import React from "react";
-import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, UserCheck, Shield, UserX } from "lucide-react";
 
