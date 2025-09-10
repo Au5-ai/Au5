@@ -274,7 +274,7 @@ export default function InviteModal({
                             >
                               <Mail className="w-3 h-3 mr-1" />
                               {invite.email}
-                              {` (${invite.role})`}
+                              {` (${getRoleDisplay(invite.role)?.label})`}
                               <Button
                                 onClick={() => removeEmail(invite.email)}
                                 size="sm"
