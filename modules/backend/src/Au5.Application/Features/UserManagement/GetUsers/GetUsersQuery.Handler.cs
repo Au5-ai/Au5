@@ -11,7 +11,6 @@ public class GetUsersQueryHandler(IApplicationDbContext applicationDbContext) : 
 	{
 		var users = await _dbContext.Set<User>()
 			.AsNoTracking()
-			.Where(x => x.IsActive)
 			.ToListAsync(cancellationToken);
 
 		return users;

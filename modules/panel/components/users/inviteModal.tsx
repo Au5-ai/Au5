@@ -27,12 +27,15 @@ import {
   Crown,
   User,
   AlertCircle,
+  XCircle,
+  CheckCircle2,
 } from "lucide-react";
-import { getRoleDisplay } from "@/lib/utils";
+import { getRoleDisplay, getRoleType } from "@/lib/utils";
+import { userApi } from "@/lib/api";
 
 interface Invite {
   email: string;
-  role: string;
+  role: number;
 }
 
 export default function InviteModal({
@@ -49,6 +52,10 @@ export default function InviteModal({
   const [invitationsSent, setInvitationsSent] = useState(0);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [duplicateEmails, setDuplicateEmails] = useState<string[]>([]);
+  const [inviteResult, setInviteResult] = useState<{
+    success: string[];
+    failed: string[];
+  } | null>(null);
 
   const isValidEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -56,23 +63,15 @@ export default function InviteModal({
 
   const validateAndAddEmail = () => {
     const trimmedEmail = currentEmail.trim().toLowerCase();
-
-    // Reset errors
     setEmailError(null);
-
-    // Check if email is empty
     if (!trimmedEmail) {
       setEmailError("Please enter an email address");
       return;
     }
-
-    // Check if email is valid
     if (!isValidEmail(trimmedEmail)) {
       setEmailError("Please enter a valid email address");
       return;
     }
-
-    // Check if email is duplicate
     const isDuplicate = invites.some((invite) => invite.email === trimmedEmail);
     if (isDuplicate) {
       setDuplicateEmails((prev) => [...prev, trimmedEmail]);
@@ -86,7 +85,7 @@ export default function InviteModal({
 
     setInvites((prev) => [
       ...prev,
-      { email: trimmedEmail, role: selectedRole },
+      { email: trimmedEmail, role: getRoleType(selectedRole) },
     ]);
     setCurrentEmail("");
   };
@@ -110,19 +109,14 @@ export default function InviteModal({
   const sendInvitations = async () => {
     if (invites.length === 0) return;
     setIsLoading(true);
-
+    setInviteResult(null);
     try {
-      // Call API with invites array
-      console.log("Sending invites:", invites);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Hide the form by setting invitationsSent after successful API call
+      const result = await userApi.inviteUsers(invites);
+      setInviteResult(result);
       setInvitationsSent(invites.length);
     } catch (error) {
+      setInviteResult(null);
       console.error("Failed to send invitations:", error);
-      // Handle error (show error message to user, etc.)
     } finally {
       setIsLoading(false);
     }
@@ -135,6 +129,7 @@ export default function InviteModal({
     setInvitationsSent(0);
     setEmailError(null);
     setDuplicateEmails([]);
+    setInviteResult(null);
   };
 
   React.useEffect(() => {
@@ -339,11 +334,50 @@ export default function InviteModal({
             </h3>
             <p className="text-sm text-gray-600 mb-4">
               {invitationsSent} invitation{invitationsSent !== 1 ? "s" : ""}{" "}
-              sent successfully.
+              sent.
+              <br />
+              {inviteResult && (
+                <>
+                  {inviteResult.success.length > 0 && (
+                    <div>
+                      <h3 className="text-sm font-medium text-green-600 flex items-center gap-2">
+                        <CheckCircle2 className="h-4 w-4" />
+                        {inviteResult.success.length} Succeeded
+                      </h3>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {inviteResult.success.map((email) => (
+                          <Badge
+                            key={email}
+                            variant="secondary"
+                            className="bg-green-100 text-green-800"
+                          >
+                            {email}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {inviteResult.failed.length > 0 && (
+                    <div className="mt-4 ">
+                      <h3 className="text-sm font-medium text-red-600 flex items-center gap-2">
+                        <XCircle className="h-4 w-4" />
+                        {inviteResult.failed.length} Failed
+                      </h3>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {inviteResult.failed.map((email) => (
+                          <Badge key={email} variant="destructive">
+                            {email}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </p>
             <Button
               onClick={() => onOpenChange(false)}
-              className="bg-black hover:bg-gray-800 text-white"
+              className="bg-black hover:bg-gray-800 text-white mt-8"
             >
               Done
             </Button>

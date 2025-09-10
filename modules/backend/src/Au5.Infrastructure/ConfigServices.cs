@@ -33,6 +33,7 @@ public static class ConfigureServices
 		services.AddScoped<ICacheProvider, DistributedCacheCacheProvider>();
 		services.AddScoped<ITokenService, TokenService>();
 		services.AddScoped<IBotFatherAdapter, BotFatherAdapter>();
+		services.AddScoped<IEmailProvider, EmailProvider>();
 
 		services.AddStackExchangeRedisCache(options =>
 		{

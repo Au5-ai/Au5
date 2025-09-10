@@ -24,7 +24,7 @@ export const userApi = {
     }>(`${API_BASE}/stats`, { method: "GET" }),
 
   inviteUsers: (
-    invites: { email: string; role: string }[]
+    invites: { email: string; role: number }[]
   ): Promise<{ success: string[]; failed: string[] }> =>
     apiRequest<{ success: string[]; failed: string[] }>(`${API_BASE}/invite`, {
       method: "POST",

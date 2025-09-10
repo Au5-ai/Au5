@@ -46,7 +46,7 @@ interface User {
   fullName: string;
   email: string;
   pictureUrl?: string;
-  role: "admin" | "user";
+  role: 1 | 2;
   createdAt: string;
   lastLoginAt?: string;
   lastPasswordChangeAt?: string;
@@ -132,26 +132,9 @@ export default function UserGrid({
   };
 
   return (
-    <Card className="border-0 shadow-sm bg-white">
-      <CardHeader className="border-b border-gray-100 p-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <CardTitle className="text-xl font-semibold text-gray-900">
-            Users
-          </CardTitle>
-          <div className="relative">
-            <IconSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <Input
-              placeholder="Search users..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-72 border-gray-200"
-            />
-          </div>
-        </div>
-      </CardHeader>
-
+    <Card className="border-0 shadow-sm bg-white py-0">
       <CardContent className="p-0">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-xl">
           <Table>
             <TableHeader className="bg-gray-50">
               <TableRow className="border-b border-gray-100">
@@ -204,7 +187,7 @@ export default function UserGrid({
                           key={i}
                           className="animate-pulse border-b border-gray-50"
                         >
-                          <TableCell className="py-4">
+                          <TableCell className="py-2">
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 bg-gray-200 rounded-full" />
                               <div>

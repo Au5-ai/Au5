@@ -6,7 +6,7 @@ public record InviteUsersRequest
 {
 	public string Email { get; init; }
 
-	public string Role { get; init; }
+	public RoleTypes Role { get; init; }
 }
 
 public class InviteUsersResponse

@@ -93,8 +93,8 @@ export const formatDuration = (timeString: string) => {
   return `${totalMinutes} min`;
 };
 
-export const getRoleDisplay = (role: string) => {
-  return role === "admin"
+export const getRoleDisplay = (role: number) => {
+  return role === 1
     ? {
         label: "Admin",
         color:
@@ -107,4 +107,13 @@ export const getRoleDisplay = (role: string) => {
           "bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 border-blue-200",
         icon: User,
       };
+};
+
+export const getRoleType = (role: string): number => {
+  if (role == "user") {
+    return 2;
+  } else if (role == "admin") {
+    return 1;
+  }
+  return 0;
 };
