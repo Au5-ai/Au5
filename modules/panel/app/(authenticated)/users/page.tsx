@@ -11,15 +11,17 @@ import EditModal from "@/components/users/editModal";
 import BreadcrumbLayout from "@/components/breadcrumb-layout";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@radix-ui/react-separator";
+import { UserList } from "@/type";
 
 export default function UsersManagemnetPage() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<UserList[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
+    setSelectedUser(null);
     loadUsers();
   }, []);
 
@@ -39,17 +41,20 @@ export default function UsersManagemnetPage() {
     setShowEditModal(true);
   };
 
-  const handleSaveUser = async (userData) => {
+  const handleSaveUser = async (userData: UserList) => {
     try {
+      await userApi.editUser(userData.id, userData);
       setShowEditModal(false);
       setSelectedUser(null);
+      await loadUsers();
     } catch (error) {
       console.error("Error updating user:", error);
     }
   };
-
-  const handleToggleUserStatus = async (user) => {
+  const handleToggleUserStatus = async (user: UserList) => {
     try {
+      await userApi.toggleUserStatus(user.id, !user.isValid);
+      await loadUsers();
     } catch (error) {
       console.error("Error toggling user status:", error);
     }

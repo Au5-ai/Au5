@@ -28,6 +28,7 @@ import {
   User,
   AlertCircle,
 } from "lucide-react";
+import { getRoleDisplay } from "@/lib/utils";
 
 interface Invite {
   email: string;
@@ -104,22 +105,6 @@ export default function InviteModal({
       e.preventDefault();
       validateAndAddEmail();
     }
-  };
-
-  const getRoleDisplay = (role: string) => {
-    return role === "admin"
-      ? {
-          label: "Admin",
-          color:
-            "bg-gradient-to-r from-purple-100 to-violet-100 text-purple-800 border-purple-200",
-          icon: Crown,
-        }
-      : {
-          label: "User",
-          color:
-            "bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 border-blue-200",
-          icon: User,
-        };
   };
 
   const sendInvitations = async () => {

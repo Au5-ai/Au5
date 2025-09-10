@@ -6,8 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import {
   IconDotsVertical,
-  IconCrown,
-  IconUser,
   IconSearch,
   IconEdit,
   IconUserX,
@@ -39,6 +37,8 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui";
+import { UserList } from "@/type";
+import { getRoleDisplay } from "@/lib/utils";
 
 // Define the user type based on your requirements
 interface User {
@@ -54,7 +54,7 @@ interface User {
 }
 
 interface UserGridProps {
-  users: User[];
+  users: UserList[];
   isLoading: boolean;
   onEditUser: (user: User) => void;
   onToggleUserStatus: (user: User) => void;
@@ -129,12 +129,6 @@ export default function UserGrid({
     if (daysDiff <= 30)
       return { label: "Recent", color: "bg-blue-100 text-blue-800" };
     return { label: "Inactive", color: "bg-red-100 text-red-800" };
-  };
-
-  const getRoleDisplay = (role: "admin" | "user") => {
-    return role === "admin"
-      ? { label: "Admin", color: "bg-black text-white", icon: IconCrown }
-      : { label: "User", color: "bg-gray-100 text-gray-800", icon: IconUser };
   };
 
   return (
