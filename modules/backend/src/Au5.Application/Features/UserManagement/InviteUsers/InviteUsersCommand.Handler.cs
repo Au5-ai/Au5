@@ -40,7 +40,8 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 					FullName = "Not Entered",
 					Password = "Not Entered",
 					PictureUrl = "Not Entered",
-					Role = userInvited.Role
+					Role = userInvited.Role,
+					Status = UserStatus.SendVerificationLink
 				};
 				_context.Set<User>().Add(user);
 				invited.Add(user);

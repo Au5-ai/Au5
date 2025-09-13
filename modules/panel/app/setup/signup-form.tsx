@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useSignup } from "@/hooks/use-auth";
-import { AddAdminRequest } from "@/type";
+import { AddUserRequest } from "@/type";
 
 export function SignupForm({
   className,
@@ -92,7 +92,7 @@ export function SignupForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      const signupData: AddAdminRequest = {
+      const signupData: AddUserRequest = {
         email: formData.email,
         fullName: formData.fullname,
         password: formData.password,

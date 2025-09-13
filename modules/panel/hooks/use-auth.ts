@@ -7,8 +7,8 @@ import { ApiError, authApi, setUpApi, userApi } from "@/lib/api";
 import {
   LoginRequest,
   LoginResponse,
-  AddAdminRequest,
-  AddAdminResponse,
+  AddUserRequest,
+  AddUserResponse,
 } from "@/type";
 import { tokenStorageService } from "@/lib/services";
 import { toast } from "sonner";
@@ -44,7 +44,7 @@ export function useSignup() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  return useMutation<AddAdminResponse, unknown, AddAdminRequest>({
+  return useMutation<AddUserResponse, unknown, AddUserRequest>({
     mutationFn: setUpApi.addAdmin,
     onSuccess: async (response, signupData) => {
       if (!response.isDone) {

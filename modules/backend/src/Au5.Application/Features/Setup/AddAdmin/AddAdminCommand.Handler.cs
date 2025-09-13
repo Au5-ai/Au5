@@ -31,7 +31,8 @@ public class AddAdminQueryHandler : IRequestHandler<AddAdminCommand, Result<AddA
 			IsActive = true,
 			Role = RoleTypes.Admin,
 			CreatedAt = DateTime.Now,
-			PictureUrl = Constants.DefaultPictureUrl
+			PictureUrl = Constants.DefaultPictureUrl,
+			Status = UserStatus.CompleteSignUp
 		};
 
 		_dbContext.Set<User>().Add(admin);

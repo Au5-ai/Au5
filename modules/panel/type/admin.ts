@@ -2,13 +2,13 @@ export interface HelloAdminResponse {
   helloFromAdmin: boolean;
 }
 
-export interface AddAdminRequest {
+export interface AddUserRequest {
   email: string;
   fullName: string;
   password: string;
   repeatedPassword: string;
 }
 
-export interface AddAdminResponse {
+export interface AddUserResponse {
   isDone: boolean;
 }

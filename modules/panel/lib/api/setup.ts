@@ -1,4 +1,4 @@
-import { AddAdminRequest, AddAdminResponse, HelloAdminResponse } from "@/type";
+import { AddUserRequest, AddUserResponse, HelloAdminResponse } from "@/type";
 import { apiRequest } from "./client";
 
 export const setUpApi = {
@@ -6,8 +6,8 @@ export const setUpApi = {
     apiRequest<HelloAdminResponse>("/setUp/hello-admin", {
       method: "GET",
     }),
-  addAdmin: (data: AddAdminRequest): Promise<AddAdminResponse> =>
-    apiRequest<AddAdminResponse>("/setUp/hello-admin", {
+  addAdmin: (data: AddUserRequest): Promise<AddUserResponse> =>
+    apiRequest<AddUserResponse>("/setUp/hello-admin", {
       method: "POST",
       body: JSON.stringify(data),
     }),
