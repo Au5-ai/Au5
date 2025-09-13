@@ -48,6 +48,21 @@ public class SystemDbConfig : IEntityTypeConfiguration<SystemConfig>
 			.IsRequired()
 			.HasMaxLength(5);
 
+		builder.Property(t => t.SmtpUser)
+			.IsRequired()
+			.HasMaxLength(50);
+
+		builder.Property(t => t.SmtpHost)
+			.IsRequired()
+			.HasMaxLength(50);
+
+		builder.Property(t => t.SmtpPassword)
+			.IsRequired()
+			.HasMaxLength(100);
+
+		builder.Property(t => t.SmtpPort)
+			.IsRequired();
+
 		builder.Property(t => t.MeetingTranscriptionModel)
 			.IsRequired()
 			.HasMaxLength(20);

@@ -1,9 +1,11 @@
+using Au5.Application.Common;
 using Au5.Application.Common.Abstractions;
+using Au5.Application.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.UserManagement.InviteUsers;
 
-public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, InviteUsersResponse>
+public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Result<InviteUsersResponse>>
 {
 	private readonly IApplicationDbContext _context;
 	private readonly IEmailProvider _emailProvider;
@@ -14,10 +16,15 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Inv
 		_emailProvider = emailProvider;
 	}
 
-	public async ValueTask<InviteUsersResponse> Handle(InviteUsersCommand request, CancellationToken cancellationToken)
+	public async ValueTask<Result<InviteUsersResponse>> Handle(InviteUsersCommand request, CancellationToken cancellationToken)
 	{
 		List<User> invited = [];
 		InviteUsersResponse response = new() { Success = [], Failed = [] };
+		var config = await _context.Set<SystemConfig>().AsNoTracking().FirstOrDefaultAsync(cancellationToken: cancellationToken);
+		if (config is null)
+		{
+			return Error.Failure(description: AppResources.System.IsNotConfigured);
+		}
 
 		foreach (var userInvited in request.Invites)
 		{
@@ -48,10 +55,18 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Inv
 		var result = await _context.SaveChangesAsync(cancellationToken);
 		if (result.IsSuccess)
 		{
-			await _emailProvider.SendInviteAsync(invited);
+			await _emailProvider.SendInviteAsync(invited, new SmtpOptions()
+			{
+				Host = config.SmtpHost,
+				BaseUrl = config.PanelUrl,
+				Password = config.SmtpPassword,
+				Port = config.SmtpPort,
+				User = config.SmtpUser
+			});
 		}
 		else
 		{
+			response.Failed.Clear();
 			response.Failed.AddRange(request.Invites.Select(i => i.Email));
 			response.Success.Clear();
 		}

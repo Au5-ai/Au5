@@ -1,6 +1,6 @@
 namespace Au5.Application.Features.UserManagement.InviteUsers;
 
-public record InviteUsersCommand(List<InviteUsersRequest> Invites) : IRequest<InviteUsersResponse>;
+public record InviteUsersCommand(List<InviteUsersRequest> Invites) : IRequest<Result<InviteUsersResponse>>;
 
 public record InviteUsersRequest
 {

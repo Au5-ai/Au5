@@ -23,7 +23,7 @@ export default function SystemConfigPage() {
           {/* Render a component passed from children via a prop */}
         </div>
       </header>
-      <div className="flex flex-1 flex-col p-4">
+      <div className="flex flex-1 flex-col px-6 py-4">
         <div className="container mx-auto mb-4">
           <h1 className="text-2xl font-bold mb-1">System Settings</h1>
           <p className="text-muted-foreground">

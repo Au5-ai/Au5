@@ -1,4 +1,5 @@
 using Au5.Application.Common.Abstractions;
+using Au5.Application.Dtos;
 using Au5.Domain.Entities;
 using MailKit.Net.Smtp;
 using MimeKit;
@@ -7,20 +8,14 @@ namespace Au5.Infrastructure.Providers;
 
 public class EmailProvider : IEmailProvider
 {
-	private readonly string _smtpHost = "smtp.company.com";
-	private readonly int _smtpPort = 587; // or 465 for SSL
-	private readonly string _smtpUser = "m.karimi@asax.ir";
-	private readonly string _smtpPass = "29o84!8o2!##D0t";
-	private readonly string _verificationBaseUrl = "https://localhost:3001";
-
-	public async Task SendInviteAsync(List<User> invited)
+	public async Task SendInviteAsync(List<User> invited, SmtpOptions smtpOption)
 	{
 		foreach (var user in invited)
 		{
-			var emailBody = BuildInviteEmailBody(user, _verificationBaseUrl);
+			var emailBody = BuildInviteEmailBody(user, smtpOption.BaseUrl);
 
 			var message = new MimeMessage();
-			message.From.Add(new MailboxAddress("Company Name", _smtpUser));
+			message.From.Add(new MailboxAddress("Company Name", smtpOption.User));
 			message.To.Add(new MailboxAddress(user.FullName, user.Email));
 			message.Subject = "You're Invited! Please Verify Your Email";
 
@@ -32,8 +27,8 @@ public class EmailProvider : IEmailProvider
 			message.Body = builder.ToMessageBody();
 
 			using var client = new SmtpClient();
-			await client.ConnectAsync(_smtpHost, _smtpPort, MailKit.Security.SecureSocketOptions.StartTls);
-			await client.AuthenticateAsync(_smtpUser, _smtpPass);
+			await client.ConnectAsync(smtpOption.Host, smtpOption.Port, MailKit.Security.SecureSocketOptions.StartTls);
+			await client.AuthenticateAsync(smtpOption.User, smtpOption.Password);
 			await client.SendAsync(message);
 			await client.DisconnectAsync(true);
 		}
