@@ -36,6 +36,10 @@ public class SystemConfigCommandHandler : IRequestHandler<SystemConfigCommand, R
 			existingConfig.MeetingTranscription = request.MeetingTranscription;
 			existingConfig.MeetingTranscriptionModel = request.MeetingTranscriptionModel;
 			existingConfig.OpenAIToken = request.OpenAIToken;
+			existingConfig.SmtpPort = request.SmtpPort;
+			existingConfig.SmtpHost = request.SmtpHost;
+			existingConfig.SmtpPassword = request.SmtpPassword;
+			existingConfig.SmtpUser = request.SmtpUser;
 		}
 		else
 		{
@@ -58,7 +62,11 @@ public class SystemConfigCommandHandler : IRequestHandler<SystemConfigCommand, R
 				MeetingVideoRecording = request.MeetingVideoRecording,
 				MeetingAudioRecording = request.MeetingAudioRecording,
 				MeetingTranscription = request.MeetingTranscription,
-				MeetingTranscriptionModel = request.MeetingTranscriptionModel
+				MeetingTranscriptionModel = request.MeetingTranscriptionModel,
+				SmtpUser = request.SmtpUser,
+				SmtpPassword = request.SmtpPassword,
+				SmtpHost = request.SmtpHost,
+				SmtpPort = request.SmtpPort,
 			});
 		}
 

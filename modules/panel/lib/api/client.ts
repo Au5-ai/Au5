@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { API_BASE_URL } from "./config";
 import { ApiError, ProblemDetails } from "./types";
 
@@ -44,9 +45,11 @@ export async function apiRequest<T>(
     return await response.json();
   } catch (error) {
     if (error instanceof ApiError) {
+      toast.error(error.problemDetails.detail);
       throw error;
     }
 
+    toast.error("An unexpected error occurred during the request.");
     throw new ApiError(0, "Network Error", {
       title: "Network Error",
       detail:

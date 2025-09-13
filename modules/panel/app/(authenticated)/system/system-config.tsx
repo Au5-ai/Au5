@@ -53,10 +53,8 @@ export function SystemConfigsTab() {
         if (configData) {
           setConfigs(configData);
           setOriginalConfigs(configData);
-          console.log("Loaded system configs:", configData);
         }
       } catch {
-        toast.info("Using default configuration values.");
         setConfigs(defaultConfigs);
         setOriginalConfigs(defaultConfigs);
       } finally {
@@ -154,10 +152,10 @@ export function SystemConfigsTab() {
   };
 
   return isLoading ? (
-    <div className="flex flex-1 items-center justify-center">
-      <div className="flex flex-col items-center space-y-4">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        <p className="text-muted-foreground">Loading configuration...</p>
+    <div className="min-h-100 w-full flex items-center justify-center">
+      <div className="text-center">
+        <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+        <p className="text-gray-600 font-medium">Loading Configs...</p>
       </div>
     </div>
   ) : (
@@ -165,7 +163,7 @@ export function SystemConfigsTab() {
       <div className="space-y-8">
         {/* Organization Settings */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Organization & Bot</h2>
+          <h2 className="text-xl mt-8 font-semibold">Organization & Bot</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="organizationName">Organization Name</Label>
@@ -200,8 +198,8 @@ export function SystemConfigsTab() {
 
         {/* URL Configuration */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold">URL Configuration</h2>
-          <div className="grid grid-cols-1 gap-4">
+          <h2 className="text-xl mt-8 font-semibold">URL Configuration</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               {
                 key: "botFatherUrl",
@@ -257,9 +255,63 @@ export function SystemConfigsTab() {
           </div>
         </div>
 
+        {/* URL Configuration */}
+        <div className="space-y-4">
+          <h2 className="text-xl mt-8 font-semibold">SMTP Configuration</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              {
+                key: "smtpHost",
+                label: "SMTP Host",
+                placeholder: "http://localhost:8081",
+              },
+              {
+                key: "smtpPort",
+                label: "SMTP Port",
+                placeholder: "25",
+              },
+              {
+                key: "smtpUser",
+                label: "SMTP User",
+                placeholder: "test@example.com",
+              },
+              {
+                key: "smtpPassword",
+                label: "SMTP Password",
+                placeholder: "",
+              },
+            ].map(({ key, label, placeholder }) => (
+              <div key={key} className="space-y-4">
+                <Label htmlFor={key}>{label}</Label>
+                <Input
+                  id={key}
+                  value={configs[key as keyof SystemConfigs] as string}
+                  onChange={(e) =>
+                    handleInputChange(
+                      key as keyof SystemConfigs,
+                      e.target.value
+                    )
+                  }
+                  placeholder={placeholder}
+                  className={
+                    errors[key as keyof SystemConfigs]
+                      ? "border-destructive"
+                      : ""
+                  }
+                />
+                {errors[key as keyof SystemConfigs] && (
+                  <p className="text-sm text-destructive">
+                    {errors[key as keyof SystemConfigs]}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Localization */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Localization</h2>
+          <h2 className="text-xl mt-8 font-semibold">Localization</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-4">
               <Label htmlFor="direction">Text Direction</Label>
@@ -410,7 +462,7 @@ export function SystemConfigsTab() {
 
         {/* API Tokens */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold">API Tokens</h2>
+          <h2 className="text-xl mt-8 font-semibold">API Tokens</h2>
           <div className="space-y-2">
             <Label htmlFor="openaiToken">OpenAI Token</Label>
             <Input
@@ -429,7 +481,7 @@ export function SystemConfigsTab() {
 
         {/* Meeting configs */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Meeting Configuration</h2>
+          <h2 className="text-xl mt-8 font-semibold">Meeting Configuration</h2>
 
           <div className="space-y-2">
             <Label htmlFor="transcriptionModel">Transcription Model</Label>
@@ -451,7 +503,7 @@ export function SystemConfigsTab() {
 
           <div className="space-y-4">
             <h3 className="font-medium">Auto-Leave Timeouts (milliseconds)</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
                 {
                   key: "autoLeaveWaitingEnter",
@@ -503,7 +555,7 @@ export function SystemConfigsTab() {
 
           <div className="space-y-4">
             <h3 className="font-medium">Recording & Transcription</h3>
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
                 {
                   key: "meetingVideoRecording",
