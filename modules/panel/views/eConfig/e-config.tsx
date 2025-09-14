@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { CheckCircle2, ChevronLeft, ChevronRight, Circle } from "lucide-react";
-import { handleCelebration } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { Steps } from "./models";
+import { Button, Card, CardContent } from "@/shared/components/ui";
+import { handleCelebration } from "@/shared/lib/utils";
 
 export default function EConfigPanel() {
   const router = useRouter();
@@ -80,7 +79,6 @@ export default function EConfigPanel() {
           <div>{Steps[currentStep - 1].component}</div>
           <div className="flex justify-between">
             <Button
-              className="cursor-pointer"
               variant="outline"
               onClick={prevStep}
               disabled={currentStep === 1}>

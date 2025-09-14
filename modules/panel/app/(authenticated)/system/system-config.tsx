@@ -1,19 +1,19 @@
 import { useState, useEffect } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+import { Input } from "@/shared/components/ui/input";
+import { Label } from "@/shared/components/ui/label";
+import { Button } from "@/shared/components/ui/button";
+import { Switch } from "@/shared/components/ui/switch";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/shared/components/ui/select";
 import { toast } from "sonner";
-import { SystemConfigs } from "@/type";
-import { validateUrl } from "@/lib/utils";
-import { systemApi } from "@/lib/api";
+import { SystemConfigs } from "@/shared/types";
+import { systemApi } from "@/shared/network/api/system";
+import { validateUrl } from "@/shared/lib/utils";
 
 const defaultConfigs: SystemConfigs = {
   organizationName: "",

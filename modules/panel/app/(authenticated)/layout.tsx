@@ -1,9 +1,9 @@
 "use client";
 
-import { AppSidebar } from "@/components/app-sidebar";
-import { AuthGuard } from "@/components/auth-guard";
-import { useUser } from "@/hooks/use-auth";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/shared/components/ui";
+import { AppSidebar } from "@/shared/components/x/app-sidebar";
+import { AuthGuard } from "@/shared/components/x/auth-guard";
+import { useUser } from "@/shared/hooks/use-auth";
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;

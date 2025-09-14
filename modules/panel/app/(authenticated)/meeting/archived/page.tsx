@@ -1,19 +1,23 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/shared/components/ui/avatar";
+import { Card, CardContent } from "@/shared/components/ui/card";
+import { Button } from "@/shared/components/ui/button";
 import { Link, Share2, Trash2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { meetingApi } from "@/lib/api";
 import { MeetingListSkeleton } from "@/app/(authenticated)/meeting/meeting-list-skeleton";
 import { useRouter } from "next/navigation";
-import { MeetingItem } from "@/type";
-import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
-import BreadcrumbLayout from "@/components/breadcrumb-layout";
-import { NetworkError } from "@/components/empty-states/error";
-import NoRecordsState from "@/components/empty-states/no-record";
+import { meetingApi } from "@/shared/network/api/meeting";
+import { MeetingItem } from "@/shared/types";
+import NoRecordsState from "@/shared/components/x/empty-states/no-record";
+import { SidebarInset, SidebarTrigger } from "@/shared/components/ui";
+import { NetworkError } from "@/shared/components/x/empty-states/error";
+import { Separator } from "@radix-ui/react-separator";
+import BreadcrumbLayout from "@/shared/components/x/breadcrumb-layout";
 
 export default function MyMeetingPage() {
   const router = useRouter();

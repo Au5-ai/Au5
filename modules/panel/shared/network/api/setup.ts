@@ -1,13 +1,17 @@
-import { AddUserRequest, AddUserResponse, HelloAdminResponse } from "@/type";
-import { apiRequest } from "../apiRequestClient";
+import {
+  AddUserRequest,
+  AddUserResponse,
+  HelloAdminResponse,
+} from "@/shared/types";
+import { apiRequestClient } from "../apiRequestClient";
 
 export const setUpApi = {
   helloAdmin: (): Promise<HelloAdminResponse> =>
-    apiRequest<HelloAdminResponse>("/setUp/hello-admin", {
+    apiRequestClient<HelloAdminResponse>("/setUp/hello-admin", {
       method: "GET",
     }),
   addAdmin: (data: AddUserRequest): Promise<AddUserResponse> =>
-    apiRequest<AddUserResponse>("/setUp/hello-admin", {
+    apiRequestClient<AddUserResponse>("/setUp/hello-admin", {
       method: "POST",
       body: JSON.stringify(data),
     }),

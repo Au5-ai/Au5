@@ -1,6 +1,7 @@
-import { Button } from "@/components/ui/button";
-import { systemApi, userApi } from "@/lib/api";
-import { tokenStorageService } from "@/lib/services";
+import { Button } from "@/shared/components/ui";
+import { tokenStorageService } from "@/shared/lib/localStorage";
+import { systemApi } from "@/shared/network/api/system";
+import { userApi } from "@/shared/network/api/user";
 import { useQueryClient } from "@tanstack/react-query";
 import { Settings } from "lucide-react";
 import Image from "next/image";
@@ -21,7 +22,6 @@ export function ConfigureStep() {
             id: user.id,
             fullName: user.fullName,
             pictureUrl: user.pictureUrl,
-            hasAccount: user.hasAccount,
           },
           service: {
             jwtToken: tokenStorageService.get(),
@@ -47,7 +47,6 @@ export function ConfigureStep() {
         localStorage.setItem("config", JSON.stringify(config));
         queryClient.setQueryData(["currentUser"], {
           ...user,
-          hasAccount: user.hasAccount,
         });
         toast.success("Configuration sent to extension!");
       }
@@ -73,10 +72,7 @@ export function ConfigureStep() {
         />
 
         <div className="flex justify-between py-6">
-          <Button
-            variant="outline"
-            className="cursor-pointer"
-            onClick={handleSendConfigs}>
+          <Button variant="outline" onClick={handleSendConfigs}>
             <Settings />
             Send Config To Extension
           </Button>

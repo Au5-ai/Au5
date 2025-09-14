@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import { Button } from "@/components/ui/button";
-import HeroSection from "@/components/landing/HeroSection";
 import { useRouter } from "next/navigation";
-import Logo from "@/components/logo";
+import Logo from "@/shared/components/x/logo";
+import { Button } from "@/shared/components/ui";
+import HeroSection from "@/shared/components/landing/HeroSection";
 
 export default function Home() {
   const router = useRouter();

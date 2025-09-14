@@ -1,19 +1,19 @@
 "use client";
 
-import { cn, validateEmail, validatePassword } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { cn, validateEmail, validatePassword } from "@/shared/lib/utils";
+import { Button } from "@/shared/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@/shared/components/ui/card";
+import { Input } from "@/shared/components/ui/input";
+import { Label } from "@/shared/components/ui/label";
 import { useState } from "react";
-import { useSignup } from "@/hooks/use-auth";
-import { AddUserRequest } from "@/type";
+import { useSignup } from "@/shared/hooks/use-auth";
+import { AddUserRequest } from "@/shared/types";
 
 export function SignupForm({
   className,

@@ -2,7 +2,6 @@ import { toast } from "sonner";
 import { API_BASE_URL } from "../config";
 import { ApiError, ProblemDetails } from "../types/network";
 
-// Generic API request function
 export async function apiRequestClient<T>(
   endpoint: string,
   options: RequestInit = {},

@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Logo from "@/components/logo";
-import { setUpApi } from "@/lib/api";
 import { SignupForm } from "./signup-form";
+import { setUpApi } from "@/shared/network/api/setup";
+import Logo from "@/shared/components/x/logo";
 
 export default function SignupPage() {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);

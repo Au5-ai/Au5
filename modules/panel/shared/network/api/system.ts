@@ -1,19 +1,19 @@
-import { ExtensionConfig, SystemConfigs } from "@/type";
-import { apiRequest } from "../apiRequestClient";
+import { ExtensionConfig, SystemConfigs } from "@/shared/types";
+import { apiRequestClient } from "../apiRequestClient";
 
 export const systemApi = {
   getExtensionConfig: (): Promise<ExtensionConfig> =>
-    apiRequest<ExtensionConfig>("/system/extension-config", {
+    apiRequestClient<ExtensionConfig>("/system/extension-config", {
       method: "GET",
     }),
 
   getConfig: (): Promise<SystemConfigs> =>
-    apiRequest<SystemConfigs>("/system/config", {
+    apiRequestClient<SystemConfigs>("/system/config", {
       method: "GET",
     }),
 
   setConfig: (configs: SystemConfigs): Promise<void> =>
-    apiRequest<void>("/system/config", {
+    apiRequestClient<void>("/system/config", {
       method: "POST",
       body: JSON.stringify(configs),
     }),

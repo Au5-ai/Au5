@@ -1,15 +1,15 @@
-import { LoginRequest, LoginResponse } from "@/type";
-import { apiRequest } from "../apiRequestClient";
+import { LoginRequest, LoginResponse } from "@/shared/types";
+import { apiRequestClient } from "../apiRequestClient";
 
 export const authApi = {
   login: (credentials: LoginRequest): Promise<LoginResponse> =>
-    apiRequest<LoginResponse>("/authentication/login", {
+    apiRequestClient<LoginResponse>("/authentication/login", {
       method: "POST",
       body: JSON.stringify(credentials),
     }),
 
   logout: (): Promise<void> =>
-    apiRequest<void>("/authentication/logout", {
+    apiRequestClient<void>("/authentication/logout", {
       method: "POST",
     }),
 };
