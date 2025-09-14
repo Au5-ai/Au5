@@ -3,17 +3,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { ApiError, authApi, setUpApi, userApi } from "@/lib/api";
-import {
-  LoginRequest,
-  LoginResponse,
-  AddUserRequest,
-  AddUserResponse,
-} from "@/type";
-import { tokenStorageService } from "@/lib/services";
 import { toast } from "sonner";
+import { userApi } from "../network/api/user";
 
-// Hook to get current user data
 export function useUser() {
   return useQuery({
     queryKey: ["user"],
