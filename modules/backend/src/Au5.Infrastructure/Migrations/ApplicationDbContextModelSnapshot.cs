@@ -431,6 +431,9 @@ namespace Au5.Infrastructure.Migrations
                     b.Property<byte>("Role")
                         .HasColumnType("tinyint");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("Id")
                         .HasName("PK_dbo_User");
 
@@ -449,7 +452,8 @@ namespace Au5.Infrastructure.Migrations
                             IsActive = true,
                             Password = "0PVQk0Qiwb8gY3iUipZQKhBQgDMJ/1PJfmIDhG5hbrA=",
                             PictureUrl = "https://i.imgur.com/ESenFCJ.jpeg",
-                            Role = (byte)2
+                            Role = (byte)2,
+                            Status = 0
                         });
                 });
 

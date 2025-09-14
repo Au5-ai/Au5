@@ -1,19 +1,19 @@
 import { useState, useEffect } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+import { Input } from "@/shared/components/ui/input";
+import { Label } from "@/shared/components/ui/label";
+import { Button } from "@/shared/components/ui/button";
+import { Switch } from "@/shared/components/ui/switch";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/shared/components/ui/select";
 import { toast } from "sonner";
-import { SystemConfigs } from "@/type";
-import { validateUrl } from "@/lib/utils";
-import { systemApi } from "@/lib/api";
+import { SystemConfigs } from "@/shared/types";
+import { systemApi } from "@/shared/network/api/system";
+import { validateUrl } from "@/shared/lib/utils";
 
 const defaultConfigs: SystemConfigs = {
   organizationName: "",
@@ -72,7 +72,7 @@ export function SystemConfigsTab() {
 
   const validateField = (
     field: keyof SystemConfigs,
-    value: string | number | boolean
+    value: string | number | boolean,
   ): string | null => {
     switch (field) {
       case "organizationName":
@@ -107,7 +107,7 @@ export function SystemConfigsTab() {
 
   const handleInputChange = (
     field: keyof SystemConfigs,
-    value: string | number | boolean
+    value: string | number | boolean,
   ) => {
     setConfigs((prev) => ({ ...prev, [field]: value }));
 
@@ -235,7 +235,7 @@ export function SystemConfigsTab() {
                   onChange={(e) =>
                     handleInputChange(
                       key as keyof SystemConfigs,
-                      e.target.value
+                      e.target.value,
                     )
                   }
                   placeholder={placeholder}
@@ -289,7 +289,7 @@ export function SystemConfigsTab() {
                   onChange={(e) =>
                     handleInputChange(
                       key as keyof SystemConfigs,
-                      e.target.value
+                      e.target.value,
                     )
                   }
                   placeholder={placeholder}
@@ -317,8 +317,9 @@ export function SystemConfigsTab() {
               <Label htmlFor="direction">Text Direction</Label>
               <Select
                 value={configs.direction}
-                onValueChange={(value) => handleInputChange("direction", value)}
-              >
+                onValueChange={(value) =>
+                  handleInputChange("direction", value)
+                }>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -332,8 +333,7 @@ export function SystemConfigsTab() {
               <Label htmlFor="language">Language</Label>
               <Select
                 value={configs.language}
-                onValueChange={(value) => handleInputChange("language", value)}
-              >
+                onValueChange={(value) => handleInputChange("language", value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -489,8 +489,7 @@ export function SystemConfigsTab() {
               value={configs.meetingTranscriptionModel}
               onValueChange={(value) =>
                 handleInputChange("meetingTranscriptionModel", value)
-              }
-            >
+              }>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -533,7 +532,7 @@ export function SystemConfigsTab() {
                     onChange={(e) =>
                       handleInputChange(
                         key as keyof SystemConfigs,
-                        Number.parseInt(e.target.value)
+                        Number.parseInt(e.target.value),
                       )
                     }
                     className={
@@ -575,8 +574,7 @@ export function SystemConfigsTab() {
               ].map(({ key, label, description }) => (
                 <div
                   key={key}
-                  className="flex items-center justify-between p-4 border rounded-lg"
-                >
+                  className="flex items-center justify-between p-4 border rounded-lg">
                   <div className="space-y-1">
                     <Label htmlFor={key}>{label}</Label>
                     <p className="text-sm text-muted-foreground">

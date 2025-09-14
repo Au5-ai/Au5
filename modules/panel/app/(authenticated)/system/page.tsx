@@ -1,11 +1,17 @@
 "use client";
 
-import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import BreadcrumbLayout from "@/components/breadcrumb-layout";
-import { Separator } from "@/components/ui/separator";
-import { SystemConfigsTab } from "./system-config";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  SidebarInset,
+  SidebarTrigger,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/components/ui";
+import BreadcrumbLayout from "@/shared/components/x/breadcrumb-layout";
+import { Separator } from "@radix-ui/react-separator";
 import { Bot, Brain, Frame, Palette, Settings, Target } from "lucide-react";
+import { SystemConfigsTab } from "./system-config";
 
 export default function SystemConfigPage() {
   return (

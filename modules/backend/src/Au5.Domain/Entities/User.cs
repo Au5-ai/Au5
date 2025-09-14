@@ -26,6 +26,8 @@ public class User
 
 	public RoleTypes Role { get; set; }
 
+	public UserStatus Status { get; set; }
+
 	public ICollection<Meeting> Meetings { get; set; }
 
 	public Participant ToParticipant()

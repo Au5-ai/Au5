@@ -38,6 +38,13 @@ public class UsersController(ISender mediator) : BaseController
 		return Ok(result);
 	}
 
+	//[HttpGet]
+	//[Route("{userId}")]
+	//public async Task<IActionResult> GetUser(string userId)
+	//{
+	//	var result = await mediator.Send(new GetUserQuery(userId));
+	//	return Ok(result);
+	//}
 	[HttpPatch]
 	[Route("{userId}/status")]
 	public async Task<IActionResult> ToggleUserStatus([FromRoute] Guid userId, [FromBody] ToggleUserStatusCommand request)

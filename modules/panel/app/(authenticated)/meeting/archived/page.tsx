@@ -1,19 +1,23 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/shared/components/ui/avatar";
+import { Card, CardContent } from "@/shared/components/ui/card";
+import { Button } from "@/shared/components/ui/button";
 import { Link, Share2, Trash2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { meetingApi } from "@/lib/api";
 import { MeetingListSkeleton } from "@/app/(authenticated)/meeting/meeting-list-skeleton";
 import { useRouter } from "next/navigation";
-import { MeetingItem } from "@/type";
-import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
-import BreadcrumbLayout from "@/components/breadcrumb-layout";
-import { NetworkError } from "@/components/empty-states/error";
-import NoRecordsState from "@/components/empty-states/no-record";
+import { meetingApi } from "@/shared/network/api/meeting";
+import { MeetingItem } from "@/shared/types";
+import NoRecordsState from "@/shared/components/x/empty-states/no-record";
+import { SidebarInset, SidebarTrigger } from "@/shared/components/ui";
+import { NetworkError } from "@/shared/components/x/empty-states/error";
+import { Separator } from "@radix-ui/react-separator";
+import BreadcrumbLayout from "@/shared/components/x/breadcrumb-layout";
 
 export default function MyMeetingPage() {
   const router = useRouter();
@@ -76,8 +80,7 @@ export default function MyMeetingPage() {
                   <CardContent
                     key={index}
                     className="flex items-center justify-between px-3 py-3 hover:bg-gray-50 cursor-pointer transition-colors"
-                    onClick={() => handleMeetingClick(item)}
-                  >
+                    onClick={() => handleMeetingClick(item)}>
                     <div className="flex items-center">
                       <div className="flex h-full w-16 min-w-16 max-w-16 flex-col-reverse items-start justify-between truncate pl-1">
                         <div aria-label="meeting-list-item-created">
@@ -87,8 +90,7 @@ export default function MyMeetingPage() {
                         </div>
                         <div
                           aria-label="meeting-list-item-duration"
-                          className="truncate text-center align-baseline font-semibold text-neutral-default text-sm"
-                        >
+                          className="truncate text-center align-baseline font-semibold text-neutral-default text-sm">
                           {item.duration}
                         </div>
                       </div>
@@ -116,8 +118,7 @@ export default function MyMeetingPage() {
                           onClick={(e) => {
                             e.stopPropagation();
                             // Handle open action here
-                          }}
-                        >
+                          }}>
                           <Link className="h-4 w-4" />
                         </Button>
                         <Button
@@ -128,8 +129,7 @@ export default function MyMeetingPage() {
                           onClick={(e) => {
                             e.stopPropagation();
                             // Handle share action here
-                          }}
-                        >
+                          }}>
                           <Share2 className="h-4 w-4" />
                         </Button>
                         <Button
@@ -140,8 +140,7 @@ export default function MyMeetingPage() {
                           onClick={(e) => {
                             e.stopPropagation();
                             // Handle delete action here
-                          }}
-                        >
+                          }}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>

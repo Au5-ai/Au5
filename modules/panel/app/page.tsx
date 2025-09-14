@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import { Button } from "@/components/ui/button";
-import HeroSection from "@/components/landing/HeroSection";
 import { useRouter } from "next/navigation";
-import Logo from "@/components/logo";
+import Logo from "@/shared/components/x/logo";
+import { Button } from "@/shared/components/ui";
+import HeroSection from "@/shared/components/landing/HeroSection";
 
 export default function Home() {
   const router = useRouter();
@@ -19,8 +19,7 @@ export default function Home() {
         background:
           "linear-gradient(to bottom, #f8fbff 0%, #f4f0ec 28%, #f4eae7 66%, #f4e8ec 100%)",
         color: "black",
-      }}
-    >
+      }}>
       <nav className="fixed top-0 w-full z-50">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center h-16">
@@ -32,7 +31,7 @@ export default function Home() {
             </div>
             <div className="hidden md:flex items-center space-x-8">
               <Button onClick={() => letsGo()} className="cursor-pointer">
-                Let's Go
+                Let&apos;s Go
               </Button>
             </div>
           </div>

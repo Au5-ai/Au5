@@ -1,16 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { userApi } from "@/lib/api/user";
-import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
-import StatsCards from "@/components/users/statsCards";
-import UserGrid from "@/components/users/userGrids";
-import InviteModal from "@/components/users/inviteModal";
-import BreadcrumbLayout from "@/components/breadcrumb-layout";
-import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@radix-ui/react-separator";
-import { UserList } from "@/type";
+import { UserList } from "@/shared/types";
+import { userApi } from "@/shared/network/api/user";
+import { Button, SidebarInset, SidebarTrigger } from "@/shared/components/ui";
+import BreadcrumbLayout from "@/shared/components/x/breadcrumb-layout";
+import UserGrid from "@/shared/components/users/userGrids";
+import StatsCards from "@/shared/components/users/statsCards";
+import InviteModal from "@/shared/components/users/inviteModal";
 
 export default function UsersManagemnetPage() {
   const [users, setUsers] = useState<UserList[]>([]);
@@ -58,8 +57,7 @@ export default function UsersManagemnetPage() {
           <div>
             <Button
               onClick={() => setShowInviteModal(true)}
-              className="bg-black hover:bg-gray-800 text-white"
-            >
+              className="bg-black hover:bg-gray-800 text-white">
               <UserPlus className="w-5 h-5 mr-2" />
               Invite Users
             </Button>
