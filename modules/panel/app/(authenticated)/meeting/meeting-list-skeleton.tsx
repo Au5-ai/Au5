@@ -1,7 +1,11 @@
-import { Card, CardContent } from "@/components/ui/card";
-import BreadcrumbLayout from "../../../components/breadcrumb-layout";
+import {
+  Card,
+  CardContent,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/shared/components/ui";
+import BreadcrumbLayout from "@/shared/components/x/breadcrumb-layout";
 import { Separator } from "@radix-ui/react-separator";
-import { SidebarInset, SidebarTrigger } from "../../../components/ui/sidebar";
 
 export function MeetingListSkeleton() {
   return (
@@ -35,8 +39,7 @@ export function MeetingListSkeleton() {
           {[...Array(3)].map((_, index) => (
             <CardContent
               key={index}
-              className="flex items-center justify-between px-3 py-3 animate-pulse"
-            >
+              className="flex items-center justify-between px-3 py-3 animate-pulse">
               <div className="flex items-center">
                 {/* Time and duration skeleton */}
                 <div className="flex h-full w-16 min-w-16 max-w-16 flex-col-reverse items-start justify-between truncate pl-1">
@@ -77,8 +80,7 @@ export function MeetingListSkeleton() {
           {[...Array(3)].map((_, index) => (
             <CardContent
               key={index}
-              className="flex items-center justify-between px-3 py-3 animate-pulse"
-            >
+              className="flex items-center justify-between px-3 py-3 animate-pulse">
               <div className="flex items-center">
                 {/* Time and duration skeleton */}
                 <div className="flex h-full w-16 min-w-16 max-w-16 flex-col-reverse items-start justify-between truncate pl-1">

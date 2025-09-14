@@ -58,8 +58,7 @@ export default function UsersManagemnetPage() {
           <div>
             <Button
               onClick={() => setShowInviteModal(true)}
-              className="bg-black hover:bg-gray-800 text-white"
-            >
+              className="bg-black hover:bg-gray-800 text-white">
               <UserPlus className="w-5 h-5 mr-2" />
               Invite Users
             </Button>

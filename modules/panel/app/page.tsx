@@ -19,8 +19,7 @@ export default function Home() {
         background:
           "linear-gradient(to bottom, #f8fbff 0%, #f4f0ec 28%, #f4eae7 66%, #f4e8ec 100%)",
         color: "black",
-      }}
-    >
+      }}>
       <nav className="fixed top-0 w-full z-50">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center h-16">

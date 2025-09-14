@@ -1,18 +1,18 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "next/navigation";
-import TranscriptionHeader from "@/components/transcription/transcriptionHeader";
-import TranscriptionFilters from "@/components/transcription/transcriptionFilters";
-import TranscriptionEntry from "@/components/transcription/transcriptionEntry";
+import { Meeting } from "@/shared/types";
+import { meetingApi } from "@/shared/network/api/meeting";
 import NoRecordsState, {
   NoSearchResults,
-} from "@/components/empty-states/no-record";
-import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
-import BreadcrumbLayout from "@/components/breadcrumb-layout";
-import { NavActions } from "@/components/navActions";
-import { Meeting } from "@/type";
-import { meetingApi } from "@/lib/api";
+} from "@/shared/components/x/empty-states/no-record";
+import { SidebarInset, SidebarTrigger } from "@/shared/components/ui";
+import { Separator } from "@radix-ui/react-separator";
+import BreadcrumbLayout from "@/shared/components/x/breadcrumb-layout";
+import { NavActions } from "@/shared/components/x/navActions";
+import TranscriptionHeader from "@/shared/components/transcription/transcriptionHeader";
+import TranscriptionFilters from "@/shared/components/transcription/transcriptionFilters";
+import TranscriptionEntry from "@/shared/components/transcription/transcriptionEntry";
 
 export default function TranscriptionPage() {
   const [transcription, setTranscription] = useState<Meeting>();
@@ -71,7 +71,7 @@ export default function TranscriptionPage() {
 
     if (selectedSpeaker && selectedSpeaker !== "all") {
       filtered = filtered.filter(
-        (entry) => entry?.fullName === selectedSpeaker
+        (entry) => entry?.fullName === selectedSpeaker,
       );
     }
 
@@ -79,7 +79,7 @@ export default function TranscriptionPage() {
       filtered = filtered.filter(
         (entry) =>
           entry.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          entry?.fullName.toLowerCase().includes(searchQuery.toLowerCase())
+          entry?.fullName.toLowerCase().includes(searchQuery.toLowerCase()),
       );
     }
 
