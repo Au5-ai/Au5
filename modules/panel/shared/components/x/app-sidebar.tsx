@@ -10,10 +10,10 @@ import {
   UserPlus,
   Waypoints,
 } from "lucide-react";
-import { NavMain } from "@/components/nav-main";
-import { NavSpaces } from "@/components/nav-spaces";
-import { NavUser } from "@/components/nav-user";
-import { User } from "@/type";
+import { NavMain } from "@/shared/components/x/nav-main";
+import { NavSpaces } from "@/shared/components/x/nav-spaces";
+import { NavUser } from "@/shared/components/x/nav-user";
+import { User } from "@/shared/types";
 import {
   Sidebar,
   SidebarContent,
@@ -21,8 +21,8 @@ import {
   SidebarHeader,
   SidebarMenuButton,
   SidebarRail,
-} from "@/components/ui/sidebar";
-import Logo from "../logo";
+} from "@/shared/components/ui/sidebar";
+import Logo from "./logo";
 
 // This is sample data.
 const data = {

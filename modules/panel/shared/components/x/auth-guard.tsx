@@ -1,6 +1,6 @@
 "use client";
 
-import { tokenStorageService } from "@/lib/services";
+import { tokenStorageService } from "@/shared/lib/localStorage";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 

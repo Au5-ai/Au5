@@ -1,8 +1,8 @@
 import React from "react";
 import { Clock, Gem } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/shared/components/ui/badge";
 import { format } from "date-fns";
-import { Meeting } from "@/type";
+import { Meeting } from "@/shared/types";
 import ParticipantAvatarGroup from "./participantAvatarGroup";
 import ParticipantAvatar from "./participantAvatar";
 
@@ -44,7 +44,6 @@ export default function TranscriptionHeader({ meeting }: { meeting: Meeting }) {
             <ParticipantAvatar
               fullName={meeting.userRecorder.fullName}
               pictureUrl={meeting.userRecorder.pictureUrl}
-              size="sm"
             />
             <span>
               Recorded by{" "}

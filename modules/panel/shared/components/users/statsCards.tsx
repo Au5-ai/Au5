@@ -1,7 +1,7 @@
 import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/shared/components/ui/card";
 import { Users, UserCheck, Shield, UserX } from "lucide-react";
-import { UserList } from "@/type";
+import { UserList } from "@/shared/types";
 
 export default function StatsCards({
   users,

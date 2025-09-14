@@ -20,9 +20,9 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui";
-import { UserList } from "@/type";
-import { getRoleDisplay } from "@/lib/utils";
+} from "@/shared/components/ui";
+import { UserList } from "@/shared/types";
+import { getRoleDisplay } from "@/shared/lib/utils";
 
 export default function UserGrid({
   users,

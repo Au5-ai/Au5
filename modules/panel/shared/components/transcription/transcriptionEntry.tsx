@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import { MessageCircle, Mic } from "lucide-react";
 import { format } from "date-fns";
 import ReactionBadges from "./reactionBadges";
-import { Entry } from "@/type";
 import ParticipantAvatar from "./participantAvatar";
+import { Entry } from "@/shared/types";
 
 export default function TranscriptionEntry({
   entry,

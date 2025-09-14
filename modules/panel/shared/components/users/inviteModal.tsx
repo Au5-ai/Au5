@@ -6,18 +6,18 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+} from "@/shared/components/ui/dialog";
+import { Button } from "@/shared/components/ui/button";
+import { Input } from "@/shared/components/ui/input";
+import { Label } from "@/shared/components/ui/label";
+import { Badge } from "@/shared/components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/shared/components/ui/select";
 import {
   X,
   Mail,
@@ -30,8 +30,8 @@ import {
   XCircle,
   CheckCircle2,
 } from "lucide-react";
-import { getRoleDisplay, getRoleType, validateEmail } from "@/lib/utils";
-import { userApi } from "@/lib/api";
+import { getRoleDisplay, getRoleType, validateEmail } from "@/shared/lib/utils";
+import { userApi } from "@/shared/network/api/user";
 
 interface Invite {
   email: string;

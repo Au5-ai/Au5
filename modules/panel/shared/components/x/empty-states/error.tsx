@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/components/ui/button";
 import {
   AlertTriangle,
   RefreshCw,
@@ -14,7 +14,7 @@ import {
   NetworkErrorProps,
   ServerErrorProps,
   UnexpectedErrorProps,
-} from "@/type/empty-state";
+} from "@/shared/types/empty-state";
 
 export default function ErrorState({
   title = "Something went wrong",

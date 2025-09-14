@@ -45,7 +45,6 @@ public class UsersController(ISender mediator) : BaseController
 	//	var result = await mediator.Send(new GetUserQuery(userId));
 	//	return Ok(result);
 	//}
-
 	[HttpPatch]
 	[Route("{userId}/status")]
 	public async Task<IActionResult> ToggleUserStatus([FromRoute] Guid userId, [FromBody] ToggleUserStatusCommand request)
