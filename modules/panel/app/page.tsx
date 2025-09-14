@@ -31,7 +31,7 @@ export default function Home() {
             </div>
             <div className="hidden md:flex items-center space-x-8">
               <Button onClick={() => letsGo()} className="cursor-pointer">
-                Let's Go
+                Let&apos;s Go
               </Button>
             </div>
           </div>

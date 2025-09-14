@@ -1,6 +1,5 @@
-import { MeetingData } from "@/shared/types";
+import { Meeting, MeetingData } from "@/shared/types";
 import { apiRequestClient } from "../apiRequestClient";
-import { Meeting } from "@/app/(authenticated)/meeting/my/columns";
 
 export const meetingApi = {
   my: (): Promise<MeetingData> => {

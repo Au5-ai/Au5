@@ -1,12 +1,12 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/components/ui/button";
 import { FileX, Plus, Search, Database } from "lucide-react";
 import {
   EmptyDatabaseProps,
   NoRecordsStateProps,
   NoRecordVariantType,
   NoSearchResultsProps,
-} from "@/type/empty-state";
+} from "@/shared/types/empty-state";
 
 export default function NoRecordsState({
   title = "No records found",

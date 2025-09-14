@@ -1,6 +1,6 @@
 import React from "react";
 import ParticipantAvatar from "./participantAvatar";
-import { Participant } from "@/type";
+import { Participant } from "@/shared/types";
 
 export default function ParticipantAvatarGroup({
   participants,
@@ -59,7 +59,6 @@ export default function ParticipantAvatarGroup({
             <ParticipantAvatar
               fullName={participant.fullName}
               pictureUrl={participant.pictureUrl}
-              size="sm"
             />
           </div>
         ))}

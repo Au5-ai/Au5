@@ -55,15 +55,13 @@ export function LoginForm({
             required
           />
         </div>
-
-        {loginMutation.error && (
+        {/* {loginMutation.error && (
           <div className="text-sm text-red-600 text-center">
             {loginMutation.error instanceof Error
               ? loginMutation.error.message
               : "Login failed. Please try again."}
           </div>
-        )}
-
+        )} */}
         <Button
           type="submit"
           className="w-full cursor-pointer"
