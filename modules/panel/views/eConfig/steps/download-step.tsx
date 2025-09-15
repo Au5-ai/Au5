@@ -11,7 +11,7 @@ export function DownloadStep() {
       </p>
       <div>
         <Image
-          src="/extension-install.png"
+          src="/assets/images/extension-install.png"
           width={480}
           height={400}
           alt="Welcome"
@@ -24,7 +24,7 @@ export function DownloadStep() {
             Add to Chrome - It's free!
           </Button>
           <Image
-            src="/meets.svg"
+            src="/assets/images/meets.svg"
             alt="Download Extension"
             className="rounded-lg cursor-pointer"
             width={100}
