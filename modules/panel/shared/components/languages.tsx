@@ -1,5 +1,5 @@
 import { SelectContent } from "@radix-ui/react-select";
-import { SelectItem } from "../ui/select";
+import { SelectItem } from "./ui/select";
 
 export function Languages() {
   return (

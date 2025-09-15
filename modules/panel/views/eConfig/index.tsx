@@ -1,5 +1,5 @@
 "use client";
-import Logo from "@/shared/components/x/logo";
+import Logo from "@/shared/components/logo";
 import { useState } from "react";
 import { CheckCircle2, ChevronLeft, ChevronRight, Circle } from "lucide-react";
 import { useRouter } from "next/navigation";

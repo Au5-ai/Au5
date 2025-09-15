@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import Logo from "@/shared/components/x/logo";
+import Logo from "@/shared/components/logo";
 import { Button } from "@/shared/components/ui";
 import HeroSection from "@/shared/components/landing/HeroSection";
 

@@ -15,9 +15,9 @@ import { SidebarInset, SidebarTrigger } from "@/shared/components/ui/sidebar";
 import { Separator } from "@/shared/components/ui/separator";
 import { meetingApi } from "@/shared/network/api/meeting";
 import { MeetingItem } from "@/shared/types";
-import { NetworkError } from "@/shared/components/x/empty-states/error";
-import BreadcrumbLayout from "@/shared/components/x/breadcrumb-layout";
-import NoRecordsState from "@/shared/components/x/empty-states/no-record";
+import { NetworkError } from "@/shared/components/empty-states/error";
+import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
+import NoRecordsState from "@/shared/components/empty-states/no-record";
 
 export default function MyMeetingPage() {
   const router = useRouter();

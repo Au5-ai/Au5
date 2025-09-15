@@ -4,7 +4,7 @@ import {
   SidebarInset,
   SidebarTrigger,
 } from "@/shared/components/ui";
-import BreadcrumbLayout from "@/shared/components/x/breadcrumb-layout";
+import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
 import { Separator } from "@radix-ui/react-separator";
 
 export function MeetingListSkeleton() {

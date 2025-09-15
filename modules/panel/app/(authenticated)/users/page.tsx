@@ -6,7 +6,7 @@ import { Separator } from "@radix-ui/react-separator";
 import { UserList } from "@/shared/types";
 import { userApi } from "@/shared/network/api/user";
 import { Button, SidebarInset, SidebarTrigger } from "@/shared/components/ui";
-import BreadcrumbLayout from "@/shared/components/x/breadcrumb-layout";
+import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
 import UserGrid from "@/shared/components/users/userGrids";
 import StatsCards from "@/shared/components/users/statsCards";
 import InviteModal from "@/shared/components/users/inviteModal";

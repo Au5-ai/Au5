@@ -1,5 +1,5 @@
-import { LoginForm } from "@/shared/components/x/login-form";
-import Logo from "@/shared/components/x/logo";
+import { LoginForm } from "@/shared/components/login-form";
+import Logo from "@/shared/components/logo";
 import Image from "next/image";
 
 export default function LoginPage() {

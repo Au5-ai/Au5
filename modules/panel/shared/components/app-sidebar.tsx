@@ -10,9 +10,9 @@ import {
   UserPlus,
   Waypoints,
 } from "lucide-react";
-import { NavMain } from "@/shared/components/x/nav-main";
-import { NavSpaces } from "@/shared/components/x/nav-spaces";
-import { NavUser } from "@/shared/components/x/nav-user";
+import { NavMain } from "@/shared/components/nav-main";
+import { NavSpaces } from "@/shared/components/nav-spaces";
+import { NavUser } from "@/shared/components/nav-user";
 import { User } from "@/shared/types";
 import {
   Sidebar,

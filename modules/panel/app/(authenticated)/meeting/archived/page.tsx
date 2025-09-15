@@ -13,11 +13,11 @@ import { MeetingListSkeleton } from "@/app/(authenticated)/meeting/meeting-list-
 import { useRouter } from "next/navigation";
 import { meetingApi } from "@/shared/network/api/meeting";
 import { MeetingItem } from "@/shared/types";
-import NoRecordsState from "@/shared/components/x/empty-states/no-record";
+import NoRecordsState from "@/shared/components/empty-states/no-record";
 import { SidebarInset, SidebarTrigger } from "@/shared/components/ui";
-import { NetworkError } from "@/shared/components/x/empty-states/error";
+import { NetworkError } from "@/shared/components/empty-states/error";
 import { Separator } from "@radix-ui/react-separator";
-import BreadcrumbLayout from "@/shared/components/x/breadcrumb-layout";
+import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
 
 export default function MyMeetingPage() {
   const router = useRouter();
