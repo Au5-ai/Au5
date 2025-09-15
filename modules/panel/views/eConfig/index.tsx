@@ -1,11 +1,11 @@
 "use client";
 import Logo from "@/shared/components/logo";
-import { useState } from "react";
-import { CheckCircle2, ChevronLeft, ChevronRight, Circle } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { Steps } from "./models";
 import { Button, Card, CardContent } from "@/shared/components/ui";
 import { handleCelebration } from "@/shared/lib/utils";
+import { CheckCircle2, ChevronLeft, ChevronRight, Circle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Steps } from "./models";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -33,12 +33,7 @@ export default function OnboardingPage() {
       }}
       className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex flex-col gap-6">
-        <a href="#" className="flex items-center gap-2 font-medium">
-          <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-            <Logo />
-          </div>
-          Au5.ai
-        </a>
+        <Logo href="#" text="Au5.ai" />
         <div className="flex items-center justify-center w-[800px]">
           <div className="flex rounded-xl border shadow-sm w-full h-[600px] gap-2 bg-card text-card-foreground">
             <div className="w-64 p-4 bg-muted rounded-tr-none rounded-br-none rounded-xl">
