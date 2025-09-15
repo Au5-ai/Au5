@@ -114,10 +114,8 @@ export default function MyMeetingPage() {
                           variant="ghost"
                           size="icon"
                           title="Open"
-                          className="cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
-                            // Handle open action here
                           }}>
                           <Link className="h-4 w-4" />
                         </Button>
@@ -125,10 +123,8 @@ export default function MyMeetingPage() {
                           variant="ghost"
                           size="icon"
                           title="Share"
-                          className="cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
-                            // Handle share action here
                           }}>
                           <Share2 className="h-4 w-4" />
                         </Button>
@@ -136,10 +132,8 @@ export default function MyMeetingPage() {
                           variant="ghost"
                           size="icon"
                           title="Delete"
-                          className="cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
-                            // Handle delete action here
                           }}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
