@@ -6,6 +6,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Settings } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
+import { eConfigCaptions } from "../i18n";
+import { globalCaptions } from "@/shared/i18n/captions";
 
 export function ConfigureStep() {
   const queryClient = useQueryClient();
@@ -48,18 +50,18 @@ export function ConfigureStep() {
         queryClient.setQueryData(["currentUser"], {
           ...user,
         });
-        toast.success("Configuration sent to extension!");
+        toast.success(eConfigCaptions.configurationSentSuccess);
       }
     } catch (error) {
-      console.error("Failed to configure:", error);
+      console.error(globalCaptions.failedToConfigure, error);
     }
   };
 
   return (
     <>
-      <h2 className="text-xl font-semibold mb-2">Configure Extension</h2>
+      <h2 className="text-xl font-semibold mb-2">{eConfigCaptions.configureExtensionTitle}</h2>
       <p className="text-muted-foreground mb-6">
-        Configure the extension settings
+        {eConfigCaptions.configureExtensionDescription}
       </p>
       <div>
         <Image
@@ -74,7 +76,7 @@ export function ConfigureStep() {
         <div className="flex justify-between py-6">
           <Button variant="outline" onClick={handleSendConfigs}>
             <Settings />
-            Send Config To Extension
+            {eConfigCaptions.sendConfigButtonText}
           </Button>
         </div>
       </div>

@@ -1,13 +1,14 @@
 import { Button } from "@/shared/components/ui";
 import { Download } from "lucide-react";
 import Image from "next/image";
+import { eConfigCaptions } from "../i18n";
 
 export function DownloadStep() {
   return (
     <>
-      <h2 className="text-xl font-semibold mb-2">Download Extension</h2>
+      <h2 className="text-xl font-semibold mb-2">{eConfigCaptions.downloadExtensionTitle}</h2>
       <p className="text-muted-foreground mb-6">
-        Get the latest version of the extension
+        {eConfigCaptions.downloadExtensionDescription}
       </p>
       <div>
         <Image
@@ -21,7 +22,7 @@ export function DownloadStep() {
         <div className="flex justify-between py-6">
           <Button variant="outline" className="cursor-pointer">
             <Download />
-            Add to Chrome - It's free!
+            {eConfigCaptions.downloadButtonText}
           </Button>
           <Image
             src="/meets.svg"
