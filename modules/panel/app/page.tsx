@@ -1,10 +1,9 @@
 "use client";
 
-import React from "react";
-import { useRouter } from "next/navigation";
+import HeroSection from "@/shared/components/landing/HeroSection";
 import Logo from "@/shared/components/logo";
 import { Button } from "@/shared/components/ui";
-import HeroSection from "@/shared/components/landing/HeroSection";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
@@ -23,12 +22,7 @@ export default function Home() {
       <nav className="fixed top-0 w-full z-50">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-                <Logo />
-              </div>
-              <span className="text-xl font-bold text-slate-900">Au5.ai</span>
-            </div>
+            <Logo text="Au5.ai" className="text-slate-900" />
             <div className="hidden md:flex items-center space-x-8">
               <Button onClick={() => letsGo()} className="cursor-pointer">
                 Let&apos;s Go
