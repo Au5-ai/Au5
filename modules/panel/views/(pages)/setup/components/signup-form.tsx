@@ -12,9 +12,9 @@ import {
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { useState } from "react";
-import { useSignup } from "./hooks";
-import { AddUserRequest } from "./types";
-import { CAPTIONS } from "./i18n";
+import { useSignup } from "../hooks";
+import { AddUserRequest } from "../types";
+import { CAPTIONS } from "../i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 
 export function SignupForm({

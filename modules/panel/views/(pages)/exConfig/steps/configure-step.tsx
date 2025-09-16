@@ -53,7 +53,7 @@ export function ConfigureStep() {
         toast.success(CAPTIONS.configurationSentSuccess);
       }
     } catch (error) {
-      console.error(GLOBAL_CAPTIONS.failedToConfigure, error);
+      console.error(GLOBAL_CAPTIONS.errors.exConfig.failedToConfigure, error);
     }
   };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { SignupForm } from "@/views/(pages)/setup/signup-form";
+import { SignupForm } from "@/views/(pages)/setup/components/signup-form";
 import Logo from "@/shared/components/logo";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

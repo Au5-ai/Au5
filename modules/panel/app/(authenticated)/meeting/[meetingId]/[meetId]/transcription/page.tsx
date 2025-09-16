@@ -3,9 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { Meeting } from "@/shared/types";
 import { meetingApi } from "@/shared/network/api/meeting";
-import NoRecordsState, {
-  NoSearchResults,
-} from "@/shared/components/empty-states/no-record";
+import NoRecordsState from "@/shared/components/empty-states/no-record";
 import { SidebarInset, SidebarTrigger } from "@/shared/components/ui";
 import { Separator } from "@radix-ui/react-separator";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
@@ -13,6 +11,7 @@ import { NavActions } from "@/shared/components/navActions";
 import TranscriptionHeader from "@/shared/components/transcription/transcriptionHeader";
 import TranscriptionFilters from "@/shared/components/transcription/transcriptionFilters";
 import TranscriptionEntry from "@/shared/components/transcription/transcriptionEntry";
+import { NoSearchResults } from "@/shared/components/empty-states/no-search-result";
 
 export default function TranscriptionPage() {
   const [transcription, setTranscription] = useState<Meeting>();
