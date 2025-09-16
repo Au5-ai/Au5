@@ -123,7 +123,7 @@ function handleAuthSuccess(
     router.push("/playground");
   } else {
     const setup = localStorage.getItem("eConfig");
-    router.push(setup ? "/playground" : "/eConfig");
+    router.push(setup ? "/playground" : "/exConfig");
   }
 }
 

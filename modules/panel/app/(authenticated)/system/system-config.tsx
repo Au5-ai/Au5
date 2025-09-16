@@ -12,8 +12,8 @@ import {
 } from "@/shared/components/ui/select";
 import { toast } from "sonner";
 import { SystemConfigs } from "@/shared/types";
-import { systemApi } from "@/shared/network/api/system";
 import { validateUrl } from "@/shared/lib/utils";
+import { systemController } from "@/shared/network/api/systemController";
 
 const defaultConfigs: SystemConfigs = {
   organizationName: "",
@@ -49,7 +49,7 @@ export function SystemConfigsTab() {
     const loadConfig = async () => {
       try {
         setIsLoading(true);
-        const configData = await systemApi.getConfig();
+        const configData = await systemController.getConfig();
         if (configData) {
           setConfigs(configData);
           setOriginalConfigs(configData);
@@ -131,7 +131,7 @@ export function SystemConfigsTab() {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      systemApi
+      systemController
         .setConfig(configs)
         .then(() => {
           setOriginalConfigs(configs); // Update original configs after successful save

@@ -1,6 +1,5 @@
 import { Button } from "@/shared/components/ui";
 import { tokenStorageService } from "@/shared/lib/localStorage";
-import { systemApi } from "@/shared/network/api/system";
 import { userApi } from "@/shared/network/api/user";
 import { useQueryClient } from "@tanstack/react-query";
 import { Settings } from "lucide-react";
@@ -8,6 +7,7 @@ import Image from "next/image";
 import { toast } from "sonner";
 import { eConfigCaptions } from "../i18n";
 import { globalCaptions } from "@/shared/i18n/captions";
+import { systemController } from "../systemController";
 
 export function ConfigureStep() {
   const queryClient = useQueryClient();
@@ -15,7 +15,7 @@ export function ConfigureStep() {
     try {
       const [user, systemConfig] = await Promise.all([
         userApi.me(),
-        systemApi.getExtensionConfig(),
+        systemController.getExtensionConfig(),
       ]);
 
       if (user && systemConfig) {
@@ -59,7 +59,9 @@ export function ConfigureStep() {
 
   return (
     <>
-      <h2 className="text-xl font-semibold mb-2">{eConfigCaptions.configureExtensionTitle}</h2>
+      <h2 className="text-xl font-semibold mb-2">
+        {eConfigCaptions.configureExtensionTitle}
+      </h2>
       <p className="text-muted-foreground mb-6">
         {eConfigCaptions.configureExtensionDescription}
       </p>
