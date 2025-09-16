@@ -22,7 +22,7 @@ import {
   AvatarImage,
 } from "@/shared/components/ui";
 import { UserList } from "@/shared/types";
-import { getRoleDisplay } from "@/shared/lib/utils";
+import { getRoleDisplay } from "@/shared/lib/user-utils";
 
 export default function UserGrid({
   users,
