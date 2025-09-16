@@ -1,7 +1,7 @@
 "use client";
 import Logo from "@/shared/components/logo";
 import { Button, Card, CardContent } from "@/shared/components/ui";
-import { handleCelebration } from "@/shared/lib/utils";
+import { handleCelebration } from "@/shared/lib/animation-utils";
 import { CheckCircle2, ChevronLeft, ChevronRight, Circle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
