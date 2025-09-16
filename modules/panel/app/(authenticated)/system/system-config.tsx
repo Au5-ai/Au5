@@ -13,7 +13,7 @@ import {
 import { toast } from "sonner";
 import { SystemConfigs } from "@/shared/types";
 import { systemApi } from "@/shared/network/api/system";
-import { validateUrl } from "@/shared/lib/utils";
+import { validateUrl } from "@/shared/lib/validation-utils";
 
 const defaultConfigs: SystemConfigs = {
   organizationName: "",
