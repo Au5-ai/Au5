@@ -1,3 +1,1 @@
-import OnboardingPage from "@/views/exConfig";
-
-export default OnboardingPage;
+export { default } from "@/views/exConfig";
