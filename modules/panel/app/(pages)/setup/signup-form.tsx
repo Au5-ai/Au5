@@ -1,6 +1,7 @@
 "use client";
 
-import { cn, validateEmail, validatePassword } from "@/shared/lib/utils";
+import { cn } from "@/shared/lib/styling-utils";
+import { validateEmail, validatePassword } from "@/shared/lib/validation-utils";
 import { Button } from "@/shared/components/ui/button";
 import {
   Card,
