@@ -3,7 +3,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { toast } from "sonner";
 import { userApi } from "../network/api/user";
 import { tokenStorageService } from "../lib/localStorage";
 import { LoginRequest, LoginResponse } from "../types";
@@ -29,11 +28,11 @@ export function useLogin() {
   return useMutation<LoginResponse, unknown, LoginRequest>({
     mutationFn: authController.login,
     onSuccess: (data) => handleAuthSuccess(data, false, queryClient, router),
-    onError: (error) => {
-      tokenStorageService.remove();
-      const message = handleAuthError(error);
-      toast.error(message);
-    },
+    // onError: (error) => {
+    //   tokenStorageService.remove();
+    //   const message = handleAuthError(error);
+    //   toast.error(message);
+    // },
   });
 }
 

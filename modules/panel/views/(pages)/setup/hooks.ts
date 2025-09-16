@@ -1,9 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { AddUserRequest, AddUserResponse } from "./types";
 import { useRouter } from "next/navigation";
 import { setupController } from "./setupController";
-import { handleAuthError, handleAuthSuccess } from "@/shared/hooks/use-auth";
+import { handleAuthSuccess } from "@/shared/hooks/use-auth";
 import { authController } from "@/shared/network/api/authController";
 import { CAPTIONS } from "./i18n";
 import { ROUTES } from "@/shared/routes";
@@ -31,9 +30,9 @@ export function useSignup() {
         router.push(ROUTES.LOGIN);
       }
     },
-    onError: (error) => {
-      const message = handleAuthError(error);
-      toast.error(message);
-    },
+    // onError: (error) => {
+    //   const message = handleAuthError(error);
+    //   toast.error(message);
+    // },
   });
 }
