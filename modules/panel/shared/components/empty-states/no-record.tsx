@@ -1,11 +1,9 @@
 import React from "react";
 import { Button } from "@/shared/components/ui/button";
-import { FileX, Plus, Search, Database } from "lucide-react";
+import { FileX, Plus } from "lucide-react";
 import {
-  EmptyDatabaseProps,
   NoRecordsStateProps,
   NoRecordVariantType,
-  NoSearchResultsProps,
 } from "@/shared/types/empty-state";
 
 export default function NoRecordsState({
@@ -87,35 +85,5 @@ export default function NoRecordsState({
         </div>
       )}
     </div>
-  );
-}
-
-// Pre-configured variants for common use cases
-export function NoSearchResults({ onClear }: NoSearchResultsProps) {
-  return (
-    <NoRecordsState
-      icon={Search}
-      title="No results found"
-      description={`We couldn't find anything matching. Try adjusting your search terms.`}
-      actionLabel="Clear Search"
-      onAction={onClear}
-      variant="search"
-    />
-  );
-}
-
-export function EmptyDatabase({
-  onAction,
-  actionLabel = "Add First Record",
-}: EmptyDatabaseProps) {
-  return (
-    <NoRecordsState
-      icon={Database}
-      title="Your database is empty"
-      description="Start building your collection by adding your first record."
-      actionLabel={actionLabel}
-      onAction={onAction}
-      variant="database"
-    />
   );
 }
