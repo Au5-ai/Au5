@@ -30,7 +30,8 @@ import {
   XCircle,
   CheckCircle2,
 } from "lucide-react";
-import { getRoleDisplay, getRoleType, validateEmail } from "@/shared/lib/utils";
+import { getRoleDisplay, getRoleType } from "@/shared/lib/user-utils";
+import { validateEmail } from "@/shared/lib/validation-utils";
 import { userApi } from "@/shared/network/api/user";
 
 interface Invite {
