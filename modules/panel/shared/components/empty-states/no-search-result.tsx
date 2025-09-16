@@ -7,9 +7,9 @@ export function NoSearchResults({ onClear }: NoSearchResultsProps) {
   return (
     <NoRecordsState
       icon={Search}
-      title={globalCaptions.search.noResults.title}
-      description={globalCaptions.search.noResults.description}
-      actionLabel={globalCaptions.search.noResults.action}
+      title={globalCaptions.emptyState.search.noResults.title}
+      description={globalCaptions.emptyState.search.noResults.description}
+      actionLabel={globalCaptions.emptyState.search.noResults.action}
       onAction={onClear}
       variant="search"
     />

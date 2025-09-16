@@ -5,13 +5,13 @@ import { Database } from "lucide-react";
 
 export function EmptyDatabase({
   onAction,
-  actionLabel = globalCaptions.database.empty.action,
+  actionLabel = globalCaptions.emptyState.database.empty.action,
 }: EmptyDatabaseProps) {
   return (
     <NoRecordsState
       icon={Database}
-      title={globalCaptions.database.empty.title}
-      description={globalCaptions.database.empty.description}
+      title={globalCaptions.emptyState.database.empty.title}
+      description={globalCaptions.emptyState.database.empty.description}
       actionLabel={actionLabel}
       onAction={onAction}
       variant="database"
