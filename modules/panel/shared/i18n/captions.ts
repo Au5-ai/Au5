@@ -3,7 +3,6 @@ export const globalCaptions = {
   next: "Next",
   brandName: "Au5.ai",
   playground: "playground",
-  failedToConfigure: "Failed to configure:",
   emptyState: {
     search: {
       noResults: {
@@ -20,6 +19,15 @@ export const globalCaptions = {
           "Start building your collection by adding your first record.",
         action: "Add First Record",
       },
+    },
+  },
+  errors: {
+    auth: {
+      authenticationFailed: "Authentication failed",
+      unexpectedError: "Unexpected error",
+    },
+    exConfig: {
+      failedToConfigure: "Failed to configure:",
     },
   },
 } as const;

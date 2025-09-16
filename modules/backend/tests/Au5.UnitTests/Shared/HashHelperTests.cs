@@ -17,6 +17,16 @@ public class HashHelperTests
 	}
 
 	[Fact]
+	public void Should_ReturnHash_When_SamePasswordAndSalt()
+	{
+		var password = "!qaz@wsx";
+		var salt = Guid.Parse("edada1f7-cbda-4c13-8504-a57fe72d5960");
+
+		var hash1 = HashHelper.HashPassword(password, salt);
+		Assert.Equal("0PVQk0Qiwb8gY3iUipZQKhBQgDMJ/1PJfmIDhG5hbrA=", hash1);
+	}
+
+	[Fact]
 	public void Should_ReturnDifferentHash_When_DifferentPassword()
 	{
 		var salt = Guid.NewGuid();

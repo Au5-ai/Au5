@@ -12,8 +12,8 @@ import {
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { useState } from "react";
-import { useSignup } from "@/shared/hooks/use-auth";
-import { AddUserRequest } from "@/shared/types";
+import { useSignup } from "./hooks";
+import { AddUserRequest } from "./types";
 
 export function SignupForm({
   className,
@@ -38,7 +38,6 @@ export function SignupForm({
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-    // Clear error when user starts typing
     if (errors[field as keyof typeof errors]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
@@ -52,14 +51,12 @@ export function SignupForm({
       confirmPassword: "",
     };
 
-    // Email validation
     if (!formData.email) {
       newErrors.email = "Email is required";
     } else if (!validateEmail(formData.email)) {
       newErrors.email = "Please enter a valid email address";
     }
 
-    // Full name validation
     if (!formData.fullname.trim()) {
       newErrors.fullname = "Full name is required";
     } else if (
@@ -70,7 +67,6 @@ export function SignupForm({
         "Full name must be at least 2 characters and at most 50 characters";
     }
 
-    // Password validation
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (!validatePassword(formData.password)) {
@@ -78,7 +74,6 @@ export function SignupForm({
         "Password must be at least 8 characters with uppercase, lowercase, number, and special character";
     }
 
-    // Confirm password validation
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = "Please confirm your password";
     } else if (formData.password !== formData.confirmPassword) {

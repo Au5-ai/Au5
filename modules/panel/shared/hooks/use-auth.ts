@@ -6,15 +6,10 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { userApi } from "../network/api/user";
 import { tokenStorageService } from "../lib/localStorage";
-import {
-  AddUserRequest,
-  AddUserResponse,
-  LoginRequest,
-  LoginResponse,
-} from "../types";
-import { authApi } from "../network/api/auth";
-import { setUpApi } from "../network/api/setup";
+import { LoginRequest, LoginResponse } from "../types";
 import { ApiError } from "../types/network";
+import { globalCaptions } from "../i18n/captions";
+import { authController } from "../network/api/authController";
 
 export function useUser() {
   return useQuery({
@@ -32,40 +27,10 @@ export function useLogin() {
   const router = useRouter();
 
   return useMutation<LoginResponse, unknown, LoginRequest>({
-    mutationFn: authApi.login,
+    mutationFn: authController.login,
     onSuccess: (data) => handleAuthSuccess(data, false, queryClient, router),
     onError: (error) => {
       tokenStorageService.remove();
-      const message = handleAuthError(error);
-      toast.error(message);
-    },
-  });
-}
-
-export function useSignup() {
-  const queryClient = useQueryClient();
-  const router = useRouter();
-
-  return useMutation<AddUserResponse, unknown, AddUserRequest>({
-    mutationFn: setUpApi.addAdmin,
-    onSuccess: async (response, signupData) => {
-      if (!response.isDone) {
-        throw new Error("Signup was not completed successfully");
-      }
-
-      try {
-        const loginResponse = await authApi.login({
-          username: signupData.email,
-          password: signupData.password,
-        });
-
-        handleAuthSuccess(loginResponse, true, queryClient, router);
-      } catch (loginError) {
-        console.error("Auto-login after signup failed:", loginError);
-        router.push("/login");
-      }
-    },
-    onError: (error) => {
       const message = handleAuthError(error);
       toast.error(message);
     },
@@ -77,7 +42,7 @@ export function useLogout() {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: () => authApi.logout(),
+    mutationFn: () => authController.logout(),
     onSuccess: () => {
       tokenStorageService.remove();
       queryClient.clear();
@@ -110,7 +75,7 @@ export function useIsAuthenticated() {
   return isAuthenticated;
 }
 
-function handleAuthSuccess(
+export function handleAuthSuccess(
   data: LoginResponse,
   isAdmin: boolean,
   queryClient: ReturnType<typeof useQueryClient>,
@@ -127,11 +92,13 @@ function handleAuthSuccess(
   }
 }
 
-function handleAuthError(error: unknown) {
+export function handleAuthError(error: unknown) {
   if (error instanceof ApiError) {
     return (
-      error.problemDetails?.detail || error.title || "Authentication failed"
+      error.problemDetails?.detail ||
+      error.title ||
+      globalCaptions.errors.auth.authenticationFailed
     );
   }
-  return "Unexpected error";
+  return globalCaptions.errors.auth.unexpectedError;
 }
