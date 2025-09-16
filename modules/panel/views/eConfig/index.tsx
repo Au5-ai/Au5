@@ -6,6 +6,8 @@ import { CheckCircle2, ChevronLeft, ChevronRight, Circle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Steps } from "./models";
+import { eConfigCaptions } from "./i18n";
+import { globalCaptions } from "@/shared/i18n/captions";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -24,16 +26,9 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div
-      style={{
-        background:
-          "linear-gradient(to bottom, #f8fbff 0%, #f4f0ec 28%, #f4eae7 66%, #f4e8ec 100%)",
-        color: "black",
-        display: "flex",
-      }}
-      className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
+    <div className="econfig-gradient-bg bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex flex-col gap-6">
-        <Logo href="#" text="Au5.ai" />
+        <Logo href="#" text={globalCaptions.brandName} />
         <div className="flex items-center justify-center w-[800px]">
           <div className="flex rounded-xl border shadow-sm w-full h-[600px] gap-2 bg-card text-card-foreground">
             <div className="w-64 p-4 bg-muted rounded-tr-none rounded-br-none rounded-xl">
@@ -94,7 +89,7 @@ export default function OnboardingPage() {
                     onClick={prevStep}
                     disabled={currentStep === 1}>
                     <ChevronLeft />
-                    Back
+                    {globalCaptions.back}
                   </Button>
                   {currentStep === Steps.length ? (
                     <Button
@@ -103,14 +98,14 @@ export default function OnboardingPage() {
                         handleCelebration();
 
                         setTimeout(() => {
-                          router.push("/playground");
+                          router.push(`/${globalCaptions.playground}`);
                         }, 3000);
                       }}>
-                      Enjoy 🎉🎉
+                      {eConfigCaptions.enjoyButtonText}
                     </Button>
                   ) : (
                     <Button className="cursor-pointer" onClick={nextStep}>
-                      Next <ChevronRight />
+                      {globalCaptions.next} <ChevronRight />
                     </Button>
                   )}
                 </div>
@@ -119,9 +114,9 @@ export default function OnboardingPage() {
           </div>
         </div>
         <div className="p-2 text-center text-sm items-center justify-center text-muted-foreground">
-          if you already configured the extention{" "}
+          {eConfigCaptions.alreadyConfiguredText}{" "}
           <a href="#" className="underline underline-offset-4">
-            skip here
+            {eConfigCaptions.skipHereText}
           </a>
         </div>
       </div>
