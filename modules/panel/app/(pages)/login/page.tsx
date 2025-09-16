@@ -7,12 +7,7 @@ export default function LoginPage() {
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
-          <a href="#" className="flex items-center gap-2 font-medium">
-            <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-              <Logo />
-            </div>
-            Au5.ai
-          </a>
+          <Logo href="#" text="Au5.ai" />
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
@@ -32,7 +27,7 @@ export default function LoginPage() {
           <h2 className="text-3xl font-bold mb-8">Welcome Back</h2>
           <div className="mb-8">
             <Image
-              src="/hi5.png"
+              src="/assets/images/hi5.png"
               alt="Welcome illustration"
               width={192}
               height={192}

@@ -65,7 +65,7 @@ export function ConfigureStep() {
       </p>
       <div>
         <Image
-          src="/welcome.png"
+          src="/assets/images/welcome.png"
           alt="Configure Extension"
           className="rounded-lg"
           width={480}
