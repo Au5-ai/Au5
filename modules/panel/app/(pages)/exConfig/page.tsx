@@ -1,1 +1,1 @@
-export { default } from "@/views/exConfig";
+export { default } from "@/views/(pages)/exConfig";
