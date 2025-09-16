@@ -14,6 +14,8 @@ import { Label } from "@/shared/components/ui/label";
 import { useState } from "react";
 import { useSignup } from "./hooks";
 import { AddUserRequest } from "./types";
+import { CAPTIONS } from "./i18n";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 
 export function SignupForm({
   className,
@@ -52,32 +54,32 @@ export function SignupForm({
     };
 
     if (!formData.email) {
-      newErrors.email = "Email is required";
+      newErrors.email = GLOBAL_CAPTIONS.validation.email.required;
     } else if (!validateEmail(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
+      newErrors.email = GLOBAL_CAPTIONS.validation.email.invalid;
     }
 
     if (!formData.fullname.trim()) {
-      newErrors.fullname = "Full name is required";
+      newErrors.fullname = GLOBAL_CAPTIONS.validation.fullname.required;
     } else if (
       formData.fullname.trim().length < 2 ||
       formData.fullname.trim().length > 50
     ) {
-      newErrors.fullname =
-        "Full name must be at least 2 characters and at most 50 characters";
+      newErrors.fullname = GLOBAL_CAPTIONS.validation.fullname.invalidLength;
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required";
+      newErrors.password = GLOBAL_CAPTIONS.validation.password.required;
     } else if (!validatePassword(formData.password)) {
-      newErrors.password =
-        "Password must be at least 8 characters with uppercase, lowercase, number, and special character";
+      newErrors.password = GLOBAL_CAPTIONS.validation.password.invalid;
     }
 
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
+      newErrors.confirmPassword =
+        GLOBAL_CAPTIONS.validation.confirmPassword.required;
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+      newErrors.confirmPassword =
+        GLOBAL_CAPTIONS.validation.confirmPassword.mismatch;
     }
 
     setErrors(newErrors);
@@ -102,21 +104,21 @@ export function SignupForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Create Account</CardTitle>
-          <CardDescription>
-            Sign up with your personal/organization email account
-          </CardDescription>
+          <CardTitle className="text-xl">{CAPTIONS.form.title}</CardTitle>
+          <CardDescription>{CAPTIONS.form.description}</CardDescription>
         </CardHeader>
         <CardContent className="mt-6">
           <form onSubmit={handleSubmit}>
             <div className="grid gap-6">
               <div className="grid gap-6">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Username (Email)</Label>
+                  <Label htmlFor="email">
+                    {GLOBAL_CAPTIONS.fields.email.label}
+                  </Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="m@example.com"
+                    placeholder={GLOBAL_CAPTIONS.fields.email.placeholder}
                     value={formData.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     className={errors.email ? "border-red-500" : ""}
@@ -126,12 +128,13 @@ export function SignupForm({
                     <p className="text-sm text-red-500 mt-1">{errors.email}</p>
                   )}
                   <p className="text-xs text-gray-500 mt-1">
-                    Please use your work or organization email. This account is
-                    for business purposes only.
+                    {GLOBAL_CAPTIONS.fields.email.hint}
                   </p>
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="fullname">Full Name</Label>
+                  <Label htmlFor="fullname">
+                    {GLOBAL_CAPTIONS.fields.fullname.label}
+                  </Label>
                   <Input
                     id="fullname"
                     type="text"
@@ -149,11 +152,13 @@ export function SignupForm({
                   )}
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">
+                    {GLOBAL_CAPTIONS.fields.password.label}
+                  </Label>
                   <Input
                     id="password"
                     type="password"
-                    placeholder="Enter a strong password"
+                    placeholder={GLOBAL_CAPTIONS.fields.password.placeholder}
                     value={formData.password}
                     onChange={(e) =>
                       handleInputChange("password", e.target.value)
@@ -167,16 +172,19 @@ export function SignupForm({
                     </p>
                   )}
                   <p className="text-xs text-gray-500 mt-1">
-                    Must be at least 8 characters with uppercase, lowercase,
-                    number, and special character
+                    {GLOBAL_CAPTIONS.fields.password.hint}
                   </p>
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="confirmPassword">Repeat Password</Label>
+                  <Label htmlFor="confirmPassword">
+                    {GLOBAL_CAPTIONS.fields.confirmPassword.label}
+                  </Label>
                   <Input
                     id="confirmPassword"
                     type="password"
-                    placeholder="Confirm your password"
+                    placeholder={
+                      GLOBAL_CAPTIONS.fields.confirmPassword.placeholder
+                    }
                     value={formData.confirmPassword}
                     onChange={(e) =>
                       handleInputChange("confirmPassword", e.target.value)
@@ -195,7 +203,9 @@ export function SignupForm({
                   type="submit"
                   className="w-full cursor-pointer"
                   disabled={signupMutation.isPending}>
-                  {signupMutation.isPending ? "Signing Up..." : "Sign Up"}
+                  {signupMutation.isPending
+                    ? CAPTIONS.form.submittingButton
+                    : CAPTIONS.form.submitButton}
                 </Button>
               </div>
             </div>
@@ -203,8 +213,8 @@ export function SignupForm({
         </CardContent>
       </Card>
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
+        {CAPTIONS.footer.text} <a href="#">{CAPTIONS.footer.terms}</a>{" "}
+        {CAPTIONS.footer.and} <a href="#">{CAPTIONS.footer.privacy}</a>.
       </div>
     </div>
   );

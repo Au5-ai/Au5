@@ -5,6 +5,8 @@ import Logo from "@/shared/components/logo";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { setupController } from "./setupController";
+import { ROUTES } from "@/shared/routes";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 
 export default function SignupPage() {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
@@ -18,11 +20,11 @@ export default function SignupPage() {
         setIsAdmin(response.helloFromAdmin);
 
         if (response.helloFromAdmin) {
-          router.push("/login");
+          router.push(ROUTES.LOGIN);
         }
       } catch (error) {
-        console.error("Failed to check admin status:", error);
-        router.push("/login");
+        console.error(error);
+        router.push(ROUTES.LOGIN);
       } finally {
         setIsLoading(false);
       }
@@ -37,7 +39,9 @@ export default function SignupPage() {
         <div className="min-h-100 w-full flex items-center justify-center">
           <div className="text-center">
             <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600 font-medium">Loading ...</p>
+            <p className="text-gray-600 font-medium">
+              {GLOBAL_CAPTIONS.loading}
+            </p>
           </div>
         </div>
       </div>

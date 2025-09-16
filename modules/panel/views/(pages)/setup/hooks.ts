@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { setupController } from "./setupController";
 import { handleAuthError, handleAuthSuccess } from "@/shared/hooks/use-auth";
 import { authController } from "@/shared/network/api/authController";
-import { setupCaptions } from "./i18n";
+import { CAPTIONS } from "./i18n";
+import { ROUTES } from "@/shared/routes";
 
 export function useSignup() {
   const queryClient = useQueryClient();
@@ -15,7 +16,7 @@ export function useSignup() {
     mutationFn: setupController.addAdmin,
     onSuccess: async (response, signupData) => {
       if (!response.isDone) {
-        throw new Error(setupCaptions.singupException);
+        throw new Error(CAPTIONS.singupException);
       }
 
       try {
@@ -27,7 +28,7 @@ export function useSignup() {
         handleAuthSuccess(loginResponse, true, queryClient, router);
       } catch (loginError) {
         console.error("Auto-login after signup failed:", loginError);
-        router.push("/login");
+        router.push(ROUTES.LOGIN);
       }
     },
     onError: (error) => {

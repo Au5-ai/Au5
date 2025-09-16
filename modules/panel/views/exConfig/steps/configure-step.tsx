@@ -5,8 +5,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Settings } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
-import { eConfigCaptions } from "../i18n";
-import { globalCaptions } from "@/shared/i18n/captions";
+import { CAPTIONS } from "../i18n";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { systemController } from "../systemController";
 
 export function ConfigureStep() {
@@ -50,20 +50,20 @@ export function ConfigureStep() {
         queryClient.setQueryData(["currentUser"], {
           ...user,
         });
-        toast.success(eConfigCaptions.configurationSentSuccess);
+        toast.success(CAPTIONS.configurationSentSuccess);
       }
     } catch (error) {
-      console.error(globalCaptions.failedToConfigure, error);
+      console.error(GLOBAL_CAPTIONS.failedToConfigure, error);
     }
   };
 
   return (
     <>
       <h2 className="text-xl font-semibold mb-2">
-        {eConfigCaptions.configureExtensionTitle}
+        {CAPTIONS.configureExtensionTitle}
       </h2>
       <p className="text-muted-foreground mb-6">
-        {eConfigCaptions.configureExtensionDescription}
+        {CAPTIONS.configureExtensionDescription}
       </p>
       <div>
         <Image
@@ -78,7 +78,7 @@ export function ConfigureStep() {
         <div className="flex justify-between py-6">
           <Button variant="outline" onClick={handleSendConfigs}>
             <Settings />
-            {eConfigCaptions.sendConfigButtonText}
+            {CAPTIONS.sendConfigButtonText}
           </Button>
         </div>
       </div>

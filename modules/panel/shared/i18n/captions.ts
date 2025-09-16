@@ -1,8 +1,48 @@
-export const globalCaptions = {
+export const GLOBAL_CAPTIONS = {
   back: "Back",
   next: "Next",
   brandName: "Au5.ai",
   playground: "playground",
+  loading: "Loading ...",
+  fields: {
+    email: {
+      label: "Username (Email)",
+      placeholder: "m@example.com",
+      hint: "Please use your work or organization email. This account is for business purposes only.",
+    },
+    fullname: {
+      label: "Full Name",
+    },
+    password: {
+      label: "Password",
+      placeholder: "Enter a strong password",
+      hint: "Must be at least 8 characters with uppercase, lowercase, number, and special character",
+    },
+    confirmPassword: {
+      label: "Repeat Password",
+      placeholder: "Confirm your password",
+    },
+  },
+  validation: {
+    email: {
+      required: "Email is required",
+      invalid: "Please enter a valid email address",
+    },
+    fullname: {
+      required: "Full name is required",
+      invalidLength:
+        "Full name must be at least 2 characters and at most 50 characters",
+    },
+    password: {
+      required: "Password is required",
+      invalid:
+        "Password must be at least 8 characters with uppercase, lowercase, number, and special character",
+    },
+    confirmPassword: {
+      required: "Please confirm your password",
+      mismatch: "Passwords do not match",
+    },
+  },
   emptyState: {
     search: {
       noResults: {

@@ -8,7 +8,7 @@ import { userApi } from "../network/api/user";
 import { tokenStorageService } from "../lib/localStorage";
 import { LoginRequest, LoginResponse } from "../types";
 import { ApiError } from "../types/network";
-import { globalCaptions } from "../i18n/captions";
+import { GLOBAL_CAPTIONS } from "../i18n/captions";
 import { authController } from "../network/api/authController";
 
 export function useUser() {
@@ -97,8 +97,8 @@ export function handleAuthError(error: unknown) {
     return (
       error.problemDetails?.detail ||
       error.title ||
-      globalCaptions.errors.auth.authenticationFailed
+      GLOBAL_CAPTIONS.errors.auth.authenticationFailed
     );
   }
-  return globalCaptions.errors.auth.unexpectedError;
+  return GLOBAL_CAPTIONS.errors.auth.unexpectedError;
 }
