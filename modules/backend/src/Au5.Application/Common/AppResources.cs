@@ -52,4 +52,11 @@ internal static class AppResources
 		public const string InvalidUsernameFormat = "The username format is invalid. Please use only alphanumeric characters and underscores.";
 		public const string InvalidPasswordFormat = "Password must be at least 6 characters long and contain a mix of letters and numbers.";
 	}
+
+	internal static class User
+	{
+		public const string UserNotFound = "User Not Found";
+
+		public const string FailedToUpdateUserInfo = "Failed to Update User.";
+	}
 }

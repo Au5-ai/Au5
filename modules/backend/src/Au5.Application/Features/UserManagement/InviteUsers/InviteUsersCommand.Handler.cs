@@ -39,7 +39,7 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 					CreatedAt = DateTime.Now,
 					FullName = "Not Entered",
 					Password = "Not Entered",
-					PictureUrl = "Not Entered",
+					PictureUrl = string.Empty,
 					Role = userInvited.Role,
 					Status = UserStatus.SendVerificationLink
 				};

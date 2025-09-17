@@ -1,9 +1,10 @@
 using Au5.Application.Common.Abstractions;
 using Au5.Application.Dtos;
 using Au5.Domain.Entities;
-using MailKit.Net.Smtp;
-using MimeKit;
+using Au5.Shared;
 
+//using MailKit.Net.Smtp;
+//using MimeKit;
 namespace Au5.Infrastructure.Providers;
 
 public class EmailProvider : IEmailProvider
@@ -14,29 +15,29 @@ public class EmailProvider : IEmailProvider
 		{
 			var emailBody = BuildInviteEmailBody(user, smtpOption.BaseUrl);
 
-			var message = new MimeMessage();
-			message.From.Add(new MailboxAddress("Company Name", smtpOption.User));
-			message.To.Add(new MailboxAddress(user.FullName, user.Email));
-			message.Subject = "You're Invited! Please Verify Your Email";
+			//var message = new MimeMessage();
+			//message.From.Add(new MailboxAddress("Company Name", smtpOption.User));
+			//message.To.Add(new MailboxAddress(user.FullName, user.Email));
+			//message.Subject = "You're Invited! Please Verify Your Email";
 
-			var builder = new BodyBuilder
-			{
-				HtmlBody = emailBody
-			};
+			//var builder = new BodyBuilder
+			//{
+			//	HtmlBody = emailBody
+			//};
 
-			message.Body = builder.ToMessageBody();
+			//message.Body = builder.ToMessageBody();
 
-			using var client = new SmtpClient();
-			await client.ConnectAsync(smtpOption.Host, smtpOption.Port, MailKit.Security.SecureSocketOptions.StartTls);
-			await client.AuthenticateAsync(smtpOption.User, smtpOption.Password);
-			await client.SendAsync(message);
-			await client.DisconnectAsync(true);
+			//using var client = new SmtpClient();
+			//await client.ConnectAsync(smtpOption.Host, smtpOption.Port, MailKit.Security.SecureSocketOptions.StartTls);
+			//await client.AuthenticateAsync(smtpOption.User, smtpOption.Password);
+			//await client.SendAsync(message);
+			//await client.DisconnectAsync(true);
 		}
 	}
 
 	private static string BuildInviteEmailBody(User invitedUser, string verificationBaseUrl)
 	{
-		var verificationLink = $"{verificationBaseUrl}/verify/{invitedUser.Id}";
+		var verificationLink = $"{verificationBaseUrl}/verify?id={invitedUser.Id}&hash={HashHelper.HashSafe(invitedUser.Email)}";
 		var companyName = "asax";
 		var html = $@"<table
   width=""100%""

@@ -3,6 +3,7 @@
 import { tokenStorageService } from "@/shared/lib/localStorage";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { ROUTES } from "../routes";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -19,7 +20,7 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
       setIsAuthenticated(isValid);
 
       if (!isValid) {
-        router.push("/login");
+        router.push(ROUTES.LOGIN);
       }
     };
 

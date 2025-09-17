@@ -1,8 +1,9 @@
-using Au5.Application.Features.UserManagement.EditUser;
 using Au5.Application.Features.UserManagement.GetMyInfo;
 using Au5.Application.Features.UserManagement.GetUsers;
 using Au5.Application.Features.UserManagement.InviteUsers;
-using Au5.Application.Features.UserManagement.ToggleStatus;
+using Au5.Application.Features.UserManagement.VerifyUser.Command;
+using Au5.Application.Features.UserManagement.VerifyUser.Query;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
 
@@ -30,26 +31,18 @@ public class UsersController(ISender mediator) : BaseController
 		return Ok(result);
 	}
 
-	[HttpPut]
-	[Route("{userId}")]
-	public async Task<IActionResult> EditUser(string userId, [FromBody] EditUserRequest request)
+	[AllowAnonymous]
+	[HttpGet("{userId}/verify")]
+	public async Task<IActionResult> VerifyUser([FromRoute] Guid userId, [FromQuery] string hash)
 	{
-		var result = await mediator.Send(new EditUserCommand(userId, request));
-		return Ok(result);
+		var command = new VerifyUserQuery(userId, hash);
+		return Ok(await mediator.Send(command));
 	}
 
-	//[HttpGet]
-	//[Route("{userId}")]
-	//public async Task<IActionResult> GetUser(string userId)
-	//{
-	//	var result = await mediator.Send(new GetUserQuery(userId));
-	//	return Ok(result);
-	//}
-	[HttpPatch]
-	[Route("{userId}/status")]
-	public async Task<IActionResult> ToggleUserStatus([FromRoute] Guid userId, [FromBody] ToggleUserStatusCommand request)
+	[AllowAnonymous]
+	[HttpPost("{userId}/verify")]
+	public async Task<IActionResult> VerifyUser([FromRoute] Guid userId, [FromBody] VerifyUserCommand verifyUserCommand)
 	{
-		var result = await mediator.Send(request with { UserId = userId });
-		return Ok(result);
+		return Ok(await mediator.Send(verifyUserCommand with { UserId = userId }));
 	}
 }

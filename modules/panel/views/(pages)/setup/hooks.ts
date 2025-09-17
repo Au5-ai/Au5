@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { setupController } from "./setupController";
 import { handleAuthSuccess } from "@/shared/hooks/use-auth";
 import { authController } from "@/shared/network/api/authController";
-import { CAPTIONS } from "./i18n";
 import { ROUTES } from "@/shared/routes";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 
 export function useSignup() {
   const queryClient = useQueryClient();
@@ -15,7 +15,7 @@ export function useSignup() {
     mutationFn: setupController.addAdmin,
     onSuccess: async (response, signupData) => {
       if (!response.isDone) {
-        throw new Error(CAPTIONS.singupException);
+        throw new Error(GLOBAL_CAPTIONS.pages.signup.singupException);
       }
 
       try {

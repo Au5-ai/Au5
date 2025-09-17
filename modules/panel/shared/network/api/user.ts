@@ -21,18 +21,4 @@ export const userApi = {
         headers: { "Content-Type": "application/json" },
       },
     ),
-
-  editUser: (userId: string, data: Partial<User>): Promise<User> =>
-    apiRequestClient<User>(`${API_BASE}/${userId}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    }),
-
-  toggleUserStatus: (userId: string, isActive: boolean): Promise<User> =>
-    apiRequestClient<User>(`${API_BASE}/${userId}/status`, {
-      method: "PATCH",
-      body: JSON.stringify({ isActive }),
-      headers: { "Content-Type": "application/json" },
-    }),
 };

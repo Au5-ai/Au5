@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, validateEmail, validatePassword } from "@/shared/lib/utils";
+import { cn, validatePassword } from "@/shared/lib/utils";
 import { Button } from "@/shared/components/ui/button";
 import {
   Card,
@@ -12,23 +12,26 @@ import {
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { useState } from "react";
-import { useSignup } from "../hooks";
-import { AddUserRequest } from "../types";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
+import { useSignup } from "../hooks";
+import { useSearchParams } from "next/navigation";
+import { toast } from "sonner";
+import { Mail } from "lucide-react";
+import { AddUserRequest } from "../types";
 
 export function SignupForm({
+  email,
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
-    email: "",
     fullname: "",
     password: "",
     confirmPassword: "",
   });
 
   const [errors, setErrors] = useState({
-    email: "",
     fullname: "",
     password: "",
     confirmPassword: "",
@@ -46,17 +49,10 @@ export function SignupForm({
 
   const validateForm = () => {
     const newErrors = {
-      email: "",
       fullname: "",
       password: "",
       confirmPassword: "",
     };
-
-    if (!formData.email) {
-      newErrors.email = GLOBAL_CAPTIONS.validation.email.required;
-    } else if (!validateEmail(formData.email)) {
-      newErrors.email = GLOBAL_CAPTIONS.validation.email.invalid;
-    }
 
     if (!formData.fullname.trim()) {
       newErrors.fullname = GLOBAL_CAPTIONS.validation.fullname.required;
@@ -87,9 +83,18 @@ export function SignupForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const userId = searchParams.get("id");
+    const hash = searchParams.get("hash");
+    if (!userId || !hash) {
+      toast.error(GLOBAL_CAPTIONS.errors.signup.urlIsInvalid);
+      return;
+    }
+
     if (validateForm()) {
       const signupData: AddUserRequest = {
-        email: formData.email,
+        userId: userId,
+        hashedEmail: hash,
         fullName: formData.fullname,
         password: formData.password,
         repeatedPassword: formData.confirmPassword,
@@ -107,33 +112,13 @@ export function SignupForm({
             {GLOBAL_CAPTIONS.pages.signup.form.title}
           </CardTitle>
           <CardDescription>
-            {GLOBAL_CAPTIONS.pages.signup.form.description}
+            Sign up with your <b>{email}</b> email account
           </CardDescription>
         </CardHeader>
         <CardContent className="mt-6">
           <form onSubmit={handleSubmit}>
             <div className="grid gap-6">
               <div className="grid gap-6">
-                <div className="grid gap-2">
-                  <Label htmlFor="email">
-                    {GLOBAL_CAPTIONS.fields.email.label}
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder={GLOBAL_CAPTIONS.fields.email.placeholder}
-                    value={formData.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
-                    className={errors.email ? "border-red-500" : ""}
-                    required
-                  />
-                  {errors.email && (
-                    <p className="text-sm text-red-500 mt-1">{errors.email}</p>
-                  )}
-                  <p className="text-xs text-gray-500 mt-1">
-                    {GLOBAL_CAPTIONS.fields.email.hint}
-                  </p>
-                </div>
                 <div className="grid gap-2">
                   <Label htmlFor="fullname">
                     {GLOBAL_CAPTIONS.fields.fullname.label}
