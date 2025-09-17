@@ -14,6 +14,7 @@ internal static class AppResources
 		public const string IsNotConfigured = "The system has not been configured yet. Please complete the initial setup.";
 		public const string FailedToSetup = "System setup was not completed successfully. Please review the configuration and try again.";
 		public const string ThereIsNoAdmin = "No administrator user found. Please create an admin user to continue.";
+		public const string FailedToAddAdmin = "Faild to add admin. Please check the data and try again.";
 	}
 
 	/// <summary>

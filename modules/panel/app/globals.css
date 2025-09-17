@@ -126,9 +126,14 @@
 [dir="rtl"] {
   font-family: var(--font-vazirmatn) !important;
 }
-
 .gradient-bg {
-  background: linear-gradient(to bottom, #f8fbff 0%, #f4f0ec 28%, #f4eae7 66%, #f4e8ec 100%);
+  background: linear-gradient(
+    to bottom,
+    #f8fbff 0%,
+    #f4f0ec 28%,
+    #f4eae7 66%,
+    #f4e8ec 100%
+  );
   color: black;
   display: flex;
 }

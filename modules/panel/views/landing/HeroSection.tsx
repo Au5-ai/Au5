@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowRight, CheckCircle } from "lucide-react";
-import { Button } from "../ui";
+import { Button } from "@/shared/components/ui";
+import { heroSectionCaptions } from "./i18n";
 
 export default function HeroSection() {
   return (
@@ -63,22 +64,20 @@ export default function HeroSection() {
 
             <div className="space-y-6">
               <h1 className="text-5xl lg:text-6xl font-bold text-slate-900 leading-tight">
-                Turn your{" "}
+                {heroSectionCaptions.title.part1}{" "}
                 <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  meetings
+                  {heroSectionCaptions.title.meetings}
                 </span>{" "}
-                into insights
+                {heroSectionCaptions.title.part2}
               </h1>
               <p className="text-l text-slate-600 leading-relaxed max-w-lg">
-                Get accurate transcripts, AI-powered summaries, and actionable
-                insights from every meeting. Works with Zoom, Teams, Google
-                Meet, and more.
+                {heroSectionCaptions.description}
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" variant="outline">
-                Download Chrome Extension
+                {heroSectionCaptions.downloadButton}
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </div>
@@ -86,11 +85,11 @@ export default function HeroSection() {
             <div className="flex items-center space-x-6 text-sm text-slate-500">
               <div className="flex items-center space-x-2">
                 <CheckCircle className="w-4 h-4 text-green-500" />
-                <span>No credit card required</span>
+                <span>{heroSectionCaptions.features.noCreditCard}</span>
               </div>
               <div className="flex items-center space-x-2">
                 <CheckCircle className="w-4 h-4 text-green-500" />
-                <span>Always free</span>
+                <span>{heroSectionCaptions.features.alwaysFree}</span>
               </div>
             </div>
           </div>
@@ -101,7 +100,7 @@ export default function HeroSection() {
                 src="https://shadcnuikit.com/not-selected-chat.svg"
                 loading="lazy"
                 sizes="100vw"
-                alt=""
+                alt={heroSectionCaptions.imageAlt}
                 className="layout3_image"
               />
             </div>

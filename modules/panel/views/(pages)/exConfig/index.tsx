@@ -6,8 +6,8 @@ import { CheckCircle2, ChevronLeft, ChevronRight, Circle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Steps } from "./models";
-import { eConfigCaptions } from "./i18n";
-import { globalCaptions } from "@/shared/i18n/captions";
+import { CAPTIONS } from "./i18n";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -28,7 +28,7 @@ export default function OnboardingPage() {
   return (
     <div className="gradient-bg bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex flex-col gap-6">
-        <Logo href="#" text={globalCaptions.brandName} />
+        <Logo href="#" text={GLOBAL_CAPTIONS.brandName} />
         <div className="flex items-center justify-center w-[800px]">
           <div className="flex rounded-xl border shadow-sm w-full h-[600px] gap-2 bg-card text-card-foreground">
             <div className="w-64 p-4 bg-muted rounded-tr-none rounded-br-none rounded-xl">
@@ -89,7 +89,7 @@ export default function OnboardingPage() {
                     onClick={prevStep}
                     disabled={currentStep === 1}>
                     <ChevronLeft />
-                    {globalCaptions.back}
+                    {GLOBAL_CAPTIONS.back}
                   </Button>
                   {currentStep === Steps.length ? (
                     <Button
@@ -98,14 +98,14 @@ export default function OnboardingPage() {
                         handleCelebration();
 
                         setTimeout(() => {
-                          router.push(`/${globalCaptions.playground}`);
+                          router.push(`/${GLOBAL_CAPTIONS.playground}`);
                         }, 3000);
                       }}>
-                      {eConfigCaptions.enjoyButtonText}
+                      {CAPTIONS.enjoyButtonText}
                     </Button>
                   ) : (
                     <Button className="cursor-pointer" onClick={nextStep}>
-                      {globalCaptions.next} <ChevronRight />
+                      {GLOBAL_CAPTIONS.next} <ChevronRight />
                     </Button>
                   )}
                 </div>
@@ -114,9 +114,9 @@ export default function OnboardingPage() {
           </div>
         </div>
         <div className="p-2 text-center text-sm items-center justify-center text-muted-foreground">
-          {eConfigCaptions.alreadyConfiguredText}{" "}
+          {CAPTIONS.alreadyConfiguredText}{" "}
           <a href="#" className="underline underline-offset-4">
-            {eConfigCaptions.skipHereText}
+            {CAPTIONS.skipHereText}
           </a>
         </div>
       </div>
