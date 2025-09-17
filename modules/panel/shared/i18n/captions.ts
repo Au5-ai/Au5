@@ -1,3 +1,5 @@
+import { url } from "inspector";
+
 export const GLOBAL_CAPTIONS = {
   back: "Back",
   next: "Next",
@@ -68,6 +70,28 @@ export const GLOBAL_CAPTIONS = {
     },
     exConfig: {
       failedToConfigure: "Failed to configure:",
+    },
+    signup: {
+      urlIsInvalid:
+        "Url is not valid, Please click on your verificaion link on your email",
+    },
+  },
+  pages: {
+    signup: {
+      singupException: "Signup was not completed successfully",
+      signupSuccess: "Signup was completed successfully",
+      form: {
+        title: "Create Account",
+        description: "Sign up with your personal/organization email account",
+        submitButton: "Sign Up",
+        submittingButton: "Signing Up...",
+      },
+      footer: {
+        text: "By clicking continue, you agree to our",
+        terms: "Terms of Service",
+        and: "and",
+        privacy: "Privacy Policy",
+      },
     },
   },
 } as const;

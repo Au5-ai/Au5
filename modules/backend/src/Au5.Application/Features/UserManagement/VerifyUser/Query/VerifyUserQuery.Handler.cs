@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.UserManagement.VerifyUser.Query;
 
-public class VerifyUserQueryHandler : IRequestHandler<VerifyUserQuery, Result<bool>>
+public class VerifyUserQueryHandler : IRequestHandler<VerifyUserQuery, Result<VerifyUserResponse>>
 {
 	private readonly IApplicationDbContext _context;
 
@@ -13,7 +13,7 @@ public class VerifyUserQueryHandler : IRequestHandler<VerifyUserQuery, Result<bo
 		_context = context;
 	}
 
-	public async ValueTask<Result<bool>> Handle(VerifyUserQuery request, CancellationToken cancellationToken)
+	public async ValueTask<Result<VerifyUserResponse>> Handle(VerifyUserQuery request, CancellationToken cancellationToken)
 	{
 		var user = await _context.Set<User>().FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
 		if (user is null)
@@ -21,11 +21,16 @@ public class VerifyUserQueryHandler : IRequestHandler<VerifyUserQuery, Result<bo
 			return Error.BadRequest(description: AppResources.User.UserNotFound);
 		}
 
-		if (HashHelper.HashSafe(user.Email) != request.EmailHashed)
+		if (HashHelper.HashSafe(user.Email) != request.HashedEmail)
 		{
 			return Error.BadRequest(description: AppResources.User.UserNotFound);
 		}
 
-		return true;
+		if (user.IsRegistered())
+		{
+			return Error.Unauthorized(description: AppResources.Auth.UnAuthorizedAction);
+		}
+
+		return new VerifyUserResponse(user.Email);
 	}
 }

@@ -56,5 +56,7 @@ internal static class AppResources
 	internal static class User
 	{
 		public const string UserNotFound = "User Not Found";
+
+		public const string FailedToUpdateUserInfo = "Failed to Update User.";
 	}
 }

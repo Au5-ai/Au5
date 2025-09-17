@@ -1,7 +1,9 @@
 using Au5.Application.Features.UserManagement.GetMyInfo;
 using Au5.Application.Features.UserManagement.GetUsers;
 using Au5.Application.Features.UserManagement.InviteUsers;
+using Au5.Application.Features.UserManagement.VerifyUser.Command;
 using Au5.Application.Features.UserManagement.VerifyUser.Query;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
 
@@ -29,6 +31,7 @@ public class UsersController(ISender mediator) : BaseController
 		return Ok(result);
 	}
 
+	[AllowAnonymous]
 	[HttpGet("{userId}/verify")]
 	public async Task<IActionResult> VerifyUser([FromRoute] Guid userId, [FromQuery] string hash)
 	{
@@ -36,14 +39,10 @@ public class UsersController(ISender mediator) : BaseController
 		return Ok(await mediator.Send(command));
 	}
 
-	// [HttpPost("verify/{userId}")]
-	// public async Task<IActionResult> VerifyUser([FromRoute] string userId, [FromQuery] string hash)
-	// {
-	// var command = new VerifyEmailCommand
-	// {
-	// UserId = userId,
-	// VerificationToken = token
-	// };
-	// return Ok(await mediator.Send(command));
-	// }
+	[AllowAnonymous]
+	[HttpPost("{userId}/verify")]
+	public async Task<IActionResult> VerifyUser([FromRoute] Guid userId, [FromBody] VerifyUserCommand verifyUserCommand)
+	{
+		return Ok(await mediator.Send(verifyUserCommand with { UserId = userId }));
+	}
 }

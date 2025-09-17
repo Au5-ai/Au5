@@ -6,10 +6,12 @@ import { useSearchParams } from "next/navigation";
 import Custom404 from "@/shared/components/not-found";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { userController } from "./userController";
+import { SignupForm } from "./components/signup-form";
 
 export default function VerifyUserPage() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<"loading" | "ok" | "error">("loading");
+  const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
     const userId = searchParams.get("id");
@@ -20,8 +22,9 @@ export default function VerifyUserPage() {
     }
     const verify = async () => {
       try {
-        const ok = await userController.verify(userId, hash);
-        setStatus(ok ? "ok" : "error");
+        const response = await userController.verify(userId, hash);
+        setStatus(response ? "ok" : "error");
+        setEmail(response.email);
       } catch {
         setStatus("error");
       }
@@ -49,7 +52,7 @@ export default function VerifyUserPage() {
       <div className="gradient-bg bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
         <div className="flex w-full max-w-sm flex-col gap-6">
           <Logo href="#" text="Au5.ai" />
-          <div className="text-center text-2xl font-bold">Hello</div>
+          <SignupForm email={email} />
         </div>
       </div>
     );

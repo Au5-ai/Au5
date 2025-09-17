@@ -30,6 +30,9 @@ public class User
 
 	public ICollection<Meeting> Meetings { get; set; }
 
+	public bool IsRegistered()
+		=> Status == UserStatus.CompleteSignUp;
+
 	public Participant ToParticipant()
 	{
 		return new Participant()
