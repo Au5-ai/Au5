@@ -1,14 +1,15 @@
 import { SystemConfigs } from "@/shared/types";
 import { apiRequestClient } from "../apiRequestClient";
+import { API_URLS } from "./urls";
 
 export const systemController = {
   getConfig: (): Promise<SystemConfigs> =>
-    apiRequestClient<SystemConfigs>("/system/config", {
+    apiRequestClient<SystemConfigs>(API_URLS.SYSTEM.CONFIG, {
       method: "GET",
     }),
 
   setConfig: (configs: SystemConfigs): Promise<void> =>
-    apiRequestClient<void>("/system/config", {
+    apiRequestClient<void>(API_URLS.SYSTEM.CONFIG, {
       method: "POST",
       body: JSON.stringify(configs),
     }),

@@ -39,7 +39,7 @@ public class AddAdminQueryHandler : IRequestHandler<AddAdminCommand, Result<AddA
 		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
 
 		return dbResult.IsFailure
-			? Error.Failure(description: AppResources.System.FailedToSetup)
+			? Error.Failure(description: AppResources.System.FailedToAddAdmin)
 			: new AddAdminResponse
 			{
 				IsDone = dbResult.IsSuccess

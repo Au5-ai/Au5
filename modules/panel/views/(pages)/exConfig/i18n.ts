@@ -1,4 +1,4 @@
-export const eConfigCaptions = {
+export const CAPTIONS = {
   downloadExtensionTitle: "Download Extension",
   downloadExtensionDescription: "Get the latest version of the extension",
   configureExtensionTitle: "Configure Extension",
