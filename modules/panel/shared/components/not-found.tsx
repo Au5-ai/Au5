@@ -17,7 +17,7 @@ type Custom404Props = {
 
 export default function Custom404({
   errorCode = "404",
-  title = "Page Not Found",
+  title = "Not Found",
   description = "Looks like you've ventured into the unknown digital realm.",
   primaryAction = { label: "Return Home", href: "/" },
   showSearch = false,

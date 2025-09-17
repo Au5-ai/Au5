@@ -29,7 +29,7 @@ public class UsersController(ISender mediator) : BaseController
 		return Ok(result);
 	}
 
-	[HttpGet("/{userId}/verify")]
+	[HttpGet("{userId}/verify")]
 	public async Task<IActionResult> VerifyUser([FromRoute] Guid userId, [FromQuery] string hash)
 	{
 		var command = new VerifyUserQuery(userId, hash);
