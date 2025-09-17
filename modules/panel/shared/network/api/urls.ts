@@ -19,7 +19,8 @@ export const API_URLS = {
   USERS: {
     ME: "/users/me",
     INVITE: "/users/invite",
-    USER: (userId: string) => `/users/${userId}`,
     STATUS: (userId: string) => `/users/${userId}/status`,
+    VERIFY: (userId: string, hash: string) =>
+      `/users/${userId}/verify?hash=${hash}`,
   },
 } as const;

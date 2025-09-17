@@ -37,7 +37,7 @@ public class EmailProvider : IEmailProvider
 
 	private static string BuildInviteEmailBody(User invitedUser, string verificationBaseUrl)
 	{
-		var verificationLink = $"{verificationBaseUrl}/user/verify/{invitedUser.Id}?hash={HashHelper.HashSafe(invitedUser.Email)}";
+		var verificationLink = $"{verificationBaseUrl}/verify?id={invitedUser.Id}&hash={HashHelper.HashSafe(invitedUser.Email)}";
 		var companyName = "asax";
 		var html = $@"<table
   width=""100%""
