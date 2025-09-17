@@ -3,9 +3,8 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { Meeting } from "@/shared/types";
 import { meetingApi } from "@/shared/network/api/meeting";
-import NoRecordsState, {
-  NoSearchResults,
-} from "@/shared/components/empty-states/no-record";
+import NoRecordsState from "@/shared/components/empty-states/no-record";
+import { NoSearchResults } from "@/shared/components/empty-states/no-search-result";
 import { SidebarInset, SidebarTrigger } from "@/shared/components/ui";
 import { Separator } from "@radix-ui/react-separator";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
