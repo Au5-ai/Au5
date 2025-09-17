@@ -1,9 +1,6 @@
 export const loginCaptions = {
   title: "Login to your account",
   subtitle: "Enter your email below to login to your account",
-  emailLabel: "Email",
-  emailPlaceholder: "m@example.com",
-  passwordLabel: "Password",
   loginButton: "Login",
   loggingInButton: "Logging in...",
   orContinueWith: "Or continue with",

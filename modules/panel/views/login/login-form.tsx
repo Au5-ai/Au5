@@ -7,6 +7,7 @@ import { Label } from "@/shared/components/ui/label";
 import { useLogin } from "@/shared/hooks/use-auth";
 import { useState } from "react";
 import { loginCaptions } from "./i18n";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 
 export function LoginForm({
   className,
@@ -34,11 +35,11 @@ export function LoginForm({
       </div>
       <div className="grid gap-6">
         <div className="grid gap-3">
-          <Label htmlFor="email">{loginCaptions.emailLabel}</Label>
+          <Label htmlFor="email">{GLOBAL_CAPTIONS.fields.email.label}</Label>
           <Input
             id="email"
             type="email"
-            placeholder={loginCaptions.emailPlaceholder}
+            placeholder={GLOBAL_CAPTIONS.fields.email.placeholder}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
@@ -46,7 +47,7 @@ export function LoginForm({
         </div>
         <div className="grid gap-3">
           <div className="flex items-center">
-            <Label htmlFor="password">{loginCaptions.passwordLabel}</Label>
+            <Label htmlFor="password">{GLOBAL_CAPTIONS.fields.password.label}</Label>
           </div>
           <Input
             id="password"

@@ -2,14 +2,14 @@ import { LoginForm } from "./login-form";
 import Logo from "@/shared/components/logo";
 import Image from "next/image";
 import { loginCaptions } from "./i18n";
-import { globalCaptions } from "@/shared/i18n/captions";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 
 export default function LoginPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
-          <Logo href="#" text={globalCaptions.brandName} />
+          <Logo href="#" text={GLOBAL_CAPTIONS.brandName} />
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
