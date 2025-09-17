@@ -6,6 +6,8 @@ import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { useLogin } from "@/shared/hooks/use-auth";
 import { useState } from "react";
+import { loginCaptions } from "./i18n";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 
 export function LoginForm({
   className,
@@ -26,18 +28,18 @@ export function LoginForm({
       onSubmit={handleSubmit}
       {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Login to your account</h1>
+        <h1 className="text-2xl font-bold">{loginCaptions.title}</h1>
         <p className="text-muted-foreground text-sm text-balance">
-          Enter your email below to login to your account
+          {loginCaptions.subtitle}
         </p>
       </div>
       <div className="grid gap-6">
         <div className="grid gap-3">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{GLOBAL_CAPTIONS.fields.email.label}</Label>
           <Input
             id="email"
             type="email"
-            placeholder="m@example.com"
+            placeholder={GLOBAL_CAPTIONS.fields.email.placeholder}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
@@ -45,7 +47,7 @@ export function LoginForm({
         </div>
         <div className="grid gap-3">
           <div className="flex items-center">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{GLOBAL_CAPTIONS.fields.password.label}</Label>
           </div>
           <Input
             id="password"
@@ -66,18 +68,18 @@ export function LoginForm({
           type="submit"
           className="w-full cursor-pointer"
           disabled={loginMutation.isPending}>
-          {loginMutation.isPending ? "Logging in..." : "Login"}
+          {loginMutation.isPending ? loginCaptions.loggingInButton : loginCaptions.loginButton}
         </Button>
         <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
           <span className="bg-background text-muted-foreground relative z-10 px-2">
-            Or continue with
+            {loginCaptions.orContinueWith}
           </span>
         </div>
       </div>
       <div className="text-center text-sm">
-        Don&apos;t have an account?{" "}
+        {loginCaptions.noAccountText}{" "}
         <a href="#" className="underline underline-offset-4">
-          Contact Admin
+          {loginCaptions.contactAdminLink}
         </a>
       </div>
     </form>
