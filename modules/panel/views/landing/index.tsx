@@ -4,6 +4,7 @@ import HeroSection from "@/views/landing/HeroSection";
 import Logo from "@/shared/components/logo";
 import { Button } from "@/shared/components/ui";
 import { useRouter } from "next/navigation";
+import { landingCaptions } from "./i18n";
 
 export default function Home() {
   const router = useRouter();
@@ -25,7 +26,7 @@ export default function Home() {
             <Logo text="Au5.ai" className="text-slate-900" />
             <div className="hidden md:flex items-center space-x-8">
               <Button onClick={() => letsGo()} className="cursor-pointer">
-                Let&apos;s Go
+                {landingCaptions.navigation.letsGoButton}
               </Button>
             </div>
           </div>
