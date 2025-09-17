@@ -26,7 +26,7 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="econfig-gradient-bg bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
+    <div className="gradient-bg bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex flex-col gap-6">
         <Logo href="#" text={globalCaptions.brandName} />
         <div className="flex items-center justify-center w-[800px]">
