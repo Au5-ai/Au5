@@ -1,23 +1,26 @@
 using Au5.Application.Common.Abstractions;
 using Au5.Application.Dtos;
 using Au5.Domain.Entities;
+using Au5.Infrastructure.Adapters;
 using Au5.Shared;
 using MimeKit;
 
 namespace Au5.Infrastructure.Providers;
 
-public class EmailProvider : IEmailProvider
+public class EmailProvider(ISmtpClientWrapper smtpClient) : IEmailProvider
 {
+	private readonly ISmtpClientWrapper _smtpClient = smtpClient;
+
+
 	public async Task SendInviteAsync(List<User> invited, SmtpOptions smtpOption)
 	{
-		using var client = new MailKit.Net.Smtp.SmtpClient();
+		await _smtpClient.ConnectAsync(smtpOption.Host, smtpOption.Port, MailKit.Security.SecureSocketOptions.None);
 
-		await client.ConnectAsync(smtpOption.Host, smtpOption.Port, MailKit.Security.SecureSocketOptions.None);
-
-		if (!string.IsNullOrWhiteSpace(smtpOption.User) && !string.IsNullOrWhiteSpace(smtpOption.Password) &&
-			client.Capabilities.HasFlag(MailKit.Net.Smtp.SmtpCapabilities.Authentication))
+		if (!string.IsNullOrWhiteSpace(smtpOption.User) &&
+			!string.IsNullOrWhiteSpace(smtpOption.Password) &&
+			_smtpClient.Capabilities.HasFlag(MailKit.Net.Smtp.SmtpCapabilities.Authentication))
 		{
-			await client.AuthenticateAsync(smtpOption.User, smtpOption.Password);
+			await _smtpClient.AuthenticateAsync(smtpOption.User, smtpOption.Password);
 		}
 
 		foreach (var user in invited)
@@ -29,17 +32,13 @@ public class EmailProvider : IEmailProvider
 			message.To.Add(new MailboxAddress(user.FullName, user.Email));
 			message.Subject = "You're Invited! Please Verify Your Email";
 
-			var builder = new BodyBuilder
-			{
-				HtmlBody = emailBody
-			};
-
+			var builder = new BodyBuilder { HtmlBody = emailBody };
 			message.Body = builder.ToMessageBody();
 
-			await client.SendAsync(message);
+			await _smtpClient.SendAsync(message);
 		}
 
-		await client.DisconnectAsync(true);
+		await _smtpClient.DisconnectAsync(true);
 	}
 
 	private static string BuildInviteEmailBody(User invitedUser, string verificationBaseUrl)
