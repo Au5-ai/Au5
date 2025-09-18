@@ -20,7 +20,7 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 	{
 		List<User> invited = [];
 		InviteUsersResponse response = new() { Success = [], Failed = [] };
-		var config = await _context.Set<SystemConfig>().AsNoTracking().FirstOrDefaultAsync(cancellationToken: cancellationToken);
+		var config = await _context.Set<SystemConfig>().AsNoTracking().SingleOrDefaultAsync(cancellationToken: cancellationToken);
 		if (config is null)
 		{
 			return Error.Failure(description: AppResources.System.IsNotConfigured);

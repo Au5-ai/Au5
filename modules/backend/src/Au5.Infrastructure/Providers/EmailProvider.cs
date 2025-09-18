@@ -2,37 +2,44 @@ using Au5.Application.Common.Abstractions;
 using Au5.Application.Dtos;
 using Au5.Domain.Entities;
 using Au5.Shared;
+using MimeKit;
 
-//using MailKit.Net.Smtp;
-//using MimeKit;
 namespace Au5.Infrastructure.Providers;
 
 public class EmailProvider : IEmailProvider
 {
 	public async Task SendInviteAsync(List<User> invited, SmtpOptions smtpOption)
 	{
+		using var client = new MailKit.Net.Smtp.SmtpClient();
+
+		await client.ConnectAsync(smtpOption.Host, smtpOption.Port, MailKit.Security.SecureSocketOptions.None);
+
+		if (!string.IsNullOrWhiteSpace(smtpOption.User) && !string.IsNullOrWhiteSpace(smtpOption.Password) &&
+			client.Capabilities.HasFlag(MailKit.Net.Smtp.SmtpCapabilities.Authentication))
+		{
+			await client.AuthenticateAsync(smtpOption.User, smtpOption.Password);
+		}
+
 		foreach (var user in invited)
 		{
 			var emailBody = BuildInviteEmailBody(user, smtpOption.BaseUrl);
 
-			//var message = new MimeMessage();
-			//message.From.Add(new MailboxAddress("Company Name", smtpOption.User));
-			//message.To.Add(new MailboxAddress(user.FullName, user.Email));
-			//message.Subject = "You're Invited! Please Verify Your Email";
+			var message = new MimeMessage();
+			message.From.Add(new MailboxAddress("Company Name", smtpOption.User));
+			message.To.Add(new MailboxAddress(user.FullName, user.Email));
+			message.Subject = "You're Invited! Please Verify Your Email";
 
-			//var builder = new BodyBuilder
-			//{
-			//	HtmlBody = emailBody
-			//};
+			var builder = new BodyBuilder
+			{
+				HtmlBody = emailBody
+			};
 
-			//message.Body = builder.ToMessageBody();
+			message.Body = builder.ToMessageBody();
 
-			//using var client = new SmtpClient();
-			//await client.ConnectAsync(smtpOption.Host, smtpOption.Port, MailKit.Security.SecureSocketOptions.StartTls);
-			//await client.AuthenticateAsync(smtpOption.User, smtpOption.Password);
-			//await client.SendAsync(message);
-			//await client.DisconnectAsync(true);
+			await client.SendAsync(message);
 		}
+
+		await client.DisconnectAsync(true);
 	}
 
 	private static string BuildInviteEmailBody(User invitedUser, string verificationBaseUrl)
