@@ -61,6 +61,77 @@ using a Docker network or a cloud Redis provider (like Azure Redis, AWS ElastiCa
 }
 ```
 
+
+<h1>Email Sending Mechanism</h1>
+
+<p>This guide explains how to configure and use the email sending functionality in this application for both production and development environments.</p>
+
+<h2>1. Production Configuration</h2>
+
+<p>For production, enter SMTP server details in the <code>SystemConfig</code> table:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>SmtpHost</td><td>Hostname of your SMTP server (e.g., smtp.example.com)</td></tr>
+    <tr><td>SmtpPort</td><td>Port of the SMTP server (e.g., 587)</td></tr>
+    <tr><td>SmtpUser</td><td>Username for authentication</td></tr>
+    <tr><td>SmtpPassword</td><td>Password for authentication</td></tr>
+    <tr><td>UseSsl</td><td>true to enable SSL/TLS, false otherwise</td></tr>
+  </tbody>
+</table>
+
+<p>Example configuration:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>SmtpHost</th><th>SmtpPort</th><th>SmtpUser</th><th>SmtpPassword</th><th>UseSsl</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>smtp.example.com</td>
+      <td>587</td>
+      <td>user@example.com</td>
+      <td>password123</td>
+      <td>true</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>2. Development Configuration</h2>
+
+<p>For development, you can run a fake SMTP server to test email sending without sending real emails. Popular options include <strong>MailKit</strong> or similar tools. These servers allow you to inspect outgoing emails locally.</p>
+
+<ul>
+  <li>SMTP Host: <strong>localhost</strong></li>
+  <li>SMTP Port: <strong>1025</strong> (example port)</li>
+  <li>SSL: <strong>false</strong></li>
+  <li>Username/Password: <strong>not required</strong></li>
+</ul>
+
+<p>As an example, you can refer to <a href="https://github.com/axllent/mailpit">Mailpit</a> for a ready-to-use fake SMTP solution.</p>
+
+<h2>3. Code Usage</h2>
+
+<p>Before sending emails, the app configures the SMTP connection based on <code>SystemConfig</code> values:</p>
+
+<h3>3.1 How it works</h3>
+<ul>
+  <li>If <code>UseSsl</code> is true, a secure connection is used. Otherwise, the connection is unencrypted.</li>
+  <li>If username and password are provided, the SMTP client authenticates. Otherwise, authentication is skipped.</li>
+  <li>This allows sending emails in both production and development environments.</li>
+</ul>
+
+
+
+
 # Au5 Extension
 
 # Au5 Captain
