@@ -13,7 +13,11 @@ public class EmailProvider(ISmtpClientWrapper smtpClient) : IEmailProvider
 
 	public async Task SendInviteAsync(List<User> invited, string organizationName, SmtpOptions smtpOption)
 	{
-		await _smtpClient.ConnectAsync(smtpOption.Host, smtpOption.Port, MailKit.Security.SecureSocketOptions.StartTls);
+		var secureSocketOptions = smtpOption.UseSsl ?
+						  MailKit.Security.SecureSocketOptions.StartTls :
+						  MailKit.Security.SecureSocketOptions.None;
+
+		await _smtpClient.ConnectAsync(smtpOption.Host, smtpOption.Port, secureSocketOptions);
 
 		if (!string.IsNullOrWhiteSpace(smtpOption.User) &&
 			!string.IsNullOrWhiteSpace(smtpOption.Password) &&

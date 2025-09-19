@@ -62,7 +62,8 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 				BaseUrl = config.PanelUrl,
 				Password = config.SmtpPassword,
 				Port = config.SmtpPort,
-				User = config.SmtpUser
+				User = config.SmtpUser,
+				UseSsl = config.SmtpUseSSl
 			});
 		}
 		else

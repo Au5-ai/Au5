@@ -66,5 +66,8 @@ public class SystemDbConfig : IEntityTypeConfiguration<SystemConfig>
 		builder.Property(t => t.MeetingTranscriptionModel)
 			.IsRequired()
 			.HasMaxLength(20);
+
+		builder.Property(t => t.SmtpUseSSl)
+			.HasDefaultValue(false);
 	}
 }
