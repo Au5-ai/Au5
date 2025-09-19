@@ -56,7 +56,7 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 		var result = await _context.SaveChangesAsync(cancellationToken);
 		if (result.IsSuccess)
 		{
-			await _emailProvider.SendInviteAsync(invited, new SmtpOptions()
+			await _emailProvider.SendInviteAsync(invited, config.OrganizationName, new SmtpOptions()
 			{
 				Host = config.SmtpHost,
 				BaseUrl = config.PanelUrl,

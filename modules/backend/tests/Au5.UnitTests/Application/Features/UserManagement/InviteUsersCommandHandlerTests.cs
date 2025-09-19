@@ -35,7 +35,7 @@ public class InviteUsersCommandHandlerTests
 
 		Assert.True(result.IsFailure);
 		Assert.Equal(AppResources.System.IsNotConfigured, result.Error.Description);
-		_emailProviderMock.Verify(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<SmtpOptions>()), Times.Never);
+		_emailProviderMock.Verify(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()), Times.Never);
 	}
 
 	[Fact]
@@ -73,6 +73,7 @@ public class InviteUsersCommandHandlerTests
 		_emailProviderMock.Verify(
 			e => e.SendInviteAsync(
 			It.Is<List<User>>(u => u.Any(x => x.Email == "new@example.com")),
+			It.IsAny<string>(),
 			It.Is<SmtpOptions>(o => o.Host == config.SmtpHost)), Times.Once);
 	}
 
@@ -100,7 +101,7 @@ public class InviteUsersCommandHandlerTests
 		Assert.Contains("exists@example.com", result.Data.Failed);
 		Assert.Empty(result.Data.Success);
 
-		_emailProviderMock.Verify(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<SmtpOptions>()), Times.Never);
+		_emailProviderMock.Verify(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()), Times.Never);
 	}
 
 	[Fact]
@@ -129,7 +130,7 @@ public class InviteUsersCommandHandlerTests
 		Assert.Contains("one@example.com", result.Data.Failed);
 		Assert.Contains("two@example.com", result.Data.Failed);
 
-		_emailProviderMock.Verify(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<SmtpOptions>()), Times.Never);
+		_emailProviderMock.Verify(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()), Times.Never);
 	}
 
 	[Fact]
@@ -160,6 +161,7 @@ public class InviteUsersCommandHandlerTests
 		_emailProviderMock.Verify(
 			e => e.SendInviteAsync(
 			It.Is<List<User>>(u => u.Any(x => x.Email == "new@example.com")),
+			It.IsAny<string>(),
 			It.IsAny<SmtpOptions>()), Times.Once);
 	}
 }

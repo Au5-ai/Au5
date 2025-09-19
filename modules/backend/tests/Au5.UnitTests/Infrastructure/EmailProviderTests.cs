@@ -10,6 +10,7 @@ public class EmailProviderTests
 {
 	private readonly Mock<ISmtpClientWrapper> _mockSmtp;
 	private readonly EmailProvider _service;
+	private readonly string _organizationName = "Test Organization";
 
 	public EmailProviderTests()
 	{
@@ -38,7 +39,7 @@ public class EmailProviderTests
 		};
 
 		// Act
-		await _service.SendInviteAsync(users, options);
+		await _service.SendInviteAsync(users, _organizationName, options);
 
 		// Assert
 		_mockSmtp.Verify(m => m.ConnectAsync(options.Host, options.Port, MailKit.Security.SecureSocketOptions.None, default), Times.Once);
@@ -73,7 +74,7 @@ public class EmailProviderTests
 		};
 
 		// Act
-		await _service.SendInviteAsync(users, options);
+		await _service.SendInviteAsync(users, _organizationName, options);
 
 		// Assert
 		_mockSmtp.Verify(m => m.AuthenticateAsync(It.IsAny<string>(), It.IsAny<string>(), default), Times.Never);
@@ -101,7 +102,7 @@ public class EmailProviderTests
 		};
 
 		// Act
-		await _service.SendInviteAsync(users, options);
+		await _service.SendInviteAsync(users, _organizationName, options);
 
 		// Assert
 		_mockSmtp.Verify(m => m.AuthenticateAsync(It.IsAny<string>(), It.IsAny<string>(), default), Times.Never);
@@ -130,7 +131,7 @@ public class EmailProviderTests
 		};
 
 		// Act
-		await _service.SendInviteAsync(users, options);
+		await _service.SendInviteAsync(users, _organizationName, options);
 
 		// Assert
 		_mockSmtp.Verify(m => m.SendAsync(It.IsAny<MimeMessage>(), default), Times.Exactly(2));
