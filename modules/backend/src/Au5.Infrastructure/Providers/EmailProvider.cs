@@ -94,7 +94,7 @@ public class EmailProvider(ISmtpClientWrapper smtpClient) : IEmailProvider
               <!-- Button -->
               <table cellpadding=""0"" cellspacing=""0"" border=""0"" style=""margin:0 auto 25px;"">
                 <tr>
-                  <td align=""center"" bgcolor=""#4CAF50"" style=""border-radius:5px;"">
+                  <td align=""center"" bgcolor=""#4CAF50"" style=""border-radius:5px;background-color: #4CAF50;"">
                     <a href=""{verificationLink}"" target=""_blank"" style=""display:inline-block; padding:15px 25px; font-size:14px; color:#fff; text-decoration:none; font-weight:bold;"">
                       Verify My Email
                     </a>
@@ -105,7 +105,7 @@ public class EmailProvider(ISmtpClientWrapper smtpClient) : IEmailProvider
               <!-- Fallback link -->
               <p style=""font-size:12px; color:#666; line-height:1.6; margin:0 0 25px;"">
                 If the button above doesn't work, copy and paste this link into your browser:<br>
-                <a href=""{verificationLink}"" style=""color:#4CAF50;"">{verificationLink}</a>
+                <a href=""{verificationLink}"" style=""color: #381dc6;text-decoration: none;"">Click Here</a>
               </p>
 
               <hr style=""border:none; border-top:1px solid #eaeaea; margin:26px 0;"">

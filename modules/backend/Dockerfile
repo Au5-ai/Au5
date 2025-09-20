@@ -16,6 +16,8 @@ COPY ["Directory.Packages.props", "."]
 COPY ["Directory.Build.props", "."]
 COPY ["src/Au5.BackEnd/Au5.BackEnd.csproj", "src/Au5.BackEnd/"]
 COPY ["src/Au5.Application/Au5.Application.csproj", "src/Au5.Application/"]
+COPY ["src/Au5.Infrastructure/Au5.Infrastructure.csproj", "src/Au5.Infrastructure/"]
+COPY ["src/Au5.Shared/Au5.Shared.csproj", "src/Au5.Shared/"]
 COPY ["src/Au5.Domain/Au5.Domain.csproj", "src/Au5.Domain/"]
 COPY ["src/Au5.ServiceDefaults/Au5.ServiceDefaults.csproj", "src/Au5.ServiceDefaults/"]
 RUN dotnet restore "./src/Au5.BackEnd/Au5.BackEnd.csproj"
