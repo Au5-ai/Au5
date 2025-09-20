@@ -1,4 +1,6 @@
 export const CAPTIONS = {
+  addUserTitle: "Create Account",
+  addUserDescription: "Enter the details to create your account",
   downloadExtensionTitle: "Download Extension",
   downloadExtensionDescription: "Get the latest version of the extension",
   configureExtensionTitle: "Configure Extension",

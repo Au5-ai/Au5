@@ -8,6 +8,8 @@ import { useLogin } from "@/shared/hooks/use-auth";
 import { useState } from "react";
 import { loginCaptions } from "./i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/shared/routes";
 
 export function LoginForm({
   className,
@@ -16,10 +18,12 @@ export function LoginForm({
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const loginMutation = useLogin();
+  const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     loginMutation.mutate({ username, password });
+    router.push(ROUTES.PLAYGROUND);
   };
 
   return (
@@ -47,7 +51,9 @@ export function LoginForm({
         </div>
         <div className="grid gap-3">
           <div className="flex items-center">
-            <Label htmlFor="password">{GLOBAL_CAPTIONS.fields.password.label}</Label>
+            <Label htmlFor="password">
+              {GLOBAL_CAPTIONS.fields.password.label}
+            </Label>
           </div>
           <Input
             id="password"
@@ -68,7 +74,9 @@ export function LoginForm({
           type="submit"
           className="w-full cursor-pointer"
           disabled={loginMutation.isPending}>
-          {loginMutation.isPending ? loginCaptions.loggingInButton : loginCaptions.loginButton}
+          {loginMutation.isPending
+            ? loginCaptions.loggingInButton
+            : loginCaptions.loginButton}
         </Button>
         <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
           <span className="bg-background text-muted-foreground relative z-10 px-2">

@@ -24,7 +24,8 @@ export function useSignup() {
           password: signupData.password,
         });
 
-        handleAuthSuccess(loginResponse, true, queryClient, router);
+        handleAuthSuccess(loginResponse, queryClient);
+        router.push(ROUTES.PLAYGROUND);
       } catch (loginError) {
         console.error("Auto-login after signup failed:", loginError);
         router.push(ROUTES.LOGIN);
