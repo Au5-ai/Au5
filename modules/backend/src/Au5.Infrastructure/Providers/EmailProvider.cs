@@ -1,227 +1,130 @@
 using Au5.Application.Common.Abstractions;
 using Au5.Application.Dtos;
 using Au5.Domain.Entities;
+using Au5.Infrastructure.Adapters;
 using Au5.Shared;
+using MimeKit;
 
-//using MailKit.Net.Smtp;
-//using MimeKit;
 namespace Au5.Infrastructure.Providers;
 
-public class EmailProvider : IEmailProvider
+public class EmailProvider(ISmtpClientWrapper smtpClient) : IEmailProvider
 {
-	public async Task SendInviteAsync(List<User> invited, SmtpOptions smtpOption)
+	private readonly ISmtpClientWrapper _smtpClient = smtpClient;
+
+	public async Task SendInviteAsync(List<User> invited, string organizationName, SmtpOptions smtpOption)
 	{
+		var secureSocketOptions = smtpOption.UseSsl ?
+						  MailKit.Security.SecureSocketOptions.StartTls :
+						  MailKit.Security.SecureSocketOptions.None;
+
+		await _smtpClient.ConnectAsync(smtpOption.Host, smtpOption.Port, secureSocketOptions);
+
+		if (!string.IsNullOrWhiteSpace(smtpOption.User) &&
+			!string.IsNullOrWhiteSpace(smtpOption.Password) &&
+			_smtpClient.Capabilities.HasFlag(MailKit.Net.Smtp.SmtpCapabilities.Authentication))
+		{
+			await _smtpClient.AuthenticateAsync(smtpOption.User, smtpOption.Password);
+		}
+
 		foreach (var user in invited)
 		{
-			var emailBody = BuildInviteEmailBody(user, smtpOption.BaseUrl);
+			var emailBody = BuildInviteEmailBody(user, smtpOption.BaseUrl, organizationName);
 
-			//var message = new MimeMessage();
-			//message.From.Add(new MailboxAddress("Company Name", smtpOption.User));
-			//message.To.Add(new MailboxAddress(user.FullName, user.Email));
-			//message.Subject = "You're Invited! Please Verify Your Email";
+			var message = new MimeMessage();
 
-			//var builder = new BodyBuilder
-			//{
-			//	HtmlBody = emailBody
-			//};
+			message.From.Add(new MailboxAddress(organizationName, smtpOption.User));
+			message.To.Add(MailboxAddress.Parse(user.Email));
 
-			//message.Body = builder.ToMessageBody();
+			message.Subject = "You're Invited! Please Verify Your Email";
 
-			//using var client = new SmtpClient();
-			//await client.ConnectAsync(smtpOption.Host, smtpOption.Port, MailKit.Security.SecureSocketOptions.StartTls);
-			//await client.AuthenticateAsync(smtpOption.User, smtpOption.Password);
-			//await client.SendAsync(message);
-			//await client.DisconnectAsync(true);
+			var builder = new BodyBuilder { HtmlBody = emailBody };
+			message.Body = builder.ToMessageBody();
+
+			await _smtpClient.SendAsync(message);
 		}
+
+		await _smtpClient.DisconnectAsync(true);
 	}
 
-	private static string BuildInviteEmailBody(User invitedUser, string verificationBaseUrl)
+	private static string BuildInviteEmailBody(User invitedUser, string verificationBaseUrl, string companyName)
 	{
+		ArgumentNullException.ThrowIfNull(invitedUser);
+
 		var verificationLink = $"{verificationBaseUrl}/verify?id={invitedUser.Id}&hash={HashHelper.HashSafe(invitedUser.Email)}";
-		var companyName = "asax";
-		var html = $@"<table
-  width=""100%""
-  border=""0""
-  cellspacing=""0""
-  cellpadding=""0""
-  style=""width: 100% !important""
->
-  <tbody>
+		var au5LogoUrl = "https://avatars.githubusercontent.com/u/202275934?s=200&v=4";
+
+		var html = $@"
+<!DOCTYPE html>
+<html lang=""en"">
+<head>
+<meta charset=""UTF-8"">
+<meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+<title>Invitation to Join AU5</title>
+</head>
+<body style=""margin:0; padding:0; background-color:#f4f6f8; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;"">
+  <table width=""100%"" cellpadding=""0"" cellspacing=""0"" style=""padding:40px 0;"">
     <tr>
       <td align=""center"">
-        <table
-          style=""border: 1px solid #eaeaea; border-radius: 5px; margin: 40px 0""
-          width=""600""
-          border=""0""
-          cellspacing=""0""
-          cellpadding=""40""
-        >
-          <tbody>
-            <tr>
-              <td align=""center"">
-                <div
-                  style=""
-                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
-                      'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
-                      'Droid Sans', 'Helvetica Neue', sans-serif;
-                    text-align: left;
-                    width: 465px;
-                  ""
-                >
-                  <table
-                    width=""100%""
-                    border=""0""
-                    cellspacing=""0""
-                    cellpadding=""0""
-                    style=""width: 100% !important""
-                  >
-                    <tbody>
-                      <tr>
-                        <td align=""center"">
-                          <div>
-                             <img
-                              src=""https://avatars.githubusercontent.com/u/202275934?s=200&v=4""
-                              width=""40""
-                              height=""37""
-                              alt=""Au5""
-                              style=""border-radius: 6px""
-                            />
-                          </div>
-                          <h1
-                            style=""
-                              color: #000;
-                              font-family: -apple-system, BlinkMacSystemFont,
-                                'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-                                'Cantarell', 'Fira Sans', 'Droid Sans',
-                                'Helvetica Neue', sans-serif;
-                              font-size: 24px;
-                              font-weight: normal;
-                              margin: 30px 0;
-                              padding: 0;
-                            ""
-                          >
-                            {{TITLE}}
-                            <strong style=""color: #000; font-weight: bold""
-                              >{{COMPANYNAME}}</strong
-                            >
-                          </h1>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+        <table width=""100%"" max-width=""600"" cellpadding=""0"" cellspacing=""0"" style=""background-color:#fff; border-radius:10px; overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.1);"">
+          <tr>
+            <td align=""center"" style=""padding:40px 20px;"">
+              <!-- Logo -->
+              <img src=""{au5LogoUrl}"" alt=""AU5 Logo"" width=""40"" height=""37"" style=""border-radius:6px; display:block; margin-bottom:20px;"">
 
-                  <p
-                    style=""
-                      color: #000;
-                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
-                        'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
-                        'Droid Sans', 'Helvetica Neue', sans-serif;
-                      font-size: 14px;
-                      line-height: 24px;
-                    ""
-                  >
-                    Hello
-                    <strong style=""color: #000; font-weight: bold""
-                      >{{FULLNAME}}</strong
-                    >,
-                  </p>
-                  <p
-                    style=""
-                      color: #000;
-                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
-                        'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
-                        'Droid Sans', 'Helvetica Neue', sans-serif;
-                      font-size: 14px;
-                      line-height: 24px;
-                    ""
-                  >
-                    {{SUBJECT}}
-                  </p>
-                  <p
-                    style=""
-                      color: #000;
-                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
-                        'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
-                        'Droid Sans', 'Helvetica Neue', sans-serif;
-                      font-size: 14px;
-                      line-height: 24px;
-                    ""
-                  >
-                    {{DESCRIBEACTION}}
-                  </p>
-                  <br />
+              <!-- Heading -->
+              <h1 style=""font-size:24px; margin:0 0 20px; color:#000; line-height:1.3;"">
+                You've been invited to <strong>AU5</strong> by {companyName}!
+              </h1>
 
-                  <div align=""center"">
-                    <table
-                      border=""0""
-                      cellspacing=""0""
-                      cellpadding=""0""
-                      style=""display: inline-block""
-                    >
-                      <tbody>
-                        <tr>
-                          <td
-                            align=""center""
-                            bgcolor=""#000""
-                            valign=""middle""
-                            height=""50""
-                            style=""
-                              font-family: -apple-system, BlinkMacSystemFont,
-                                'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-                                'Cantarell', 'Fira Sans', 'Droid Sans',
-                                'Helvetica Neue', sans-serif;
-                              font-size: 14px;
-                              padding: 12px 24px;
-                            ""
-                          >
-                          <a href=""{{VERIFICATIONLINK}}"" target=""_blank"" style=""color: white; text-decoration: none;"">
-                              {{BUTTONTEXT}}
-                            </a>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+              <!-- Greeting -->
+              <p style=""font-size:14px; line-height:1.6; color:#000; margin:0 0 15px;"">
+                Step inside – your invitation is here,
+              </p>
 
-                  <br />
-                  <hr
-                    style=""
-                      border: none;
-                      border-top: 1px solid #eaeaea;
-                      margin: 26px 0;
-                      width: 100%;
-                    ""
-                  />
-                  <p
-                    style=""
-                      color: #666666;
-                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
-                        'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
-                        'Droid Sans', 'Helvetica Neue', sans-serif;
-                      font-size: 12px;
-                      line-height: 24px;
-                    ""
-                  >
-                    {{FOOTER}}
-                  </p>
-                </div>
-              </td>
-            </tr>
-          </tbody>
+              <!-- Body text -->
+              <p style=""font-size:14px; line-height:1.6; color:#000; margin:0 0 15px;"">
+                Welcome! You've been invited to join the AU5 platform by <strong>{companyName}</strong>. We're excited to have you on board.
+              </p>
+
+              <p style=""font-size:14px; line-height:1.6; color:#000; margin:0 0 25px;"">
+                Please verify your email to log in to AU5 and unlock all its features.
+                By verifying, you’ll gain AI-powered control over your meetings and make the most of the platform.
+              </p>
+
+              <!-- Button -->
+              <table cellpadding=""0"" cellspacing=""0"" border=""0"" style=""margin:0 auto 25px;"">
+                <tr>
+                  <td align=""center"" bgcolor=""#4CAF50"" style=""border-radius:5px;"">
+                    <a href=""{verificationLink}"" target=""_blank"" style=""display:inline-block; padding:15px 25px; font-size:14px; color:#fff; text-decoration:none; font-weight:bold;"">
+                      Verify My Email
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Fallback link -->
+              <p style=""font-size:12px; color:#666; line-height:1.6; margin:0 0 25px;"">
+                If the button above doesn't work, copy and paste this link into your browser:<br>
+                <a href=""{verificationLink}"" style=""color:#4CAF50;"">{verificationLink}</a>
+              </p>
+
+              <hr style=""border:none; border-top:1px solid #eaeaea; margin:26px 0;"">
+
+              <!-- Footer -->
+              <p style=""font-size:12px; color:#666; line-height:1.6; margin:0;"">
+                If you didn't request this account, no further action is required.<br>
+                Welcome aboard!<br>
+                The Team at {companyName}
+              </p>
+            </td>
+          </tr>
         </table>
       </td>
     </tr>
-  </tbody>
-</table>
+  </table>
+</body>
+</html>
 ";
-
-		html = html.Replace("{{TITLE}}", "Verify your email to sign in to").Replace("{{COMPANY}}", "Asax")
-			.Replace("{{FULLNAME}}", "Our Coleage")
-			.Replace("{{SUBJECT}}", "Welcome to Au5 platform! We're excited to have you on board.")
-			.Replace("{{DESCRIBEACTION}}", "To get started, we need to verify your email address. This ensures you can receive important notifications and helps keep your account secure.\r\nPlease click the verification button below:")
-			.Replace("{{VERIFICATIONLINK}}", verificationLink)
-			.Replace("{{BUTTONTEXT}}", "Veify My Email")
-			.Replace("{{FOOTER}}", "Having trouble?\r\nIf the button above doesn't work, please copy the entire URL below and paste it into your web browser's address bar.\r\n[" + verificationLink + "]\r\n\r\nIf you didn't request this account, no further action is required.\r\n\r\nWelcome aboard!\r\nThe Team at " + companyName);
 
 		return html;
 	}

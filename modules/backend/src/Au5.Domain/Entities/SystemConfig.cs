@@ -49,4 +49,6 @@ public class SystemConfig
 	public int SmtpPort { get; set; }
 
 	public string SmtpUser { get; set; }
+
+	public bool SmtpUseSSl { get; set; }
 }

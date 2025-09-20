@@ -20,7 +20,7 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 	{
 		List<User> invited = [];
 		InviteUsersResponse response = new() { Success = [], Failed = [] };
-		var config = await _context.Set<SystemConfig>().AsNoTracking().FirstOrDefaultAsync(cancellationToken: cancellationToken);
+		var config = await _context.Set<SystemConfig>().AsNoTracking().SingleOrDefaultAsync(cancellationToken: cancellationToken);
 		if (config is null)
 		{
 			return Error.Failure(description: AppResources.System.IsNotConfigured);
@@ -56,13 +56,14 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 		var result = await _context.SaveChangesAsync(cancellationToken);
 		if (result.IsSuccess)
 		{
-			await _emailProvider.SendInviteAsync(invited, new SmtpOptions()
+			await _emailProvider.SendInviteAsync(invited, config.OrganizationName, new SmtpOptions()
 			{
 				Host = config.SmtpHost,
 				BaseUrl = config.PanelUrl,
 				Password = config.SmtpPassword,
 				Port = config.SmtpPort,
-				User = config.SmtpUser
+				User = config.SmtpUser,
+				UseSsl = config.SmtpUseSSl
 			});
 		}
 		else
