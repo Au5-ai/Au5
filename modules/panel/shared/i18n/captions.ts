@@ -1,11 +1,13 @@
-import { url } from "inspector";
-
 export const GLOBAL_CAPTIONS = {
   back: "Back",
   next: "Next",
   brandName: "Au5.ai",
   playground: "playground",
   loading: "Loading ...",
+  roles: {
+    admin: "Admin",
+    user: "User",
+  },
   fields: {
     email: {
       label: "Username (Email)",
