@@ -1,0 +1,65 @@
+{
+  "name": "Au5 Backend",
+  "description": "AI project configuration for the Au5 backend module.",
+  "language": "C#",
+  "solution": "Au5.BackEnd.sln",
+  "projects": [
+    {
+      "name": "Au5.BackEnd",
+      "path": "src/Au5.BackEnd/Au5.BackEnd.csproj",
+      "type": "main-api"
+    },
+    {
+      "name": "Au5.Domain",
+      "path": "src/Au5.Domain/Au5.Domain.csproj",
+      "type": "domain"
+    },
+    {
+      "name": "Au5.AppHost",
+      "path": "src/Au5.AppHost/Au5.AppHost.csproj",
+      "type": "host"
+    },
+    {
+      "name": "Au5.ServiceDefaults",
+      "path": "src/Au5.ServiceDefaults/Au5.ServiceDefaults.csproj",
+      "type": "library"
+    },
+    {
+      "name": "Au5.Application",
+      "path": "src/Au5.Application/Au5.Application.csproj",
+      "type": "application"
+    },
+    {
+      "name": "Au5.Infrastructure",
+      "path": "src/Au5.Infrastructure/Au5.Infrastructure.csproj",
+      "type": "infrastructure"
+    },
+    {
+      "name": "Au5.Shared",
+      "path": "src/Au5.Shared/Au5.Shared.csproj",
+      "type": "shared"
+    },
+    {
+      "name": "Au5.UnitTests",
+      "path": "tests/Au5.UnitTests/Au5.UnitTests.csproj",
+      "type": "unit-test"
+    },
+    {
+      "name": "Au5.IntegrationTests",
+      "path": "tests/Au5.IntegrationTests/Au5.IntegrationTests.csproj",
+      "type": "integration-test"
+    }
+  ],
+  "guidelines": [
+    "Follow SOLID principles and clean architecture.",
+    "Write unit and integration tests for new features.",
+    "Don't write comments in code",
+    "Reuse shared code from the Au5.Shared project when possible.",
+    "Unit test rules:",
+    "- Don't write comments in Unit Tests",
+    "- Name test methods using the pattern: Should_<ExpectedResult>_When_<Condition> (e.g., Should_ReturnToken_When_ValidUser)",
+    "- Use pure xUnit assertions (Assert.Equal, Assert.True, etc.), avoid other assertion libraries.",
+    "- Mock DbSet<T> using MockQueryable.Moq for LINQ support.",
+    "- Use Moq's Mock<> for all dependencies and services."
+  ]
+}

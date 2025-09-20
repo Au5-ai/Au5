@@ -26,9 +26,13 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 			return Error.Failure(description: AppResources.System.IsNotConfigured);
 		}
 
+		var emails = request.Invites.Select(x => x.Email).ToArray();
+
+		var users = await _context.Set<User>().Where(u => emails.Contains(u.Email)).ToListAsync(cancellationToken);
+
 		foreach (var userInvited in request.Invites)
 		{
-			var userExists = await _context.Set<User>().AnyAsync(u => u.Email == userInvited.Email, cancellationToken);
+			var userExists = users.Any(x => x.Email == userInvited.Email);
 			if (!userExists)
 			{
 				var user = new User
