@@ -3,47 +3,55 @@ using Au5.Application.Dtos;
 using Au5.Domain.Entities;
 using Au5.Infrastructure.Adapters;
 using Au5.Shared;
+using Microsoft.Extensions.Logging;
 using MimeKit;
 
 namespace Au5.Infrastructure.Providers;
 
-public class EmailProvider(ISmtpClientWrapper smtpClient) : IEmailProvider
+public class EmailProvider(ISmtpClientWrapper smtpClient, ILogger<EmailProvider> logger) : IEmailProvider
 {
 	private readonly ISmtpClientWrapper _smtpClient = smtpClient;
 
 	public async Task SendInviteAsync(List<User> invited, string organizationName, SmtpOptions smtpOption)
 	{
-		var secureSocketOptions = smtpOption.UseSsl ?
-						  MailKit.Security.SecureSocketOptions.StartTls :
-						  MailKit.Security.SecureSocketOptions.None;
-
-		await _smtpClient.ConnectAsync(smtpOption.Host, smtpOption.Port, secureSocketOptions);
-
-		if (!string.IsNullOrWhiteSpace(smtpOption.User) &&
-			!string.IsNullOrWhiteSpace(smtpOption.Password) &&
-			_smtpClient.Capabilities.HasFlag(MailKit.Net.Smtp.SmtpCapabilities.Authentication))
+		try
 		{
-			await _smtpClient.AuthenticateAsync(smtpOption.User, smtpOption.Password);
-		}
+			var secureSocketOptions = smtpOption.UseSsl ?
+							  MailKit.Security.SecureSocketOptions.StartTls :
+							  MailKit.Security.SecureSocketOptions.None;
 
-		foreach (var user in invited)
+			await _smtpClient.ConnectAsync(smtpOption.Host, smtpOption.Port, secureSocketOptions);
+
+			if (!string.IsNullOrWhiteSpace(smtpOption.User) &&
+				!string.IsNullOrWhiteSpace(smtpOption.Password) &&
+				_smtpClient.Capabilities.HasFlag(MailKit.Net.Smtp.SmtpCapabilities.Authentication))
+			{
+				await _smtpClient.AuthenticateAsync(smtpOption.User, smtpOption.Password);
+			}
+
+			foreach (var user in invited)
+			{
+				var emailBody = BuildInviteEmailBody(user, smtpOption.BaseUrl, organizationName);
+
+				var message = new MimeMessage();
+
+				message.From.Add(new MailboxAddress(organizationName, smtpOption.User));
+				message.To.Add(MailboxAddress.Parse(user.Email));
+
+				message.Subject = "You're Invited! Please Verify Your Email";
+
+				var builder = new BodyBuilder { HtmlBody = emailBody };
+				message.Body = builder.ToMessageBody();
+
+				await _smtpClient.SendAsync(message);
+			}
+
+			await _smtpClient.DisconnectAsync(true);
+		}
+		catch (Exception ex)
 		{
-			var emailBody = BuildInviteEmailBody(user, smtpOption.BaseUrl, organizationName);
-
-			var message = new MimeMessage();
-
-			message.From.Add(new MailboxAddress(organizationName, smtpOption.User));
-			message.To.Add(MailboxAddress.Parse(user.Email));
-
-			message.Subject = "You're Invited! Please Verify Your Email";
-
-			var builder = new BodyBuilder { HtmlBody = emailBody };
-			message.Body = builder.ToMessageBody();
-
-			await _smtpClient.SendAsync(message);
+			logger.LogInformation(message: ex.Message);
 		}
-
-		await _smtpClient.DisconnectAsync(true);
 	}
 
 	private static string BuildInviteEmailBody(User invitedUser, string verificationBaseUrl, string companyName)
@@ -94,7 +102,7 @@ public class EmailProvider(ISmtpClientWrapper smtpClient) : IEmailProvider
               <!-- Button -->
               <table cellpadding=""0"" cellspacing=""0"" border=""0"" style=""margin:0 auto 25px;"">
                 <tr>
-                  <td align=""center"" bgcolor=""#4CAF50"" style=""border-radius:5px;background-color: #4CAF50;"">
+                  <td align=""center"" bgcolor=""#4CAF50"" style=""border-radius:5px;background-color: #2f2f2f;"">
                     <a href=""{verificationLink}"" target=""_blank"" style=""display:inline-block; padding:15px 25px; font-size:14px; color:#fff; text-decoration:none; font-weight:bold;"">
                       Verify My Email
                     </a>
