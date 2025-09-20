@@ -2,6 +2,7 @@ using Au5.Application.Dtos;
 using Au5.Domain.Entities;
 using Au5.Infrastructure.Adapters;
 using Au5.Infrastructure.Providers;
+using Microsoft.Extensions.Logging;
 using MimeKit;
 
 namespace Au5.UnitTests.Infrastructure;
@@ -9,13 +10,15 @@ namespace Au5.UnitTests.Infrastructure;
 public class EmailProviderTests
 {
 	private readonly Mock<ISmtpClientWrapper> _mockSmtp;
+	private readonly Mock<ILogger<EmailProvider>> _loggerMock;
 	private readonly EmailProvider _service;
 	private readonly string _organizationName = "Test Organization";
 
 	public EmailProviderTests()
 	{
 		_mockSmtp = new Mock<ISmtpClientWrapper>();
-		_service = new EmailProvider(_mockSmtp.Object);
+		_loggerMock = new Mock<ILogger<EmailProvider>>();
+		_service = new EmailProvider(_mockSmtp.Object, _loggerMock.Object);
 	}
 
 	[Fact]
