@@ -1,6 +1,4 @@
 using Au5.Application.Common;
-using Au5.Application.Common.Abstractions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Au5.Application.Features.Meetings.CloseMeetingByUser;
@@ -52,7 +50,7 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 
 			if (dbResult.IsSuccess)
 			{
-					await _botFather.RemoveBotContainerAsync(config.BotFatherUrl, meeting.MeetId, meeting.HashToken, cancellationToken);
+				await _botFather.RemoveBotContainerAsync(config.BotFatherUrl, meeting.MeetId, meeting.HashToken, cancellationToken);
 			}
 
 			return dbResult.IsSuccess
