@@ -4,7 +4,9 @@ import { useParams } from "next/navigation";
 import { Meeting } from "@/shared/types";
 import { meetingApi } from "@/shared/network/api/meeting";
 import NoRecordsState from "@/shared/components/empty-states/no-record";
+import { LoadingPage } from "@/shared/components/loading-page";
 import { SidebarInset, SidebarTrigger } from "@/shared/components/ui";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { Separator } from "@radix-ui/react-separator";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
 import { NavActions } from "@/shared/components/navActions";
@@ -86,14 +88,7 @@ export default function TranscriptionPage() {
   }, [transcription, filterType, selectedSpeaker, searchQuery]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen w-full flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium">Loading Transcription...</p>
-        </div>
-      </div>
-    );
+    return <LoadingPage text={GLOBAL_CAPTIONS.loadingTranscription} className="min-h-screen" />;
   }
 
   if (error) {
