@@ -1,4 +1,6 @@
 export const CAPTIONS = {
+  addUserTitle: "Create Account",
+  addUserDescription: "Enter the details to create your account",
   downloadExtensionTitle: "Download Extension",
   downloadExtensionDescription: "Get the latest version of the extension",
   configureExtensionTitle: "Configure Extension",
@@ -12,7 +14,5 @@ export const CAPTIONS = {
   completionMessage:
     "You've successfully completed the onboarding process! Welcome to our amazing platform. You're now ready to explore all the incredible features we have to offer.",
   readyMessage: "🚀 Ready to take off? Let's build something amazing together!",
-  alreadyConfiguredText: "if you already configured the extention",
-  skipHereText: "skip here",
   enjoyButtonText: "Enjoy 🎉🎉",
 } as const;

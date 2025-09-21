@@ -9,6 +9,7 @@ import { LoginRequest, LoginResponse } from "../types";
 import { ApiError } from "../types/network";
 import { GLOBAL_CAPTIONS } from "../i18n/captions";
 import { authController } from "../network/api/authController";
+import { ROUTES } from "../routes";
 
 export function useUser() {
   return useQuery({
@@ -23,16 +24,12 @@ export function useUser() {
 // --- Hooks ---
 export function useLogin() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation<LoginResponse, unknown, LoginRequest>({
     mutationFn: authController.login,
-    onSuccess: (data) => handleAuthSuccess(data, false, queryClient, router),
-    // onError: (error) => {
-    //   tokenStorageService.remove();
-    //   const message = handleAuthError(error);
-    //   toast.error(message);
-    // },
+    onSuccess: (data) => {
+      handleAuthSuccess(data, queryClient);
+    },
   });
 }
 
@@ -45,12 +42,12 @@ export function useLogout() {
     onSuccess: () => {
       tokenStorageService.remove();
       queryClient.clear();
-      router.push("/login");
+      router.push(ROUTES.LOGIN);
     },
     onError: () => {
       tokenStorageService.remove();
       queryClient.clear();
-      router.push("/login");
+      router.push(ROUTES.LOGIN);
     },
   });
 }
@@ -76,19 +73,10 @@ export function useIsAuthenticated() {
 
 export function handleAuthSuccess(
   data: LoginResponse,
-  isAdmin: boolean,
   queryClient: ReturnType<typeof useQueryClient>,
-  router: ReturnType<typeof useRouter>,
 ) {
   tokenStorageService.set(data.accessToken);
   queryClient.invalidateQueries({ queryKey: ["user"] });
-
-  if (isAdmin) {
-    router.push("/playground");
-  } else {
-    const setup = localStorage.getItem("eConfig");
-    router.push(setup ? "/playground" : "/exConfig");
-  }
 }
 
 export function handleAuthError(error: unknown) {
