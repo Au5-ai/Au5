@@ -69,7 +69,7 @@ export default function OnboardingPage() {
       id: 3,
       title: CAPTIONS.configureExtensionTitle,
       description: CAPTIONS.configureExtensionDescription,
-      component: <ConfigureStep />,
+      component: <ConfigureStep next={nextStep} />,
     },
     {
       id: 4,
@@ -158,7 +158,7 @@ export default function OnboardingPage() {
                       <Button
                         variant="outline"
                         onClick={prevStep}
-                        disabled={currentStep === 1}>
+                        disabled={currentStep < 3}>
                         <ChevronLeft />
                         {GLOBAL_CAPTIONS.back}
                       </Button>

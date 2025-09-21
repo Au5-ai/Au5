@@ -18,7 +18,6 @@ import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { AddUserRequest } from "../types";
 import { useLogin } from "@/shared/hooks/use-auth";
-import { LoginRequest } from "@/shared/types";
 
 export function AddUserStep({
   email,
@@ -110,6 +109,7 @@ export function AddUserStep({
         username: email ?? "",
         password: formData.password,
       });
+      toast.info(GLOBAL_CAPTIONS.pages.signup.signupSuccess);
       next();
     }
   };

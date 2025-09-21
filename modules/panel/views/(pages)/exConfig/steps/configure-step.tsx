@@ -9,7 +9,7 @@ import { CAPTIONS } from "../i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { systemController } from "../systemController";
 
-export function ConfigureStep() {
+export function ConfigureStep({ next }: { next: () => void }) {
   const queryClient = useQueryClient();
   const handleSendConfigs = async () => {
     try {
@@ -45,12 +45,13 @@ export function ConfigureStep() {
           },
           "*",
         );
-        localStorage.setItem("eConfig", "true");
+        localStorage.setItem("exConfig", "true");
         localStorage.setItem("config", JSON.stringify(config));
         queryClient.setQueryData(["currentUser"], {
           ...user,
         });
         toast.success(CAPTIONS.configurationSentSuccess);
+        next();
       }
     } catch (error) {
       console.error(GLOBAL_CAPTIONS.errors.exConfig.failedToConfigure, error);
