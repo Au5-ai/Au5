@@ -279,7 +279,6 @@ public class AddBotCommandHandlerTests
 
 		Assert.True(result.IsSuccess);
 		var expectedCacheKey = MeetingService.GetMeetingKey("test-meet-id");
-
 	}
 
 	[Fact]
