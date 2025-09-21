@@ -59,7 +59,13 @@ public class EmailProvider(ISmtpClientWrapper smtpClient, ILogger<EmailProvider>
 		ArgumentNullException.ThrowIfNull(invitedUser);
 
 		var verificationLink = $"{verificationBaseUrl}/verify?id={invitedUser.Id}&hash={HashHelper.HashSafe(invitedUser.Email)}";
-		var au5LogoUrl = "https://avatars.githubusercontent.com/u/202275934?s=200&v=4";
+
+		// AU5 Logo as inline SVG (base64 encoded)
+		var au5LogoSvg = "data:image/svg+xml;base64," + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(@"
+			<svg width='40' height='37' viewBox='0 0 40 37' fill='none' xmlns='http://www.w3.org/2000/svg'>
+  				<rect width='40' height='37' rx='6' fill='#2f2f2f'/>
+  				<text x='20' y='24' font-family='Arial, sans-serif' font-size='14' font-weight='bold' text-anchor='middle' fill='white'>AU5</text>
+			</svg>".Trim()));
 
 		var html = $@"
 <!DOCTYPE html>
@@ -77,7 +83,7 @@ public class EmailProvider(ISmtpClientWrapper smtpClient, ILogger<EmailProvider>
           <tr>
             <td align=""center"" style=""padding:40px 20px;"">
               <!-- Logo -->
-              <img src=""{au5LogoUrl}"" alt=""AU5 Logo"" width=""40"" height=""37"" style=""border-radius:6px; display:block; margin-bottom:20px;"">
+              <img src=""{au5LogoSvg}"" alt=""AU5 Logo"" width=""40"" height=""37"" style=""border-radius:6px; display:block; margin-bottom:20px;"">
 
               <!-- Heading -->
               <h1 style=""font-size:24px; margin:0 0 20px; color:#000; line-height:1.3;"">
