@@ -36,6 +36,7 @@ public class SystemConfigCommandHandler : IRequestHandler<SystemConfigCommand, R
 			existingConfig.MeetingTranscription = request.MeetingTranscription;
 			existingConfig.MeetingTranscriptionModel = request.MeetingTranscriptionModel;
 			existingConfig.OpenAIToken = request.OpenAIToken;
+			existingConfig.OpenAIProxyUrl = request.OpenAIProxyUrl;
 			existingConfig.SmtpPort = request.SmtpPort;
 			existingConfig.SmtpHost = request.SmtpHost;
 			existingConfig.SmtpPassword = request.SmtpPassword;
@@ -56,6 +57,7 @@ public class SystemConfigCommandHandler : IRequestHandler<SystemConfigCommand, R
 				BotHubUrl = request.BotHubUrl,
 				PanelUrl = request.PanelUrl,
 				OpenAIToken = request.OpenAIToken,
+				OpenAIProxyUrl = request.OpenAIProxyUrl,
 				AutoLeaveWaitingEnter = request.AutoLeaveWaitingEnter,
 				AutoLeaveNoParticipant = request.AutoLeaveNoParticipant,
 				AutoLeaveAllParticipantsLeft = request.AutoLeaveAllParticipantsLeft,
