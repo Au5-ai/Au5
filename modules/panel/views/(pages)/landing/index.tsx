@@ -1,6 +1,6 @@
 "use client";
 
-import HeroSection from "@/views/landing/HeroSection";
+import HeroSection from "@/views/(pages)/landing/HeroSection";
 import Logo from "@/shared/components/logo";
 import { Button } from "@/shared/components/ui";
 import { useRouter } from "next/navigation";

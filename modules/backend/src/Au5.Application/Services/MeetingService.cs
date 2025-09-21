@@ -2,7 +2,7 @@ namespace Au5.Application.Services;
 
 public class MeetingService : IMeetingService
 {
-	private const string FallbackBotName = "Cando";
+	private const string FallbackBotName = "Au5";
 	private static readonly TimeSpan CacheExpiration = TimeSpan.FromHours(1);
 
 	private readonly SemaphoreSlim _lock = new(1, 1);
@@ -230,13 +230,7 @@ public class MeetingService : IMeetingService
 		return meeting;
 	}
 
-	private async Task<string> GetBotNameFromConfigAsync(CancellationToken cancellationToken = default)
-	{
-		var config = await _dbContext.Set<SystemConfig>().AsNoTracking().FirstOrDefaultAsync(cancellationToken);
-		return config?.BotName ?? FallbackBotName;
-	}
-
-	private Entry CreateEntryFromMessage(EntryMessage entry)
+	private static Entry CreateEntryFromMessage(EntryMessage entry)
 	{
 		return new Entry
 		{
@@ -250,7 +244,7 @@ public class MeetingService : IMeetingService
 		};
 	}
 
-	private Meeting CreateNewMeeting(UserJoinedInMeetingMessage userJoined)
+	private static Meeting CreateNewMeeting(UserJoinedInMeetingMessage userJoined)
 	{
 		var meetingId = Guid.NewGuid();
 		var hashToken = HashHelper.HashSafe(meetingId.ToString());
@@ -267,5 +261,11 @@ public class MeetingService : IMeetingService
 			HashToken = hashToken,
 			Status = MeetingStatus.AddingBot,
 		};
+	}
+
+	private async Task<string> GetBotNameFromConfigAsync(CancellationToken cancellationToken = default)
+	{
+		var config = await _dbContext.Set<SystemConfig>().AsNoTracking().FirstOrDefaultAsync(cancellationToken);
+		return config?.BotName ?? FallbackBotName;
 	}
 }

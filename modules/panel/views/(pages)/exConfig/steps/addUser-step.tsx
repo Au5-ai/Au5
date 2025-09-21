@@ -16,14 +16,17 @@ import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { useSignup } from "../hooks";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { Mail } from "lucide-react";
 import { AddUserRequest } from "../types";
+import { useLogin } from "@/shared/hooks/use-auth";
 
-export function SignupForm({
+export function AddUserStep({
   email,
-  className,
+  next,
   ...props
-}: React.ComponentProps<"div">) {
+}: {
+  email: string | null;
+  next: () => void;
+}) {
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     fullname: "",
@@ -38,6 +41,7 @@ export function SignupForm({
   });
 
   const signupMutation = useSignup();
+  const loginMutation = useLogin();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -81,7 +85,7 @@ export function SignupForm({
     return !Object.values(newErrors).some((error) => error !== "");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const userId = searchParams.get("id");
@@ -100,13 +104,19 @@ export function SignupForm({
         repeatedPassword: formData.confirmPassword,
       };
 
-      signupMutation.mutate(signupData);
+      await signupMutation.mutateAsync(signupData);
+      await loginMutation.mutateAsync({
+        username: email ?? "",
+        password: formData.password,
+      });
+      toast.success(GLOBAL_CAPTIONS.pages.signup.signupSuccess);
+      next();
     }
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+    <div className={cn("flex flex-col gap-6")} {...props}>
+      <Card className="border-0 shadow-none">
         <CardHeader className="text-center">
           <CardTitle className="text-xl">
             {GLOBAL_CAPTIONS.pages.signup.form.title}
@@ -115,7 +125,7 @@ export function SignupForm({
             Sign up with your <b>{email}</b> email account
           </CardDescription>
         </CardHeader>
-        <CardContent className="mt-6">
+        <CardContent className="mt-8">
           <form onSubmit={handleSubmit}>
             <div className="grid gap-6">
               <div className="grid gap-6">
@@ -187,10 +197,7 @@ export function SignupForm({
                   )}
                 </div>
 
-                <Button
-                  type="submit"
-                  className="w-full cursor-pointer"
-                  disabled={signupMutation.isPending}>
+                <Button type="submit" disabled={signupMutation.isPending}>
                   {signupMutation.isPending
                     ? GLOBAL_CAPTIONS.pages.signup.form.submittingButton
                     : GLOBAL_CAPTIONS.pages.signup.form.submitButton}
@@ -200,12 +207,6 @@ export function SignupForm({
           </form>
         </CardContent>
       </Card>
-      <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        {GLOBAL_CAPTIONS.pages.signup.footer.text}{" "}
-        <a href="#">{GLOBAL_CAPTIONS.pages.signup.footer.terms}</a>{" "}
-        {GLOBAL_CAPTIONS.pages.signup.footer.and}{" "}
-        <a href="#">{GLOBAL_CAPTIONS.pages.signup.footer.privacy}</a>.
-      </div>
     </div>
   );
 }
