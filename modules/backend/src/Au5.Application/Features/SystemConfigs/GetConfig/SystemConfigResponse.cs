@@ -21,6 +21,8 @@ public record SystemConfigResponse
 	[JsonIgnore]
 	public string OpenAIToken { get; set; }
 
+	public string OpenAIProxyUrl { get; set; }
+
 	public string PanelUrl { get; set; }
 
 	public int AutoLeaveWaitingEnter { get; set; }
