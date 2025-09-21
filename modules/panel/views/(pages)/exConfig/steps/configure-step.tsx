@@ -2,7 +2,7 @@ import { Button } from "@/shared/components/ui";
 import { tokenStorageService } from "@/shared/lib/localStorage";
 import { userApi } from "@/shared/network/api/user";
 import { useQueryClient } from "@tanstack/react-query";
-import { Settings } from "lucide-react";
+import { ChevronLeft, Settings } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { CAPTIONS } from "../i18n";
@@ -60,28 +60,34 @@ export function ConfigureStep({ next }: { next: () => void }) {
 
   return (
     <>
-      <h2 className="text-xl font-semibold mb-2">
-        {CAPTIONS.configureExtensionTitle}
-      </h2>
-      <p className="text-muted-foreground mb-6">
-        {CAPTIONS.configureExtensionDescription}
-      </p>
       <div>
-        <Image
-          src="/assets/images/welcome.png"
-          alt="Configure Extension"
-          className="rounded-lg"
-          width={480}
-          height={100}
-          style={{ height: "auto" }}
-        />
-
-        <div className="flex justify-between py-6">
-          <Button variant="outline" onClick={handleSendConfigs}>
-            <Settings />
-            {CAPTIONS.sendConfigButtonText}
-          </Button>
+        <h2 className="text-xl font-semibold mb-2">
+          {CAPTIONS.configureExtensionTitle}
+        </h2>
+        <p className="text-muted-foreground mb-6">
+          {CAPTIONS.configureExtensionDescription}
+        </p>
+        <div>
+          <Image
+            src="/assets/images/welcome.png"
+            alt="Configure Extension"
+            className="rounded-lg"
+            width={480}
+            height={100}
+            style={{ height: "auto" }}
+          />
         </div>
+      </div>
+      <div className="flex justify-between">
+        <Button variant="outline" disabled>
+          <ChevronLeft />
+          {GLOBAL_CAPTIONS.back}
+        </Button>
+
+        <Button onClick={handleSendConfigs}>
+          <Settings />
+          {CAPTIONS.sendConfigButtonText}
+        </Button>
       </div>
     </>
   );

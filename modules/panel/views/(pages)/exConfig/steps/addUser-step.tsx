@@ -109,7 +109,7 @@ export function AddUserStep({
         username: email ?? "",
         password: formData.password,
       });
-      toast.info(GLOBAL_CAPTIONS.pages.signup.signupSuccess);
+      toast.success(GLOBAL_CAPTIONS.pages.signup.signupSuccess);
       next();
     }
   };
@@ -125,7 +125,7 @@ export function AddUserStep({
             Sign up with your <b>{email}</b> email account
           </CardDescription>
         </CardHeader>
-        <CardContent className="mt-16">
+        <CardContent className="mt-8">
           <form onSubmit={handleSubmit}>
             <div className="grid gap-6">
               <div className="grid gap-6">
@@ -197,10 +197,7 @@ export function AddUserStep({
                   )}
                 </div>
 
-                <Button
-                  type="submit"
-                  className="w-full mt-8"
-                  disabled={signupMutation.isPending}>
+                <Button type="submit" disabled={signupMutation.isPending}>
                   {signupMutation.isPending
                     ? GLOBAL_CAPTIONS.pages.signup.form.submittingButton
                     : GLOBAL_CAPTIONS.pages.signup.form.submitButton}

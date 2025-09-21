@@ -1,9 +1,8 @@
 "use client";
 import Logo from "@/shared/components/logo";
-import { Button, Card, CardContent } from "@/shared/components/ui";
-import { handleCelebration } from "@/shared/lib/utils";
-import { CheckCircle2, ChevronLeft, ChevronRight, Circle } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Card, CardContent } from "@/shared/components/ui";
+import { CheckCircle2, Circle } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CAPTIONS } from "./i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
@@ -15,7 +14,6 @@ import { DownloadStep } from "./steps/download-step";
 import { AddUserStep } from "./steps/addUser-step";
 
 export default function OnboardingPage() {
-  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<"loading" | "ok" | "error">("loading");
@@ -46,12 +44,6 @@ export default function OnboardingPage() {
     }
   };
 
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep((prev) => prev - 1);
-    }
-  };
-
   const Steps = [
     {
       id: 1,
@@ -63,7 +55,7 @@ export default function OnboardingPage() {
       id: 2,
       title: CAPTIONS.downloadExtensionTitle,
       description: CAPTIONS.downloadExtensionDescription,
-      component: <DownloadStep />,
+      component: <DownloadStep next={nextStep} />,
     },
     {
       id: 3,
@@ -152,46 +144,10 @@ export default function OnboardingPage() {
               {/* Step Content */}
               <Card className="flex-1 shadow-none border-0 py-0">
                 <CardContent className="p-6 h-full flex flex-col justify-between">
-                  <div>{Steps[currentStep - 1].component}</div>
-                  {currentStep > 1 ? (
-                    <div className="flex justify-between">
-                      <Button
-                        variant="outline"
-                        onClick={prevStep}
-                        disabled={currentStep < 3}>
-                        <ChevronLeft />
-                        {GLOBAL_CAPTIONS.back}
-                      </Button>
-                      {currentStep === Steps.length ? (
-                        <Button
-                          className="cursor-pointer"
-                          onClick={() => {
-                            handleCelebration();
-
-                            setTimeout(() => {
-                              router.push(`/${GLOBAL_CAPTIONS.playground}`);
-                            }, 3000);
-                          }}>
-                          {CAPTIONS.enjoyButtonText}
-                        </Button>
-                      ) : (
-                        <Button className="cursor-pointer" onClick={nextStep}>
-                          {GLOBAL_CAPTIONS.next} <ChevronRight />
-                        </Button>
-                      )}
-                    </div>
-                  ) : (
-                    <> </>
-                  )}
+                  {Steps[currentStep - 1].component}
                 </CardContent>
               </Card>
             </div>
-          </div>
-          <div className="p-2 text-center text-sm items-center justify-center text-muted-foreground">
-            {CAPTIONS.alreadyConfiguredText}{" "}
-            <a href="#" className="underline underline-offset-4">
-              {CAPTIONS.skipHereText}
-            </a>
           </div>
         </div>
       </div>
