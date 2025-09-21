@@ -8,12 +8,14 @@ namespace Au5.UnitTests.Application;
 public class MeetingServiceTests
 {
 	private readonly Mock<ICacheProvider> _cacheProviderMock;
+	private readonly Mock<IApplicationDbContext> _dbContextMock;
 	private readonly MeetingService _meetingService;
 
 	public MeetingServiceTests()
 	{
 		_cacheProviderMock = new Mock<ICacheProvider>();
-		_meetingService = new MeetingService(_cacheProviderMock.Object);
+		_dbContextMock = new Mock<IApplicationDbContext>();
+		_meetingService = new MeetingService(_cacheProviderMock.Object, _dbContextMock.Object);
 	}
 
 	[Fact]
