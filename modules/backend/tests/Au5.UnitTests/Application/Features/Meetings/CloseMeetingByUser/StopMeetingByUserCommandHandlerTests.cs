@@ -1,8 +1,6 @@
-using Au5.Application.Common.Abstractions;
 using Au5.Application.Features.Meetings.CloseMeetingByUser;
 using Au5.Domain.Entities;
 using Au5.Shared;
-using Microsoft.Extensions.Logging;
 using MockQueryable.Moq;
 
 namespace Au5.UnitTests.Application.Features.Meetings.CloseMeetingByUser;
@@ -11,7 +9,6 @@ public class CloseMeetingByUserCommandHandlerTests
 	private readonly Mock<IApplicationDbContext> _dbContextMock;
 	private readonly Mock<IMeetingService> _meetingServiceMock;
 	private readonly Mock<IBotFatherAdapter> _botFatherAdapter;
-	private readonly Mock<ILogger<CloseMeetingByUserCommandHandler>> _loggerMock;
 	private readonly CloseMeetingByUserCommandHandler _handler;
 
 	public CloseMeetingByUserCommandHandlerTests()
@@ -19,8 +16,7 @@ public class CloseMeetingByUserCommandHandlerTests
 		_dbContextMock = new();
 		_meetingServiceMock = new();
 		_botFatherAdapter = new();
-		_loggerMock = new();
-		_handler = new CloseMeetingByUserCommandHandler(_loggerMock.Object, _dbContextMock.Object, _meetingServiceMock.Object, _botFatherAdapter.Object);
+		_handler = new CloseMeetingByUserCommandHandler(_dbContextMock.Object, _meetingServiceMock.Object, _botFatherAdapter.Object);
 	}
 
 	[Fact]

@@ -3,7 +3,7 @@ import Logo from "@/shared/components/logo";
 import { Card, CardContent } from "@/shared/components/ui";
 import { CheckCircle2, Circle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { CAPTIONS } from "./i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import Custom404 from "@/shared/components/not-found";
@@ -49,7 +49,11 @@ export default function OnboardingPage() {
       id: 1,
       title: CAPTIONS.addUserTitle,
       description: CAPTIONS.addUserDescription,
-      component: <AddUserStep email={email} next={nextStep} />,
+      component: (
+        <Suspense fallback={null}>
+          <AddUserStep email={email} next={nextStep} />
+        </Suspense>
+      ),
     },
     {
       id: 2,
