@@ -44,6 +44,10 @@ public class SystemDbConfig : IEntityTypeConfiguration<SystemConfig>
 			.IsRequired()
 			.HasMaxLength(200);
 
+		builder.Property(t => t.OpenAIProxyUrl)
+			.IsRequired(false)
+			.HasMaxLength(200);
+
 		builder.Property(t => t.Language)
 			.IsRequired()
 			.HasMaxLength(5);

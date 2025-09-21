@@ -28,6 +28,7 @@ export interface SystemConfigs {
   direction: string;
   language: string;
   openAIToken: string;
+  openAIProxyUrl: string;
   meetingTranscriptionModel: string;
   autoLeaveWaitingEnter: number;
   autoLeaveNoParticipant: number;

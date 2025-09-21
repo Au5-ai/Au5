@@ -26,6 +26,7 @@ const defaultConfigs: SystemConfigs = {
   direction: "rtl",
   language: "fa-IR",
   openAIToken: "",
+  openAIProxyUrl: "",
   meetingTranscriptionModel: "liveCaption",
   autoLeaveWaitingEnter: 30000,
   autoLeaveNoParticipant: 60000,
@@ -91,6 +92,11 @@ export function SystemConfigsTab() {
       case "openAIToken":
         return !value || (typeof value === "string" && value.trim().length < 10)
           ? "Token must be at least 10 characters"
+          : null;
+
+      case "openAIProxyUrl":
+        return value && typeof value === "string" && value.trim() && !validateUrl(value as string)
+          ? "Must be a valid URL" 
           : null;
 
       case "autoLeaveWaitingEnter":
@@ -463,19 +469,35 @@ export function SystemConfigsTab() {
         {/* API Tokens */}
         <div className="space-y-4">
           <h2 className="text-xl mt-8 font-semibold">API Tokens</h2>
-          <div className="space-y-2">
-            <Label htmlFor="openaiToken">OpenAI Token</Label>
-            <Input
-              id="openaiToken"
-              type="password"
-              value={configs.openAIToken}
-              onChange={(e) => handleInputChange("openAIToken", e.target.value)}
-              placeholder="Enter your OpenAI API token"
-              className={errors.openAIToken ? "border-destructive" : ""}
-            />
-            {errors.openAIToken && (
-              <p className="text-sm text-destructive">{errors.openAIToken}</p>
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="openaiToken">OpenAI Token</Label>
+              <Input
+                id="openaiToken"
+                type="password"
+                value={configs.openAIToken}
+                onChange={(e) => handleInputChange("openAIToken", e.target.value)}
+                placeholder="Enter your OpenAI API token"
+                className={errors.openAIToken ? "border-destructive" : ""}
+              />
+              {errors.openAIToken && (
+                <p className="text-sm text-destructive">{errors.openAIToken}</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="openaiProxyUrl">OpenAI Proxy URL (Optional)</Label>
+              <Input
+                id="openaiProxyUrl"
+                type="url"
+                value={configs.openAIProxyUrl}
+                onChange={(e) => handleInputChange("openAIProxyUrl", e.target.value)}
+                placeholder="https://your-proxy-domain.com"
+                className={errors.openAIProxyUrl ? "border-destructive" : ""}
+              />
+              {errors.openAIProxyUrl && (
+                <p className="text-sm text-destructive">{errors.openAIProxyUrl}</p>
+              )}
+            </div>
           </div>
         </div>
 

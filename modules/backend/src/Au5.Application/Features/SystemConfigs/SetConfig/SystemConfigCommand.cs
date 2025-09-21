@@ -22,6 +22,8 @@ public record SystemConfigCommand : IRequest<Result>
 
 	public string OpenAIToken { get; init; }
 
+	public string OpenAIProxyUrl { get; init; }
+
 	public int AutoLeaveWaitingEnter { get; set; }
 
 	public int AutoLeaveNoParticipant { get; set; }
