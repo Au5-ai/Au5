@@ -1,18 +1,18 @@
-using Au5.Application.Common.Abstractions;
-
 namespace Au5.Application.Services;
 
 public class MeetingService : IMeetingService
 {
-	private const string DefaultBotName = "Cando"; // TODO: Get the name from config
+	private const string FallbackBotName = "Cando";
 	private static readonly TimeSpan CacheExpiration = TimeSpan.FromHours(1);
 
 	private readonly SemaphoreSlim _lock = new(1, 1);
 	private readonly ICacheProvider _cacheProvider;
+	private readonly IApplicationDbContext _dbContext;
 
-	public MeetingService(ICacheProvider cacheProvider)
+	public MeetingService(ICacheProvider cacheProvider, IApplicationDbContext dbContext)
 	{
 		_cacheProvider = cacheProvider ?? throw new ArgumentNullException(nameof(cacheProvider));
+		_dbContext = dbContext;
 	}
 
 	public static string GetMeetingKey(string meetId)
@@ -90,7 +90,7 @@ public class MeetingService : IMeetingService
 
 		if (!meeting.IsBotAdded)
 		{
-			meeting.BotName = DefaultBotName;
+			meeting.BotName = await GetBotNameFromConfigAsync();
 			meeting.IsBotAdded = true;
 			meeting.Status = MeetingStatus.Recording;
 		}
@@ -228,6 +228,12 @@ public class MeetingService : IMeetingService
 
 		await _cacheProvider.RemoveAsync(key);
 		return meeting;
+	}
+
+	private async Task<string> GetBotNameFromConfigAsync(CancellationToken cancellationToken = default)
+	{
+		var config = await _dbContext.Set<SystemConfig>().AsNoTracking().FirstOrDefaultAsync(cancellationToken);
+		return config?.BotName ?? FallbackBotName;
 	}
 
 	private Entry CreateEntryFromMessage(EntryMessage entry)

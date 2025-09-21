@@ -1,19 +1,31 @@
-using Au5.Application.Common.Abstractions;
 using Au5.Application.Messages;
 using Au5.Application.Services;
 using Au5.Domain.Entities;
+using MockQueryable.Moq;
 
 namespace Au5.UnitTests.Application;
 
 public class MeetingServiceTests
 {
 	private readonly Mock<ICacheProvider> _cacheProviderMock;
+	private readonly Mock<IApplicationDbContext> _dbContextMock;
 	private readonly MeetingService _meetingService;
 
 	public MeetingServiceTests()
 	{
 		_cacheProviderMock = new Mock<ICacheProvider>();
-		_meetingService = new MeetingService(_cacheProviderMock.Object);
+		_dbContextMock = new Mock<IApplicationDbContext>();
+
+		// Set up the default SystemConfig for tests
+		var systemConfigs = new List<SystemConfig>
+		{
+			new() { Id = Guid.NewGuid(), BotName = "Cando" }
+		};
+
+		var systemConfigDbSet = systemConfigs.BuildMockDbSet();
+		_dbContextMock.Setup(x => x.Set<SystemConfig>()).Returns(systemConfigDbSet.Object);
+
+		_meetingService = new MeetingService(_cacheProviderMock.Object, _dbContextMock.Object);
 	}
 
 	[Fact]
