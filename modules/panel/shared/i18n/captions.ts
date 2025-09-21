@@ -4,6 +4,8 @@ export const GLOBAL_CAPTIONS = {
   brandName: "Au5.ai",
   playground: "playground",
   loading: "Loading ...",
+  loadingConfigs: "Loading Configs...",
+  loadingTranscription: "Loading Transcription...",
   roles: {
     admin: "Admin",
     user: "User",
