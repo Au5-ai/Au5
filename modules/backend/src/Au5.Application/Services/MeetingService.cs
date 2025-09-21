@@ -1,11 +1,8 @@
-using Au5.Application.Common.Abstractions;
-using Microsoft.EntityFrameworkCore;
-
 namespace Au5.Application.Services;
 
 public class MeetingService : IMeetingService
 {
-	private const string FallbackBotName = "Cando"; // Fallback when config is not available
+	private const string FallbackBotName = "Cando";
 	private static readonly TimeSpan CacheExpiration = TimeSpan.FromHours(1);
 
 	private readonly SemaphoreSlim _lock = new(1, 1);
