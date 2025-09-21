@@ -1,10 +1,10 @@
 "use client";
 
 import Logo from "@/shared/components/logo";
+import { LoadingPage } from "@/shared/components/loading-page";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Custom404 from "@/shared/components/not-found";
-import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { userController } from "./userController";
 import { SignupForm } from "./components/signup-form";
 
@@ -33,18 +33,7 @@ export default function VerifyUserPage() {
   }, [searchParams]);
 
   if (status === "loading") {
-    return (
-      <div className="gradient-bg bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-        <div className="min-h-100 w-full flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600 font-medium">
-              {GLOBAL_CAPTIONS.loading}
-            </p>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingPage />;
   }
 
   if (status === "ok") {
