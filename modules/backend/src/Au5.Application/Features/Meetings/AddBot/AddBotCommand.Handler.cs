@@ -1,8 +1,6 @@
 using Au5.Application.Common;
-using Au5.Application.Common.Abstractions;
 using Au5.Application.Services;
 using Au5.Application.Services.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.Meetings.AddBot;
 

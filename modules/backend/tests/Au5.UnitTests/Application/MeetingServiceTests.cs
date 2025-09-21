@@ -1,6 +1,7 @@
 using Au5.Application.Messages;
 using Au5.Application.Services;
 using Au5.Domain.Entities;
+using Au5.Shared;
 using MockQueryable.Moq;
 
 namespace Au5.UnitTests.Application;
@@ -9,12 +10,14 @@ public class MeetingServiceTests
 {
 	private readonly Mock<ICacheProvider> _cacheProviderMock;
 	private readonly Mock<IApplicationDbContext> _dbContextMock;
+	private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
 	private readonly MeetingService _meetingService;
 
 	public MeetingServiceTests()
 	{
 		_cacheProviderMock = new Mock<ICacheProvider>();
 		_dbContextMock = new Mock<IApplicationDbContext>();
+		_dateTimeProviderMock = new Mock<IDateTimeProvider>();
 
 		// Set up the default SystemConfig for tests
 		var systemConfigs = new List<SystemConfig>
@@ -25,7 +28,7 @@ public class MeetingServiceTests
 		var systemConfigDbSet = systemConfigs.BuildMockDbSet();
 		_dbContextMock.Setup(x => x.Set<SystemConfig>()).Returns(systemConfigDbSet.Object);
 
-		_meetingService = new MeetingService(_cacheProviderMock.Object, _dbContextMock.Object);
+		_meetingService = new MeetingService(_cacheProviderMock.Object, _dbContextMock.Object, _dateTimeProviderMock.Object);
 	}
 
 	[Fact]
@@ -857,5 +860,42 @@ public class MeetingServiceTests
 		Assert.Single(entry.Reactions);
 		Assert.Empty(existingReaction.Participants);
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromHours(1)), Times.Once);
+	}
+
+	[Theory]
+	[InlineData("2025-09-21T10:00:00", "2025-09-21T10:00:02", "00:00:02")]
+	[InlineData("2025-09-21T10:00:00", "2025-09-21T10:01:43", "00:01:43")]
+	[InlineData("2025-09-21T10:00:00", "2025-09-21T11:43:21", "01:43:21")]
+	public async Task CreateEntryFromMessage_Should_CalculateTimelineCorrectly_WhenThereIsNoEntries(string startIso, string nowIso, string expectedTimeline)
+	{
+		var start = DateTime.Parse(startIso);
+		var now = DateTime.Parse(nowIso);
+
+		var activeMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Recording,
+			Entries = [],
+			CreatedAt = start
+		};
+
+		var entry = new EntryMessage
+		{
+			MeetId = "meet123",
+			BlockId = Guid.NewGuid(),
+			Content = "New content",
+			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Jane Doe" },
+			EntryType = "Transcription"
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(activeMeeting);
+		_dateTimeProviderMock.Setup(x => x.Now).Returns(now);
+
+		var result = await _meetingService.UpsertBlock(entry);
+		var meeting = await _meetingService.CloseMeeting(entry.MeetId, CancellationToken.None);
+		var timeline = meeting.Entries.First().Timeline;
+		Assert.Equal(expectedTimeline, timeline);
 	}
 }

@@ -38,7 +38,7 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 			meeting.Status = MeetingStatus.Ended;
 			meeting.Duration = meeting.CreatedAt.DiffTo(DateTime.Now).ToReadableString();
 			meeting.ClosedAt = DateTime.Now;
-			meeting.Entries = meetingContent.Entries; // TODO: Calculate Timeline in each entry
+			meeting.Entries = meetingContent.Entries;
 			meeting.Participants = meetingContent.Participants;
 			meeting.Guests = meetingContent.Guests;
 			meeting.ClosedMeetingUserId = request.UserId;
