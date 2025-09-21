@@ -1,10 +1,8 @@
-using Au5.Application.Common.Abstractions;
 using Au5.Application.Features.Meetings.AddBot;
 using Au5.Application.Services;
 using Au5.Application.Services.Models;
 using Au5.Domain.Entities;
 using Au5.Shared;
-using Microsoft.EntityFrameworkCore;
 using MockQueryable.Moq;
 
 namespace Au5.UnitTests.Application.Features.Meetings.AddBot;
@@ -66,8 +64,6 @@ public class AddBotCommandHandlerTests
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 		_meetingDbSetMock.Verify(x => x.Add(It.IsAny<Meeting>()), Times.Once);
 		_botFatherMock.Verify(x => x.CreateBotContainerAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()), Times.Once);
-
-		//_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), It.IsAny<TimeSpan>()), Times.Once);
 	}
 
 	[Fact]
@@ -244,9 +240,6 @@ public class AddBotCommandHandlerTests
 
 		Assert.True(result.IsSuccess);
 		var expectedCacheKey = MeetingService.GetMeetingKey("test-meet-id");
-
-		//_cacheProviderMock.Verify(x => x.GetAsync<Meeting>(expectedCacheKey), Times.Once);
-		//_cacheProviderMock.Verify(x => x.SetAsync(expectedCacheKey, It.IsAny<Meeting>(), TimeSpan.FromHours(1)), Times.Once);
 	}
 
 	[Fact]
@@ -287,8 +280,6 @@ public class AddBotCommandHandlerTests
 		Assert.True(result.IsSuccess);
 		var expectedCacheKey = MeetingService.GetMeetingKey("test-meet-id");
 
-		//_cacheProviderMock.Verify(x => x.GetAsync<Meeting>(expectedCacheKey), Times.Once);
-		//_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), It.IsAny<TimeSpan>()), Times.Never);
 	}
 
 	[Fact]
