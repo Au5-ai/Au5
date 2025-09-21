@@ -58,7 +58,7 @@ public class EmailProvider(ISmtpClientWrapper smtpClient, ILogger<EmailProvider>
 	{
 		ArgumentNullException.ThrowIfNull(invitedUser);
 
-		var verificationLink = $"{verificationBaseUrl}/verify?id={invitedUser.Id}&hash={HashHelper.HashSafe(invitedUser.Email)}";
+		var verificationLink = $"{verificationBaseUrl}/exConfig?id={invitedUser.Id}&hash={HashHelper.HashSafe(invitedUser.Email)}";
 		var au5LogoUrl = "https://avatars.githubusercontent.com/u/202275934?s=200&v=4";
 
 		var html = $@"
