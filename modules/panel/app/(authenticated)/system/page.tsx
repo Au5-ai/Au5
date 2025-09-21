@@ -37,31 +37,30 @@ export default function SystemConfigPage() {
           </p>
         </div>
         <Tabs defaultValue="SystemConfigsTab" className="w-full">
-          <TabsList>
-            <TabsTrigger value="SystemConfigsTab">
-              <Settings className="mr-1 h-4 w-4" /> System Configuration
-            </TabsTrigger>
-            <TabsTrigger value="Reactions">
-              <Target className="mr-1 h-4 w-4" /> Reactions
-            </TabsTrigger>
-            <TabsTrigger value="AI">
-              <Brain className="mr-1 h-4 w-4" /> AI
-            </TabsTrigger>
-            <TabsTrigger value="AutoCorrection">
-              <Bot className="mr-1 h-4 w-4" /> Auto Correction
-            </TabsTrigger>
-            <TabsTrigger value="Spaces">
-              <Frame className="mr-1 h-4 w-4" /> Manage Spaces
-            </TabsTrigger>
-            <TabsTrigger value="Personalization">
-              <Palette className="mr-1 h-4 w-4" /> Personalize
-            </TabsTrigger>
-          </TabsList>
+          <div className="bg-muted rounded-lg">
+            <TabsList>
+              <TabsTrigger value="SystemConfigsTab">
+                <Settings className="mr-1 h-4 w-4" /> System Configuration
+              </TabsTrigger>
+              <TabsTrigger value="Reactions">
+                <Target className="mr-1 h-4 w-4" /> Reactions
+              </TabsTrigger>
+              <TabsTrigger value="AI">
+                <Brain className="mr-1 h-4 w-4" /> AI
+              </TabsTrigger>
+              <TabsTrigger value="AutoCorrection">
+                <Bot className="mr-1 h-4 w-4" /> Auto Correction
+              </TabsTrigger>
+              <TabsTrigger value="Spaces">
+                <Frame className="mr-1 h-4 w-4" /> Manage Spaces
+              </TabsTrigger>
+              <TabsTrigger value="Personalization">
+                <Palette className="mr-1 h-4 w-4" /> Personalize
+              </TabsTrigger>
+            </TabsList>
+          </div>
           <TabsContent value="SystemConfigsTab">
             <SystemConfigsTab />
-          </TabsContent>
-          <TabsContent value="Reactions">
-            Manage your reactions here.
           </TabsContent>
           <TabsContent value="Reactions">
             Manage your reactions here.

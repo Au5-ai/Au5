@@ -4,6 +4,7 @@ import { tokenStorageService } from "@/shared/lib/localStorage";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ROUTES } from "../routes";
+import { LoadingPage } from "./loading-page";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -28,7 +29,7 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
   }, [router]);
 
   if (isAuthenticated === null) {
-    return fallback || <div>Loading...</div>;
+    return fallback || <LoadingPage />;
   }
 
   if (!isAuthenticated) {

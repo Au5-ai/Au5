@@ -97,8 +97,11 @@ export function SystemConfigsTab() {
           : null;
 
       case "openAIProxyUrl":
-        return value && typeof value === "string" && value.trim() && !validateUrl(value as string)
-          ? "Must be a valid URL" 
+        return value &&
+          typeof value === "string" &&
+          value.trim() &&
+          !validateUrl(value as string)
+          ? "Must be a valid URL"
           : null;
 
       case "autoLeaveWaitingEnter":
@@ -160,7 +163,9 @@ export function SystemConfigsTab() {
   };
 
   return isLoading ? (
-    <LoadingPage text={GLOBAL_CAPTIONS.loadingConfigs} className="min-h-100" />
+    <div className="min-h-100">
+      <LoadingPage text={GLOBAL_CAPTIONS.loadingConfigs} />
+    </div>
   ) : (
     <div className="max-w-4xl mx-auto space-y-8 pt-6">
       <div className="space-y-8">
@@ -473,7 +478,9 @@ export function SystemConfigsTab() {
                 id="openaiToken"
                 type="password"
                 value={configs.openAIToken}
-                onChange={(e) => handleInputChange("openAIToken", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("openAIToken", e.target.value)
+                }
                 placeholder="Enter your OpenAI API token"
                 className={errors.openAIToken ? "border-destructive" : ""}
               />
@@ -482,17 +489,23 @@ export function SystemConfigsTab() {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="openaiProxyUrl">OpenAI Proxy URL (Optional)</Label>
+              <Label htmlFor="openaiProxyUrl">
+                OpenAI Proxy URL (Optional)
+              </Label>
               <Input
                 id="openaiProxyUrl"
                 type="url"
                 value={configs.openAIProxyUrl}
-                onChange={(e) => handleInputChange("openAIProxyUrl", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("openAIProxyUrl", e.target.value)
+                }
                 placeholder="https://your-proxy-domain.com"
                 className={errors.openAIProxyUrl ? "border-destructive" : ""}
               />
               {errors.openAIProxyUrl && (
-                <p className="text-sm text-destructive">{errors.openAIProxyUrl}</p>
+                <p className="text-sm text-destructive">
+                  {errors.openAIProxyUrl}
+                </p>
               )}
             </div>
           </div>

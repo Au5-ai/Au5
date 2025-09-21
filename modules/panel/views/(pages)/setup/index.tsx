@@ -35,7 +35,11 @@ export default function SignupPage() {
   }, [router]);
 
   if (isLoading) {
-    return <LoadingPage />;
+    return (
+      <div className="gradient-bg bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
+        <LoadingPage />
+      </div>
+    );
   }
 
   if (isAdmin) {
