@@ -10,10 +10,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
+import { LoadingPage } from "@/shared/components/loading-page";
 import { toast } from "sonner";
 import { SystemConfigs } from "@/shared/types";
 import { validateUrl } from "@/shared/lib/utils";
 import { systemController } from "@/shared/network/api/systemController";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 
 const defaultConfigs: SystemConfigs = {
   organizationName: "",
@@ -158,12 +160,7 @@ export function SystemConfigsTab() {
   };
 
   return isLoading ? (
-    <div className="min-h-100 w-full flex items-center justify-center">
-      <div className="text-center">
-        <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-gray-600 font-medium">Loading Configs...</p>
-      </div>
-    </div>
+    <LoadingPage text={GLOBAL_CAPTIONS.loadingConfigs} className="min-h-100" />
   ) : (
     <div className="max-w-4xl mx-auto space-y-8 pt-6">
       <div className="space-y-8">
