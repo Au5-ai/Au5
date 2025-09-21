@@ -8,11 +8,13 @@ public class MeetingService : IMeetingService
 	private readonly SemaphoreSlim _lock = new(1, 1);
 	private readonly ICacheProvider _cacheProvider;
 	private readonly IApplicationDbContext _dbContext;
+	private readonly IDateTimeProvider _dateTimeProvider;
 
-	public MeetingService(ICacheProvider cacheProvider, IApplicationDbContext dbContext)
+	public MeetingService(ICacheProvider cacheProvider, IApplicationDbContext dbContext, IDateTimeProvider dateTimeProvider)
 	{
 		_cacheProvider = cacheProvider ?? throw new ArgumentNullException(nameof(cacheProvider));
 		_dbContext = dbContext;
+		_dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
 	}
 
 	public static string GetMeetingKey(string meetId)
@@ -134,7 +136,10 @@ public class MeetingService : IMeetingService
 			}
 			else
 			{
-				meeting.Entries.Add(CreateEntryFromMessage(entry));
+				var now = _dateTimeProvider.Now;
+				var start = meeting.CreatedAt;
+
+				meeting.Entries.Add(CreateEntryFromMessage(entry, start, now));
 			}
 
 			await _cacheProvider.SetAsync(key, meeting, CacheExpiration);
@@ -230,21 +235,23 @@ public class MeetingService : IMeetingService
 		return meeting;
 	}
 
-	private static Entry CreateEntryFromMessage(EntryMessage entry)
+	private static Entry CreateEntryFromMessage(EntryMessage entry, DateTime startDate, DateTime now)
 	{
+		var elapsed = now - startDate;
 		return new Entry
 		{
 			BlockId = entry.BlockId,
 			Content = entry.Content,
 			ParticipantId = entry.Participant.Id,
 			FullName = entry.Participant.FullName,
-			Timestamp = entry.Timestamp,
+			Timestamp = now,
+			Timeline = elapsed.ToString(@"hh\:mm\:ss"),
 			EntryType = entry.EntryType,
 			Reactions = [],
 		};
 	}
 
-	private static Meeting CreateNewMeeting(UserJoinedInMeetingMessage userJoined)
+	private Meeting CreateNewMeeting(UserJoinedInMeetingMessage userJoined)
 	{
 		var meetingId = Guid.NewGuid();
 		var hashToken = HashHelper.HashSafe(meetingId.ToString());
@@ -254,7 +261,7 @@ public class MeetingService : IMeetingService
 			Id = meetingId,
 			MeetId = userJoined.MeetId,
 			Entries = [],
-			CreatedAt = DateTime.Now,
+			CreatedAt = _dateTimeProvider.Now,
 			Platform = userJoined.Platform,
 			Participants = [],
 			Guests = [],

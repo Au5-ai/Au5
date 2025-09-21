@@ -1,5 +1,4 @@
 using Au5.Application.Common;
-using Microsoft.Extensions.Logging;
 
 namespace Au5.Application.Features.Meetings.CloseMeetingByUser;
 
@@ -8,14 +7,12 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 	private readonly IApplicationDbContext _dbContext;
 	private readonly IMeetingService _meetingService;
 	private readonly IBotFatherAdapter _botFather;
-	private readonly ILogger<CloseMeetingByUserCommandHandler> _logger;
 
-	public CloseMeetingByUserCommandHandler(ILogger<CloseMeetingByUserCommandHandler> logger, IApplicationDbContext dbContext, IMeetingService meetingService, IBotFatherAdapter botFather)
+	public CloseMeetingByUserCommandHandler(IApplicationDbContext dbContext, IMeetingService meetingService, IBotFatherAdapter botFather)
 	{
 		_meetingService = meetingService;
 		_dbContext = dbContext;
 		_botFather = botFather;
-		_logger = logger;
 	}
 
 	public async ValueTask<Result<bool>> Handle(CloseMeetingByUserCommand request, CancellationToken cancellationToken)
@@ -41,7 +38,7 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 			meeting.Status = MeetingStatus.Ended;
 			meeting.Duration = meeting.CreatedAt.DiffTo(DateTime.Now).ToReadableString();
 			meeting.ClosedAt = DateTime.Now;
-			meeting.Entries = meetingContent.Entries; // TODO: Calculate Timeline in each entry
+			meeting.Entries = meetingContent.Entries;
 			meeting.Participants = meetingContent.Participants;
 			meeting.Guests = meetingContent.Guests;
 			meeting.ClosedMeetingUserId = request.UserId;
