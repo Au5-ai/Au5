@@ -23,6 +23,8 @@ import {
 } from "@/shared/components/ui";
 import { UserList } from "@/shared/types";
 import { getRoleDisplay } from "@/shared/lib/utils";
+import { USER_MANAGEMENT_CAPTIONS } from "./i18n";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 
 export default function UserGrid({
   users,
@@ -84,7 +86,7 @@ export default function UserGrid({
             <TableHeader className="bg-gray-50">
               <TableRow className="border-b border-gray-100">
                 <TableHead className="font-medium text-gray-700 px-4">
-                  User
+                  {USER_MANAGEMENT_CAPTIONS.table.user}
                 </TableHead>
                 <TableHead className="font-medium text-gray-700">
                   <Button
@@ -92,11 +94,11 @@ export default function UserGrid({
                     size="sm"
                     onClick={() => handleSort("role")}
                     className="hover:bg-gray-100 p-0 h-auto font-medium text-gray-700">
-                    Role <IconArrowsUpDown className="ml-1 w-3 h-3" />
+                    {USER_MANAGEMENT_CAPTIONS.table.role} <IconArrowsUpDown className="ml-1 w-3 h-3" />
                   </Button>
                 </TableHead>
                 <TableHead className="font-medium text-gray-700">
-                  Status
+                  {USER_MANAGEMENT_CAPTIONS.table.status}
                 </TableHead>
                 <TableHead className="font-medium text-gray-700">
                   <Button
@@ -104,7 +106,7 @@ export default function UserGrid({
                     size="sm"
                     onClick={() => handleSort("lastLoginAt")}
                     className="hover:bg-gray-100 p-0 h-auto font-medium text-gray-700">
-                    Last Login <IconArrowsUpDown className="ml-1 w-3 h-3" />
+                    {USER_MANAGEMENT_CAPTIONS.table.lastLogin} <IconArrowsUpDown className="ml-1 w-3 h-3" />
                   </Button>
                 </TableHead>
                 <TableHead className="font-medium text-gray-700">
@@ -113,7 +115,7 @@ export default function UserGrid({
                     size="sm"
                     onClick={() => handleSort("createdAt")}
                     className="hover:bg-gray-100 p-0 h-auto font-medium text-gray-700">
-                    Joined <IconArrowsUpDown className="ml-1 w-3 h-3" />
+                    {USER_MANAGEMENT_CAPTIONS.table.joined} <IconArrowsUpDown className="ml-1 w-3 h-3" />
                   </Button>
                 </TableHead>
                 <TableHead className="w-12"></TableHead>
@@ -204,7 +206,7 @@ export default function UserGrid({
                                   ? "bg-green-100 text-green-800"
                                   : "bg-red-100 text-red-800"
                               } border-0 font-medium`}>
-                              {user.isActive ? "Active" : "Disabled"}
+                              {user.isActive ? GLOBAL_CAPTIONS.status.active : GLOBAL_CAPTIONS.status.disabled}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-sm text-gray-600">
@@ -213,7 +215,7 @@ export default function UserGrid({
                                   new Date(user.lastLoginAt),
                                   "MMM d, yyyy",
                                 )
-                              : "Never"}
+                              : GLOBAL_CAPTIONS.status.never}
                           </TableCell>
                           <TableCell className="text-sm text-gray-600">
                             {format(new Date(user.createdAt), "MMM d, yyyy")}

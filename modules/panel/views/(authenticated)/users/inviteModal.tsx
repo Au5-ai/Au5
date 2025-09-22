@@ -32,6 +32,8 @@ import {
 } from "lucide-react";
 import { getRoleDisplay, getRoleType, validateEmail } from "@/shared/lib/utils";
 import { userApi } from "@/shared/network/api/user";
+import { USER_MANAGEMENT_CAPTIONS } from "./i18n";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 
 interface Invite {
   email: string;
@@ -63,11 +65,11 @@ export default function InviteModal({
     const trimmedEmail = currentEmail.trim().toLowerCase();
     setEmailError(null);
     if (!trimmedEmail) {
-      setEmailError("Please enter an email address");
+      setEmailError(USER_MANAGEMENT_CAPTIONS.inviteModal.pleaseEnterEmail);
       return;
     }
     if (!validateEmail(trimmedEmail)) {
-      setEmailError("Please enter a valid email address");
+      setEmailError(GLOBAL_CAPTIONS.validation.email.invalid);
       return;
     }
     const isDuplicate = invites.some((invite) => invite.email === trimmedEmail);
@@ -114,7 +116,7 @@ export default function InviteModal({
       setInvitationsSent(invites.length);
     } catch (error) {
       setInviteResult(null);
-      console.error("Failed to send invitations:", error);
+      console.error(USER_MANAGEMENT_CAPTIONS.inviteModal.failedToSendInvitations, error);
     } finally {
       setIsLoading(false);
     }
@@ -149,7 +151,7 @@ export default function InviteModal({
                 <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
                   <Users className="w-5 h-5 text-gray-600" />
                 </div>
-                Invite Users
+                {USER_MANAGEMENT_CAPTIONS.inviteModal.title}
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-6">
@@ -157,7 +159,7 @@ export default function InviteModal({
                 <Label
                   htmlFor="role"
                   className="text-sm font-medium text-gray-700">
-                  Assign Role
+                  {USER_MANAGEMENT_CAPTIONS.inviteModal.assignRole}
                 </Label>
                 <Select value={selectedRole} onValueChange={setSelectedRole}>
                   <SelectTrigger className="border-gray-200 w-full">
@@ -167,18 +169,18 @@ export default function InviteModal({
                     <SelectItem value="user">
                       <div className="flex items-center gap-2">
                         <User className="w-4 h-4" />
-                        <span>User</span>
+                        <span>{GLOBAL_CAPTIONS.roles.user}</span>
                         <span className="text-xs text-gray-500">
-                          - Standard access
+                          {USER_MANAGEMENT_CAPTIONS.roles.userDescription}
                         </span>
                       </div>
                     </SelectItem>
                     <SelectItem value="admin">
                       <div className="flex items-center gap-2">
                         <Crown className="w-4 h-4" />
-                        <span>Administrator</span>
+                        <span>{GLOBAL_CAPTIONS.roles.administrator}</span>
                         <span className="text-xs text-gray-500">
-                          - Full access
+                          {USER_MANAGEMENT_CAPTIONS.roles.administratorDescription}
                         </span>
                       </div>
                     </SelectItem>
@@ -186,7 +188,7 @@ export default function InviteModal({
                 </Select>
 
                 <div className="flex items-center gap-2 mt-2">
-                  <span className="text-sm text-gray-600">Selected role:</span>
+                  <span className="text-sm text-gray-600">{USER_MANAGEMENT_CAPTIONS.inviteModal.selectedRole}</span>
                   <Badge
                     className={`${roleDisplay.color} border-0 font-medium`}>
                     <RoleIcon className="w-3 h-3 mr-1" />
@@ -198,13 +200,13 @@ export default function InviteModal({
                 <Label
                   htmlFor="email"
                   className="text-sm font-medium text-gray-700">
-                  Email Addresses
+                  {USER_MANAGEMENT_CAPTIONS.inviteModal.emailAddresses}
                 </Label>
                 <div className="flex gap-2">
                   <Input
                     id="email"
                     type="email"
-                    placeholder="Enter email address..."
+                    placeholder={USER_MANAGEMENT_CAPTIONS.inviteModal.enterEmailPlaceholder}
                     value={currentEmail}
                     onChange={(e) => {
                       setCurrentEmail(e.target.value);
@@ -230,7 +232,7 @@ export default function InviteModal({
                   </div>
                 )}
                 <p className="text-xs text-gray-500">
-                  Press Enter to add emails
+                  {USER_MANAGEMENT_CAPTIONS.inviteModal.pressEnterHint}
                 </p>
               </div>
               <AnimatePresence>
@@ -241,7 +243,7 @@ export default function InviteModal({
                     exit={{ opacity: 0, height: 0 }}
                     className="space-y-2">
                     <Label className="text-sm font-medium text-gray-700">
-                      Inviting ({invites.length})
+                      {USER_MANAGEMENT_CAPTIONS.inviteModal.inviting} ({invites.length})
                     </Label>
                     <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
                       {invites.map((invite) => {
@@ -276,7 +278,7 @@ export default function InviteModal({
                             </Badge>
                             {isDuplicate && (
                               <div className="text-xs text-red-600 mt-1">
-                                Duplicate email
+                                {USER_MANAGEMENT_CAPTIONS.inviteModal.duplicateEmail}
                               </div>
                             )}
                           </motion.div>
@@ -292,7 +294,7 @@ export default function InviteModal({
                 variant="outline"
                 onClick={() => onOpenChange(false)}
                 className="border-gray-200 hover:bg-gray-50">
-                Cancel
+                {GLOBAL_CAPTIONS.actions.cancel}
               </Button>
               <Button
                 onClick={sendInvitations}
@@ -301,12 +303,12 @@ export default function InviteModal({
                 {isLoading ? (
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Sending...
+                    {GLOBAL_CAPTIONS.actions.sending}
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
                     <Send className="w-4 h-4" />
-                    Send Invites
+                    {USER_MANAGEMENT_CAPTIONS.inviteModal.sendInvites}
                   </div>
                 )}
               </Button>
@@ -318,11 +320,10 @@ export default function InviteModal({
               <Send className="w-6 h-6 text-green-600" />
             </div>
             <h3 className="font-medium text-gray-900 mb-1">
-              Invitations Sent!
+              {USER_MANAGEMENT_CAPTIONS.inviteModal.invitationsSent}
             </h3>
             <div className="text-sm text-gray-600 mb-4">
-              {invitationsSent} invitation{invitationsSent !== 1 ? "s" : ""}{" "}
-              sent.
+              {invitationsSent} {invitationsSent !== 1 ? USER_MANAGEMENT_CAPTIONS.inviteModal.invitationsSent : USER_MANAGEMENT_CAPTIONS.inviteModal.invitationsSentCount}
               <br />
               {inviteResult && (
                 <>
@@ -330,7 +331,7 @@ export default function InviteModal({
                     <div>
                       <h3 className="text-sm font-medium text-green-600 flex items-center gap-2">
                         <CheckCircle2 className="h-4 w-4" />
-                        {inviteResult.success.length} Succeeded
+                        {inviteResult.success.length} {GLOBAL_CAPTIONS.actions.succeeded}
                       </h3>
                       <div className="flex flex-wrap gap-2 mt-2">
                         {inviteResult.success.map((email) => (
@@ -348,7 +349,7 @@ export default function InviteModal({
                     <div className="mt-4 ">
                       <h3 className="text-sm font-medium text-red-600 flex items-center gap-2">
                         <XCircle className="h-4 w-4" />
-                        {inviteResult.failed.length} Failed
+                        {inviteResult.failed.length} {GLOBAL_CAPTIONS.actions.failed}
                       </h3>
                       <div className="flex flex-wrap gap-2 mt-2">
                         {inviteResult.failed.map((email) => (
@@ -368,7 +369,7 @@ export default function InviteModal({
                 onReloadData();
               }}
               className="bg-black hover:bg-gray-800 text-white mt-8">
-              Done
+              {GLOBAL_CAPTIONS.actions.done}
             </Button>
           </div>
         )}

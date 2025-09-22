@@ -1,0 +1,38 @@
+export const USER_MANAGEMENT_CAPTIONS = {
+  title: "User Management",
+  description: "Manage your team members and their access levels",
+  inviteUsers: "Invite Users",
+  errorLoadingUsers: "Error loading users:",
+  table: {
+    user: "User",
+    role: "Role",
+    status: "Status",
+    lastLogin: "Last Login",
+    joined: "Joined",
+  },
+  stats: {
+    totalUsers: "Total Users",
+    activeUsers: "Active Users",
+    administrators: "Administrators",
+    inactiveUsers: "Inactive Users",
+  },
+  inviteModal: {
+    title: "Invite Users",
+    assignRole: "Assign Role",
+    selectedRole: "Selected role:",
+    emailAddresses: "Email Addresses",
+    enterEmailPlaceholder: "Enter email address...",
+    pressEnterHint: "Press Enter to add emails",
+    inviting: "Inviting",
+    sendInvites: "Send Invites",
+    invitationsSent: "Invitations Sent!",
+    invitationsSentCount: "invitation sent.",
+    duplicateEmail: "Duplicate email",
+    pleaseEnterEmail: "Please enter an email address",
+    failedToSendInvitations: "Failed to send invitations:",
+  },
+  roles: {
+    userDescription: "- Standard access",
+    administratorDescription: "- Full access",
+  },
+} as const;

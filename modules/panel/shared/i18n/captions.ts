@@ -9,6 +9,23 @@ export const GLOBAL_CAPTIONS = {
   roles: {
     admin: "Admin",
     user: "User",
+    administrator: "Administrator",
+  },
+
+  // Common status labels
+  status: {
+    active: "Active",
+    disabled: "Disabled",
+    never: "Never",
+  },
+
+  // Common actions
+  actions: {
+    cancel: "Cancel",
+    done: "Done",
+    succeeded: "Succeeded",
+    failed: "Failed",
+    sending: "Sending...",
   },
   fields: {
     email: {
