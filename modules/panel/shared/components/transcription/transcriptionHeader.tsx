@@ -51,7 +51,7 @@ export default function TranscriptionHeader({ meeting }: { meeting: Meeting }) {
                 {meeting.userRecorder.fullName}
               </span>
               , {format(recordingDate, "dd MMMM yy")}{" "}
-              {format(recordingDate, "hh:mm")}
+              {format(recordingDate, "HH:mm")}
             </span>
           </div>
           <ParticipantAvatarGroup
