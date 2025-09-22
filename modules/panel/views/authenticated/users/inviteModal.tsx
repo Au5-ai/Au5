@@ -178,7 +178,7 @@ export default function InviteModal({
                     <SelectItem value="admin">
                       <div className="flex items-center gap-2">
                         <Crown className="w-4 h-4" />
-                        <span>{USER_MANAGEMENT_CAPTIONS.roles.administrator}</span>
+                        <span>{GLOBAL_CAPTIONS.roles.administrator}</span>
                         <span className="text-xs text-gray-500">
                           {USER_MANAGEMENT_CAPTIONS.roles.administratorDescription}
                         </span>
@@ -294,7 +294,7 @@ export default function InviteModal({
                 variant="outline"
                 onClick={() => onOpenChange(false)}
                 className="border-gray-200 hover:bg-gray-50">
-                {USER_MANAGEMENT_CAPTIONS.inviteModal.cancel}
+                {GLOBAL_CAPTIONS.actions.cancel}
               </Button>
               <Button
                 onClick={sendInvitations}
@@ -303,7 +303,7 @@ export default function InviteModal({
                 {isLoading ? (
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    {USER_MANAGEMENT_CAPTIONS.inviteModal.sending}
+                    {GLOBAL_CAPTIONS.actions.sending}
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
@@ -323,7 +323,7 @@ export default function InviteModal({
               {USER_MANAGEMENT_CAPTIONS.inviteModal.invitationsSent}
             </h3>
             <div className="text-sm text-gray-600 mb-4">
-              {invitationsSent} {invitationsSent !== 1 ? USER_MANAGEMENT_CAPTIONS.inviteModal.invitationsSentCountPlural : USER_MANAGEMENT_CAPTIONS.inviteModal.invitationsSentCount}
+              {invitationsSent} {invitationsSent !== 1 ? USER_MANAGEMENT_CAPTIONS.inviteModal.invitationsSent : USER_MANAGEMENT_CAPTIONS.inviteModal.invitationsSentCount}
               <br />
               {inviteResult && (
                 <>
@@ -331,7 +331,7 @@ export default function InviteModal({
                     <div>
                       <h3 className="text-sm font-medium text-green-600 flex items-center gap-2">
                         <CheckCircle2 className="h-4 w-4" />
-                        {inviteResult.success.length} {USER_MANAGEMENT_CAPTIONS.inviteModal.succeeded}
+                        {inviteResult.success.length} {GLOBAL_CAPTIONS.actions.succeeded}
                       </h3>
                       <div className="flex flex-wrap gap-2 mt-2">
                         {inviteResult.success.map((email) => (
@@ -349,7 +349,7 @@ export default function InviteModal({
                     <div className="mt-4 ">
                       <h3 className="text-sm font-medium text-red-600 flex items-center gap-2">
                         <XCircle className="h-4 w-4" />
-                        {inviteResult.failed.length} {USER_MANAGEMENT_CAPTIONS.inviteModal.failed}
+                        {inviteResult.failed.length} {GLOBAL_CAPTIONS.actions.failed}
                       </h3>
                       <div className="flex flex-wrap gap-2 mt-2">
                         {inviteResult.failed.map((email) => (
@@ -369,7 +369,7 @@ export default function InviteModal({
                 onReloadData();
               }}
               className="bg-black hover:bg-gray-800 text-white mt-8">
-              {USER_MANAGEMENT_CAPTIONS.inviteModal.done}
+              {GLOBAL_CAPTIONS.actions.done}
             </Button>
           </div>
         )}

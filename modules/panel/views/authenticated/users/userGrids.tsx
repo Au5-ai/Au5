@@ -24,6 +24,7 @@ import {
 import { UserList } from "@/shared/types";
 import { getRoleDisplay } from "@/shared/lib/utils";
 import { USER_MANAGEMENT_CAPTIONS } from "./i18n";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 
 export default function UserGrid({
   users,
@@ -205,7 +206,7 @@ export default function UserGrid({
                                   ? "bg-green-100 text-green-800"
                                   : "bg-red-100 text-red-800"
                               } border-0 font-medium`}>
-                              {user.isActive ? USER_MANAGEMENT_CAPTIONS.status.active : USER_MANAGEMENT_CAPTIONS.status.disabled}
+                              {user.isActive ? GLOBAL_CAPTIONS.status.active : GLOBAL_CAPTIONS.status.disabled}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-sm text-gray-600">
@@ -214,7 +215,7 @@ export default function UserGrid({
                                   new Date(user.lastLoginAt),
                                   "MMM d, yyyy",
                                 )
-                              : USER_MANAGEMENT_CAPTIONS.status.never}
+                              : GLOBAL_CAPTIONS.status.never}
                           </TableCell>
                           <TableCell className="text-sm text-gray-600">
                             {format(new Date(user.createdAt), "MMM d, yyyy")}
