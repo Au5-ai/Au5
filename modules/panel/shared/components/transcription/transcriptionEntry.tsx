@@ -24,27 +24,28 @@ export default function TranscriptionEntry({
         isChat ? "border-r-transparent bg-indigo-50/30" : "border-r-transparent"
       }`}>
       <div className="flex gap-2">
-        {/* Avatar */}
-        <ParticipantAvatar
-          fullName={entry.fullName}
-          pictureUrl={entry.pictureUrl}
-        />
-
         {/* Content */}
         <div className="flex-1 min-w-0">
           {/* Header */}
           <div className="flex justify-between mb-2">
-            <div className="flex flex-col gap-1">
-              <h3 className="font-semibold text-gray-900 text-sm">
-                {entry.fullName}
-              </h3>
-              <div className="flex gap-2 text-xs text-gray-500">
-                <span>{entry.timeline}</span>
-                <span className="text-gray-300">•</span>
-                <span>{format(new Date(entry.timestamp), "HH:mm")}</span>
+            <div className="flex gap-2">
+              <div className="flex items-center">
+                <ParticipantAvatar
+                  fullName={entry.fullName}
+                  pictureUrl={entry.pictureUrl}
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <h3 className="font-semibold text-gray-900 text-sm">
+                  {entry.fullName}
+                </h3>
+                <div className="flex gap-2 text-xs text-gray-500">
+                  <span>{entry.timeline}</span>
+                  <span className="text-gray-300">•</span>
+                  <span>{format(new Date(entry.timestamp), "HH:mm")}</span>
+                </div>
               </div>
             </div>
-
             <div className="flex items-center items-start gap-2 text-xs text-gray-500">
               <div className="flex items-center gap-2  bg-gray-50 p-2 rounded-xl">
                 {isChat ? (
