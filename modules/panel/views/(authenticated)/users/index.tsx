@@ -7,9 +7,9 @@ import { UserList } from "@/shared/types";
 import { userApi } from "@/shared/network/api/user";
 import { Button, SidebarInset, SidebarTrigger } from "@/shared/components/ui";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
-import UserGrid from "@/views/authenticated/users/userGrids";
-import StatsCards from "@/views/authenticated/users/statsCards";
-import InviteModal from "@/views/authenticated/users/inviteModal";
+import UserGrid from "@/views/(authenticated)/users/userGrids";
+import StatsCards from "@/views/(authenticated)/users/statsCards";
+import InviteModal from "@/views/(authenticated)/users/inviteModal";
 import { USER_MANAGEMENT_CAPTIONS } from "./i18n";
 
 export default function UsersManagemnetPage() {
@@ -50,7 +50,9 @@ export default function UsersManagemnetPage() {
       <div className="flex flex-1 flex-col px-6 py-4">
         <div className="container mx-auto mb-4 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold mb-1">{USER_MANAGEMENT_CAPTIONS.title}</h1>
+            <h1 className="text-2xl font-bold mb-1">
+              {USER_MANAGEMENT_CAPTIONS.title}
+            </h1>
             <p className="text-muted-foreground">
               {USER_MANAGEMENT_CAPTIONS.description}
             </p>

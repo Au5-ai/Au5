@@ -1,1 +1,1 @@
- export { default } from "@/views/authenticated/users";
+export { default } from "@/views/(authenticated)/users";
