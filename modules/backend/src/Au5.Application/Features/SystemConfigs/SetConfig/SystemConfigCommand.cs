@@ -45,4 +45,6 @@ public record SystemConfigCommand : IRequest<Result>
 	public int SmtpPort { get; set; }
 
 	public string SmtpUser { get; set; }
+
+	public bool SmtpUseSSl { get; set; }
 }

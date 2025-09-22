@@ -34,10 +34,10 @@ const data = [
       label: "Rename",
       icon: Pencil,
     },
-    {
-      label: "Add to space",
-      icon: Blocks,
-    },
+    // {
+    //   label: "Add to space", // Commented out - no API for spaces
+    //   icon: Blocks,
+    // },
   ],
   [
     {
@@ -60,10 +60,10 @@ export function NavActions() {
 
   return (
     <div className="flex items-center gap-2 text-sm">
-      <Button variant="ghost" size="icon" className="h-7 w-32 cursor-pointer">
+      {/* <Button variant="ghost" size="icon" className="h-7 w-32 cursor-pointer"> // Commented out - no API for spaces
         <Blocks />
         Add to space
-      </Button>
+      </Button> */}
       <Button variant="ghost" size="icon" className="h-7 w-21 cursor-pointer">
         <Share2 />
         Share

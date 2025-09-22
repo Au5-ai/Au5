@@ -38,4 +38,6 @@ public record SystemConfigResponse
 	public bool MeetingTranscription { get; set; }
 
 	public string MeetingTranscriptionModel { get; set; }
+
+	public bool SmtpUseSSl { get; set; }
 }

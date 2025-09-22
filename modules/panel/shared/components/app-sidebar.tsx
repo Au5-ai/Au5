@@ -1,7 +1,7 @@
 "use client";
 
 import { NavMain } from "@/shared/components/nav-main";
-import { NavSpaces } from "@/shared/components/nav-spaces";
+// import { NavSpaces } from "@/shared/components/nav-spaces"; // Commented out - no API for spaces
 import { NavUser } from "@/shared/components/nav-user";
 import {
     Sidebar,
@@ -16,7 +16,7 @@ import {
     ArchiveIcon,
     Brain,
     ClosedCaption,
-    Frame,
+    // Frame, // Commented out - no longer used after removing spaces
     Settings,
     UserPlus,
     Waypoints,
@@ -62,36 +62,36 @@ const data = {
       icon: UserPlus,
     },
   ],
-  spaces: [
-    {
-      name: "Automation Team",
-      url: "#",
-      icon: Frame,
-      showBadge: true,
-      badge: "soon",
-    },
-    {
-      name: "My Agah",
-      url: "#",
-      icon: Frame,
-      showBadge: true,
-      badge: "soon",
-    },
-    {
-      name: "ENS Team",
-      url: "#",
-      icon: Frame,
-      showBadge: true,
-      badge: "soon",
-    },
-    {
-      name: "ISS Team",
-      url: "#",
-      icon: Frame,
-      showBadge: true,
-      badge: "soon",
-    },
-  ],
+  // spaces: [ // Commented out - no API for spaces
+  //   {
+  //     name: "Automation Team",
+  //     url: "#",
+  //     icon: Frame,
+  //     showBadge: true,
+  //     badge: "soon",
+  //   },
+  //   {
+  //     name: "My Agah",
+  //     url: "#",
+  //     icon: Frame,
+  //     showBadge: true,
+  //     badge: "soon",
+  //   },
+  //   {
+  //     name: "ENS Team",
+  //     url: "#",
+  //     icon: Frame,
+  //     showBadge: true,
+  //     badge: "soon",
+  //   },
+  //   {
+  //     name: "ISS Team",
+  //     url: "#",
+  //     icon: Frame,
+  //     showBadge: true,
+  //     badge: "soon",
+  //   },
+  // ],
   // navWithSubMenu: [
   //   {
   //     title: "Account & Settings",
@@ -134,7 +134,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavSpaces spaces={data.spaces} />
+        {/* <NavSpaces spaces={data.spaces} /> */} {/* Commented out - no API for spaces */}
         {/* <NavWithSubMenu items={data.navWithSubMenu} /> */}
       </SidebarContent>
       <SidebarFooter>{user && <NavUser {...user} />}</SidebarFooter>

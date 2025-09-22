@@ -2,6 +2,7 @@ import React from "react";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { Users, UserCheck, Shield, UserX } from "lucide-react";
 import { UserList } from "@/shared/types";
+import { USER_MANAGEMENT_CAPTIONS } from "./i18n";
 
 export default function StatsCards({
   users,
@@ -35,22 +36,22 @@ export default function StatsCards({
 
   const statCards = [
     {
-      title: "Total Users",
+      title: USER_MANAGEMENT_CAPTIONS.stats.totalUsers,
       value: stats.total,
       icon: Users,
     },
     {
-      title: "Active Users",
+      title: USER_MANAGEMENT_CAPTIONS.stats.activeUsers,
       value: stats.active,
       icon: UserCheck,
     },
     {
-      title: "Administrators",
+      title: USER_MANAGEMENT_CAPTIONS.stats.administrators,
       value: stats.administrators,
       icon: Shield,
     },
     {
-      title: "Inactive Users",
+      title: USER_MANAGEMENT_CAPTIONS.stats.inactiveUsers,
       value: stats.inactive,
       icon: UserX,
     },
