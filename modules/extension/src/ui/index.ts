@@ -42,6 +42,7 @@ async function initializeChatPanel(): Promise<void> {
     chatPanel.showUserUnAuthorizedContainer();
     return;
   }
+  chatPanel.setUserLogin(config.user);
   chatPanel.setDirection(config.service.direction);
 
   if (!platform) {
