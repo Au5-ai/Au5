@@ -1,6 +1,4 @@
 using Au5.Application.Common;
-using Au5.Application.Common.Abstractions;
-using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.SystemConfigs.SetConfig;
 
@@ -41,6 +39,7 @@ public class SystemConfigCommandHandler : IRequestHandler<SystemConfigCommand, R
 			existingConfig.SmtpHost = request.SmtpHost;
 			existingConfig.SmtpPassword = request.SmtpPassword;
 			existingConfig.SmtpUser = request.SmtpUser;
+			existingConfig.SmtpUseSSl = request.SmtpUseSSl;
 		}
 		else
 		{
@@ -69,6 +68,7 @@ public class SystemConfigCommandHandler : IRequestHandler<SystemConfigCommand, R
 				SmtpPassword = request.SmtpPassword,
 				SmtpHost = request.SmtpHost,
 				SmtpPort = request.SmtpPort,
+				SmtpUseSSl = request.SmtpUseSSl,
 			});
 		}
 
