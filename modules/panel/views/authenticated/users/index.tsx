@@ -7,9 +7,9 @@ import { UserList } from "@/shared/types";
 import { userApi } from "@/shared/network/api/user";
 import { Button, SidebarInset, SidebarTrigger } from "@/shared/components/ui";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
-import UserGrid from "@/shared/components/users/userGrids";
-import StatsCards from "@/shared/components/users/statsCards";
-import InviteModal from "@/shared/components/users/inviteModal";
+import UserGrid from "@/views/authenticated/users/userGrids";
+import StatsCards from "@/views/authenticated/users/statsCards";
+import InviteModal from "@/views/authenticated/users/inviteModal";
 import { USER_MANAGEMENT_CAPTIONS } from "./i18n";
 
 export default function UsersManagemnetPage() {
