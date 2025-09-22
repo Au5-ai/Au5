@@ -36,4 +36,9 @@ export interface SystemConfigs {
   meetingVideoRecording: boolean;
   meetingAudioRecording: boolean;
   meetingTranscription: boolean;
+  smtpUseSSl: boolean;
+  smtpHost: string;
+  smtpPort: number;
+  smtpUser: string;
+  smtpPassword: string;
 }

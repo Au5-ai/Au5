@@ -36,6 +36,11 @@ const defaultConfigs: SystemConfigs = {
   meetingVideoRecording: false,
   meetingAudioRecording: false,
   meetingTranscription: true,
+  smtpUseSSl: false,
+  smtpHost: "",
+  smtpPort: 25,
+  smtpUser: "",
+  smtpPassword: "",
 };
 
 export function SystemConfigsTab() {
@@ -314,6 +319,18 @@ export function SystemConfigsTab() {
                 )}
               </div>
             ))}
+          </div>
+          
+          {/* Use SSL Switch */}
+          <div className="flex items-center space-x-2 mt-4">
+            <Switch
+              id="smtpUseSSl"
+              checked={configs.smtpUseSSl}
+              onCheckedChange={(checked) =>
+                handleInputChange("smtpUseSSl", checked)
+              }
+            />
+            <Label htmlFor="smtpUseSSl">Use SSL for SMTP</Label>
           </div>
         </div>
 
