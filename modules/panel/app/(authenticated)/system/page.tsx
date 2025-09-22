@@ -51,9 +51,9 @@ export default function SystemConfigPage() {
               <TabsTrigger value="AutoCorrection">
                 <Bot className="mr-1 h-4 w-4" /> Auto Correction
               </TabsTrigger>
-              <TabsTrigger value="Spaces">
+              {/* <TabsTrigger value="Spaces"> // Commented out - no API for spaces
                 <Frame className="mr-1 h-4 w-4" /> Manage Spaces
-              </TabsTrigger>
+              </TabsTrigger> */}
               <TabsTrigger value="Personalization">
                 <Palette className="mr-1 h-4 w-4" /> Personalize
               </TabsTrigger>
@@ -69,7 +69,7 @@ export default function SystemConfigPage() {
           <TabsContent value="AutoCorrection">
             Manage your auto correction here.
           </TabsContent>
-          <TabsContent value="Spaces">Manage your spaces here.</TabsContent>
+          {/* <TabsContent value="Spaces">Manage your spaces here.</TabsContent> */} {/* Commented out - no API for spaces */}
           <TabsContent value="Personalization">
             Manage your personalization here.
           </TabsContent>
