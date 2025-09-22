@@ -13,6 +13,7 @@ var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
   MessageTypes2["RequestToAddBot"] = "RequestToAddBot";
   MessageTypes2["PauseAndPlayTranscription"] = "PauseAndPlayTranscription";
   MessageTypes2["MeetingIsActive"] = "MeetingIsActive";
+  MessageTypes2["CloseMeeting"] = "CloseMeeting";
   return MessageTypes2;
 })(MessageTypes || {});
 var PageState = /* @__PURE__ */ ((PageState2) => {
@@ -95,6 +96,12 @@ class ChatPanel {
   }
   escapeHtml(text) {
     return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+  setUserLogin(user) {
+    const avatar = document.getElementById("userAvatar");
+    if (avatar) {
+      avatar.setAttribute("src", user.pictureUrl || DEFAULT_AVATAR_URL);
+    }
   }
   setDirection(direction) {
     this.direction = direction;
@@ -241,7 +248,7 @@ class ChatPanel {
       const userSpan = document.createElement("img");
       userSpan.setAttribute("data-user-id", reaction.user.id || "");
       userSpan.className = "au5-reaction-user-avatar";
-      userSpan.src = `${reaction.user.pictureUrl}`;
+      userSpan.src = `${reaction.user.pictureUrl || DEFAULT_AVATAR_URL}`;
       userSpan.alt = `${reaction.user.fullName}'s avatar`;
       userSpan.title = reaction.user.fullName;
       reactionUsersContainer.appendChild(userSpan);
@@ -3353,7 +3360,6 @@ class MeetingHubClient {
       }
     }).withAutomaticReconnect().build();
     this.connection.onclose((err) => {
-      console.log("onclose fired");
       this.chatPanel.isOffline();
     });
     this.connection.onreconnecting((err) => {
@@ -3681,22 +3687,36 @@ class UIHandlers {
       if (!meeting) {
         return;
       }
+      const meetId = (_a = this.platform) == null ? void 0 : _a.getMeetId();
       const meetingModel = {
-        meetId: (_a = this.platform) == null ? void 0 : _a.getMeetId(),
+        meetId,
         meetingId: meeting.meetingId
       };
       this.backendApi.closeMeeting(meetingModel).then(() => {
-        localStorage.removeItem("au5-meetingId");
-        chrome.runtime.sendMessage({
-          action: "CLOSE_SIDEPANEL",
-          panelUrl: this.config.service.panelUrl + "/meeting/my"
-        });
+        const message = {
+          type: MessageTypes.CloseMeeting,
+          meetId
+        };
+        this.meetingHubClient.sendMessage(message);
+        this.closeSidePanel(this.config.service.panelUrl);
       }).catch((error) => {
         showToast("Failed to close meeting :(");
         return;
       });
     });
     return this;
+  }
+  closeSidePanel(panelUrl, meetingId = "", meetId = "") {
+    localStorage.removeItem("au5-meetingId");
+    if (meetingId && meetId) {
+      panelUrl = panelUrl + `/meeting/${meetingId}/${meetId}/transcription`;
+    } else {
+      panelUrl = panelUrl + "/meeting/my";
+    }
+    chrome.runtime.sendMessage({
+      action: "CLOSE_SIDEPANEL",
+      panelUrl
+    });
   }
   handleMessage(msg) {
     switch (msg.type) {
@@ -3741,6 +3761,14 @@ class UIHandlers {
         const meetingIsActive = msg;
         this.chatPanel.botJoined(meetingIsActive.botName);
         break;
+      case MessageTypes.CloseMeeting:
+        const closeMeeting = msg;
+        this.closeSidePanel(
+          this.config.service.panelUrl,
+          localStorage.getItem("au5-meetingId") ?? "",
+          closeMeeting.meetId
+        );
+        break;
     }
   }
 }
@@ -3773,6 +3801,7 @@ async function initializeChatPanel() {
     chatPanel.showUserUnAuthorizedContainer();
     return;
   }
+  chatPanel.setUserLogin(config.user);
   chatPanel.setDirection(config.service.direction);
   if (!platform) {
     chatPanel.showNoActiveMeetingContainer(url);

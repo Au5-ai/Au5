@@ -2,6 +2,7 @@ import StateManager from "../core/stateManager";
 import {
   Entry,
   PageState,
+  Participant,
   PauseAndPlayTranscriptionMessage,
   Reaction,
   ReactionAppliedMessage,
@@ -36,6 +37,12 @@ export class ChatPanel {
     this.transcriptionsContainerEl = this.activeMeetingEl?.querySelector(
       ".au5-transcriptions-container"
     ) as HTMLDivElement;
+  }
+  public setUserLogin(user: Participant): void {
+    const avatar = document.getElementById("userAvatar");
+    if (avatar) {
+      avatar.setAttribute("src", user.pictureUrl || DEFAULT_AVATAR_URL);
+    }
   }
 
   public setDirection(direction: "ltr" | "rtl"): void {
@@ -205,7 +212,7 @@ export class ChatPanel {
       const userSpan = document.createElement("img");
       userSpan.setAttribute("data-user-id", reaction.user.id || "");
       userSpan.className = "au5-reaction-user-avatar";
-      userSpan.src = `${reaction.user.pictureUrl}`;
+      userSpan.src = `${reaction.user.pictureUrl || DEFAULT_AVATAR_URL}`;
       userSpan.alt = `${reaction.user.fullName}'s avatar`;
       userSpan.title = reaction.user.fullName;
       reactionUsersContainer.appendChild(userSpan);
