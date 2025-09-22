@@ -16,6 +16,7 @@ import { SystemConfigs } from "@/shared/types";
 import { validateUrl } from "@/shared/lib/utils";
 import { systemController } from "@/shared/network/api/systemController";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
+import { Lock, Key } from "lucide-react";
 
 const defaultConfigs: SystemConfigs = {
   organizationName: "",
@@ -291,22 +292,27 @@ export function SystemConfigsTab() {
             ].map(({ key, label, placeholder }) => (
               <div key={key} className="space-y-4">
                 <Label htmlFor={key}>{label}</Label>
-                <Input
-                  id={key}
-                  value={configs[key as keyof SystemConfigs] as string}
-                  onChange={(e) =>
-                    handleInputChange(
-                      key as keyof SystemConfigs,
-                      e.target.value,
-                    )
-                  }
-                  placeholder={placeholder}
-                  className={
-                    errors[key as keyof SystemConfigs]
-                      ? "border-destructive"
-                      : ""
-                  }
-                />
+                <div className="relative">
+                  {key === "smtpPassword" && (
+                    <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  )}
+                  <Input
+                    id={key}
+                    value={configs[key as keyof SystemConfigs] as string}
+                    onChange={(e) =>
+                      handleInputChange(
+                        key as keyof SystemConfigs,
+                        e.target.value,
+                      )
+                    }
+                    placeholder={placeholder}
+                    className={`${
+                      errors[key as keyof SystemConfigs]
+                        ? "border-destructive"
+                        : ""
+                    } ${key === "smtpPassword" ? "pr-10" : ""}`}
+                  />
+                </div>
                 {errors[key as keyof SystemConfigs] && (
                   <p className="text-sm text-destructive">
                     {errors[key as keyof SystemConfigs]}
@@ -474,16 +480,19 @@ export function SystemConfigsTab() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="openaiToken">OpenAI Token</Label>
-              <Input
-                id="openaiToken"
-                type="password"
-                value={configs.openAIToken}
-                onChange={(e) =>
-                  handleInputChange("openAIToken", e.target.value)
-                }
-                placeholder="Enter your OpenAI API token"
-                className={errors.openAIToken ? "border-destructive" : ""}
-              />
+              <div className="relative">
+                <Key className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="openaiToken"
+                  type="password"
+                  value={configs.openAIToken}
+                  onChange={(e) =>
+                    handleInputChange("openAIToken", e.target.value)
+                  }
+                  placeholder="Enter your OpenAI API token"
+                  className={`${errors.openAIToken ? "border-destructive" : ""} pr-10`}
+                />
+              </div>
               {errors.openAIToken && (
                 <p className="text-sm text-destructive">{errors.openAIToken}</p>
               )}
