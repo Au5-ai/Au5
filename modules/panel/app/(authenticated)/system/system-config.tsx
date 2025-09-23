@@ -341,7 +341,15 @@ export function SystemConfigsTab() {
           </div>
           
           {/* Use SSL Switch */}
-          <div className="flex items-center space-x-2 mt-4">
+          <div className="flex items-center justify-between mt-4 p-4 border rounded-lg">
+            <div className="space-y-1">
+              <Label htmlFor="smtpUseSSl" className="text-base font-medium">
+                Use SSL for SMTP
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Enable secure connection for email sending
+              </p>
+            </div>
             <Switch
               id="smtpUseSSl"
               checked={configs.smtpUseSSl}
@@ -349,7 +357,6 @@ export function SystemConfigsTab() {
                 handleInputChange("smtpUseSSl", checked)
               }
             />
-            <Label htmlFor="smtpUseSSl">Use SSL for SMTP</Label>
           </div>
         </div>
 
