@@ -16,7 +16,7 @@ import { SystemConfigs } from "@/shared/types";
 import { validateUrl } from "@/shared/lib/utils";
 import { systemController } from "@/shared/network/api/systemController";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import { Lock, Key } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 const defaultConfigs: SystemConfigs = {
   organizationName: "",
@@ -38,7 +38,7 @@ const defaultConfigs: SystemConfigs = {
   meetingAudioRecording: false,
   meetingTranscription: true,
   smtpUseSSl: false,
-  smtpHost: "",
+  smtpHost: "", 
   smtpPort: 25,
   smtpUser: "",
   smtpPassword: "",
@@ -53,6 +53,8 @@ export function SystemConfigsTab() {
   const [errors, setErrors] = useState<
     Partial<Record<keyof SystemConfigs, string>>
   >({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showOpenAIToken, setShowOpenAIToken] = useState(false);
 
   useEffect(() => {
     const loadConfig = async () => {
@@ -299,10 +301,21 @@ export function SystemConfigsTab() {
                 <Label htmlFor={key}>{label}</Label>
                 <div className="relative">
                   {key === "smtpPassword" && (
-                    <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
                   )}
                   <Input
                     id={key}
+                    type={key === "smtpPassword" ? (showPassword ? "text" : "password") : "text"}
                     value={configs[key as keyof SystemConfigs] as string}
                     onChange={(e) =>
                       handleInputChange(
@@ -498,10 +511,20 @@ export function SystemConfigsTab() {
             <div className="space-y-2">
               <Label htmlFor="openaiToken">OpenAI Token</Label>
               <div className="relative">
-                <Key className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <button
+                  type="button"
+                  onClick={() => setShowOpenAIToken(!showOpenAIToken)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {showOpenAIToken ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
                 <Input
                   id="openaiToken"
-                  type="password"
+                  type={showOpenAIToken ? "text" : "password"}
                   value={configs.openAIToken}
                   onChange={(e) =>
                     handleInputChange("openAIToken", e.target.value)
