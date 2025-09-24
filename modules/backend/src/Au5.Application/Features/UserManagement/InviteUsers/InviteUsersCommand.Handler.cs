@@ -1,7 +1,5 @@
 using Au5.Application.Common;
-using Au5.Application.Common.Abstractions;
 using Au5.Application.Dtos;
-using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.UserManagement.InviteUsers;
 
@@ -20,7 +18,7 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 	{
 		List<User> invited = [];
 		InviteUsersResponse response = new() { Success = [], Failed = [] };
-		var config = await _context.Set<SystemConfig>().AsNoTracking().SingleOrDefaultAsync(cancellationToken: cancellationToken);
+		var config = await _context.Set<SystemConfig>().AsNoTracking().FirstOrDefaultAsync(cancellationToken: cancellationToken);
 		if (config is null)
 		{
 			return Error.Failure(description: AppResources.System.IsNotConfigured);

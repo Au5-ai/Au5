@@ -12,26 +12,28 @@ public class EmailProvider(ISmtpClientWrapper smtpClient, ILogger<EmailProvider>
 {
 	private readonly ISmtpClientWrapper _smtpClient = smtpClient;
 
-	public async Task SendInviteAsync(List<User> invited, string organizationName, SmtpOptions smtpOption)
+	public async Task<List<InviteResponse>> SendInviteAsync(List<User> invited, string organizationName, SmtpOptions smtpOption)
 	{
+		List<InviteResponse> respose = [];
 		try
 		{
 			var secureSocketOptions = smtpOption.UseSsl ?
 							  MailKit.Security.SecureSocketOptions.StartTls :
 							  MailKit.Security.SecureSocketOptions.None;
 
-			await _smtpClient.ConnectAsync(smtpOption.Host, smtpOption.Port, secureSocketOptions);
+			//await _smtpClient.ConnectAsync(smtpOption.Host, smtpOption.Port, secureSocketOptions);
 
-			if (!string.IsNullOrWhiteSpace(smtpOption.User) &&
-				!string.IsNullOrWhiteSpace(smtpOption.Password) &&
-				_smtpClient.Capabilities.HasFlag(MailKit.Net.Smtp.SmtpCapabilities.Authentication))
-			{
-				await _smtpClient.AuthenticateAsync(smtpOption.User, smtpOption.Password);
-			}
-
+			//if (!string.IsNullOrWhiteSpace(smtpOption.User) &&
+			//	!string.IsNullOrWhiteSpace(smtpOption.Password) &&
+			//	_smtpClient.Capabilities.HasFlag(MailKit.Net.Smtp.SmtpCapabilities.Authentication))
+			//{
+			//	await _smtpClient.AuthenticateAsync(smtpOption.User, smtpOption.Password);
+			//}
 			foreach (var user in invited)
 			{
-				var emailBody = BuildInviteEmailBody(user, smtpOption.BaseUrl, organizationName);
+				var link = VerificationLinkGenerator.Generate(smtpOption.BaseUrl, user.Id, user.Email);
+				respose.Add(new InviteResponse() { Link = link, UserId = user.Id });
+				var emailBody = BuildInviteEmailBody(link, organizationName);
 
 				var message = new MimeMessage();
 
@@ -52,13 +54,12 @@ public class EmailProvider(ISmtpClientWrapper smtpClient, ILogger<EmailProvider>
 		{
 			logger.LogInformation(message: ex.Message);
 		}
+
+		return respose;
 	}
 
-	private static string BuildInviteEmailBody(User invitedUser, string verificationBaseUrl, string companyName)
+	private static string BuildInviteEmailBody(string verificationLink, string companyName)
 	{
-		ArgumentNullException.ThrowIfNull(invitedUser);
-
-		var verificationLink = $"{verificationBaseUrl}/exConfig?id={invitedUser.Id}&hash={HashHelper.HashSafe(invitedUser.Email)}";
 		var au5LogoUrl = "https://avatars.githubusercontent.com/u/202275934?s=200&v=4";
 
 		var html = $@"

@@ -1,6 +1,7 @@
 using Au5.Application.Features.UserManagement.GetMyInfo;
 using Au5.Application.Features.UserManagement.GetUsers;
 using Au5.Application.Features.UserManagement.InviteUsers;
+using Au5.Application.Features.UserManagement.ResendVerificationEmail;
 using Au5.Application.Features.UserManagement.VerifyUser.Command;
 using Au5.Application.Features.UserManagement.VerifyUser.Query;
 using Microsoft.AspNetCore.Authorization;
@@ -21,6 +22,13 @@ public class UsersController(ISender mediator) : BaseController
 	{
 		var result = await mediator.Send(new GetUsersQuery());
 		return Ok(result);
+	}
+
+	[AllowAnonymous]
+	[HttpPost("{userId}/invite")]
+	public async Task<IActionResult> RetryINviteUser([FromRoute] Guid userId)
+	{
+		return Ok(await mediator.Send(new ResendVerificationEmailCommand() { UserId = userId }));
 	}
 
 	[HttpPost]
