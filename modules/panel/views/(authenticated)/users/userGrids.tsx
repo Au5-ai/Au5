@@ -4,7 +4,12 @@ import * as React from "react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
-import { IconArrowsUpDown } from "@tabler/icons-react";
+import {
+  IconArrowsUpDown,
+  IconDotsVertical,
+  IconMail,
+  IconCopy,
+} from "@tabler/icons-react";
 
 import {
   Badge,
@@ -20,11 +25,27 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DialogDescription,
 } from "@/shared/components/ui";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/shared/components/ui/dialog";
+
 import { UserList } from "@/shared/types";
 import { getRoleDisplay } from "@/shared/lib/utils";
 import { USER_MANAGEMENT_CAPTIONS } from "./i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
+import { userController } from "./userController";
+import { toast } from "sonner";
 
 export default function UserGrid({
   users,
@@ -33,6 +54,29 @@ export default function UserGrid({
   users: UserList[];
   isLoading: boolean;
 }) {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [invitationLink, setInvitationLink] = useState("");
+  const [modalTitle, setModalTitle] = useState("");
+
+  const handleCopyLink = () => {
+    if (invitationLink) {
+      navigator.clipboard.writeText(invitationLink);
+      toast.success("Invitation link copied to clipboard");
+      setModalOpen(false);
+    }
+  };
+
+  const onResendInvite = async (user: UserList) => {
+    const { link } = await userController.retryInvite(user.id);
+    if (link) {
+      setModalTitle("Email Sent");
+      setInvitationLink(link);
+      setModalOpen(true);
+    } else {
+      setModalOpen(false);
+    }
+  };
+
   const [sortConfig, setSortConfig] = useState({
     key: "createdAt",
     direction: "desc",
@@ -94,7 +138,8 @@ export default function UserGrid({
                     size="sm"
                     onClick={() => handleSort("role")}
                     className="hover:bg-gray-100 p-0 h-auto font-medium text-gray-700">
-                    {USER_MANAGEMENT_CAPTIONS.table.role} <IconArrowsUpDown className="ml-1 w-3 h-3" />
+                    {USER_MANAGEMENT_CAPTIONS.table.role}{" "}
+                    <IconArrowsUpDown className="ml-1 w-3 h-3" />
                   </Button>
                 </TableHead>
                 <TableHead className="font-medium text-gray-700">
@@ -106,7 +151,8 @@ export default function UserGrid({
                     size="sm"
                     onClick={() => handleSort("lastLoginAt")}
                     className="hover:bg-gray-100 p-0 h-auto font-medium text-gray-700">
-                    {USER_MANAGEMENT_CAPTIONS.table.lastLogin} <IconArrowsUpDown className="ml-1 w-3 h-3" />
+                    {USER_MANAGEMENT_CAPTIONS.table.lastLogin}{" "}
+                    <IconArrowsUpDown className="ml-1 w-3 h-3" />
                   </Button>
                 </TableHead>
                 <TableHead className="font-medium text-gray-700">
@@ -115,7 +161,8 @@ export default function UserGrid({
                     size="sm"
                     onClick={() => handleSort("createdAt")}
                     className="hover:bg-gray-100 p-0 h-auto font-medium text-gray-700">
-                    {USER_MANAGEMENT_CAPTIONS.table.joined} <IconArrowsUpDown className="ml-1 w-3 h-3" />
+                    {USER_MANAGEMENT_CAPTIONS.table.joined}{" "}
+                    <IconArrowsUpDown className="ml-1 w-3 h-3" />
                   </Button>
                 </TableHead>
                 <TableHead className="w-12"></TableHead>
@@ -206,7 +253,9 @@ export default function UserGrid({
                                   ? "bg-green-100 text-green-800"
                                   : "bg-red-100 text-red-800"
                               } border-0 font-medium`}>
-                              {user.isActive ? GLOBAL_CAPTIONS.status.active : GLOBAL_CAPTIONS.status.disabled}
+                              {user.isActive
+                                ? GLOBAL_CAPTIONS.status.active
+                                : GLOBAL_CAPTIONS.status.disabled}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-sm text-gray-600">
@@ -221,43 +270,24 @@ export default function UserGrid({
                             {format(new Date(user.createdAt), "MMM d, yyyy")}
                           </TableCell>
                           <TableCell>
-                            {/* <DropdownMenu>
+                            <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="w-8 h-8 p-0 hover:bg-gray-100"
-                                >
+                                  className="w-8 h-8 p-0 hover:bg-gray-100">
                                   <IconDotsVertical className="w-4 h-4" />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="w-48">
                                 <DropdownMenuItem
-                                  onClick={() => onEditUser(user)}
-                                  className="cursor-pointer"
-                                >
-                                  <IconEdit className="w-4 h-4 mr-2" />
-                                  Edit User
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem
-                                  onClick={() => onToggleUserStatus(user)}
-                                  className="cursor-pointer"
-                                >
-                                  {user.isActive ? (
-                                    <>
-                                      <IconUserX className="w-4 h-4 mr-2 text-red-600" />
-                                      Disable User
-                                    </>
-                                  ) : (
-                                    <>
-                                      <IconUserCheck className="w-4 h-4 mr-2 text-green-600" />
-                                      Enable User
-                                    </>
-                                  )}
+                                  onClick={() => onResendInvite(user)}
+                                  className="cursor-pointer">
+                                  <IconMail className="w-4 h-4 mr-2" />
+                                  Resend Email Verification
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
-                            </DropdownMenu> */}
+                            </DropdownMenu>
                           </TableCell>
                         </motion.tr>
                       );
@@ -267,6 +297,21 @@ export default function UserGrid({
           </Table>
         </div>
       </CardContent>
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <DialogContent className="max-w-md bg-white border-gray-200">
+          <DialogHeader>
+            <DialogTitle>{modalTitle}</DialogTitle>
+            <DialogDescription>
+              {invitationLink ? (
+                <span className="flex justify-between py-4 gap-2 cursor-pointer select-none">
+                  <span className="break-all">Copy Invitation Link</span>
+                  <IconCopy className="w-4 h-4" onClick={handleCopyLink} />
+                </span>
+              ) : null}
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

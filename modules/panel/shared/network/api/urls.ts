@@ -17,8 +17,10 @@ export const API_URLS = {
     EXTENSION_CONFIG: "/system/extension-config",
   },
   USERS: {
+    LIST: "/users",
     ME: "/users/me",
     INVITE: "/users/invite",
+    RETRY_INVITE: (userId: string) => `/users/${userId}/invite`,
     STATUS: (userId: string) => `/users/${userId}/status`,
     VERIFY: (userId: string, hash: string) =>
       `/users/${userId}/verify?hash=${hash}`,

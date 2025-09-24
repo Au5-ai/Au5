@@ -4,13 +4,13 @@ import React, { useState, useEffect } from "react";
 import { UserPlus } from "lucide-react";
 import { Separator } from "@radix-ui/react-separator";
 import { UserList } from "@/shared/types";
-import { userApi } from "@/shared/network/api/user";
 import { Button, SidebarInset, SidebarTrigger } from "@/shared/components/ui";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
 import UserGrid from "@/views/(authenticated)/users/userGrids";
 import StatsCards from "@/views/(authenticated)/users/statsCards";
 import InviteModal from "@/views/(authenticated)/users/inviteModal";
 import { USER_MANAGEMENT_CAPTIONS } from "./i18n";
+import { userController } from "./userController";
 
 export default function UsersManagemnetPage() {
   const [users, setUsers] = useState<UserList[]>([]);
@@ -24,7 +24,7 @@ export default function UsersManagemnetPage() {
   const loadUsers = async () => {
     setIsLoading(true);
     try {
-      const fetchedUsers = await userApi.fetchUsers();
+      const fetchedUsers = await userController.fetchUsers();
       setUsers(fetchedUsers);
     } catch (error) {
       console.error(USER_MANAGEMENT_CAPTIONS.errorLoadingUsers, error);
