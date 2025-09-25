@@ -22,7 +22,7 @@ public class ResendVerificationEmailCommandHandler : IRequestHandler<ResendVerif
 			.AsNoTracking()
 			.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
 
-		if (user is null || user.IsVerified())
+		if (user is null || user.IsRegistered())
 		{
 			return Error.Failure(description: "User not found or already verified.");
 		}

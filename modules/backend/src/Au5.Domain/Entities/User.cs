@@ -33,9 +33,6 @@ public class User
 	public bool IsRegistered()
 		=> Status == UserStatus.CompleteSignUp;
 
-	public bool IsVerified()
-		=> Status == UserStatus.CompleteSignUp;
-
 	public Participant ToParticipant()
 	{
 		return new Participant()
