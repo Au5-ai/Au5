@@ -22,9 +22,14 @@ public class ResendVerificationEmailCommandHandler : IRequestHandler<ResendVerif
 			.AsNoTracking()
 			.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
 
-		if (user is null || user.IsRegistered())
+		if (user is null)
 		{
-			return Error.Failure(description: "User not found or already verified.");
+			return Error.BadRequest(description: AppResources.User.UserNotFound);
+		}
+
+		if (user.IsRegistered())
+		{
+			return Error.BadRequest(description: AppResources.User.EmailAlreadyVerified);
 		}
 
 		var config = await _dbContext.Set<SystemConfig>().AsNoTracking().FirstOrDefaultAsync(cancellationToken: cancellationToken);
@@ -43,6 +48,6 @@ public class ResendVerificationEmailCommandHandler : IRequestHandler<ResendVerif
 			UseSsl = config.SmtpUseSSl
 		});
 
-		return (response is null || response.Count is 0) ? Error.Failure(description: "Can not connect to SMTP Server.") : new ResendVerificationEmailResponse(response.First().Link);
+		return (response is null || response.Count is 0) ? Error.Failure(description: AppResources.System.FailedToSMTPConnection) : new ResendVerificationEmailResponse(response.First().Link);
 	}
 }
