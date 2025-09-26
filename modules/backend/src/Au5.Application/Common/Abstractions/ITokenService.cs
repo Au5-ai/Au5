@@ -1,4 +1,4 @@
-using Au5.Application.Features.Authentication;
+using Au5.Application.Features.Authentication.Login;
 
 namespace Au5.Application.Common.Abstractions;
 

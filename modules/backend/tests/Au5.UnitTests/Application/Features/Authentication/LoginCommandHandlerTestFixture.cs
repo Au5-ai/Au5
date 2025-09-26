@@ -1,4 +1,4 @@
-using Au5.Application.Features.Authentication;
+using Au5.Application.Features.Authentication.Login;
 using Au5.Domain.Entities;
 using Au5.Shared;
 using MockQueryable.Moq;

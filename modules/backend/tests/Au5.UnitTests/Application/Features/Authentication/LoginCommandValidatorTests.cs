@@ -1,4 +1,4 @@
-using Au5.Application.Features.Authentication;
+using Au5.Application.Features.Authentication.Login;
 using FluentValidation.TestHelper;
 
 namespace Au5.UnitTests.Application.Features.Authentication;

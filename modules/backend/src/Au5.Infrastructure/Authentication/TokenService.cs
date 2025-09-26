@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Au5.Application.Common.Abstractions;
-using Au5.Application.Features.Authentication;
+using Au5.Application.Features.Authentication.Login;
 using Au5.Domain.Common;
 using Au5.Shared;
 using Microsoft.Extensions.Options;

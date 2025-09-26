@@ -1,6 +1,6 @@
 using Au5.Application.Common;
 
-namespace Au5.Application.Features.Authentication;
+namespace Au5.Application.Features.Authentication.Login;
 
 public class LoginCommandValidator : AbstractValidator<LoginCommand>
 {

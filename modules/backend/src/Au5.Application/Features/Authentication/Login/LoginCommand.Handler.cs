@@ -1,6 +1,6 @@
 using Au5.Application.Common;
 
-namespace Au5.Application.Features.Authentication;
+namespace Au5.Application.Features.Authentication.Login;
 
 public sealed class LoginCommandHandler(IApplicationDbContext dbContext, ITokenService tokenService) : IRequestHandler<LoginCommand, Result<TokenResponse>>
 {

@@ -25,6 +25,7 @@ internal static class AppResources
 	{
 		public const string InvalidUsernameOrPassword = "The username or password you entered is incorrect. Please check your credentials and try again.";
 		public const string UnAuthorizedAction = "You are not authorized to perform this action. Please contact your administrator if you believe this is an error.";
+		public const string UserRoleNotFound = "The current user does not have a valid role assigned. Please contact the administrator.";
 	}
 
 	/// <summary>
