@@ -1,7 +1,11 @@
 from fastapi import FastAPI
+from app.api.routes import router
+from app.api.middlewares.exception_handler import exception_handler
 
 app = FastAPI()
 
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to the AI Engine!"}
+# Include API routes
+app.include_router(router)
+
+# Add middleware
+app.middleware("http")(exception_handler)
