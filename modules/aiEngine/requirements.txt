@@ -1,0 +1,8 @@
+fastapi
+pydantic
+dotenv
+uvicorn
+pydantic-settings
+langchain
+langchain-community
+langchain-openai
