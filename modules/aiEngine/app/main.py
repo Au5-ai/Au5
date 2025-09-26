@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api.routes import router
+from app.api.routers.routes import router
 from app.api.middlewares.exception_handler import exception_handler
 
 app = FastAPI()
