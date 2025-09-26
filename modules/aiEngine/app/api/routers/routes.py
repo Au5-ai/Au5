@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.routers.openai_assistant import router as openai_assistant_router
+from app.api.routers.openai_sample import router as openai_assistant_router
 from app.api.routers.start import router as start_router
 
 router = APIRouter()
