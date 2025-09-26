@@ -15,6 +15,7 @@ internal static class AppResources
 		public const string FailedToSetup = "System setup was not completed successfully. Please review the configuration and try again.";
 		public const string ThereIsNoAdmin = "No administrator user found. Please create an admin user to continue.";
 		public const string FailedToAddAdmin = "Faild to add admin. Please check the data and try again.";
+		public const string FailedToSMTPConnection = "Can not connect to SMTP Server.";
 	}
 
 	/// <summary>
@@ -55,7 +56,9 @@ internal static class AppResources
 
 	internal static class User
 	{
-		public const string UserNotFound = "User Not Found";
+		public const string EmailAlreadyVerified = "This email address has already been verified. A verification email cannot be sent again.";
+
+		public const string UserNotFound = "User not found. Please verify your information and try again.";
 
 		public const string FailedToUpdateUserInfo = "Failed to Update User.";
 	}
