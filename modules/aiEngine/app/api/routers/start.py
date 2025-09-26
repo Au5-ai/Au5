@@ -1,7 +1,8 @@
 from fastapi import APIRouter
+from app.shared.result import Result
 
 router = APIRouter()
 
 @router.get("/")
 def read_root():
-    return {"message": "Welcome to the AI Engine!"}
+    return Result.ok("Welcome to the AI Engine!")

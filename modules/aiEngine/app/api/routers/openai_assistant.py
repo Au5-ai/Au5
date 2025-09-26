@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from app.shared.configuration.config import openai_settings
 from app.shared.result import Result
-from langchain_community.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.schema import HumanMessage
 
 router = APIRouter()
@@ -13,13 +13,20 @@ class AskRequest(BaseModel):
 @router.post("/ask")
 async def ask_openai(request: AskRequest):
     try:
-        # Initialize OpenAI chat model
-        chat = ChatOpenAI(openai_api_key=openai_settings.api_key, openai_api_base=openai_settings.api_url)
+        
+        chat = ChatOpenAI(
+            model=openai_settings.model, 
+            openai_api_key=openai_settings.api_key,
+            base_url=openai_settings.api_url,  # optional, only if you're using a custom endpoint
+        )
 
         # Get response from OpenAI
-        response = chat([HumanMessage(content=request.question)])
+        response = chat.invoke([HumanMessage(content=request.question)])
 
         # Return success result
-        return Result.ok({"question": request.question, "answer": response.content})
+        return Result.ok({
+            "question": request.question,
+            "answer": response.content
+        })
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return Result.fail(f"Error communicating with OpenAI: {str(e)}")
