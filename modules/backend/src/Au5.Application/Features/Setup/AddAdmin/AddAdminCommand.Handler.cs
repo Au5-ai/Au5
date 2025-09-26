@@ -1,6 +1,4 @@
 using Au5.Application.Common;
-using Au5.Application.Common.Abstractions;
-using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.Setup.AddAdmin;
 
@@ -31,7 +29,7 @@ public class AddAdminQueryHandler : IRequestHandler<AddAdminCommand, Result<AddA
 			IsActive = true,
 			Role = RoleTypes.Admin,
 			CreatedAt = DateTime.Now,
-			PictureUrl = Constants.DefaultPictureUrl,
+			PictureUrl = string.Empty,
 			Status = UserStatus.CompleteSignUp
 		};
 
