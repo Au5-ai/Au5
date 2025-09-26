@@ -5,6 +5,8 @@ namespace Au5.Application.Common;
 /// </summary>
 internal static class AppResources
 {
+	public const string DatabaseFailureMessage = "Failed to save record, Pleach check your data and try again.";
+
 	/// <summary>
 	/// System configuration related messages.
 	/// </summary>
@@ -52,6 +54,12 @@ internal static class AppResources
 		public const string InvalidMeetingTranscriptionModel = "Invalid transcription model specified. Please use either 'liveCaption' or 'liveAudio'.";
 		public const string InvalidUsernameFormat = "The username format is invalid. Please use only alphanumeric characters and underscores.";
 		public const string InvalidPasswordFormat = "Password must be at least 6 characters long and contain a mix of letters and numbers.";
+		public const string AssistantNameRequired = "Assistant name is required.";
+		public const string AssistantNameMaxLength = "Assistant name must not exceed 200 characters.";
+		public const string AssistantIconMaxLength = "Assistant icon URL must not exceed 200 characters.";
+		public const string AssistantDescriptionMaxLength = "Assistant description must not exceed 500 characters.";
+		public const string AssistantPromptRequired = "Assistant prompt is required.";
+		public const string AssistantPromptMaxLength = "Assistant prompt must not exceed 2000 characters.";
 	}
 
 	internal static class User
