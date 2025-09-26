@@ -479,3 +479,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Virtual environment folder
+venv/
