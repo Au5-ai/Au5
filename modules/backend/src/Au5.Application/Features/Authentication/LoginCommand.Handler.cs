@@ -1,6 +1,4 @@
 using Au5.Application.Common;
-using Au5.Application.Common.Abstractions;
-using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.Authentication;
 
@@ -22,6 +20,6 @@ public sealed class LoginCommandHandler(IApplicationDbContext dbContext, ITokenS
 
 		user.LastLoginAt = DateTime.Now;
 		await _dbContext.SaveChangesAsync(cancellationToken);
-		return _tokenService.GenerateToken(user.Id, user.FullName, "User");
+		return _tokenService.GenerateToken(user.Id, user.FullName, user.Role);
 	}
 }

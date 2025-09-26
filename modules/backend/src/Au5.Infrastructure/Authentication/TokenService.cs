@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Au5.Application.Common.Abstractions;
 using Au5.Application.Features.Authentication;
+using Au5.Domain.Common;
 using Au5.Shared;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -21,7 +22,7 @@ public class TokenService : ITokenService
 		_cacheProvider = cacheProvider;
 	}
 
-	public TokenResponse GenerateToken(Guid extensionId, string fullName, string role)
+	public TokenResponse GenerateToken(Guid extensionId, string fullName, RoleTypes role)
 	{
 		var jti = Guid.NewGuid().ToString();
 
@@ -29,7 +30,7 @@ public class TokenService : ITokenService
 		{
 			new Claim(ClaimConstants.UserId, extensionId.ToString()),
 			new Claim(ClaimConstants.Name, fullName ?? string.Empty),
-			new Claim(ClaimConstants.Role, role),
+			new Claim(ClaimConstants.Role, ((byte)role).ToString()),
 			new Claim(ClaimConstants.Jti, jti)
 		};
 

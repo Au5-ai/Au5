@@ -1,4 +1,3 @@
-using Au5.Application.Common.Abstractions;
 using Au5.Application.Features.Authentication;
 using Au5.Domain.Entities;
 using Au5.Shared;
@@ -54,7 +53,7 @@ public class LoginCommandHandlerTestFixture
 
 	public LoginCommandHandlerTestFixture WithToken(string token = "fake-token")
 	{
-		MockTokenService.Setup(ts => ts.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()))
+		MockTokenService.Setup(ts => ts.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<RoleTypes>()))
 						.Returns(new TokenResponse(token, 3600, string.Empty, "Bearer"));
 		return this;
 	}
