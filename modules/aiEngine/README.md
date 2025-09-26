@@ -28,3 +28,11 @@ This is the AI Engine microservice for the Au5 project. It provides AI-based API
    ```bash
    uvicorn app.main:app --reload
    ```
+
+## API Documentation
+
+The AI Engine microservice includes Swagger-based API documentation. You can access it at the following endpoint after starting the application:
+
+- **Swagger UI**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+This documentation provides an interactive interface to explore and test the available endpoints.
