@@ -1,5 +1,5 @@
 using System.Net;
-using Au5.Application.Features.Authentication;
+using Au5.Application.Features.Authentication.Login;
 using Au5.Domain.Entities;
 
 namespace Au5.UnitTests.Application.Features.Authentication;

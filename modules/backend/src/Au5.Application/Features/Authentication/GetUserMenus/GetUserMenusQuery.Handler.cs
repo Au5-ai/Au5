@@ -34,7 +34,7 @@ public class GetUserMenusQueryHandler : IRequestHandler<GetUserMenusQuery, Resul
 		return topMenus.Select(m => MapMenuToDto(m)).ToList();
 	}
 
-	private GetUserMenusResponse MapMenuToDto(Menu menu)
+	private static GetUserMenusResponse MapMenuToDto(Menu menu)
 	{
 		return new GetUserMenusResponse
 		{
