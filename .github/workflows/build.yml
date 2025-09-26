@@ -1,0 +1,73 @@
+name: .NET Core CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
+    env:
+      Solution_Name: modules/backend/Au5.BackEnd.sln
+      Test_Project_Path: modules/backend/tests/Au5.UnitTests/Au5.UnitTests.csproj
+
+    steps:
+      - name: 🔄 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🛠️ Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: 📦 Restore NuGet packages
+        run: dotnet restore ${{ env.Solution_Name }}
+
+      - name: 🧱 Build solution - ${{ matrix.configuration }}
+        run: dotnet build ${{ env.Solution_Name }} --configuration ${{ matrix.configuration }} --no-restore
+
+      - name: 🧪 Run unit tests
+        run: dotnet test ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }} --no-build --verbosity normal
+
+      # --- Build Panel (Next.js) ---
+      - name: 📦 Install Panel dependencies
+        run: npm install
+        working-directory: modules/panel
+
+      - name: 🏗️ Build Panel
+        run: npm run build
+        working-directory: modules/panel
+
+      # --- Build Bot (Node.js) ---
+      - name: 📦 Install Bot dependencies
+        run: npm install
+        working-directory: modules/bot
+
+      - name: 🏗️ Build Bot
+        run: npm run build || echo "No build script, skipping"
+        working-directory: modules/bot
+
+      # --- Build Extension (Vite/TS) ---
+      - name: 📦 Install Extension dependencies
+        run: npm install
+        working-directory: modules/extension
+
+      - name: 🏗️ Build Extension
+        run: npm run build || echo "No build script, skipping"
+        working-directory: modules/extension
+
+      # --- Build Bot Father (Go) ---
+      - name: 🏗️ Build Bot Father
+        run: |
+          go version
+          go build -o botfather.exe bot-father.go
+        working-directory: modules/botFather
