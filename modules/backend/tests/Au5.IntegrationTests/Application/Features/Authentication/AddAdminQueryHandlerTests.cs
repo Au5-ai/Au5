@@ -1,5 +1,4 @@
 using System.Net;
-using Au5.Application.Common;
 using Au5.Application.Features.Setup.AddAdmin;
 using Au5.Domain.Common;
 using Au5.Domain.Entities;
@@ -28,7 +27,7 @@ public class AddAdminQueryHandlerTests : BaseIntegrationTest
 		Assert.Equal(command.FullName, user.FullName);
 		Assert.Equal(RoleTypes.Admin, user.Role);
 		Assert.True(user.IsActive);
-		Assert.Equal(Constants.DefaultPictureUrl, user.PictureUrl);
+		Assert.Equal(string.Empty, user.PictureUrl);
 		Assert.NotEqual(Guid.Empty, user.Id);
 	}
 

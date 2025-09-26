@@ -5,5 +5,5 @@ namespace Au5.Application.Common.Abstractions;
 /// </summary>
 public interface IUserContextRequest
 {
-    Guid UserId { get; set; }
+	Guid UserId { get; set; }
 }
