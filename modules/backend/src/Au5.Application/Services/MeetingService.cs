@@ -66,7 +66,7 @@ public class MeetingService : IMeetingService
 
 		foreach (var user in users)
 		{
-			if (!user.HasAccount && !meeting.Guests.Any(g => g.FullName == user.FullName))
+			if (!meeting.Guests.Any(g => g.FullName == user.FullName))
 			{
 				meeting.Guests.Add(new GuestsInMeeting
 				{

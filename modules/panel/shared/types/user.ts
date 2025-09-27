@@ -12,7 +12,6 @@ export interface Participant {
   fullName: string;
   pictureUrl: string;
   email: string;
-  hasAccount: boolean;
 }
 
 export interface UserList {

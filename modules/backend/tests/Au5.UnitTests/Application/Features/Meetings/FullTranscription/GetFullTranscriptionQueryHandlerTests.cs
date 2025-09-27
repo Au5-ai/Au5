@@ -1,4 +1,3 @@
-using Au5.Application.Common.Abstractions;
 using Au5.Application.Features.Meetings.GetFullTranscription;
 using Au5.Domain.Entities;
 using MockQueryable.Moq;
@@ -57,7 +56,7 @@ public class GetFullTranscriptionQueryHandlerTests
 				Reaction = new Reaction { Type = "Goal", Emoji = "??" },
 				Participants =
 				[
-					new(userId, null, null, null, false)
+					new(userId, null, null, null)
 				]
 			},
 			new()
@@ -66,7 +65,7 @@ public class GetFullTranscriptionQueryHandlerTests
 				Reaction = new Reaction { Type = "GoodPoint", Emoji = "?" },
 				Participants =
 				[
-					new(userId, null, null, null, false)
+					new(userId, null, null, null)
 				]
 			},
 			new()
@@ -75,7 +74,7 @@ public class GetFullTranscriptionQueryHandlerTests
 				Reaction = new Reaction { Type = "Task", Emoji = "?" },
 				Participants =
 				[
-					new(userId, null, null, null, false)
+					new(userId, null, null, null)
 				]
 			}
 		};

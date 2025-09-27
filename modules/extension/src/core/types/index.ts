@@ -20,7 +20,6 @@ export interface Participant {
   id: string;
   fullName: string;
   pictureUrl: string;
-  hasAccount: boolean;
 }
 
 export interface ServiceIntegration {

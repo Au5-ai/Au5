@@ -42,7 +42,6 @@ public class GetMyInfoQueryHandlerTests
 		Assert.Equal("Test User", result.Data.FullName);
 		Assert.Equal("http://pic", result.Data.PictureUrl);
 		Assert.Equal("mha.karimi@gmail.com", result.Data.Email);
-		Assert.True(result.Data.HasAccount);
 	}
 
 	[Fact]
