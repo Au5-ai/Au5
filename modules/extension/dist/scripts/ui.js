@@ -156,6 +156,8 @@ class ChatPanel {
       if (textEl) textEl.innerText = entry.content;
       return;
     }
+    const isChat = entry.entryType != "Chat";
+    const iconHtml = isChat ? '<span class="au5-message-type-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-more-icon lucide-message-circle-more"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"></path><path d="M8 12h.01"></path><path d="M12 12h.01"></path><path d="M16 12h.01"></path></svg></span>' : '<span class="au5-message-type-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-closed-caption-icon lucide-closed-caption"><path d="M10 9.17a3 3 0 1 0 0 5.66"/><path d="M17 9.17a3 3 0 1 0 0 5.66"/><rect x="2" y="5" width="20" height="14" rx="2"/></svg></span>';
     const entryBlock = document.createElement("div");
     entryBlock.setAttribute("data-id", entry.blockId);
     entryBlock.className = "au5-transcription";
@@ -171,8 +173,10 @@ class ChatPanel {
 
     <div class="au5-message-bubble">
       <div class="au5-message-header">
-        <span class="au5-message-sender">${this.escapeHtml(entry.participant.fullName)}</span>
-        <span class="au5-message-time">${DateTime.toHoursAndMinutes(entry.timestamp)}</span>
+      <span class="au5-message-sender">${this.escapeHtml(entry.participant.fullName)}</span>
+      <span class="au5-message-time">${DateTime.toHoursAndMinutes(entry.timestamp)}
+      ${iconHtml}
+        </span>
       </div>
 
       <div class="au5-message-text" style="direction: ${this.direction};">
@@ -3580,7 +3584,7 @@ class UIHandlers {
   handleMessageSend() {
     const btn = document.getElementById("au5-btn-sendMessage");
     const input = document.getElementById("au5-input-message");
-    btn == null ? void 0 : btn.addEventListener("click", () => {
+    const sendMessage2 = () => {
       var _a, _b;
       if (input && input.value.trim()) {
         const state = StateManager.getInstance().getState();
@@ -3608,6 +3612,20 @@ class UIHandlers {
         (_b = this.meetingHubClient) == null ? void 0 : _b.sendMessage(entry);
         this.chatPanel.addEntry(entry);
         input.value = "";
+      }
+    };
+    btn == null ? void 0 : btn.addEventListener("click", sendMessage2);
+    input == null ? void 0 : input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.ctrlKey) {
+        e.preventDefault();
+        sendMessage2();
+      } else if (e.key === "Enter" && e.ctrlKey) {
+        e.preventDefault();
+        const start = input.selectionStart || 0;
+        const end = input.selectionEnd || 0;
+        const value = input.value;
+        input.value = value.substring(0, start) + "\n" + value.substring(end);
+        input.selectionStart = input.selectionEnd = start + 1;
       }
     });
     return this;
