@@ -5,15 +5,24 @@ import { Meeting } from "@/shared/types";
 import { meetingApi } from "@/shared/network/api/meeting";
 import NoRecordsState from "@/shared/components/empty-states/no-record";
 import { LoadingPage } from "@/shared/components/loading-page";
-import { SidebarInset, SidebarTrigger } from "@/shared/components/ui";
+import {
+  Separator,
+  SidebarInset,
+  SidebarTrigger,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/components/ui";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import { Separator } from "@radix-ui/react-separator";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
 import { NavActions } from "@/shared/components/navActions";
 import TranscriptionHeader from "@/shared/components/transcription/transcriptionHeader";
 import TranscriptionFilters from "@/shared/components/transcription/transcriptionFilters";
 import TranscriptionEntry from "@/shared/components/transcription/transcriptionEntry";
 import { NoSearchResults } from "@/shared/components/empty-states/no-search-result";
+import { CaptionsIcon } from "lucide-react";
+import { AiIcon } from "@/shared/components/ui/ai";
 
 export default function TranscriptionPage() {
   const [transcription, setTranscription] = useState<Meeting>();
@@ -88,7 +97,12 @@ export default function TranscriptionPage() {
   }, [transcription, filterType, selectedSpeaker, searchQuery]);
 
   if (loading) {
-    return <LoadingPage text={GLOBAL_CAPTIONS.loadingTranscription} className="min-h-screen" />;
+    return (
+      <LoadingPage
+        text={GLOBAL_CAPTIONS.loadingTranscription}
+        className="min-h-screen"
+      />
+    );
   }
 
   if (error) {
@@ -133,33 +147,50 @@ export default function TranscriptionPage() {
         </div>
       </header>
       <div className="min-h-screen w-full">
-        <TranscriptionHeader meeting={transcription} />
-        <TranscriptionFilters
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          filterType={filterType}
-          setFilterType={setFilterType}
-          selectedSpeaker={selectedSpeaker}
-          setSelectedSpeaker={setSelectedSpeaker}
-          speakers={speakers}
-        />
-        <div className="w-[800px]">
-          <div className="bg-white overflow-hidden">
-            {filteredEntries.length > 0 ? (
-              <div className="divide-y divide-gray-100">
-                {filteredEntries.map((entry, index) => (
-                  <TranscriptionEntry
-                    key={entry.blockId}
-                    entry={entry}
-                    index={index}
-                  />
-                ))}
-              </div>
-            ) : (
-              <NoSearchResults />
-            )}
+        <Tabs defaultValue="Transcription" className="w-full">
+          <div className="bg-muted px-4">
+            <TabsList>
+              <TabsTrigger value="Transcription">
+                <CaptionsIcon className="mr-1 h-4 w-4" /> Transcription
+              </TabsTrigger>
+              <TabsTrigger value="DetailedSummary">
+                <AiIcon className="mr-1 h-4 w-4" /> Detailed AI Summary
+              </TabsTrigger>
+            </TabsList>
           </div>
-        </div>
+          <TabsContent value="Transcription">
+            <TranscriptionHeader meeting={transcription} />
+            <TranscriptionFilters
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              filterType={filterType}
+              setFilterType={setFilterType}
+              selectedSpeaker={selectedSpeaker}
+              setSelectedSpeaker={setSelectedSpeaker}
+              speakers={speakers}
+            />
+            <div className="w-[800px]">
+              <div className="bg-white overflow-hidden">
+                {filteredEntries.length > 0 ? (
+                  <div className="divide-y divide-gray-100">
+                    {filteredEntries.map((entry, index) => (
+                      <TranscriptionEntry
+                        key={entry.blockId}
+                        entry={entry}
+                        index={index}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <NoSearchResults />
+                )}
+              </div>
+            </div>
+          </TabsContent>
+          <TabsContent value="DetailedSummary">
+            Detailed Summary is here :)
+          </TabsContent>
+        </Tabs>
       </div>
     </SidebarInset>
   );
