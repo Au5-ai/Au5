@@ -213,8 +213,14 @@ body {
   font-size: 11px;
   color: #888;
   text-align: right;
+  display: flex;
+  align-items: center;
 }
 
+.au5-message-type-icon {
+  margin-left: 4px;
+  display: flex;
+}
 .au5-message-text {
   font-size: 12.5px;
   direction: rtl;
