@@ -63,7 +63,9 @@ export default function TranscriptionEntry({
 
           {/* Content */}
           <div className="mb-3">
-            <p className={`text-gray-800 leading-relaxed`} dir="auto">
+            <p
+              className={`text-gray-800 leading-relaxed text-justify`}
+              dir="auto">
               {entry.content}
             </p>
           </div>
