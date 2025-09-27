@@ -241,7 +241,7 @@ export class UIHandlers {
     const btn = document.getElementById("au5-btn-sendMessage") as HTMLButtonElement | null;
     const input = document.getElementById("au5-input-message") as HTMLInputElement | null;
 
-    btn?.addEventListener("click", () => {
+    const sendMessage = () => {
       if (input && input.value.trim()) {
         const state = StateManager.getInstance().getState();
         if (state.isConnected === false) {
@@ -271,7 +271,24 @@ export class UIHandlers {
         this.chatPanel.addEntry(entry);
         input.value = "";
       }
+    };
+
+    btn?.addEventListener("click", sendMessage);
+
+    input?.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Enter" && !e.ctrlKey) {
+        e.preventDefault();
+        sendMessage();
+      } else if (e.key === "Enter" && e.ctrlKey) {
+        e.preventDefault();
+        const start = input.selectionStart || 0;
+        const end = input.selectionEnd || 0;
+        const value = input.value;
+        input.value = value.substring(0, start) + "\n" + value.substring(end);
+        input.selectionStart = input.selectionEnd = start + 1;
+      }
     });
+
     return this;
   }
 

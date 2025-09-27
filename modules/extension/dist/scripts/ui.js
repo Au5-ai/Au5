@@ -3580,7 +3580,7 @@ class UIHandlers {
   handleMessageSend() {
     const btn = document.getElementById("au5-btn-sendMessage");
     const input = document.getElementById("au5-input-message");
-    btn == null ? void 0 : btn.addEventListener("click", () => {
+    const sendMessage2 = () => {
       var _a, _b;
       if (input && input.value.trim()) {
         const state = StateManager.getInstance().getState();
@@ -3608,6 +3608,20 @@ class UIHandlers {
         (_b = this.meetingHubClient) == null ? void 0 : _b.sendMessage(entry);
         this.chatPanel.addEntry(entry);
         input.value = "";
+      }
+    };
+    btn == null ? void 0 : btn.addEventListener("click", sendMessage2);
+    input == null ? void 0 : input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.ctrlKey) {
+        e.preventDefault();
+        sendMessage2();
+      } else if (e.key === "Enter" && e.ctrlKey) {
+        e.preventDefault();
+        const start = input.selectionStart || 0;
+        const end = input.selectionEnd || 0;
+        const value = input.value;
+        input.value = value.substring(0, start) + "\n" + value.substring(end);
+        input.selectionStart = input.selectionEnd = start + 1;
       }
     });
     return this;
