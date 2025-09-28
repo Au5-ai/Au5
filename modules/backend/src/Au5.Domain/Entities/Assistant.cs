@@ -13,6 +13,8 @@ public class Assistant
 
 	public string Prompt { get; set; }
 
+	public string OpenAIAssistantId { get; set; }
+
 	public bool IsDefault { get; set; }
 
 	public bool IsActive { get; set; }

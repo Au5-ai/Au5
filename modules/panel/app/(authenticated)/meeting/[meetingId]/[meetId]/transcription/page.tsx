@@ -31,7 +31,7 @@ export default function TranscriptionPage() {
   const [assistants, setAssistants] = useState<Assistant[]>([]);
 
   useEffect(() => {
-    assistantsController.getActive().then(setAssistants);
+    assistantsController.getActive(true).then(setAssistants);
   }, []);
   const [transcription, setTranscription] = useState<Meeting>();
   const [loading, setLoading] = useState(true);

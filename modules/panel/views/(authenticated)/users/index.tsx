@@ -6,9 +6,9 @@ import { Separator } from "@radix-ui/react-separator";
 import { UserList } from "@/shared/types";
 import { Button, SidebarInset, SidebarTrigger } from "@/shared/components/ui";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
-import UserGrid from "@/views/(authenticated)/users/userGrids";
-import StatsCards from "@/views/(authenticated)/users/statsCards";
-import InviteModal from "@/views/(authenticated)/users/inviteModal";
+import UserGrid from "@/views/(authenticated)/users/components/userGrids";
+import StatsCards from "@/views/(authenticated)/users/components/statsCards";
+import InviteModal from "@/views/(authenticated)/users/components/inviteModal";
 import { USER_MANAGEMENT_CAPTIONS } from "./i18n";
 import { userController } from "./userController";
 

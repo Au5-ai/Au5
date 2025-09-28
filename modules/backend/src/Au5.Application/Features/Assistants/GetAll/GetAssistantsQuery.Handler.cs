@@ -11,8 +11,14 @@ public class GetAssistantsQueryHandler : IRequestHandler<GetAssistantsQuery, Res
 
 	public async ValueTask<Result<List<Assistant>>> Handle(GetAssistantsQuery request, CancellationToken cancellationToken)
 	{
-		return await _db.Set<Assistant>()
-			.Where(x => x.IsActive && !x.IsDefault)
+		var query = _db.Set<Assistant>().Where(x => !x.IsDefault);
+
+		if(request.IsActive.HasValue)
+		{
+			query = query.Where(x => x.IsActive == request.IsActive.Value);
+		}
+
+		return await query
 			.AsNoTracking()
 			.ToListAsync(cancellationToken);
 	}

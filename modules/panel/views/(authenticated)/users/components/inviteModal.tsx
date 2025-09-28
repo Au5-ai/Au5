@@ -31,9 +31,9 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { getRoleDisplay, getRoleType, validateEmail } from "@/shared/lib/utils";
-import { USER_MANAGEMENT_CAPTIONS } from "./i18n";
+import { USER_MANAGEMENT_CAPTIONS } from "../i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import { userController } from "./userController";
+import { userController } from "../userController";
 
 interface Invite {
   email: string;

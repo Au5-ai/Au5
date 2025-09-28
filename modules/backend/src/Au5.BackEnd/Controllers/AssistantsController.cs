@@ -7,9 +7,9 @@ public class AssistantsController(IMediator mediator) : BaseController
 {
 	[HttpGet]
 	[Route("")]
-	public async Task<IActionResult> GetAll()
+	public async Task<IActionResult> GetAll([FromQuery] bool? isActive)
 	{
-		return Ok(await mediator.Send(new GetAssistantsQuery()));
+		return Ok(await mediator.Send(new GetAssistantsQuery(isActive)));
 	}
 
 	[HttpPost]
