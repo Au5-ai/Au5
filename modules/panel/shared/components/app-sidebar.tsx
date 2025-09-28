@@ -38,13 +38,6 @@ const data = {
       icon: ArchiveIcon,
     },
     {
-      title: "Shared With Me",
-      url: "#",
-      icon: Waypoints,
-      showBadge: true,
-      badge: "soon",
-    },
-    {
       title: "AI Tools",
       url: "/assistants",
       icon: Brain,
