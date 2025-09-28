@@ -19,6 +19,7 @@ interface AddAssistantModalProps {
   open: boolean;
   onClose: () => void;
   onAdd: (data: {
+    icon: string;
     name: string;
     prompt: string;
     description: string;
