@@ -21,7 +21,7 @@ import TranscriptionHeader from "@/shared/components/transcription/transcription
 import TranscriptionFilters from "@/shared/components/transcription/transcriptionFilters";
 import TranscriptionEntry from "@/shared/components/transcription/transcriptionEntry";
 import { NoSearchResults } from "@/shared/components/empty-states/no-search-result";
-import { Bot, BrainCog, CaptionsIcon, MessageCircleCode } from "lucide-react";
+import { BrainCog, CaptionsIcon, MessageCircleCode } from "lucide-react";
 import { AiIcon } from "@/shared/components/ui/ai";
 import { AssistantList } from "../AssistantList";
 import { assistantsController } from "@/shared/network/api/assistantsController";
@@ -205,16 +205,8 @@ export default function TranscriptionPage() {
                           <BrainCog className="mr-1 h-4 w-4" />
                           <span>AI Assistants</span>
                         </h2>
-                        {assistants.length > 0 ? (
-                          <AssistantList assistants={assistants} />
-                        ) : (
-                          <div className="bg-red-100 w-full p-2 rounded-lg flex items-center">
-                            <Bot className="mr-2 w-4 h-4" />
-                            <span className="text-sm">
-                              Sorry, There is no active AI Assistant :(
-                            </span>
-                          </div>
-                        )}
+
+                        <AssistantList assistants={assistants} />
                       </div>
                     </div>
                   </>

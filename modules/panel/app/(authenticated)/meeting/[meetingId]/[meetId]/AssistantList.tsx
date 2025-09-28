@@ -2,6 +2,7 @@ import React from "react";
 import { Card } from "@/shared/components/ui";
 import { AiIcon } from "@/shared/components/ui/ai";
 import { Assistant } from "@/shared/types/assistants";
+import { Bot } from "lucide-react";
 
 export interface AssistantListProps {
   assistants: Assistant[];
@@ -9,7 +10,14 @@ export interface AssistantListProps {
 
 export const AssistantList: React.FC<AssistantListProps> = ({ assistants }) => {
   if (!assistants.length) {
-    return <div className="text-gray-500 text-sm">No assistants found.</div>;
+    return (
+      <div className="bg-red-100 w-full p-2 rounded-lg flex items-center">
+        <Bot className="mr-2 w-4 h-4" />
+        <span className="text-sm">
+          Sorry, There is no active AI Assistant :(
+        </span>
+      </div>
+    );
   }
   return (
     <div className="grid grid-cols-1 gap-2">
