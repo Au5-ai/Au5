@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250919141524_Edit.SystemConfig.UseSslField")]
-    partial class EditSystemConfigUseSslField
+    [Migration("20250927175351_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,6 +47,47 @@ namespace Au5.Infrastructure.Migrations
                     b.HasIndex("ReactionId");
 
                     b.ToTable("AppliedReactions");
+                });
+
+            modelBuilder.Entity("Au5.Domain.Entities.Assistant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("Icon")
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("Prompt")
+                        .HasMaxLength(2000)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(2000)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Assistant");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.Entry", b =>
@@ -339,6 +380,11 @@ namespace Au5.Infrastructure.Migrations
                     b.Property<bool>("MeetingVideoRecording")
                         .HasColumnType("bit");
 
+                    b.Property<string>("OpenAIProxyUrl")
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
+
                     b.Property<string>("OpenAIToken")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -497,9 +543,6 @@ namespace Au5.Infrastructure.Migrations
                                 .HasMaxLength(200)
                                 .IsUnicode(false)
                                 .HasColumnType("varchar(200)");
-
-                            b1.Property<bool>("HasAccount")
-                                .HasColumnType("bit");
 
                             b1.Property<Guid>("Id")
                                 .HasColumnType("uniqueidentifier");

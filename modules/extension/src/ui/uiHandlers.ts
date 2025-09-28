@@ -113,8 +113,7 @@ export class UIHandlers {
             user: {
               id: this.config.user.id,
               fullName: this.config.user.fullName,
-              pictureUrl: this.config.user.pictureUrl,
-              hasAccount: this.config.user.hasAccount
+              pictureUrl: this.config.user.pictureUrl
             },
             reactionId: reactionId,
             reactionType: type
@@ -125,8 +124,7 @@ export class UIHandlers {
             user: {
               id: this.config.user.id,
               fullName: this.config.user.fullName,
-              pictureUrl: this.config.user.pictureUrl,
-              hasAccount: this.config.user.hasAccount
+              pictureUrl: this.config.user.pictureUrl
             },
             reactionId: reactionId,
             reactionType: type
@@ -260,8 +258,7 @@ export class UIHandlers {
           participant: {
             id: this.config.user.id,
             fullName: this.config.user.fullName,
-            pictureUrl: this.config.user.pictureUrl,
-            hasAccount: this.config.user.hasAccount
+            pictureUrl: this.config.user.pictureUrl
           },
           content: input.value.trim(),
           timestamp: new Date(),
@@ -338,8 +335,7 @@ export class UIHandlers {
         user: {
           id: this.config.user.id,
           fullName: this.config.user.fullName,
-          pictureUrl: this.config.user.pictureUrl,
-          hasAccount: this.config.user.hasAccount
+          pictureUrl: this.config.user.pictureUrl
         }
       };
       this.meetingHubClient.sendMessage(message);
@@ -355,8 +351,7 @@ export class UIHandlers {
         user: {
           id: this.config.user.id,
           fullName: this.config.user.fullName,
-          pictureUrl: this.config.user.pictureUrl,
-          hasAccount: this.config.user.hasAccount
+          pictureUrl: this.config.user.pictureUrl
         }
       };
       this.meetingHubClient.sendMessage(message);

@@ -11,6 +11,24 @@ namespace Au5.Infrastructure.Migrations
 		protected override void Up(MigrationBuilder migrationBuilder)
 		{
 			migrationBuilder.CreateTable(
+				name: "Assistant",
+				columns: table => new
+				{
+					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+					Name = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
+					Icon = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
+					Description = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
+					Prompt = table.Column<string>(type: "varchar(2000)", unicode: false, maxLength: 2000, nullable: true),
+					IsDefault = table.Column<bool>(type: "bit", nullable: false),
+					IsActive = table.Column<bool>(type: "bit", nullable: false),
+					CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+				},
+				constraints: table =>
+				{
+					table.PrimaryKey("PK_Assistant", x => x.Id);
+				});
+
+			migrationBuilder.CreateTable(
 				name: "Reaction",
 				columns: table => new
 				{
@@ -40,6 +58,7 @@ namespace Au5.Infrastructure.Migrations
 					BotFatherUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
 					BotHubUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
 					OpenAIToken = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
+					OpenAIProxyUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
 					PanelUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
 					AutoLeaveWaitingEnter = table.Column<int>(type: "int", nullable: false),
 					AutoLeaveNoParticipant = table.Column<int>(type: "int", nullable: false),
@@ -47,7 +66,12 @@ namespace Au5.Infrastructure.Migrations
 					MeetingVideoRecording = table.Column<bool>(type: "bit", nullable: false),
 					MeetingAudioRecording = table.Column<bool>(type: "bit", nullable: false),
 					MeetingTranscription = table.Column<bool>(type: "bit", nullable: false),
-					MeetingTranscriptionModel = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false)
+					MeetingTranscriptionModel = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
+					SmtpHost = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+					SmtpPassword = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
+					SmtpPort = table.Column<int>(type: "int", nullable: false),
+					SmtpUser = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+					SmtpUseSSl = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
 				},
 				constraints: table =>
 				{
@@ -67,7 +91,8 @@ namespace Au5.Infrastructure.Migrations
 					CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
 					LastLoginAt = table.Column<DateTime>(type: "datetime2", nullable: true),
 					LastPasswordChangeAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-					Role = table.Column<byte>(type: "tinyint", nullable: false)
+					Role = table.Column<byte>(type: "tinyint", nullable: false),
+					Status = table.Column<int>(type: "int", nullable: false)
 				},
 				constraints: table =>
 				{
@@ -208,8 +233,8 @@ namespace Au5.Infrastructure.Migrations
 
 			migrationBuilder.InsertData(
 				table: "User",
-				columns: new[] { "Id", "CreatedAt", "Email", "FullName", "IsActive", "LastLoginAt", "LastPasswordChangeAt", "Password", "PictureUrl", "Role" },
-				values: new object[] { new Guid("edada1f7-cbda-4c13-8504-a57fe72d5960"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "mha.karimi@gmail.com", "Mohammad Karimi", true, null, null, "0PVQk0Qiwb8gY3iUipZQKhBQgDMJ/1PJfmIDhG5hbrA=", "https://i.imgur.com/ESenFCJ.jpeg", (byte)2 });
+				columns: new[] { "Id", "CreatedAt", "Email", "FullName", "IsActive", "LastLoginAt", "LastPasswordChangeAt", "Password", "PictureUrl", "Role", "Status" },
+				values: new object[] { new Guid("edada1f7-cbda-4c13-8504-a57fe72d5960"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "mha.karimi@gmail.com", "Mohammad Karimi", true, null, null, "0PVQk0Qiwb8gY3iUipZQKhBQgDMJ/1PJfmIDhG5hbrA=", "https://i.imgur.com/ESenFCJ.jpeg", (byte)2, 0 });
 
 			migrationBuilder.CreateIndex(
 				name: "IX_AppliedReactions_EntryId",
@@ -258,6 +283,9 @@ namespace Au5.Infrastructure.Migrations
 		{
 			migrationBuilder.DropTable(
 				name: "AppliedReactions");
+
+			migrationBuilder.DropTable(
+				name: "Assistant");
 
 			migrationBuilder.DropTable(
 				name: "GuestsInMeeting");

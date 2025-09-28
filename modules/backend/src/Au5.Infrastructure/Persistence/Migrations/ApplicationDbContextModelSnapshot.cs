@@ -541,9 +541,6 @@ namespace Au5.Infrastructure.Migrations
                                 .IsUnicode(false)
                                 .HasColumnType("varchar(200)");
 
-                            b1.Property<bool>("HasAccount")
-                                .HasColumnType("bit");
-
                             b1.Property<Guid>("Id")
                                 .HasColumnType("uniqueidentifier");
 

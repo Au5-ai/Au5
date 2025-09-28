@@ -155,3 +155,11 @@
   color: black;
   display: flex;
 }
+
+.fill-gold {
+  fill: #f6b600;
+}
+
+.text-justify {
+  text-align: justify;
+}
