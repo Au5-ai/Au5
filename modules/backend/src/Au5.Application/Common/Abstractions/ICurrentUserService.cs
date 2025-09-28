@@ -10,8 +10,13 @@ public interface ICurrentUserService
     /// </summary>
     Guid UserId { get; }
 
-    /// <summary>
-    /// Gets a value indicating whether gets whether the current request is from an authenticated user.
-    /// </summary>
+	/// <summary>
+	/// Gets the user's RoleType from the JWT claim. Returns null if not available.
+	/// </summary>
+    RoleTypes? Role { get; }
+
+	/// <summary>
+	/// Gets a value indicating whether gets whether the current request is from an authenticated user.
+	/// </summary>
     bool IsAuthenticated { get; }
 }

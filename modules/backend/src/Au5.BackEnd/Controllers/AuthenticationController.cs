@@ -1,5 +1,6 @@
 using Au5.Application.Common.Abstractions;
-using Au5.Application.Features.Authentication;
+using Au5.Application.Features.Authentication.GetUserMenus;
+using Au5.Application.Features.Authentication.Login;
 using Au5.Shared;
 using Microsoft.AspNetCore.Authorization;
 
@@ -37,5 +38,12 @@ public class AuthenticationController(ISender mediator, ITokenService tokenServi
 		await tokenService.BlacklistTokenAsync(userId, jti, expiry);
 
 		return Ok(new { message = "Logged out successfully" });
+	}
+
+	[HttpGet("MyMenus")]
+	public async Task<IActionResult> MyMenus()
+	{
+		var query = new GetUserMenusQuery();
+		return Ok(await mediator.Send(query));
 	}
 }
