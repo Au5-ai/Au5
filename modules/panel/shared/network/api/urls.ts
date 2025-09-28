@@ -1,4 +1,7 @@
 export const API_URLS = {
+  ASSISTANTS: {
+    LIST: "/assistants",
+  },
   AUTH: {
     LOGIN: "/authentication/login",
     LOGOUT: "/authentication/logout",

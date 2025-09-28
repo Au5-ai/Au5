@@ -21,30 +21,17 @@ import TranscriptionHeader from "@/shared/components/transcription/transcription
 import TranscriptionFilters from "@/shared/components/transcription/transcriptionFilters";
 import TranscriptionEntry from "@/shared/components/transcription/transcriptionEntry";
 import { NoSearchResults } from "@/shared/components/empty-states/no-search-result";
-import { BrainCog, CaptionsIcon, MessageCircleCode } from "lucide-react";
+import { Bot, BrainCog, CaptionsIcon, MessageCircleCode } from "lucide-react";
 import { AiIcon } from "@/shared/components/ui/ai";
-import { AssistantList, Assistant } from "../AssistantList";
-// TODO: Replace with real API call
-const fetchAssistants = async (): Promise<Assistant[]> => {
-  return [
-    {
-      id: "1",
-      name: "Detailed AI Summary",
-      description: "Helps with meeting notes and summaries.",
-    },
-    {
-      id: "2",
-      name: "Generate Action Items",
-      description: "Transcribes and highlights action items.",
-    },
-  ];
-};
+import { AssistantList } from "../AssistantList";
+import { assistantsController } from "@/shared/network/api/assistantsController";
+import { Assistant } from "@/shared/types/assistants";
 
 export default function TranscriptionPage() {
   const [assistants, setAssistants] = useState<Assistant[]>([]);
 
   useEffect(() => {
-    fetchAssistants().then(setAssistants);
+    assistantsController.getActive().then(setAssistants);
   }, []);
   const [transcription, setTranscription] = useState<Meeting>();
   const [loading, setLoading] = useState(true);
@@ -79,9 +66,7 @@ export default function TranscriptionPage() {
 
   const speakers: string[] = useMemo(() => {
     if (!transcription?.entries) return [];
-
     const uniqueParticipants = new Set<string>();
-
     transcription.entries.forEach((entry) => {
       if (entry?.fullName) {
         uniqueParticipants.add(entry.fullName);
@@ -214,12 +199,22 @@ export default function TranscriptionPage() {
                           />
                         ))}
                       </div>
+
                       <div className="flex-[1] px-4 py-4 bg-slate-50/50 border-gray-100 border-l">
                         <h2 className="text-lg font-semibold mb-4 flex items-center">
                           <BrainCog className="mr-1 h-4 w-4" />
                           <span>AI Assistants</span>
                         </h2>
-                        <AssistantList assistants={assistants} />
+                        {assistants.length > 0 ? (
+                          <AssistantList assistants={assistants} />
+                        ) : (
+                          <div className="bg-red-100 w-full p-2 rounded-lg flex items-center">
+                            <Bot className="mr-2 w-4 h-4" />
+                            <span className="text-sm">
+                              Sorry, There is no active AI Assistant :(
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </>
