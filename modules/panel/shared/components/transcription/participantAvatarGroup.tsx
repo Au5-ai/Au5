@@ -53,7 +53,7 @@ export default function ParticipantAvatarGroup({
         {visibleParticipants.map((participant, index) => (
           <div
             key={participant.fullName}
-            className="relative z-10 ring-2 ring-white rounded-full"
+            className="relative z-10 ring-2 ring-white rounded-lg"
             style={{ zIndex: visibleParticipants.length - index }}
             title={participant.fullName}>
             <ParticipantAvatar

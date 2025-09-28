@@ -42,9 +42,9 @@ import {
 
 import { UserList } from "@/shared/types";
 import { getRoleDisplay } from "@/shared/lib/utils";
-import { USER_MANAGEMENT_CAPTIONS } from "./i18n";
+import { USER_MANAGEMENT_CAPTIONS } from "../i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import { userController } from "./userController";
+import { userController } from "../userController";
 import { toast } from "sonner";
 import { CheckIcon, MailWarningIcon } from "lucide-react";
 

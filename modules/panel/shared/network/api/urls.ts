@@ -1,6 +1,6 @@
 export const API_URLS = {
   ASSISTANTS: {
-    LIST: "/assistants",
+    ROOT: "/assistants",
   },
   AUTH: {
     LOGIN: "/authentication/login",

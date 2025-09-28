@@ -10,7 +10,8 @@ public class AssistantConfig : IEntityTypeConfiguration<Assistant>
 	{
 		builder.HasKey(x => x.Id);
 		builder.Property(x => x.Name).IsRequired().HasMaxLength(200);
-		builder.Property(x => x.Icon).HasMaxLength(200);
+		builder.Property(x => x.Icon).IsUnicode(true).HasMaxLength(200);
+		builder.Property(x => x.OpenAIAssistantId).HasMaxLength(100);
 		builder.Property(x => x.Description).HasMaxLength(500);
 		builder.Property(x => x.Prompt).HasMaxLength(2000);
 		builder.Property(x => x.IsDefault).IsRequired();
