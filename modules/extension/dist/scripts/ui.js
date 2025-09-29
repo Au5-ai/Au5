@@ -463,14 +463,14 @@ const _ApiRoutes = class _ApiRoutes {
     }
     return _ApiRoutes.instance;
   }
-  addBot() {
-    return `${this.config.service.baseUrl}/meeting/addBot`;
+  addBot(meetingId, meetId) {
+    return `${this.config.service.baseUrl}/meeting/${meetingId}/sessions/${meetId}/actions/addBot`;
   }
   getReactions() {
     return `${this.config.service.baseUrl}/reactions`;
   }
   closeMeeting(meetingId, meetId) {
-    return `${this.config.service.baseUrl}/meeting/${meetingId}/${meetId}/close`;
+    return `${this.config.service.baseUrl}/meeting/${meetingId}/sessions/${meetId}/actions/close`;
   }
 };
 __publicField(_ApiRoutes, "instance");
@@ -503,7 +503,7 @@ class BackEndApi {
     this.config = config2;
   }
   async addBot(body) {
-    return apiRequest(ApiRoutes.getInstance(this.config).addBot(), {
+    return apiRequest(ApiRoutes.getInstance(this.config).addBot(body.meetingId, body.meetId), {
       method: "POST",
       body,
       authToken: this.config.service.jwtToken
@@ -3539,7 +3539,12 @@ class UIHandlers {
         return;
       }
       const meetId = this.platform.getMeetId();
+      const meeting = JSON.parse(localStorage.getItem("au5-meetingId") || "null");
+      if (!meeting) {
+        return;
+      }
       const response = await this.backendApi.addBot({
+        meetingId: meeting.meetingId,
         meetId,
         botName: this.config.service.botName,
         platform: this.platform.getPlatformName()
@@ -3721,9 +3726,9 @@ class UIHandlers {
   closeSidePanel(panelUrl, meetingId = "", meetId = "") {
     localStorage.removeItem("au5-meetingId");
     if (meetingId && meetId) {
-      panelUrl = panelUrl + `/meeting/${meetingId}/${meetId}/transcription`;
+      panelUrl = panelUrl + `/meetings/${meetingId}/sessions/${meetId}/transcription`;
     } else {
-      panelUrl = panelUrl + "/meeting/my";
+      panelUrl = panelUrl + "/meetings/my";
     }
     chrome.runtime.sendMessage({
       action: "CLOSE_SIDEPANEL",

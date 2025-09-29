@@ -191,8 +191,13 @@ export class UIHandlers {
         return;
       }
       const meetId = this.platform.getMeetId();
+      const meeting = JSON.parse(localStorage.getItem("au5-meetingId") || "null");
+      if (!meeting) {
+        return;
+      }
       const response = await this.backendApi
         .addBot({
+          meetingId: meeting.meetingId,
           meetId: meetId,
           botName: this.config.service.botName,
           platform: this.platform.getPlatformName()
@@ -400,9 +405,9 @@ export class UIHandlers {
     localStorage.removeItem("au5-meetingId");
 
     if (meetingId && meetId) {
-      panelUrl = panelUrl + `/meeting/${meetingId}/${meetId}/transcription`;
+      panelUrl = panelUrl + `/meetings/${meetingId}/sessions/${meetId}/transcription`;
     } else {
-      panelUrl = panelUrl + "/meeting/my";
+      panelUrl = panelUrl + "/meetings/my";
     }
     chrome.runtime.sendMessage({
       action: "CLOSE_SIDEPANEL",

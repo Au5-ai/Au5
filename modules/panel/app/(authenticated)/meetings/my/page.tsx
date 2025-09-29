@@ -9,15 +9,16 @@ import { Card, CardContent } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 import { Link, Share2, Trash2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { MeetingListSkeleton } from "@/app/(authenticated)/meeting/meeting-list-skeleton";
+import { MeetingListSkeleton } from "@/app/(authenticated)/meetings/meeting-list-skeleton";
 import { useRouter } from "next/navigation";
-import { meetingApi } from "@/shared/network/api/meeting";
+import { SidebarInset, SidebarTrigger } from "@/shared/components/ui/sidebar";
+import { Separator } from "@/shared/components/ui/separator";
+import { meetingsController } from "@/shared/network/api/meetingsController";
 import { MeetingItem } from "@/shared/types";
-import NoRecordsState from "@/shared/components/empty-states/no-record";
-import { SidebarInset, SidebarTrigger } from "@/shared/components/ui";
 import { NetworkError } from "@/shared/components/empty-states/error";
-import { Separator } from "@radix-ui/react-separator";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
+import NoRecordsState from "@/shared/components/empty-states/no-record";
+import { API_URLS } from "@/shared/network/api/urls";
 
 export default function MyMeetingPage() {
   const router = useRouter();
@@ -27,19 +28,15 @@ export default function MyMeetingPage() {
     isLoading: loading,
     error,
   } = useQuery({
-    queryKey: ["meetings", "archived"],
-    queryFn: meetingApi.archived,
+    queryKey: ["meetings", "my"],
+    queryFn: meetingsController.my,
   });
 
   const handleMeetingClick = (item: MeetingItem) => {
     const meetingId = item.meetingId;
     const meetId = item.meetId;
-    router.push(`/meeting/${meetingId}/${meetId}/transcription`);
+    router.push(API_URLS.MEETING.TRANSCRIPTION(meetingId, meetId));
   };
-
-  if (loading) {
-    return <MeetingListSkeleton />;
-  }
 
   if (loading) {
     return <MeetingListSkeleton />;
@@ -68,8 +65,9 @@ export default function MyMeetingPage() {
       {meetings.length > 0 && (
         <div className="flex flex-1 flex-col">
           <div className="container mx-auto px-6 py-4">
-            <h1 className="text-2xl font-bold mb-1">Archived Transcription</h1>
+            <h1 className="text-2xl font-bold mb-1">Meeting Transcription</h1>
           </div>
+
           {meetings.map((group, groupIndex) => (
             <div key={groupIndex}>
               <h2 className="text-sm font-medium bg-gray-100 px-8 py-3">
@@ -114,8 +112,10 @@ export default function MyMeetingPage() {
                           variant="ghost"
                           size="icon"
                           title="Open"
+                          className="cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
+                            // Handle open action here
                           }}>
                           <Link className="h-4 w-4" />
                         </Button>
@@ -123,8 +123,10 @@ export default function MyMeetingPage() {
                           variant="ghost"
                           size="icon"
                           title="Share"
+                          className="cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
+                            // Handle share action here
                           }}>
                           <Share2 className="h-4 w-4" />
                         </Button>
@@ -132,8 +134,10 @@ export default function MyMeetingPage() {
                           variant="ghost"
                           size="icon"
                           title="Delete"
+                          className="cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
+                            // Handle delete action here
                           }}>
                           <Trash2 className="h-4 w-4" />
                         </Button>

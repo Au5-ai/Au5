@@ -1,6 +1,6 @@
 import { Button } from "@/shared/components/ui";
 import { tokenStorageService } from "@/shared/lib/localStorage";
-import { userApi } from "@/shared/network/api/user";
+import { userController } from "@/shared/network/api/user";
 import { useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft, Settings } from "lucide-react";
 import Image from "next/image";
@@ -14,7 +14,7 @@ export function ConfigureStep({ next }: { next: () => void }) {
   const handleSendConfigs = async () => {
     try {
       const [user, systemConfig] = await Promise.all([
-        userApi.me(),
+        userController.me(),
         systemController.getExtensionConfig(),
       ]);
 

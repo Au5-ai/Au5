@@ -1,3 +1,4 @@
+using Au5.Application.Features.Authentication.GetUserMenus;
 using Au5.Application.Features.UserManagement.GetMyInfo;
 using Au5.Application.Features.UserManagement.GetUsers;
 using Au5.Application.Features.UserManagement.InviteUsers;
@@ -10,12 +11,6 @@ namespace Au5.BackEnd.Controllers;
 
 public class UsersController(ISender mediator) : BaseController
 {
-	[Route("me")]
-	public async Task<IActionResult> GetMyInfo()
-	{
-		return Ok(await mediator.Send(new GetMyInfoQuery()));
-	}
-
 	[HttpGet]
 	[Route("")]
 	public async Task<IActionResult> GetUsers()
@@ -24,19 +19,32 @@ public class UsersController(ISender mediator) : BaseController
 		return Ok(result);
 	}
 
-	[AllowAnonymous]
-	[HttpPost("{userId}/invite")]
-	public async Task<IActionResult> RetryINviteUser([FromRoute] Guid userId)
+	[Route("me")]
+	public async Task<IActionResult> GetCurrentUserInfo()
 	{
-		return Ok(await mediator.Send(new ResendVerificationEmailCommand() { UserId = userId }));
+		return Ok(await mediator.Send(new GetMyInfoQuery()));
+	}
+
+	[HttpGet("me/menus")]
+	public async Task<IActionResult> GetCurrentUserMenus()
+	{
+		var query = new GetUserMenusQuery();
+		return Ok(await mediator.Send(query));
 	}
 
 	[HttpPost]
-	[Route("invite")]
+	[Route("invitations")]
 	public async Task<IActionResult> InviteUsers([FromBody] List<InviteUsersRequest> invites)
 	{
 		var result = await mediator.Send(new InviteUsersCommand(invites));
 		return Ok(result);
+	}
+
+	[AllowAnonymous]
+	[HttpPost("{userId}/invitations")]
+	public async Task<IActionResult> ResendInvitation([FromRoute] Guid userId)
+	{
+		return Ok(await mediator.Send(new ResendVerificationEmailCommand() { UserId = userId }));
 	}
 
 	[AllowAnonymous]

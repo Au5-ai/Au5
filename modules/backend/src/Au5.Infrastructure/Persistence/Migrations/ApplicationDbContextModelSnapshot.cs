@@ -4,7 +4,6 @@ using Au5.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,11 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250929134758_Init")]
-    partial class Init
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,12 +250,6 @@ namespace Au5.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
                     b.Property<int?>("ParentId")
                         .HasColumnType("int");
 
@@ -266,6 +257,12 @@ namespace Au5.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("Url")
                         .HasMaxLength(200)
@@ -277,6 +274,53 @@ namespace Au5.Infrastructure.Migrations
                     b.HasIndex("ParentId");
 
                     b.ToTable("Menus", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 100,
+                            Icon = "ClosedCaption",
+                            IsActive = true,
+                            SortOrder = 1,
+                            Title = "My Meetings",
+                            Url = "/meetings/my"
+                        },
+                        new
+                        {
+                            Id = 200,
+                            Icon = "ArchiveIcon",
+                            IsActive = true,
+                            SortOrder = 2,
+                            Title = "Archived Transcripts",
+                            Url = "/meetings/archived"
+                        },
+                        new
+                        {
+                            Id = 300,
+                            Icon = "Brain",
+                            IsActive = true,
+                            SortOrder = 3,
+                            Title = "AI Tools",
+                            Url = "/assistants"
+                        },
+                        new
+                        {
+                            Id = 400,
+                            Icon = "Settings",
+                            IsActive = true,
+                            SortOrder = 4,
+                            Title = "System Settings",
+                            Url = "/system"
+                        },
+                        new
+                        {
+                            Id = 500,
+                            Icon = "UserPlus",
+                            IsActive = true,
+                            SortOrder = 5,
+                            Title = "User Management",
+                            Url = "/users"
+                        });
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.ParticipantInMeeting", b =>
@@ -377,6 +421,33 @@ namespace Au5.Infrastructure.Migrations
                     b.HasIndex("MenuId");
 
                     b.ToTable("RoleMenus", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            RoleType = (byte)2,
+                            MenuId = 100
+                        },
+                        new
+                        {
+                            RoleType = (byte)2,
+                            MenuId = 200
+                        },
+                        new
+                        {
+                            RoleType = (byte)1,
+                            MenuId = 300
+                        },
+                        new
+                        {
+                            RoleType = (byte)1,
+                            MenuId = 400
+                        },
+                        new
+                        {
+                            RoleType = (byte)1,
+                            MenuId = 500
+                        });
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.SystemConfig", b =>

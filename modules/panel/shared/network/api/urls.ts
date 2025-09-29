@@ -7,10 +7,10 @@ export const API_URLS = {
     LOGOUT: "/authentication/logout",
   },
   MEETING: {
-    MY: "/meeting/my",
-    ARCHIVED: "/meeting/archived",
+    MY: `/meetings/my?status=ended`,
+    ARCHIVED: `/meetings/archived?status=archived`,
     TRANSCRIPTION: (meetingId: string, meetId: string) =>
-      `/meeting/${meetingId}/${meetId}/transcription`,
+      `/meetings/${meetingId}/sessions/${meetId}/transcription`,
   },
   SETUP: {
     HELLO_ADMIN: "/setUp/hello-admin",
@@ -22,9 +22,9 @@ export const API_URLS = {
   USERS: {
     LIST: "/users",
     ME: "/users/me",
-    INVITE: "/users/invite",
-    RETRY_INVITE: (userId: string) => `/users/${userId}/invite`,
-    STATUS: (userId: string) => `/users/${userId}/status`,
+    MY_MENU: "/users/me/menus",
+    INVITATIONS: "/users/invitations", // bulk invite
+    USER_INVITATIONS: (userId: string) => `/users/${userId}/invitations`, // resend invite
     VERIFY: (userId: string, hash: string) =>
       `/users/${userId}/verify?hash=${hash}`,
   },

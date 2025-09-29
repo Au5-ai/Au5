@@ -37,10 +37,9 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/shared/components/ui/dialog";
 
-import { UserList } from "@/shared/types";
+import { UserListItem } from "@/shared/types";
 import { getRoleDisplay } from "@/shared/lib/utils";
 import { USER_MANAGEMENT_CAPTIONS } from "../i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
@@ -52,7 +51,7 @@ export default function UserGrid({
   users,
   isLoading,
 }: {
-  users: UserList[];
+  users: UserListItem[];
   isLoading: boolean;
 }) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -69,7 +68,7 @@ export default function UserGrid({
     }
   };
 
-  const onResendInvite = async (user: UserList) => {
+  const onResendInvite = async (user: UserListItem) => {
     const { link } = await userController.retryInvite(user.id);
     if (link) {
       setModalTitle("Email Sent");
@@ -86,12 +85,12 @@ export default function UserGrid({
   });
 
   const filteredAndSortedUsers = React.useMemo(() => {
-    const filtered: UserList[] = users;
+    const filtered: UserListItem[] = users;
 
     if (sortConfig.key) {
       filtered.sort((a, b) => {
-        let aValue = a[sortConfig.key as keyof UserList];
-        let bValue = b[sortConfig.key as keyof UserList];
+        let aValue = a[sortConfig.key as keyof UserListItem];
+        let bValue = b[sortConfig.key as keyof UserListItem];
 
         if (
           sortConfig.key === "createdAt" ||

@@ -1,7 +1,6 @@
 "use client";
 
 import { NavMain } from "@/shared/components/nav-main";
-// import { NavSpaces } from "@/shared/components/nav-spaces"; // Commented out - no API for spaces
 import { NavUser } from "@/shared/components/nav-user";
 import {
   Sidebar,
@@ -11,100 +10,16 @@ import {
   SidebarMenuButton,
   SidebarRail,
 } from "@/shared/components/ui/sidebar";
-import { User } from "@/shared/types";
-import {
-  ArchiveIcon,
-  Brain,
-  ClosedCaption,
-  // Frame, // Commented out - no longer used after removing spaces
-  Settings,
-  UserPlus,
-  Waypoints,
-} from "lucide-react";
+import { User, UserMenuItem } from "@/shared/types";
 import * as React from "react";
 import Logo from "./logo";
 
-// This is sample data.
-const data = {
-  navMain: [
-    {
-      title: "My Meetings",
-      url: "/meeting/my",
-      icon: ClosedCaption,
-    },
-    {
-      title: "Archived Transcripts",
-      url: "/meeting/archived",
-      icon: ArchiveIcon,
-    },
-    {
-      title: "AI Tools",
-      url: "/assistants",
-      icon: Brain,
-      showBadge: true,
-    },
-    {
-      title: "System Settings",
-      url: "/system",
-      icon: Settings,
-    },
-    {
-      title: "User Management",
-      url: "/users",
-      icon: UserPlus,
-    },
-  ],
-  // spaces: [ // Commented out - no API for spaces
-  //   {
-  //     name: "Automation Team",
-  //     url: "#",
-  //     icon: Frame,
-  //     showBadge: true,
-  //     badge: "soon",
-  //   },
-  //   {
-  //     name: "My Agah",
-  //     url: "#",
-  //     icon: Frame,
-  //     showBadge: true,
-  //     badge: "soon",
-  //   },
-  //   {
-  //     name: "ENS Team",
-  //     url: "#",
-  //     icon: Frame,
-  //     showBadge: true,
-  //     badge: "soon",
-  //   },
-  //   {
-  //     name: "ISS Team",
-  //     url: "#",
-  //     icon: Frame,
-  //     showBadge: true,
-  //     badge: "soon",
-  //   },
-  // ],
-  // navWithSubMenu: [
-  //   {
-  //     title: "Account & Settings",
-  //     url: "#",
-  //     icon: SettingsIcon,
-  //     isActive: true,
-  //     items: [
-  //       {
-  //         title: "Settings",
-  //         url: "#",
-  //       },
-  //     ],
-  //   },
-  // ],
-};
-
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user?: User;
+  menu?: UserMenuItem[];
 }
 
-export function AppSidebar({ user, ...props }: AppSidebarProps) {
+export function AppSidebar({ user, menu, ...props }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -125,10 +40,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
         </SidebarMenuButton>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        {/* <NavSpaces spaces={data.spaces} /> */}{" "}
-        {/* Commented out - no API for spaces */}
-        {/* <NavWithSubMenu items={data.navWithSubMenu} /> */}
+        <NavMain items={menu} />
       </SidebarContent>
       <SidebarFooter>{user && <NavUser {...user} />}</SidebarFooter>
       <SidebarRail />

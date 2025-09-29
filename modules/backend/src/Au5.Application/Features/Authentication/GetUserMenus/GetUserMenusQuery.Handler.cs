@@ -39,9 +39,11 @@ public class GetUserMenusQueryHandler : IRequestHandler<GetUserMenusQuery, Resul
 		return new GetUserMenusResponse
 		{
 			Id = menu.Id,
-			Name = menu.Name,
+			Title = menu.Title,
 			Url = menu.Url,
 			Icon = menu.Icon,
+			Badge = string.Empty,
+			ShowBadge = false,
 			Children = [.. menu.Children
 						   .OrderBy(c => c.SortOrder)
 						   .Select(c => MapMenuToDto(c))]

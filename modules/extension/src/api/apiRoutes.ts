@@ -12,8 +12,8 @@ export class ApiRoutes {
     return ApiRoutes.instance;
   }
 
-  public addBot(): string {
-    return `${this.config.service.baseUrl}/meeting/addBot`;
+  public addBot(meetingId: string, meetId: string): string {
+    return `${this.config.service.baseUrl}/meeting/${meetingId}/sessions/${meetId}/actions/addBot`;
   }
 
   public getReactions(): string {
@@ -21,6 +21,6 @@ export class ApiRoutes {
   }
 
   public closeMeeting(meetingId: string, meetId: string): string {
-    return `${this.config.service.baseUrl}/meeting/${meetingId}/${meetId}/close`;
+    return `${this.config.service.baseUrl}/meeting/${meetingId}/sessions/${meetId}/actions/close`;
   }
 }

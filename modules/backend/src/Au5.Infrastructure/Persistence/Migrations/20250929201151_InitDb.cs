@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Au5.Infrastructure.Migrations
 {
 	/// <inheritdoc />
-	public partial class Init : Migration
+	public partial class InitDb : Migration
 	{
 		/// <inheritdoc />
 		protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,7 +35,7 @@ namespace Au5.Infrastructure.Migrations
 				{
 					Id = table.Column<int>(type: "int", nullable: false)
 						.Annotation("SqlServer:Identity", "1, 1"),
-					Name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
+					Title = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
 					Url = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
 					Icon = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
 					ParentId = table.Column<int>(type: "int", nullable: true),
@@ -263,13 +263,37 @@ namespace Au5.Infrastructure.Migrations
 				});
 
 			migrationBuilder.InsertData(
+				table: "Menus",
+				columns: new[] { "Id", "Icon", "IsActive", "ParentId", "SortOrder", "Title", "Url" },
+				values: new object[,]
+				{
+					{ 100, "ClosedCaption", true, null, 1, "My Meetings", "/meetings/my" },
+					{ 200, "ArchiveIcon", true, null, 2, "Archived Transcripts", "/meetings/archived" },
+					{ 300, "Brain", true, null, 3, "AI Tools", "/assistants" },
+					{ 400, "Settings", true, null, 4, "System Settings", "/system" },
+					{ 500, "UserPlus", true, null, 5, "User Management", "/users" }
+				});
+
+			migrationBuilder.InsertData(
 				table: "Reaction",
-				columns: ["Id", "ClassName", "Emoji", "IsActive", "Type"],
+				columns: new[] { "Id", "ClassName", "Emoji", "IsActive", "Type" },
 				values: new object[,]
 				{
 					{ 1, "reaction-task bg-blue-100 text-blue-700 border-blue-200", "⚡", false, "Task" },
 					{ 2, "reaction-important bg-amber-100 text-amber-700 border-amber-200", "⭐", false, "GoodPoint" },
 					{ 3, "reaction-bug bg-rose-100 text-rose-700 border-rose-200", "🐞", false, "Bug" }
+				});
+
+			migrationBuilder.InsertData(
+				table: "RoleMenus",
+				columns: new[] { "MenuId", "RoleType" },
+				values: new object[,]
+				{
+					{ 300, (byte)1 },
+					{ 400, (byte)1 },
+					{ 500, (byte)1 },
+					{ 100, (byte)2 },
+					{ 200, (byte)2 }
 				});
 
 			migrationBuilder.CreateIndex(

@@ -39,11 +39,4 @@ public class AuthenticationController(ISender mediator, ITokenService tokenServi
 
 		return Ok(new { message = "Logged out successfully" });
 	}
-
-	[HttpGet("MyMenus")]
-	public async Task<IActionResult> MyMenus()
-	{
-		var query = new GetUserMenusQuery();
-		return Ok(await mediator.Send(query));
-	}
 }

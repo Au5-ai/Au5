@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { UserPlus } from "lucide-react";
 import { Separator } from "@radix-ui/react-separator";
-import { UserList } from "@/shared/types";
+import { UserListItem } from "@/shared/types";
 import { Button, SidebarInset, SidebarTrigger } from "@/shared/components/ui";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
 import UserGrid from "@/views/(authenticated)/users/components/userGrids";
@@ -13,7 +13,7 @@ import { USER_MANAGEMENT_CAPTIONS } from "./i18n";
 import { userController } from "./userController";
 
 export default function UsersManagemnetPage() {
-  const [users, setUsers] = useState<UserList[]>([]);
+  const [users, setUsers] = useState<UserListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showInviteModal, setShowInviteModal] = useState(false);
 
