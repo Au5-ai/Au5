@@ -18,6 +18,8 @@ public record SystemConfigResponse
 
 	public string BotFatherUrl { get; set; }
 
+	public string BotHubUrl { get; set; }
+
 	[JsonIgnore]
 	public string OpenAIToken { get; set; }
 
