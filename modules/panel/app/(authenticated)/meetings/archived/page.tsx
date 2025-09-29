@@ -11,7 +11,7 @@ import { Link, Share2, Trash2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { MeetingListSkeleton } from "@/app/(authenticated)/meetings/meeting-list-skeleton";
 import { useRouter } from "next/navigation";
-import { meetingApi } from "@/shared/network/api/meeting";
+import { meetingsController } from "@/shared/network/api/meetingsController";
 import { MeetingItem } from "@/shared/types";
 import NoRecordsState from "@/shared/components/empty-states/no-record";
 import { SidebarInset, SidebarTrigger } from "@/shared/components/ui";
@@ -29,7 +29,7 @@ export default function MyMeetingPage() {
     error,
   } = useQuery({
     queryKey: ["meetings", "archived"],
-    queryFn: meetingApi.archived,
+    queryFn: meetingsController.archived,
   });
 
   const handleMeetingClick = (item: MeetingItem) => {

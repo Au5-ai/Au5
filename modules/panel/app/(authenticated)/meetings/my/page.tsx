@@ -13,7 +13,7 @@ import { MeetingListSkeleton } from "@/app/(authenticated)/meetings/meeting-list
 import { useRouter } from "next/navigation";
 import { SidebarInset, SidebarTrigger } from "@/shared/components/ui/sidebar";
 import { Separator } from "@/shared/components/ui/separator";
-import { meetingApi } from "@/shared/network/api/meeting";
+import { meetingsController } from "@/shared/network/api/meetingsController";
 import { MeetingItem } from "@/shared/types";
 import { NetworkError } from "@/shared/components/empty-states/error";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
@@ -29,7 +29,7 @@ export default function MyMeetingPage() {
     error,
   } = useQuery({
     queryKey: ["meetings", "my"],
-    queryFn: meetingApi.my,
+    queryFn: meetingsController.my,
   });
 
   const handleMeetingClick = (item: MeetingItem) => {

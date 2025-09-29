@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { Meeting } from "@/shared/types";
-import { meetingApi } from "@/shared/network/api/meeting";
+import { meetingsController } from "@/shared/network/api/meetingsController";
 import NoRecordsState from "@/shared/components/empty-states/no-record";
 import { LoadingPage } from "@/shared/components/loading-page";
 import {
@@ -49,7 +49,10 @@ export default function TranscriptionPage() {
       try {
         setLoading(true);
         setError(null);
-        const data = await meetingApi.getTranscription(meetingId, meetId);
+        const data = await meetingsController.getTranscription(
+          meetingId,
+          meetId,
+        );
         setTranscription(data);
       } catch (error) {
         console.error("Failed to load transcription:", error);
