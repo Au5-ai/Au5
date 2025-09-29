@@ -263,13 +263,37 @@ namespace Au5.Infrastructure.Migrations
 				});
 
 			migrationBuilder.InsertData(
+				table: "Menus",
+				columns: new[] { "Id", "Icon", "IsActive", "Name", "ParentId", "SortOrder", "Url" },
+				values: new object[,]
+				{
+					{ 100, "ClosedCaption", true, "My Meetings", null, 1, "/meetings/my?status=ended" },
+					{ 200, "ArchiveIcon", true, "Archived Transcripts", null, 2, "/meetings/archived?status=archived" },
+					{ 300, "Brain", true, "AI Tools", null, 3, "/assistants" },
+					{ 400, "Settings", true, "System Settings", null, 4, "/system" },
+					{ 500, "UserPlus", true, "User Management", null, 5, "/users" }
+				});
+
+			migrationBuilder.InsertData(
 				table: "Reaction",
-				columns: ["Id", "ClassName", "Emoji", "IsActive", "Type"],
+				columns: new[] { "Id", "ClassName", "Emoji", "IsActive", "Type" },
 				values: new object[,]
 				{
 					{ 1, "reaction-task bg-blue-100 text-blue-700 border-blue-200", "⚡", false, "Task" },
 					{ 2, "reaction-important bg-amber-100 text-amber-700 border-amber-200", "⭐", false, "GoodPoint" },
 					{ 3, "reaction-bug bg-rose-100 text-rose-700 border-rose-200", "🐞", false, "Bug" }
+				});
+
+			migrationBuilder.InsertData(
+				table: "RoleMenus",
+				columns: new[] { "MenuId", "RoleType" },
+				values: new object[,]
+				{
+					{ 300, (byte)1 },
+					{ 400, (byte)1 },
+					{ 500, (byte)1 },
+					{ 100, (byte)2 },
+					{ 200, (byte)2 }
 				});
 
 			migrationBuilder.CreateIndex(

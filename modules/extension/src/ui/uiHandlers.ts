@@ -400,9 +400,9 @@ export class UIHandlers {
     localStorage.removeItem("au5-meetingId");
 
     if (meetingId && meetId) {
-      panelUrl = panelUrl + `/meeting/${meetingId}/${meetId}/transcription`;
+      panelUrl = panelUrl + `/meetings/${meetingId}/sessions/${meetId}/transcription`;
     } else {
-      panelUrl = panelUrl + "/meeting/my";
+      panelUrl = panelUrl + "/meetings/my";
     }
     chrome.runtime.sendMessage({
       action: "CLOSE_SIDEPANEL",

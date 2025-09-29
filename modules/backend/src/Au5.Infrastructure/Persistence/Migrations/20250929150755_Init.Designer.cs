@@ -4,6 +4,7 @@ using Au5.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250929150755_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -274,6 +277,53 @@ namespace Au5.Infrastructure.Migrations
                     b.HasIndex("ParentId");
 
                     b.ToTable("Menus", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 100,
+                            Icon = "ClosedCaption",
+                            IsActive = true,
+                            Name = "My Meetings",
+                            SortOrder = 1,
+                            Url = "/meetings/my?status=ended"
+                        },
+                        new
+                        {
+                            Id = 200,
+                            Icon = "ArchiveIcon",
+                            IsActive = true,
+                            Name = "Archived Transcripts",
+                            SortOrder = 2,
+                            Url = "/meetings/archived?status=archived"
+                        },
+                        new
+                        {
+                            Id = 300,
+                            Icon = "Brain",
+                            IsActive = true,
+                            Name = "AI Tools",
+                            SortOrder = 3,
+                            Url = "/assistants"
+                        },
+                        new
+                        {
+                            Id = 400,
+                            Icon = "Settings",
+                            IsActive = true,
+                            Name = "System Settings",
+                            SortOrder = 4,
+                            Url = "/system"
+                        },
+                        new
+                        {
+                            Id = 500,
+                            Icon = "UserPlus",
+                            IsActive = true,
+                            Name = "User Management",
+                            SortOrder = 5,
+                            Url = "/users"
+                        });
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.ParticipantInMeeting", b =>
@@ -374,6 +424,33 @@ namespace Au5.Infrastructure.Migrations
                     b.HasIndex("MenuId");
 
                     b.ToTable("RoleMenus", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            RoleType = (byte)2,
+                            MenuId = 100
+                        },
+                        new
+                        {
+                            RoleType = (byte)2,
+                            MenuId = 200
+                        },
+                        new
+                        {
+                            RoleType = (byte)1,
+                            MenuId = 300
+                        },
+                        new
+                        {
+                            RoleType = (byte)1,
+                            MenuId = 400
+                        },
+                        new
+                        {
+                            RoleType = (byte)1,
+                            MenuId = 500
+                        });
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.SystemConfig", b =>

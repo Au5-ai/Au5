@@ -18,6 +18,7 @@ import { SidebarInset, SidebarTrigger } from "@/shared/components/ui";
 import { NetworkError } from "@/shared/components/empty-states/error";
 import { Separator } from "@radix-ui/react-separator";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
+import { API_URLS } from "@/shared/network/api/urls";
 
 export default function MyMeetingPage() {
   const router = useRouter();
@@ -34,7 +35,7 @@ export default function MyMeetingPage() {
   const handleMeetingClick = (item: MeetingItem) => {
     const meetingId = item.meetingId;
     const meetId = item.meetId;
-    router.push(`/meeting/${meetingId}/${meetId}/transcription`);
+    router.push(API_URLS.MEETING.TRANSCRIPTION(meetingId, meetId));
   };
 
   if (loading) {

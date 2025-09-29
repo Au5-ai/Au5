@@ -10,7 +10,7 @@ export const userController = {
     invites: { email: string; role: number }[],
   ): Promise<{ success: string[]; failed: string[] }> =>
     apiRequestClient<{ success: string[]; failed: string[] }>(
-      API_URLS.USERS.INVITE,
+      API_URLS.USERS.INVITATIONS,
       {
         method: "POST",
         body: JSON.stringify(invites),
@@ -19,8 +19,11 @@ export const userController = {
     ),
 
   retryInvite: (userId: string): Promise<{ link: string }> =>
-    apiRequestClient<{ link: string }>(API_URLS.USERS.RETRY_INVITE(userId), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-    }),
+    apiRequestClient<{ link: string }>(
+      API_URLS.USERS.USER_INVITATIONS(userId),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      },
+    ),
 };
