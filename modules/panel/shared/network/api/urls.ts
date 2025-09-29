@@ -7,7 +7,8 @@ export const API_URLS = {
     LOGOUT: "/authentication/logout",
   },
   MEETING: {
-    MY: (status: string) => `/meetings/my?status=${status}`,
+    MY: `/meetings/my?status=ended`,
+    ARCHIVED: `/meetings/archived?status=archived`,
     TRANSCRIPTION: (meetingId: string, meetId: string) =>
       `/meetings/${meetingId}/sessions/${meetId}/transcription`,
   },

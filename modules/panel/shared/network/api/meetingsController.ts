@@ -4,12 +4,12 @@ import { API_URLS } from "./urls";
 
 export const meetingsController = {
   my: (): Promise<MeetingData> => {
-    return apiRequestClient<MeetingData>(API_URLS.MEETING.MY("ended"), {
+    return apiRequestClient<MeetingData>(API_URLS.MEETING.MY, {
       method: "GET",
     });
   },
   archived: (): Promise<MeetingData> => {
-    return apiRequestClient<MeetingData>(API_URLS.MEETING.MY("archived"), {
+    return apiRequestClient<MeetingData>(API_URLS.MEETING.ARCHIVED, {
       method: "GET",
     });
   },
