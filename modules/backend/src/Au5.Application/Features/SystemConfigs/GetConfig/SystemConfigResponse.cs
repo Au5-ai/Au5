@@ -18,6 +18,8 @@ public record SystemConfigResponse
 
 	public string BotFatherUrl { get; set; }
 
+	public string BotHubUrl { get; set; }
+
 	[JsonIgnore]
 	public string OpenAIToken { get; set; }
 
@@ -40,4 +42,12 @@ public record SystemConfigResponse
 	public string MeetingTranscriptionModel { get; set; }
 
 	public bool SmtpUseSSl { get; set; }
+
+	public string SmtpHost { get; set; }
+
+	public int SmtpPort { get; set; }
+
+	public string SmtpUser { get; set; }
+
+	public string SmtpPassword { get; set; }
 }
