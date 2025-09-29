@@ -24,7 +24,6 @@ public class UserTests
 		Assert.Equal("Mohammad Karimi", participant.FullName);
 		Assert.Equal("http://example.com/pic.jpg", participant.PictureUrl);
 		Assert.Equal("mha.karimi@gmail.com", participant.Email);
-		Assert.True(participant.HasAccount);
 	}
 
 	[Fact]

@@ -3,7 +3,6 @@ export interface AppConfig {
     id: string;
     fullName: string;
     pictureUrl?: string;
-    hasAccount: boolean;
   };
   service: {
     jwtToken: string;

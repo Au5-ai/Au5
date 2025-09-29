@@ -24,7 +24,6 @@ public class EmailProviderTests
 	[Fact]
 	public async Task SendInviteAsync_ShouldConnectAuthenticateSendAndDisconnect()
 	{
-		// Arrange
 		_mockSmtp.SetupGet(m => m.Capabilities).Returns(MailKit.Net.Smtp.SmtpCapabilities.Authentication);
 
 		var users = new List<User>
@@ -41,10 +40,8 @@ public class EmailProviderTests
 			BaseUrl = "http://example.com"
 		};
 
-		// Act
 		await _service.SendInviteAsync(users, _organizationName, options);
 
-		// Assert
 		_mockSmtp.Verify(m => m.ConnectAsync(options.Host, options.Port, MailKit.Security.SecureSocketOptions.None, default), Times.Once);
 		_mockSmtp.Verify(m => m.AuthenticateAsync(options.User, options.Password, default), Times.Once);
 		_mockSmtp.Verify(
@@ -59,7 +56,6 @@ public class EmailProviderTests
 	[Fact]
 	public async Task SendInviteAsync_ShouldNotAuthenticateIfServerDoesNotSupport()
 	{
-		// Arrange
 		_mockSmtp.SetupGet(m => m.Capabilities).Returns(MailKit.Net.Smtp.SmtpCapabilities.None);
 
 		var users = new List<User>
@@ -76,10 +72,8 @@ public class EmailProviderTests
 			BaseUrl = "http://example.com"
 		};
 
-		// Act
 		await _service.SendInviteAsync(users, _organizationName, options);
 
-		// Assert
 		_mockSmtp.Verify(m => m.AuthenticateAsync(It.IsAny<string>(), It.IsAny<string>(), default), Times.Never);
 		_mockSmtp.Verify(m => m.SendAsync(It.IsAny<MimeMessage>(), default), Times.Once);
 	}
@@ -87,7 +81,6 @@ public class EmailProviderTests
 	[Fact]
 	public async Task SendInviteAsync_ShouldNotAuthenticateIfNoCredentialsProvided()
 	{
-		// Arrange
 		_mockSmtp.SetupGet(m => m.Capabilities).Returns(MailKit.Net.Smtp.SmtpCapabilities.Authentication);
 
 		var users = new List<User>
@@ -104,10 +97,8 @@ public class EmailProviderTests
 			BaseUrl = "http://example.com"
 		};
 
-		// Act
 		await _service.SendInviteAsync(users, _organizationName, options);
 
-		// Assert
 		_mockSmtp.Verify(m => m.AuthenticateAsync(It.IsAny<string>(), It.IsAny<string>(), default), Times.Never);
 		_mockSmtp.Verify(m => m.SendAsync(It.IsAny<MimeMessage>(), default), Times.Once);
 	}
@@ -115,7 +106,6 @@ public class EmailProviderTests
 	[Fact]
 	public async Task SendInviteAsync_ShouldSendMultipleEmails()
 	{
-		// Arrange
 		_mockSmtp.SetupGet(m => m.Capabilities).Returns(MailKit.Net.Smtp.SmtpCapabilities.Authentication);
 
 		var users = new List<User>
@@ -133,10 +123,8 @@ public class EmailProviderTests
 			BaseUrl = "http://example.com"
 		};
 
-		// Act
 		await _service.SendInviteAsync(users, _organizationName, options);
 
-		// Assert
 		_mockSmtp.Verify(m => m.SendAsync(It.IsAny<MimeMessage>(), default), Times.Exactly(2));
 	}
 }

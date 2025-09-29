@@ -46,6 +46,52 @@ namespace Au5.Infrastructure.Migrations
                     b.ToTable("AppliedReactions");
                 });
 
+            modelBuilder.Entity("Au5.Domain.Entities.Assistant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("Icon")
+                        .HasMaxLength(200)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("OpenAIAssistantId")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("Prompt")
+                        .HasMaxLength(2000)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(2000)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Assistant");
+                });
+
             modelBuilder.Entity("Au5.Domain.Entities.Entry", b =>
                 {
                     b.Property<int>("Id")
@@ -186,6 +232,50 @@ namespace Au5.Infrastructure.Migrations
                     b.ToTable("Meeting");
                 });
 
+            modelBuilder.Entity("Au5.Domain.Entities.Menu", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Icon")
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SortOrder")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Url")
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("Menus", (string)null);
+                });
+
             modelBuilder.Entity("Au5.Domain.Entities.ParticipantInMeeting", b =>
                 {
                     b.Property<int>("Id")
@@ -269,6 +359,21 @@ namespace Au5.Infrastructure.Migrations
                             IsActive = false,
                             Type = "Bug"
                         });
+                });
+
+            modelBuilder.Entity("Au5.Domain.Entities.RoleMenu", b =>
+                {
+                    b.Property<byte>("RoleType")
+                        .HasColumnType("tinyint");
+
+                    b.Property<int>("MenuId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RoleType", "MenuId");
+
+                    b.HasIndex("MenuId");
+
+                    b.ToTable("RoleMenus", (string)null);
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.SystemConfig", b =>
@@ -500,9 +605,6 @@ namespace Au5.Infrastructure.Migrations
                                 .IsUnicode(false)
                                 .HasColumnType("varchar(200)");
 
-                            b1.Property<bool>("HasAccount")
-                                .HasColumnType("bit");
-
                             b1.Property<Guid>("Id")
                                 .HasColumnType("uniqueidentifier");
 
@@ -558,6 +660,16 @@ namespace Au5.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Au5.Domain.Entities.Menu", b =>
+                {
+                    b.HasOne("Au5.Domain.Entities.Menu", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Parent");
+                });
+
             modelBuilder.Entity("Au5.Domain.Entities.ParticipantInMeeting", b =>
                 {
                     b.HasOne("Au5.Domain.Entities.Meeting", "Meeting")
@@ -577,6 +689,17 @@ namespace Au5.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Au5.Domain.Entities.RoleMenu", b =>
+                {
+                    b.HasOne("Au5.Domain.Entities.Menu", "Menu")
+                        .WithMany("RoleMenus")
+                        .HasForeignKey("MenuId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Menu");
+                });
+
             modelBuilder.Entity("Au5.Domain.Entities.Entry", b =>
                 {
                     b.Navigation("Reactions");
@@ -589,6 +712,13 @@ namespace Au5.Infrastructure.Migrations
                     b.Navigation("Guests");
 
                     b.Navigation("Participants");
+                });
+
+            modelBuilder.Entity("Au5.Domain.Entities.Menu", b =>
+                {
+                    b.Navigation("Children");
+
+                    b.Navigation("RoleMenus");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.User", b =>

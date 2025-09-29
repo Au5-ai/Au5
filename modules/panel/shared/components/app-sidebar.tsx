@@ -4,22 +4,22 @@ import { NavMain } from "@/shared/components/nav-main";
 // import { NavSpaces } from "@/shared/components/nav-spaces"; // Commented out - no API for spaces
 import { NavUser } from "@/shared/components/nav-user";
 import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarHeader,
-    SidebarMenuButton,
-    SidebarRail,
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenuButton,
+  SidebarRail,
 } from "@/shared/components/ui/sidebar";
 import { User } from "@/shared/types";
 import {
-    ArchiveIcon,
-    Brain,
-    ClosedCaption,
-    // Frame, // Commented out - no longer used after removing spaces
-    Settings,
-    UserPlus,
-    Waypoints,
+  ArchiveIcon,
+  Brain,
+  ClosedCaption,
+  // Frame, // Commented out - no longer used after removing spaces
+  Settings,
+  UserPlus,
+  Waypoints,
 } from "lucide-react";
 import * as React from "react";
 import Logo from "./logo";
@@ -38,18 +38,10 @@ const data = {
       icon: ArchiveIcon,
     },
     {
-      title: "Shared With Me",
-      url: "#",
-      icon: Waypoints,
-      showBadge: true,
-      badge: "soon",
-    },
-    {
       title: "AI Tools",
-      url: "#",
+      url: "/assistants",
       icon: Brain,
       showBadge: true,
-      badge: "soon",
     },
     {
       title: "System Settings",
@@ -134,7 +126,8 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        {/* <NavSpaces spaces={data.spaces} /> */} {/* Commented out - no API for spaces */}
+        {/* <NavSpaces spaces={data.spaces} /> */}{" "}
+        {/* Commented out - no API for spaces */}
         {/* <NavWithSubMenu items={data.navWithSubMenu} /> */}
       </SidebarContent>
       <SidebarFooter>{user && <NavUser {...user} />}</SidebarFooter>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Clock, Gem } from "lucide-react";
+import { Bot, Gem, LaptopMinimal, Timer } from "lucide-react";
 import { Badge } from "@/shared/components/ui/badge";
 import { format } from "date-fns";
 import { Meeting } from "@/shared/types";
@@ -21,14 +21,20 @@ export default function TranscriptionHeader({ meeting }: { meeting: Meeting }) {
               {meeting.title}
             </h1>
             <div className="flex items-center gap-3 text-sm text-gray-600">
-              <span className="font-medium">{meeting.meetingId}</span>
+              <div className="flex items-center gap-1">
+                <LaptopMinimal className="w-4 h-4" />
+                <span>{meeting.meetingId}</span>
+              </div>
               <div className="w-1 h-1 rounded-full bg-gray-300" />
               <div className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
+                <Timer className="w-4 h-4" />
                 <span>{meeting.duration}</span>
               </div>
               <div className="w-1 h-1 rounded-full bg-gray-300" />
-              <span>{meeting.botName}</span>
+              <div className="flex items-center gap-1">
+                <Bot className="w-4 h-4" />
+                <span>{meeting.botName}</span>
+              </div>
             </div>
           </div>
 

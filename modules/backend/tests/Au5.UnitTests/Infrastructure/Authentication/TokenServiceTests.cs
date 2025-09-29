@@ -1,5 +1,4 @@
 using System.IdentityModel.Tokens.Jwt;
-using Au5.Application.Common.Abstractions;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Au5.UnitTests.Infrastructure.Authentication;
@@ -35,7 +34,7 @@ public class TokenServiceTests
 	{
 		var participantId = Guid.NewGuid();
 		var participantName = "Test User";
-		var role = "Admin";
+		var role = RoleTypes.Admin;
 
 		var tokenResponse = _tokenService.GenerateToken(participantId, participantName, role);
 

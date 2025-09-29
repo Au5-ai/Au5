@@ -43,7 +43,6 @@ public class MeetingServiceTests
 				Id = Guid.NewGuid(),
 				FullName = "Mohammad K",
 				PictureUrl = "https://example.com/picture.jpg",
-				HasAccount = true
 			}
 		};
 
@@ -82,7 +81,6 @@ public class MeetingServiceTests
 				Id = Guid.NewGuid(),
 				FullName = "Mohammad K",
 				PictureUrl = "https://example.com/picture.jpg",
-				HasAccount = true
 			}
 		};
 
@@ -123,7 +121,6 @@ public class MeetingServiceTests
 				Id = newUserId,
 				FullName = "Jane Doe",
 				PictureUrl = "https://example.com/jane.jpg",
-				HasAccount = true
 			}
 		};
 
@@ -163,7 +160,6 @@ public class MeetingServiceTests
 				Id = userId,
 				FullName = "Mohammad K",
 				PictureUrl = "https://example.com/john.jpg",
-				HasAccount = true
 			}
 		};
 
@@ -186,7 +182,6 @@ public class MeetingServiceTests
 			{
 				Id = Guid.NewGuid(),
 				FullName = "Guest User",
-				HasAccount = false,
 				PictureUrl = "https://example.com/guest.jpg"
 			}
 		};
@@ -216,7 +211,6 @@ public class MeetingServiceTests
 			{
 				Id = Guid.NewGuid(),
 				FullName = "Guest User",
-				HasAccount = false,
 				PictureUrl = "https://example.com/guest.jpg"
 			}
 		};
@@ -246,14 +240,12 @@ public class MeetingServiceTests
 			{
 				Id = Guid.NewGuid(),
 				FullName = "Guest User 1",
-				HasAccount = false,
 				PictureUrl = "https://example.com/guest1.jpg"
 			},
 			new()
 			{
 				Id = Guid.NewGuid(),
 				FullName = "Guest User 2",
-				HasAccount = false,
 				PictureUrl = "https://example.com/guest2.jpg"
 			}
 		};
@@ -292,7 +284,6 @@ public class MeetingServiceTests
 			{
 				Id = Guid.NewGuid(),
 				FullName = existingGuestName,
-				HasAccount = false,
 				PictureUrl = "https://example.com/guest.jpg"
 			}
 		};
@@ -303,36 +294,6 @@ public class MeetingServiceTests
 		await _meetingService.AddGuestsToMeet(guests, "meet123");
 
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.Is<Meeting>(m => m.Guests.Count == 1), TimeSpan.FromHours(1)), Times.Once);
-	}
-
-	[Fact]
-	public async Task AddGuestsToMeet_WhenGuestHasAccount_ShouldNotAddGuest()
-	{
-		var activeMeeting = new Meeting
-		{
-			Id = Guid.NewGuid(),
-			MeetId = "meet123",
-			Status = MeetingStatus.Recording,
-			Guests = []
-		};
-
-		var guests = new List<Participant>
-		{
-			new()
-			{
-				Id = Guid.NewGuid(),
-				FullName = "User With Account",
-				HasAccount = true,
-				PictureUrl = "https://example.com/user.jpg"
-			}
-		};
-
-		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
-			.ReturnsAsync(activeMeeting);
-
-		await _meetingService.AddGuestsToMeet(guests, "meet123");
-
-		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.Is<Meeting>(m => m.Guests.Count == 0), TimeSpan.FromHours(1)), Times.Once);
 	}
 
 	[Fact]

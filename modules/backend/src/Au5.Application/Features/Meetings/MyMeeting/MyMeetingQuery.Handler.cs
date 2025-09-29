@@ -1,6 +1,3 @@
-using Au5.Application.Common.Abstractions;
-using Microsoft.EntityFrameworkCore;
-
 namespace Au5.Application.Features.Meetings.MyMeeting;
 
 public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IReadOnlyCollection<MyMeetingsGroupedResponse>>>
@@ -42,7 +39,6 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 				{
 					FullName = p.User.FullName,
 					PictureUrl = p.User.PictureUrl,
-					HasAccount = true,
 					Email = p.User.Email,
 					Id = p.UserId
 				}).ToList()

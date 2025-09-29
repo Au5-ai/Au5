@@ -5,6 +5,8 @@ namespace Au5.UnitTests.Application;
 /// </summary>
 internal static class AppResources
 {
+	public const string DatabaseFailureMessage = "Failed to save record, Pleach check your data and try again.";
+
 	/// <summary>
 	/// System configuration related messages.
 	/// </summary>
