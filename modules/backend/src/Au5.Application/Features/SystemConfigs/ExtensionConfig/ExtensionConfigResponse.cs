@@ -13,5 +13,4 @@ public record ExtensionConfigResponse
 	public string ServiceBaseUrl { get; init; }
 
 	public string PanelUrl { get; init; }
-
 }

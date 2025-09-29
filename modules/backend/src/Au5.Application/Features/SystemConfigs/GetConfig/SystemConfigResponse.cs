@@ -20,7 +20,6 @@ public record SystemConfigResponse
 
 	public string BotHubUrl { get; set; }
 
-	[JsonIgnore]
 	public string OpenAIToken { get; set; }
 
 	public string OpenAIProxyUrl { get; set; }
