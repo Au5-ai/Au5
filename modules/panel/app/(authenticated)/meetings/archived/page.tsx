@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 import { Link, Share2, Trash2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { MeetingListSkeleton } from "@/app/(authenticated)/meeting/meeting-list-skeleton";
+import { MeetingListSkeleton } from "@/app/(authenticated)/meetings/meeting-list-skeleton";
 import { useRouter } from "next/navigation";
 import { meetingApi } from "@/shared/network/api/meeting";
 import { MeetingItem } from "@/shared/types";

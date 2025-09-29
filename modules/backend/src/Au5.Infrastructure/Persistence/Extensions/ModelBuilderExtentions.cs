@@ -41,8 +41,8 @@ public static class ModelBuilderExtension
 		{
 			var menus = new[]
 			{
-				new Menu { Id = 100, Title = "My Meetings", Url = "/meetings/my?status=ended", Icon = "ClosedCaption", SortOrder = 1, IsActive = true },
-				new Menu { Id = 200, Title = "Archived Transcripts", Url = "/meetings/archived?status=archived", Icon = "ArchiveIcon", SortOrder = 2, IsActive = true },
+				new Menu { Id = 100, Title = "My Meetings", Url = "/meetings/my", Icon = "ClosedCaption", SortOrder = 1, IsActive = true },
+				new Menu { Id = 200, Title = "Archived Transcripts", Url = "/meetings/archived", Icon = "ArchiveIcon", SortOrder = 2, IsActive = true },
 				new Menu { Id = 300, Title = "AI Tools", Url = "/assistants", Icon = "Brain", SortOrder = 3, IsActive = true },
 				new Menu { Id = 400, Title = "System Settings", Url = "/system", Icon = "Settings", SortOrder = 4, IsActive = true },
 				new Menu { Id = 500, Title = "User Management", Url = "/users", Icon = "UserPlus", SortOrder = 5, IsActive = true }

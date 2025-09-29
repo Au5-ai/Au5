@@ -1,9 +1,12 @@
+import { LucideIcon } from "lucide-react";
+
 export type UserRole = 1 | 2;
 
 export interface UserMenuItem {
   id: string;
   title: string;
-  icon?: string;
+  icon: string;
+  lucideIcon?: LucideIcon;
   url: string;
   showBadge: boolean;
   badge?: string;

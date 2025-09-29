@@ -25,7 +25,7 @@ public class UsersController(ISender mediator) : BaseController
 		return Ok(await mediator.Send(new GetMyInfoQuery()));
 	}
 
-	[HttpGet("/me/menus")]
+	[HttpGet("me/menus")]
 	public async Task<IActionResult> GetCurrentUserMenus()
 	{
 		var query = new GetUserMenusQuery();

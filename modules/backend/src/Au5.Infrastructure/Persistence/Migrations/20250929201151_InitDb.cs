@@ -267,8 +267,8 @@ namespace Au5.Infrastructure.Migrations
 				columns: new[] { "Id", "Icon", "IsActive", "ParentId", "SortOrder", "Title", "Url" },
 				values: new object[,]
 				{
-					{ 100, "ClosedCaption", true, null, 1, "My Meetings", "/meetings/my?status=ended" },
-					{ 200, "ArchiveIcon", true, null, 2, "Archived Transcripts", "/meetings/archived?status=archived" },
+					{ 100, "ClosedCaption", true, null, 1, "My Meetings", "/meetings/my" },
+					{ 200, "ArchiveIcon", true, null, 2, "Archived Transcripts", "/meetings/archived" },
 					{ 300, "Brain", true, null, 3, "AI Tools", "/assistants" },
 					{ 400, "Settings", true, null, 4, "System Settings", "/system" },
 					{ 500, "UserPlus", true, null, 5, "User Management", "/users" }

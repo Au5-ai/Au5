@@ -23,7 +23,7 @@ export function NavMain({ items }: { items: UserMenuItem[] | undefined }) {
                 tooltip={item.title}
                 className="cursor-pointer"
                 onClick={() => (window.location.href = item.url)}>
-                {item.icon && <item.icon />}
+                {item.lucideIcon && <item.lucideIcon />}
                 <span>{item.title}</span>
               </SidebarMenuButton>
 

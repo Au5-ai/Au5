@@ -283,7 +283,7 @@ namespace Au5.Infrastructure.Migrations
                             IsActive = true,
                             SortOrder = 1,
                             Title = "My Meetings",
-                            Url = "/meetings/my?status=ended"
+                            Url = "/meetings/my"
                         },
                         new
                         {
@@ -292,7 +292,7 @@ namespace Au5.Infrastructure.Migrations
                             IsActive = true,
                             SortOrder = 2,
                             Title = "Archived Transcripts",
-                            Url = "/meetings/archived?status=archived"
+                            Url = "/meetings/archived"
                         },
                         new
                         {
