@@ -16,9 +16,10 @@ namespace Au5.Infrastructure.Migrations
 				{
 					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					Name = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
-					Icon = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
+					Icon = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
 					Description = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
 					Prompt = table.Column<string>(type: "varchar(2000)", unicode: false, maxLength: 2000, nullable: true),
+					OpenAIAssistantId = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
 					IsDefault = table.Column<bool>(type: "bit", nullable: false),
 					IsActive = table.Column<bool>(type: "bit", nullable: false),
 					CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -26,6 +27,29 @@ namespace Au5.Infrastructure.Migrations
 				constraints: table =>
 				{
 					table.PrimaryKey("PK_Assistant", x => x.Id);
+				});
+
+			migrationBuilder.CreateTable(
+				name: "Menus",
+				columns: table => new
+				{
+					Id = table.Column<int>(type: "int", nullable: false)
+						.Annotation("SqlServer:Identity", "1, 1"),
+					Name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
+					Url = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
+					Icon = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
+					ParentId = table.Column<int>(type: "int", nullable: true),
+					SortOrder = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+					IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
+				},
+				constraints: table =>
+				{
+					table.PrimaryKey("PK_Menus", x => x.Id);
+					table.ForeignKey(
+						name: "FK_Menus_Menus_ParentId",
+						column: x => x.ParentId,
+						principalTable: "Menus",
+						principalColumn: "Id");
 				});
 
 			migrationBuilder.CreateTable(
@@ -97,6 +121,23 @@ namespace Au5.Infrastructure.Migrations
 				constraints: table =>
 				{
 					table.PrimaryKey("PK_dbo_User", x => x.Id);
+				});
+
+			migrationBuilder.CreateTable(
+				name: "RoleMenus",
+				columns: table => new
+				{
+					RoleType = table.Column<byte>(type: "tinyint", nullable: false),
+					MenuId = table.Column<int>(type: "int", nullable: false)
+				},
+				constraints: table =>
+				{
+					table.PrimaryKey("PK_RoleMenus", x => new { x.RoleType, x.MenuId });
+					table.ForeignKey(
+						name: "FK_RoleMenus_Menus_MenuId",
+						column: x => x.MenuId,
+						principalTable: "Menus",
+						principalColumn: "Id");
 				});
 
 			migrationBuilder.CreateTable(
@@ -223,18 +264,13 @@ namespace Au5.Infrastructure.Migrations
 
 			migrationBuilder.InsertData(
 				table: "Reaction",
-				columns: new[] { "Id", "ClassName", "Emoji", "IsActive", "Type" },
+				columns: ["Id", "ClassName", "Emoji", "IsActive", "Type"],
 				values: new object[,]
 				{
 					{ 1, "reaction-task bg-blue-100 text-blue-700 border-blue-200", "⚡", false, "Task" },
 					{ 2, "reaction-important bg-amber-100 text-amber-700 border-amber-200", "⭐", false, "GoodPoint" },
 					{ 3, "reaction-bug bg-rose-100 text-rose-700 border-rose-200", "🐞", false, "Bug" }
 				});
-
-			migrationBuilder.InsertData(
-				table: "User",
-				columns: new[] { "Id", "CreatedAt", "Email", "FullName", "IsActive", "LastLoginAt", "LastPasswordChangeAt", "Password", "PictureUrl", "Role", "Status" },
-				values: new object[] { new Guid("edada1f7-cbda-4c13-8504-a57fe72d5960"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "mha.karimi@gmail.com", "Mohammad Karimi", true, null, null, "0PVQk0Qiwb8gY3iUipZQKhBQgDMJ/1PJfmIDhG5hbrA=", "https://i.imgur.com/ESenFCJ.jpeg", (byte)2, 0 });
 
 			migrationBuilder.CreateIndex(
 				name: "IX_AppliedReactions_EntryId",
@@ -262,6 +298,11 @@ namespace Au5.Infrastructure.Migrations
 				column: "BotInviterUserId");
 
 			migrationBuilder.CreateIndex(
+				name: "IX_Menus_ParentId",
+				table: "Menus",
+				column: "ParentId");
+
+			migrationBuilder.CreateIndex(
 				name: "IX_ParticipantInMeeting_MeetingId",
 				table: "ParticipantInMeeting",
 				column: "MeetingId");
@@ -270,6 +311,11 @@ namespace Au5.Infrastructure.Migrations
 				name: "IX_ParticipantInMeeting_UserId",
 				table: "ParticipantInMeeting",
 				column: "UserId");
+
+			migrationBuilder.CreateIndex(
+				name: "IX_RoleMenus_MenuId",
+				table: "RoleMenus",
+				column: "MenuId");
 
 			migrationBuilder.CreateIndex(
 				name: "IX_User_Email",
@@ -294,6 +340,9 @@ namespace Au5.Infrastructure.Migrations
 				name: "ParticipantInMeeting");
 
 			migrationBuilder.DropTable(
+				name: "RoleMenus");
+
+			migrationBuilder.DropTable(
 				name: "SystemConfig");
 
 			migrationBuilder.DropTable(
@@ -301,6 +350,9 @@ namespace Au5.Infrastructure.Migrations
 
 			migrationBuilder.DropTable(
 				name: "Reaction");
+
+			migrationBuilder.DropTable(
+				name: "Menus");
 
 			migrationBuilder.DropTable(
 				name: "Meeting");
