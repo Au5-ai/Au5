@@ -3,7 +3,7 @@
 import { SidebarProvider } from "@/shared/components/ui";
 import { AppSidebar } from "@/shared/components/app-sidebar";
 import { AuthGuard } from "@/shared/components/auth-guard";
-import { useUser } from "@/shared/hooks/use-auth";
+import { useCurrentUser, useCurrentUserMenu } from "@/shared/hooks/user-user";
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
@@ -12,11 +12,12 @@ interface AuthenticatedLayoutProps {
 export default function AuthenticatedLayout({
   children,
 }: AuthenticatedLayoutProps) {
-  const { data: user } = useUser();
+  const { data: user } = useCurrentUser();
+  const { data: menu } = useCurrentUserMenu();
   return (
     <AuthGuard>
       <SidebarProvider>
-        <AppSidebar user={user} />
+        <AppSidebar user={user} menu={menu} />
         {children}
       </SidebarProvider>
     </AuthGuard>

@@ -1,18 +1,8 @@
 var __defProp = Object.defineProperty;
-var __defNormalProp = (obj, key, value) =>
-  key in obj
-    ? __defProp(obj, key, {
-        enumerable: true,
-        configurable: true,
-        writable: true,
-        value,
-      })
-    : (obj[key] = value);
-var __publicField = (obj, key, value) =>
-  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 const platformRegex = {
-  googleMeet:
-    /https:\/\/meet\.google\.com\/([a-zA-Z0-9]{3}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{3})/,
+  googleMeet: /https:\/\/meet\.google\.com\/([a-zA-Z0-9]{3}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{3})/
 };
 var MessageTypes = /* @__PURE__ */ ((MessageTypes2) => {
   MessageTypes2["UserJoinedInMeeting"] = "UserJoinedInMeeting";
@@ -41,7 +31,7 @@ const _StateManager = class _StateManager {
       isBotAdded: false,
       isTranscriptionPaused: false,
       isBotContainerVisible: true,
-      theme: "light",
+      theme: "light"
     });
   }
   static getInstance() {
@@ -96,26 +86,16 @@ class ChatPanel {
     __publicField(this, "reactions", []);
     __publicField(this, "stateManager", StateManager.getInstance());
     var _a;
-    this.unauthorizedContainerEl = document.getElementById(
-      "au5-userUnAuthorized"
-    );
+    this.unauthorizedContainerEl = document.getElementById("au5-userUnAuthorized");
     this.noActiveMeetingEl = document.getElementById("au5-noActiveMeeting");
-    this.activeMeetingButNotStartedEl = document.getElementById(
-      "au5-activeMeetingButNotStarted"
-    );
+    this.activeMeetingButNotStartedEl = document.getElementById("au5-activeMeetingButNotStarted");
     this.activeMeetingEl = document.getElementById("au5-activeMeeting");
-    this.transcriptionsContainerEl =
-      (_a = this.activeMeetingEl) == null
-        ? void 0
-        : _a.querySelector(".au5-transcriptions-container");
+    this.transcriptionsContainerEl = (_a = this.activeMeetingEl) == null ? void 0 : _a.querySelector(
+      ".au5-transcriptions-container"
+    );
   }
   escapeHtml(text) {
-    return text
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
   }
   setUserLogin(user) {
     const avatar = document.getElementById("userAvatar");
@@ -154,16 +134,12 @@ class ChatPanel {
   }
   showTranscriptionContainer() {
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("hidden");
-    if (this.activeMeetingButNotStartedEl)
-      this.activeMeetingButNotStartedEl.classList.add("hidden");
+    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("hidden");
     if (this.activeMeetingEl) this.activeMeetingEl.classList.remove("hidden");
     const editor = document.querySelector(".au5-chat-editor");
     if (editor) {
       editor.addEventListener("input", () => {
-        if (
-          editor.innerHTML.trim() === "<br>" ||
-          editor.innerHTML.trim() === ""
-        ) {
+        if (editor.innerHTML.trim() === "<br>" || editor.innerHTML.trim() === "") {
           editor.innerHTML = "";
         }
       });
@@ -174,18 +150,14 @@ class ChatPanel {
     if (!this.transcriptionsContainerEl) {
       return;
     }
-    const existing = this.transcriptionsContainerEl.querySelector(
-      `[data-id="${entry.blockId}"]`
-    );
+    const existing = this.transcriptionsContainerEl.querySelector(`[data-id="${entry.blockId}"]`);
     if (existing) {
       const textEl = existing.querySelector(".au5-message-text");
       if (textEl) textEl.innerText = entry.content;
       return;
     }
     const isChat = entry.entryType === "Chat";
-    const iconHtml = isChat
-      ? '<span class="au5-message-type-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-more-icon lucide-message-circle-more"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"></path><path d="M8 12h.01"></path><path d="M12 12h.01"></path><path d="M16 12h.01"></path></svg></span>'
-      : '<span class="au5-message-type-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-closed-caption-icon lucide-closed-caption"><path d="M10 9.17a3 3 0 1 0 0 5.66"/><path d="M17 9.17a3 3 0 1 0 0 5.66"/><rect x="2" y="5" width="20" height="14" rx="2"/></svg></span>';
+    const iconHtml = isChat ? '<span class="au5-message-type-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-more-icon lucide-message-circle-more"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"></path><path d="M8 12h.01"></path><path d="M12 12h.01"></path><path d="M16 12h.01"></path></svg></span>' : '<span class="au5-message-type-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-closed-caption-icon lucide-closed-caption"><path d="M10 9.17a3 3 0 1 0 0 5.66"/><path d="M17 9.17a3 3 0 1 0 0 5.66"/><rect x="2" y="5" width="20" height="14" rx="2"/></svg></span>';
     const entryBlock = document.createElement("div");
     entryBlock.setAttribute("data-id", entry.blockId);
     entryBlock.className = "au5-transcription";
@@ -201,12 +173,8 @@ class ChatPanel {
 
     <div class="au5-message-bubble">
       <div class="au5-message-header">
-      <span class="au5-message-sender">${this.escapeHtml(
-        entry.participant.fullName
-      )}</span>
-      <span class="au5-message-time">${DateTime.toHoursAndMinutes(
-        entry.timestamp
-      )}
+      <span class="au5-message-sender">${this.escapeHtml(entry.participant.fullName)}</span>
+      <span class="au5-message-time">${DateTime.toHoursAndMinutes(entry.timestamp)}
       ${iconHtml}
         </span>
       </div>
@@ -226,10 +194,7 @@ class ChatPanel {
     this.addUserJoinedOrLeaved(botName, true);
     this.stateManager.setBotAdded(true);
     this.removeBotContainer();
-    const botPlayContainer =
-      (_a = this.activeMeetingEl) == null
-        ? void 0
-        : _a.querySelector("#au5-bot-playContainer");
+    const botPlayContainer = (_a = this.activeMeetingEl) == null ? void 0 : _a.querySelector("#au5-bot-playContainer");
     if (!botPlayContainer) {
       return;
     }
@@ -263,8 +228,7 @@ class ChatPanel {
       console.warn("Transcription block not found for reaction:", reaction);
       return;
     }
-    const reactionsContainer =
-      transcriptionBlock.querySelector(".au5-reaction-list");
+    const reactionsContainer = transcriptionBlock.querySelector(".au5-reaction-list");
     if (!reactionsContainer) {
       console.warn("Reactions container not found in transcription block.");
       return;
@@ -273,9 +237,7 @@ class ChatPanel {
       `.au5-reaction[reaction-type="${reaction.reactionType}"]`
     );
     if (existingReaction) {
-      const reactionUsersContainer = existingReaction.querySelector(
-        ".au5-reaction-users"
-      );
+      const reactionUsersContainer = existingReaction.querySelector(".au5-reaction-users");
       if (!reactionUsersContainer) {
         console.warn("Reaction users container not found.");
         return;
@@ -300,9 +262,7 @@ class ChatPanel {
     if (!this.transcriptionsContainerEl) {
       return;
     }
-    const botContainer = this.transcriptionsContainerEl.querySelector(
-      "#au5-addBot-container"
-    );
+    const botContainer = this.transcriptionsContainerEl.querySelector("#au5-addBot-container");
     if (botContainer) {
       botContainer.classList.add("hidden");
       const botRequested = document.createElement("div");
@@ -345,12 +305,8 @@ class ChatPanel {
     if (!this.activeMeetingEl) {
       return;
     }
-    const botPlayAction = this.activeMeetingEl.querySelector(
-      "#au5-bot-playAction"
-    );
-    const botPauseAction = this.activeMeetingEl.querySelector(
-      "#au5-bot-pauseAction"
-    );
+    const botPlayAction = this.activeMeetingEl.querySelector("#au5-bot-playAction");
+    const botPauseAction = this.activeMeetingEl.querySelector("#au5-bot-pauseAction");
     if (!botPlayAction || !botPauseAction) {
       return;
     }
@@ -358,15 +314,11 @@ class ChatPanel {
     if (action.isPaused === true) {
       botPlayAction.removeAttribute("style");
       botPauseAction.setAttribute("style", `display:none;`);
-      this.addGeneralMessage(
-        "🫸🏻 Transcription paused by " + action.user.fullName
-      );
+      this.addGeneralMessage("🫸🏻 Transcription paused by " + action.user.fullName);
     } else {
       botPlayAction.setAttribute("style", `display:none;`);
       botPauseAction.removeAttribute("style");
-      this.addGeneralMessage(
-        "🎮 Transcription resumed by " + action.user.fullName
-      );
+      this.addGeneralMessage("🎮 Transcription resumed by " + action.user.fullName);
     }
   }
   setUrl(url) {
@@ -387,9 +339,7 @@ class ChatPanel {
     }
     const usersJoined = document.createElement("div");
     usersJoined.className = "au5-join-time";
-    usersJoined.innerText = `👋 ${name} ${
-      isJoined ? "Joined" : "Leaved"
-    } at ${DateTime.toHoursAndMinutes(/* @__PURE__ */ new Date())}`;
+    usersJoined.innerText = `👋 ${name} ${isJoined ? "Joined" : "Leaved"} at ${DateTime.toHoursAndMinutes(/* @__PURE__ */ new Date())}`;
     this.transcriptionsContainerEl.appendChild(usersJoined);
     this.scrollToBottom();
   }
@@ -407,30 +357,26 @@ class ChatPanel {
     if (this.transcriptionsContainerEl) {
       this.transcriptionsContainerEl.scrollTo({
         top: this.transcriptionsContainerEl.scrollHeight,
-        behavior: "smooth",
+        behavior: "smooth"
       });
     }
   }
   hideAllContainers() {
-    if (this.unauthorizedContainerEl)
-      this.unauthorizedContainerEl.classList.add("hidden");
+    if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.add("hidden");
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("hidden");
-    if (this.activeMeetingButNotStartedEl)
-      this.activeMeetingButNotStartedEl.classList.add("hidden");
+    if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("hidden");
   }
   getReactionsHtml(blockId) {
     if (!this.reactions || this.reactions.length === 0) {
       return "";
     }
-    const reactionsHtml = this.reactions
-      .map((reaction) => {
-        return `
+    const reactionsHtml = this.reactions.map((reaction) => {
+      return `
       <div class="au5-reaction ${reaction.className}" reaction-Id="${reaction.id}" reaction-type="${reaction.type}" data-blockId="${blockId}">
         <span class="au5-reaction-emoji">${reaction.emoji}</span>
         <div class="au5-reaction-users"></div>
       </div>`;
-      })
-      .join("");
+    }).join("");
     return `
       <div class="au5-message-reactions">
         <div class="au5-reaction-list">
@@ -488,7 +434,7 @@ class MeetingPlatformFactory {
   getPlatform() {
     let platformName = null;
     const patterns = {
-      "Google Meet": platformRegex.googleMeet,
+      "Google Meet": platformRegex.googleMeet
     };
     for (const [platform2, pattern] of Object.entries(patterns)) {
       if (pattern.test(this._url)) {
@@ -517,14 +463,14 @@ const _ApiRoutes = class _ApiRoutes {
     }
     return _ApiRoutes.instance;
   }
-  addBot() {
-    return `${this.config.service.baseUrl}/meeting/addBot`;
+  addBot(meetingId, meetId) {
+    return `${this.config.service.baseUrl}/meeting/${meetingId}/sessions/${meetId}/actions/addBot`;
   }
   getReactions() {
     return `${this.config.service.baseUrl}/reactions`;
   }
   closeMeeting(meetingId, meetId) {
-    return `${this.config.service.baseUrl}/meeting/${meetingId}/${meetId}/close`;
+    return `${this.config.service.baseUrl}/meeting/${meetingId}/sessions/${meetId}/actions/close`;
   }
 };
 __publicField(_ApiRoutes, "instance");
@@ -533,7 +479,7 @@ async function apiRequest(url, options = {}) {
   const { method = "GET", headers = {}, body, authToken } = options;
   const finalHeaders = new Headers({
     "Content-Type": "application/json",
-    ...headers,
+    ...headers
   });
   if (authToken) {
     finalHeaders.set("Authorization", `Bearer ${authToken}`);
@@ -541,7 +487,7 @@ async function apiRequest(url, options = {}) {
   const response = await fetch(url, {
     method,
     headers: finalHeaders,
-    body: body ? JSON.stringify(body) : void 0,
+    body: body ? JSON.stringify(body) : void 0
   });
   if (!response.ok) {
     const errorText = await response.text();
@@ -557,29 +503,23 @@ class BackEndApi {
     this.config = config2;
   }
   async addBot(body) {
-    return apiRequest(ApiRoutes.getInstance(this.config).addBot(), {
+    return apiRequest(ApiRoutes.getInstance(this.config).addBot(body.meetingId, body.meetId), {
       method: "POST",
       body,
-      authToken: this.config.service.jwtToken,
+      authToken: this.config.service.jwtToken
     });
   }
   async getReactions() {
     return apiRequest(ApiRoutes.getInstance(this.config).getReactions(), {
       method: "GET",
-      authToken: this.config.service.jwtToken,
+      authToken: this.config.service.jwtToken
     });
   }
   async closeMeeting(body) {
-    return apiRequest(
-      ApiRoutes.getInstance(this.config).closeMeeting(
-        body.meetingId,
-        body.meetId
-      ),
-      {
-        method: "POST",
-        authToken: this.config.service.jwtToken,
-      }
-    );
+    return apiRequest(ApiRoutes.getInstance(this.config).closeMeeting(body.meetingId, body.meetId), {
+      method: "POST",
+      authToken: this.config.service.jwtToken
+    });
   }
 }
 async function getCurrentUrl$1() {
@@ -587,9 +527,7 @@ async function getCurrentUrl$1() {
     return new Promise((resolve) => {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         var _a;
-        resolve(
-          ((_a = tabs[0]) == null ? void 0 : _a.url) || window.location.href
-        );
+        resolve(((_a = tabs[0]) == null ? void 0 : _a.url) || window.location.href);
       });
     });
   }
@@ -726,21 +664,21 @@ class HttpClient {
     return this.send({
       ...options,
       method: "GET",
-      url,
+      url
     });
   }
   post(url, options) {
     return this.send({
       ...options,
       method: "POST",
-      url,
+      url
     });
   }
   delete(url, options) {
     return this.send({
       ...options,
       method: "DELETE",
-      url,
+      url
     });
   }
   /** Gets all cookies that apply to the specified URL.
@@ -754,20 +692,22 @@ class HttpClient {
   }
 }
 var LogLevel;
-(function (LogLevel2) {
-  LogLevel2[(LogLevel2["Trace"] = 0)] = "Trace";
-  LogLevel2[(LogLevel2["Debug"] = 1)] = "Debug";
-  LogLevel2[(LogLevel2["Information"] = 2)] = "Information";
-  LogLevel2[(LogLevel2["Warning"] = 3)] = "Warning";
-  LogLevel2[(LogLevel2["Error"] = 4)] = "Error";
-  LogLevel2[(LogLevel2["Critical"] = 5)] = "Critical";
-  LogLevel2[(LogLevel2["None"] = 6)] = "None";
+(function(LogLevel2) {
+  LogLevel2[LogLevel2["Trace"] = 0] = "Trace";
+  LogLevel2[LogLevel2["Debug"] = 1] = "Debug";
+  LogLevel2[LogLevel2["Information"] = 2] = "Information";
+  LogLevel2[LogLevel2["Warning"] = 3] = "Warning";
+  LogLevel2[LogLevel2["Error"] = 4] = "Error";
+  LogLevel2[LogLevel2["Critical"] = 5] = "Critical";
+  LogLevel2[LogLevel2["None"] = 6] = "None";
 })(LogLevel || (LogLevel = {}));
 class NullLogger {
-  constructor() {}
+  constructor() {
+  }
   /** @inheritDoc */
   // eslint-disable-next-line
-  log(_logLevel, _message) {}
+  log(_logLevel, _message) {
+  }
 }
 NullLogger.instance = new NullLogger();
 const VERSION = "8.0.7";
@@ -791,34 +731,20 @@ class Arg {
 class Platform {
   // react-native has a window but no document so we should check both
   static get isBrowser() {
-    return (
-      !Platform.isNode &&
-      typeof window === "object" &&
-      typeof window.document === "object"
-    );
+    return !Platform.isNode && typeof window === "object" && typeof window.document === "object";
   }
   // WebWorkers don't have a window object so the isBrowser check would fail
   static get isWebWorker() {
-    return (
-      !Platform.isNode && typeof self === "object" && "importScripts" in self
-    );
+    return !Platform.isNode && typeof self === "object" && "importScripts" in self;
   }
   // react-native has a window but no document
   static get isReactNative() {
-    return (
-      !Platform.isNode &&
-      typeof window === "object" &&
-      typeof window.document === "undefined"
-    );
+    return !Platform.isNode && typeof window === "object" && typeof window.document === "undefined";
   }
   // Node apps shouldn't have a window object, but WebWorkers don't either
   // so we need to check for both WebWorker and window
   static get isNode() {
-    return (
-      typeof process !== "undefined" &&
-      process.release &&
-      process.release.name === "node"
-    );
+    return typeof process !== "undefined" && process.release && process.release.name === "node";
   }
 }
 function getDataDetail(data, includeContent) {
@@ -846,43 +772,23 @@ function formatArrayBuffer(data) {
   return str.substr(0, str.length - 1);
 }
 function isArrayBuffer(val) {
-  return (
-    val &&
-    typeof ArrayBuffer !== "undefined" &&
-    (val instanceof ArrayBuffer || // Sometimes we get an ArrayBuffer that doesn't satisfy instanceof
-      (val.constructor && val.constructor.name === "ArrayBuffer"))
-  );
+  return val && typeof ArrayBuffer !== "undefined" && (val instanceof ArrayBuffer || // Sometimes we get an ArrayBuffer that doesn't satisfy instanceof
+  val.constructor && val.constructor.name === "ArrayBuffer");
 }
-async function sendMessage(
-  logger,
-  transportName,
-  httpClient,
-  url,
-  content,
-  options
-) {
+async function sendMessage(logger, transportName, httpClient, url, content, options) {
   const headers = {};
   const [name, value] = getUserAgentHeader();
   headers[name] = value;
-  logger.log(
-    LogLevel.Trace,
-    `(${transportName} transport) sending data. ${getDataDetail(
-      content,
-      options.logMessageContent
-    )}.`
-  );
+  logger.log(LogLevel.Trace, `(${transportName} transport) sending data. ${getDataDetail(content, options.logMessageContent)}.`);
   const responseType = isArrayBuffer(content) ? "arraybuffer" : "text";
   const response = await httpClient.post(url, {
     content,
     headers: { ...headers, ...options.headers },
     responseType,
     timeout: options.timeout,
-    withCredentials: options.withCredentials,
+    withCredentials: options.withCredentials
   });
-  logger.log(
-    LogLevel.Trace,
-    `(${transportName} transport) request complete. Response status: ${response.statusCode}.`
-  );
+  logger.log(LogLevel.Trace, `(${transportName} transport) request complete. Response status: ${response.statusCode}.`);
 }
 function createLogger(logger) {
   if (logger === void 0) {
@@ -907,7 +813,8 @@ class SubjectSubscription {
       this._subject.observers.splice(index, 1);
     }
     if (this._subject.observers.length === 0 && this._subject.cancelCallback) {
-      this._subject.cancelCallback().catch((_) => {});
+      this._subject.cancelCallback().catch((_) => {
+      });
     }
   }
 }
@@ -918,9 +825,7 @@ class ConsoleLogger {
   }
   log(logLevel, message) {
     if (logLevel >= this._minLevel) {
-      const msg = `[${/* @__PURE__ */ new Date().toISOString()}] ${
-        LogLevel[logLevel]
-      }: ${message}`;
+      const msg = `[${(/* @__PURE__ */ new Date()).toISOString()}] ${LogLevel[logLevel]}: ${message}`;
       switch (logLevel) {
         case LogLevel.Critical:
         case LogLevel.Error:
@@ -944,10 +849,7 @@ function getUserAgentHeader() {
   if (Platform.isNode) {
     userAgentHeaderName = "User-Agent";
   }
-  return [
-    userAgentHeaderName,
-    constructUserAgent(VERSION, getOsName(), getRuntime(), getRuntimeVersion()),
-  ];
+  return [userAgentHeaderName, constructUserAgent(VERSION, getOsName(), getRuntime(), getRuntimeVersion())];
 }
 function constructUserAgent(version, os, runtime, runtimeVersion) {
   let userAgent = "Microsoft SignalR/";
@@ -1025,11 +927,8 @@ class FetchHttpClient extends HttpClient {
     super();
     this._logger = logger;
     if (typeof fetch === "undefined" || Platform.isNode) {
-      const requireFunc =
-        typeof __webpack_require__ === "function"
-          ? __non_webpack_require__
-          : require;
-      this._jar = new (requireFunc("tough-cookie").CookieJar)();
+      const requireFunc = typeof __webpack_require__ === "function" ? __non_webpack_require__ : require;
+      this._jar = new (requireFunc("tough-cookie")).CookieJar();
       if (typeof fetch === "undefined") {
         this._fetchType = requireFunc("node-fetch");
       } else {
@@ -1040,10 +939,7 @@ class FetchHttpClient extends HttpClient {
       this._fetchType = fetch.bind(getGlobalThis());
     }
     if (typeof AbortController === "undefined") {
-      const requireFunc =
-        typeof __webpack_require__ === "function"
-          ? __non_webpack_require__
-          : require;
+      const requireFunc = typeof __webpack_require__ === "function" ? __non_webpack_require__ : require;
       this._abortControllerType = requireFunc("abort-controller");
     } else {
       this._abortControllerType = AbortController;
@@ -1093,16 +989,15 @@ class FetchHttpClient extends HttpClient {
       response = await this._fetchType(request.url, {
         body: request.content,
         cache: "no-cache",
-        credentials:
-          request.withCredentials === true ? "include" : "same-origin",
+        credentials: request.withCredentials === true ? "include" : "same-origin",
         headers: {
           "X-Requested-With": "XMLHttpRequest",
-          ...request.headers,
+          ...request.headers
         },
         method: request.method,
         mode: "cors",
         redirect: "follow",
-        signal: abortController.signal,
+        signal: abortController.signal
       });
     } catch (e) {
       if (error) {
@@ -1129,7 +1024,7 @@ class FetchHttpClient extends HttpClient {
   getCookieString(url) {
     let cookies = "";
     if (Platform.isNode && this._jar) {
-      this._jar.getCookies(url, (e, c) => (cookies = c.join("; ")));
+      this._jar.getCookies(url, (e, c) => cookies = c.join("; "));
     }
     return cookies;
   }
@@ -1172,8 +1067,7 @@ class XhrHttpClient extends HttpClient {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open(request.method, request.url, true);
-      xhr.withCredentials =
-        request.withCredentials === void 0 ? true : request.withCredentials;
+      xhr.withCredentials = request.withCredentials === void 0 ? true : request.withCredentials;
       xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
       if (request.content === "") {
         request.content = void 0;
@@ -1208,27 +1102,13 @@ class XhrHttpClient extends HttpClient {
           request.abortSignal.onabort = null;
         }
         if (xhr.status >= 200 && xhr.status < 300) {
-          resolve(
-            new HttpResponse(
-              xhr.status,
-              xhr.statusText,
-              xhr.response || xhr.responseText
-            )
-          );
+          resolve(new HttpResponse(xhr.status, xhr.statusText, xhr.response || xhr.responseText));
         } else {
-          reject(
-            new HttpError(
-              xhr.response || xhr.responseText || xhr.statusText,
-              xhr.status
-            )
-          );
+          reject(new HttpError(xhr.response || xhr.responseText || xhr.statusText, xhr.status));
         }
       };
       xhr.onerror = () => {
-        this._logger.log(
-          LogLevel.Warning,
-          `Error from HTTP request. ${xhr.status}: ${xhr.statusText}.`
-        );
+        this._logger.log(LogLevel.Warning, `Error from HTTP request. ${xhr.status}: ${xhr.statusText}.`);
         reject(new HttpError(xhr.statusText, xhr.status));
       };
       xhr.ontimeout = () => {
@@ -1282,9 +1162,7 @@ class TextMessageFormat {
   }
 }
 TextMessageFormat.RecordSeparatorCode = 30;
-TextMessageFormat.RecordSeparator = String.fromCharCode(
-  TextMessageFormat.RecordSeparatorCode
-);
+TextMessageFormat.RecordSeparator = String.fromCharCode(TextMessageFormat.RecordSeparatorCode);
 class HandshakeProtocol {
   // Handshake request is always JSON
   writeHandshakeRequest(handshakeRequest) {
@@ -1295,35 +1173,22 @@ class HandshakeProtocol {
     let remainingData;
     if (isArrayBuffer(data)) {
       const binaryData = new Uint8Array(data);
-      const separatorIndex = binaryData.indexOf(
-        TextMessageFormat.RecordSeparatorCode
-      );
+      const separatorIndex = binaryData.indexOf(TextMessageFormat.RecordSeparatorCode);
       if (separatorIndex === -1) {
         throw new Error("Message is incomplete.");
       }
       const responseLength = separatorIndex + 1;
-      messageData = String.fromCharCode.apply(
-        null,
-        Array.prototype.slice.call(binaryData.slice(0, responseLength))
-      );
-      remainingData =
-        binaryData.byteLength > responseLength
-          ? binaryData.slice(responseLength).buffer
-          : null;
+      messageData = String.fromCharCode.apply(null, Array.prototype.slice.call(binaryData.slice(0, responseLength)));
+      remainingData = binaryData.byteLength > responseLength ? binaryData.slice(responseLength).buffer : null;
     } else {
       const textData = data;
-      const separatorIndex = textData.indexOf(
-        TextMessageFormat.RecordSeparator
-      );
+      const separatorIndex = textData.indexOf(TextMessageFormat.RecordSeparator);
       if (separatorIndex === -1) {
         throw new Error("Message is incomplete.");
       }
       const responseLength = separatorIndex + 1;
       messageData = textData.substring(0, responseLength);
-      remainingData =
-        textData.length > responseLength
-          ? textData.substring(responseLength)
-          : null;
+      remainingData = textData.length > responseLength ? textData.substring(responseLength) : null;
     }
     const messages = TextMessageFormat.parse(messageData);
     const response = JSON.parse(messages[0]);
@@ -1335,16 +1200,16 @@ class HandshakeProtocol {
   }
 }
 var MessageType;
-(function (MessageType2) {
-  MessageType2[(MessageType2["Invocation"] = 1)] = "Invocation";
-  MessageType2[(MessageType2["StreamItem"] = 2)] = "StreamItem";
-  MessageType2[(MessageType2["Completion"] = 3)] = "Completion";
-  MessageType2[(MessageType2["StreamInvocation"] = 4)] = "StreamInvocation";
-  MessageType2[(MessageType2["CancelInvocation"] = 5)] = "CancelInvocation";
-  MessageType2[(MessageType2["Ping"] = 6)] = "Ping";
-  MessageType2[(MessageType2["Close"] = 7)] = "Close";
-  MessageType2[(MessageType2["Ack"] = 8)] = "Ack";
-  MessageType2[(MessageType2["Sequence"] = 9)] = "Sequence";
+(function(MessageType2) {
+  MessageType2[MessageType2["Invocation"] = 1] = "Invocation";
+  MessageType2[MessageType2["StreamItem"] = 2] = "StreamItem";
+  MessageType2[MessageType2["Completion"] = 3] = "Completion";
+  MessageType2[MessageType2["StreamInvocation"] = 4] = "StreamInvocation";
+  MessageType2[MessageType2["CancelInvocation"] = 5] = "CancelInvocation";
+  MessageType2[MessageType2["Ping"] = 6] = "Ping";
+  MessageType2[MessageType2["Close"] = 7] = "Close";
+  MessageType2[MessageType2["Ack"] = 8] = "Ack";
+  MessageType2[MessageType2["Sequence"] = 9] = "Sequence";
 })(MessageType || (MessageType = {}));
 class Subject {
   constructor() {
@@ -1393,8 +1258,10 @@ class MessageBuffer {
     let backpressurePromise = Promise.resolve();
     if (this._isInvocationMessage(message)) {
       this._totalMessageCount++;
-      let backpressurePromiseResolver = () => {};
-      let backpressurePromiseRejector = () => {};
+      let backpressurePromiseResolver = () => {
+      };
+      let backpressurePromiseRejector = () => {
+      };
       if (isArrayBuffer(serializedMessage)) {
         this._bufferedByteCount += serializedMessage.byteLength;
       } else {
@@ -1406,14 +1273,7 @@ class MessageBuffer {
           backpressurePromiseRejector = reject;
         });
       }
-      this._messages.push(
-        new BufferedItem(
-          serializedMessage,
-          this._totalMessageCount,
-          backpressurePromiseResolver,
-          backpressurePromiseRejector
-        )
-      );
+      this._messages.push(new BufferedItem(serializedMessage, this._totalMessageCount, backpressurePromiseResolver, backpressurePromiseRejector));
     }
     try {
       if (!this._reconnectInProgress) {
@@ -1472,9 +1332,7 @@ class MessageBuffer {
   }
   _resetSequence(message) {
     if (message.sequenceId > this._nextReceivingSequenceId) {
-      this._connection.stop(
-        new Error("Sequence ID greater than amount of messages we've received.")
-      );
+      this._connection.stop(new Error("Sequence ID greater than amount of messages we've received."));
       return;
     }
     this._nextReceivingSequenceId = message.sequenceId;
@@ -1484,13 +1342,8 @@ class MessageBuffer {
     this._waitForSequenceMessage = true;
   }
   async _resend() {
-    const sequenceId =
-      this._messages.length !== 0
-        ? this._messages[0]._id
-        : this._totalMessageCount + 1;
-    await this._connection.send(
-      this._protocol.writeMessage({ type: MessageType.Sequence, sequenceId })
-    );
+    const sequenceId = this._messages.length !== 0 ? this._messages[0]._id : this._totalMessageCount + 1;
+    await this._connection.send(this._protocol.writeMessage({ type: MessageType.Sequence, sequenceId }));
     const messages = this._messages;
     for (const element of messages) {
       await this._connection.send(element._message);
@@ -1498,9 +1351,7 @@ class MessageBuffer {
     this._reconnectInProgress = false;
   }
   _dispose(error) {
-    error !== null && error !== void 0
-      ? error
-      : (error = new Error("Unable to reconnect to server."));
+    error !== null && error !== void 0 ? error : error = new Error("Unable to reconnect to server.");
     for (const element of this._messages) {
       element._rejector(error);
     }
@@ -1525,14 +1376,10 @@ class MessageBuffer {
       this._ackTimerHandle = setTimeout(async () => {
         try {
           if (!this._reconnectInProgress) {
-            await this._connection.send(
-              this._protocol.writeMessage({
-                type: MessageType.Ack,
-                sequenceId: this._latestReceivedSequenceId,
-              })
-            );
+            await this._connection.send(this._protocol.writeMessage({ type: MessageType.Ack, sequenceId: this._latestReceivedSequenceId }));
           }
-        } catch {}
+        } catch {
+        }
         clearTimeout(this._ackTimerHandle);
         this._ackTimerHandle = void 0;
       }, 1e3);
@@ -1551,7 +1398,7 @@ const DEFAULT_TIMEOUT_IN_MS = 30 * 1e3;
 const DEFAULT_PING_INTERVAL_IN_MS = 15 * 1e3;
 const DEFAULT_STATEFUL_RECONNECT_BUFFER_SIZE = 1e5;
 var HubConnectionState;
-(function (HubConnectionState2) {
+(function(HubConnectionState2) {
   HubConnectionState2["Disconnected"] = "Disconnected";
   HubConnectionState2["Connecting"] = "Connecting";
   HubConnectionState2["Connected"] = "Connected";
@@ -1564,59 +1411,20 @@ class HubConnection {
   // create method that can be used by HubConnectionBuilder. An "internal" constructor would just
   // be stripped away and the '.d.ts' file would have no constructor, which is interpreted as a
   // public parameter-less constructor.
-  static create(
-    connection,
-    logger,
-    protocol,
-    reconnectPolicy,
-    serverTimeoutInMilliseconds,
-    keepAliveIntervalInMilliseconds,
-    statefulReconnectBufferSize
-  ) {
-    return new HubConnection(
-      connection,
-      logger,
-      protocol,
-      reconnectPolicy,
-      serverTimeoutInMilliseconds,
-      keepAliveIntervalInMilliseconds,
-      statefulReconnectBufferSize
-    );
+  static create(connection, logger, protocol, reconnectPolicy, serverTimeoutInMilliseconds, keepAliveIntervalInMilliseconds, statefulReconnectBufferSize) {
+    return new HubConnection(connection, logger, protocol, reconnectPolicy, serverTimeoutInMilliseconds, keepAliveIntervalInMilliseconds, statefulReconnectBufferSize);
   }
-  constructor(
-    connection,
-    logger,
-    protocol,
-    reconnectPolicy,
-    serverTimeoutInMilliseconds,
-    keepAliveIntervalInMilliseconds,
-    statefulReconnectBufferSize
-  ) {
+  constructor(connection, logger, protocol, reconnectPolicy, serverTimeoutInMilliseconds, keepAliveIntervalInMilliseconds, statefulReconnectBufferSize) {
     this._nextKeepAlive = 0;
     this._freezeEventListener = () => {
-      this._logger.log(
-        LogLevel.Warning,
-        "The page is being frozen, this will likely lead to the connection being closed and messages being lost. For more information see the docs at https://learn.microsoft.com/aspnet/core/signalr/javascript-client#bsleep"
-      );
+      this._logger.log(LogLevel.Warning, "The page is being frozen, this will likely lead to the connection being closed and messages being lost. For more information see the docs at https://learn.microsoft.com/aspnet/core/signalr/javascript-client#bsleep");
     };
     Arg.isRequired(connection, "connection");
     Arg.isRequired(logger, "logger");
     Arg.isRequired(protocol, "protocol");
-    this.serverTimeoutInMilliseconds =
-      serverTimeoutInMilliseconds !== null &&
-      serverTimeoutInMilliseconds !== void 0
-        ? serverTimeoutInMilliseconds
-        : DEFAULT_TIMEOUT_IN_MS;
-    this.keepAliveIntervalInMilliseconds =
-      keepAliveIntervalInMilliseconds !== null &&
-      keepAliveIntervalInMilliseconds !== void 0
-        ? keepAliveIntervalInMilliseconds
-        : DEFAULT_PING_INTERVAL_IN_MS;
-    this._statefulReconnectBufferSize =
-      statefulReconnectBufferSize !== null &&
-      statefulReconnectBufferSize !== void 0
-        ? statefulReconnectBufferSize
-        : DEFAULT_STATEFUL_RECONNECT_BUFFER_SIZE;
+    this.serverTimeoutInMilliseconds = serverTimeoutInMilliseconds !== null && serverTimeoutInMilliseconds !== void 0 ? serverTimeoutInMilliseconds : DEFAULT_TIMEOUT_IN_MS;
+    this.keepAliveIntervalInMilliseconds = keepAliveIntervalInMilliseconds !== null && keepAliveIntervalInMilliseconds !== void 0 ? keepAliveIntervalInMilliseconds : DEFAULT_PING_INTERVAL_IN_MS;
+    this._statefulReconnectBufferSize = statefulReconnectBufferSize !== null && statefulReconnectBufferSize !== void 0 ? statefulReconnectBufferSize : DEFAULT_STATEFUL_RECONNECT_BUFFER_SIZE;
     this._logger = logger;
     this._protocol = protocol;
     this.connection = connection;
@@ -1633,9 +1441,7 @@ class HubConnection {
     this._receivedHandshakeResponse = false;
     this._connectionState = HubConnectionState.Disconnected;
     this._connectionStarted = false;
-    this._cachedPingMessage = this._protocol.writeMessage({
-      type: MessageType.Ping,
-    });
+    this._cachedPingMessage = this._protocol.writeMessage({ type: MessageType.Ping });
   }
   /** Indicates the state of the {@link HubConnection} to the server. */
   get state() {
@@ -1657,13 +1463,8 @@ class HubConnection {
    * @param {string} url The url to connect to.
    */
   set baseUrl(url) {
-    if (
-      this._connectionState !== HubConnectionState.Disconnected &&
-      this._connectionState !== HubConnectionState.Reconnecting
-    ) {
-      throw new Error(
-        "The HubConnection must be in the Disconnected or Reconnecting state to change the url."
-      );
+    if (this._connectionState !== HubConnectionState.Disconnected && this._connectionState !== HubConnectionState.Reconnecting) {
+      throw new Error("The HubConnection must be in the Disconnected or Reconnecting state to change the url.");
     }
     if (!url) {
       throw new Error("The HubConnection url must be a valid url.");
@@ -1680,11 +1481,7 @@ class HubConnection {
   }
   async _startWithStateTransitions() {
     if (this._connectionState !== HubConnectionState.Disconnected) {
-      return Promise.reject(
-        new Error(
-          "Cannot start a HubConnection that is not in the 'Disconnected' state."
-        )
-      );
+      return Promise.reject(new Error("Cannot start a HubConnection that is not in the 'Disconnected' state."));
     }
     this._connectionState = HubConnectionState.Connecting;
     this._logger.log(LogLevel.Debug, "Starting HubConnection.");
@@ -1698,10 +1495,7 @@ class HubConnection {
       this._logger.log(LogLevel.Debug, "HubConnection connected successfully.");
     } catch (e) {
       this._connectionState = HubConnectionState.Disconnected;
-      this._logger.log(
-        LogLevel.Debug,
-        `HubConnection failed to start successfully because of error '${e}'.`
-      );
+      this._logger.log(LogLevel.Debug, `HubConnection failed to start successfully because of error '${e}'.`);
       return Promise.reject(e);
     }
   }
@@ -1720,16 +1514,11 @@ class HubConnection {
       }
       const handshakeRequest = {
         protocol: this._protocol.name,
-        version,
+        version
       };
       this._logger.log(LogLevel.Debug, "Sending handshake request.");
-      await this._sendMessage(
-        this._handshakeProtocol.writeHandshakeRequest(handshakeRequest)
-      );
-      this._logger.log(
-        LogLevel.Information,
-        `Using HubProtocol '${this._protocol.name}'.`
-      );
+      await this._sendMessage(this._handshakeProtocol.writeHandshakeRequest(handshakeRequest));
+      this._logger.log(LogLevel.Information, `Using HubProtocol '${this._protocol.name}'.`);
       this._cleanupTimeout();
       this._resetTimeoutPeriod();
       this._resetKeepAliveInterval();
@@ -1739,13 +1528,8 @@ class HubConnection {
       }
       const useStatefulReconnect = this.connection.features.reconnect || false;
       if (useStatefulReconnect) {
-        this._messageBuffer = new MessageBuffer(
-          this._protocol,
-          this.connection,
-          this._statefulReconnectBufferSize
-        );
-        this.connection.features.disconnected =
-          this._messageBuffer._disconnected.bind(this._messageBuffer);
+        this._messageBuffer = new MessageBuffer(this._protocol, this.connection, this._statefulReconnectBufferSize);
+        this.connection.features.disconnected = this._messageBuffer._disconnected.bind(this._messageBuffer);
         this.connection.features.resend = () => {
           if (this._messageBuffer) {
             return this._messageBuffer._resend();
@@ -1756,10 +1540,7 @@ class HubConnection {
         await this._sendMessage(this._cachedPingMessage);
       }
     } catch (e) {
-      this._logger.log(
-        LogLevel.Debug,
-        `Hub handshake failed with error '${e}' during start(). Stopping HubConnection.`
-      );
+      this._logger.log(LogLevel.Debug, `Hub handshake failed with error '${e}' during start(). Stopping HubConnection.`);
       this._cleanupTimeout();
       this._cleanupPingTimer();
       await this.connection.stop(e);
@@ -1777,31 +1558,23 @@ class HubConnection {
     await this._stopPromise;
     try {
       await startPromise;
-    } catch (e) {}
+    } catch (e) {
+    }
   }
   _stopInternal(error) {
     if (this._connectionState === HubConnectionState.Disconnected) {
-      this._logger.log(
-        LogLevel.Debug,
-        `Call to HubConnection.stop(${error}) ignored because it is already in the disconnected state.`
-      );
+      this._logger.log(LogLevel.Debug, `Call to HubConnection.stop(${error}) ignored because it is already in the disconnected state.`);
       return Promise.resolve();
     }
     if (this._connectionState === HubConnectionState.Disconnecting) {
-      this._logger.log(
-        LogLevel.Debug,
-        `Call to HttpConnection.stop(${error}) ignored because the connection is already in the disconnecting state.`
-      );
+      this._logger.log(LogLevel.Debug, `Call to HttpConnection.stop(${error}) ignored because the connection is already in the disconnecting state.`);
       return this._stopPromise;
     }
     const state = this._connectionState;
     this._connectionState = HubConnectionState.Disconnecting;
     this._logger.log(LogLevel.Debug, "Stopping HubConnection.");
     if (this._reconnectDelayHandle) {
-      this._logger.log(
-        LogLevel.Debug,
-        "Connection stopped during reconnect delay. Done reconnecting."
-      );
+      this._logger.log(LogLevel.Debug, "Connection stopped during reconnect delay. Done reconnecting.");
       clearTimeout(this._reconnectDelayHandle);
       this._reconnectDelayHandle = void 0;
       this._completeClose();
@@ -1812,17 +1585,14 @@ class HubConnection {
     }
     this._cleanupTimeout();
     this._cleanupPingTimer();
-    this._stopDuringStartError =
-      error ||
-      new AbortError(
-        "The connection was stopped before the hub handshake could complete."
-      );
+    this._stopDuringStartError = error || new AbortError("The connection was stopped before the hub handshake could complete.");
     return this.connection.stop(error);
   }
   async _sendCloseMessage() {
     try {
       await this._sendWithProtocol(this._createCloseMessage());
-    } catch {}
+    } catch {
+    }
   }
   /** Invokes a streaming hub method on the server using the specified name and arguments.
    *
@@ -1833,26 +1603,17 @@ class HubConnection {
    */
   stream(methodName, ...args) {
     const [streams, streamIds] = this._replaceStreamingParams(args);
-    const invocationDescriptor = this._createStreamInvocation(
-      methodName,
-      args,
-      streamIds
-    );
+    const invocationDescriptor = this._createStreamInvocation(methodName, args, streamIds);
     let promiseQueue;
     const subject = new Subject();
     subject.cancelCallback = () => {
-      const cancelInvocation = this._createCancelInvocation(
-        invocationDescriptor.invocationId
-      );
+      const cancelInvocation = this._createCancelInvocation(invocationDescriptor.invocationId);
       delete this._callbacks[invocationDescriptor.invocationId];
       return promiseQueue.then(() => {
         return this._sendWithProtocol(cancelInvocation);
       });
     };
-    this._callbacks[invocationDescriptor.invocationId] = (
-      invocationEvent,
-      error
-    ) => {
+    this._callbacks[invocationDescriptor.invocationId] = (invocationEvent, error) => {
       if (error) {
         subject.error(error);
         return;
@@ -1901,9 +1662,7 @@ class HubConnection {
    */
   send(methodName, ...args) {
     const [streams, streamIds] = this._replaceStreamingParams(args);
-    const sendPromise = this._sendWithProtocol(
-      this._createInvocation(methodName, args, true, streamIds)
-    );
+    const sendPromise = this._sendWithProtocol(this._createInvocation(methodName, args, true, streamIds));
     this._launchStreams(streams, sendPromise);
     return sendPromise;
   }
@@ -1920,17 +1679,9 @@ class HubConnection {
    */
   invoke(methodName, ...args) {
     const [streams, streamIds] = this._replaceStreamingParams(args);
-    const invocationDescriptor = this._createInvocation(
-      methodName,
-      args,
-      false,
-      streamIds
-    );
+    const invocationDescriptor = this._createInvocation(methodName, args, false, streamIds);
     const p = new Promise((resolve, reject) => {
-      this._callbacks[invocationDescriptor.invocationId] = (
-        invocationEvent,
-        error
-      ) => {
+      this._callbacks[invocationDescriptor.invocationId] = (invocationEvent, error) => {
         if (error) {
           reject(error);
           return;
@@ -1942,18 +1693,14 @@ class HubConnection {
               resolve(invocationEvent.result);
             }
           } else {
-            reject(
-              new Error(`Unexpected message type: ${invocationEvent.type}`)
-            );
+            reject(new Error(`Unexpected message type: ${invocationEvent.type}`));
           }
         }
       };
-      const promiseQueue = this._sendWithProtocol(invocationDescriptor).catch(
-        (e) => {
-          reject(e);
-          delete this._callbacks[invocationDescriptor.invocationId];
-        }
-      );
+      const promiseQueue = this._sendWithProtocol(invocationDescriptor).catch((e) => {
+        reject(e);
+        delete this._callbacks[invocationDescriptor.invocationId];
+      });
       this._launchStreams(streams, promiseQueue);
     });
     return p;
@@ -2028,19 +1775,13 @@ class HubConnection {
     if (data) {
       const messages = this._protocol.parseMessages(data, this._logger);
       for (const message of messages) {
-        if (
-          this._messageBuffer &&
-          !this._messageBuffer._shouldProcessMessage(message)
-        ) {
+        if (this._messageBuffer && !this._messageBuffer._shouldProcessMessage(message)) {
           continue;
         }
         switch (message.type) {
           case MessageType.Invocation:
             this._invokeClientMethod(message).catch((e) => {
-              this._logger.log(
-                LogLevel.Error,
-                `Invoke client method threw error: ${getErrorString(e)}`
-              );
+              this._logger.log(LogLevel.Error, `Invoke client method threw error: ${getErrorString(e)}`);
             });
             break;
           case MessageType.StreamItem:
@@ -2053,10 +1794,7 @@ class HubConnection {
               try {
                 callback(message);
               } catch (e) {
-                this._logger.log(
-                  LogLevel.Error,
-                  `Stream callback threw error: ${getErrorString(e)}`
-                );
+                this._logger.log(LogLevel.Error, `Stream callback threw error: ${getErrorString(e)}`);
               }
             }
             break;
@@ -2064,13 +1802,8 @@ class HubConnection {
           case MessageType.Ping:
             break;
           case MessageType.Close: {
-            this._logger.log(
-              LogLevel.Information,
-              "Close message received from server."
-            );
-            const error = message.error
-              ? new Error("Server returned an error on close: " + message.error)
-              : void 0;
+            this._logger.log(LogLevel.Information, "Close message received from server.");
+            const error = message.error ? new Error("Server returned an error on close: " + message.error) : void 0;
             if (message.allowReconnect === true) {
               this.connection.stop(error);
             } else {
@@ -2089,10 +1822,7 @@ class HubConnection {
             }
             break;
           default:
-            this._logger.log(
-              LogLevel.Warning,
-              `Invalid message type: ${message.type}.`
-            );
+            this._logger.log(LogLevel.Warning, `Invalid message type: ${message.type}.`);
             break;
         }
       }
@@ -2103,8 +1833,7 @@ class HubConnection {
     let responseMessage;
     let remainingData;
     try {
-      [remainingData, responseMessage] =
-        this._handshakeProtocol.parseHandshakeResponse(data);
+      [remainingData, responseMessage] = this._handshakeProtocol.parseHandshakeResponse(data);
     } catch (e) {
       const message = "Error parsing handshake response: " + e;
       this._logger.log(LogLevel.Error, message);
@@ -2113,8 +1842,7 @@ class HubConnection {
       throw error;
     }
     if (responseMessage.error) {
-      const message =
-        "Server returned handshake error: " + responseMessage.error;
+      const message = "Server returned handshake error: " + responseMessage.error;
       this._logger.log(LogLevel.Error, message);
       const error = new Error(message);
       this._handshakeRejecter(error);
@@ -2129,23 +1857,14 @@ class HubConnection {
     if (this.connection.features.inherentKeepAlive) {
       return;
     }
-    this._nextKeepAlive =
-      /* @__PURE__ */ new Date().getTime() +
-      this.keepAliveIntervalInMilliseconds;
+    this._nextKeepAlive = (/* @__PURE__ */ new Date()).getTime() + this.keepAliveIntervalInMilliseconds;
     this._cleanupPingTimer();
   }
   _resetTimeoutPeriod() {
-    if (
-      !this.connection.features ||
-      !this.connection.features.inherentKeepAlive
-    ) {
-      this._timeoutHandle = setTimeout(
-        () => this.serverTimeout(),
-        this.serverTimeoutInMilliseconds
-      );
+    if (!this.connection.features || !this.connection.features.inherentKeepAlive) {
+      this._timeoutHandle = setTimeout(() => this.serverTimeout(), this.serverTimeoutInMilliseconds);
       if (this._pingServerHandle === void 0) {
-        let nextPing =
-          this._nextKeepAlive - /* @__PURE__ */ new Date().getTime();
+        let nextPing = this._nextKeepAlive - (/* @__PURE__ */ new Date()).getTime();
         if (nextPing < 0) {
           nextPing = 0;
         }
@@ -2163,32 +1882,16 @@ class HubConnection {
   }
   // eslint-disable-next-line @typescript-eslint/naming-convention
   serverTimeout() {
-    this.connection.stop(
-      new Error(
-        "Server timeout elapsed without receiving a message from the server."
-      )
-    );
+    this.connection.stop(new Error("Server timeout elapsed without receiving a message from the server."));
   }
   async _invokeClientMethod(invocationMessage) {
     const methodName = invocationMessage.target.toLowerCase();
     const methods = this._methods[methodName];
     if (!methods) {
-      this._logger.log(
-        LogLevel.Warning,
-        `No client method with the name '${methodName}' found.`
-      );
+      this._logger.log(LogLevel.Warning, `No client method with the name '${methodName}' found.`);
       if (invocationMessage.invocationId) {
-        this._logger.log(
-          LogLevel.Warning,
-          `No result given for '${methodName}' method and invocation ID '${invocationMessage.invocationId}'.`
-        );
-        await this._sendWithProtocol(
-          this._createCompletionMessage(
-            invocationMessage.invocationId,
-            "Client didn't provide a result.",
-            null
-          )
-        );
+        this._logger.log(LogLevel.Warning, `No result given for '${methodName}' method and invocation ID '${invocationMessage.invocationId}'.`);
+        await this._sendWithProtocol(this._createCompletionMessage(invocationMessage.invocationId, "Client didn't provide a result.", null));
       }
       return;
     }
@@ -2202,89 +1905,45 @@ class HubConnection {
         const prevRes = res;
         res = await m.apply(this, invocationMessage.arguments);
         if (expectsResponse && res && prevRes) {
-          this._logger.log(
-            LogLevel.Error,
-            `Multiple results provided for '${methodName}'. Sending error to server.`
-          );
-          completionMessage = this._createCompletionMessage(
-            invocationMessage.invocationId,
-            `Client provided multiple results.`,
-            null
-          );
+          this._logger.log(LogLevel.Error, `Multiple results provided for '${methodName}'. Sending error to server.`);
+          completionMessage = this._createCompletionMessage(invocationMessage.invocationId, `Client provided multiple results.`, null);
         }
         exception = void 0;
       } catch (e) {
         exception = e;
-        this._logger.log(
-          LogLevel.Error,
-          `A callback for the method '${methodName}' threw error '${e}'.`
-        );
+        this._logger.log(LogLevel.Error, `A callback for the method '${methodName}' threw error '${e}'.`);
       }
     }
     if (completionMessage) {
       await this._sendWithProtocol(completionMessage);
     } else if (expectsResponse) {
       if (exception) {
-        completionMessage = this._createCompletionMessage(
-          invocationMessage.invocationId,
-          `${exception}`,
-          null
-        );
+        completionMessage = this._createCompletionMessage(invocationMessage.invocationId, `${exception}`, null);
       } else if (res !== void 0) {
-        completionMessage = this._createCompletionMessage(
-          invocationMessage.invocationId,
-          null,
-          res
-        );
+        completionMessage = this._createCompletionMessage(invocationMessage.invocationId, null, res);
       } else {
-        this._logger.log(
-          LogLevel.Warning,
-          `No result given for '${methodName}' method and invocation ID '${invocationMessage.invocationId}'.`
-        );
-        completionMessage = this._createCompletionMessage(
-          invocationMessage.invocationId,
-          "Client didn't provide a result.",
-          null
-        );
+        this._logger.log(LogLevel.Warning, `No result given for '${methodName}' method and invocation ID '${invocationMessage.invocationId}'.`);
+        completionMessage = this._createCompletionMessage(invocationMessage.invocationId, "Client didn't provide a result.", null);
       }
       await this._sendWithProtocol(completionMessage);
     } else {
       if (res) {
-        this._logger.log(
-          LogLevel.Error,
-          `Result given for '${methodName}' method but server is not expecting a result.`
-        );
+        this._logger.log(LogLevel.Error, `Result given for '${methodName}' method but server is not expecting a result.`);
       }
     }
   }
   _connectionClosed(error) {
-    this._logger.log(
-      LogLevel.Debug,
-      `HubConnection.connectionClosed(${error}) called while in state ${this._connectionState}.`
-    );
-    this._stopDuringStartError =
-      this._stopDuringStartError ||
-      error ||
-      new AbortError(
-        "The underlying connection was closed before the hub handshake could complete."
-      );
+    this._logger.log(LogLevel.Debug, `HubConnection.connectionClosed(${error}) called while in state ${this._connectionState}.`);
+    this._stopDuringStartError = this._stopDuringStartError || error || new AbortError("The underlying connection was closed before the hub handshake could complete.");
     if (this._handshakeResolver) {
       this._handshakeResolver();
     }
-    this._cancelCallbacksWithError(
-      error ||
-        new Error(
-          "Invocation canceled due to the underlying connection being closed."
-        )
-    );
+    this._cancelCallbacksWithError(error || new Error("Invocation canceled due to the underlying connection being closed."));
     this._cleanupTimeout();
     this._cleanupPingTimer();
     if (this._connectionState === HubConnectionState.Disconnecting) {
       this._completeClose(error);
-    } else if (
-      this._connectionState === HubConnectionState.Connected &&
-      this._reconnectPolicy
-    ) {
+    } else if (this._connectionState === HubConnectionState.Connected && this._reconnectPolicy) {
       this._reconnect(error);
     } else if (this._connectionState === HubConnectionState.Connected) {
       this._completeClose(error);
@@ -2295,55 +1954,32 @@ class HubConnection {
       this._connectionState = HubConnectionState.Disconnected;
       this._connectionStarted = false;
       if (this._messageBuffer) {
-        this._messageBuffer._dispose(
-          error !== null && error !== void 0
-            ? error
-            : new Error("Connection closed.")
-        );
+        this._messageBuffer._dispose(error !== null && error !== void 0 ? error : new Error("Connection closed."));
         this._messageBuffer = void 0;
       }
       if (Platform.isBrowser) {
-        window.document.removeEventListener(
-          "freeze",
-          this._freezeEventListener
-        );
+        window.document.removeEventListener("freeze", this._freezeEventListener);
       }
       try {
         this._closedCallbacks.forEach((c) => c.apply(this, [error]));
       } catch (e) {
-        this._logger.log(
-          LogLevel.Error,
-          `An onclose callback called with error '${error}' threw error '${e}'.`
-        );
+        this._logger.log(LogLevel.Error, `An onclose callback called with error '${error}' threw error '${e}'.`);
       }
     }
   }
   async _reconnect(error) {
     const reconnectStartTime = Date.now();
     let previousReconnectAttempts = 0;
-    let retryError =
-      error !== void 0
-        ? error
-        : new Error("Attempting to reconnect due to a unknown error.");
-    let nextRetryDelay = this._getNextRetryDelay(
-      previousReconnectAttempts++,
-      0,
-      retryError
-    );
+    let retryError = error !== void 0 ? error : new Error("Attempting to reconnect due to a unknown error.");
+    let nextRetryDelay = this._getNextRetryDelay(previousReconnectAttempts++, 0, retryError);
     if (nextRetryDelay === null) {
-      this._logger.log(
-        LogLevel.Debug,
-        "Connection not reconnecting because the IRetryPolicy returned null on the first reconnect attempt."
-      );
+      this._logger.log(LogLevel.Debug, "Connection not reconnecting because the IRetryPolicy returned null on the first reconnect attempt.");
       this._completeClose(error);
       return;
     }
     this._connectionState = HubConnectionState.Reconnecting;
     if (error) {
-      this._logger.log(
-        LogLevel.Information,
-        `Connection reconnecting because of error '${error}'.`
-      );
+      this._logger.log(LogLevel.Information, `Connection reconnecting because of error '${error}'.`);
     } else {
       this._logger.log(LogLevel.Information, "Connection reconnecting.");
     }
@@ -2351,84 +1987,49 @@ class HubConnection {
       try {
         this._reconnectingCallbacks.forEach((c) => c.apply(this, [error]));
       } catch (e) {
-        this._logger.log(
-          LogLevel.Error,
-          `An onreconnecting callback called with error '${error}' threw error '${e}'.`
-        );
+        this._logger.log(LogLevel.Error, `An onreconnecting callback called with error '${error}' threw error '${e}'.`);
       }
       if (this._connectionState !== HubConnectionState.Reconnecting) {
-        this._logger.log(
-          LogLevel.Debug,
-          "Connection left the reconnecting state in onreconnecting callback. Done reconnecting."
-        );
+        this._logger.log(LogLevel.Debug, "Connection left the reconnecting state in onreconnecting callback. Done reconnecting.");
         return;
       }
     }
     while (nextRetryDelay !== null) {
-      this._logger.log(
-        LogLevel.Information,
-        `Reconnect attempt number ${previousReconnectAttempts} will start in ${nextRetryDelay} ms.`
-      );
+      this._logger.log(LogLevel.Information, `Reconnect attempt number ${previousReconnectAttempts} will start in ${nextRetryDelay} ms.`);
       await new Promise((resolve) => {
         this._reconnectDelayHandle = setTimeout(resolve, nextRetryDelay);
       });
       this._reconnectDelayHandle = void 0;
       if (this._connectionState !== HubConnectionState.Reconnecting) {
-        this._logger.log(
-          LogLevel.Debug,
-          "Connection left the reconnecting state during reconnect delay. Done reconnecting."
-        );
+        this._logger.log(LogLevel.Debug, "Connection left the reconnecting state during reconnect delay. Done reconnecting.");
         return;
       }
       try {
         await this._startInternal();
         this._connectionState = HubConnectionState.Connected;
-        this._logger.log(
-          LogLevel.Information,
-          "HubConnection reconnected successfully."
-        );
+        this._logger.log(LogLevel.Information, "HubConnection reconnected successfully.");
         if (this._reconnectedCallbacks.length !== 0) {
           try {
-            this._reconnectedCallbacks.forEach((c) =>
-              c.apply(this, [this.connection.connectionId])
-            );
+            this._reconnectedCallbacks.forEach((c) => c.apply(this, [this.connection.connectionId]));
           } catch (e) {
-            this._logger.log(
-              LogLevel.Error,
-              `An onreconnected callback called with connectionId '${this.connection.connectionId}; threw error '${e}'.`
-            );
+            this._logger.log(LogLevel.Error, `An onreconnected callback called with connectionId '${this.connection.connectionId}; threw error '${e}'.`);
           }
         }
         return;
       } catch (e) {
-        this._logger.log(
-          LogLevel.Information,
-          `Reconnect attempt failed because of error '${e}'.`
-        );
+        this._logger.log(LogLevel.Information, `Reconnect attempt failed because of error '${e}'.`);
         if (this._connectionState !== HubConnectionState.Reconnecting) {
-          this._logger.log(
-            LogLevel.Debug,
-            `Connection moved to the '${this._connectionState}' from the reconnecting state during reconnect attempt. Done reconnecting.`
-          );
+          this._logger.log(LogLevel.Debug, `Connection moved to the '${this._connectionState}' from the reconnecting state during reconnect attempt. Done reconnecting.`);
           if (this._connectionState === HubConnectionState.Disconnecting) {
             this._completeClose();
           }
           return;
         }
         retryError = e instanceof Error ? e : new Error(e.toString());
-        nextRetryDelay = this._getNextRetryDelay(
-          previousReconnectAttempts++,
-          Date.now() - reconnectStartTime,
-          retryError
-        );
+        nextRetryDelay = this._getNextRetryDelay(previousReconnectAttempts++, Date.now() - reconnectStartTime, retryError);
       }
     }
-    this._logger.log(
-      LogLevel.Information,
-      `Reconnect retries have been exhausted after ${
-        Date.now() - reconnectStartTime
-      } ms and ${previousReconnectAttempts} failed attempts. Connection disconnecting.`
-    );
+    this._logger.log(LogLevel.Information, `Reconnect retries have been exhausted after ${Date.now() - reconnectStartTime} ms and ${previousReconnectAttempts} failed attempts. Connection disconnecting.`);
     this._completeClose();
   }
   _getNextRetryDelay(previousRetryCount, elapsedMilliseconds, retryReason) {
@@ -2436,13 +2037,10 @@ class HubConnection {
       return this._reconnectPolicy.nextRetryDelayInMilliseconds({
         elapsedMilliseconds,
         previousRetryCount,
-        retryReason,
+        retryReason
       });
     } catch (e) {
-      this._logger.log(
-        LogLevel.Error,
-        `IRetryPolicy.nextRetryDelayInMilliseconds(${previousRetryCount}, ${elapsedMilliseconds}) threw error '${e}'.`
-      );
+      this._logger.log(LogLevel.Error, `IRetryPolicy.nextRetryDelayInMilliseconds(${previousRetryCount}, ${elapsedMilliseconds}) threw error '${e}'.`);
       return null;
     }
   }
@@ -2454,12 +2052,7 @@ class HubConnection {
       try {
         callback(null, error);
       } catch (e) {
-        this._logger.log(
-          LogLevel.Error,
-          `Stream 'error' callback called with '${error}' threw error: ${getErrorString(
-            e
-          )}`
-        );
+        this._logger.log(LogLevel.Error, `Stream 'error' callback called with '${error}' threw error: ${getErrorString(e)}`);
       }
     });
   }
@@ -2481,13 +2074,13 @@ class HubConnection {
           arguments: args,
           streamIds,
           target: methodName,
-          type: MessageType.Invocation,
+          type: MessageType.Invocation
         };
       } else {
         return {
           arguments: args,
           target: methodName,
-          type: MessageType.Invocation,
+          type: MessageType.Invocation
         };
       }
     } else {
@@ -2499,14 +2092,14 @@ class HubConnection {
           invocationId: invocationId.toString(),
           streamIds,
           target: methodName,
-          type: MessageType.Invocation,
+          type: MessageType.Invocation
         };
       } else {
         return {
           arguments: args,
           invocationId: invocationId.toString(),
           target: methodName,
-          type: MessageType.Invocation,
+          type: MessageType.Invocation
         };
       }
     }
@@ -2521,9 +2114,7 @@ class HubConnection {
     for (const streamId in streams) {
       streams[streamId].subscribe({
         complete: () => {
-          promiseQueue = promiseQueue.then(() =>
-            this._sendWithProtocol(this._createCompletionMessage(streamId))
-          );
+          promiseQueue = promiseQueue.then(() => this._sendWithProtocol(this._createCompletionMessage(streamId)));
         },
         error: (err) => {
           let message;
@@ -2534,19 +2125,11 @@ class HubConnection {
           } else {
             message = "Unknown error";
           }
-          promiseQueue = promiseQueue.then(() =>
-            this._sendWithProtocol(
-              this._createCompletionMessage(streamId, message)
-            )
-          );
+          promiseQueue = promiseQueue.then(() => this._sendWithProtocol(this._createCompletionMessage(streamId, message)));
         },
         next: (item) => {
-          promiseQueue = promiseQueue.then(() =>
-            this._sendWithProtocol(
-              this._createStreamItemMessage(streamId, item)
-            )
-          );
-        },
+          promiseQueue = promiseQueue.then(() => this._sendWithProtocol(this._createStreamItemMessage(streamId, item)));
+        }
       });
     }
   }
@@ -2577,28 +2160,28 @@ class HubConnection {
         invocationId: invocationId.toString(),
         streamIds,
         target: methodName,
-        type: MessageType.StreamInvocation,
+        type: MessageType.StreamInvocation
       };
     } else {
       return {
         arguments: args,
         invocationId: invocationId.toString(),
         target: methodName,
-        type: MessageType.StreamInvocation,
+        type: MessageType.StreamInvocation
       };
     }
   }
   _createCancelInvocation(id) {
     return {
       invocationId: id,
-      type: MessageType.CancelInvocation,
+      type: MessageType.CancelInvocation
     };
   }
   _createStreamItemMessage(id, item) {
     return {
       invocationId: id,
       item,
-      type: MessageType.StreamItem,
+      type: MessageType.StreamItem
     };
   }
   _createCompletionMessage(id, error, result) {
@@ -2606,13 +2189,13 @@ class HubConnection {
       return {
         error,
         invocationId: id,
-        type: MessageType.Completion,
+        type: MessageType.Completion
       };
     }
     return {
       invocationId: id,
       result,
-      type: MessageType.Completion,
+      type: MessageType.Completion
     };
   }
   _createCloseMessage() {
@@ -2622,16 +2205,14 @@ class HubConnection {
 const DEFAULT_RETRY_DELAYS_IN_MILLISECONDS = [0, 2e3, 1e4, 3e4, null];
 class DefaultReconnectPolicy {
   constructor(retryDelays) {
-    this._retryDelays =
-      retryDelays !== void 0
-        ? [...retryDelays, null]
-        : DEFAULT_RETRY_DELAYS_IN_MILLISECONDS;
+    this._retryDelays = retryDelays !== void 0 ? [...retryDelays, null] : DEFAULT_RETRY_DELAYS_IN_MILLISECONDS;
   }
   nextRetryDelayInMilliseconds(retryContext) {
     return this._retryDelays[retryContext.previousRetryCount];
   }
 }
-class HeaderNames {}
+class HeaderNames {
+}
 HeaderNames.Authorization = "Authorization";
 HeaderNames.Cookie = "Cookie";
 class AccessTokenHttpClient extends HttpClient {
@@ -2642,11 +2223,7 @@ class AccessTokenHttpClient extends HttpClient {
   }
   async send(request) {
     let allowRetry = true;
-    if (
-      this._accessTokenFactory &&
-      (!this._accessToken ||
-        (request.url && request.url.indexOf("/negotiate?") > 0))
-    ) {
+    if (this._accessTokenFactory && (!this._accessToken || request.url && request.url.indexOf("/negotiate?") > 0)) {
       allowRetry = false;
       this._accessToken = await this._accessTokenFactory();
     }
@@ -2664,9 +2241,7 @@ class AccessTokenHttpClient extends HttpClient {
       request.headers = {};
     }
     if (this._accessToken) {
-      request.headers[
-        HeaderNames.Authorization
-      ] = `Bearer ${this._accessToken}`;
+      request.headers[HeaderNames.Authorization] = `Bearer ${this._accessToken}`;
     } else if (this._accessTokenFactory) {
       if (request.headers[HeaderNames.Authorization]) {
         delete request.headers[HeaderNames.Authorization];
@@ -2678,17 +2253,16 @@ class AccessTokenHttpClient extends HttpClient {
   }
 }
 var HttpTransportType;
-(function (HttpTransportType2) {
-  HttpTransportType2[(HttpTransportType2["None"] = 0)] = "None";
-  HttpTransportType2[(HttpTransportType2["WebSockets"] = 1)] = "WebSockets";
-  HttpTransportType2[(HttpTransportType2["ServerSentEvents"] = 2)] =
-    "ServerSentEvents";
-  HttpTransportType2[(HttpTransportType2["LongPolling"] = 4)] = "LongPolling";
+(function(HttpTransportType2) {
+  HttpTransportType2[HttpTransportType2["None"] = 0] = "None";
+  HttpTransportType2[HttpTransportType2["WebSockets"] = 1] = "WebSockets";
+  HttpTransportType2[HttpTransportType2["ServerSentEvents"] = 2] = "ServerSentEvents";
+  HttpTransportType2[HttpTransportType2["LongPolling"] = 4] = "LongPolling";
 })(HttpTransportType || (HttpTransportType = {}));
 var TransferFormat;
-(function (TransferFormat2) {
-  TransferFormat2[(TransferFormat2["Text"] = 1)] = "Text";
-  TransferFormat2[(TransferFormat2["Binary"] = 2)] = "Binary";
+(function(TransferFormat2) {
+  TransferFormat2[TransferFormat2["Text"] = 1] = "Text";
+  TransferFormat2[TransferFormat2["Binary"] = 2] = "Binary";
 })(TransferFormat || (TransferFormat = {}));
 let AbortController$1 = class AbortController2 {
   constructor() {
@@ -2730,14 +2304,8 @@ class LongPollingTransport {
     Arg.isIn(transferFormat, TransferFormat, "transferFormat");
     this._url = url;
     this._logger.log(LogLevel.Trace, "(LongPolling transport) Connecting.");
-    if (
-      transferFormat === TransferFormat.Binary &&
-      typeof XMLHttpRequest !== "undefined" &&
-      typeof new XMLHttpRequest().responseType !== "string"
-    ) {
-      throw new Error(
-        "Binary protocols over XmlHttpRequest not implementing advanced features are not supported."
-      );
+    if (transferFormat === TransferFormat.Binary && (typeof XMLHttpRequest !== "undefined" && typeof new XMLHttpRequest().responseType !== "string")) {
+      throw new Error("Binary protocols over XmlHttpRequest not implementing advanced features are not supported.");
     }
     const [name, value] = getUserAgentHeader();
     const headers = { [name]: value, ...this._options.headers };
@@ -2745,26 +2313,17 @@ class LongPollingTransport {
       abortSignal: this._pollAbort.signal,
       headers,
       timeout: 1e5,
-      withCredentials: this._options.withCredentials,
+      withCredentials: this._options.withCredentials
     };
     if (transferFormat === TransferFormat.Binary) {
       pollOptions.responseType = "arraybuffer";
     }
     const pollUrl = `${url}&_=${Date.now()}`;
-    this._logger.log(
-      LogLevel.Trace,
-      `(LongPolling transport) polling: ${pollUrl}.`
-    );
+    this._logger.log(LogLevel.Trace, `(LongPolling transport) polling: ${pollUrl}.`);
     const response = await this._httpClient.get(pollUrl, pollOptions);
     if (response.statusCode !== 200) {
-      this._logger.log(
-        LogLevel.Error,
-        `(LongPolling transport) Unexpected response code: ${response.statusCode}.`
-      );
-      this._closeError = new HttpError(
-        response.statusText || "",
-        response.statusCode
-      );
+      this._logger.log(LogLevel.Error, `(LongPolling transport) Unexpected response code: ${response.statusCode}.`);
+      this._closeError = new HttpError(response.statusText || "", response.statusCode);
       this._running = false;
     } else {
       this._running = true;
@@ -2776,58 +2335,31 @@ class LongPollingTransport {
       while (this._running) {
         try {
           const pollUrl = `${url}&_=${Date.now()}`;
-          this._logger.log(
-            LogLevel.Trace,
-            `(LongPolling transport) polling: ${pollUrl}.`
-          );
+          this._logger.log(LogLevel.Trace, `(LongPolling transport) polling: ${pollUrl}.`);
           const response = await this._httpClient.get(pollUrl, pollOptions);
           if (response.statusCode === 204) {
-            this._logger.log(
-              LogLevel.Information,
-              "(LongPolling transport) Poll terminated by server."
-            );
+            this._logger.log(LogLevel.Information, "(LongPolling transport) Poll terminated by server.");
             this._running = false;
           } else if (response.statusCode !== 200) {
-            this._logger.log(
-              LogLevel.Error,
-              `(LongPolling transport) Unexpected response code: ${response.statusCode}.`
-            );
-            this._closeError = new HttpError(
-              response.statusText || "",
-              response.statusCode
-            );
+            this._logger.log(LogLevel.Error, `(LongPolling transport) Unexpected response code: ${response.statusCode}.`);
+            this._closeError = new HttpError(response.statusText || "", response.statusCode);
             this._running = false;
           } else {
             if (response.content) {
-              this._logger.log(
-                LogLevel.Trace,
-                `(LongPolling transport) data received. ${getDataDetail(
-                  response.content,
-                  this._options.logMessageContent
-                )}.`
-              );
+              this._logger.log(LogLevel.Trace, `(LongPolling transport) data received. ${getDataDetail(response.content, this._options.logMessageContent)}.`);
               if (this.onreceive) {
                 this.onreceive(response.content);
               }
             } else {
-              this._logger.log(
-                LogLevel.Trace,
-                "(LongPolling transport) Poll timed out, reissuing."
-              );
+              this._logger.log(LogLevel.Trace, "(LongPolling transport) Poll timed out, reissuing.");
             }
           }
         } catch (e) {
           if (!this._running) {
-            this._logger.log(
-              LogLevel.Trace,
-              `(LongPolling transport) Poll errored after shutdown: ${e.message}`
-            );
+            this._logger.log(LogLevel.Trace, `(LongPolling transport) Poll errored after shutdown: ${e.message}`);
           } else {
             if (e instanceof TimeoutError) {
-              this._logger.log(
-                LogLevel.Trace,
-                "(LongPolling transport) Poll timed out, reissuing."
-              );
+              this._logger.log(LogLevel.Trace, "(LongPolling transport) Poll timed out, reissuing.");
             } else {
               this._closeError = e;
               this._running = false;
@@ -2836,10 +2368,7 @@ class LongPollingTransport {
         }
       }
     } finally {
-      this._logger.log(
-        LogLevel.Trace,
-        "(LongPolling transport) Polling complete."
-      );
+      this._logger.log(LogLevel.Trace, "(LongPolling transport) Polling complete.");
       if (!this.pollAborted) {
         this._raiseOnClose();
       }
@@ -2847,39 +2376,24 @@ class LongPollingTransport {
   }
   async send(data) {
     if (!this._running) {
-      return Promise.reject(
-        new Error("Cannot send until the transport is connected")
-      );
+      return Promise.reject(new Error("Cannot send until the transport is connected"));
     }
-    return sendMessage(
-      this._logger,
-      "LongPolling",
-      this._httpClient,
-      this._url,
-      data,
-      this._options
-    );
+    return sendMessage(this._logger, "LongPolling", this._httpClient, this._url, data, this._options);
   }
   async stop() {
-    this._logger.log(
-      LogLevel.Trace,
-      "(LongPolling transport) Stopping polling."
-    );
+    this._logger.log(LogLevel.Trace, "(LongPolling transport) Stopping polling.");
     this._running = false;
     this._pollAbort.abort();
     try {
       await this._receiving;
-      this._logger.log(
-        LogLevel.Trace,
-        `(LongPolling transport) sending DELETE request to ${this._url}.`
-      );
+      this._logger.log(LogLevel.Trace, `(LongPolling transport) sending DELETE request to ${this._url}.`);
       const headers = {};
       const [name, value] = getUserAgentHeader();
       headers[name] = value;
       const deleteOptions = {
         headers: { ...headers, ...this._options.headers },
         timeout: this._options.timeout,
-        withCredentials: this._options.withCredentials,
+        withCredentials: this._options.withCredentials
       };
       let error;
       try {
@@ -2890,28 +2404,16 @@ class LongPollingTransport {
       if (error) {
         if (error instanceof HttpError) {
           if (error.statusCode === 404) {
-            this._logger.log(
-              LogLevel.Trace,
-              "(LongPolling transport) A 404 response was returned from sending a DELETE request."
-            );
+            this._logger.log(LogLevel.Trace, "(LongPolling transport) A 404 response was returned from sending a DELETE request.");
           } else {
-            this._logger.log(
-              LogLevel.Trace,
-              `(LongPolling transport) Error sending a DELETE request: ${error}`
-            );
+            this._logger.log(LogLevel.Trace, `(LongPolling transport) Error sending a DELETE request: ${error}`);
           }
         }
       } else {
-        this._logger.log(
-          LogLevel.Trace,
-          "(LongPolling transport) DELETE request accepted."
-        );
+        this._logger.log(LogLevel.Trace, "(LongPolling transport) DELETE request accepted.");
       }
     } finally {
-      this._logger.log(
-        LogLevel.Trace,
-        "(LongPolling transport) Stop finished."
-      );
+      this._logger.log(LogLevel.Trace, "(LongPolling transport) Stop finished.");
       this._raiseOnClose();
     }
   }
@@ -2942,47 +2444,30 @@ class ServerSentEventsTransport {
     this._logger.log(LogLevel.Trace, "(SSE transport) Connecting.");
     this._url = url;
     if (this._accessToken) {
-      url +=
-        (url.indexOf("?") < 0 ? "?" : "&") +
-        `access_token=${encodeURIComponent(this._accessToken)}`;
+      url += (url.indexOf("?") < 0 ? "?" : "&") + `access_token=${encodeURIComponent(this._accessToken)}`;
     }
     return new Promise((resolve, reject) => {
       let opened = false;
       if (transferFormat !== TransferFormat.Text) {
-        reject(
-          new Error(
-            "The Server-Sent Events transport only supports the 'Text' transfer format"
-          )
-        );
+        reject(new Error("The Server-Sent Events transport only supports the 'Text' transfer format"));
         return;
       }
       let eventSource;
       if (Platform.isBrowser || Platform.isWebWorker) {
-        eventSource = new this._options.EventSource(url, {
-          withCredentials: this._options.withCredentials,
-        });
+        eventSource = new this._options.EventSource(url, { withCredentials: this._options.withCredentials });
       } else {
         const cookies = this._httpClient.getCookieString(url);
         const headers = {};
         headers.Cookie = cookies;
         const [name, value] = getUserAgentHeader();
         headers[name] = value;
-        eventSource = new this._options.EventSource(url, {
-          withCredentials: this._options.withCredentials,
-          headers: { ...headers, ...this._options.headers },
-        });
+        eventSource = new this._options.EventSource(url, { withCredentials: this._options.withCredentials, headers: { ...headers, ...this._options.headers } });
       }
       try {
         eventSource.onmessage = (e) => {
           if (this.onreceive) {
             try {
-              this._logger.log(
-                LogLevel.Trace,
-                `(SSE transport) data received. ${getDataDetail(
-                  e.data,
-                  this._options.logMessageContent
-                )}.`
-              );
+              this._logger.log(LogLevel.Trace, `(SSE transport) data received. ${getDataDetail(e.data, this._options.logMessageContent)}.`);
               this.onreceive(e.data);
             } catch (error) {
               this._close(error);
@@ -2994,18 +2479,11 @@ class ServerSentEventsTransport {
           if (opened) {
             this._close();
           } else {
-            reject(
-              new Error(
-                "EventSource failed to connect. The connection could not be found on the server, either the connection ID is not present on the server, or a proxy is refusing/buffering the connection. If you have multiple servers check that sticky sessions are enabled."
-              )
-            );
+            reject(new Error("EventSource failed to connect. The connection could not be found on the server, either the connection ID is not present on the server, or a proxy is refusing/buffering the connection. If you have multiple servers check that sticky sessions are enabled."));
           }
         };
         eventSource.onopen = () => {
-          this._logger.log(
-            LogLevel.Information,
-            `SSE connected to ${this._url}`
-          );
+          this._logger.log(LogLevel.Information, `SSE connected to ${this._url}`);
           this._eventSource = eventSource;
           opened = true;
           resolve();
@@ -3018,18 +2496,9 @@ class ServerSentEventsTransport {
   }
   async send(data) {
     if (!this._eventSource) {
-      return Promise.reject(
-        new Error("Cannot send until the transport is connected")
-      );
+      return Promise.reject(new Error("Cannot send until the transport is connected"));
     }
-    return sendMessage(
-      this._logger,
-      "SSE",
-      this._httpClient,
-      this._url,
-      data,
-      this._options
-    );
+    return sendMessage(this._logger, "SSE", this._httpClient, this._url, data, this._options);
   }
   stop() {
     this._close();
@@ -3046,14 +2515,7 @@ class ServerSentEventsTransport {
   }
 }
 class WebSocketTransport {
-  constructor(
-    httpClient,
-    accessTokenFactory,
-    logger,
-    logMessageContent,
-    webSocketConstructor,
-    headers
-  ) {
+  constructor(httpClient, accessTokenFactory, logger, logMessageContent, webSocketConstructor, headers) {
     this._logger = logger;
     this._accessTokenFactory = accessTokenFactory;
     this._logMessageContent = logMessageContent;
@@ -3088,13 +2550,11 @@ class WebSocketTransport {
           headers[HeaderNames.Cookie] = cookies;
         }
         webSocket = new this._webSocketConstructor(url, void 0, {
-          headers: { ...headers, ...this._headers },
+          headers: { ...headers, ...this._headers }
         });
       } else {
         if (token) {
-          url +=
-            (url.indexOf("?") < 0 ? "?" : "&") +
-            `access_token=${encodeURIComponent(token)}`;
+          url += (url.indexOf("?") < 0 ? "?" : "&") + `access_token=${encodeURIComponent(token)}`;
         }
       }
       if (!webSocket) {
@@ -3104,10 +2564,7 @@ class WebSocketTransport {
         webSocket.binaryType = "arraybuffer";
       }
       webSocket.onopen = (_event) => {
-        this._logger.log(
-          LogLevel.Information,
-          `WebSocket connected to ${url}.`
-        );
+        this._logger.log(LogLevel.Information, `WebSocket connected to ${url}.`);
         this._webSocket = webSocket;
         opened = true;
         resolve();
@@ -3119,19 +2576,10 @@ class WebSocketTransport {
         } else {
           error = "There was an error with the transport";
         }
-        this._logger.log(
-          LogLevel.Information,
-          `(WebSockets transport) ${error}.`
-        );
+        this._logger.log(LogLevel.Information, `(WebSockets transport) ${error}.`);
       };
       webSocket.onmessage = (message) => {
-        this._logger.log(
-          LogLevel.Trace,
-          `(WebSockets transport) data received. ${getDataDetail(
-            message.data,
-            this._logMessageContent
-          )}.`
-        );
+        this._logger.log(LogLevel.Trace, `(WebSockets transport) data received. ${getDataDetail(message.data, this._logMessageContent)}.`);
         if (this.onreceive) {
           try {
             this.onreceive(message.data);
@@ -3146,14 +2594,10 @@ class WebSocketTransport {
           this._close(event);
         } else {
           let error = null;
-          if (
-            typeof ErrorEvent !== "undefined" &&
-            event instanceof ErrorEvent
-          ) {
+          if (typeof ErrorEvent !== "undefined" && event instanceof ErrorEvent) {
             error = event.error;
           } else {
-            error =
-              "WebSocket failed to connect. The connection could not be found on the server, either the endpoint may not be a SignalR endpoint, the connection ID is not present on the server, or there is a proxy blocking WebSockets. If you have multiple servers check that sticky sessions are enabled.";
+            error = "WebSocket failed to connect. The connection could not be found on the server, either the endpoint may not be a SignalR endpoint, the connection ID is not present on the server, or there is a proxy blocking WebSockets. If you have multiple servers check that sticky sessions are enabled.";
           }
           reject(new Error(error));
         }
@@ -3161,17 +2605,8 @@ class WebSocketTransport {
     });
   }
   send(data) {
-    if (
-      this._webSocket &&
-      this._webSocket.readyState === this._webSocketConstructor.OPEN
-    ) {
-      this._logger.log(
-        LogLevel.Trace,
-        `(WebSockets transport) sending data. ${getDataDetail(
-          data,
-          this._logMessageContent
-        )}.`
-      );
+    if (this._webSocket && this._webSocket.readyState === this._webSocketConstructor.OPEN) {
+      this._logger.log(LogLevel.Trace, `(WebSockets transport) sending data. ${getDataDetail(data, this._logMessageContent)}.`);
       this._webSocket.send(data);
       return Promise.resolve();
     }
@@ -3185,25 +2620,19 @@ class WebSocketTransport {
   }
   _close(event) {
     if (this._webSocket) {
-      this._webSocket.onclose = () => {};
-      this._webSocket.onmessage = () => {};
-      this._webSocket.onerror = () => {};
+      this._webSocket.onclose = () => {
+      };
+      this._webSocket.onmessage = () => {
+      };
+      this._webSocket.onerror = () => {
+      };
       this._webSocket.close();
       this._webSocket = void 0;
     }
     this._logger.log(LogLevel.Trace, "(WebSockets transport) socket closed.");
     if (this.onclose) {
-      if (
-        this._isCloseEvent(event) &&
-        (event.wasClean === false || event.code !== 1e3)
-      ) {
-        this.onclose(
-          new Error(
-            `WebSocket closed with status code: ${event.code} (${
-              event.reason || "no reason given"
-            }).`
-          )
-        );
+      if (this._isCloseEvent(event) && (event.wasClean === false || event.code !== 1e3)) {
+        this.onclose(new Error(`WebSocket closed with status code: ${event.code} (${event.reason || "no reason given"}).`));
       } else if (event instanceof Error) {
         this.onclose(event);
       } else {
@@ -3212,73 +2641,49 @@ class WebSocketTransport {
     }
   }
   _isCloseEvent(event) {
-    return (
-      event &&
-      typeof event.wasClean === "boolean" &&
-      typeof event.code === "number"
-    );
+    return event && typeof event.wasClean === "boolean" && typeof event.code === "number";
   }
 }
 const MAX_REDIRECTS = 100;
 class HttpConnection {
   constructor(url, options = {}) {
-    this._stopPromiseResolver = () => {};
+    this._stopPromiseResolver = () => {
+    };
     this.features = {};
     this._negotiateVersion = 1;
     Arg.isRequired(url, "url");
     this._logger = createLogger(options.logger);
     this.baseUrl = this._resolveUrl(url);
     options = options || {};
-    options.logMessageContent =
-      options.logMessageContent === void 0 ? false : options.logMessageContent;
-    if (
-      typeof options.withCredentials === "boolean" ||
-      options.withCredentials === void 0
-    ) {
-      options.withCredentials =
-        options.withCredentials === void 0 ? true : options.withCredentials;
+    options.logMessageContent = options.logMessageContent === void 0 ? false : options.logMessageContent;
+    if (typeof options.withCredentials === "boolean" || options.withCredentials === void 0) {
+      options.withCredentials = options.withCredentials === void 0 ? true : options.withCredentials;
     } else {
-      throw new Error(
-        "withCredentials option was not a 'boolean' or 'undefined' value"
-      );
+      throw new Error("withCredentials option was not a 'boolean' or 'undefined' value");
     }
     options.timeout = options.timeout === void 0 ? 100 * 1e3 : options.timeout;
     let webSocketModule = null;
     let eventSourceModule = null;
     if (Platform.isNode && typeof require !== "undefined") {
-      const requireFunc =
-        typeof __webpack_require__ === "function"
-          ? __non_webpack_require__
-          : require;
+      const requireFunc = typeof __webpack_require__ === "function" ? __non_webpack_require__ : require;
       webSocketModule = requireFunc("ws");
       eventSourceModule = requireFunc("eventsource");
     }
-    if (
-      !Platform.isNode &&
-      typeof WebSocket !== "undefined" &&
-      !options.WebSocket
-    ) {
+    if (!Platform.isNode && typeof WebSocket !== "undefined" && !options.WebSocket) {
       options.WebSocket = WebSocket;
     } else if (Platform.isNode && !options.WebSocket) {
       if (webSocketModule) {
         options.WebSocket = webSocketModule;
       }
     }
-    if (
-      !Platform.isNode &&
-      typeof EventSource !== "undefined" &&
-      !options.EventSource
-    ) {
+    if (!Platform.isNode && typeof EventSource !== "undefined" && !options.EventSource) {
       options.EventSource = EventSource;
     } else if (Platform.isNode && !options.EventSource) {
       if (typeof eventSourceModule !== "undefined") {
         options.EventSource = eventSourceModule;
       }
     }
-    this._httpClient = new AccessTokenHttpClient(
-      options.httpClient || new DefaultHttpClient(this._logger),
-      options.accessTokenFactory
-    );
+    this._httpClient = new AccessTokenHttpClient(options.httpClient || new DefaultHttpClient(this._logger), options.accessTokenFactory);
     this._connectionState = "Disconnected";
     this._connectionStarted = false;
     this._options = options;
@@ -3288,29 +2693,20 @@ class HttpConnection {
   async start(transferFormat) {
     transferFormat = transferFormat || TransferFormat.Binary;
     Arg.isIn(transferFormat, TransferFormat, "transferFormat");
-    this._logger.log(
-      LogLevel.Debug,
-      `Starting connection with transfer format '${TransferFormat[transferFormat]}'.`
-    );
+    this._logger.log(LogLevel.Debug, `Starting connection with transfer format '${TransferFormat[transferFormat]}'.`);
     if (this._connectionState !== "Disconnected") {
-      return Promise.reject(
-        new Error(
-          "Cannot start an HttpConnection that is not in the 'Disconnected' state."
-        )
-      );
+      return Promise.reject(new Error("Cannot start an HttpConnection that is not in the 'Disconnected' state."));
     }
     this._connectionState = "Connecting";
     this._startInternalPromise = this._startInternal(transferFormat);
     await this._startInternalPromise;
     if (this._connectionState === "Disconnecting") {
-      const message =
-        "Failed to start the HttpConnection before stop() was called.";
+      const message = "Failed to start the HttpConnection before stop() was called.";
       this._logger.log(LogLevel.Error, message);
       await this._stopPromise;
       return Promise.reject(new AbortError(message));
     } else if (this._connectionState !== "Connected") {
-      const message =
-        "HttpConnection.startInternal completed gracefully but didn't enter the connection into the connected state!";
+      const message = "HttpConnection.startInternal completed gracefully but didn't enter the connection into the connected state!";
       this._logger.log(LogLevel.Error, message);
       return Promise.reject(new AbortError(message));
     }
@@ -3318,11 +2714,7 @@ class HttpConnection {
   }
   send(data) {
     if (this._connectionState !== "Connected") {
-      return Promise.reject(
-        new Error(
-          "Cannot send data if the connection is not in the 'Connected' State."
-        )
-      );
+      return Promise.reject(new Error("Cannot send data if the connection is not in the 'Connected' State."));
     }
     if (!this._sendQueue) {
       this._sendQueue = new TransportSendQueue(this.transport);
@@ -3331,17 +2723,11 @@ class HttpConnection {
   }
   async stop(error) {
     if (this._connectionState === "Disconnected") {
-      this._logger.log(
-        LogLevel.Debug,
-        `Call to HttpConnection.stop(${error}) ignored because the connection is already in the disconnected state.`
-      );
+      this._logger.log(LogLevel.Debug, `Call to HttpConnection.stop(${error}) ignored because the connection is already in the disconnected state.`);
       return Promise.resolve();
     }
     if (this._connectionState === "Disconnecting") {
-      this._logger.log(
-        LogLevel.Debug,
-        `Call to HttpConnection.stop(${error}) ignored because the connection is already in the disconnecting state.`
-      );
+      this._logger.log(LogLevel.Debug, `Call to HttpConnection.stop(${error}) ignored because the connection is already in the disconnecting state.`);
       return this._stopPromise;
     }
     this._connectionState = "Disconnecting";
@@ -3355,23 +2741,18 @@ class HttpConnection {
     this._stopError = error;
     try {
       await this._startInternalPromise;
-    } catch (e) {}
+    } catch (e) {
+    }
     if (this.transport) {
       try {
         await this.transport.stop();
       } catch (e) {
-        this._logger.log(
-          LogLevel.Error,
-          `HttpConnection.transport.stop() threw error '${e}'.`
-        );
+        this._logger.log(LogLevel.Error, `HttpConnection.transport.stop() threw error '${e}'.`);
         this._stopConnection();
       }
       this.transport = void 0;
     } else {
-      this._logger.log(
-        LogLevel.Debug,
-        "HttpConnection.transport is undefined in HttpConnection.stop() because start() failed."
-      );
+      this._logger.log(LogLevel.Debug, "HttpConnection.transport is undefined in HttpConnection.stop() because start() failed.");
     }
   }
   async _startInternal(transferFormat) {
@@ -3381,35 +2762,24 @@ class HttpConnection {
     try {
       if (this._options.skipNegotiation) {
         if (this._options.transport === HttpTransportType.WebSockets) {
-          this.transport = this._constructTransport(
-            HttpTransportType.WebSockets
-          );
+          this.transport = this._constructTransport(HttpTransportType.WebSockets);
           await this._startTransport(url, transferFormat);
         } else {
-          throw new Error(
-            "Negotiation can only be skipped when using the WebSocket transport directly."
-          );
+          throw new Error("Negotiation can only be skipped when using the WebSocket transport directly.");
         }
       } else {
         let negotiateResponse = null;
         let redirects = 0;
         do {
           negotiateResponse = await this._getNegotiationResponse(url);
-          if (
-            this._connectionState === "Disconnecting" ||
-            this._connectionState === "Disconnected"
-          ) {
-            throw new AbortError(
-              "The connection was stopped during negotiation."
-            );
+          if (this._connectionState === "Disconnecting" || this._connectionState === "Disconnected") {
+            throw new AbortError("The connection was stopped during negotiation.");
           }
           if (negotiateResponse.error) {
             throw new Error(negotiateResponse.error);
           }
           if (negotiateResponse.ProtocolVersion) {
-            throw new Error(
-              "Detected a connection attempt to an ASP.NET SignalR Server. This client only supports connecting to an ASP.NET Core SignalR Server. See https://aka.ms/signalr-core-differences for details."
-            );
+            throw new Error("Detected a connection attempt to an ASP.NET SignalR Server. This client only supports connecting to an ASP.NET Core SignalR Server. See https://aka.ms/signalr-core-differences for details.");
           }
           if (negotiateResponse.url) {
             url = negotiateResponse.url;
@@ -3425,21 +2795,13 @@ class HttpConnection {
         if (redirects === MAX_REDIRECTS && negotiateResponse.url) {
           throw new Error("Negotiate redirection limit exceeded.");
         }
-        await this._createTransport(
-          url,
-          this._options.transport,
-          negotiateResponse,
-          transferFormat
-        );
+        await this._createTransport(url, this._options.transport, negotiateResponse, transferFormat);
       }
       if (this.transport instanceof LongPollingTransport) {
         this.features.inherentKeepAlive = true;
       }
       if (this._connectionState === "Connecting") {
-        this._logger.log(
-          LogLevel.Debug,
-          "The HttpConnection connected successfully."
-        );
+        this._logger.log(LogLevel.Debug, "The HttpConnection connected successfully.");
         this._connectionState = "Connected";
       }
     } catch (e) {
@@ -3455,49 +2817,30 @@ class HttpConnection {
     const [name, value] = getUserAgentHeader();
     headers[name] = value;
     const negotiateUrl = this._resolveNegotiateUrl(url);
-    this._logger.log(
-      LogLevel.Debug,
-      `Sending negotiation request: ${negotiateUrl}.`
-    );
+    this._logger.log(LogLevel.Debug, `Sending negotiation request: ${negotiateUrl}.`);
     try {
       const response = await this._httpClient.post(negotiateUrl, {
         content: "",
         headers: { ...headers, ...this._options.headers },
         timeout: this._options.timeout,
-        withCredentials: this._options.withCredentials,
+        withCredentials: this._options.withCredentials
       });
       if (response.statusCode !== 200) {
-        return Promise.reject(
-          new Error(
-            `Unexpected status code returned from negotiate '${response.statusCode}'`
-          )
-        );
+        return Promise.reject(new Error(`Unexpected status code returned from negotiate '${response.statusCode}'`));
       }
       const negotiateResponse = JSON.parse(response.content);
-      if (
-        !negotiateResponse.negotiateVersion ||
-        negotiateResponse.negotiateVersion < 1
-      ) {
+      if (!negotiateResponse.negotiateVersion || negotiateResponse.negotiateVersion < 1) {
         negotiateResponse.connectionToken = negotiateResponse.connectionId;
       }
-      if (
-        negotiateResponse.useStatefulReconnect &&
-        this._options._useStatefulReconnect !== true
-      ) {
-        return Promise.reject(
-          new FailedToNegotiateWithServerError(
-            "Client didn't negotiate Stateful Reconnect but the server did."
-          )
-        );
+      if (negotiateResponse.useStatefulReconnect && this._options._useStatefulReconnect !== true) {
+        return Promise.reject(new FailedToNegotiateWithServerError("Client didn't negotiate Stateful Reconnect but the server did."));
       }
       return negotiateResponse;
     } catch (e) {
       let errorMessage = "Failed to complete negotiation with the server: " + e;
       if (e instanceof HttpError) {
         if (e.statusCode === 404) {
-          errorMessage =
-            errorMessage +
-            " Either this is not a SignalR endpoint or there is a proxy blocking the connection.";
+          errorMessage = errorMessage + " Either this is not a SignalR endpoint or there is a proxy blocking the connection.";
         }
       }
       this._logger.log(LogLevel.Error, errorMessage);
@@ -3508,25 +2851,12 @@ class HttpConnection {
     if (!connectionToken) {
       return url;
     }
-    return (
-      url + (url.indexOf("?") === -1 ? "?" : "&") + `id=${connectionToken}`
-    );
+    return url + (url.indexOf("?") === -1 ? "?" : "&") + `id=${connectionToken}`;
   }
-  async _createTransport(
-    url,
-    requestedTransport,
-    negotiateResponse,
-    requestedTransferFormat
-  ) {
-    let connectUrl = this._createConnectUrl(
-      url,
-      negotiateResponse.connectionToken
-    );
+  async _createTransport(url, requestedTransport, negotiateResponse, requestedTransferFormat) {
+    let connectUrl = this._createConnectUrl(url, negotiateResponse.connectionToken);
     if (this._isITransport(requestedTransport)) {
-      this._logger.log(
-        LogLevel.Debug,
-        "Connection was provided an instance of ITransport, using that directly."
-      );
+      this._logger.log(LogLevel.Debug, "Connection was provided an instance of ITransport, using that directly.");
       this.transport = requestedTransport;
       await this._startTransport(connectUrl, requestedTransferFormat);
       this.connectionId = negotiateResponse.connectionId;
@@ -3536,14 +2866,7 @@ class HttpConnection {
     const transports = negotiateResponse.availableTransports || [];
     let negotiate = negotiateResponse;
     for (const endpoint of transports) {
-      const transportOrError = this._resolveTransportOrError(
-        endpoint,
-        requestedTransport,
-        requestedTransferFormat,
-        (negotiate === null || negotiate === void 0
-          ? void 0
-          : negotiate.useStatefulReconnect) === true
-      );
+      const transportOrError = this._resolveTransportOrError(endpoint, requestedTransport, requestedTransferFormat, (negotiate === null || negotiate === void 0 ? void 0 : negotiate.useStatefulReconnect) === true);
       if (transportOrError instanceof Error) {
         transportExceptions.push(`${endpoint.transport} failed:`);
         transportExceptions.push(transportOrError);
@@ -3562,20 +2885,11 @@ class HttpConnection {
           this.connectionId = negotiate.connectionId;
           return;
         } catch (ex) {
-          this._logger.log(
-            LogLevel.Error,
-            `Failed to start the transport '${endpoint.transport}': ${ex}`
-          );
+          this._logger.log(LogLevel.Error, `Failed to start the transport '${endpoint.transport}': ${ex}`);
           negotiate = void 0;
-          transportExceptions.push(
-            new FailedToStartTransportError(
-              `${endpoint.transport} failed: ${ex}`,
-              HttpTransportType[endpoint.transport]
-            )
-          );
+          transportExceptions.push(new FailedToStartTransportError(`${endpoint.transport} failed: ${ex}`, HttpTransportType[endpoint.transport]));
           if (this._connectionState !== "Connecting") {
-            const message =
-              "Failed to select transport before stop() was called.";
+            const message = "Failed to select transport before stop() was called.";
             this._logger.log(LogLevel.Debug, message);
             return Promise.reject(new AbortError(message));
           }
@@ -3583,20 +2897,9 @@ class HttpConnection {
       }
     }
     if (transportExceptions.length > 0) {
-      return Promise.reject(
-        new AggregateErrors(
-          `Unable to connect to the server with any of the available transports. ${transportExceptions.join(
-            " "
-          )}`,
-          transportExceptions
-        )
-      );
+      return Promise.reject(new AggregateErrors(`Unable to connect to the server with any of the available transports. ${transportExceptions.join(" ")}`, transportExceptions));
     }
-    return Promise.reject(
-      new Error(
-        "None of the transports supported by the client are supported by the server."
-      )
-    );
+    return Promise.reject(new Error("None of the transports supported by the client are supported by the server."));
   }
   _constructTransport(transport) {
     switch (transport) {
@@ -3604,32 +2907,14 @@ class HttpConnection {
         if (!this._options.WebSocket) {
           throw new Error("'WebSocket' is not supported in your environment.");
         }
-        return new WebSocketTransport(
-          this._httpClient,
-          this._accessTokenFactory,
-          this._logger,
-          this._options.logMessageContent,
-          this._options.WebSocket,
-          this._options.headers || {}
-        );
+        return new WebSocketTransport(this._httpClient, this._accessTokenFactory, this._logger, this._options.logMessageContent, this._options.WebSocket, this._options.headers || {});
       case HttpTransportType.ServerSentEvents:
         if (!this._options.EventSource) {
-          throw new Error(
-            "'EventSource' is not supported in your environment."
-          );
+          throw new Error("'EventSource' is not supported in your environment.");
         }
-        return new ServerSentEventsTransport(
-          this._httpClient,
-          this._httpClient._accessToken,
-          this._logger,
-          this._options
-        );
+        return new ServerSentEventsTransport(this._httpClient, this._httpClient._accessToken, this._logger, this._options);
       case HttpTransportType.LongPolling:
-        return new LongPollingTransport(
-          this._httpClient,
-          this._logger,
-          this._options
-        );
+        return new LongPollingTransport(this._httpClient, this._logger, this._options);
       default:
         throw new Error(`Unknown transport: ${transport}.`);
     }
@@ -3660,74 +2945,34 @@ class HttpConnection {
     }
     return this.transport.connect(url, transferFormat);
   }
-  _resolveTransportOrError(
-    endpoint,
-    requestedTransport,
-    requestedTransferFormat,
-    useStatefulReconnect
-  ) {
+  _resolveTransportOrError(endpoint, requestedTransport, requestedTransferFormat, useStatefulReconnect) {
     const transport = HttpTransportType[endpoint.transport];
     if (transport === null || transport === void 0) {
-      this._logger.log(
-        LogLevel.Debug,
-        `Skipping transport '${endpoint.transport}' because it is not supported by this client.`
-      );
-      return new Error(
-        `Skipping transport '${endpoint.transport}' because it is not supported by this client.`
-      );
+      this._logger.log(LogLevel.Debug, `Skipping transport '${endpoint.transport}' because it is not supported by this client.`);
+      return new Error(`Skipping transport '${endpoint.transport}' because it is not supported by this client.`);
     } else {
       if (transportMatches(requestedTransport, transport)) {
-        const transferFormats = endpoint.transferFormats.map(
-          (s) => TransferFormat[s]
-        );
+        const transferFormats = endpoint.transferFormats.map((s) => TransferFormat[s]);
         if (transferFormats.indexOf(requestedTransferFormat) >= 0) {
-          if (
-            (transport === HttpTransportType.WebSockets &&
-              !this._options.WebSocket) ||
-            (transport === HttpTransportType.ServerSentEvents &&
-              !this._options.EventSource)
-          ) {
-            this._logger.log(
-              LogLevel.Debug,
-              `Skipping transport '${HttpTransportType[transport]}' because it is not supported in your environment.'`
-            );
-            return new UnsupportedTransportError(
-              `'${HttpTransportType[transport]}' is not supported in your environment.`,
-              transport
-            );
+          if (transport === HttpTransportType.WebSockets && !this._options.WebSocket || transport === HttpTransportType.ServerSentEvents && !this._options.EventSource) {
+            this._logger.log(LogLevel.Debug, `Skipping transport '${HttpTransportType[transport]}' because it is not supported in your environment.'`);
+            return new UnsupportedTransportError(`'${HttpTransportType[transport]}' is not supported in your environment.`, transport);
           } else {
-            this._logger.log(
-              LogLevel.Debug,
-              `Selecting transport '${HttpTransportType[transport]}'.`
-            );
+            this._logger.log(LogLevel.Debug, `Selecting transport '${HttpTransportType[transport]}'.`);
             try {
-              this.features.reconnect =
-                transport === HttpTransportType.WebSockets
-                  ? useStatefulReconnect
-                  : void 0;
+              this.features.reconnect = transport === HttpTransportType.WebSockets ? useStatefulReconnect : void 0;
               return this._constructTransport(transport);
             } catch (ex) {
               return ex;
             }
           }
         } else {
-          this._logger.log(
-            LogLevel.Debug,
-            `Skipping transport '${HttpTransportType[transport]}' because it does not support the requested transfer format '${TransferFormat[requestedTransferFormat]}'.`
-          );
-          return new Error(
-            `'${HttpTransportType[transport]}' does not support ${TransferFormat[requestedTransferFormat]}.`
-          );
+          this._logger.log(LogLevel.Debug, `Skipping transport '${HttpTransportType[transport]}' because it does not support the requested transfer format '${TransferFormat[requestedTransferFormat]}'.`);
+          return new Error(`'${HttpTransportType[transport]}' does not support ${TransferFormat[requestedTransferFormat]}.`);
         }
       } else {
-        this._logger.log(
-          LogLevel.Debug,
-          `Skipping transport '${HttpTransportType[transport]}' because it was disabled by the client.`
-        );
-        return new DisabledTransportError(
-          `'${HttpTransportType[transport]}' is disabled by the client.`,
-          transport
-        );
+        this._logger.log(LogLevel.Debug, `Skipping transport '${HttpTransportType[transport]}' because it was disabled by the client.`);
+        return new DisabledTransportError(`'${HttpTransportType[transport]}' is disabled by the client.`, transport);
       }
     }
   }
@@ -3735,46 +2980,29 @@ class HttpConnection {
     return transport && typeof transport === "object" && "connect" in transport;
   }
   _stopConnection(error) {
-    this._logger.log(
-      LogLevel.Debug,
-      `HttpConnection.stopConnection(${error}) called while in state ${this._connectionState}.`
-    );
+    this._logger.log(LogLevel.Debug, `HttpConnection.stopConnection(${error}) called while in state ${this._connectionState}.`);
     this.transport = void 0;
     error = this._stopError || error;
     this._stopError = void 0;
     if (this._connectionState === "Disconnected") {
-      this._logger.log(
-        LogLevel.Debug,
-        `Call to HttpConnection.stopConnection(${error}) was ignored because the connection is already in the disconnected state.`
-      );
+      this._logger.log(LogLevel.Debug, `Call to HttpConnection.stopConnection(${error}) was ignored because the connection is already in the disconnected state.`);
       return;
     }
     if (this._connectionState === "Connecting") {
-      this._logger.log(
-        LogLevel.Warning,
-        `Call to HttpConnection.stopConnection(${error}) was ignored because the connection is still in the connecting state.`
-      );
-      throw new Error(
-        `HttpConnection.stopConnection(${error}) was called while the connection is still in the connecting state.`
-      );
+      this._logger.log(LogLevel.Warning, `Call to HttpConnection.stopConnection(${error}) was ignored because the connection is still in the connecting state.`);
+      throw new Error(`HttpConnection.stopConnection(${error}) was called while the connection is still in the connecting state.`);
     }
     if (this._connectionState === "Disconnecting") {
       this._stopPromiseResolver();
     }
     if (error) {
-      this._logger.log(
-        LogLevel.Error,
-        `Connection disconnected with error '${error}'.`
-      );
+      this._logger.log(LogLevel.Error, `Connection disconnected with error '${error}'.`);
     } else {
       this._logger.log(LogLevel.Information, "Connection disconnected.");
     }
     if (this._sendQueue) {
       this._sendQueue.stop().catch((e) => {
-        this._logger.log(
-          LogLevel.Error,
-          `TransportSendQueue.stop() threw error '${e}'.`
-        );
+        this._logger.log(LogLevel.Error, `TransportSendQueue.stop() threw error '${e}'.`);
       });
       this._sendQueue = void 0;
     }
@@ -3787,18 +3015,12 @@ class HttpConnection {
           this.onclose(error);
         }
       } catch (e) {
-        this._logger.log(
-          LogLevel.Error,
-          `HttpConnection.onclose(${error}) threw error '${e}'.`
-        );
+        this._logger.log(LogLevel.Error, `HttpConnection.onclose(${error}) threw error '${e}'.`);
       }
     }
   }
   _resolveUrl(url) {
-    if (
-      url.lastIndexOf("https://", 0) === 0 ||
-      url.lastIndexOf("http://", 0) === 0
-    ) {
+    if (url.lastIndexOf("https://", 0) === 0 || url.lastIndexOf("http://", 0) === 0) {
       return url;
     }
     if (!Platform.isBrowser) {
@@ -3806,10 +3028,7 @@ class HttpConnection {
     }
     const aTag = window.document.createElement("a");
     aTag.href = url;
-    this._logger.log(
-      LogLevel.Information,
-      `Normalizing '${url}' to '${aTag.href}'.`
-    );
+    this._logger.log(LogLevel.Information, `Normalizing '${url}' to '${aTag.href}'.`);
     return aTag.href;
   }
   _resolveNegotiateUrl(url) {
@@ -3821,10 +3040,7 @@ class HttpConnection {
     }
     const searchParams = new URLSearchParams(negotiateUrl.searchParams);
     if (!searchParams.has("negotiateVersion")) {
-      searchParams.append(
-        "negotiateVersion",
-        this._negotiateVersion.toString()
-      );
+      searchParams.append("negotiateVersion", this._negotiateVersion.toString());
     }
     if (searchParams.has("useStatefulReconnect")) {
       if (searchParams.get("useStatefulReconnect") === "true") {
@@ -3863,10 +3079,7 @@ class TransportSendQueue {
   }
   _bufferData(data) {
     if (this._buffer.length && typeof this._buffer[0] !== typeof data) {
-      throw new Error(
-        `Expected data to be of type ${typeof this
-          ._buffer} but was of type ${typeof data}`
-      );
+      throw new Error(`Expected data to be of type ${typeof this._buffer} but was of type ${typeof data}`);
     }
     this._buffer.push(data);
     this._sendBufferedData.resolve();
@@ -3883,10 +3096,7 @@ class TransportSendQueue {
       this._sendBufferedData = new PromiseSource();
       const transportResult = this._transportResult;
       this._transportResult = void 0;
-      const data =
-        typeof this._buffer[0] === "string"
-          ? this._buffer.join("")
-          : TransportSendQueue._concatBuffers(this._buffer);
+      const data = typeof this._buffer[0] === "string" ? this._buffer.join("") : TransportSendQueue._concatBuffers(this._buffer);
       this._buffer.length = 0;
       try {
         await this._transport.send(data);
@@ -3897,9 +3107,7 @@ class TransportSendQueue {
     }
   }
   static _concatBuffers(arrayBuffers) {
-    const totalLength = arrayBuffers
-      .map((b) => b.byteLength)
-      .reduce((a, b) => a + b);
+    const totalLength = arrayBuffers.map((b) => b.byteLength).reduce((a, b) => a + b);
     const result = new Uint8Array(totalLength);
     let offset = 0;
     for (const item of arrayBuffers) {
@@ -3911,10 +3119,7 @@ class TransportSendQueue {
 }
 class PromiseSource {
   constructor() {
-    this.promise = new Promise(
-      (resolve, reject) =>
-        ([this._resolver, this._rejecter] = [resolve, reject])
-    );
+    this.promise = new Promise((resolve, reject) => [this._resolver, this._rejecter] = [resolve, reject]);
   }
   resolve() {
     this._resolver();
@@ -3937,9 +3142,7 @@ class JsonHubProtocol {
    */
   parseMessages(input, logger) {
     if (typeof input !== "string") {
-      throw new Error(
-        "Invalid input for JSON hub protocol. Expected a string."
-      );
+      throw new Error("Invalid input for JSON hub protocol. Expected a string.");
     }
     if (!input) {
       return [];
@@ -3975,10 +3178,7 @@ class JsonHubProtocol {
           this._isSequenceMessage(parsedMessage);
           break;
         default:
-          logger.log(
-            LogLevel.Information,
-            "Unknown message type '" + parsedMessage.type + "' ignored."
-          );
+          logger.log(LogLevel.Information, "Unknown message type '" + parsedMessage.type + "' ignored.");
           continue;
       }
       hubMessages.push(parsedMessage);
@@ -3994,22 +3194,13 @@ class JsonHubProtocol {
     return TextMessageFormat.write(JSON.stringify(message));
   }
   _isInvocationMessage(message) {
-    this._assertNotEmptyString(
-      message.target,
-      "Invalid payload for Invocation message."
-    );
+    this._assertNotEmptyString(message.target, "Invalid payload for Invocation message.");
     if (message.invocationId !== void 0) {
-      this._assertNotEmptyString(
-        message.invocationId,
-        "Invalid payload for Invocation message."
-      );
+      this._assertNotEmptyString(message.invocationId, "Invalid payload for Invocation message.");
     }
   }
   _isStreamItemMessage(message) {
-    this._assertNotEmptyString(
-      message.invocationId,
-      "Invalid payload for StreamItem message."
-    );
+    this._assertNotEmptyString(message.invocationId, "Invalid payload for StreamItem message.");
     if (message.item === void 0) {
       throw new Error("Invalid payload for StreamItem message.");
     }
@@ -4019,15 +3210,9 @@ class JsonHubProtocol {
       throw new Error("Invalid payload for Completion message.");
     }
     if (!message.result && message.error) {
-      this._assertNotEmptyString(
-        message.error,
-        "Invalid payload for Completion message."
-      );
+      this._assertNotEmptyString(message.error, "Invalid payload for Completion message.");
     }
-    this._assertNotEmptyString(
-      message.invocationId,
-      "Invalid payload for Completion message."
-    );
+    this._assertNotEmptyString(message.invocationId, "Invalid payload for Completion message.");
   }
   _isAckMessage(message) {
     if (typeof message.sequenceId !== "number") {
@@ -4054,7 +3239,7 @@ const LogLevelNameMapping = {
   warning: LogLevel.Warning,
   error: LogLevel.Error,
   critical: LogLevel.Critical,
-  none: LogLevel.None,
+  none: LogLevel.None
 };
 function parseLogLevel(name) {
   const mapping = LogLevelNameMapping[name.toLowerCase()];
@@ -4082,14 +3267,11 @@ class HubConnectionBuilder {
     Arg.isNotEmpty(url, "url");
     this.url = url;
     if (typeof transportTypeOrOptions === "object") {
-      this.httpConnectionOptions = {
-        ...this.httpConnectionOptions,
-        ...transportTypeOrOptions,
-      };
+      this.httpConnectionOptions = { ...this.httpConnectionOptions, ...transportTypeOrOptions };
     } else {
       this.httpConnectionOptions = {
         ...this.httpConnectionOptions,
-        transport: transportTypeOrOptions,
+        transport: transportTypeOrOptions
       };
     }
     return this;
@@ -4110,9 +3292,7 @@ class HubConnectionBuilder {
     if (!retryDelaysOrReconnectPolicy) {
       this.reconnectPolicy = new DefaultReconnectPolicy();
     } else if (Array.isArray(retryDelaysOrReconnectPolicy)) {
-      this.reconnectPolicy = new DefaultReconnectPolicy(
-        retryDelaysOrReconnectPolicy
-      );
+      this.reconnectPolicy = new DefaultReconnectPolicy(retryDelaysOrReconnectPolicy);
     } else {
       this.reconnectPolicy = retryDelaysOrReconnectPolicy;
     }
@@ -4145,8 +3325,7 @@ class HubConnectionBuilder {
       this.httpConnectionOptions = {};
     }
     this.httpConnectionOptions._useStatefulReconnect = true;
-    this._statefulReconnectBufferSize =
-      options === null || options === void 0 ? void 0 : options.bufferSize;
+    this._statefulReconnectBufferSize = options === null || options === void 0 ? void 0 : options.bufferSize;
     return this;
   }
   /** Creates a {@link @microsoft/signalr.HubConnection} from the configuration options specified in this builder.
@@ -4159,20 +3338,10 @@ class HubConnectionBuilder {
       httpConnectionOptions.logger = this.logger;
     }
     if (!this.url) {
-      throw new Error(
-        "The 'HubConnectionBuilder.withUrl' method must be called before building the connection."
-      );
+      throw new Error("The 'HubConnectionBuilder.withUrl' method must be called before building the connection.");
     }
     const connection = new HttpConnection(this.url, httpConnectionOptions);
-    return HubConnection.create(
-      connection,
-      this.logger || NullLogger.instance,
-      this.protocol || new JsonHubProtocol(),
-      this.reconnectPolicy,
-      this._serverTimeoutInMilliseconds,
-      this._keepAliveIntervalInMilliseconds,
-      this._statefulReconnectBufferSize
-    );
+    return HubConnection.create(connection, this.logger || NullLogger.instance, this.protocol || new JsonHubProtocol(), this.reconnectPolicy, this._serverTimeoutInMilliseconds, this._keepAliveIntervalInMilliseconds, this._statefulReconnectBufferSize);
   }
 }
 function isLogger(logger) {
@@ -4189,14 +3358,11 @@ class MeetingHubClient {
     this.platform = platform2;
     this.meetId = platform2.getMeetId();
     this.chatPanel = chatPanel2;
-    this.connection = new HubConnectionBuilder()
-      .withUrl(this.config.service.hubUrl, {
-        accessTokenFactory: () => {
-          return this.config.service.jwtToken || "";
-        },
-      })
-      .withAutomaticReconnect()
-      .build();
+    this.connection = new HubConnectionBuilder().withUrl(this.config.service.hubUrl, {
+      accessTokenFactory: () => {
+        return this.config.service.jwtToken || "";
+      }
+    }).withAutomaticReconnect().build();
     this.connection.onclose((err) => {
       this.chatPanel.isOffline();
     });
@@ -4208,28 +3374,25 @@ class MeetingHubClient {
     });
   }
   startConnection(messageHandler) {
-    this.connection
-      .start()
-      .then(() => {
-        this.connection.invoke(MessageTypes.UserJoinedInMeeting, {
-          meetId: this.meetId,
-          user: {
-            id: this.config.user.id,
-            fullName: this.config.user.fullName,
-            pictureUrl: this.config.user.pictureUrl,
-          },
-          platform: this.platform.getPlatformName(),
-        });
-        this.connection.on("ReceiveMessage", (msg) => {
-          messageHandler(msg);
-        });
-        this.chatPanel.isOnline();
-        return true;
-      })
-      .catch((err) => {
-        this.chatPanel.isOffline();
-        console.error("SignalR connection failed:", err);
+    this.connection.start().then(() => {
+      this.connection.invoke(MessageTypes.UserJoinedInMeeting, {
+        meetId: this.meetId,
+        user: {
+          id: this.config.user.id,
+          fullName: this.config.user.fullName,
+          pictureUrl: this.config.user.pictureUrl
+        },
+        platform: this.platform.getPlatformName()
       });
+      this.connection.on("ReceiveMessage", (msg) => {
+        messageHandler(msg);
+      });
+      this.chatPanel.isOnline();
+      return true;
+    }).catch((err) => {
+      this.chatPanel.isOffline();
+      console.error("SignalR connection failed:", err);
+    });
     return false;
   }
   async sendMessage(payload) {
@@ -4253,61 +3416,41 @@ class UIHandlers {
     this.handleMessage = this.handleMessage.bind(this);
   }
   init() {
-    return this.handleJoin()
-      .handleReload()
-      .handleReactions()
-      .handleThemeToggle()
-      .handleOptions()
-      .handleGithubLink()
-      .handleDiscordLink()
-      .handleAddIssueLink()
-      .handleAddBot()
-      .handleMessageSend()
-      .handleBotPlayPauseActions()
-      .handleMeetingCloseActions()
-      .handleTooltips();
+    return this.handleJoin().handleReload().handleReactions().handleThemeToggle().handleOptions().handleGithubLink().handleDiscordLink().handleAddIssueLink().handleAddBot().handleMessageSend().handleBotPlayPauseActions().handleMeetingCloseActions().handleTooltips();
   }
   handleJoin() {
     const btn = document.getElementById("au5-btn-joinMeeting");
-    btn == null
-      ? void 0
-      : btn.addEventListener("click", async () => {
-          if (!this.config) return;
-          const url = await getCurrentUrl$1();
-          this.platform = new MeetingPlatformFactory(url).getPlatform();
-          if (!this.platform) {
-            this.chatPanel.showNoActiveMeetingContainer(url);
-            return;
-          }
-          this.chatPanel.showTranscriptionContainer();
-          this.meetingHubClient = new MeetingHubClient(
-            this.config,
-            this.platform,
-            this.chatPanel
-          );
-          this.meetingHubClient.startConnection(this.handleMessage);
-          const reactions = await this.backendApi.getReactions();
-          if (reactions && reactions.length > 0) {
-            this.chatPanel.setReactions(reactions);
-          } else {
-            console.warn("No reactions found or failed to fetch reactions.");
-          }
-        });
+    btn == null ? void 0 : btn.addEventListener("click", async () => {
+      if (!this.config) return;
+      const url = await getCurrentUrl$1();
+      this.platform = new MeetingPlatformFactory(url).getPlatform();
+      if (!this.platform) {
+        this.chatPanel.showNoActiveMeetingContainer(url);
+        return;
+      }
+      this.chatPanel.showTranscriptionContainer();
+      this.meetingHubClient = new MeetingHubClient(this.config, this.platform, this.chatPanel);
+      this.meetingHubClient.startConnection(this.handleMessage);
+      const reactions = await this.backendApi.getReactions();
+      if (reactions && reactions.length > 0) {
+        this.chatPanel.setReactions(reactions);
+      } else {
+        console.warn("No reactions found or failed to fetch reactions.");
+      }
+    });
     return this;
   }
   handleReload() {
     const btn = document.getElementById("au5-btn-reload");
-    btn == null
-      ? void 0
-      : btn.addEventListener("click", async () => {
-          const url = await getCurrentUrl$1();
-          this.platform = new MeetingPlatformFactory(url).getPlatform();
-          if (!this.platform) {
-            this.chatPanel.showNoActiveMeetingContainer(url);
-          } else {
-            this.chatPanel.showJoinMeetingContainer(url);
-          }
-        });
+    btn == null ? void 0 : btn.addEventListener("click", async () => {
+      const url = await getCurrentUrl$1();
+      this.platform = new MeetingPlatformFactory(url).getPlatform();
+      if (!this.platform) {
+        this.chatPanel.showNoActiveMeetingContainer(url);
+      } else {
+        this.chatPanel.showJoinMeetingContainer(url);
+      }
+    });
     return this;
   }
   handleReactions() {
@@ -4316,38 +3459,32 @@ class UIHandlers {
       const target = event.target;
       const reaction = target.closest(".au5-reaction");
       if (reaction) {
-        const reactionId = Number.parseInt(
-          ((_a = reaction.getAttribute("reaction-Id")) == null
-            ? void 0
-            : _a.toString()) || "0"
-        );
+        const reactionId = Number.parseInt(((_a = reaction.getAttribute("reaction-Id")) == null ? void 0 : _a.toString()) || "0");
         const type = reaction.getAttribute("reaction-type");
         const blockId = reaction.getAttribute("data-blockId");
         if (type && blockId) {
-          (_c = this.meetingHubClient) == null
-            ? void 0
-            : _c.sendMessage({
-                type: MessageTypes.ReactionApplied,
-                meetId: (_b = this.platform) == null ? void 0 : _b.getMeetId(),
-                blockId,
-                user: {
-                  id: this.config.user.id,
-                  fullName: this.config.user.fullName,
-                  pictureUrl: this.config.user.pictureUrl,
-                },
-                reactionId,
-                reactionType: type,
-              });
+          (_c = this.meetingHubClient) == null ? void 0 : _c.sendMessage({
+            type: MessageTypes.ReactionApplied,
+            meetId: (_b = this.platform) == null ? void 0 : _b.getMeetId(),
+            blockId,
+            user: {
+              id: this.config.user.id,
+              fullName: this.config.user.fullName,
+              pictureUrl: this.config.user.pictureUrl
+            },
+            reactionId,
+            reactionType: type
+          });
           this.chatPanel.addReaction({
             type: MessageTypes.ReactionApplied,
             blockId,
             user: {
               id: this.config.user.id,
               fullName: this.config.user.fullName,
-              pictureUrl: this.config.user.pictureUrl,
+              pictureUrl: this.config.user.pictureUrl
             },
             reactionId,
-            reactionType: type,
+            reactionType: type
           });
         }
       }
@@ -4356,126 +3493,94 @@ class UIHandlers {
   }
   handleThemeToggle() {
     const toggle = document.getElementById("au5-theme-toggle");
-    toggle == null
-      ? void 0
-      : toggle.addEventListener("click", () => {
-          var _a, _b;
-          const html = document.documentElement;
-          const currentTheme = html.getAttribute("data-gpts-theme");
-          const nextTheme = currentTheme === "light" ? "dark" : "light";
-          StateManager.getInstance().setTheme(nextTheme);
-          html.setAttribute("data-gpts-theme", nextTheme);
-          (_a = document.getElementById("darkmode")) == null
-            ? void 0
-            : _a.setAttribute(
-                "style",
-                `display: ${nextTheme === "dark" ? "inline" : "none"};`
-              );
-          (_b = document.getElementById("lightmode")) == null
-            ? void 0
-            : _b.setAttribute(
-                "style",
-                `display: ${nextTheme === "light" ? "inline" : "none"};`
-              );
-        });
+    toggle == null ? void 0 : toggle.addEventListener("click", () => {
+      var _a, _b;
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute("data-gpts-theme");
+      const nextTheme = currentTheme === "light" ? "dark" : "light";
+      StateManager.getInstance().setTheme(nextTheme);
+      html.setAttribute("data-gpts-theme", nextTheme);
+      (_a = document.getElementById("darkmode")) == null ? void 0 : _a.setAttribute("style", `display: ${nextTheme === "dark" ? "inline" : "none"};`);
+      (_b = document.getElementById("lightmode")) == null ? void 0 : _b.setAttribute("style", `display: ${nextTheme === "light" ? "inline" : "none"};`);
+    });
     return this;
   }
   handleOptions() {
     const btn = document.getElementById("au5-btn-login");
-    btn == null
-      ? void 0
-      : btn.addEventListener("click", () =>
-          window.open(this.config.service.panelUrl, "_blank")
-        );
+    btn == null ? void 0 : btn.addEventListener("click", () => window.open(this.config.service.panelUrl, "_blank"));
     return this;
   }
   handleGithubLink() {
     const btn = document.getElementById("github-link");
-    btn == null
-      ? void 0
-      : btn.addEventListener("click", () =>
-          window.open("https://github.com/Au5-ai/au5-issues/issues", "_blank")
-        );
+    btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://github.com/Au5-ai/au5-issues/issues", "_blank"));
     return this;
   }
   handleDiscordLink() {
     const btn = document.getElementById("discord-link");
-    btn == null
-      ? void 0
-      : btn.addEventListener("click", () =>
-          window.open(
-            "https://discord.com/channels/1385091638422016101",
-            "_blank"
-          )
-        );
+    btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://discord.com/channels/1385091638422016101", "_blank"));
     return this;
   }
   handleAddIssueLink() {
     const btn = document.getElementById("issue-link");
-    btn == null
-      ? void 0
-      : btn.addEventListener("click", () =>
-          window.open("https://github.com/Au5-ai/au5-issues/issues", "_blank")
-        );
+    btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://github.com/Au5-ai/au5-issues/issues", "_blank"));
     return this;
   }
   handleAddBot() {
     let disabled = false;
     const btn = document.getElementById("au5-btn-addbot");
-    btn == null
-      ? void 0
-      : btn.addEventListener("click", async () => {
-          var _a;
-          if (disabled) {
-            console.warn("Button is disabled, please wait before retrying.");
-            return;
-          }
-          if (!this.platform || !this.config) {
-            console.error("Platform or configuration is not set.");
-            return;
-          }
-          const meetId = this.platform.getMeetId();
-          const response = await this.backendApi
-            .addBot({
-              meetId,
-              botName: this.config.service.botName,
-              platform: this.platform.getPlatformName(),
-            })
-            .catch((error) => {
-              showToast("Failed to add bot :(");
-              return;
-            });
-          if (response) {
-            localStorage.setItem("au5-meetingId", JSON.stringify(response));
-            const message = {
-              type: MessageTypes.RequestToAddBot,
-              meetId,
-              botName: this.config.service.botName,
-              user: this.config.user,
-            };
-            (_a = this.meetingHubClient) == null
-              ? void 0
-              : _a.sendMessage(message);
-            const addBotText = document.getElementById("au5-btn-addbot-text");
-            if (addBotText) {
-              let seconds = 60;
-              disabled = true;
+    btn == null ? void 0 : btn.addEventListener("click", async () => {
+      var _a;
+      if (disabled) {
+        console.warn("Button is disabled, please wait before retrying.");
+        return;
+      }
+      if (!this.platform || !this.config) {
+        console.error("Platform or configuration is not set.");
+        return;
+      }
+      const meetId = this.platform.getMeetId();
+      const meeting = JSON.parse(localStorage.getItem("au5-meetingId") || "null");
+      if (!meeting) {
+        return;
+      }
+      const response = await this.backendApi.addBot({
+        meetingId: meeting.meetingId,
+        meetId,
+        botName: this.config.service.botName,
+        platform: this.platform.getPlatformName()
+      }).catch((error) => {
+        showToast("Failed to add bot :(");
+        return;
+      });
+      if (response) {
+        localStorage.setItem("au5-meetingId", JSON.stringify(response));
+        const message = {
+          type: MessageTypes.RequestToAddBot,
+          meetId,
+          botName: this.config.service.botName,
+          user: this.config.user
+        };
+        (_a = this.meetingHubClient) == null ? void 0 : _a.sendMessage(message);
+        const addBotText = document.getElementById("au5-btn-addbot-text");
+        if (addBotText) {
+          let seconds = 60;
+          disabled = true;
+          addBotText.textContent = `${seconds}s to retry`;
+          const interval = setInterval(() => {
+            seconds--;
+            if (seconds > 0) {
               addBotText.textContent = `${seconds}s to retry`;
-              const interval = setInterval(() => {
-                seconds--;
-                if (seconds > 0) {
-                  addBotText.textContent = `${seconds}s to retry`;
-                } else {
-                  clearInterval(interval);
-                  disabled = false;
-                  addBotText.textContent = "Add bot";
-                }
-              }, 1e3);
+            } else {
+              clearInterval(interval);
+              disabled = false;
+              addBotText.textContent = "Add bot";
             }
-          } else {
-            console.error("Failed to add bot:", response.error);
-          }
-        });
+          }, 1e3);
+        }
+      } else {
+        console.error("Failed to add bot:", response.error);
+      }
+    });
     return this;
   }
   handleMessageSend() {
@@ -4499,11 +3604,11 @@ class UIHandlers {
           participant: {
             id: this.config.user.id,
             fullName: this.config.user.fullName,
-            pictureUrl: this.config.user.pictureUrl,
+            pictureUrl: this.config.user.pictureUrl
           },
           content: input.value.trim(),
           timestamp: /* @__PURE__ */ new Date(),
-          entryType: "Chat",
+          entryType: "Chat"
         };
         (_b = this.meetingHubClient) == null ? void 0 : _b.sendMessage(entry);
         this.chatPanel.addEntry(entry);
@@ -4511,22 +3616,19 @@ class UIHandlers {
       }
     };
     btn == null ? void 0 : btn.addEventListener("click", sendMessage2);
-    input == null
-      ? void 0
-      : input.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" && !e.ctrlKey) {
-            e.preventDefault();
-            sendMessage2();
-          } else if (e.key === "Enter" && e.ctrlKey) {
-            e.preventDefault();
-            const start = input.selectionStart || 0;
-            const end = input.selectionEnd || 0;
-            const value = input.value;
-            input.value =
-              value.substring(0, start) + "\n" + value.substring(end);
-            input.selectionStart = input.selectionEnd = start + 1;
-          }
-        });
+    input == null ? void 0 : input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.ctrlKey) {
+        e.preventDefault();
+        sendMessage2();
+      } else if (e.key === "Enter" && e.ctrlKey) {
+        e.preventDefault();
+        const start = input.selectionStart || 0;
+        const end = input.selectionEnd || 0;
+        const value = input.value;
+        input.value = value.substring(0, start) + "\n" + value.substring(end);
+        input.selectionStart = input.selectionEnd = start + 1;
+      }
+    });
     return this;
   }
   handleTooltips() {
@@ -4541,14 +3643,10 @@ class UIHandlers {
           document.body.appendChild(tooltipEl);
           const rect = tooltip.getBoundingClientRect();
           tooltipEl.style.left = `${rect.left + window.scrollX}px`;
-          tooltipEl.style.top = `${
-            rect.top + window.scrollY - tooltipEl.offsetHeight - 8
-          }px`;
+          tooltipEl.style.top = `${rect.top + window.scrollY - tooltipEl.offsetHeight - 8}px`;
           requestAnimationFrame(() => {
             tooltipEl.style.left = `${rect.left + window.scrollX}px`;
-            tooltipEl.style.top = `${
-              rect.top + window.scrollY - tooltipEl.offsetHeight - 8
-            }px`;
+            tooltipEl.style.top = `${rect.top + window.scrollY - tooltipEl.offsetHeight - 8}px`;
           });
           tooltip.addEventListener(
             "mouseleave",
@@ -4565,89 +3663,76 @@ class UIHandlers {
   handleBotPlayPauseActions() {
     const botPlayAction = document.getElementById("au5-bot-playAction");
     const botPauseAction = document.getElementById("au5-bot-pauseAction");
-    botPlayAction == null
-      ? void 0
-      : botPlayAction.addEventListener("click", () => {
-          if (!this.platform || !this.meetingHubClient) return;
-          const message = {
-            type: MessageTypes.PauseAndPlayTranscription,
-            meetId: this.platform.getMeetId(),
-            isPaused: false,
-            user: {
-              id: this.config.user.id,
-              fullName: this.config.user.fullName,
-              pictureUrl: this.config.user.pictureUrl,
-            },
-          };
-          this.meetingHubClient.sendMessage(message);
-          this.chatPanel.pauseAndPlay(message);
-        });
-    botPauseAction == null
-      ? void 0
-      : botPauseAction.addEventListener("click", () => {
-          if (!this.platform || !this.meetingHubClient) return;
-          const message = {
-            type: MessageTypes.PauseAndPlayTranscription,
-            meetId: this.platform.getMeetId(),
-            isPaused: true,
-            user: {
-              id: this.config.user.id,
-              fullName: this.config.user.fullName,
-              pictureUrl: this.config.user.pictureUrl,
-            },
-          };
-          this.meetingHubClient.sendMessage(message);
-          this.chatPanel.pauseAndPlay(message);
-        });
+    botPlayAction == null ? void 0 : botPlayAction.addEventListener("click", () => {
+      if (!this.platform || !this.meetingHubClient) return;
+      const message = {
+        type: MessageTypes.PauseAndPlayTranscription,
+        meetId: this.platform.getMeetId(),
+        isPaused: false,
+        user: {
+          id: this.config.user.id,
+          fullName: this.config.user.fullName,
+          pictureUrl: this.config.user.pictureUrl
+        }
+      };
+      this.meetingHubClient.sendMessage(message);
+      this.chatPanel.pauseAndPlay(message);
+    });
+    botPauseAction == null ? void 0 : botPauseAction.addEventListener("click", () => {
+      if (!this.platform || !this.meetingHubClient) return;
+      const message = {
+        type: MessageTypes.PauseAndPlayTranscription,
+        meetId: this.platform.getMeetId(),
+        isPaused: true,
+        user: {
+          id: this.config.user.id,
+          fullName: this.config.user.fullName,
+          pictureUrl: this.config.user.pictureUrl
+        }
+      };
+      this.meetingHubClient.sendMessage(message);
+      this.chatPanel.pauseAndPlay(message);
+    });
     return this;
   }
   handleMeetingCloseActions() {
-    const meetingCloseAction = document.getElementById(
-      "au5-meeting-closeAction"
-    );
-    meetingCloseAction == null
-      ? void 0
-      : meetingCloseAction.addEventListener("click", () => {
-          var _a;
-          if (!this.platform || !this.meetingHubClient) return;
-          const meeting = JSON.parse(
-            localStorage.getItem("au5-meetingId") || "null"
-          );
-          if (!meeting) {
-            return;
-          }
-          const meetId = (_a = this.platform) == null ? void 0 : _a.getMeetId();
-          const meetingModel = {
-            meetId,
-            meetingId: meeting.meetingId,
-          };
-          this.backendApi
-            .closeMeeting(meetingModel)
-            .then(() => {
-              const message = {
-                type: MessageTypes.CloseMeeting,
-                meetId,
-              };
-              this.meetingHubClient.sendMessage(message);
-              this.closeSidePanel(this.config.service.panelUrl);
-            })
-            .catch((error) => {
-              showToast("Failed to close meeting :(");
-              return;
-            });
-        });
+    const meetingCloseAction = document.getElementById("au5-meeting-closeAction");
+    meetingCloseAction == null ? void 0 : meetingCloseAction.addEventListener("click", () => {
+      var _a;
+      if (!this.platform || !this.meetingHubClient) return;
+      const meeting = JSON.parse(localStorage.getItem("au5-meetingId") || "null");
+      if (!meeting) {
+        return;
+      }
+      const meetId = (_a = this.platform) == null ? void 0 : _a.getMeetId();
+      const meetingModel = {
+        meetId,
+        meetingId: meeting.meetingId
+      };
+      this.backendApi.closeMeeting(meetingModel).then(() => {
+        const message = {
+          type: MessageTypes.CloseMeeting,
+          meetId
+        };
+        this.meetingHubClient.sendMessage(message);
+        this.closeSidePanel(this.config.service.panelUrl);
+      }).catch((error) => {
+        showToast("Failed to close meeting :(");
+        return;
+      });
+    });
     return this;
   }
   closeSidePanel(panelUrl, meetingId = "", meetId = "") {
     localStorage.removeItem("au5-meetingId");
     if (meetingId && meetId) {
-      panelUrl = panelUrl + `/meetings/${meetingId}/${meetId}/transcription`;
+      panelUrl = panelUrl + `/meetings/${meetingId}/sessions/${meetId}/transcription`;
     } else {
-      panelUrl = panelUrl + "/meetings/my?status=ended";
+      panelUrl = panelUrl + "/meetings/my";
     }
     chrome.runtime.sendMessage({
       action: "CLOSE_SIDEPANEL",
-      panelUrl,
+      panelUrl
     });
   }
   handleMessage(msg) {
@@ -4664,7 +3749,7 @@ class UIHandlers {
           participant: transcriptEntry.participant,
           content: transcriptEntry.content,
           entryType: transcriptEntry.entryType,
-          timestamp: transcriptEntry.timestamp,
+          timestamp: transcriptEntry.timestamp
         });
         break;
       case MessageTypes.UserJoinedInMeeting:
@@ -4676,12 +3761,7 @@ class UIHandlers {
         break;
       case MessageTypes.ReactionApplied:
         const reactionMsg = msg;
-        if (
-          !reactionMsg.meetId ||
-          !reactionMsg.blockId ||
-          !reactionMsg.user ||
-          !reactionMsg.reactionType
-        ) {
+        if (!reactionMsg.meetId || !reactionMsg.blockId || !reactionMsg.user || !reactionMsg.reactionType) {
           return;
         }
         this.chatPanel.addReaction(reactionMsg);
@@ -4718,9 +3798,7 @@ async function getCurrentUrl() {
     return new Promise((resolve) => {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         var _a;
-        resolve(
-          ((_a = tabs[0]) == null ? void 0 : _a.url) || window.location.href
-        );
+        resolve(((_a = tabs[0]) == null ? void 0 : _a.url) || window.location.href);
       });
     });
   }

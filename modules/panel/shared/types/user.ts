@@ -1,5 +1,15 @@
 export type UserRole = 1 | 2;
 
+export interface UserMenuItem {
+  id: string;
+  title: string;
+  icon?: string;
+  url: string;
+  showBadge: boolean;
+  badge?: string;
+  children?: UserMenuItem[];
+}
+
 export interface User {
   id: string;
   fullName: string;
@@ -14,28 +24,22 @@ export interface Participant {
   email: string;
 }
 
-export interface UserList {
+export interface UserListItem {
   id: string;
   fullName: string;
   email: string;
-  pictureUrl?: string;
   role: UserRole;
   createdAt: Date;
+  isActive: boolean;
+  pictureUrl?: string;
   lastLoginAt?: Date;
   lastPasswordChangeAt?: Date;
-  isActive: boolean;
 }
 
-export interface InviteUserRequest {
+export interface InviteUserPayload {
   email: string;
   fullName: string;
   role: UserRole;
-}
-
-export interface UpdateUserRequest {
-  fullName?: string;
-  role?: UserRole;
-  isValid?: boolean;
 }
 
 export interface UsersState {

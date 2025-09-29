@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Au5.Infrastructure.Migrations
 {
 	/// <inheritdoc />
-	public partial class Init : Migration
+	public partial class InitDb : Migration
 	{
 		/// <inheritdoc />
 		protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,7 +35,7 @@ namespace Au5.Infrastructure.Migrations
 				{
 					Id = table.Column<int>(type: "int", nullable: false)
 						.Annotation("SqlServer:Identity", "1, 1"),
-					Name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
+					Title = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
 					Url = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
 					Icon = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
 					ParentId = table.Column<int>(type: "int", nullable: true),
@@ -264,14 +264,14 @@ namespace Au5.Infrastructure.Migrations
 
 			migrationBuilder.InsertData(
 				table: "Menus",
-				columns: new[] { "Id", "Icon", "IsActive", "Name", "ParentId", "SortOrder", "Url" },
+				columns: new[] { "Id", "Icon", "IsActive", "ParentId", "SortOrder", "Title", "Url" },
 				values: new object[,]
 				{
-					{ 100, "ClosedCaption", true, "My Meetings", null, 1, "/meetings/my?status=ended" },
-					{ 200, "ArchiveIcon", true, "Archived Transcripts", null, 2, "/meetings/archived?status=archived" },
-					{ 300, "Brain", true, "AI Tools", null, 3, "/assistants" },
-					{ 400, "Settings", true, "System Settings", null, 4, "/system" },
-					{ 500, "UserPlus", true, "User Management", null, 5, "/users" }
+					{ 100, "ClosedCaption", true, null, 1, "My Meetings", "/meetings/my?status=ended" },
+					{ 200, "ArchiveIcon", true, null, 2, "Archived Transcripts", "/meetings/archived?status=archived" },
+					{ 300, "Brain", true, null, 3, "AI Tools", "/assistants" },
+					{ 400, "Settings", true, null, 4, "System Settings", "/system" },
+					{ 500, "UserPlus", true, null, 5, "User Management", "/users" }
 				});
 
 			migrationBuilder.InsertData(

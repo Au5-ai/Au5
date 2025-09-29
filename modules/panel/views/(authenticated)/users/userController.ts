@@ -1,10 +1,10 @@
 import { API_URLS } from "@/shared/network/api/urls";
 import { apiRequestClient } from "@/shared/network/apiRequestClient";
-import { UserList } from "@/shared/types";
+import { UserListItem } from "@/shared/types";
 
 export const userController = {
-  fetchUsers: (): Promise<UserList[]> =>
-    apiRequestClient<UserList[]>(API_URLS.USERS.LIST, { method: "GET" }),
+  fetchUsers: (): Promise<UserListItem[]> =>
+    apiRequestClient<UserListItem[]>(API_URLS.USERS.LIST, { method: "GET" }),
 
   inviteUsers: (
     invites: { email: string; role: number }[],

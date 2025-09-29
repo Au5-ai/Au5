@@ -10,7 +10,7 @@ import {
 } from "@/shared/components/ui";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
 import { Separator } from "@radix-ui/react-separator";
-import { Bot, Brain, Frame, Palette, Settings, Target } from "lucide-react";
+import { Bot, Brain, Palette, Settings, Target } from "lucide-react";
 import { SystemConfigsTab } from "./system-config";
 
 export default function SystemConfigPage() {
@@ -69,7 +69,8 @@ export default function SystemConfigPage() {
           <TabsContent value="AutoCorrection">
             Manage your auto correction here.
           </TabsContent>
-          {/* <TabsContent value="Spaces">Manage your spaces here.</TabsContent> */} {/* Commented out - no API for spaces */}
+          {/* <TabsContent value="Spaces">Manage your spaces here.</TabsContent> */}{" "}
+          {/* Commented out - no API for spaces */}
           <TabsContent value="Personalization">
             Manage your personalization here.
           </TabsContent>

@@ -1,14 +1,14 @@
 import React from "react";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { Users, UserCheck, Shield, UserX } from "lucide-react";
-import { UserList } from "@/shared/types";
+import { UserListItem } from "@/shared/types";
 import { USER_MANAGEMENT_CAPTIONS } from "../i18n";
 
 export default function StatsCards({
   users,
   isLoading,
 }: {
-  users: UserList[];
+  users: UserListItem[];
   isLoading: boolean;
 }) {
   const calculateStats = () => {

@@ -12,7 +12,7 @@ public class MenuConfiguration : IEntityTypeConfiguration<Menu>
 
 		builder.HasKey(m => m.Id);
 
-		builder.Property(m => m.Name)
+		builder.Property(m => m.Title)
 			.IsRequired()
 			.HasMaxLength(100);
 

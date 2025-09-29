@@ -250,12 +250,6 @@ namespace Au5.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
                     b.Property<int?>("ParentId")
                         .HasColumnType("int");
 
@@ -263,6 +257,12 @@ namespace Au5.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("Url")
                         .HasMaxLength(200)
@@ -281,8 +281,8 @@ namespace Au5.Infrastructure.Migrations
                             Id = 100,
                             Icon = "ClosedCaption",
                             IsActive = true,
-                            Name = "My Meetings",
                             SortOrder = 1,
+                            Title = "My Meetings",
                             Url = "/meetings/my?status=ended"
                         },
                         new
@@ -290,8 +290,8 @@ namespace Au5.Infrastructure.Migrations
                             Id = 200,
                             Icon = "ArchiveIcon",
                             IsActive = true,
-                            Name = "Archived Transcripts",
                             SortOrder = 2,
+                            Title = "Archived Transcripts",
                             Url = "/meetings/archived?status=archived"
                         },
                         new
@@ -299,8 +299,8 @@ namespace Au5.Infrastructure.Migrations
                             Id = 300,
                             Icon = "Brain",
                             IsActive = true,
-                            Name = "AI Tools",
                             SortOrder = 3,
+                            Title = "AI Tools",
                             Url = "/assistants"
                         },
                         new
@@ -308,8 +308,8 @@ namespace Au5.Infrastructure.Migrations
                             Id = 400,
                             Icon = "Settings",
                             IsActive = true,
-                            Name = "System Settings",
                             SortOrder = 4,
+                            Title = "System Settings",
                             Url = "/system"
                         },
                         new
@@ -317,8 +317,8 @@ namespace Au5.Infrastructure.Migrations
                             Id = 500,
                             Icon = "UserPlus",
                             IsActive = true,
-                            Name = "User Management",
                             SortOrder = 5,
+                            Title = "User Management",
                             Url = "/users"
                         });
                 });

@@ -1,7 +1,6 @@
 "use client";
 
 import { NavMain } from "@/shared/components/nav-main";
-// import { NavSpaces } from "@/shared/components/nav-spaces"; // Commented out - no API for spaces
 import { NavUser } from "@/shared/components/nav-user";
 import {
   Sidebar,
@@ -11,20 +10,13 @@ import {
   SidebarMenuButton,
   SidebarRail,
 } from "@/shared/components/ui/sidebar";
-import { User } from "@/shared/types";
+import { User, UserMenuItem } from "@/shared/types";
 import * as React from "react";
 import Logo from "./logo";
-import { LucideIcon } from "lucide-react";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user?: User;
-  menu: {
-    title: string;
-    url: string;
-    icon?: LucideIcon;
-    showBadge?: boolean;
-    badge?: string;
-  };
+  menu?: UserMenuItem[];
 }
 
 export function AppSidebar({ user, menu, ...props }: AppSidebarProps) {
@@ -49,9 +41,6 @@ export function AppSidebar({ user, menu, ...props }: AppSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={menu} />
-        {/* <NavSpaces spaces={data.spaces} /> */}{" "}
-        {/* Commented out - no API for spaces */}
-        {/* <NavWithSubMenu items={data.navWithSubMenu} /> */}
       </SidebarContent>
       <SidebarFooter>{user && <NavUser {...user} />}</SidebarFooter>
       <SidebarRail />

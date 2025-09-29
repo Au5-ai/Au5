@@ -21,7 +21,7 @@ export const API_URLS = {
   USERS: {
     LIST: "/users",
     ME: "/users/me",
-    MENUS: "/users/me/menus",
+    MY_MENU: "/users/me/menus",
     INVITATIONS: "/users/invitations", // bulk invite
     USER_INVITATIONS: (userId: string) => `/users/${userId}/invitations`, // resend invite
     VERIFY: (userId: string, hash: string) =>

@@ -7,7 +7,7 @@ export class BackEndApi {
   constructor(private config: AppConfiguration) {}
 
   public async addBot(body: RequestAddBotModel): Promise<any> {
-    return apiRequest<any, RequestAddBotModel>(ApiRoutes.getInstance(this.config).addBot(), {
+    return apiRequest<any, RequestAddBotModel>(ApiRoutes.getInstance(this.config).addBot(body.meetingId, body.meetId), {
       method: "POST",
       body,
       authToken: this.config.service.jwtToken
