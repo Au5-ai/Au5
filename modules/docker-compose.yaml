@@ -1,91 +1,71 @@
 version: "3.9"
-
 services:
-  # SQL Server Database
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: au5-sqlserver
-    ports:
-      - "1433:1433"
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD==FgBGa)>:Gc-U>#gL@~1
+      - SA_PASSWORD=SAStrong!Pass123
       - MSSQL_PID=Express
+    ports:
+      - "15433:1433"
     volumes:
       - sqlserver_data:/var/opt/mssql
-    networks:
-      - au5
     restart: unless-stopped
 
-  # Redis Cache
   redis:
     image: redis:7-alpine
     container_name: au5-redis
+    command: ["redis-server", "--appendonly", "yes"]
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    networks:
-      - au5
     restart: unless-stopped
-    command: redis-server --appendonly yes
 
-  # Backend API
-  au5-backend:
+  backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: ../backend
+    image: au5-backend
     container_name: au5-backend
-    ports:
-      - "1366:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__ApplicationDbContext=Server=sqlserver,1433;Database=Au5Db;User Id=Au5User;Password=Au5UserStrong!Pass123;TrustServerCertificate=true
+      - ConnectionStrings__Redis=redis:6379
     depends_on:
       - sqlserver
       - redis
-    networks:
-      - au5
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=Au5Db;User Id=Au5User;Password=Au5UserStrong!Pass123;TrustServerCertificate=true
-      - ConnectionStrings__Redis=redis:6379
+    ports:
+      - "1366:8080"
     restart: unless-stopped
 
-  # Bot Father Service
-  au5-botfather:
+  botfather:
     build:
-      context: ./botFather
-      dockerfile: Dockerfile
+      context: ../botFather
+    image: au5-botfather
     container_name: au5-botfather
-    ports:
-      - "1367:8080"
+    volumes:
+      - /run/podman/podman.sock:/var/run/docker.sock
     depends_on:
-      - au5-backend
-    networks:
-      - au5
-    environment:
-      - DISPLAY=:99
+      - backend
+    ports:
+      - "1367:8081"
     restart: unless-stopped
 
-  # Panel Frontend
-  au5-panel:
-    build:
-      context: ./panel
-      dockerfile: Dockerfile
-    container_name: au5-panel
-    ports:
-      - "1368:3000"
-    depends_on:
-      - au5-backend
-    networks:
-      - au5
-    environment:
-      - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=http://localhost:1366
-    restart: unless-stopped
+  # panel:
+  #   build:
+  #     context: ../panel
+  #   image: au5-panel
+  #   container_name: au5-panel
+  #   environment:
+  #     - NODE_ENV=production
+  #     - NEXT_PUBLIC_API_URL=http://localhost:1366
+  #   ports:
+  #     - "1368:3000"
+  #   depends_on:
+  #     - backend
+  #   restart: unless-stopped
 
 volumes:
   sqlserver_data:
   redis_data:
-
-networks:
-  au5:
-    driver: bridge
