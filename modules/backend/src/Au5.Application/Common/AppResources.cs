@@ -71,4 +71,10 @@ internal static class AppResources
 
 		public const string FailedToUpdateUserInfo = "Failed to Update User.";
 	}
+
+	internal static class Assistant
+	{
+		public const string Code = "Assistant";
+		public const string OpenAIConnectionFailed = "Can not connect to OpenAI platform, Please check and try again.";
+	}
 }
