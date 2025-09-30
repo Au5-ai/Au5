@@ -12,7 +12,7 @@ import {
 } from "@/shared/components/ui/select";
 import { LoadingPage } from "@/shared/components/loading-page";
 import { toast } from "sonner";
-import { SystemConfigs } from "../type";
+import { SystemConfigs } from "@/shared/types";
 import { validateUrl } from "@/shared/lib/utils";
 import { systemController } from "@/shared/network/api/systemController";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
