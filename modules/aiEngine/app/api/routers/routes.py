@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.api.routers.openai import router as openai_router
-from modules.aiEngine.app.api.routers.liveness import router as liveness
+from app.api.routers.liveness import router as liveness
 
 router = APIRouter()
 

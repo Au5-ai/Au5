@@ -9,11 +9,11 @@ router = APIRouter()
 
 @router.post("/assistants")
 async def create_assistant(request: AssistantRequest):
-    base_url = request.proxy_url or openai_settings.api_url
+    base_url = request.proxy_url if request.proxy_url else openai_settings.api_url
     url = f"{base_url.rstrip('/')}/assistants"
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {openai_settings.api_key}",
+        "Authorization": f"Bearer {request.apiKey or openai_settings.api_key}",
         "OpenAI-Beta": "assistants=v2"
     }
     payload = {
@@ -26,6 +26,6 @@ async def create_assistant(request: AssistantRequest):
         async with httpx.AsyncClient() as client:
             resp = await client.post(url, headers=headers, json=payload)
             resp.raise_for_status()
-            return Result.ok(resp.json())
+            return resp.json()
     except Exception as e:
-        return Result.fail(f"Error communicating with OpenAI Assistants API: {str(e)}")
+        return {"error": f"Error communicating with OpenAI Assistants API: {str(e)}"}

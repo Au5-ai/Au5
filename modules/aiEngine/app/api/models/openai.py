@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 class ProxyRequest(BaseModel):
     proxy_url: str | None = None
+    apiKey: str | None = None
 
 class AssistantRequest(ProxyRequest):
     instructions: str
