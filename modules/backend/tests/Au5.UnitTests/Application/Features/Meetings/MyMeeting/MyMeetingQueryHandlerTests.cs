@@ -1,4 +1,3 @@
-using Au5.Application.Common.Abstractions;
 using Au5.Application.Features.Meetings.MyMeeting;
 using Au5.Domain.Entities;
 using MockQueryable.Moq;
@@ -19,14 +18,14 @@ public class MyMeetingQueryHandlerTests
 		var meetings = GetMeetings(userId);
 
 		var mockContext = new Mock<IApplicationDbContext>();
+		var currentUserService = new Mock<ICurrentUserService>();
+
+		currentUserService.Setup(x => x.UserId).Returns(userId);
 		mockContext.Setup(x => x.Set<Meeting>()).Returns(meetings.BuildMockDbSet().Object);
 
-		var handler = new MyMeetingQueryHandler(mockContext.Object);
+		var handler = new MyMeetingQueryHandler(mockContext.Object, currentUserService.Object);
 
-		var query = new MyMeetingQuery(status)
-		{
-			UserId = userId
-		};
+		var query = new MyMeetingQuery(status);
 
 		var result = await handler.Handle(query, CancellationToken.None);
 
@@ -47,14 +46,14 @@ public class MyMeetingQueryHandlerTests
 		var meetings = GetMultipleMeetings(userId);
 
 		var mockContext = new Mock<IApplicationDbContext>();
+		var currentUserService = new Mock<ICurrentUserService>();
+
+		currentUserService.Setup(x => x.UserId).Returns(userId);
 		mockContext.Setup(x => x.Set<Meeting>()).Returns(meetings.BuildMockDbSet().Object);
 
-		var handler = new MyMeetingQueryHandler(mockContext.Object);
+		var handler = new MyMeetingQueryHandler(mockContext.Object, currentUserService.Object);
 
-		var query = new MyMeetingQuery(MeetingStatus.Ended)
-		{
-			UserId = userId
-		};
+		var query = new MyMeetingQuery(MeetingStatus.Ended);
 
 		var result = await handler.Handle(query, CancellationToken.None);
 
@@ -74,14 +73,14 @@ public class MyMeetingQueryHandlerTests
 	{
 		var meetings = GetMeetings(Guid.NewGuid());
 		var mockContext = new Mock<IApplicationDbContext>();
+		var currentUserService = new Mock<ICurrentUserService>();
+
+		currentUserService.Setup(x => x.UserId).Returns(Guid.NewGuid());
 		mockContext.Setup(x => x.Set<Meeting>()).Returns(meetings.BuildMockDbSet().Object);
 
-		var handler = new MyMeetingQueryHandler(mockContext.Object);
+		var handler = new MyMeetingQueryHandler(mockContext.Object, currentUserService.Object);
 
-		var query = new MyMeetingQuery(MeetingStatus.Ended)
-		{
-			UserId = Guid.NewGuid()
-		};
+		var query = new MyMeetingQuery(MeetingStatus.Ended);
 
 		var result = await handler.Handle(query, CancellationToken.None);
 

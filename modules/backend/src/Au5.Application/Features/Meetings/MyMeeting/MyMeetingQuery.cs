@@ -1,8 +1,6 @@
-using Au5.Application.Common.Abstractions;
-
 namespace Au5.Application.Features.Meetings.MyMeeting;
 
-public record MyMeetingQuery(MeetingStatus Status) : BaseUserCommand<Result<IReadOnlyCollection<MyMeetingsGroupedResponse>>>;
+public record MyMeetingQuery(MeetingStatus Status) : IRequest<Result<IReadOnlyCollection<MyMeetingsGroupedResponse>>>;
 
 public record class MyMeetingsGroupedResponse
 {

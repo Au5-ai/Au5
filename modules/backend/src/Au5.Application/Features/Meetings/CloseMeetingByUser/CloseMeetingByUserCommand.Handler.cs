@@ -7,12 +7,18 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 	private readonly IApplicationDbContext _dbContext;
 	private readonly IMeetingService _meetingService;
 	private readonly IBotFatherAdapter _botFather;
+	private readonly ICurrentUserService _currentUserService;
 
-	public CloseMeetingByUserCommandHandler(IApplicationDbContext dbContext, IMeetingService meetingService, IBotFatherAdapter botFather)
+	public CloseMeetingByUserCommandHandler(
+		IApplicationDbContext dbContext,
+		IMeetingService meetingService,
+		IBotFatherAdapter botFather,
+		ICurrentUserService currentUserService)
 	{
 		_meetingService = meetingService;
 		_dbContext = dbContext;
 		_botFather = botFather;
+		_currentUserService = currentUserService;
 	}
 
 	public async ValueTask<Result<bool>> Handle(CloseMeetingByUserCommand request, CancellationToken cancellationToken)
@@ -41,7 +47,7 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 			meeting.Entries = meetingContent.Entries;
 			meeting.Participants = meetingContent.Participants;
 			meeting.Guests = meetingContent.Guests;
-			meeting.ClosedMeetingUserId = request.UserId;
+			meeting.ClosedMeetingUserId = _currentUserService.UserId;
 
 			var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
 

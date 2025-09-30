@@ -10,17 +10,20 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 	private readonly IBotFatherAdapter _botFather;
 	private readonly IMeetingUrlService _meetingUrlService;
 	private readonly ICacheProvider _cacheProvider;
+	private readonly ICurrentUserService _currentUserService;
 
 	public AddBotCommandHandler(
 		IApplicationDbContext dbContext,
 		IBotFatherAdapter botFather,
 		IMeetingUrlService meetingUrlService,
-		ICacheProvider cacheProvider)
+		ICacheProvider cacheProvider,
+		ICurrentUserService currentUserService)
 	{
 		_dbContext = dbContext;
 		_botFather = botFather;
 		_meetingUrlService = meetingUrlService;
 		_cacheProvider = cacheProvider;
+		_currentUserService = currentUserService;
 	}
 
 	public async ValueTask<Result<AddBotCommandResponse>> Handle(AddBotCommand request, CancellationToken cancellationToken)
@@ -41,7 +44,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 			MeetName = "Meeting Transcription",
 			BotName = request.BotName,
 			IsBotAdded = false,
-			BotInviterUserId = request.UserId,
+			BotInviterUserId = _currentUserService.UserId,
 			CreatedAt = DateTime.Now,
 			Platform = request.Platform,
 			Status = MeetingStatus.AddingBot,

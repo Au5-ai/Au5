@@ -1,4 +1,4 @@
-namespace Au5.Application.Features.Authentication.GetUserMenus;
+namespace Au5.Application.Features.UserManagement.GetUserMenus;
 
 public record GetUserMenusQuery() : IRequest<Result<List<GetUserMenusResponse>>>;
 

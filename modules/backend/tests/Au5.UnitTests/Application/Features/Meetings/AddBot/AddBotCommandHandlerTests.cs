@@ -13,6 +13,7 @@ public class AddBotCommandHandlerTests
 	private readonly Mock<IBotFatherAdapter> _botFatherMock;
 	private readonly Mock<IMeetingUrlService> _meetingUrlServiceMock;
 	private readonly Mock<ICacheProvider> _cacheProviderMock;
+	private readonly Mock<ICurrentUserService> _currentUserServiceMock;
 	private readonly Mock<DbSet<Meeting>> _meetingDbSetMock;
 	private readonly AddBotCommandHandler _handler;
 
@@ -23,21 +24,21 @@ public class AddBotCommandHandlerTests
 		_meetingUrlServiceMock = new Mock<IMeetingUrlService>();
 		_cacheProviderMock = new Mock<ICacheProvider>();
 		_meetingDbSetMock = new Mock<DbSet<Meeting>>();
+		_currentUserServiceMock = new Mock<ICurrentUserService>();
 
 		_handler = new AddBotCommandHandler(
 			_dbContextMock.Object,
 			_botFatherMock.Object,
 			_meetingUrlServiceMock.Object,
-			_cacheProviderMock.Object);
+			_cacheProviderMock.Object,
+			_currentUserServiceMock.Object);
 	}
 
 	[Fact]
 	public async Task Handle_ShouldReturnSuccess_WhenValidRequest()
 	{
-		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id")
-		{
-			UserId = Guid.NewGuid()
-		};
+		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(Guid.NewGuid());
+		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
 
 		var systemConfig = CreateSystemConfig();
 		var systemConfigs = new List<SystemConfig> { systemConfig };
@@ -69,10 +70,9 @@ public class AddBotCommandHandlerTests
 	[Fact]
 	public async Task Handle_ShouldReturnFailure_WhenSystemConfigNotFound()
 	{
-		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id")
-		{
-			UserId = Guid.NewGuid()
-		};
+		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(Guid.NewGuid());
+
+		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
 
 		var systemConfigs = new List<SystemConfig>();
 		var systemConfigDbSet = systemConfigs.BuildMockDbSet();
@@ -91,10 +91,9 @@ public class AddBotCommandHandlerTests
 	[Fact]
 	public async Task Handle_ShouldReturnFailure_WhenDatabaseSaveFails()
 	{
-		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id")
-		{
-			UserId = Guid.NewGuid()
-		};
+		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(Guid.NewGuid());
+
+		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
 
 		var systemConfig = CreateSystemConfig();
 		var systemConfigs = new List<SystemConfig> { systemConfig };
@@ -118,10 +117,9 @@ public class AddBotCommandHandlerTests
 	public async Task Handle_ShouldCreateMeetingWithCorrectProperties()
 	{
 		var userId = Guid.NewGuid();
-		var command = new AddBotCommand("Meet", "MeetBot", "Meet-meet-123")
-		{
-			UserId = userId
-		};
+		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(userId);
+
+		var command = new AddBotCommand("Meet", "MeetBot", "Meet-meet-123");
 
 		var systemConfig = CreateSystemConfig();
 		var systemConfigs = new List<SystemConfig> { systemConfig };
@@ -164,11 +162,9 @@ public class AddBotCommandHandlerTests
 	[Fact]
 	public async Task Handle_ShouldBuildCorrectBotPayload()
 	{
-		var command = new AddBotCommand("Meets", "MeetsBot", "Meets-meet-456")
-		{
-			UserId = Guid.NewGuid()
-		};
+		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(Guid.NewGuid());
 
+		var command = new AddBotCommand("Meets", "MeetsBot", "Meets-meet-456");
 		var systemConfig = CreateSystemConfig();
 		var systemConfigs = new List<SystemConfig> { systemConfig };
 		var systemConfigDbSet = systemConfigs.BuildMockDbSet();
@@ -213,10 +209,9 @@ public class AddBotCommandHandlerTests
 	[Fact]
 	public async Task Handle_ShouldSetCacheWhenNoCachedMeetingExists()
 	{
-		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id")
-		{
-			UserId = Guid.NewGuid()
-		};
+		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(Guid.NewGuid());
+
+		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
 
 		var systemConfig = CreateSystemConfig();
 		var systemConfigs = new List<SystemConfig> { systemConfig };
@@ -245,10 +240,9 @@ public class AddBotCommandHandlerTests
 	[Fact]
 	public async Task Handle_ShouldUpdateCachedMeetingId_When_CachedMeetingExists()
 	{
-		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id")
-		{
-			UserId = Guid.NewGuid()
-		};
+		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(Guid.NewGuid());
+
+		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
 
 		var systemConfig = CreateSystemConfig();
 		var systemConfigs = new List<SystemConfig> { systemConfig };
@@ -284,10 +278,9 @@ public class AddBotCommandHandlerTests
 	[Fact]
 	public async Task Handle_ShouldCallBotFatherWithCorrectUrl()
 	{
-		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id")
-		{
-			UserId = Guid.NewGuid()
-		};
+		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(Guid.NewGuid());
+
+		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
 
 		var systemConfig = CreateSystemConfig();
 		systemConfig.BotFatherUrl = "https://bot-father.example.com";

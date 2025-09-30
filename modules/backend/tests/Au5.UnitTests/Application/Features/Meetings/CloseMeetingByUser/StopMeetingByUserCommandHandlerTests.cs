@@ -9,6 +9,7 @@ public class CloseMeetingByUserCommandHandlerTests
 	private readonly Mock<IApplicationDbContext> _dbContextMock;
 	private readonly Mock<IMeetingService> _meetingServiceMock;
 	private readonly Mock<IBotFatherAdapter> _botFatherAdapter;
+	private readonly Mock<ICurrentUserService> _currentUserServiceMock;
 	private readonly CloseMeetingByUserCommandHandler _handler;
 
 	public CloseMeetingByUserCommandHandlerTests()
@@ -16,7 +17,8 @@ public class CloseMeetingByUserCommandHandlerTests
 		_dbContextMock = new();
 		_meetingServiceMock = new();
 		_botFatherAdapter = new();
-		_handler = new CloseMeetingByUserCommandHandler(_dbContextMock.Object, _meetingServiceMock.Object, _botFatherAdapter.Object);
+		_currentUserServiceMock = new();
+		_handler = new CloseMeetingByUserCommandHandler(_dbContextMock.Object, _meetingServiceMock.Object, _botFatherAdapter.Object, _currentUserServiceMock.Object);
 	}
 
 	[Fact]

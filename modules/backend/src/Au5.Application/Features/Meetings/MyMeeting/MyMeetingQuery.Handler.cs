@@ -3,10 +3,12 @@ namespace Au5.Application.Features.Meetings.MyMeeting;
 public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IReadOnlyCollection<MyMeetingsGroupedResponse>>>
 {
 	private readonly IApplicationDbContext _dbContext;
+	private readonly ICurrentUserService _currentUserService;
 
-	public MyMeetingQueryHandler(IApplicationDbContext dbContext)
+	public MyMeetingQueryHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
 	{
 		_dbContext = dbContext;
+		_currentUserService = currentUserService;
 	}
 
 	public async ValueTask<Result<IReadOnlyCollection<MyMeetingsGroupedResponse>>> Handle(MyMeetingQuery request, CancellationToken cancellationToken)
@@ -16,7 +18,7 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 		.Include(x => x.Participants)
 			.ThenInclude(x => x.User)
 		.AsNoTracking()
-		.Where(x => x.Participants.Any(p => p.UserId == request.UserId));
+		.Where(x => x.Participants.Any(p => p.UserId == _currentUserService.UserId));
 
 		query = request.Status == MeetingStatus.Archived
 			? query.Where(x => x.Status == MeetingStatus.Archived)

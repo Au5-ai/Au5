@@ -1,16 +1,15 @@
 using Au5.Application.Common;
-using Au5.Application.Common.Abstractions;
-using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.UserManagement.GetMyInfo;
 
-public class GetMyInfoQueryHandler(IApplicationDbContext applicationDbContext) : IRequestHandler<GetMyInfoQuery, Result<Participant>>
+public class GetMyInfoQueryHandler(IApplicationDbContext applicationDbContext, ICurrentUserService currentUserService) : IRequestHandler<GetMyInfoQuery, Result<Participant>>
 {
 	private readonly IApplicationDbContext _dbContext = applicationDbContext;
+	private readonly ICurrentUserService _currentUserService = currentUserService;
 
 	public async ValueTask<Result<Participant>> Handle(GetMyInfoQuery request, CancellationToken cancellationToken)
 	{
-		var user = await _dbContext.Set<User>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == request.UserId && x.IsActive, cancellationToken);
+		var user = await _dbContext.Set<User>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == _currentUserService.UserId && x.IsActive, cancellationToken);
 		return user == null
 			? Error.Unauthorized(description: AppResources.Auth.UnAuthorizedAction)
 			: new Participant
