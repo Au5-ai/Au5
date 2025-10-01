@@ -63,6 +63,7 @@ async def run_thread(request: ThreadRunRequest):
 @router.post("/assistants")
 async def create_assistant(request: AssistantRequest):
     """Proxy endpoint for creating an assistant (non-streaming)."""
+    print(request.apiKey)
     base_url, api_key = get_base_url_and_key(request)
     url = f"{base_url.rstrip('/')}/assistants"
     headers = build_headers(api_key)

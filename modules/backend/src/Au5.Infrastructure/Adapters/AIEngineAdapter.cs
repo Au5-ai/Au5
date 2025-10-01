@@ -1,5 +1,7 @@
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Au5.Application.Common.Abstractions;
 using Au5.Application.Dtos.AI;
 using Au5.Infrastructure.Common;
@@ -15,12 +17,13 @@ public class AIEngineAdapter(IHttpClientFactory httpClientFactory, ILogger<AIEng
 
 	public async Task<string> CreateAssistantAsync(string baseUrl, CreateAssistantRequest request, CancellationToken cancellationToken = default)
 	{
-		var result = await PostJsonAsync(
+		var result = await PostJsonAsync<CreateAssistantRequest, CreateAssistantResponse>(
 			url: $"{baseUrl}/api/assistants",
 			payload: request,
 			failureMessage: AppResources.AIEngine.FailedToAdd,
 			cancellationToken: cancellationToken);
-		return result.IsSuccess ? result.Data : string.Empty;
+
+		return result.IsSuccess ? result.Data.Id : string.Empty;
 	}
 
 	public Task<IAsyncEnumerable<string>> RunThreadAsync(RunThreadRequest request, CancellationToken cancellationToken = default)
@@ -28,9 +31,9 @@ public class AIEngineAdapter(IHttpClientFactory httpClientFactory, ILogger<AIEng
 		throw new NotImplementedException();
 	}
 
-	private async Task<Result<string>> PostJsonAsync<T>(
+	private async Task<Result<TResponse>> PostJsonAsync<TRequest, TResponse>(
 		string url,
-		T payload,
+		TRequest payload,
 		string failureMessage,
 		CancellationToken cancellationToken)
 	{
@@ -55,7 +58,7 @@ public class AIEngineAdapter(IHttpClientFactory httpClientFactory, ILogger<AIEng
 				return Error.Failure(description: failureMessage);
 			}
 
-			return await response.Content.ReadAsStringAsync(cancellationToken);
+			return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken);
 		}
 		catch (Exception ex)
 		{
@@ -63,4 +66,10 @@ public class AIEngineAdapter(IHttpClientFactory httpClientFactory, ILogger<AIEng
 			return Error.Failure(description: AppResources.AIEngine.FailedCommunicate);
 		}
 	}
+}
+
+public class CreateAssistantResponse
+{
+	[JsonPropertyName("id")]
+	public string Id { get; init; }
 }

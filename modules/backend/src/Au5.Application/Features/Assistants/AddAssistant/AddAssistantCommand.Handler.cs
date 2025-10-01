@@ -3,10 +3,10 @@ using Au5.Application.Dtos.AI;
 
 namespace Au5.Application.Features.Assistants.AddAssistant;
 
-public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngineAdapter aIEngine, ICurrentUserService currentUserService) : IRequestHandler<AddAssistantCommand, Result<AddAssisstantResponse>>
+public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngineAdapter aiEngine, ICurrentUserService currentUserService) : IRequestHandler<AddAssistantCommand, Result<AddAssisstantResponse>>
 {
 	private readonly IApplicationDbContext _dbContext = dbContext;
-	private readonly IAIEngineAdapter _aIEngine = aIEngine;
+	private readonly IAIEngineAdapter _aiEngine = aiEngine;
 	private readonly ICurrentUserService _currentUserService = currentUserService;
 
 	public async ValueTask<Result<AddAssisstantResponse>> Handle(AddAssistantCommand request, CancellationToken cancellationToken)
@@ -17,7 +17,7 @@ public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngi
 			return Error.Failure(description: AppResources.System.IsNotConfigured);
 		}
 
-		var assistantId = await _aIEngine.CreateAssistantAsync(
+		var assistantId = await _aiEngine.CreateAssistantAsync(
 			config.AIProviderUrl,
 			new CreateAssistantRequest()
 			{
