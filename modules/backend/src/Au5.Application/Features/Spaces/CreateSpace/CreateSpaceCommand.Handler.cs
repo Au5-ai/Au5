@@ -20,7 +20,7 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 
 			if (!parentExists)
 			{
-				return Error.NotFound("Space.NotFound", "Parent space not found");
+				return Error.NotFound(AppResources.Space.ParentNotFoundCode, AppResources.Space.ParentNotFoundMessage);
 			}
 		}
 
@@ -32,7 +32,7 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 
 			if (existingUsersCount != request.UserIds.Count)
 			{
-				return Error.Validation("Space.InvalidUsers", AppResources.User.UserNotFound);
+				return Error.Validation(AppResources.Space.InvalidUsersCode, AppResources.Space.InvalidUsersMessage);
 			}
 		}
 
@@ -67,16 +67,12 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 
 		if (!result.IsSuccess)
 		{
-			return Error.Failure("Space.CreateFailed", AppResources.DatabaseFailureMessage);
+			return Error.Failure(AppResources.Space.CreateFailedCode, AppResources.Space.CreateFailedMessage);
 		}
 
 		return new CreateSpaceResponse
 		{
 			Id = space.Id,
-			Name = space.Name,
-			Description = space.Description,
-			ParentId = space.ParentId,
-			CreatedAt = space.CreatedAt
 		};
 	}
 }
