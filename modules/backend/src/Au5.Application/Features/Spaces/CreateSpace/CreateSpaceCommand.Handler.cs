@@ -24,13 +24,14 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 			}
 		}
 
-		if (request.UserIds != null && request.UserIds.Any())
+		if (request.Users != null && request.Users.Any())
 		{
+			var userIds = request.Users.Select(u => u.UserId).ToList();
 			var existingUsersCount = await _context.Set<User>()
-				.Where(u => request.UserIds.Contains(u.Id) && u.IsActive)
+				.Where(u => userIds.Contains(u.Id) && u.IsActive)
 				.CountAsync(cancellationToken);
 
-			if (existingUsersCount != request.UserIds.Count)
+			if (existingUsersCount != userIds.Count)
 			{
 				return Error.Validation(AppResources.Space.InvalidUsersCode, AppResources.Space.InvalidUsersMessage);
 			}
@@ -48,13 +49,14 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 
 		_context.Set<Space>().Add(space);
 
-		if (request.UserIds != null && request.UserIds.Any())
+		if (request.Users != null && request.Users.Any())
 		{
-			var userSpaces = request.UserIds.Select(userId => new UserSpace
+			var userSpaces = request.Users.Select(user => new UserSpace
 			{
-				UserId = userId,
+				UserId = user.UserId,
 				SpaceId = space.Id,
-				JoinedAt = DateTime.UtcNow
+				JoinedAt = DateTime.UtcNow,
+				IsAdmin = user.IsAdmin
 			}).ToList();
 
 			_context.Set<UserSpace>().AddRange(userSpaces);

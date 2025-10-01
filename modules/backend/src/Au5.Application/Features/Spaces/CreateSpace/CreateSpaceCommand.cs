@@ -8,7 +8,14 @@ public record CreateSpaceCommand : IRequest<Result<CreateSpaceResponse>>
 
 	public Guid? ParentId { get; init; }
 
-	public List<Guid> UserIds { get; init; }
+	public List<UserInSpace> Users { get; init; }
+}
+
+public record UserInSpace
+{
+	public Guid UserId { get; init; }
+
+	public bool IsAdmin { get; init; }
 }
 
 public record CreateSpaceResponse

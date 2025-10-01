@@ -12,4 +12,6 @@ public class UserSpace
 	public Space Space { get; set; }
 
 	public DateTime JoinedAt { get; set; }
+
+	public bool IsAdmin { get; set; }
 }

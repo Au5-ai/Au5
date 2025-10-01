@@ -17,10 +17,10 @@ public class CreateSpaceCommandValidator : AbstractValidator<CreateSpaceCommand>
 			.WithMessage(AppResources.Space.DescriptionMaxLength)
 			.When(x => !string.IsNullOrEmpty(x.Description));
 
-		RuleFor(x => x.UserIds)
+		RuleFor(x => x.Users)
 			.NotNull()
 			.WithMessage(AppResources.Validation.Required)
-			.Must(userIds => userIds != null && userIds.All(id => id != Guid.Empty))
+			.Must(users => users != null && users.All(user => user.UserId != Guid.Empty))
 			.WithMessage(AppResources.Space.InvalidUserIds);
 	}
 }
