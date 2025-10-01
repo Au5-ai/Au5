@@ -10,6 +10,7 @@ import {
   SidebarMenuItem,
 } from "@/shared/components/ui/sidebar";
 import { UserMenuItem } from "../types";
+import Link from "next/link";
 
 export function NavMain({ items }: { items: UserMenuItem[] | undefined }) {
   return (
@@ -21,10 +22,13 @@ export function NavMain({ items }: { items: UserMenuItem[] | undefined }) {
             <SidebarMenuItem key={item.title} className="cursor-pointer">
               <SidebarMenuButton
                 tooltip={item.title}
-                className="cursor-pointer"
-                onClick={() => (window.location.href = item.url)}>
+                className="cursor-pointer">
                 {item.lucideIcon && <item.lucideIcon />}
-                <span>{item.title}</span>
+                <Link
+                  href={item.url}
+                  className="flex items-center gap-2 w-full">
+                  <span>{item.title}</span>
+                </Link>
               </SidebarMenuButton>
 
               {item.showBadge && (
