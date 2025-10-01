@@ -62,11 +62,14 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 
 		var result = await _context.SaveChangesAsync(cancellationToken);
 
-		return result.IsSuccess
-			? new CreateSpaceResponse
-			{
-				Id = space.Id,
-			}
-			: Error.Failure(AppResources.Space.CreateFailedCode, AppResources.Space.CreateFailedMessage);
+		if (result.IsFailure)
+		{
+			return Error.Failure(AppResources.Space.CreateFailedCode, AppResources.Space.CreateFailedMessage);
+		}
+
+		return new CreateSpaceResponse
+		{
+			Id = space.Id,
+		};
 	}
 }
