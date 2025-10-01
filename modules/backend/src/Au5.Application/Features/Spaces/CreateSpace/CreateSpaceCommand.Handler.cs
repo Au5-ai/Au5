@@ -57,22 +57,16 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 				JoinedAt = DateTime.UtcNow
 			}).ToList();
 
-			foreach (var userSpace in userSpaces)
-			{
-				_context.Set<UserSpace>().Add(userSpace);
-			}
+			_context.Set<UserSpace>().AddRange(userSpaces);
 		}
 
 		var result = await _context.SaveChangesAsync(cancellationToken);
 
-		if (!result.IsSuccess)
-		{
-			return Error.Failure(AppResources.Space.CreateFailedCode, AppResources.Space.CreateFailedMessage);
-		}
-
-		return new CreateSpaceResponse
-		{
-			Id = space.Id,
-		};
+		return result.IsSuccess
+			? new CreateSpaceResponse
+			{
+				Id = space.Id,
+			}
+			: Error.Failure(AppResources.Space.CreateFailedCode, AppResources.Space.CreateFailedMessage);
 	}
 }
