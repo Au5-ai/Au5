@@ -35,6 +35,8 @@ public record SpaceUserInfo
 
     public string Email { get; init; }
 
+    public bool IsAdmin { get; init; }
+
     public string PictureUrl { get; init; }
 
     public DateTime JoinedAt { get; init; }
