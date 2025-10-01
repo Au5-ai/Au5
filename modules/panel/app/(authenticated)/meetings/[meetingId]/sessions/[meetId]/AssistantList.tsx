@@ -26,9 +26,7 @@ export const AssistantList: React.FC<AssistantListProps> = ({ assistants }) => {
           key={assistant.id}
           className="flex flex-col items-start gap-2 p-2 shadow-none rounded-lg cursor-pointer hover:bg-muted hover:shadow-sm">
           <div className="flex items-starts gap-2">
-            <div>
-              <AiIcon className="w-8 h-8 fill-gold" />
-            </div>
+            <div>{assistant.icon}</div>
             <div className="flex flex-col">
               <span className="font-semibold text-gray-900 text-sm">
                 {assistant.name}

@@ -59,8 +59,8 @@ internal static class AppResources
 		public const string AssistantNameMaxLength = "Assistant name must not exceed 200 characters.";
 		public const string AssistantIconMaxLength = "Assistant icon URL must not exceed 200 characters.";
 		public const string AssistantDescriptionMaxLength = "Assistant description must not exceed 500 characters.";
-		public const string AssistantPromptRequired = "Assistant prompt is required.";
-		public const string AssistantPromptMaxLength = "Assistant prompt must not exceed 2000 characters.";
+		public const string AssistantInstructionsRequired = "Assistant instructions is required.";
+		public const string AssistantInstructionsMaxLength = "Assistant instructions must not exceed 2000 characters.";
 	}
 
 	internal static class User

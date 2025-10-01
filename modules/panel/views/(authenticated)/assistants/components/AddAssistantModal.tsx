@@ -21,7 +21,7 @@ interface AddAssistantModalProps {
   onAdd: (data: {
     icon: string;
     name: string;
-    prompt: string;
+    instructions: string;
     description: string;
   }) => Promise<void>;
   isLoading: boolean;
@@ -35,7 +35,7 @@ export function AddAssistantModal({
 }: AddAssistantModalProps) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [prompt, setPrompt] = useState("");
+  const [instructions, setInstructions] = useState("");
   const [icon, setIcon] = useState("🤖");
   const [error, setError] = useState<string | null>(null);
 
@@ -48,12 +48,12 @@ export function AddAssistantModal({
     }
     await onAdd({
       name: name.trim(),
-      prompt: prompt.trim(),
+      instructions: instructions.trim(),
       description: description.trim(),
       icon,
     });
     setName("");
-    setPrompt("");
+    setInstructions("");
     setDescription("");
     setIcon("🤖");
   };
@@ -98,12 +98,14 @@ export function AddAssistantModal({
             required
           />
 
-          <Label htmlFor="prompt" className="text-sm font-medium text-gray-700">
-            {ASSISTANTS_CAPTIONS.fields.prompt}
+          <Label
+            htmlFor="instructions"
+            className="text-sm font-medium text-gray-700">
+            {ASSISTANTS_CAPTIONS.fields.instructions}
           </Label>
           <Textarea
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
+            value={instructions}
+            onChange={(e) => setInstructions(e.target.value)}
             placeholder="You are a summarization assistant. Read the provided transcription and generate ..."
             disabled={isLoading}
           />

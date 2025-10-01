@@ -16,7 +16,7 @@ public class AddAssistantCommandValidator : AbstractValidator<AddAssistantComman
             .MaximumLength(500).WithMessage(AppResources.Validation.AssistantDescriptionMaxLength);
 
         RuleFor(x => x.Instructions)
-            .NotEmpty().WithMessage(AppResources.Validation.AssistantPromptRequired)
-            .MaximumLength(2000).WithMessage(AppResources.Validation.AssistantPromptMaxLength);
+            .NotEmpty().WithMessage(AppResources.Validation.AssistantInstructionsRequired)
+            .MaximumLength(2000).WithMessage(AppResources.Validation.AssistantInstructionsMaxLength);
     }
 }
