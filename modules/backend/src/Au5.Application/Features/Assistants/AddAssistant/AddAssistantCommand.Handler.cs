@@ -18,6 +18,7 @@ public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngi
 		}
 
 		var assistantId = await _aIEngine.CreateAssistantAsync(
+			config.AIProviderUrl,
 			new CreateAssistantRequest()
 			{
 				Instructions = request.Instructions,

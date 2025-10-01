@@ -15,8 +15,9 @@ public interface IAIEngineAdapter
 	/// <summary>
 	/// Creates an assistant with the given parameters.
 	/// </summary>
+	/// <param name="baseUrl">base url of ai provider.</param>
 	/// <param name="request">Request model containing all parameters.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
 	/// <returns>Task with the result.</returns>
-	Task<string> CreateAssistantAsync(CreateAssistantRequest request, CancellationToken cancellationToken = default);
+	Task<string> CreateAssistantAsync(string baseUrl, CreateAssistantRequest request, CancellationToken cancellationToken = default);
 }

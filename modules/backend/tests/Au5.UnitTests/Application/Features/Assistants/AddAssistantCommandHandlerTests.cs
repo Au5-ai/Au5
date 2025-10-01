@@ -16,7 +16,7 @@ public class AddAssistantCommandHandlerTests
 		var aiEngineAdapterMock = new Mock<IAIEngineAdapter>();
 		var currentUserServiceMock = new Mock<ICurrentUserService>();
 
-		aiEngineAdapterMock.Setup(x => x.CreateAssistantAsync(It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync("assistant-id");
+		aiEngineAdapterMock.Setup(x => x.CreateAssistantAsync(It.IsAny<string>(), It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync("assistant-id");
 		dbContextMock.Setup(x => x.Set<Assistant>()).Returns(dbSetMock.Object);
 		dbContextMock.Setup(x => x.Set<SystemConfig>()).Returns(configDbSetMock.Object);
 		dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(Au5.Shared.Result.Success());
@@ -46,7 +46,7 @@ public class AddAssistantCommandHandlerTests
 		var aiEngineAdapterMock = new Mock<IAIEngineAdapter>();
 		var currentUserServiceMock = new Mock<ICurrentUserService>();
 
-		aiEngineAdapterMock.Setup(x => x.CreateAssistantAsync(It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync("assistant-id");
+		aiEngineAdapterMock.Setup(x => x.CreateAssistantAsync(It.IsAny<string>(), It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync("assistant-id");
 		dbContextMock.Setup(x => x.Set<Assistant>()).Returns(dbSetMock.Object);
 		dbContextMock.Setup(x => x.Set<SystemConfig>()).Returns(configDbSetMock.Object);
 		dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(Au5.Shared.Result.Failure(Au5.Shared.Error.Failure(description: "fail")));
@@ -77,7 +77,7 @@ public class AddAssistantCommandHandlerTests
 		var currentUserServiceMock = new Mock<ICurrentUserService>();
 
 		currentUserServiceMock.Setup(x => x.UserId).Returns(Guid.NewGuid());
-		aiEngineAdapterMock.Setup(x => x.CreateAssistantAsync(It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(string.Empty);
+		aiEngineAdapterMock.Setup(x => x.CreateAssistantAsync(It.IsAny<string>(), It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(string.Empty);
 		dbContextMock.Setup(x => x.Set<Assistant>()).Returns(dbSetMock.Object);
 		dbContextMock.Setup(x => x.Set<SystemConfig>()).Returns(configDbSetMock.Object);
 		var handler = new AddAssistantCommandHandler(dbContextMock.Object, aiEngineAdapterMock.Object, currentUserServiceMock.Object);
@@ -106,7 +106,7 @@ public class AddAssistantCommandHandlerTests
 		var currentUserServiceMock = new Mock<ICurrentUserService>();
 
 		currentUserServiceMock.Setup(x => x.UserId).Returns(Guid.NewGuid());
-		aiEngineAdapterMock.Setup(x => x.CreateAssistantAsync(It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(string.Empty);
+		aiEngineAdapterMock.Setup(x => x.CreateAssistantAsync(It.IsAny<string>(), It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(string.Empty);
 		dbContextMock.Setup(x => x.Set<Assistant>()).Returns(dbSetMock.Object);
 		dbContextMock.Setup(x => x.Set<SystemConfig>()).Returns(configDbSetMock.Object);
 		var handler = new AddAssistantCommandHandler(dbContextMock.Object, aiEngineAdapterMock.Object, currentUserServiceMock.Object);
