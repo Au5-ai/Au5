@@ -35,6 +35,7 @@ public static class ConfigureServices
 		services.AddScoped<IBotFatherAdapter, BotFatherAdapter>();
 		services.AddScoped<IEmailProvider, EmailProvider>();
 		services.AddTransient<ISmtpClientWrapper, SmtpClientWrapper>();
+		services.AddScoped<IAIEngineAdapter, AIEngineAdapter>();
 
 		services.AddStackExchangeRedisCache(options =>
 		{
