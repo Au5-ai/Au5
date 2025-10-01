@@ -1,3 +1,5 @@
+using Au5.Application.Common;
+
 namespace Au5.Application.Features.Spaces.CreateSpace;
 
 public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Result<CreateSpaceResponse>>
@@ -30,7 +32,7 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 
 			if (existingUsersCount != request.UserIds.Count)
 			{
-				return Error.Validation("Space.InvalidUsers", "One or more users not found");
+				return Error.Validation("Space.InvalidUsers", AppResources.User.UserNotFound);
 			}
 		}
 
@@ -65,7 +67,7 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 
 		if (!result.IsSuccess)
 		{
-			return Error.Failure("Space.CreateFailed", "Failed to create space");
+			return Error.Failure("Space.CreateFailed", AppResources.DatabaseFailureMessage);
 		}
 
 		return new CreateSpaceResponse
