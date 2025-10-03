@@ -22,11 +22,7 @@ public class MyMeetingQueryHandlerTests : BaseIntegrationTest
 		var userId = UserId;
 		TestCurrentUserService.UserId = userId;
 		TestCurrentUserService.IsAuthenticated = true;
-		var query = new MyMeetingQuery(MeetingStatus.Ended)
-		{
-			UserId = userId
-		};
-
+		var query = new MyMeetingQuery(MeetingStatus.Ended);
 		var result = await Mediator.Send(query);
 		Assert.True(result.IsSuccess);
 		Assert.NotNull(result.Data);
@@ -54,10 +50,7 @@ public class MyMeetingQueryHandlerTests : BaseIntegrationTest
 		var userId = UserId;
 		TestCurrentUserService.UserId = userId;
 		TestCurrentUserService.IsAuthenticated = true;
-		var query = new MyMeetingQuery(MeetingStatus.Archived)
-		{
-			UserId = userId
-		};
+		var query = new MyMeetingQuery(MeetingStatus.Archived);
 
 		var result = await Mediator.Send(query);
 		Assert.True(result.IsSuccess);

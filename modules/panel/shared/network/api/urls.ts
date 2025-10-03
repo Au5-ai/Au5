@@ -8,7 +8,7 @@ export const API_URLS = {
   },
   MEETING: {
     MY: `/meetings/my?status=ended`,
-    ARCHIVED: `/meetings/archived?status=archived`,
+    ARCHIVED: `/meetings/my?status=archived`,
     TRANSCRIPTION: (meetingId: string, meetId: string) =>
       `/meetings/${meetingId}/sessions/${meetId}/transcription`,
   },

@@ -53,4 +53,9 @@ internal static class AppResources
 		public const string InvalidUsernameFormat = "The username format is invalid. Please use only alphanumeric characters and underscores.";
 		public const string InvalidPasswordFormat = "Password must be at least 6 characters long and contain a mix of letters and numbers.";
 	}
+
+	internal static class Assistant
+	{
+		public const string OpenAIConnectionFailed = "Can not connect to OpenAI platform, Please check and try again.";
+	}
 }

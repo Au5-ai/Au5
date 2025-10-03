@@ -52,6 +52,7 @@ public static class ModelBuilderExtension
 			{
 				new RoleMenu { MenuId = 100, RoleType = RoleTypes.User },
 				new RoleMenu { MenuId = 200, RoleType = RoleTypes.User },
+				new RoleMenu { MenuId = 300, RoleType = RoleTypes.User },
 				new RoleMenu { MenuId = 300, RoleType = RoleTypes.Admin },
 				new RoleMenu { MenuId = 400, RoleType = RoleTypes.Admin },
 				new RoleMenu { MenuId = 500, RoleType = RoleTypes.Admin }

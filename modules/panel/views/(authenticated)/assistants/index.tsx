@@ -39,7 +39,7 @@ export default function AssistantsPage() {
 
   const handleAddAssistant = async (data: {
     name: string;
-    prompt: string;
+    instructions: string;
     description: string;
     icon: string;
   }) => {

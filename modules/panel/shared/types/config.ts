@@ -23,6 +23,7 @@ export interface SystemConfigs {
   botHubUrl: string;
   hubUrl: string;
   serviceBaseUrl: string;
+  aiProviderUrl: string;
   panelUrl: string;
   direction: string;
   language: string;

@@ -25,6 +25,7 @@ const defaultConfigs: SystemConfigs = {
   botHubUrl: "",
   hubUrl: "",
   serviceBaseUrl: "",
+  aiProviderUrl: "",
   panelUrl: "",
   direction: "rtl",
   language: "fa-IR",
@@ -38,7 +39,7 @@ const defaultConfigs: SystemConfigs = {
   meetingAudioRecording: false,
   meetingTranscription: true,
   smtpUseSSl: false,
-  smtpHost: "", 
+  smtpHost: "",
   smtpPort: 25,
   smtpUser: "",
   smtpPassword: "",
@@ -97,6 +98,7 @@ export function SystemConfigsTab() {
       case "hubUrl":
       case "serviceBaseUrl":
       case "panelUrl":
+      case "aiProviderUrl":
         return !validateUrl(value as string) ? "Must be a valid URL" : null;
 
       case "openAIToken":
@@ -238,6 +240,11 @@ export function SystemConfigsTab() {
                 placeholder: "http://localhost:1366",
               },
               {
+                key: "aiProviderUrl",
+                label: "AI Provider URL(To Connect Open AI)",
+                placeholder: "http://localhost:8000",
+              },
+              {
                 key: "panelUrl",
                 label: "Panel URL",
                 placeholder: "http://localhost:3001",
@@ -304,8 +311,7 @@ export function SystemConfigsTab() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
-                    >
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors">
                       {showPassword ? (
                         <EyeOff className="h-4 w-4" />
                       ) : (
@@ -315,7 +321,13 @@ export function SystemConfigsTab() {
                   )}
                   <Input
                     id={key}
-                    type={key === "smtpPassword" ? (showPassword ? "text" : "password") : "text"}
+                    type={
+                      key === "smtpPassword"
+                        ? showPassword
+                          ? "text"
+                          : "password"
+                        : "text"
+                    }
                     value={configs[key as keyof SystemConfigs] as string}
                     onChange={(e) =>
                       handleInputChange(
@@ -339,7 +351,7 @@ export function SystemConfigsTab() {
               </div>
             ))}
           </div>
-          
+
           {/* Use SSL Switch */}
           <div className="flex items-center justify-between mt-4 p-4 border rounded-lg">
             <div className="space-y-1">
@@ -521,8 +533,7 @@ export function SystemConfigsTab() {
                 <button
                   type="button"
                   onClick={() => setShowOpenAIToken(!showOpenAIToken)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
-                >
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors">
                   {showOpenAIToken ? (
                     <EyeOff className="h-4 w-4" />
                   ) : (
