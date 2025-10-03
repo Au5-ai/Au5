@@ -21,6 +21,13 @@ public class SystemConfigCommandValidator : AbstractValidator<SystemConfigComman
 						 (temp.Scheme == Uri.UriSchemeHttp || temp.Scheme == Uri.UriSchemeHttps))
 			.WithMessage(AppResources.Validation.InvalidUrl);
 
+		RuleFor(x => x.AIProviderUrl)
+			.NotEmpty()
+			.WithMessage(AppResources.Validation.Required)
+			.Must(uri => Uri.TryCreate(uri, UriKind.Absolute, out var temp) &&
+						 (temp.Scheme == Uri.UriSchemeHttp || temp.Scheme == Uri.UriSchemeHttps))
+			.WithMessage(AppResources.Validation.InvalidUrl);
+
 		RuleFor(x => x.Direction)
 			.NotEmpty()
 			.WithMessage(AppResources.Validation.Required)

@@ -13,9 +13,11 @@ public class AssistantConfig : IEntityTypeConfiguration<Assistant>
 		builder.Property(x => x.Icon).IsUnicode(true).HasMaxLength(200);
 		builder.Property(x => x.OpenAIAssistantId).HasMaxLength(100);
 		builder.Property(x => x.Description).HasMaxLength(500);
-		builder.Property(x => x.Prompt).HasMaxLength(2000);
+		builder.Property(x => x.Instructions).HasMaxLength(2000);
 		builder.Property(x => x.IsDefault).IsRequired();
 		builder.Property(x => x.IsActive).IsRequired();
 		builder.Property(x => x.CreatedAt).IsRequired();
+		builder.Property(x => x.UserId).IsRequired();
+		builder.Property(x => x.OpenAIAssistantId).IsRequired();
 	}
 }

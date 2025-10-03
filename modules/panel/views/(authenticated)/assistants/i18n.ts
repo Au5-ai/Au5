@@ -7,7 +7,7 @@ export const ASSISTANTS_CAPTIONS = {
   successAdd: "Your new assistant was added!",
   fields: {
     name: "Assistant Name",
-    prompt: "Prompt (what should this assistant do?)",
+    instructions: "Instructions (what should this assistant do?)",
     description: "Short Description",
   },
 };

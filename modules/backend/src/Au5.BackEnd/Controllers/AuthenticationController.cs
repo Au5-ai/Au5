@@ -1,5 +1,4 @@
 using Au5.Application.Common.Abstractions;
-using Au5.Application.Features.Authentication.GetUserMenus;
 using Au5.Application.Features.Authentication.Login;
 using Au5.Shared;
 using Microsoft.AspNetCore.Authorization;

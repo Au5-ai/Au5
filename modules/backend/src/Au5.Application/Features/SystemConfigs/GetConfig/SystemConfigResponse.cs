@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace Au5.Application.Features.SystemConfigs.GetConfig;
 
 public record SystemConfigResponse
@@ -25,6 +23,8 @@ public record SystemConfigResponse
 	public string OpenAIProxyUrl { get; set; }
 
 	public string PanelUrl { get; set; }
+
+	public string AIProviderUrl { get; set; }
 
 	public int AutoLeaveWaitingEnter { get; set; }
 

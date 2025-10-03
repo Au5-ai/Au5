@@ -24,6 +24,8 @@ public class SystemConfig
 
 	public string BotHubUrl { get; set; }
 
+	public string AIProviderUrl { get; set; }
+
 	public string OpenAIToken { get; set; }
 
 	public string OpenAIProxyUrl { get; set; }

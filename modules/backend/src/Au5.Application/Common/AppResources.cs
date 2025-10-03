@@ -59,8 +59,8 @@ internal static class AppResources
 		public const string AssistantNameMaxLength = "Assistant name must not exceed 200 characters.";
 		public const string AssistantIconMaxLength = "Assistant icon URL must not exceed 200 characters.";
 		public const string AssistantDescriptionMaxLength = "Assistant description must not exceed 500 characters.";
-		public const string AssistantPromptRequired = "Assistant prompt is required.";
-		public const string AssistantPromptMaxLength = "Assistant prompt must not exceed 2000 characters.";
+		public const string AssistantInstructionsRequired = "Assistant instructions is required.";
+		public const string AssistantInstructionsMaxLength = "Assistant instructions must not exceed 2000 characters.";
 	}
 
 	internal static class User
@@ -89,10 +89,13 @@ internal static class AppResources
 		public const string CreateFailedCode = "Space.CreateFailed";
 		public const string CreateFailedMessage = "Failed to create space";
 
-		// Validation messages
 		public const string NameRequired = "Space name is required.";
 		public const string NameMaxLength = "Space name must not exceed 100 characters.";
 		public const string DescriptionMaxLength = "Space description must not exceed 500 characters.";
 		public const string InvalidUserIds = "All user IDs must be valid GUIDs.";
-	}
+}
+internal static class Assistant
+{
+		public const string Code = "Assistant";
+		public const string OpenAIConnectionFailed = "Can not connect to OpenAI platform, Please check and try again.";
 }
