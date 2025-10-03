@@ -1,9 +1,6 @@
 using Au5.Application.Features.Spaces.GetSpaces;
 using Au5.Domain.Entities;
-using Au5.Infrastructure.Common;
-using Microsoft.EntityFrameworkCore;
 using MockQueryable.Moq;
-using Moq;
 
 namespace Au5.UnitTests.Application.Features.Spaces.GetSpaces;
 
