@@ -63,37 +63,11 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 
 		var result = await _context.SaveChangesAsync(cancellationToken);
 
-		if (result.IsFailure)
-		{
-			return Error.Failure(AppResources.Space.CreateFailedCode, AppResources.Space.CreateFailedMessage);
-		}
-
-		var createdSpace = await _context.Set<Space>()
-			.Include(s => s.Parent)
-			.Include(s => s.UserSpaces)
-				.ThenInclude(us => us.User)
-			.FirstOrDefaultAsync(s => s.Id == space.Id, cancellationToken);
-
-		return createdSpace is null
+		return result.IsFailure
 			? Error.Failure(AppResources.Space.CreateFailedCode, AppResources.Space.CreateFailedMessage)
 			: new CreateSpaceResponse
-		{
-			Id = createdSpace.Id,
-			Name = createdSpace.Name,
-			Description = createdSpace.Description,
-			ParentId = createdSpace.ParentId,
-			ParentName = createdSpace.Parent?.Name,
-			IsActive = createdSpace.IsActive,
-			UsersCount = createdSpace.UserSpaces?.Count ?? 0,
-			Users = createdSpace.UserSpaces?.Select(us => new SpaceUserResponse
 			{
-				UserId = us.UserId,
-				FullName = us.User.FullName,
-				Email = us.User.Email,
-				PictureUrl = us.User.PictureUrl,
-				JoinedAt = us.JoinedAt,
-				IsAdmin = us.IsAdmin
-			}).ToList() ?? []
-		};
+				Id = space.Id,
+			};
 	}
 }
