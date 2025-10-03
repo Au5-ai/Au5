@@ -6,6 +6,7 @@ namespace Au5.BackEnd.Controllers;
 public class SpacesController(ISender mediator) : BaseController
 {
 	[HttpGet]
+	[Route("")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> GetSpaces(CancellationToken ct)
 	{
@@ -13,6 +14,7 @@ public class SpacesController(ISender mediator) : BaseController
 	}
 
 	[HttpPost]
+	[Route("")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> CreateSpace([FromBody] CreateSpaceCommand command, CancellationToken ct)
 	{
