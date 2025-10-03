@@ -72,9 +72,30 @@ internal static class AppResources
 		public const string FailedToUpdateUserInfo = "Failed to Update User.";
 	}
 
-	internal static class Assistant
+	/// <summary>
+	/// Space related messages and codes.
+	/// </summary>
+	internal static class Space
 	{
+		public const string NotFoundCode = "Space.NotFound";
+		public const string NotFoundMessage = "Space not found";
+
+		public const string ParentNotFoundCode = "Space.ParentNotFound";
+		public const string ParentNotFoundMessage = "Parent space not found";
+
+		public const string InvalidUsersCode = "Space.InvalidUsers";
+		public const string InvalidUsersMessage = "One or more users not found";
+
+		public const string CreateFailedCode = "Space.CreateFailed";
+		public const string CreateFailedMessage = "Failed to create space";
+
+		public const string NameRequired = "Space name is required.";
+		public const string NameMaxLength = "Space name must not exceed 100 characters.";
+		public const string DescriptionMaxLength = "Space description must not exceed 500 characters.";
+		public const string InvalidUserIds = "All user IDs must be valid GUIDs.";
+}
+internal static class Assistant
+{
 		public const string Code = "Assistant";
 		public const string OpenAIConnectionFailed = "Can not connect to OpenAI platform, Please check and try again.";
-	}
 }

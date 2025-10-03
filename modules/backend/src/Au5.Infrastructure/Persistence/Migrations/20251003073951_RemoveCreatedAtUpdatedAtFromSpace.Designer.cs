@@ -4,6 +4,7 @@ using Au5.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251003073951_RemoveCreatedAtUpdatedAtFromSpace")]
+    partial class RemoveCreatedAtUpdatedAtFromSpace
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,11 +68,6 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("Instructions")
-                        .HasMaxLength(2000)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(2000)");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -83,17 +81,16 @@ namespace Au5.Infrastructure.Migrations
                         .HasColumnType("varchar(200)");
 
                     b.Property<string>("OpenAIAssistantId")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Prompt")
+                        .HasMaxLength(2000)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(2000)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Assistant");
                 });
@@ -441,11 +438,6 @@ namespace Au5.Infrastructure.Migrations
                         },
                         new
                         {
-                            RoleType = (byte)2,
-                            MenuId = 300
-                        },
-                        new
-                        {
                             RoleType = (byte)1,
                             MenuId = 300
                         },
@@ -497,12 +489,6 @@ namespace Au5.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AIProviderUrl")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
 
                     b.Property<int>("AutoLeaveAllParticipantsLeft")
                         .HasColumnType("int");
@@ -758,17 +744,6 @@ namespace Au5.Infrastructure.Migrations
                     b.Navigation("Participants");
 
                     b.Navigation("Reaction");
-                });
-
-            modelBuilder.Entity("Au5.Domain.Entities.Assistant", b =>
-                {
-                    b.HasOne("Au5.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.Entry", b =>
