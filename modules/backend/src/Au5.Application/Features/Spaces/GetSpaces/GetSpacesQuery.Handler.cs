@@ -27,8 +27,7 @@ public class GetSpacesQueryHandler : IRequestHandler<GetSpacesQuery, Result<List
 			Description = s.Description,
 			ParentId = s.ParentId,
 			ParentName = s.Parent?.Name,
-			CreatedAt = s.CreatedAt,
-			UpdatedAt = s.UpdatedAt,
+
 			IsActive = s.IsActive,
 			ChildrenCount = s.Children?.Count ?? 0,
 			UsersCount = s.UserSpaces?.Count ?? 0,

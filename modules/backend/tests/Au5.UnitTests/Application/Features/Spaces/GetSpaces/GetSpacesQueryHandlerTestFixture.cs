@@ -2,6 +2,7 @@ using Au5.Application.Features.Spaces.GetSpaces;
 using Au5.Domain.Entities;
 using Au5.Infrastructure.Common;
 using Microsoft.EntityFrameworkCore;
+using MockQueryable.Moq;
 using Moq;
 
 namespace Au5.UnitTests.Application.Features.Spaces.GetSpaces;
@@ -9,17 +10,21 @@ namespace Au5.UnitTests.Application.Features.Spaces.GetSpaces;
 public class GetSpacesQueryHandlerTestFixture
 {
 	public Mock<IApplicationDbContext> MockDbContext { get; } = new();
+
 	public GetSpacesQueryHandler Handler { get; private set; }
-	public List<SpaceEntity> TestSpaces { get; private set; } = [];
+
+	public List<Space> TestSpaces { get; private set; } = [];
+
 	public List<User> TestUsers { get; private set; } = [];
+
 	public List<UserSpace> TestUserSpaces { get; private set; } = [];
 
 	public GetSpacesQueryHandlerTestFixture WithActiveSpaces(int spaceCount = 3)
 	{
-		TestSpaces = new List<SpaceEntity>();
+		TestSpaces = new List<Space>();
 		for (var i = 0; i < spaceCount; i++)
 		{
-			var space = new SpaceEntity
+			var space = new Space
 			{
 				Id = Guid.NewGuid(),
 				Name = $"Test Space {i + 1}",
@@ -31,18 +36,18 @@ public class GetSpacesQueryHandlerTestFixture
 			TestSpaces.Add(space);
 		}
 
-		var mockSet = TestSpaces.AsQueryable().BuildMockDbSet();
-		MockDbContext.Setup(db => db.Set<SpaceEntity>()).Returns(mockSet.Object);
+		var mockSet = TestSpaces.BuildMockDbSet();
+		MockDbContext.Setup(db => db.Set<Space>()).Returns(mockSet.Object);
 
 		return this;
 	}
 
 	public GetSpacesQueryHandlerTestFixture WithInactiveSpaces(int spaceCount = 2)
 	{
-		var inactiveSpaces = new List<SpaceEntity>();
+		var inactiveSpaces = new List<Space>();
 		for (var i = 0; i < spaceCount; i++)
 		{
-			var space = new SpaceEntity
+			var space = new Space
 			{
 				Id = Guid.NewGuid(),
 				Name = $"Inactive Space {i + 1}",
@@ -56,15 +61,15 @@ public class GetSpacesQueryHandlerTestFixture
 
 		TestSpaces.AddRange(inactiveSpaces);
 
-		var allSpaces = TestSpaces.AsQueryable().BuildMockDbSet();
-		MockDbContext.Setup(db => db.Set<SpaceEntity>()).Returns(allSpaces.Object);
+		var allSpaces = TestSpaces.BuildMockDbSet();
+		MockDbContext.Setup(db => db.Set<Space>()).Returns(allSpaces.Object);
 
 		return this;
 	}
 
 	public GetSpacesQueryHandlerTestFixture WithSpacesWithParents()
 	{
-		var parentSpace = new SpaceEntity
+		var parentSpace = new Space
 		{
 			Id = Guid.NewGuid(),
 			Name = "Parent Space",
@@ -73,7 +78,7 @@ public class GetSpacesQueryHandlerTestFixture
 			IsActive = true
 		};
 
-		var childSpace = new SpaceEntity
+		var childSpace = new Space
 		{
 			Id = Guid.NewGuid(),
 			Name = "Child Space",
@@ -84,12 +89,12 @@ public class GetSpacesQueryHandlerTestFixture
 			IsActive = true
 		};
 
-		parentSpace.Children = new List<SpaceEntity> { childSpace };
+		parentSpace.Children = new List<Space> { childSpace };
 
 		TestSpaces.AddRange(new[] { parentSpace, childSpace });
 
-		var mockSet = TestSpaces.AsQueryable().BuildMockDbSet();
-		MockDbContext.Setup(db => db.Set<SpaceEntity>()).Returns(mockSet.Object);
+		var mockSet = TestSpaces.BuildMockDbSet();
+		MockDbContext.Setup(db => db.Set<Space>()).Returns(mockSet.Object);
 
 		return this;
 	}
@@ -138,9 +143,9 @@ public class GetSpacesQueryHandlerTestFixture
 
 	public GetSpacesQueryHandlerTestFixture WithEmptySpaces()
 	{
-		TestSpaces = new List<SpaceEntity>();
-		var mockSet = TestSpaces.AsQueryable().BuildMockDbSet();
-		MockDbContext.Setup(db => db.Set<SpaceEntity>()).Returns(mockSet.Object);
+		TestSpaces = new List<Space>();
+		var mockSet = TestSpaces.BuildMockDbSet();
+		MockDbContext.Setup(db => db.Set<Space>()).Returns(mockSet.Object);
 
 		return this;
 	}

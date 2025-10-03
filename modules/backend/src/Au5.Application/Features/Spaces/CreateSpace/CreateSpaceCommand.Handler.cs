@@ -43,7 +43,6 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 			Name = request.Name,
 			Description = request.Description,
 			ParentId = request.ParentId,
-			CreatedAt = DateTime.UtcNow,
 			IsActive = true
 		};
 
@@ -84,7 +83,7 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 			Description = createdSpace.Description,
 			ParentId = createdSpace.ParentId,
 			ParentName = createdSpace.Parent?.Name,
-			CreatedAt = createdSpace.CreatedAt,
+
 			IsActive = createdSpace.IsActive,
 			UsersCount = createdSpace.UserSpaces?.Count ?? 0,
 			Users = createdSpace.UserSpaces?.Select(us => new SpaceUserResponse
