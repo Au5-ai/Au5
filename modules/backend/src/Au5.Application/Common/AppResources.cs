@@ -93,9 +93,11 @@ internal static class AppResources
 		public const string NameMaxLength = "Space name must not exceed 100 characters.";
 		public const string DescriptionMaxLength = "Space description must not exceed 500 characters.";
 		public const string InvalidUserIds = "All user IDs must be valid GUIDs.";
-}
-internal static class Assistant
-{
+	}
+
+	internal static class Assistant
+	{
 		public const string Code = "Assistant";
 		public const string OpenAIConnectionFailed = "Can not connect to OpenAI platform, Please check and try again.";
+	}
 }

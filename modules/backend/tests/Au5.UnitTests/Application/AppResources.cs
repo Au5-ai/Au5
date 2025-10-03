@@ -53,7 +53,7 @@ internal static class AppResources
 		public const string InvalidUsernameFormat = "The username format is invalid. Please use only alphanumeric characters and underscores.";
 		public const string InvalidPasswordFormat = "Password must be at least 6 characters long and contain a mix of letters and numbers.";
 	}
-  
+
 	/// <summary>
 	/// Space related messages and codes.
 	/// </summary>
@@ -75,9 +75,10 @@ internal static class AppResources
 		public const string NameMaxLength = "Space name must not exceed 100 characters.";
 		public const string DescriptionMaxLength = "Space description must not exceed 500 characters.";
 		public const string InvalidUserIds = "All user IDs must be valid GUIDs.";
-}
-internal static class Assistant
+	}
+
+	internal static class Assistant
 	{
 		public const string OpenAIConnectionFailed = "Can not connect to OpenAI platform, Please check and try again.";
- 
 	}
+}
