@@ -17,9 +17,11 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      <div className="relative hidden lg:block gradient-bg flex-col items-center justify-center p-8">
+      <div className="relative hidden lg:block bg-gradient flex-col items-center justify-center p-8">
         <div className="flex flex-col items-center justify-center h-full max-w-md text-center">
-          <h2 className="text-3xl font-bold mb-8">{loginCaptions.welcomeBackTitle}</h2>
+          <h2 className="text-3xl font-bold mb-8">
+            {loginCaptions.welcomeBackTitle}
+          </h2>
           <div className="mb-8">
             <Image
               src="/assets/images/hi5.png"
