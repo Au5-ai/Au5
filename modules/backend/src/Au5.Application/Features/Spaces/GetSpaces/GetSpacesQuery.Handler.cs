@@ -38,8 +38,9 @@ public class GetSpacesQueryHandler : IRequestHandler<GetSpacesQuery, Result<List
 				FullName = us.User.FullName,
 				Email = us.User.Email,
 				PictureUrl = us.User.PictureUrl,
-				JoinedAt = us.JoinedAt
-			}).ToList() ?? new List<SpaceUserInfo>()
+				JoinedAt = us.JoinedAt,
+				IsAdmin = us.IsAdmin
+			}).ToList() ?? []
 		}).ToList();
 
 		return spaceResponses;
