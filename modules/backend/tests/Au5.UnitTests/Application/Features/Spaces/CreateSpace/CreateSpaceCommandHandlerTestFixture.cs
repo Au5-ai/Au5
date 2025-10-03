@@ -113,8 +113,21 @@ public class CreateSpaceCommandHandlerTestFixture
 
 	public CreateSpaceCommandHandlerTestFixture WithSuccessfulSave()
 	{
+		var spaces = new List<Space>();
+
+		MockDbContext.Setup(db => db.Set<Space>().Add(It.IsAny<Space>()))
+			.Callback<Space>(s => spaces.Add(s));
+
 		MockDbContext.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
-			.ReturnsAsync(Au5.Shared.Result.Success());
+			.ReturnsAsync(Au5.Shared.Result.Success())
+			.Callback(() =>
+			{
+				if (spaces.Any())
+				{
+					var spaceDbSet = spaces.BuildMockDbSet();
+					MockDbContext.Setup(db => db.Set<Space>()).Returns(spaceDbSet.Object);
+				}
+			});
 
 		return this;
 	}

@@ -25,7 +25,6 @@ public record CreateSpaceResponse
 	public string Description { get; init; }
 	public Guid? ParentId { get; init; }
 	public string ParentName { get; init; }
-	public DateTime CreatedAt { get; init; }
 	public bool IsActive { get; init; }
 	public int UsersCount { get; init; }
 	public List<SpaceUserResponse> Users { get; init; }
