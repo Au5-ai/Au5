@@ -25,8 +25,7 @@ public class CreateSpaceCommandHandlerTestFixture
 			Id = Guid.NewGuid(),
 			Name = "Parent Space",
 			Description = "Parent Description",
-			IsActive = true,
-			CreatedAt = DateTime.UtcNow
+			IsActive = true
 		};
 
 		var parentDbSet = new List<Space> { TestParentSpace }.BuildMockDbSet();
@@ -42,8 +41,7 @@ public class CreateSpaceCommandHandlerTestFixture
 			Id = Guid.NewGuid(),
 			Name = "Inactive Parent Space",
 			Description = "Inactive Parent Description",
-			IsActive = false,
-			CreatedAt = DateTime.UtcNow
+			IsActive = false
 		};
 
 		var parentDbSet = new List<Space> { TestParentSpace }.BuildMockDbSet();

@@ -26,8 +26,6 @@ public class GetSpacesQueryHandlerTestFixture
 				Id = Guid.NewGuid(),
 				Name = $"Test Space {i + 1}",
 				Description = $"Description for space {i + 1}",
-				CreatedAt = DateTime.UtcNow.AddDays(-i),
-				UpdatedAt = DateTime.UtcNow.AddDays(-i + 1),
 				IsActive = true
 			};
 			TestSpaces.Add(space);
@@ -49,8 +47,6 @@ public class GetSpacesQueryHandlerTestFixture
 				Id = Guid.NewGuid(),
 				Name = $"Inactive Space {i + 1}",
 				Description = $"Description for inactive space {i + 1}",
-				CreatedAt = DateTime.UtcNow.AddDays(-i),
-				UpdatedAt = DateTime.UtcNow.AddDays(-i + 1),
 				IsActive = false
 			};
 			inactiveSpaces.Add(space);
@@ -71,7 +67,6 @@ public class GetSpacesQueryHandlerTestFixture
 			Id = Guid.NewGuid(),
 			Name = "Parent Space",
 			Description = "Parent description",
-			CreatedAt = DateTime.UtcNow.AddDays(-5),
 			IsActive = true
 		};
 
@@ -82,7 +77,6 @@ public class GetSpacesQueryHandlerTestFixture
 			Description = "Child description",
 			ParentId = parentSpace.Id,
 			Parent = parentSpace,
-			CreatedAt = DateTime.UtcNow.AddDays(-3),
 			IsActive = true
 		};
 

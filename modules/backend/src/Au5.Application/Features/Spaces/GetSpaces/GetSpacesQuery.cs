@@ -12,13 +12,9 @@ public record SpaceResponse
 
     public Guid? ParentId { get; init; }
 
-    public string ParentName { get; init; }
+	public string ParentName { get; init; }
 
-    public DateTime CreatedAt { get; init; }
-
-    public DateTime? UpdatedAt { get; init; }
-
-    public bool IsActive { get; init; }
+	public bool IsActive { get; init; }
 
     public int ChildrenCount { get; init; }
 

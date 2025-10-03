@@ -21,11 +21,6 @@ public class SpaceConfig : IEntityTypeConfiguration<Space>
 		builder.Property(x => x.IsActive)
 			.IsRequired();
 
-		builder.Property(x => x.CreatedAt)
-			.IsRequired();
-
-		builder.Property(x => x.UpdatedAt);
-
 		builder.HasOne(s => s.Parent)
 			.WithMany(s => s.Children)
 			.HasForeignKey(s => s.ParentId)
