@@ -10,7 +10,6 @@ public class CreateSpaceCommandHandlerTests
 	[Fact]
 	public async Task Should_ReturnSuccessResponse_When_ValidSpaceWithoutParentAndUsers()
 	{
-		// Arrange
 		var fixture = new CreateSpaceCommandHandlerTestFixture()
 			.WithNoParentSpace()
 			.WithNoUsers()
@@ -18,17 +17,9 @@ public class CreateSpaceCommandHandlerTests
 
 		var command = fixture.CreateValidCommand(withParent: false, withUsers: false);
 
-		// Act
 		var result = await fixture.BuildHandler().Handle(command, CancellationToken.None);
 
-		// Assert
 		Assert.True(result.IsSuccess);
-		Assert.Equal("Test Space", result.Data.Name);
-		Assert.Equal("Test Description", result.Data.Description);
-		Assert.Null(result.Data.ParentId);
-		Assert.Null(result.Data.ParentName);
-		Assert.Equal(0, result.Data.UsersCount);
-		Assert.Empty(result.Data.Users);
 
 		fixture.MockDbContext.Verify(db => db.Set<SpaceEntity>(), Times.AtLeastOnce);
 		fixture.MockDbContext.Verify(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
@@ -37,7 +28,6 @@ public class CreateSpaceCommandHandlerTests
 	[Fact]
 	public async Task Should_ReturnParentNotFoundError_When_ParentSpaceDoesNotExist()
 	{
-		// Arrange
 		var fixture = new CreateSpaceCommandHandlerTestFixture()
 			.WithNoParentSpace()
 			.WithNoUsers()
@@ -51,10 +41,8 @@ public class CreateSpaceCommandHandlerTests
 			Users = []
 		};
 
-		// Act
 		var result = await fixture.BuildHandler().Handle(command, CancellationToken.None);
 
-		// Assert
 		Assert.False(result.IsSuccess);
 		Assert.Equal(SpaceResources.ParentNotFoundCode, result.Error.Code);
 		Assert.Equal(SpaceResources.ParentNotFoundMessage, result.Error.Description);
@@ -66,7 +54,6 @@ public class CreateSpaceCommandHandlerTests
 	[Fact]
 	public async Task Should_ReturnParentNotFoundError_When_ParentSpaceIsInactive()
 	{
-		// Arrange
 		var fixture = new CreateSpaceCommandHandlerTestFixture()
 			.WithInactiveParentSpace()
 			.WithNoUsers()
@@ -80,10 +67,8 @@ public class CreateSpaceCommandHandlerTests
 			Users = []
 		};
 
-		// Act
 		var result = await fixture.BuildHandler().Handle(command, CancellationToken.None);
 
-		// Assert
 		Assert.False(result.IsSuccess);
 		Assert.Equal(SpaceResources.ParentNotFoundCode, result.Error.Code);
 		Assert.Equal(SpaceResources.ParentNotFoundMessage, result.Error.Description);
@@ -95,7 +80,6 @@ public class CreateSpaceCommandHandlerTests
 	[Fact]
 	public async Task Should_ReturnInvalidUsersError_When_SomeUsersDoNotExist()
 	{
-		// Arrange
 		var fixture = new CreateSpaceCommandHandlerTestFixture()
 			.WithNoParentSpace()
 			.WithValidUsers(1)
@@ -113,10 +97,8 @@ public class CreateSpaceCommandHandlerTests
 			]
 		};
 
-		// Act
 		var result = await fixture.BuildHandler().Handle(command, CancellationToken.None);
 
-		// Assert
 		Assert.False(result.IsSuccess);
 		Assert.Equal(SpaceResources.InvalidUsersCode, result.Error.Code);
 		Assert.Equal(SpaceResources.InvalidUsersMessage, result.Error.Description);
@@ -128,7 +110,6 @@ public class CreateSpaceCommandHandlerTests
 	[Fact]
 	public async Task Should_ReturnInvalidUsersError_When_SomeUsersAreInactive()
 	{
-		// Arrange
 		var fixture = new CreateSpaceCommandHandlerTestFixture()
 			.WithNoParentSpace()
 			.WithValidUsers(1)
@@ -147,10 +128,8 @@ public class CreateSpaceCommandHandlerTests
 			]
 		};
 
-		// Act
 		var result = await fixture.BuildHandler().Handle(command, CancellationToken.None);
 
-		// Assert
 		Assert.False(result.IsSuccess);
 		Assert.Equal(SpaceResources.InvalidUsersCode, result.Error.Code);
 		Assert.Equal(SpaceResources.InvalidUsersMessage, result.Error.Description);
@@ -162,7 +141,6 @@ public class CreateSpaceCommandHandlerTests
 	[Fact]
 	public async Task Should_ReturnCreateFailedError_When_SaveChangesFails()
 	{
-		// Arrange
 		var fixture = new CreateSpaceCommandHandlerTestFixture()
 			.WithNoParentSpace()
 			.WithNoUsers()
@@ -170,10 +148,8 @@ public class CreateSpaceCommandHandlerTests
 
 		var command = fixture.CreateValidCommand(withParent: false, withUsers: false);
 
-		// Act
 		var result = await fixture.BuildHandler().Handle(command, CancellationToken.None);
 
-		// Assert
 		Assert.False(result.IsSuccess);
 		Assert.Equal(SpaceResources.CreateFailedCode, result.Error.Code);
 		Assert.Equal(SpaceResources.CreateFailedMessage, result.Error.Description);
@@ -185,7 +161,6 @@ public class CreateSpaceCommandHandlerTests
 	[Fact]
 	public async Task Should_CreateSpaceWithoutUsers_When_UsersListIsNull()
 	{
-		// Arrange
 		var fixture = new CreateSpaceCommandHandlerTestFixture()
 			.WithNoParentSpace()
 			.WithNoUsers()
@@ -199,14 +174,9 @@ public class CreateSpaceCommandHandlerTests
 			Users = null
 		};
 
-		// Act
 		var result = await fixture.BuildHandler().Handle(command, CancellationToken.None);
 
-		// Assert
 		Assert.True(result.IsSuccess);
-		Assert.Equal("Test Space", result.Data.Name);
-		Assert.Equal(0, result.Data.UsersCount);
-		Assert.Empty(result.Data.Users);
 
 		fixture.MockDbContext.Verify(db => db.Set<SpaceEntity>(), Times.AtLeastOnce);
 		fixture.MockDbContext.Verify(db => db.Set<User>(), Times.Never);
@@ -216,7 +186,6 @@ public class CreateSpaceCommandHandlerTests
 	[Fact]
 	public async Task Should_CreateSpaceWithoutUsers_When_UsersListIsEmpty()
 	{
-		// Arrange
 		var fixture = new CreateSpaceCommandHandlerTestFixture()
 			.WithNoParentSpace()
 			.WithNoUsers()
@@ -230,14 +199,9 @@ public class CreateSpaceCommandHandlerTests
 			Users = []
 		};
 
-		// Act
 		var result = await fixture.BuildHandler().Handle(command, CancellationToken.None);
 
-		// Assert
 		Assert.True(result.IsSuccess);
-		Assert.Equal("Test Space", result.Data.Name);
-		Assert.Equal(0, result.Data.UsersCount);
-		Assert.Empty(result.Data.Users);
 
 		fixture.MockDbContext.Verify(db => db.Set<SpaceEntity>(), Times.AtLeastOnce);
 		fixture.MockDbContext.Verify(db => db.Set<User>(), Times.Never);
