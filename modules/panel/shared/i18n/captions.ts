@@ -16,6 +16,7 @@ export const GLOBAL_CAPTIONS = {
   status: {
     active: "Active",
     disabled: "Disabled",
+    enabled: "Enabled",
     never: "Never",
   },
 

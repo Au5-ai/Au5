@@ -3,6 +3,7 @@ import { Card } from "@/shared/components/ui";
 import { Badge } from "@/shared/components/ui/badge";
 import NoRecordsState from "@/shared/components/empty-states/no-record";
 import { BadgeCheckIcon, Trash } from "lucide-react";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 
 interface AssistantsGridProps {
   assistants: Assistant[];
@@ -34,11 +35,11 @@ export function AssistantsGrid({ assistants, isLoading }: AssistantsGridProps) {
             <Badge variant={assistant.isActive ? "secondary" : "destructive"}>
               {assistant.isActive ? (
                 <>
-                  <BadgeCheckIcon /> {"Enabled"}
+                  <BadgeCheckIcon /> {GLOBAL_CAPTIONS.status.enabled}
                 </>
               ) : (
                 <>
-                  <Trash /> {"Disabled"}
+                  <Trash />  {GLOBAL_CAPTIONS.status.disabled}
                 </>
               )}
             </Badge>
