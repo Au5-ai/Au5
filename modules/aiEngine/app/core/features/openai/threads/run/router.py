@@ -1,35 +1,32 @@
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import StreamingResponse
-from app.features.openai.threads.create_run.request import (
-    CreateRunRequest,
-    CreateRunResponse
-)
-from app.features.openai.threads.create_run.handler import CreateRunHandler
-from app.features.openai.threads.create_run.dependencies import get_create_run_handler
-from app.core.exceptions import ServiceException
+from app.core.features.openai.threads.run.deps import get_thread_run_handler
+from app.core.features.openai.threads.run.handler import ThreadRunHandler
+from app.core.features.openai.threads.run.request import RunThreadRequest
+from app.shared.exceptions import ServiceException
 
 router = APIRouter()
 
 
 @router.post(
-    "",
-    summary="Create Run",
-    description="Create a run with streaming or non-streaming mode"
+    "/run",
+    description="Create a thread with messages and stream the assistant's response in real-time."
 )
 async def create_run(
-    request: CreateRunRequest,
-    handler: CreateRunHandler = Depends(get_create_run_handler)
+    request: RunThreadRequest,
+    handler: ThreadRunHandler = Depends(get_thread_run_handler)
 ):
-    """Create a run"""
     result = await handler.handle(request)
     
     if result.is_failure():
         raise ServiceException(result.error)
     
-    if request.stream:
-        return StreamingResponse(
-            result.value,
-            media_type="text/event-stream"
-        )
-    else:
-        return result.value
+    return StreamingResponse(
+        result.data,
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        }
+    )
