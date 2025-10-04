@@ -1,6 +1,13 @@
 USE [Au5]
 GO
 
+-- Add LLMModel column to SystemConfig table if it doesn't exist
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[SystemConfig]') AND name = 'LLMModel')
+BEGIN
+    ALTER TABLE [dbo].[SystemConfig] ADD [LLMModel] NVARCHAR(50) NOT NULL DEFAULT 'gpt-4o'
+END
+GO
+
 DELETE FROM [dbo].[GuestsInMeeting];
 DELETE FROM [dbo].[ParticipantInMeeting];
 DELETE FROM  [dbo].[Entry];
@@ -116,7 +123,7 @@ VALUES
 (NEWID(), @EmptyGuid, N'Mohammad Reza', N'I’m doing well, thanks. Let’s start with the project updates.', '2025-07-14 11:44:05', '00:03:42', 'Transcription', @meetingId_one),
 (NEWID(), @EmptyGuid, N'Mehran N', N'Sure, I completed the new API integration yesterday.', '2025-07-14 11:44:18', '00:03:55', 'Transcription', @meetingId_one),
 (NEWID(), @userId, N'John Smith', N'That’s great, Mark. Emily, how’s the design phase going?', '2025-07-14 11:44:33', '00:04:10', 'Transcription', @meetingId_one),
- 
+
 -- Meeting 2
 (NEWID(), @userId, '', N'Good morning team, let’s review yesterday’s work.', '2025-07-15 09:00:12', '00:00:05', 'Transcription', @meetingId_two),
 (NEWID(), @EmptyGuid, N'Alireza', N'I completed the database migration last night.', '2025-07-15 09:00:24', '00:00:17', 'Transcription', @meetingId_two),
