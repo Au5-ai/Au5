@@ -22,14 +22,12 @@ public class ToggleFavoriteCommandHandler : IRequestHandler<ToggleFavoriteComman
 			return Error.NotFound(description: "Meeting not found");
 		}
 
-		// Check if the current user is a participant in the meeting
 		var isParticipant = meeting.Participants.Any(p => p.UserId == _currentUserService.UserId);
 		if (!isParticipant)
 		{
 			return Error.Forbidden(description: "You are not authorized to modify this meeting");
 		}
 
-		// Toggle the favorite status
 		meeting.IsFavorite = !meeting.IsFavorite;
 
 		var result = await _dbContext.SaveChangesAsync(cancellationToken);
