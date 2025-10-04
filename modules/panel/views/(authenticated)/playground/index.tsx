@@ -1,72 +1,10 @@
 "use client";
 
 import React from "react";
-import {
-  UserCircle,
-  Compass,
-  BookOpen,
-  Sparkles,
-  ArrowRight,
-  Activity,
-  Brain,
-} from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/shared/components/ui";
 
 export default function PlaygroundPage() {
-  const recommendedSpaces = [
-    {
-      title: "Complete Your Profile",
-      description:
-        "Add your details and preferences to personalize your experience",
-      icon: UserCircle,
-      color: "from-blue-500 to-cyan-500",
-      action: "Set up profile",
-    },
-    {
-      title: "Explore Features",
-      description: "Discover all the powerful tools available to you",
-      icon: Compass,
-      color: "from-purple-500 to-pink-500",
-      action: "Start exploring",
-    },
-    {
-      title: "Documentation",
-      description: "Learn how to make the most of the platform",
-      icon: BookOpen,
-      color: "from-orange-500 to-red-500",
-      action: "View guides",
-    },
-    {
-      title: "Add AI Tools",
-      description: "Customize your AI Tools",
-      icon: Brain,
-      color: "from-green-500 to-emerald-500",
-      action: "Open AI Tools",
-    },
-    {
-      title: "Recent Meeting",
-      description: "Stay updated with your latest meeting",
-      icon: Activity,
-      color: "from-indigo-500 to-blue-500",
-      action: "View Meeting",
-    },
-    {
-      title: "Getting Started",
-      description: "Take a guided tour to learn the basics",
-      icon: Sparkles,
-      color: "from-yellow-500 to-amber-500",
-      action: "Start tour",
-    },
-  ];
-
   return (
     <div className="min-h-screen w-full">
       {/* Hero Section */}
