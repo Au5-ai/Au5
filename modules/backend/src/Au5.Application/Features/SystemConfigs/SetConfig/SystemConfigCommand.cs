@@ -18,6 +18,8 @@ public record SystemConfigCommand : IRequest<Result>
 
 	public string BotHubUrl { get; set; }
 
+	public string AIProviderUrl { get; set; }
+
 	public string PanelUrl { get; init; }
 
 	public string OpenAIToken { get; init; }

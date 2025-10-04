@@ -65,6 +65,11 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<string>("Instructions")
+                        .HasMaxLength(2000)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(2000)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -78,16 +83,17 @@ namespace Au5.Infrastructure.Migrations
                         .HasColumnType("varchar(200)");
 
                     b.Property<string>("OpenAIAssistantId")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<string>("Prompt")
-                        .HasMaxLength(2000)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(2000)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Assistant");
                 });
@@ -435,6 +441,11 @@ namespace Au5.Infrastructure.Migrations
                         },
                         new
                         {
+                            RoleType = (byte)2,
+                            MenuId = 300
+                        },
+                        new
+                        {
                             RoleType = (byte)1,
                             MenuId = 300
                         },
@@ -450,11 +461,48 @@ namespace Au5.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Au5.Domain.Entities.Space", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id")
+                        .HasName("PK_dbo_Space");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("Space");
+                });
+
             modelBuilder.Entity("Au5.Domain.Entities.SystemConfig", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AIProviderUrl")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
 
                     b.Property<int>("AutoLeaveAllParticipantsLeft")
                         .HasColumnType("int");
@@ -632,6 +680,28 @@ namespace Au5.Infrastructure.Migrations
                     b.ToTable("User");
                 });
 
+            modelBuilder.Entity("Au5.Domain.Entities.UserSpace", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SpaceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("UserId", "SpaceId")
+                        .HasName("PK_dbo_UserSpace");
+
+                    b.HasIndex("SpaceId");
+
+                    b.ToTable("UserSpace");
+                });
+
             modelBuilder.Entity("Au5.Domain.Entities.AppliedReactions", b =>
                 {
                     b.HasOne("Au5.Domain.Entities.Entry", "Entry")
@@ -688,6 +758,17 @@ namespace Au5.Infrastructure.Migrations
                     b.Navigation("Participants");
 
                     b.Navigation("Reaction");
+                });
+
+            modelBuilder.Entity("Au5.Domain.Entities.Assistant", b =>
+                {
+                    b.HasOne("Au5.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.Entry", b =>
@@ -760,6 +841,35 @@ namespace Au5.Infrastructure.Migrations
                     b.Navigation("Menu");
                 });
 
+            modelBuilder.Entity("Au5.Domain.Entities.Space", b =>
+                {
+                    b.HasOne("Au5.Domain.Entities.Space", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("Au5.Domain.Entities.UserSpace", b =>
+                {
+                    b.HasOne("Au5.Domain.Entities.Space", "Space")
+                        .WithMany("UserSpaces")
+                        .HasForeignKey("SpaceId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Au5.Domain.Entities.User", "User")
+                        .WithMany("UserSpaces")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Space");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Au5.Domain.Entities.Entry", b =>
                 {
                     b.Navigation("Reactions");
@@ -781,9 +891,18 @@ namespace Au5.Infrastructure.Migrations
                     b.Navigation("RoleMenus");
                 });
 
+            modelBuilder.Entity("Au5.Domain.Entities.Space", b =>
+                {
+                    b.Navigation("Children");
+
+                    b.Navigation("UserSpaces");
+                });
+
             modelBuilder.Entity("Au5.Domain.Entities.User", b =>
                 {
                     b.Navigation("Meetings");
+
+                    b.Navigation("UserSpaces");
                 });
 #pragma warning restore 612, 618
         }

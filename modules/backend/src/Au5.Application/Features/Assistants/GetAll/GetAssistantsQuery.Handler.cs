@@ -1,25 +1,37 @@
 namespace Au5.Application.Features.Assistants.GetAll;
 
-public class GetAssistantsQueryHandler : IRequestHandler<GetAssistantsQuery, Result<List<Assistant>>>
+public class GetAssistantsQueryHandler : IRequestHandler<GetAssistantsQuery, Result<IReadOnlyCollection<Assistant>>>
 {
-	private readonly IApplicationDbContext _db;
+	private readonly IApplicationDbContext _dbContext;
+	private readonly ICurrentUserService _currentUserService;
 
-	public GetAssistantsQueryHandler(IApplicationDbContext db)
+	public GetAssistantsQueryHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
 	{
-		_db = db;
+		_dbContext = dbContext;
+		_currentUserService = currentUserService;
 	}
 
-	public async ValueTask<Result<List<Assistant>>> Handle(GetAssistantsQuery request, CancellationToken cancellationToken)
+	public async ValueTask<Result<IReadOnlyCollection<Assistant>>> Handle(GetAssistantsQuery request, CancellationToken cancellationToken)
 	{
-		var query = _db.Set<Assistant>().Where(x => !x.IsDefault);
+		var assistants = _dbContext.Set<Assistant>().AsNoTracking();
 
-		if(request.IsActive.HasValue)
+		if (_currentUserService.Role == RoleTypes.Admin)
 		{
-			query = query.Where(x => x.IsActive == request.IsActive.Value);
+			return await assistants.Where(x => x.IsDefault).ToListAsync(cancellationToken);
 		}
 
-		return await query
-			.AsNoTracking()
-			.ToListAsync(cancellationToken);
+		var userId = _currentUserService.UserId;
+		IQueryable<Assistant> query;
+
+		if (request.IsActive.HasValue)
+		{
+			query = assistants.Where(x => (x.IsDefault && x.IsActive) || (x.UserId == userId && x.IsActive));
+		}
+		else
+		{
+			query = assistants.Where(x => x.UserId == userId);
+		}
+
+		return await query.ToListAsync(cancellationToken);
 	}
 }

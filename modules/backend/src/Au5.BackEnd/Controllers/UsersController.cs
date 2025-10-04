@@ -1,5 +1,5 @@
-using Au5.Application.Features.Authentication.GetUserMenus;
 using Au5.Application.Features.UserManagement.GetMyInfo;
+using Au5.Application.Features.UserManagement.GetUserMenus;
 using Au5.Application.Features.UserManagement.GetUsers;
 using Au5.Application.Features.UserManagement.InviteUsers;
 using Au5.Application.Features.UserManagement.ResendVerificationEmail;

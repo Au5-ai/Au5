@@ -52,6 +52,19 @@ services:
       - "1367:8081"
     restart: unless-stopped
 
+  ai-engine:
+    build:
+      context: ../aiEngine
+    image: au5-ai-engine
+    container_name: au5-ai-engine
+    environment:
+      - APP_MODE=development
+    env_file:
+      - ../aiEngine/.env
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
   # panel:
   #   build:
   #     context: ../panel

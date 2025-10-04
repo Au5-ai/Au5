@@ -13,7 +13,7 @@ export class ApiRoutes {
   }
 
   public addBot(meetingId: string, meetId: string): string {
-    return `${this.config.service.baseUrl}/meeting/${meetingId}/sessions/${meetId}/actions/addBot`;
+    return `${this.config.service.baseUrl}/meetings/${meetingId}/sessions/${meetId}/actions/addBot`;
   }
 
   public getReactions(): string {
@@ -21,6 +21,6 @@ export class ApiRoutes {
   }
 
   public closeMeeting(meetingId: string, meetId: string): string {
-    return `${this.config.service.baseUrl}/meeting/${meetingId}/sessions/${meetId}/actions/close`;
+    return `${this.config.service.baseUrl}/meetings/${meetingId}/sessions/${meetId}/actions/close`;
   }
 }

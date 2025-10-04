@@ -144,7 +144,18 @@
 [dir="rtl"] {
   font-family: "Vazirmatn" !important;
 }
-.gradient-bg {
+
+.bg-linear-gradient {
+  background: linear-gradient(
+    to bottom,
+    #f8fbff 0%,
+    #f4f0ec 28%,
+    #f4eae7 66%,
+    #f4e8ec 100%
+  );
+}
+
+.bg-gradient {
   background: linear-gradient(
     to bottom,
     #f8fbff 0%,
@@ -162,4 +173,25 @@
 
 .text-justify {
   text-align: justify;
+}
+
+/* Custom Toast Colors */
+[data-sonner-toaster] [data-type="success"] {
+  background-color: #47B881 !important;
+  color: white !important;
+  border-color: #47B881 !important;
+}
+
+[data-sonner-toaster] [data-type="error"] {
+  background-color: #E02E2A !important;
+  color: white !important;
+  border-color: #E02E2A !important;
+}
+
+[data-sonner-toaster] [data-type="success"] [data-icon] {
+  color: white !important;
+}
+
+[data-sonner-toaster] [data-type="error"] [data-icon] {
+  color: white !important;
 }

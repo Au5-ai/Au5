@@ -59,8 +59,8 @@ internal static class AppResources
 		public const string AssistantNameMaxLength = "Assistant name must not exceed 200 characters.";
 		public const string AssistantIconMaxLength = "Assistant icon URL must not exceed 200 characters.";
 		public const string AssistantDescriptionMaxLength = "Assistant description must not exceed 500 characters.";
-		public const string AssistantPromptRequired = "Assistant prompt is required.";
-		public const string AssistantPromptMaxLength = "Assistant prompt must not exceed 2000 characters.";
+		public const string AssistantInstructionsRequired = "Assistant instructions is required.";
+		public const string AssistantInstructionsMaxLength = "Assistant instructions must not exceed 2000 characters.";
 	}
 
 	internal static class User
@@ -70,5 +70,34 @@ internal static class AppResources
 		public const string UserNotFound = "User not found. Please verify your information and try again.";
 
 		public const string FailedToUpdateUserInfo = "Failed to Update User.";
+	}
+
+	/// <summary>
+	/// Space related messages and codes.
+	/// </summary>
+	internal static class Space
+	{
+		public const string NotFoundCode = "Space.NotFound";
+		public const string NotFoundMessage = "Space not found";
+
+		public const string ParentNotFoundCode = "Space.ParentNotFound";
+		public const string ParentNotFoundMessage = "Parent space not found";
+
+		public const string InvalidUsersCode = "Space.InvalidUsers";
+		public const string InvalidUsersMessage = "One or more users not found";
+
+		public const string CreateFailedCode = "Space.CreateFailed";
+		public const string CreateFailedMessage = "Failed to create space";
+
+		public const string NameRequired = "Space name is required.";
+		public const string NameMaxLength = "Space name must not exceed 100 characters.";
+		public const string DescriptionMaxLength = "Space description must not exceed 500 characters.";
+		public const string InvalidUserIds = "All user IDs must be valid GUIDs.";
+	}
+
+	internal static class Assistant
+	{
+		public const string Code = "Assistant";
+		public const string OpenAIConnectionFailed = "Can not connect to OpenAI platform, Please check and try again.";
 	}
 }

@@ -8,7 +8,7 @@ public class AddAssistantCommand : IRequest<Result<AddAssisstantResponse>>
 
 	public string Description { get; init; }
 
-	public string Prompt { get; init; }
+	public string Instructions { get; init; }
 }
 
 public record AddAssisstantResponse(Guid Id);

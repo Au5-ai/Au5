@@ -1,7 +1,7 @@
 using System.Data;
 using Au5.Application.Common;
 
-namespace Au5.Application.Features.Authentication.GetUserMenus;
+namespace Au5.Application.Features.UserManagement.GetUserMenus;
 
 public class GetUserMenusQueryHandler : IRequestHandler<GetUserMenusQuery, Result<List<GetUserMenusResponse>>>
 {
@@ -17,7 +17,7 @@ public class GetUserMenusQueryHandler : IRequestHandler<GetUserMenusQuery, Resul
 	public async ValueTask<Result<List<GetUserMenusResponse>>> Handle(GetUserMenusQuery request, CancellationToken cancellationToken)
 	{
 		var userRole = _currentUserService.Role;
-		if (userRole == null)
+		if (userRole is null)
 		{
 			return Error.Forbidden(description: AppResources.Auth.UserRoleNotFound);
 		}

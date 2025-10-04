@@ -15,36 +15,34 @@ public class SystemConfigQueryHandler : IRequestHandler<SystemConfigQuery, Resul
 	{
 		var existingConfig = await _dbContext.Set<SystemConfig>().FirstOrDefaultAsync(cancellationToken);
 
-		if (existingConfig is null)
-		{
-			return Error.Failure(description: AppResources.System.IsNotConfigured);
-		}
-
-		return new SystemConfigResponse
-		{
-			OrganizationName = existingConfig.OrganizationName,
-			BotName = existingConfig.BotName,
-			HubUrl = existingConfig.HubUrl,
-			Direction = existingConfig.Direction,
-			Language = existingConfig.Language,
-			ServiceBaseUrl = existingConfig.ServiceBaseUrl,
-			BotFatherUrl = existingConfig.BotFatherUrl,
-			BotHubUrl = existingConfig.BotHubUrl,
-			PanelUrl = existingConfig.PanelUrl,
-			OpenAIToken = existingConfig.OpenAIToken,
-			OpenAIProxyUrl = existingConfig.OpenAIProxyUrl,
-			AutoLeaveWaitingEnter = existingConfig.AutoLeaveWaitingEnter,
-			AutoLeaveNoParticipant = existingConfig.AutoLeaveNoParticipant,
-			AutoLeaveAllParticipantsLeft = existingConfig.AutoLeaveAllParticipantsLeft,
-			MeetingVideoRecording = existingConfig.MeetingVideoRecording,
-			MeetingAudioRecording = existingConfig.MeetingAudioRecording,
-			MeetingTranscription = existingConfig.MeetingTranscription,
-			MeetingTranscriptionModel = existingConfig.MeetingTranscriptionModel,
-			SmtpUseSSl = existingConfig.SmtpUseSSl,
-			SmtpHost = existingConfig.SmtpHost,
-			SmtpPort = existingConfig.SmtpPort,
-			SmtpUser = existingConfig.SmtpUser,
-			SmtpPassword = existingConfig.SmtpPassword
-		};
+		return existingConfig is null
+			? Error.Failure(description: AppResources.System.IsNotConfigured)
+			: new SystemConfigResponse
+			{
+				OrganizationName = existingConfig.OrganizationName,
+				BotName = existingConfig.BotName,
+				HubUrl = existingConfig.HubUrl,
+				Direction = existingConfig.Direction,
+				Language = existingConfig.Language,
+				ServiceBaseUrl = existingConfig.ServiceBaseUrl,
+				BotFatherUrl = existingConfig.BotFatherUrl,
+				BotHubUrl = existingConfig.BotHubUrl,
+				PanelUrl = existingConfig.PanelUrl,
+				OpenAIToken = existingConfig.OpenAIToken,
+				OpenAIProxyUrl = existingConfig.OpenAIProxyUrl,
+				AIProviderUrl = existingConfig.AIProviderUrl,
+				AutoLeaveWaitingEnter = existingConfig.AutoLeaveWaitingEnter,
+				AutoLeaveNoParticipant = existingConfig.AutoLeaveNoParticipant,
+				AutoLeaveAllParticipantsLeft = existingConfig.AutoLeaveAllParticipantsLeft,
+				MeetingVideoRecording = existingConfig.MeetingVideoRecording,
+				MeetingAudioRecording = existingConfig.MeetingAudioRecording,
+				MeetingTranscription = existingConfig.MeetingTranscription,
+				MeetingTranscriptionModel = existingConfig.MeetingTranscriptionModel,
+				SmtpUseSSl = existingConfig.SmtpUseSSl,
+				SmtpHost = existingConfig.SmtpHost,
+				SmtpPort = existingConfig.SmtpPort,
+				SmtpUser = existingConfig.SmtpUser,
+				SmtpPassword = existingConfig.SmtpPassword
+			};
 	}
 }

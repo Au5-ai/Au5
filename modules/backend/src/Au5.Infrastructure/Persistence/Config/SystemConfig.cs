@@ -40,6 +40,10 @@ public class SystemDbConfig : IEntityTypeConfiguration<SystemConfig>
 			.IsRequired()
 			.HasMaxLength(200);
 
+		builder.Property(t => t.AIProviderUrl)
+			.IsRequired()
+			.HasMaxLength(200);
+
 		builder.Property(t => t.OpenAIToken)
 			.IsRequired()
 			.HasMaxLength(200);

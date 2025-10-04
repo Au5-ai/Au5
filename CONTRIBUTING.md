@@ -16,15 +16,18 @@ By participating in this project, you agree to abide by our Code of Conduct.
 ## Development Setup
 
 1. Clone your fork:
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/Au5.git
    cd Au5
    ```
 
 2. Set up the development environment:
+
    - Install Node.js (v18 or later)
    - Install .NET 9 SDK
    - Install dependencies for each component:
+
      ```bash
      # UI Panel
      cd src/ui
@@ -54,4 +57,4 @@ By participating in this project, you agree to abide by our Code of Conduct.
 
 If you have any questions, please open an issue or contact the maintainers.
 
-Thank you for contributing to Au5! 
+Thank you for contributing to Au5!

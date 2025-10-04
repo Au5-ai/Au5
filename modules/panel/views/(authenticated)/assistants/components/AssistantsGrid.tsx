@@ -44,7 +44,7 @@ export function AssistantsGrid({ assistants, isLoading }: AssistantsGridProps) {
             </Badge>
           </div>
           <div className="text-muted-foreground text-sm">
-            {assistant.prompt}
+            {assistant.instructions}
           </div>
         </Card>
       ))}

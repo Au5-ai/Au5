@@ -8,6 +8,7 @@ interface LogoProps {
   priority?: boolean;
   href?: string;
   text?: string;
+  noBackground?: boolean;
 }
 
 export function Logo({
@@ -17,10 +18,14 @@ export function Logo({
   priority = false,
   href,
   text,
+  noBackground = false,
 }: LogoProps) {
   const logoContent = (
     <>
-      <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+      <div className={cn(
+        "flex items-center justify-center",
+        noBackground ? "" : "bg-primary text-primary-foreground size-6 rounded-md"
+      )}>
         <Image
           src="/assets/icons/128x.png"
           alt="Au5 Logo"
