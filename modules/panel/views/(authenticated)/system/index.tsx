@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Separator,
   SidebarInset,
   SidebarTrigger,
   Tabs,
@@ -9,7 +10,6 @@ import {
   TabsTrigger,
 } from "@/shared/components/ui";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
-import { Separator } from "@radix-ui/react-separator";
 import { Bot, Settings, Target } from "lucide-react";
 import { SystemConfigsTab } from "./components/system-config";
 import { SYSTEM_CAPTIONS } from "./i18n";
