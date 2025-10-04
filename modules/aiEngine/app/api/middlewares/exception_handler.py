@@ -6,7 +6,7 @@ import logging
 
 logger = logging.getLogger(__name__) 
 
-async def exception_handler(request: Request, call_next) -> JSONResponse :
+async def exception_handler(request: Request, call_next):
     try:
         return await call_next(request)
 
@@ -20,15 +20,15 @@ async def exception_handler(request: Request, call_next) -> JSONResponse :
                 "details": ae.details
             }
         )
-        return JSONResponse(content=ae.to_result(), status_code=ae.status_code, media_type="application/json")
+        return Response(content=ae.to_result().model_dump_json(), status_code=ae.status_code, media_type="application/json")
 
     except Exception as e:
         logger.error(
-            f"Exception: {ae.message}",
+            f"Exception: {e}",
             extra={
                 "path": request.url.path,
                 "method": request.method,
             }
         )
-        return JSONResponse(content=Result.fail(str(e)), status_code=500, media_type="application/json")
+        return Response(content=Result.failure(str(e), status=500).model_dump_json(), status_code=500, media_type="application/json")
 
