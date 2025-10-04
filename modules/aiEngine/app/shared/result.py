@@ -5,14 +5,18 @@ T = TypeVar("T")
 E = TypeVar("E")
 
 class Result(BaseModel, Generic[T, E]):
+    status: int
     success: bool
     data: Union[T, None] = None
     error: Union[E, None] = None
 
     @staticmethod
-    def ok(data: T) -> "Result[T, None]":
-        return Result(success=True, data=data)
+    def success(data: T) -> "Result[T, None]":
+        return Result(success=True, data=data, status=200)
 
     @staticmethod
-    def fail(error: E) -> "Result[None, E]":
-        return Result(success=False, error=error)
+    def failure(error: E, status: int = 400) -> "Result[None, E]":
+        return Result(success=False, error=error, status=status)
+
+    def is_failure(self) -> bool:
+        return not self.is_success
