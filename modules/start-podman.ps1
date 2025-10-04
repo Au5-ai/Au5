@@ -4,7 +4,8 @@ podman pod create --name au5-pod --network au5 `
   -p 15433:1433 `
   -p 6379:6379 `
   -p 1366:8080 `
-  -p 1367:8081
+  -p 1367:8081 `
+  -p 8000:8000
 
 Write-Host "Creating Au5 pod..."
 
@@ -60,6 +61,18 @@ podman run -d `
   --restart unless-stopped `
   au5-botfather
 
+
+# Build and start AI Engine
+Write-Host "Building and starting AI Engine..."
+podman build -t au5-ai-engine ./aiEngine
+podman run -d `
+  --name au5-ai-engine `
+  --pod au5-pod `
+  -e APP_MODE=development `
+  --env-file ./aiEngine/.env `
+  --restart unless-stopped `
+  au5-ai-engine
+
 # OR Use this command if you want to expose Bot Father on a specific port
 #podman run --name au5-botfather --network=au5 --pod au5-pod -d -p 1368:8080 -v /run/podman/podman.sock:/var/run/docker.sock au5-botfather
 
@@ -80,6 +93,7 @@ Write-Host "- Backend API: http://localhost:1366"
 Write-Host "- Bot Father: http://localhost:1367" 
 Write-Host "- Panel: http://localhost:1368"
 Write-Host "- SQL Server: localhost:1433"
+Write-Host "- AI Engine: http://localhost:8000"
 Write-Host "- Redis: localhost:6379"
 
 Write-Host ""
