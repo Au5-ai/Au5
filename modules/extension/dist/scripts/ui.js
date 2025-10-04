@@ -464,13 +464,13 @@ const _ApiRoutes = class _ApiRoutes {
     return _ApiRoutes.instance;
   }
   addBot(meetingId, meetId) {
-    return `${this.config.service.baseUrl}/meeting/${meetingId}/sessions/${meetId}/actions/addBot`;
+    return `${this.config.service.baseUrl}/meetings/${meetingId}/sessions/${meetId}/actions/addBot`;
   }
   getReactions() {
     return `${this.config.service.baseUrl}/reactions`;
   }
   closeMeeting(meetingId, meetId) {
-    return `${this.config.service.baseUrl}/meeting/${meetingId}/sessions/${meetId}/actions/close`;
+    return `${this.config.service.baseUrl}/meetings/${meetingId}/sessions/${meetId}/actions/close`;
   }
 };
 __publicField(_ApiRoutes, "instance");
@@ -3539,12 +3539,8 @@ class UIHandlers {
         return;
       }
       const meetId = this.platform.getMeetId();
-      const meeting = JSON.parse(localStorage.getItem("au5-meetingId") || "null");
-      if (!meeting) {
-        return;
-      }
       const response = await this.backendApi.addBot({
-        meetingId: meeting.meetingId,
+        meetingId: "00000000-0000-0000-0000-000000000000",
         meetId,
         botName: this.config.service.botName,
         platform: this.platform.getPlatformName()

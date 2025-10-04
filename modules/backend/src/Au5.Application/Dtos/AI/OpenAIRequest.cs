@@ -4,7 +4,7 @@ namespace Au5.Application.Dtos.AI;
 
 public abstract class OpenAIRequest
 {
-	[JsonPropertyName("proxyUrl")]
+	[JsonPropertyName("proxy_url")]
 	public string ProxyUrl { get; set; }
 
 	[JsonPropertyName("apiKey")]
