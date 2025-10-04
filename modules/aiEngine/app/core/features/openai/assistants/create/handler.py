@@ -4,7 +4,9 @@ from app.core.features.openai.assistants.create.request import (
 )
 from app.shared.result import Result
 from app.infrastructure.openai_client import OpenAIClient
+import logging
 
+logger = logging.getLogger(__name__) 
 
 class CreateAssistantHandler:
 
@@ -24,4 +26,5 @@ class CreateAssistantHandler:
             return Result.success(response)
             
         except Exception as e:
+            logger.error(f"Failed to create assistant: {e}", exc_info=True)
             return Result.failure("failed to create assistant")
