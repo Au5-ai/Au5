@@ -12,7 +12,7 @@ class OpenAIClient:
     
     def client(self, api_key: str = None, proxy_url: str = None) -> AsyncOpenAI:
         if self._client is None:
-            self._client = AsyncOpenAI(api_key= api_key or self._api_key, api_base= proxy_url or self._url)
+            self._client = AsyncOpenAI(api_key= api_key or self._api_key, base_url= proxy_url or self._url)
         return self._client
 
 
