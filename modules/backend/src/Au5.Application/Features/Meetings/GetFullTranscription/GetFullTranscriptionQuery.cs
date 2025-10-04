@@ -26,6 +26,8 @@ public class FullTranscriptionResponse
 
 	public string Status { get; init; }
 
+	public bool IsFavorite { get; init; }
+
 	public IReadOnlyList<Participant> Participants { get; init; }
 
 	public IReadOnlyList<Participant> Guests { get; init; }

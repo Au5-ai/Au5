@@ -18,6 +18,7 @@ public record class MyMeetingItem
 	public string Status { get; init; }
 	public string Duration { get; init; }
 	public string Time { get; init; }
+	public bool IsFavorite { get; init; }
 	public string PictureUrl { get; init; }
 	public IReadOnlyList<string> Guests { get; init; }
 	public IReadOnlyList<Participant> Participants { get; init; }
