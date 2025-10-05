@@ -21,12 +21,8 @@ class ThreadRunHandler:
         try:
             
             async with self.openai_client.client(**request.to_proxy_params()).beta.threads.create_and_run_stream(**request.to_openai_params()) as stream:
-                
                 async for event in stream:
-                    
-                    event_type_str = event.event if hasattr(event, 'event') else type(event).__name__
-                    stream_event = StreamEventFactory.create_event(event_type_str, event)
-                    yield f"data: {stream_event.model_dump_json(exclude_none=True)}\n\n"
+                    yield event.model_dump_json(exclude_none=True)
                 
                 # Send done signal
                 done_event = StreamEvent(type=StreamEventType.DONE)

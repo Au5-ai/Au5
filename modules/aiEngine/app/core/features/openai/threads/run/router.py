@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 @router.post(
-    "/run",
+    "/runs",
     description="Create a thread with messages and stream the assistant's response in real-time."
 )
 async def create_run(
