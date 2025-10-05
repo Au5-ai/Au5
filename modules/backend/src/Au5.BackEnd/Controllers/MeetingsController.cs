@@ -50,10 +50,10 @@ public class MeetingsController(ISender mediator) : BaseController
 		return Ok(await mediator.Send(new CloseMeetingByUserCommand(meetingId, meetId), cancellationToken));
 	}
 
-	[HttpPost("{meetingId}/toggle-favorite")]
+	[HttpPost("{meetingId}/sessions/{meetId}/toggle-favorite")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	public async Task<IActionResult> ToggleFavorite([FromRoute] Guid meetingId, CancellationToken cancellationToken)
+	public async Task<IActionResult> ToggleFavorite([FromRoute] Guid meetingId, [FromRoute] string meetId, CancellationToken cancellationToken)
 	{
-		return Ok(await mediator.Send(new ToggleFavoriteCommand(meetingId), cancellationToken));
+		return Ok(await mediator.Send(new ToggleFavoriteCommand(meetingId, meetId), cancellationToken));
 	}
 }

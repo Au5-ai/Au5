@@ -1,3 +1,5 @@
+using Au5.Application.Common;
+
 namespace Au5.Application.Features.Meetings.ToggleFavorite;
 
 public class ToggleFavoriteCommandHandler : IRequestHandler<ToggleFavoriteCommand, Result<ToggleFavoriteResponse>>
@@ -15,24 +17,24 @@ public class ToggleFavoriteCommandHandler : IRequestHandler<ToggleFavoriteComman
 	{
 		var meeting = await _dbContext.Set<Meeting>()
 			.Include(x => x.Participants)
-			.FirstOrDefaultAsync(x => x.Id == request.MeetingId, cancellationToken);
+			.FirstOrDefaultAsync(x => x.Id == request.MeetingId && x.MeetId == request.MeetId, cancellationToken);
 
 		if (meeting is null)
 		{
-			return Error.NotFound(description: "Meeting not found");
+			return Error.NotFound(description: AppResources.Meeting.NotFound);
 		}
 
 		var isParticipant = meeting.Participants.Any(p => p.UserId == _currentUserService.UserId);
 		if (!isParticipant)
 		{
-			return Error.Forbidden(description: "You are not authorized to modify this meeting");
+			return Error.Forbidden(description: AppResources.Meeting.UnauthorizedToModify);
 		}
 
 		meeting.IsFavorite = !meeting.IsFavorite;
 
 		var result = await _dbContext.SaveChangesAsync(cancellationToken);
 		return result.IsFailure
-			? Error.Failure(description: "Failed to update favorite status")
+			? Error.Failure(description: AppResources.Meeting.FailedToToggleFavorite)
 			: new ToggleFavoriteResponse(meeting.IsFavorite);
 	}
 }
