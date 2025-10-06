@@ -34,6 +34,8 @@ public class Meeting
 
 	public MeetingStatus Status { get; set; }
 
+	public bool IsFavorite { get; set; }
+
 	public ICollection<ParticipantInMeeting> Participants { get; set; }
 
 	public ICollection<GuestsInMeeting> Guests { get; set; }

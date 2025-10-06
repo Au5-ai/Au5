@@ -166,7 +166,11 @@ export default function TranscriptionPage() {
             <BreadcrumbLayout />
           </div>
           <div className="ml-auto px-4">
-            <NavActions />
+            <NavActions 
+              meetingId={transcription?.id} 
+              meetId={transcription?.meetingId}
+              isFavorite={transcription?.isFavorite} 
+            />
           </div>
         </header>
         <div className="min-h-screen w-full">

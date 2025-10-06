@@ -21,4 +21,15 @@ export const meetingsController = {
       },
     );
   },
+  toggleFavorite: (
+    meetingId: string,
+    meetId: string,
+  ): Promise<{ isFavorite: boolean }> => {
+    return apiRequestClient<{ isFavorite: boolean }>(
+      API_URLS.MEETING.TOGGLE_FAVORITE(meetingId, meetId),
+      {
+        method: "POST",
+      },
+    );
+  },
 };

@@ -36,6 +36,7 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 				Status = x.Status.ToString(),
 				Date = x.CreatedAt,
 				Duration = string.IsNullOrEmpty(x.Duration) ? "0m" : x.Duration,
+				x.IsFavorite,
 				Guests = x.Guests.Select(g => g.FullName).ToList(),
 				Participants = x.Participants.Select(p => new Participant()
 				{
@@ -59,6 +60,7 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 				Date = x.Date.ToString("dddd, MMMM dd"),
 				Time = x.Date.ToString("h:mm tt"),
 				x.Duration,
+				x.IsFavorite,
 				x.Guests,
 				x.Participants,
 				x.Participants.FirstOrDefault()?.PictureUrl
@@ -80,6 +82,7 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 				Duration = m.Duration,
 				Time = m.Time,
 				Status = m.Status,
+				IsFavorite = m.IsFavorite,
 				Guests = m.Guests,
 				Participants = m.Participants,
 				PictureUrl = m.PictureUrl

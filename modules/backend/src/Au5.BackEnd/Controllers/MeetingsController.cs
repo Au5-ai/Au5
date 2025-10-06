@@ -2,6 +2,7 @@ using Au5.Application.Features.Meetings.AddBot;
 using Au5.Application.Features.Meetings.CloseMeetingByUser;
 using Au5.Application.Features.Meetings.GetFullTranscription;
 using Au5.Application.Features.Meetings.MyMeeting;
+using Au5.Application.Features.Meetings.ToggleFavorite;
 using Au5.Domain.Common;
 
 namespace Au5.BackEnd.Controllers;
@@ -27,7 +28,7 @@ public class MeetingsController(ISender mediator) : BaseController
 	public async Task<IActionResult> MyMeetings([FromQuery] string status, CancellationToken cancellationToken)
 	{
 		var meetingStatus = MeetingStatus.Ended;
-		if(status.Equals("archived", StringComparison.OrdinalIgnoreCase))
+		if (status.Equals("archived", StringComparison.OrdinalIgnoreCase))
 		{
 			meetingStatus = MeetingStatus.Archived;
 		}
@@ -47,5 +48,12 @@ public class MeetingsController(ISender mediator) : BaseController
 	public async Task<IActionResult> CloseMeeting([FromRoute] Guid meetingId, [FromRoute] string meetId, CancellationToken cancellationToken)
 	{
 		return Ok(await mediator.Send(new CloseMeetingByUserCommand(meetingId, meetId), cancellationToken));
+	}
+
+	[HttpPost("{meetingId}/sessions/{meetId}/toggle-favorite")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> ToggleFavorite([FromRoute] Guid meetingId, [FromRoute] string meetId, CancellationToken cancellationToken)
+	{
+		return Ok(await mediator.Send(new ToggleFavoriteCommand(meetingId, meetId), cancellationToken));
 	}
 }

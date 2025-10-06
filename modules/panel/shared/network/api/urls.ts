@@ -11,6 +11,8 @@ export const API_URLS = {
     ARCHIVED: `/meetings/my?status=archived`,
     TRANSCRIPTION: (meetingId: string, meetId: string) =>
       `/meetings/${meetingId}/sessions/${meetId}/transcription`,
+    TOGGLE_FAVORITE: (meetingId: string, meetId: string) =>
+      `/meetings/${meetingId}/sessions/${meetId}/toggle-favorite`,
   },
   SETUP: {
     HELLO_ADMIN: "/setUp/hello-admin",
