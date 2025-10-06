@@ -1,11 +1,17 @@
 from fastapi import APIRouter
-from app.api.routers.openai import router as openai_router
-from app.api.routers.liveness import router as liveness
+from app.api.routers.liveness import router as liveness_router
+
+from app.core.features.openai.assistants.create.router import router as create_assistant_router
+from app.core.features.openai.threads.run.router import router as run_thread_router
+
 
 router = APIRouter()
 
-# Include OpenAI assistant routes
-router.include_router(openai_router, prefix="/api")
+router.prefix = "/api"
 
-# Include base routes
-router.include_router(liveness)
+router.include_router(create_assistant_router, prefix="/assistants")
+router.include_router(run_thread_router, prefix="/threads")
+
+
+# Health check endpoint
+router.include_router(liveness_router)

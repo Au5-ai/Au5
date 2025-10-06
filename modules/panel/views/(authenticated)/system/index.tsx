@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Separator,
   SidebarInset,
   SidebarTrigger,
   Tabs,
@@ -9,8 +10,7 @@ import {
   TabsTrigger,
 } from "@/shared/components/ui";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
-import { Separator } from "@radix-ui/react-separator";
-import { Bot, Brain, Palette, Settings, Target } from "lucide-react";
+import { Bot, Settings, Target } from "lucide-react";
 import { SystemConfigsTab } from "./components/system-config";
 import { SYSTEM_CAPTIONS } from "./i18n";
 
@@ -46,18 +46,12 @@ export default function SystemConfigPage() {
               <TabsTrigger value="Reactions">
                 <Target className="mr-1 h-4 w-4" /> {SYSTEM_CAPTIONS.tabs.reactions}
               </TabsTrigger>
-              <TabsTrigger value="AI">
-                <Brain className="mr-1 h-4 w-4" /> {SYSTEM_CAPTIONS.tabs.ai}
-              </TabsTrigger>
               <TabsTrigger value="AutoCorrection">
                 <Bot className="mr-1 h-4 w-4" /> {SYSTEM_CAPTIONS.tabs.autoCorrection}
               </TabsTrigger>
               {/* <TabsTrigger value="Spaces"> // Commented out - no API for spaces
                 <Frame className="mr-1 h-4 w-4" /> Manage Spaces
               </TabsTrigger> */}
-              <TabsTrigger value="Personalization">
-                <Palette className="mr-1 h-4 w-4" /> {SYSTEM_CAPTIONS.tabs.personalize}
-              </TabsTrigger>
             </TabsList>
           </div>
           <TabsContent value="SystemConfigsTab">
@@ -66,15 +60,11 @@ export default function SystemConfigPage() {
           <TabsContent value="Reactions">
             {SYSTEM_CAPTIONS.tabsContent.reactions}
           </TabsContent>
-          <TabsContent value="AI">{SYSTEM_CAPTIONS.tabsContent.ai}</TabsContent>
           <TabsContent value="AutoCorrection">
             {SYSTEM_CAPTIONS.tabsContent.autoCorrection}
           </TabsContent>
           {/* <TabsContent value="Spaces">Manage your spaces here.</TabsContent> */}{" "}
           {/* Commented out - no API for spaces */}
-          <TabsContent value="Personalization">
-            {SYSTEM_CAPTIONS.tabsContent.personalization}
-          </TabsContent>
         </Tabs>
       </div>
     </SidebarInset>

@@ -26,6 +26,7 @@ export const GLOBAL_CAPTIONS = {
     succeeded: "Succeeded",
     failed: "Failed",
     sending: "Sending...",
+    moveToArchive: "Move to Archived",
   },
   fields: {
     email: {
