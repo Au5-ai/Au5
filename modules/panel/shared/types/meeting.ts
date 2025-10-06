@@ -9,6 +9,7 @@ export interface MeetingItem {
   status: string;
   duration: string;
   time: string;
+  isFavorite: boolean;
   pictureUrl: string;
   guests: string[];
   participants: Participant[];
@@ -34,6 +35,7 @@ export interface Meeting {
   duration: string;
   closedAt: string;
   status: string;
+  isFavorite: boolean;
   participants: Array<Participant>;
   guests: Array<Participant>;
   entries: Array<Entry>;

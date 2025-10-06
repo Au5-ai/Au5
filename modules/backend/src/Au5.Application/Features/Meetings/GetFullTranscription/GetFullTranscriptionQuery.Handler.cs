@@ -45,6 +45,7 @@ public class GetFullTranscriptionQueryHandler : IRequestHandler<GetFullTranscrip
 			ClosedAt = meeting.ClosedAt.ToString("o"),
 			Duration = meeting.Duration,
 			Status = meeting.Status.ToString(),
+			IsFavorite = meeting.IsFavorite,
 			Participants = meeting.Participants
 										.Select(p => p.User.ToParticipant())
 										.ToList()
