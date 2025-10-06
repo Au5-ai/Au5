@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250930080807_AddSpaceEntity")]
-    partial class AddSpaceEntity
+    [Migration("20251004183843_InitDb")]
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -68,6 +68,11 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<string>("Instructions")
+                        .HasMaxLength(2000)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(2000)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -81,16 +86,17 @@ namespace Au5.Infrastructure.Migrations
                         .HasColumnType("varchar(200)");
 
                     b.Property<string>("OpenAIAssistantId")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<string>("Prompt")
-                        .HasMaxLength(2000)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(2000)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Assistant");
                 });
@@ -438,6 +444,11 @@ namespace Au5.Infrastructure.Migrations
                         },
                         new
                         {
+                            RoleType = (byte)2,
+                            MenuId = 300
+                        },
+                        new
+                        {
                             RoleType = (byte)1,
                             MenuId = 300
                         },
@@ -459,9 +470,6 @@ namespace Au5.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Description")
                         .HasMaxLength(500)
                         .IsUnicode(false)
@@ -479,9 +487,6 @@ namespace Au5.Infrastructure.Migrations
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id")
                         .HasName("PK_dbo_Space");
 
@@ -495,6 +500,12 @@ namespace Au5.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AIProviderUrl")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
 
                     b.Property<int>("AutoLeaveAllParticipantsLeft")
                         .HasColumnType("int");
@@ -680,6 +691,9 @@ namespace Au5.Infrastructure.Migrations
                     b.Property<Guid>("SpaceId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("JoinedAt")
                         .HasColumnType("datetime2");
 
@@ -747,6 +761,17 @@ namespace Au5.Infrastructure.Migrations
                     b.Navigation("Participants");
 
                     b.Navigation("Reaction");
+                });
+
+            modelBuilder.Entity("Au5.Domain.Entities.Assistant", b =>
+                {
+                    b.HasOne("Au5.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.Entry", b =>

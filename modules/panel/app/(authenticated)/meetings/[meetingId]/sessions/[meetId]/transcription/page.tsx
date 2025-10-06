@@ -6,6 +6,7 @@ import { meetingsController } from "@/shared/network/api/meetingsController";
 import NoRecordsState from "@/shared/components/empty-states/no-record";
 import { LoadingPage } from "@/shared/components/loading-page";
 import {
+  Badge,
   Separator,
   SidebarInset,
   SidebarTrigger,
@@ -22,13 +23,25 @@ import TranscriptionFilters from "@/shared/components/transcription/transcriptio
 import TranscriptionEntry from "@/shared/components/transcription/transcriptionEntry";
 import { NoSearchResults } from "@/shared/components/empty-states/no-search-result";
 import { BrainCog, CaptionsIcon, MessageCircleCode } from "lucide-react";
-import { AiIcon } from "@/shared/components/ui/ai";
 import { AssistantList } from "../AssistantList";
 import { assistantsController } from "@/shared/network/api/assistantsController";
 import { Assistant } from "@/shared/types/assistants";
 
 export default function TranscriptionPage() {
   const [assistants, setAssistants] = useState<Assistant[]>([]);
+  const [usedAssistants, setUsedAssistants] = useState<Assistant[]>([]);
+  const [selectedTab, setSelectedTab] = useState("Transcription");
+
+  const onAssistantClicked = (assistant: Assistant) => {
+    setUsedAssistants((prev) => {
+      if (prev.some((a) => a.id === assistant.id)) {
+        return prev;
+      }
+
+      return [...prev, assistant];
+    });
+    setSelectedTab(assistant.id);
+  };
 
   useEffect(() => {
     assistantsController.getActive(true).then(setAssistants);
@@ -161,24 +174,26 @@ export default function TranscriptionPage() {
           </div>
         </header>
         <div className="min-h-screen w-full">
-          <Tabs defaultValue="Transcription" className="w-full">
+          <Tabs
+            value={selectedTab}
+            onValueChange={setSelectedTab}
+            className="w-full">
             <div className="bg-muted px-4">
-              <TabsList>
+              <TabsList className="gap-4">
                 <TabsTrigger value="Transcription">
-                  <CaptionsIcon className="mr-1 h-4 w-4" /> Transcription
+                  <CaptionsIcon className="h-4 w-4" /> Transcription
                 </TabsTrigger>
-                <TabsTrigger value="DetailedSummary">
-                  <AiIcon className="mr-1 h-4 w-4" /> Detailed AI Summary
-                </TabsTrigger>
-                <TabsTrigger value="GenerateActionItems">
-                  <AiIcon className="mr-1 h-4 w-4" /> Generate Action Items
-                </TabsTrigger>
+                {usedAssistants.map((assistant) => (
+                  <TabsTrigger key={assistant.id} value={assistant.id}>
+                    <div className="h-5 w-5">{assistant.icon}</div>{" "}
+                    {assistant.name}
+                  </TabsTrigger>
+                ))}
                 <TabsTrigger value="AINotes">
-                  <MessageCircleCode className="mr-1 h-4 w-4" /> AI meeting
-                  notes
-                  <div className="flex items-center gap-1 bg-gray-500 text-white px-2 rounded-lg">
-                    3
-                  </div>
+                  <MessageCircleCode className="h-4 w-4" /> AI meeting notes
+                  <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums">
+                    0
+                  </Badge>
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -213,7 +228,10 @@ export default function TranscriptionPage() {
                           <span>AI Assistants</span>
                         </h2>
 
-                        <AssistantList assistants={assistants} />
+                        <AssistantList
+                          assistants={assistants}
+                          onClick={onAssistantClicked}
+                        />
                       </div>
                     </div>
                   </>
@@ -222,12 +240,18 @@ export default function TranscriptionPage() {
                 )}
               </div>
             </TabsContent>
-            <TabsContent value="DetailedSummary">
-              Detailed Summary is here :)
-            </TabsContent>
-            <TabsContent value="GenerateActionItems">
-              Generate Action Items is here :)
-            </TabsContent>
+            {usedAssistants.map((assistant) => (
+              <TabsContent key={assistant.id} value={assistant.id}>
+                <div className="p-4">
+                  <h3 className="font-semibold mb-2 text-gray-800">
+                    {assistant.name}
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    {assistant.description}
+                  </p>
+                </div>
+              </TabsContent>
+            ))}
             <TabsContent value="AINotes">AI Notes is here :)</TabsContent>
           </Tabs>
         </div>

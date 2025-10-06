@@ -1,14 +1,16 @@
 import React from "react";
 import { Card } from "@/shared/components/ui";
-import { AiIcon } from "@/shared/components/ui/ai";
 import { Assistant } from "@/shared/types/assistants";
 import { Bot } from "lucide-react";
 
 export interface AssistantListProps {
   assistants: Assistant[];
+  onClick?: (assistant: Assistant) => void;
 }
-
-export const AssistantList: React.FC<AssistantListProps> = ({ assistants }) => {
+export const AssistantList: React.FC<AssistantListProps> = ({
+  assistants,
+  onClick,
+}) => {
   if (!assistants.length) {
     return (
       <div className="bg-red-100 w-full p-2 rounded-lg flex items-center">
@@ -23,6 +25,7 @@ export const AssistantList: React.FC<AssistantListProps> = ({ assistants }) => {
     <div className="grid grid-cols-1 gap-2">
       {assistants.map((assistant) => (
         <Card
+          onClick={() => onClick?.(assistant)}
           key={assistant.id}
           className="flex flex-col items-start gap-2 p-2 shadow-none rounded-lg cursor-pointer hover:bg-muted hover:shadow-sm">
           <div className="flex items-starts gap-2">
