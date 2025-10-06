@@ -7,7 +7,7 @@ import {
 } from "@/shared/components/ui/avatar";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
-import { Link, Share2, Trash2 } from "lucide-react";
+import { Link, Share2, Star, Trash2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { MeetingListSkeleton } from "@/app/(authenticated)/meetings/meeting-list-skeleton";
 import { useRouter } from "next/navigation";
@@ -111,6 +111,9 @@ export default function MyMeetingPage() {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="flex gap-2">
+                        {item.isFavorite && (
+                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        )}
                         <Button
                           variant="ghost"
                           size="icon"
