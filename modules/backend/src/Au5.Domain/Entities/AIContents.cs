@@ -1,5 +1,6 @@
 namespace Au5.Domain.Entities;
 
+[Entity]
 public class AIContents
 {
 	public int Id { get; set; }

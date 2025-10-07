@@ -19,10 +19,9 @@ class ThreadRunHandler:
     async def _handle_stream(self, request: RunThreadRequest) -> AsyncGenerator[str, None]:
         
         try:
-            
             async with self.openai_client.client(**request.to_proxy_params()).beta.threads.create_and_run_stream(**request.to_openai_params()) as stream:
                 async for event in stream:
-                    yield event.model_dump_json(exclude_none=True)
+                    yield f"data: {event.model_dump_json(exclude_none=True)}\n\n"
                 
                 # Send done signal
                 done_event = StreamEvent(type=StreamEventType.DONE)
