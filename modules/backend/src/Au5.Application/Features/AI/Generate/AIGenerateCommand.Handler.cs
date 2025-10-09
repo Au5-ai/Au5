@@ -19,7 +19,7 @@ public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand,
 	{
 		var payload = new
 		{
-			assistant_id = request.AssistantId,
+			assistant_id = "asst_rTCLtfs8Y6XmKsM75g4BuRFU",
 			thread = new
 			{
 				messages = new[]

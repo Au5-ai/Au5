@@ -243,7 +243,11 @@ export default function TranscriptionPage() {
             </TabsContent>
             {usedAssistants.map((assistant) => (
               <TabsContent key={assistant.id} value={assistant.id}>
-                <AIContents assistant={assistant} />
+                <AIContents
+                  assistant={assistant}
+                  meetId={meetId}
+                  meetingId={meetingId}
+                />
               </TabsContent>
             ))}
             <TabsContent value="AINotes">AI Notes is here :)</TabsContent>

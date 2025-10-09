@@ -21,11 +21,11 @@ class ThreadRunHandler:
         try:
             async with self.openai_client.client(**request.to_proxy_params()).beta.threads.create_and_run_stream(**request.to_openai_params()) as stream:
                 async for event in stream:
-                    yield f"data: {event.model_dump_json(exclude_none=True)}\n\n"
+                    yield f"{event.model_dump_json(exclude_none=True)}\n\n"
                 
                 # Send done signal
                 done_event = StreamEvent(type=StreamEventType.DONE)
-                yield f"data: {done_event.model_dump_json(exclude_none=True)}\n\n"
+                yield f"{done_event.model_dump_json(exclude_none=True)}\n\n"
         
         except Exception as e:
             # Send error event
@@ -34,5 +34,5 @@ class ThreadRunHandler:
                 error=str(e),
                 details={"exception_type": type(e).__name__}
             )
-            yield f"data: {error_event.model_dump_json(exclude_none=True)}\n\n"
+            yield f"{error_event.model_dump_json(exclude_none=True)}"
     

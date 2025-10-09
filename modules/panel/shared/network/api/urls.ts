@@ -1,4 +1,7 @@
 export const API_URLS = {
+  AI: {
+    GENERATE: "/ai/generate",
+  },
   ASSISTANTS: {
     ROOT: "/assistants",
   },
