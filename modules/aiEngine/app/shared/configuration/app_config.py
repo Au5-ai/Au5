@@ -1,4 +1,4 @@
-from .base import BaseConfig
+from app.shared.configuration.common import BaseConfig
 
 class AppConfig(BaseConfig):
-    app_mode: str = "development"  # Default to development mode
+    app_mode: str = "development"  
