@@ -13,7 +13,7 @@ Write-Host "Au5 services stopped."
 # podman pod rm -f au5-pod
 
 # Write-Host "Removing volumes (this will delete all data!)..."
-# podman volume rm sqlserver_data redis_data
+# podman volume rm sqlserver_data redis_data qdrant_data
 
 Write-Host "To restart services, run: ./start-podman.ps1"
 Write-Host "To completely remove everything, uncomment the cleanup lines in this script."
