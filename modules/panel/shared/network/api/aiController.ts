@@ -37,7 +37,9 @@ export const aiController = {
             if (!clean) continue;
             try {
               const json = JSON.parse(clean);
-              if (json.event === "thread.message.delta") {
+              if (json.content) {
+                onDelta?.(json.content);
+              } else if (json.event === "thread.message.delta") {
                 await new Promise((res) => setTimeout(res, 60));
                 onDelta?.(json.data.delta.content[0].text.value);
               } else if (json.event === "thread.message.completed") {
