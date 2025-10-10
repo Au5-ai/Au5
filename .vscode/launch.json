@@ -1,0 +1,52 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "AI Engine: FastAPI Debug",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "app.main:app",
+                "--reload",
+                "--port",
+                "8000"
+            ],
+            "jinja": true,
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/aiEngine",
+            "python": "${workspaceFolder}/modules/aiEngine/venv/Scripts/python.exe",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/modules/aiEngine"
+            }
+        },
+        {
+            "name": "AI Engine: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/modules/aiEngine",
+            "python": "${workspaceFolder}/modules/aiEngine/venv/Scripts/python.exe",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/modules/aiEngine"
+            }
+        },
+        {
+            "name": "AI Engine: Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "-v",
+                "-s"
+            ],
+            "cwd": "${workspaceFolder}/modules/aiEngine",
+            "python": "${workspaceFolder}/modules/aiEngine/venv/Scripts/python.exe",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/modules/aiEngine"
+            }
+        }
+    ]
+}
