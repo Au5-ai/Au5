@@ -1,81 +1,111 @@
+
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.Json;
+using Au5.Application.Common.Abstractions;
+using Au5.Application.Dtos.AI;
 
 namespace Au5.Application.Features.AI.Generate;
 
+
 public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand, string>
 {
-	private readonly HttpClient _httpClient;
+	private readonly IAIEngineAdapter _aiEngineAdapter;
+	private readonly IApplicationDbContext _dbContext;
 
-	public AIGenerateCommandHandler(HttpClient httpClient)
+	public AIGenerateCommandHandler(IAIEngineAdapter aiEngineAdapter, IApplicationDbContext dbContext)
 	{
-		_httpClient = httpClient;
+		_aiEngineAdapter = aiEngineAdapter;
+		_dbContext = dbContext;
 	}
 
 	public async IAsyncEnumerable<string> Handle(
 		AIGenerateCommand request,
 		[EnumeratorCancellation] CancellationToken cancellationToken)
 	{
-		var payload = new
+		var aiContent = _dbContext.Set<AIContents>()
+			.FirstOrDefault(x => x.MeetingId == request.MeetingId && x.AssistantId == request.AssistantId);
+		if (aiContent != null)
 		{
-			assistant_id = "asst_rTCLtfs8Y6XmKsM75g4BuRFU",
-			thread = new
-			{
-				messages = new[]
-				  {
-						new { role = "user", content = "به گزارش “ورزش سه”، در چند روز گذشته ماجرای سربازی علیرضا بیرانوند بار دیگر به جریان افتاده و با افشای یک نامه از سوی فدراسیون فوتبال، این موضوع بار دیگر در میان اهالی فوتبال داغ شده است. در این نامه آمده بود که علیرضا بیرانوند تا روز ۱۴ مهر ماه اجازه بازی دارد و پس از آن باید خدمت خود را تعیین تکلیف کند.\r\n\r\nباتوجه به اینکه فعلا مسابقات باشگاهی در ایران تعطیل است، او مشکلی برای همراهی تیم خود نخواهد داشت اما بعد از فیفادی باید موضوع معافیت تحصیلی را تعیین تکلیف کند.\r\n\r\nبر اساس خبری که مجری برنامه فوتبال برتر در آنتن زنده اعلام کرد، بیرانوند بعد از فیفادی باید دفاع خود از پایان نامه تحصیلی در مقطع ارشد را انجام دهد و در صورت دریافت نمره قبولی، می‌تواند به کارش در تیم باشگاهی ادامه دهد." }
-				  }
-			},
-			api_key = "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",
-			proxy_url = string.Empty
-		};
-
-		var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
-
-		using var req = new HttpRequestMessage(HttpMethod.Post, "http://localhost:8000/api/threads/runs")
-		{
-			Content = content
-		};
-
-		var response = await _httpClient.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-		response.EnsureSuccessStatusCode();
-
-		await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
-		using var reader = new StreamReader(stream, Encoding.UTF8);
-
-		var buffer = new StringBuilder();
-		var readBuffer = new char[1024];
-		int charsRead;
-		var separator = "\n\n";
-
-		while ((charsRead = await reader.ReadAsync(readBuffer, 0, readBuffer.Length)) > 0 && !cancellationToken.IsCancellationRequested)
-		{
-			buffer.Append(readBuffer, 0, charsRead);
-			var bufStr = buffer.ToString();
-			int sepIdx;
-			while ((sepIdx = bufStr.IndexOf(separator, StringComparison.Ordinal)) >= 0)
-			{
-				var jsonChunk = bufStr[..sepIdx].Trim();
-				if (!string.IsNullOrWhiteSpace(jsonChunk))
-				{
-					Console.WriteLine(jsonChunk);
-					yield return jsonChunk + "\n\n";
-				}
-
-				bufStr = bufStr[(sepIdx + separator.Length)..];
-			}
-
-			buffer.Clear();
-			buffer.Append(bufStr);
+			yield return JsonSerializer.Serialize(new { content = aiContent.Content, tokens = new { aiContent.CompletionTokens, aiContent.PromptTokens, aiContent.TotalTokens } }) + "\n\n";
+			yield break;
 		}
 
-		// Flush any remaining chunk
-		var last = buffer.ToString().Trim();
-		if (!string.IsNullOrWhiteSpace(last))
+		var meeting = _dbContext.Set<Meeting>().FirstOrDefault(x => x.Id == request.MeetingId || x.MeetId == request.MeetId);
+		var assistant = _dbContext.Set<Assistant>().FirstOrDefault(x => x.Id == request.AssistantId);
+		var config = _dbContext.Set<SystemConfig>().FirstOrDefault();
+
+		if (meeting == null || assistant == null || config == null)
 		{
-			Console.WriteLine(last);
-			yield return last + "\n\n";
+			yield return JsonSerializer.Serialize(new { error = "Meeting, Assistant, or Config not found." }) + "\n\n";
+			yield break;
+		}
+
+		var runThreadRequest = new RunThreadRequest
+		{
+			AssistantId = assistant.OpenAIAssistantId,
+			Messages = new[] { ("user", JsonSerializer.Serialize(meeting)) },
+			ApiKey = config.OpenAIToken,
+			ProxyUrl = config.OpenAIProxyUrl,
+			Stream = true
+		};
+
+		string finalContent = null;
+		int completionTokens = 0, promptTokens = 0, totalTokens = 0;
+
+		var stream = await _aiEngineAdapter.RunThreadAsync(config.AIProviderUrl, runThreadRequest, cancellationToken);
+		await foreach (var jsonChunk in stream.WithCancellation(cancellationToken))
+		{
+			if (!string.IsNullOrWhiteSpace(jsonChunk))
+			{
+				try
+				{
+					using var doc = JsonDocument.Parse(jsonChunk);
+					var root = doc.RootElement;
+					var eventType = root.GetProperty("event").GetString();
+					if (eventType == "thread.message.completed")
+					{
+						var data = root.GetProperty("data");
+						var contentArr = data.GetProperty("content");
+						if (contentArr.GetArrayLength() > 0)
+						{
+							var text = contentArr[0].GetProperty("text").GetProperty("value").GetString();
+							finalContent = text;
+						}
+					}
+					else if (eventType == "thread.run.step.completed")
+					{
+						var data = root.GetProperty("data");
+						if (data.TryGetProperty("usage", out var usage))
+						{
+							completionTokens = usage.GetProperty("completion_tokens").GetInt32();
+							promptTokens = usage.GetProperty("prompt_tokens").GetInt32();
+							totalTokens = usage.GetProperty("total_tokens").GetInt32();
+						}
+					}
+				}
+				catch
+				{
+				}
+
+				yield return jsonChunk;
+			}
+		}
+
+		if (!string.IsNullOrWhiteSpace(finalContent))
+		{
+			var aiContentNew = new AIContents
+			{
+				MeetingId = meeting.Id,
+				AssistantId = assistant.Id,
+				Content = finalContent,
+				CompletionTokens = completionTokens,
+				PromptTokens = promptTokens,
+				TotalTokens = totalTokens,
+				CreatedAt = DateTime.UtcNow,
+				UserId = meeting.ClosedMeetingUserId
+			};
+			_dbContext.Set<AIContents>().Add(aiContentNew);
+			await _dbContext.SaveChangesAsync(cancellationToken);
 		}
 	}
 }
