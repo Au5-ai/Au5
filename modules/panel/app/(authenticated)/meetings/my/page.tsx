@@ -80,6 +80,15 @@ export default function MyMeetingPage() {
                     className="flex items-center justify-between px-3 py-3 hover:bg-gray-50 cursor-pointer transition-colors"
                     onClick={() => handleMeetingClick(item)}>
                     <div className="flex items-center">
+                      <div className="flex flex-col justify-center items-center size-9">
+                        <Star
+                          className={`h-4 w-4 ${
+                            item.isFavorite
+                              ? "fill-yellow-400 text-yellow-400"
+                              : "text-gray-400"
+                          }`}
+                        />
+                      </div>
                       <div className="flex h-full w-16 min-w-16 max-w-16 flex-col-reverse items-start justify-between truncate pl-1">
                         <div aria-label="meeting-list-item-created">
                           <div className="align-baseline font-small text-neutral-subtle text-xs leading-5">
@@ -108,9 +117,6 @@ export default function MyMeetingPage() {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="flex gap-2">
-                        {item.isFavorite && (
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        )}
                         <Button
                           variant="ghost"
                           size="icon"

@@ -44,16 +44,38 @@ public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand,
 		await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
 		using var reader = new StreamReader(stream, Encoding.UTF8);
 
-		while (!reader.EndOfStream && !cancellationToken.IsCancellationRequested)
+		var buffer = new StringBuilder();
+		var readBuffer = new char[1024];
+		int charsRead;
+		var separator = "\n\n";
+
+		while ((charsRead = await reader.ReadAsync(readBuffer, 0, readBuffer.Length)) > 0 && !cancellationToken.IsCancellationRequested)
 		{
-			var line = await reader.ReadLineAsync();
-			if (string.IsNullOrWhiteSpace(line))
+			buffer.Append(readBuffer, 0, charsRead);
+			var bufStr = buffer.ToString();
+			int sepIdx;
+			while ((sepIdx = bufStr.IndexOf(separator, StringComparison.Ordinal)) >= 0)
 			{
-				continue;
+				var jsonChunk = bufStr[..sepIdx].Trim();
+				if (!string.IsNullOrWhiteSpace(jsonChunk))
+				{
+					Console.WriteLine(jsonChunk);
+					yield return jsonChunk + "\n\n";
+				}
+
+				bufStr = bufStr[(sepIdx + separator.Length)..];
 			}
 
-			Console.WriteLine(line);
-			yield return line;
+			buffer.Clear();
+			buffer.Append(bufStr);
+		}
+
+		// Flush any remaining chunk
+		var last = buffer.ToString().Trim();
+		if (!string.IsNullOrWhiteSpace(last))
+		{
+			Console.WriteLine(last);
+			yield return last + "\n\n";
 		}
 	}
 }
