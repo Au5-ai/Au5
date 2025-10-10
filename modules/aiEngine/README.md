@@ -1,15 +1,14 @@
 # AI Engine Microservice
 
-This is the AI Engine microservice for the Au5 project. It provides AI-based APIs using FastAPI and LangChain for processing meeting transcriptions, generating summaries, and providing AI-powered insights.
+This is the AI Engine microservice for the Au5 project. It provides AI-based APIs using FastAPI and integrates with vector databases for efficient document retrieval and AI processing.
 
 ## Features
 
-- AI-powered text processing and analysis
-- Meeting transcription summarization
+- Vector database integration for efficient document storage and retrieval
 - RESTful API with FastAPI
 - OpenAI integration for advanced AI capabilities
 - Swagger/OpenAPI documentation
-- Configurable AI models and parameters
+- Clean Architecture with Port-Adapter pattern
 
 ## Prerequisites
 
@@ -27,60 +26,85 @@ Choose one of the following installation methods:
 
 ### Option 1: Using Docker
 
-#### 1. Build the Image
-Navigate to the AI Engine module directory and build the image:
+#### 1. Start Dependencies
+First, start the required services (like Qdrant vector database):
 
 ```bash
 cd modules/aiEngine
-docker build -t au5-aiengine .
-```
-
-#### 2. Run the Container
-Run the AI Engine with your OpenAI API key:
-
-```bash
-docker run -d --name au5-aiengine --network au5 \
-    -p 8000:8000 \
-    -e OPENAI_API_KEY=your_openai_api_key_here \
-    -e OPENAI_BASE_URL=https://api.openai.com/v1 \
-    au5-aiengine
-```
-
-### Option 2: Using Podman
-
-#### 1. Create Network (if not already created)
-```bash
-podman network create au5
+docker compose up -d
 ```
 
 #### 2. Build the Image
-Navigate to the AI Engine module directory and build the image:
+Build the AI Engine image:
 
 ```bash
-cd modules/aiEngine
-podman build -t au5-aiengine .
+docker build -t au5-aiengine .
 ```
 
 #### 3. Run the Container
 Run the AI Engine with your OpenAI API key:
 
 ```bash
-podman run -d --name au5-aiengine --network au5 \
+docker run -d --name au5-aiengine --network au5-ai-engine \
     -p 8000:8000 \
     -e OPENAI_API_KEY=your_openai_api_key_here \
     -e OPENAI_BASE_URL=https://api.openai.com/v1 \
+    -e QDRANT_HOST=qdrant \
+    -e QDRANT_PORT=6333 \
+    au5-aiengine
+```
+
+### Option 2: Using Podman
+
+#### 1. Start Dependencies
+First, start the required services:
+
+```bash
+cd modules/aiEngine
+podman-compose up -d
+```
+
+#### 2. Create Network (if not already created)
+```bash
+podman network create au5-ai-engine
+```
+
+#### 3. Build the Image
+Build the AI Engine image:
+
+```bash
+podman build -t au5-aiengine .
+```
+
+#### 4. Run the Container
+Run the AI Engine with your OpenAI API key:
+
+```bash
+podman run -d --name au5-aiengine --network au5-ai-engine \
+    -p 8000:8000 \
+    -e OPENAI_API_KEY=your_openai_api_key_here \
+    -e OPENAI_BASE_URL=https://api.openai.com/v1 \
+    -e QDRANT_HOST=qdrant \
+    -e QDRANT_PORT=6333 \
     au5-aiengine
 ```
 
 ### Option 3: Local Development
 
-#### 1. Create a Virtual Environment
+#### 1. Start Dependencies
+First, start the required services:
+
 ```bash
 cd modules/aiEngine
+docker compose up -d  # or podman-compose up -d
+```
+
+#### 2. Create a Virtual Environment
+```bash
 python -m venv venv
 ```
 
-#### 2. Activate the Virtual Environment
+#### 3. Activate the Virtual Environment
 **On Windows:**
 ```bash
 .\venv\Scripts\activate
@@ -91,7 +115,7 @@ python -m venv venv
 source venv/bin/activate
 ```
 
-#### 3. Install Dependencies
+#### 4. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
@@ -120,6 +144,8 @@ The AI Engine supports various environment variables for configuration:
 
 ### Required Environment Variables
 - `OPENAI_API_KEY`: Your OpenAI API key for AI processing
+- `QDRANT_HOST`: Qdrant vector database host
+- `QDRANT_PORT`: Qdrant vector database port (default: 6333)
 
 ### Optional Environment Variables
 - `OPENAI_BASE_URL`: OpenAI API base URL (default: `https://api.openai.com/v1`)
@@ -152,12 +178,12 @@ The documentation provides an interactive interface to explore and test all avai
 
 ## API Endpoints
 
-The AI Engine provides several endpoints for processing meeting data:
+The AI Engine provides several endpoints:
 
-- `POST /api/v1/transcription/summarize`: Summarize meeting transcriptions
-- `POST /api/v1/transcription/analyze`: Analyze transcription content
-- `POST /api/v1/chat/completion`: General AI chat completion
+- `POST /api/v1/collections/create`: Create a new vector collection
 - `GET /health`: Health check endpoint
+
+More endpoints coming soon!
 
 ## Container Management
 
@@ -206,17 +232,16 @@ podman rm au5-aiengine
 1. **OpenAI API Key Issues**:
    - Verify your API key is valid and has sufficient credits
    - Check that the `OPENAI_API_KEY` environment variable is set correctly
-   - Ensure the API key has the necessary permissions
 
-2. **Connection Issues**:
-   - Verify the container is running on the correct port (8000)
-   - Check that the container is on the `au5` network
-   - Ensure firewall settings allow traffic on port 8000
+2. **Vector Database Connection Issues**:
+   - Verify Qdrant is running (`docker compose ps` or `podman-compose ps`)
+   - Check that the container is on the `au5-ai-engine` network
+   - Ensure `QDRANT_HOST` and `QDRANT_PORT` are set correctly
 
-3. **Performance Issues**:
-   - Monitor API rate limits with OpenAI
-   - Adjust `MAX_TOKENS` and `TEMPERATURE` for optimal performance
-   - Consider using a more powerful AI model for complex tasks
+3. **Container Network Issues**:
+   - Check if containers are on the same network
+   - Verify port mappings are correct
+   - Use container names for inter-container communication
 
 ### Log Analysis
 ```bash
