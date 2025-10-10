@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import { Card } from "@/shared/components/ui";
 import { Assistant } from "@/shared/types/assistants";
 import { aiController } from "@/shared/network/api/aiController";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface AIContentsProps {
   assistant: Assistant;
@@ -48,6 +50,7 @@ export default function AIContents({
         if (!cancel) {
           setIsStreaming(false);
           setIsFetching(false);
+          // Show error and retry option
           console.error("Stream error:", err);
         }
       },
@@ -60,7 +63,7 @@ export default function AIContents({
   }, [assistant.id, meetId, meetingId]);
 
   return (
-    <Card className="flex flex-col w-full max-w-2xl mx-auto p-4 gap-8 shadow-none border-0 pt-8">
+    <Card className="flex flex-col w-full max-w-3xl mx-auto p-4 gap-8 shadow-none border-0 pt-8">
       {/* User message */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -89,11 +92,13 @@ export default function AIContents({
           )}
         </div>
 
-        <div
-          className="px-4 py-2 rounded-2xl text-sm w-[75%] bg-muted text-foreground rounded-bl-none whitespace-pre-wrap min-h-[2rem] flex items-center leading-relaxed"
-          dir="auto">
-          {messages.join("")}
-        </div>
+        {isFetching == false && (
+          <div className="overflow-y-auto scrollbar-gutter-stable prose prose-slate max-w-none w-[80%] bg-muted text-foreground rounded-bl-none p-4 rounded-xl prose-p:my-1 prose-li:my-0 prose-ul:my-1 prose-ol:my-1 leading-relaxed">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {messages.join("")}
+            </ReactMarkdown>
+          </div>
+        )}
       </motion.div>
     </Card>
   );

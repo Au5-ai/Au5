@@ -5,14 +5,18 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Au5.Application.Common.Abstractions;
 using Au5.Application.Dtos.AI;
-using Au5.Infrastructure.Common;
-using Au5.Shared;
 using Microsoft.Extensions.Logging;
 
 namespace Au5.Infrastructure.Adapters;
 
 public class AIEngineAdapter : IAIEngineAdapter
 {
+	private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
+	{
+		WriteIndented = false,
+		DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+	};
+
 	private readonly IHttpClientFactory _httpClientFactory;
 	private readonly ILogger<AIEngineAdapter> _logger;
 
@@ -24,33 +28,29 @@ public class AIEngineAdapter : IAIEngineAdapter
 
 	public async Task<string> CreateAssistantAsync(string baseUrl, CreateAssistantRequest request, CancellationToken cancellationToken = default)
 	{
-		var result = await PostJsonAsync<CreateAssistantRequest, BaseAIResponse<CreateAssistantData>>(
-			url: $"{baseUrl}/api/assistants",
-			payload: request,
-			failureMessage: AppResources.AIEngine.FailedToAdd,
-			cancellationToken: cancellationToken);
-
-		return result.IsSuccess ? result.Data.Data.AssistantId : string.Empty;
+		var url = $"{baseUrl}/api/assistants";
+		var assistantId = await PostJsonAsync(url, request, cancellationToken);
+		return assistantId;
 	}
 
 	public async Task<IAsyncEnumerable<string>> RunThreadAsync(string baseUrl, RunThreadRequest request, CancellationToken cancellationToken = default)
 	{
 		if (string.IsNullOrWhiteSpace(baseUrl))
 		{
-			throw new ArgumentException("baseUrl must be provided.");
+			throw new ArgumentException("Base URL must be provided.", nameof(baseUrl));
 		}
 
-		var httpClient = _httpClientFactory.CreateClient();
 		var url = $"{baseUrl}/api/threads/runs";
-		var json = JsonSerializer.Serialize(request);
-		var content = new StringContent(json, Encoding.UTF8, "application/json");
+		var httpClient = _httpClientFactory.CreateClient();
+		using var content = new StringContent(JsonSerializer.Serialize(request, JsonOptions), Encoding.UTF8, "application/json");
 
 		var response = await httpClient.PostAsync(url, content, cancellationToken);
+
 		if (!response.IsSuccessStatusCode)
 		{
 			var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-			_logger.LogError("AIEngine stream failed. Url: {Url}, StatusCode: {StatusCode}, Error: {Error}", url, response.StatusCode, errorContent);
-			throw new OperationCanceledException($"AIEngine stream failed: {response.StatusCode}");
+			_logger.LogError("AIEngine stream failed: {StatusCode} - {Error}", response.StatusCode, errorContent);
+			throw new HttpRequestException($"AIEngine stream failed: {response.StatusCode}");
 		}
 
 		return StreamResponseAsync(response, cancellationToken);
@@ -60,21 +60,29 @@ public class AIEngineAdapter : IAIEngineAdapter
 	{
 		await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
 		using var reader = new StreamReader(stream, Encoding.UTF8);
+
 		var buffer = new StringBuilder();
 		var readBuffer = new char[1024];
-		int charsRead;
-		var separator = "\n\n";
-		while ((charsRead = await reader.ReadAsync(readBuffer, 0, readBuffer.Length)) > 0 && !cancellationToken.IsCancellationRequested)
+		const string separator = "\n\n";
+
+		while (!reader.EndOfStream && !cancellationToken.IsCancellationRequested)
 		{
+			var charsRead = await reader.ReadAsync(readBuffer, 0, readBuffer.Length);
+			if (charsRead <= 0)
+			{
+				continue;
+			}
+
 			buffer.Append(readBuffer, 0, charsRead);
 			var bufStr = buffer.ToString();
+
 			int sepIdx;
 			while ((sepIdx = bufStr.IndexOf(separator, StringComparison.Ordinal)) >= 0)
 			{
-				var jsonChunk = bufStr[..sepIdx].Trim();
-				if (!string.IsNullOrWhiteSpace(jsonChunk))
+				var chunk = bufStr[..sepIdx].Trim();
+				if (!string.IsNullOrWhiteSpace(chunk))
 				{
-					yield return jsonChunk + "\n\n";
+					yield return chunk + separator;
 				}
 
 				bufStr = bufStr[(sepIdx + separator.Length)..];
@@ -87,63 +95,50 @@ public class AIEngineAdapter : IAIEngineAdapter
 		var last = buffer.ToString().Trim();
 		if (!string.IsNullOrWhiteSpace(last))
 		{
-			yield return last + "\n\n";
+			yield return last + separator;
 		}
 	}
 
-	private async Task<Result<TResponse>> PostJsonAsync<TRequest, TResponse>(
+	private async Task<string> PostJsonAsync<TRequest>(
 		string url,
 		TRequest payload,
-		string failureMessage,
 		CancellationToken cancellationToken)
 	{
-		var json = JsonSerializer.Serialize(payload);
-		var content = new StringContent(json, Encoding.UTF8, "application/json");
 		var httpClient = _httpClientFactory.CreateClient();
+		httpClient.Timeout = TimeSpan.FromSeconds(60);
 
 		try
 		{
-			httpClient.Timeout = TimeSpan.FromSeconds(60);
+			using var content = new StringContent(JsonSerializer.Serialize(payload, JsonOptions), Encoding.UTF8, "application/json");
 			var response = await httpClient.PostAsync(url, content, cancellationToken);
 
 			if (!response.IsSuccessStatusCode)
 			{
 				var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-				_logger.LogError(
-					"AIEngine request failed. Url: {Url}, StatusCode: {StatusCode}, Error: {Error}",
-					url,
-					response.StatusCode,
-					errorContent);
-
-				return Error.Failure(description: failureMessage);
+				_logger.LogError("AIEngine request failed: {StatusCode} - {Error}", response.StatusCode, errorContent);
+				return string.Empty;
 			}
 
-			return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken);
+			var result = await response.Content.ReadFromJsonAsync<BaseAIResponse<CreateAssistantData>>(JsonOptions, cancellationToken);
+			return result is null
+				? string.Empty
+				: result.Data.AssistantId;
 		}
 		catch (Exception ex)
 		{
-			_logger.LogError(ex, "Error communicating with AIEngineAdapter at {Url}", url);
-			return Error.Failure(description: AppResources.AIEngine.FailedCommunicate);
+			_logger.LogError(ex, "Error communicating with AIEngine at {Url}", url);
+			return string.Empty;
 		}
 	}
 }
 
-public class BaseAIResponse<TResponse>
+internal class BaseAIResponse<TResponse>
 {
-	[JsonPropertyName("status")]
-	public int Status { get; init; }
-
-	[JsonPropertyName("is_success")]
-	public bool IsSuccess { get; init; }
-
 	[JsonPropertyName("data")]
 	public TResponse Data { get; init; }
-
-	[JsonPropertyName("error")]
-	public object Error { get; init; }
 }
 
-public class CreateAssistantData
+internal class CreateAssistantData
 {
 	[JsonPropertyName("assistant_id")]
 	public string AssistantId { get; init; }

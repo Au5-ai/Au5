@@ -37,6 +37,9 @@ export const aiController = {
             if (!clean) continue;
             try {
               const json = JSON.parse(clean);
+              if (json.error) {
+                onError?.(new Error(json.error));
+              }
               if (json.content) {
                 onDelta?.(json.content);
               } else if (json.event === "thread.message.delta") {
