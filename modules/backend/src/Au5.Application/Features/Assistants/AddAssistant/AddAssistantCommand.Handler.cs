@@ -22,7 +22,7 @@ public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngi
 			new CreateAssistantRequest()
 			{
 				Instructions = request.Instructions,
-				Model = "gpt-4o",
+				Model = config.LLMModel,
 				ApiKey = config.OpenAIToken,
 				ProxyUrl = config.OpenAIProxyUrl,
 				Name = request.Name,

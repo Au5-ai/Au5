@@ -40,6 +40,8 @@ public record SystemConfigResponse
 
 	public string MeetingTranscriptionModel { get; set; }
 
+	public string LLMModel { get; set; }
+
 	public bool SmtpUseSSl { get; set; }
 
 	public string SmtpHost { get; set; }
