@@ -14,6 +14,13 @@ import { ASSISTANTS_CAPTIONS } from "../i18n";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { Bot } from "lucide-react";
 import { Emojis } from "../models";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/components/ui/select";
 
 interface AddAssistantModalProps {
   open: boolean;
@@ -21,6 +28,7 @@ interface AddAssistantModalProps {
   onAdd: (data: {
     icon: string;
     name: string;
+    llmModel: string;
     instructions: string;
     description: string;
   }) => Promise<void>;
@@ -36,6 +44,7 @@ export function AddAssistantModal({
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [instructions, setInstructions] = useState("");
+  const [llmModel, setLlmModel] = useState("gpt-4o");
   const [icon, setIcon] = useState("🤖");
   const [error, setError] = useState<string | null>(null);
 
@@ -48,6 +57,7 @@ export function AddAssistantModal({
     }
     await onAdd({
       name: name.trim(),
+      llmModel,
       instructions: instructions.trim(),
       description: description.trim(),
       icon,
@@ -56,6 +66,7 @@ export function AddAssistantModal({
     setInstructions("");
     setDescription("");
     setIcon("🤖");
+    setLlmModel("gpt-4o");
   };
 
   return (
@@ -97,6 +108,28 @@ export function AddAssistantModal({
             disabled={isLoading}
             required
           />
+
+          <Label htmlFor="llmModel">LLM Model</Label>
+          <Select
+            name="llmModel"
+            value={llmModel}
+            onValueChange={(value) => setLlmModel(value)}>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="w-full">
+              <SelectItem value="gpt-4.1">gpt-4.1</SelectItem>
+              <SelectItem value="gpt-4.1-mini">gpt-4.1-mini</SelectItem>
+              <SelectItem value="gpt-4.1-nano">gpt-4.1-nano</SelectItem>
+              <SelectItem value="gpt-4o">gpt-4o</SelectItem>
+              <SelectItem value="gpt-4o-mini">gpt-4o-mini</SelectItem>
+              <SelectItem value="o3-mini">o3-mini</SelectItem>
+              <SelectItem value="o1">o1</SelectItem>
+              <SelectItem value="gpt-4-turbo">gpt-4-turbo</SelectItem>
+              <SelectItem value="gpt-4">gpt-4</SelectItem>
+              <SelectItem value="gpt-3.5-turbo">gpt-3.5-turbo</SelectItem>
+            </SelectContent>
+          </Select>
 
           <Label
             htmlFor="instructions"

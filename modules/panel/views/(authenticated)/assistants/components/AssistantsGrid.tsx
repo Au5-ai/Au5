@@ -2,7 +2,7 @@ import { Assistant } from "@/shared/types/assistants";
 import { Card } from "@/shared/components/ui";
 import { Badge } from "@/shared/components/ui/badge";
 import NoRecordsState from "@/shared/components/empty-states/no-record";
-import { BadgeCheckIcon, Trash } from "lucide-react";
+import { BadgeCheckIcon, Brain, Trash } from "lucide-react";
 
 interface AssistantsGridProps {
   assistants: Assistant[];
@@ -31,6 +31,12 @@ export function AssistantsGrid({ assistants, isLoading }: AssistantsGridProps) {
             <span className="font-semibold text-lg flex-1">
               {assistant.name}
             </span>
+
+            {assistant.llmModel && (
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <Brain /> <p>{assistant.llmModel}</p>
+              </Badge>
+            )}
             <Badge variant={assistant.isActive ? "secondary" : "destructive"}>
               {assistant.isActive ? (
                 <>

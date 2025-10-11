@@ -9,6 +9,8 @@ public class AddAssistantCommand : IRequest<Result<AddAssisstantResponse>>
 	public string Description { get; init; }
 
 	public string Instructions { get; init; }
+
+	public string LLMModel { get; set; }
 }
 
 public record AddAssisstantResponse(Guid Id);

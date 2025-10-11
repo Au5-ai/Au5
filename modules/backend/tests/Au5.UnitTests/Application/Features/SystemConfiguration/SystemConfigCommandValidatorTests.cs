@@ -30,7 +30,6 @@ public class SystemConfigCommandValidatorTests
 	[InlineData(nameof(SystemConfigCommand.BotFatherUrl))]
 	[InlineData(nameof(SystemConfigCommand.OpenAIToken))]
 	[InlineData(nameof(SystemConfigCommand.HubUrl))]
-	[InlineData(nameof(SystemConfigCommand.LLMModel))]
 	[InlineData(nameof(SystemConfigCommand.MeetingTranscriptionModel))]
 	public void Missing_Required_Field_Should_Fail(string propertyName)
 	{
@@ -118,7 +117,6 @@ public class SystemConfigCommandValidatorTests
 		AIProviderUrl = "https://AI.example.com",
 		OpenAIToken = "token123",
 		HubUrl = "https://hub.example.com",
-		LLMModel = "gpt-4o-mini",
 		MeetingTranscriptionModel = "liveCaption",
 		AutoLeaveAllParticipantsLeft = 5,
 		AutoLeaveNoParticipant = 10,

@@ -22,7 +22,7 @@ public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngi
 			new CreateAssistantRequest()
 			{
 				Instructions = request.Instructions,
-				Model = config.LLMModel,
+				Model = request.LLMModel,
 				ApiKey = config.OpenAIToken,
 				ProxyUrl = config.OpenAIProxyUrl,
 				Name = request.Name,
@@ -42,6 +42,7 @@ public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngi
 			Icon = request.Icon,
 			Description = request.Description,
 			Instructions = request.Instructions,
+			LLMModel = request.LLMModel,
 			IsDefault = isDefault,
 			IsActive = true,
 			CreatedAt = DateTime.UtcNow,

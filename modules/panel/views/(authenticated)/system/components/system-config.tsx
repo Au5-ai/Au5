@@ -31,7 +31,6 @@ const defaultConfigs: SystemConfigs = {
   language: "fa-IR",
   openAIToken: "",
   openAIProxyUrl: "",
-  llmModel: "gpt-4o-mini",
   meetingTranscriptionModel: "liveCaption",
   autoLeaveWaitingEnter: 30000,
   autoLeaveNoParticipant: 60000,
@@ -114,29 +113,6 @@ export function SystemConfigsTab() {
           !validateUrl(value as string)
           ? "Must be a valid URL"
           : null;
-
-      case "llmModel": {
-        const allowed = [
-          "gpt-4.1",
-          "gpt-4.1-mini",
-          "gpt-4.1-nano",
-          "gpt-4o",
-          "gpt-4o-mini",
-          "o3-mini",
-          "o1",
-          "gpt-4-turbo",
-          "gpt-4",
-          "gpt-3.5-turbo",
-        ];
-        if (!value || (typeof value === "string" && value.trim().length === 0)) {
-          return "Model is required";
-        }
-        if (typeof value === "string" && !allowed.includes(value)) {
-          return "Invalid model";
-        }
-        return null;
-      }
-
       case "autoLeaveWaitingEnter":
       case "autoLeaveNoParticipant":
       case "autoLeaveAllParticipantsLeft":
@@ -298,38 +274,6 @@ export function SystemConfigsTab() {
                 )}
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* AI Configuration */}
-        <div className="space-y-4">
-          <h2 className="text-xl mt-8 font-semibold">AI Configuration</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-4">
-              <Label htmlFor="llmModel">LLM Model</Label>
-              <Select
-                value={configs.llmModel}
-                onValueChange={(value) => handleInputChange("llmModel", value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="gpt-4.1">gpt-4.1</SelectItem>
-                  <SelectItem value="gpt-4.1-mini">gpt-4.1-mini</SelectItem>
-                  <SelectItem value="gpt-4.1-nano">gpt-4.1-nano</SelectItem>
-                  <SelectItem value="gpt-4o">gpt-4o</SelectItem>
-                  <SelectItem value="gpt-4o-mini">gpt-4o-mini</SelectItem>
-                  <SelectItem value="o3-mini">o3-mini</SelectItem>
-                  <SelectItem value="o1">o1</SelectItem>
-                  <SelectItem value="gpt-4-turbo">gpt-4-turbo</SelectItem>
-                  <SelectItem value="gpt-4">gpt-4</SelectItem>
-                  <SelectItem value="gpt-3.5-turbo">gpt-3.5-turbo</SelectItem>
-                </SelectContent>
-              </Select>
-              {errors.llmModel && (
-                <p className="text-sm text-destructive">{errors.llmModel}</p>
-              )}
-            </div>
           </div>
         </div>
 

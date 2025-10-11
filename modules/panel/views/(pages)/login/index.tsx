@@ -29,6 +29,7 @@ export default function LoginPage() {
               width={192}
               height={192}
               className="object-contain"
+              style={{ height: "auto" }}
             />
           </div>
           <p className="text-black-100 text-lg leading-relaxed">
