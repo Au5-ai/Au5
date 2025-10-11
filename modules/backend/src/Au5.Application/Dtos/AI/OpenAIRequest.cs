@@ -7,6 +7,6 @@ public abstract class OpenAIRequest
 	[JsonPropertyName("proxy_url")]
 	public string ProxyUrl { get; set; }
 
-	[JsonPropertyName("apiKey")]
+	[JsonPropertyName("api_key")]
 	public string ApiKey { get; set; }
 }

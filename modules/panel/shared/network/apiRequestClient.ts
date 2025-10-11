@@ -58,3 +58,29 @@ export async function apiRequestClient<T>(
     });
   }
 }
+
+// Streaming version: returns the Response object for manual streaming handling
+export async function apiRequestClientStream(
+  endpoint: string,
+  options: RequestInit = {},
+): Promise<Response> {
+  const url = `${API_BASE_URL}${endpoint}`;
+
+  const config: RequestInit = {
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+    ...options,
+  };
+
+  const token = localStorage.getItem("access_token");
+  if (token) {
+    config.headers = {
+      ...config.headers,
+      Authorization: `Bearer ${token}`,
+    };
+  }
+
+  return fetch(url, config);
+}

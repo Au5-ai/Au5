@@ -4,6 +4,7 @@ using Au5.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251006175544_AddAIContentsEntity")]
+    partial class AddAIContentsEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,11 +33,11 @@ namespace Au5.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid>("AssistantId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("CompletionTokens")
+                    b.Property<int>("AssistantId")
                         .HasColumnType("int");
+
+                    b.Property<Guid?>("AssistantId1")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -48,19 +51,13 @@ namespace Au5.Infrastructure.Migrations
                     b.Property<Guid>("MeetingId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("PromptTokens")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TotalTokens")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id")
                         .HasName("PK_dbo_AIContents");
 
-                    b.HasIndex("AssistantId");
+                    b.HasIndex("AssistantId1");
 
                     b.HasIndex("MeetingId");
 
@@ -756,9 +753,8 @@ namespace Au5.Infrastructure.Migrations
                 {
                     b.HasOne("Au5.Domain.Entities.Assistant", "Assistant")
                         .WithMany()
-                        .HasForeignKey("AssistantId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("AssistantId1")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Au5.Domain.Entities.Meeting", "Meeting")
                         .WithMany()
