@@ -17,15 +17,16 @@ import {
 } from "@/shared/components/ui";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
-import { NavActions } from "@/shared/components/navActions";
+import { NavActions } from "@/app/(authenticated)/meetings/[meetingId]/sessions/[meetId]/navActions";
 import TranscriptionHeader from "@/shared/components/transcription/transcriptionHeader";
 import TranscriptionFilters from "@/shared/components/transcription/transcriptionFilters";
 import TranscriptionEntry from "@/shared/components/transcription/transcriptionEntry";
 import { NoSearchResults } from "@/shared/components/empty-states/no-search-result";
 import { BrainCog, CaptionsIcon, MessageCircleCode } from "lucide-react";
-import { AssistantList } from "../AssistantList";
 import { assistantsController } from "@/shared/network/api/assistantsController";
 import { Assistant } from "@/shared/types/assistants";
+import { AssistantList } from "../AssistantList";
+import AIContents from "../aiContents";
 
 export default function TranscriptionPage() {
   const [assistants, setAssistants] = useState<Assistant[]>([]);
@@ -166,10 +167,10 @@ export default function TranscriptionPage() {
             <BreadcrumbLayout />
           </div>
           <div className="ml-auto px-4">
-            <NavActions 
-              meetingId={transcription?.id} 
+            <NavActions
+              meetingId={transcription?.id}
               meetId={transcription?.meetingId}
-              isFavorite={transcription?.isFavorite} 
+              isFavorite={transcription?.isFavorite}
             />
           </div>
         </header>
@@ -242,14 +243,11 @@ export default function TranscriptionPage() {
             </TabsContent>
             {usedAssistants.map((assistant) => (
               <TabsContent key={assistant.id} value={assistant.id}>
-                <div className="p-4">
-                  <h3 className="font-semibold mb-2 text-gray-800">
-                    {assistant.name}
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    {assistant.description}
-                  </p>
-                </div>
+                <AIContents
+                  assistant={assistant}
+                  meetId={meetId}
+                  meetingId={meetingId}
+                />
               </TabsContent>
             ))}
             <TabsContent value="AINotes">AI Notes is here :)</TabsContent>

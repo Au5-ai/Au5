@@ -1,5 +1,6 @@
 namespace Au5.Domain.Entities;
 
+[Entity]
 public class AIContents
 {
 	public int Id { get; set; }
@@ -12,11 +13,17 @@ public class AIContents
 
 	public Meeting Meeting { get; set; }
 
-	public int AssistantId { get; set; }
+	public Guid AssistantId { get; set; }
 
 	public Assistant Assistant { get; set; }
 
 	public string Content { get; set; }
+
+	public int CompletionTokens { get; set; }
+
+	public int PromptTokens { get; set; }
+
+	public int TotalTokens { get; set; }
 
 	public DateTime CreatedAt { get; set; }
 }
