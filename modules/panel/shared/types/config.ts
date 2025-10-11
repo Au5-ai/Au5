@@ -29,6 +29,7 @@ export interface SystemConfigs {
   language: string;
   openAIToken: string;
   openAIProxyUrl: string;
+  llmModel: string;
   meetingTranscriptionModel: string;
   autoLeaveWaitingEnter: number;
   autoLeaveNoParticipant: number;
