@@ -5,7 +5,9 @@ podman pod create --name au5-pod --network au5 `
   -p 6379:6379 `
   -p 1366:8080 `
   -p 1367:8081 `
-  -p 8000:8000
+  -p 8000:8000 `
+  -p 6333:6333 `
+  -p 6334:6334
 
 Write-Host "Creating Au5 pod..."
 
@@ -13,6 +15,7 @@ Write-Host "Creating Au5 pod..."
 Write-Host "Creating volumes..."
 podman volume create sqlserver_data
 podman volume create redis_data
+podman volume create qdrant_data
 
 # Start SQL Server
 Write-Host "Starting SQL Server..."
@@ -62,6 +65,15 @@ podman run -d `
   au5-botfather
 
 
+# Start Qdrant
+Write-Host "Starting Qdrant..."
+podman run -d `
+  --name au5-qdrant `
+  --pod au5-pod `
+  -v qdrant_data:/qdrant/storage `
+  --restart unless-stopped `
+  qdrant/qdrant:latest
+
 # Build and start AI Engine
 Write-Host "Building and starting AI Engine..."
 podman build -t au5-ai-engine ./aiEngine
@@ -69,6 +81,8 @@ podman run -d `
   --name au5-ai-engine `
   --pod au5-pod `
   -e APP_MODE=development `
+  -e QDRANT_HOST=localhost `
+  -e QDRANT_PORT=6333 `
   --env-file ./aiEngine/.env `
   --restart unless-stopped `
   au5-ai-engine
@@ -95,6 +109,7 @@ Write-Host "- Panel: http://localhost:1368"
 Write-Host "- SQL Server: localhost:1433"
 Write-Host "- AI Engine: http://localhost:8000"
 Write-Host "- Redis: localhost:6379"
+Write-Host "- Qdrant: http://localhost:6333"
 
 Write-Host ""
 Write-Host "To stop all services, run: podman pod stop au5-pod"
