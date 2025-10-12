@@ -40,7 +40,7 @@ export const AssistantList: React.FC<AssistantListProps> = ({
                     <Badge
                       variant="secondary"
                       className="flex items-center gap-1">
-                      <Brain /> <p>{assistant.llmModel}</p>
+                      <p>{assistant.llmModel}</p>
                     </Badge>
                   )}
                   {assistant.isDefault && (
