@@ -177,15 +177,15 @@
 
 /* Custom Toast Colors */
 [data-sonner-toaster] [data-type="success"] {
-  background-color: #47B881 !important;
+  background-color: #47b881 !important;
   color: white !important;
-  border-color: #47B881 !important;
+  border-color: #47b881 !important;
 }
 
 [data-sonner-toaster] [data-type="error"] {
-  background-color: #E02E2A !important;
+  background-color: #e02e2a !important;
   color: white !important;
-  border-color: #E02E2A !important;
+  border-color: #e02e2a !important;
 }
 
 [data-sonner-toaster] [data-type="success"] [data-icon] {

@@ -115,5 +115,9 @@ export const GLOBAL_CAPTIONS = {
         privacy: "Privacy Policy",
       },
     },
+    meetings: {
+      aiAssistants: "AI Assistants",
+      speakerSttistics: "Speaker Statistics",
+    },
   },
 } as const;
