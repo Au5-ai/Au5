@@ -6,7 +6,6 @@ import { meetingsController } from "@/shared/network/api/meetingsController";
 import NoRecordsState from "@/shared/components/empty-states/no-record";
 import { LoadingPage } from "@/shared/components/loading-page";
 import {
-  Badge,
   Separator,
   SidebarInset,
   SidebarTrigger,
@@ -25,18 +24,7 @@ import TranscriptionHeader from "@/shared/components/transcription/transcription
 import TranscriptionFilters from "@/shared/components/transcription/transcriptionFilters";
 import TranscriptionEntry from "@/shared/components/transcription/transcriptionEntry";
 import { NoSearchResults } from "@/shared/components/empty-states/no-search-result";
-import {
-  Bot,
-  Brain,
-  BrainCog,
-  CaptionsIcon,
-  ChartBarStacked,
-  ChartPie,
-  Home,
-  MessageCircleCode,
-  Settings,
-  User,
-} from "lucide-react";
+import { Bot, Brain, CaptionsIcon, ChartPie } from "lucide-react";
 import { assistantsController } from "@/shared/network/api/assistantsController";
 import { Assistant } from "@/shared/types/assistants";
 import { AssistantList } from "../AssistantList";
