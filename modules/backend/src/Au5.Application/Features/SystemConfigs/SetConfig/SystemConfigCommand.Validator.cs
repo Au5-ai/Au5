@@ -65,10 +65,6 @@ public class SystemConfigCommandValidator : AbstractValidator<SystemConfigComman
 			.NotEmpty()
 			.WithMessage(AppResources.Validation.Required);
 
-		RuleFor(x => x.LLMModel)
-			.NotEmpty()
-			.WithMessage(AppResources.Validation.Required);
-
 		RuleFor(x => x.OpenAIProxyUrl)
 			.Must(url => string.IsNullOrEmpty(url) ||
 				(Uri.TryCreate(url, UriKind.Absolute, out var temp) &&

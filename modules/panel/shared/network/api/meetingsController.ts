@@ -1,4 +1,4 @@
-import { Meeting, MeetingData } from "@/shared/types";
+import { AIContents, Meeting, MeetingData } from "@/shared/types";
 import { apiRequestClient } from "../apiRequestClient";
 import { API_URLS } from "./urls";
 
@@ -7,6 +7,14 @@ export const meetingsController = {
     return apiRequestClient<MeetingData>(API_URLS.MEETING.MY, {
       method: "GET",
     });
+  },
+  getAIContents: (meetingId: string, meetId: string): Promise<AIContents[]> => {
+    return apiRequestClient<AIContents[]>(
+      API_URLS.MEETING.AI_CONTENTS(meetingId, meetId),
+      {
+        method: "GET",
+      },
+    );
   },
   archived: (): Promise<MeetingData> => {
     return apiRequestClient<MeetingData>(API_URLS.MEETING.ARCHIVED, {

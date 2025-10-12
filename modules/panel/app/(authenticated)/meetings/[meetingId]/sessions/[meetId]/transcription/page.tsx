@@ -32,21 +32,6 @@ export default function TranscriptionPage() {
   const [assistants, setAssistants] = useState<Assistant[]>([]);
   const [usedAssistants, setUsedAssistants] = useState<Assistant[]>([]);
   const [selectedTab, setSelectedTab] = useState("Transcription");
-
-  const onAssistantClicked = (assistant: Assistant) => {
-    setUsedAssistants((prev) => {
-      if (prev.some((a) => a.id === assistant.id)) {
-        return prev;
-      }
-
-      return [...prev, assistant];
-    });
-    setSelectedTab(assistant.id);
-  };
-
-  useEffect(() => {
-    assistantsController.getActive(true).then(setAssistants);
-  }, []);
   const [transcription, setTranscription] = useState<Meeting>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -59,6 +44,26 @@ export default function TranscriptionPage() {
   const meetId = params.meetId as string;
 
   useEffect(() => {
+    const fetchAssistants = async () => {
+      const assistants = await assistantsController.getActive(true);
+      setAssistants(assistants);
+    };
+
+    const fetchAIContents = async () => {
+      const aiContents = await meetingsController.getAIContents(
+        meetingId,
+        meetId,
+      );
+
+      if (aiContents) {
+        if (Array.isArray(aiContents)) {
+          const assistantsFromContents = aiContents
+            .map((content) => content.assistant)
+            .filter((assistant): assistant is Assistant => !!assistant);
+          setUsedAssistants(assistantsFromContents);
+        }
+      }
+    };
     const loadTranscription = async () => {
       try {
         setLoading(true);
@@ -77,9 +82,22 @@ export default function TranscriptionPage() {
     };
 
     if (meetingId && meetId) {
+      fetchAssistants();
+      fetchAIContents();
       loadTranscription();
     }
   }, [meetingId, meetId]);
+
+  const onAssistantClicked = (assistant: Assistant) => {
+    setUsedAssistants((prev) => {
+      if (prev.some((a) => a.id === assistant.id)) {
+        return prev;
+      }
+
+      return [...prev, assistant];
+    });
+    setSelectedTab(assistant.id);
+  };
 
   const speakers: string[] = useMemo(() => {
     if (!transcription?.entries) return [];
@@ -190,12 +208,12 @@ export default function TranscriptionPage() {
                     {assistant.name}
                   </TabsTrigger>
                 ))}
-                <TabsTrigger value="AINotes">
+                {/* <TabsTrigger value="AINotes">
                   <MessageCircleCode className="h-4 w-4" /> AI meeting notes
                   <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums">
                     0
                   </Badge>
-                </TabsTrigger>
+                </TabsTrigger> */}
               </TabsList>
             </div>
             <TabsContent value="Transcription">
@@ -230,6 +248,7 @@ export default function TranscriptionPage() {
                         </h2>
 
                         <AssistantList
+                          usedAssistants={usedAssistants}
                           assistants={assistants}
                           onClick={onAssistantClicked}
                         />
@@ -250,7 +269,7 @@ export default function TranscriptionPage() {
                 />
               </TabsContent>
             ))}
-            <TabsContent value="AINotes">AI Notes is here :)</TabsContent>
+            {/* <TabsContent value="AINotes">AI Notes is here :)</TabsContent> */}
           </Tabs>
         </div>
       </SidebarInset>

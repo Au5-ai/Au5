@@ -13,6 +13,8 @@ public class Assistant
 
 	public string Instructions { get; set; }
 
+	public string LLMModel { get; set; }
+
 	public string OpenAIAssistantId { get; set; }
 
 	public User User { get; set; }

@@ -75,10 +75,6 @@ public class SystemDbConfig : IEntityTypeConfiguration<SystemConfig>
 			.IsRequired()
 			.HasMaxLength(20);
 
-		builder.Property(t => t.LLMModel)
-			.IsRequired()
-			.HasMaxLength(50);
-
 		builder.Property(t => t.SmtpUseSSl)
 			.HasDefaultValue(false);
 	}

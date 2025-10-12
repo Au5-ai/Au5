@@ -40,8 +40,6 @@ public record SystemConfigCommand : IRequest<Result>
 
 	public string MeetingTranscriptionModel { get; set; }
 
-	public string LLMModel { get; set; }
-
 	public string SmtpHost { get; set; }
 
 	public string SmtpPassword { get; set; }

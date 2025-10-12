@@ -38,7 +38,7 @@ export default function TranscriptionHeader({ meeting }: { meeting: Meeting }) {
             </div>
           </div>
 
-          <Badge className="border-0 px-3 py-1 bg-green-100 text-green-800">
+          <Badge className="border-0 px-3 py-1 bg-purple-50 text-purple-800">
             <Gem className="w-3 h-3 mr-1" />
             {meeting.platform}
           </Badge>

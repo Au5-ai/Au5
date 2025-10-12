@@ -19,5 +19,9 @@ public class AssistantConfig : IEntityTypeConfiguration<Assistant>
 		builder.Property(x => x.CreatedAt).IsRequired();
 		builder.Property(x => x.UserId).IsRequired();
 		builder.Property(x => x.OpenAIAssistantId).IsRequired();
+
+		builder.Property(t => t.LLMModel)
+			.IsRequired()
+			.HasMaxLength(50);
 	}
 }

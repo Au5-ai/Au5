@@ -1,3 +1,4 @@
+import { Assistant } from "./assistants";
 import { Participant } from "./user";
 
 export interface MeetingItem {
@@ -59,4 +60,11 @@ export interface Reaction {
   emoji: string;
   className: string;
   participants: Array<Participant>;
+}
+
+export interface AIContents {
+  id: string;
+  meetingId: string;
+  contents: string;
+  assistant: Assistant;
 }

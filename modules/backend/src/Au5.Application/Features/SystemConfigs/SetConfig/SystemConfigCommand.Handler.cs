@@ -34,7 +34,6 @@ public class SystemConfigCommandHandler : IRequestHandler<SystemConfigCommand, R
 			existingConfig.MeetingAudioRecording = request.MeetingAudioRecording;
 			existingConfig.MeetingTranscription = request.MeetingTranscription;
 			existingConfig.MeetingTranscriptionModel = request.MeetingTranscriptionModel;
-			existingConfig.LLMModel = request.LLMModel;
 			existingConfig.OpenAIToken = request.OpenAIToken;
 			existingConfig.OpenAIProxyUrl = request.OpenAIProxyUrl;
 			existingConfig.SmtpPort = request.SmtpPort;
@@ -67,7 +66,6 @@ public class SystemConfigCommandHandler : IRequestHandler<SystemConfigCommand, R
 				MeetingAudioRecording = request.MeetingAudioRecording,
 				MeetingTranscription = request.MeetingTranscription,
 				MeetingTranscriptionModel = request.MeetingTranscriptionModel,
-				LLMModel = request.LLMModel,
 				SmtpUser = request.SmtpUser,
 				SmtpPassword = request.SmtpPassword,
 				SmtpHost = request.SmtpHost,

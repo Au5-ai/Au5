@@ -38,7 +38,6 @@ public class SystemConfigQueryHandler : IRequestHandler<SystemConfigQuery, Resul
 				MeetingAudioRecording = existingConfig.MeetingAudioRecording,
 				MeetingTranscription = existingConfig.MeetingTranscription,
 				MeetingTranscriptionModel = existingConfig.MeetingTranscriptionModel,
-				LLMModel = existingConfig.LLMModel,
 				SmtpUseSSl = existingConfig.SmtpUseSSl,
 				SmtpHost = existingConfig.SmtpHost,
 				SmtpPort = existingConfig.SmtpPort,
