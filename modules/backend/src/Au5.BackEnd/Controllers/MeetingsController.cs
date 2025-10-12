@@ -1,3 +1,4 @@
+using Au5.Application.Features.AI.GetAll;
 using Au5.Application.Features.Meetings.AddBot;
 using Au5.Application.Features.Meetings.CloseMeetingByUser;
 using Au5.Application.Features.Meetings.GetFullTranscription;
@@ -14,6 +15,12 @@ public class MeetingsController(ISender mediator) : BaseController
 	public async Task<IActionResult> GetTranscriptions([FromRoute] Guid meetingId, [FromRoute] string meetId, CancellationToken cancellationToken)
 	{
 		return Ok(await mediator.Send(new GetFullTranscriptionQuery(meetingId, meetId), cancellationToken));
+	}
+
+	[HttpGet("{meetingId}/sessions/{meetId}/ai-contents")]
+	public async Task<IActionResult> GetAllAIContentsAsync([FromRoute] Guid meetingId, [FromRoute] string meetId, CancellationToken cancellationToken)
+	{
+		return Ok(await mediator.Send(new GetAIContentsQuery(meetingId, meetId), cancellationToken));
 	}
 
 	/// <summary>
@@ -36,14 +43,14 @@ public class MeetingsController(ISender mediator) : BaseController
 		return Ok(await mediator.Send(new MyMeetingQuery(meetingStatus), cancellationToken));
 	}
 
-	[HttpPost("{meetingId}/sessions/{meetId}/actions/addBot")]
+	[HttpPost("{meetingId}/sessions/{meetId}/bots")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> AddBotToMeeting([FromBody] AddBotCommand request, CancellationToken cancellationToken)
 	{
 		return Ok(await mediator.Send(request, cancellationToken));
 	}
 
-	[HttpPost("{meetingId}/sessions/{meetId}/actions/close")]
+	[HttpPost("{meetingId}/sessions/{meetId}/close")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> CloseMeeting([FromRoute] Guid meetingId, [FromRoute] string meetId, CancellationToken cancellationToken)
 	{
