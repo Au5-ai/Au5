@@ -7,6 +7,8 @@ public class GetAIContentsQueryHandler(IApplicationDbContext dbContext) : IReque
 	public async ValueTask<Result<IReadOnlyCollection<AIContents>>> Handle(GetAIContentsQuery request, CancellationToken cancellationToken)
 	{
 		var aiContents = await _dbContext.Set<AIContents>()
+			.Include(x => x.Assistant)
+			.Include(x => x.User)
 			.AsNoTracking()
 			.Where(a => a.MeetingId == request.MeetingId)
 			.ToListAsync(cancellationToken: cancellationToken);
