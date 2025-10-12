@@ -69,6 +69,7 @@ public class AddAssistantCommandValidatorTests
 			Icon = "icon.png",
 			Description = "desc",
 			Instructions = "Instructions",
+			LLMModel = "gpt-4"
 		};
 		var result = _validator.Validate(command);
 		Assert.True(result.IsValid);
