@@ -6,7 +6,6 @@ import { meetingsController } from "@/shared/network/api/meetingsController";
 import NoRecordsState from "@/shared/components/empty-states/no-record";
 import { LoadingPage } from "@/shared/components/loading-page";
 import {
-  Badge,
   Separator,
   SidebarInset,
   SidebarTrigger,
@@ -14,6 +13,9 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@/shared/components/ui";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
@@ -22,7 +24,7 @@ import TranscriptionHeader from "@/shared/components/transcription/transcription
 import TranscriptionFilters from "@/shared/components/transcription/transcriptionFilters";
 import TranscriptionEntry from "@/shared/components/transcription/transcriptionEntry";
 import { NoSearchResults } from "@/shared/components/empty-states/no-search-result";
-import { BrainCog, CaptionsIcon, MessageCircleCode } from "lucide-react";
+import { Bot, Brain, CaptionsIcon, ChartPie } from "lucide-react";
 import { assistantsController } from "@/shared/network/api/assistantsController";
 import { Assistant } from "@/shared/types/assistants";
 import { AssistantList } from "../AssistantList";
@@ -38,6 +40,7 @@ export default function TranscriptionPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [selectedSpeaker, setSelectedSpeaker] = useState("");
+  const [tab, setTab] = useState("home");
 
   const params = useParams();
   const meetingId = params.meetingId as string;
@@ -231,7 +234,7 @@ export default function TranscriptionPage() {
                 {filteredEntries.length > 0 ? (
                   <>
                     <div className="flex">
-                      <div className="flex-[2] bg-white overflow-hidden divide-y divide-gray-100">
+                      <div className="flex-[2] bg-white overflow-hidden divide-y divide-gray-100 overflow-y-auto">
                         {filteredEntries.map((entry, index) => (
                           <TranscriptionEntry
                             key={entry.blockId}
@@ -241,17 +244,71 @@ export default function TranscriptionPage() {
                         ))}
                       </div>
 
-                      <div className="flex-[1] px-4 py-4 bg-slate-50/50 border-gray-100 border-l">
-                        <h2 className="text-lg font-semibold mb-4 flex items-center">
-                          <BrainCog className="mr-1 h-4 w-4" />
-                          <span>AI Assistants</span>
-                        </h2>
+                      <div className="flex-[1] bg-slate-50/50 border-gray-100 border-l">
+                        <div className="flex h-[calc(100vh-72px)] w-full sticky top-[72px]">
+                          <main className="flex-1 p-4">
+                            <Tabs value={tab}>
+                              <TabsContent value="home">
+                                <div className="max-w-4xl mx-auto">
+                                  <h2 className="text-lg font-semibold mb-4 flex items-center">
+                                    <Bot className="mr-1 h-4 w-4" />
+                                    <span>AI Assistants</span>
+                                  </h2>
+                                  <AssistantList
+                                    usedAssistants={usedAssistants}
+                                    assistants={assistants}
+                                    onClick={onAssistantClicked}
+                                  />
+                                </div>
+                              </TabsContent>
+                            </Tabs>
+                          </main>
+                          <aside className="w-[48px] border-l bg-gray-50 flex flex-col items-center">
+                            <Tabs
+                              value={tab}
+                              onValueChange={setTab}
+                              orientation="vertical"
+                              className="flex flex-col items-center pt-8">
+                              <TabsList className="flex flex-col bg-transparent space-y-4">
+                                <TabsTrigger
+                                  value="home"
+                                  className="p-2 hover:bg-accent transition-colors mt-4">
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <span>
+                                        <Brain className="h-5 w-5" />
+                                      </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      {
+                                        GLOBAL_CAPTIONS.pages.meetings
+                                          .aiAssistants
+                                      }
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TabsTrigger>
 
-                        <AssistantList
-                          usedAssistants={usedAssistants}
-                          assistants={assistants}
-                          onClick={onAssistantClicked}
-                        />
+                                <TabsTrigger
+                                  value="statistics"
+                                  className="hover:bg-accent transition-colors mb-4 p-2">
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <span>
+                                        <ChartPie className="h-5 w-5" />
+                                      </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      {
+                                        GLOBAL_CAPTIONS.pages.meetings
+                                          .speakerSttistics
+                                      }
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TabsTrigger>
+                              </TabsList>
+                            </Tabs>
+                          </aside>
+                        </div>
                       </div>
                     </div>
                   </>
