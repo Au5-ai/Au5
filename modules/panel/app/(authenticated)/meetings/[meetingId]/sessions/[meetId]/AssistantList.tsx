@@ -24,7 +24,7 @@ export const AssistantList: React.FC<AssistantListProps> = ({
     );
   }
   return (
-    <div className="grid grid-cols-1 gap-2">
+    <div className="grid grid-cols-2 gap-2">
       {assistants.map((assistant) => {
         const isUsed = usedAssistants.some((a) => a.id === assistant.id);
         const cardClass = isUsed
@@ -67,7 +67,14 @@ export const AssistantList: React.FC<AssistantListProps> = ({
                   </div>
                 </div>
                 <span className="text-gray-500 text-sm">
-                  {assistant.description}
+                  {(() => {
+                    if (!assistant.description) return null;
+                    const firstLine = assistant.description.split(/\r?\n/)[0];
+                    if (firstLine.length > 48) {
+                      return firstLine.slice(0, 48) + " ...";
+                    }
+                    return firstLine;
+                  })()}
                 </span>
               </div>
             </div>

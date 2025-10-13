@@ -5,9 +5,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 export default function ParticipantAvatar({
   fullName,
   pictureUrl,
+  className,
 }: {
   fullName: string;
   pictureUrl: string;
+  className?: string;
 }) {
   const getColorFromName = (fullName: string) => {
     if (!fullName) return "#6b7280";
@@ -23,9 +25,9 @@ export default function ParticipantAvatar({
 
   return (
     <Tooltip>
-      <TooltipTrigger className="flex items-start">
+      <TooltipTrigger className={`flex items-start`}>
         <div className="avatar-container">
-          <Avatar className="rounded-lg">
+          <Avatar className={`rounded-lg ${className ?? ""}`}>
             <AvatarImage src={pictureUrl} alt={fullName} />
             <AvatarFallback
               className="rounded-lg text-white"

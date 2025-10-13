@@ -1,5 +1,5 @@
 import { Assistant } from "./assistants";
-import { Participant } from "./user";
+import { Participant, User } from "./user";
 
 export interface MeetingItem {
   meetingId: string;
@@ -62,9 +62,9 @@ export interface Reaction {
   participants: Array<Participant>;
 }
 
-export interface AIContents {
+export interface AIContent {
   id: string;
   meetingId: string;
-  contents: string;
+  content: string;
   assistant: Assistant;
 }
