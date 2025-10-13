@@ -8,9 +8,9 @@ public class GetAIContentsQueryHandler(IApplicationDbContext dbContext) : IReque
 	{
 		var aiContents = await _dbContext.Set<AIContents>()
 			.Include(x => x.Assistant)
-			.Include(x => x.User)
 			.AsNoTracking()
 			.Where(a => a.MeetingId == request.MeetingId)
+			.OrderByDescending(x => x.CreatedAt)
 			.ToListAsync(cancellationToken: cancellationToken);
 
 		return aiContents;

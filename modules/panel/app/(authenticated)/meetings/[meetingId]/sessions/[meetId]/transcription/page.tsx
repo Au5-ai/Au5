@@ -263,9 +263,11 @@ export default function TranscriptionPage() {
                 </div>
               </div>
             </TabsContent>
-
             <TabsContent value="AIConversation">
               <AIConversation
+                onNewContent={(newContent) =>
+                  setAIContents((prev) => [...prev, newContent])
+                }
                 aiContents={aiContents}
                 meetId={meetId}
                 meetingId={meetingId}

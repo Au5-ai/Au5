@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Bot, Brain, PenLine, User, Plus, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { Card, Button, Avatar } from "@/shared/components/ui";
+import { Card, Button } from "@/shared/components/ui";
 import { Assistant } from "@/shared/types/assistants";
 import { aiController } from "@/shared/network/api/aiController";
 import ReactMarkdown from "react-markdown";
@@ -12,18 +12,19 @@ import remarkGfm from "remark-gfm";
 import { AssistantList } from "./AssistantList";
 import { AIContent } from "@/shared/types";
 import { assistantsController } from "@/shared/network/api/assistantsController";
-import ParticipantAvatar from "@/shared/components/transcription/participantAvatar";
 
 interface AIConversationProps {
   aiContents: AIContent[];
   meetId: string;
   meetingId: string;
+  onNewContent?: (content: AIContent) => void;
 }
 
 export default function AIConversation({
   aiContents,
   meetId,
   meetingId,
+  onNewContent,
 }: AIConversationProps) {
   const [usedAssistants, setUsedAssistants] = useState<Assistant[]>([]);
   const [assistants, setAssistants] = useState<Assistant[]>([]);
@@ -66,6 +67,14 @@ export default function AIConversation({
       },
       onEnd: () => {
         setIsStreaming(false);
+        const newContent: AIContent = {
+          assistant,
+          content: messagesRef.current.join(""),
+          meetingId,
+          id: "0",
+        };
+        aiContents.push(newContent);
+        //if (onNewContent) onNewContent(newContent);
       },
       onError: (err) => {
         if (!cancel) {
@@ -91,6 +100,10 @@ export default function AIConversation({
     const content =
       aiContents.find((content) => content.assistant?.id === assistant.id)
         ?.content || [];
+    console.log("Loading chat content:", content);
+    console.log("AI contents length:", assistant.id);
+    console.log("AI contents:", aiContents);
+
     setMessages(Array.isArray(content) ? content : [content]);
     setIsFetching(false);
   };
@@ -126,25 +139,27 @@ export default function AIConversation({
     fetchAssistants();
   }, [aiContents, meetId, meetingId]);
 
+  const messagesRef = useRef<string[]>([]);
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+
   return (
-    <div className="flex w-full h-screen bg-background overflow-hidden border-t">
+    <div className="flex w-full h-screen overflow-hidden border-t">
       {/* Left Sidebar: Chat History */}
-      <div className="w-64 bg-muted/50 border-r flex flex-col">
+      <div className="w-64 border-r flex flex-col">
         <div className="flex items-center justify-between p-4 border-b">
-          <span className="font-semibold text-base flex items-center">
-            <Bot className="mr-2 h-4 w-4" />
-            History
-          </span>
           <Button
             size="sm"
             variant="outline"
             onClick={onNewChat}
-            className="flex items-center gap-2 px-3 py-1 rounded-md text-sm font-medium">
+            className="flex w-full items-center gap-2 px-3 py-1 rounded-md text-sm font-medium">
             <Plus className="h-4 w-4 mr-1" />
             New Chat
           </Button>
         </div>
-        <div className="flex-1 overflow-y-auto p-2">
+        <div className="flex-1 overflow-y-auto p-4">
+          <span className="text-sm text-gray">Chats</span>
           {usedAssistants.length === 0 ? (
             <div className="text-muted-foreground text-center mt-8">
               No chats yet
@@ -154,7 +169,7 @@ export default function AIConversation({
               {usedAssistants.map((assistant, idx) => (
                 <li
                   key={assistant.id}
-                  className={`flex items-center gap-2 px-4 py-3 cursor-pointer rounded-lg transition-colors ${selectedChatIdx === idx ? "bg-muted font-semibold" : "hover:bg-muted/60"}`}
+                  className={`flex items-center mt-2 gap-2 px-4 py-3 cursor-pointer rounded-lg transition-colors ${selectedChatIdx === idx ? "bg-muted font-semibold" : "hover:bg-muted/60"}`}
                   onClick={() => onChatHistoryClicked(idx)}>
                   {assistant.icon}
                   <span className="truncate">{assistant.name}</span>

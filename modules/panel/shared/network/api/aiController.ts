@@ -55,10 +55,8 @@ export const aiController = {
             }
           }
         }
-        onEnd?.();
       } catch (err) {
         onError?.(err);
-        onEnd?.();
       }
     })();
   },
