@@ -67,7 +67,14 @@ export const AssistantList: React.FC<AssistantListProps> = ({
                   </div>
                 </div>
                 <span className="text-gray-500 text-sm">
-                  {assistant.description}
+                  {(() => {
+                    if (!assistant.description) return null;
+                    const firstLine = assistant.description.split(/\r?\n/)[0];
+                    if (firstLine.length > 48) {
+                      return firstLine.slice(0, 48) + " ...";
+                    }
+                    return firstLine;
+                  })()}
                 </span>
               </div>
             </div>
