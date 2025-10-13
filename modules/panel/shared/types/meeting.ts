@@ -62,7 +62,7 @@ export interface Reaction {
   participants: Array<Participant>;
 }
 
-export interface AIContents {
+export interface AIContent {
   id: string;
   meetingId: string;
   contents: string;

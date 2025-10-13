@@ -9,17 +9,17 @@ import { aiController } from "@/shared/network/api/aiController";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-interface AIContentsProps {
+interface AIConversationProps {
   assistant: Assistant;
   meetId: string;
   meetingId: string;
 }
 
-export default function AIContents({
+export default function AIConversation({
   assistant,
   meetId,
   meetingId,
-}: AIContentsProps) {
+}: AIConversationProps) {
   const [messages, setMessages] = useState<string[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
