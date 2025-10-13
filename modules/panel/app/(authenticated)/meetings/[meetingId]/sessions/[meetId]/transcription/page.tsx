@@ -14,9 +14,6 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
 } from "@/shared/components/ui";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
@@ -25,21 +22,13 @@ import TranscriptionHeader from "@/shared/components/transcription/transcription
 import TranscriptionFilters from "@/shared/components/transcription/transcriptionFilters";
 import TranscriptionEntry from "@/shared/components/transcription/transcriptionEntry";
 import { NoSearchResults } from "@/shared/components/empty-states/no-search-result";
-import {
-  Bot,
-  Brain,
-  CaptionsIcon,
-  ChartPie,
-  MessageCircleCode,
-} from "lucide-react";
-import { assistantsController } from "@/shared/network/api/assistantsController";
-import { Assistant } from "@/shared/types/assistants";
-import { AssistantList } from "../AssistantList";
+import { CaptionsIcon, MessageCircleCode } from "lucide-react";
 import AIConversation from "../aiConversation";
+import ParticipantAvatar from "@/shared/components/transcription/participantAvatar";
+import { format } from "date-fns";
+import ParticipantAvatarGroup from "@/shared/components/transcription/participantAvatarGroup";
 
 export default function TranscriptionPage() {
-  const [assistants, setAssistants] = useState<Assistant[]>([]);
-  const [usedAssistants, setUsedAssistants] = useState<Assistant[]>([]);
   const [aiContents, setAIContents] = useState<AIContent[]>([]);
   const [selectedTab, setSelectedTab] = useState("Transcription");
   const [transcription, setTranscription] = useState<Meeting>();
@@ -48,18 +37,12 @@ export default function TranscriptionPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [selectedSpeaker, setSelectedSpeaker] = useState("");
-  const [tab, setTab] = useState("home");
 
   const params = useParams();
   const meetingId = params.meetingId as string;
   const meetId = params.meetId as string;
 
   useEffect(() => {
-    const fetchAssistants = async () => {
-      const assistants = await assistantsController.getActive(true);
-      setAssistants(assistants);
-    };
-
     const fetchAIContents = async () => {
       const aiContents = await meetingsController.getAIContents(
         meetingId,
@@ -68,12 +51,6 @@ export default function TranscriptionPage() {
 
       if (aiContents) {
         setAIContents(aiContents);
-        if (Array.isArray(aiContents)) {
-          const assistantsFromContents = aiContents
-            .map((content) => content.assistant)
-            .filter((assistant): assistant is Assistant => !!assistant);
-          setUsedAssistants(assistantsFromContents);
-        }
       }
     };
     const loadTranscription = async () => {
@@ -94,22 +71,10 @@ export default function TranscriptionPage() {
     };
 
     if (meetingId && meetId) {
-      fetchAssistants();
       fetchAIContents();
       loadTranscription();
     }
   }, [meetingId, meetId]);
-
-  const onAssistantClicked = (assistant: Assistant) => {
-    setUsedAssistants((prev) => {
-      if (prev.some((a) => a.id === assistant.id)) {
-        return prev;
-      }
-
-      return [...prev, assistant];
-    });
-    setSelectedTab(assistant.id);
-  };
 
   const speakers: string[] = useMemo(() => {
     if (!transcription?.entries) return [];
@@ -148,6 +113,12 @@ export default function TranscriptionPage() {
 
     return filtered;
   }, [transcription, filterType, selectedSpeaker, searchQuery]);
+
+  const recordingDate = function (transcription: Meeting) {
+    return transcription.entries?.[0]?.timestamp
+      ? new Date(transcription.entries[0].timestamp)
+      : new Date(transcription.createdAt || Date.now());
+  };
 
   if (loading) {
     return (
@@ -214,16 +185,11 @@ export default function TranscriptionPage() {
                 <TabsTrigger value="Transcription">
                   <CaptionsIcon className="h-4 w-4" /> Transcription
                 </TabsTrigger>
-                {usedAssistants.map((assistant) => (
-                  <TabsTrigger key={assistant.id} value={assistant.id}>
-                    <div className="h-5 w-5">{assistant.icon}</div>{" "}
-                    {assistant.name}
-                  </TabsTrigger>
-                ))}
-                <TabsTrigger value="AINotes">
+
+                <TabsTrigger value="AIConversation">
                   <MessageCircleCode className="h-4 w-4" /> AI meeting notes
                   <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums">
-                    {usedAssistants.length}
+                    {aiContents.length}
                   </Badge>
                 </TabsTrigger>
               </TabsList>
@@ -257,79 +223,54 @@ export default function TranscriptionPage() {
                   <div className="flex-[1] bg-slate-50/50 border-gray-100 border-l">
                     <div className="flex h-[calc(100vh-72px)] w-full sticky top-[72px]">
                       <main className="flex-1 p-4">
-                        <Tabs value={tab}>
-                          <TabsContent value="home">
-                            <div className="max-w-4xl mx-auto">
-                              <h2 className="text-lg font-semibold mb-4 flex items-center">
-                                <Bot className="mr-1 h-4 w-4" />
-                                <span>AI Assistants</span>
-                              </h2>
-                              <AssistantList
-                                usedAssistants={usedAssistants}
-                                assistants={assistants}
-                                onClick={onAssistantClicked}
-                              />
-                            </div>
-                          </TabsContent>
-                        </Tabs>
-                      </main>
-                      <aside className="w-[48px] border-l bg-gray-50 flex flex-col items-center">
-                        <Tabs
-                          value={tab}
-                          onValueChange={setTab}
-                          orientation="vertical"
-                          className="flex flex-col items-center pt-8">
-                          <TabsList className="flex flex-col bg-transparent space-y-4">
-                            <TabsTrigger
-                              value="home"
-                              className="p-2 hover:bg-accent transition-colors mt-4">
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <span>
-                                    <Brain className="h-5 w-5" />
-                                  </span>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  {GLOBAL_CAPTIONS.pages.meetings.aiAssistants}
-                                </TooltipContent>
-                              </Tooltip>
-                            </TabsTrigger>
+                        <div className="">
+                          <div className="flex justify-between mb-6">
+                            <span className="font-medium text-gray-900">
+                              Participants
+                            </span>
 
-                            <TabsTrigger
-                              value="statistics"
-                              className="hover:bg-accent transition-colors mb-4 p-2">
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <span>
-                                    <ChartPie className="h-5 w-5" />
-                                  </span>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  {
-                                    GLOBAL_CAPTIONS.pages.meetings
-                                      .speakerSttistics
-                                  }
-                                </TooltipContent>
-                              </Tooltip>
-                            </TabsTrigger>
-                          </TabsList>
-                        </Tabs>
-                      </aside>
+                            <ParticipantAvatarGroup
+                              participants={transcription.participants}
+                              guests={transcription.guests}
+                              maxVisible={8}
+                            />
+                          </div>
+                          <div className="flex items-center gap-3 text-sm text-gray-600 mb-6">
+                            <ParticipantAvatar
+                              fullName={transcription.userRecorder.fullName}
+                              pictureUrl={transcription.userRecorder.pictureUrl}
+                            />
+                            <span className="flex flex-col">
+                              <span>
+                                Recorded by{" "}
+                                <span className="font-medium text-gray-900">
+                                  {transcription.userRecorder.fullName}
+                                </span>
+                              </span>
+                              <span>
+                                {format(
+                                  recordingDate(transcription),
+                                  "dd MMMM yy",
+                                )}{" "}
+                                {format(recordingDate(transcription), "HH:mm")}
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+                      </main>
                     </div>
                   </div>
                 </div>
               </div>
             </TabsContent>
-            {usedAssistants.map((assistant) => (
-              <TabsContent key={assistant.id} value={assistant.id}>
-                <AIConversation
-                  assistant={assistant}
-                  meetId={meetId}
-                  meetingId={meetingId}
-                />
-              </TabsContent>
-            ))}
-            {/* <TabsContent value="AINotes">AI Notes is here :)</TabsContent> */}
+
+            <TabsContent value="AIConversation">
+              <AIConversation
+                aiContents={aiContents}
+                meetId={meetId}
+                meetingId={meetingId}
+              />
+            </TabsContent>
           </Tabs>
         </div>
       </SidebarInset>

@@ -1,16 +1,9 @@
 import React from "react";
-import { Bot, Gem, LaptopMinimal, Timer } from "lucide-react";
+import { Bot, LaptopMinimal, Shield, ShieldOff, Timer } from "lucide-react";
 import { Badge } from "@/shared/components/ui/badge";
-import { format } from "date-fns";
 import { Meeting } from "@/shared/types";
-import ParticipantAvatarGroup from "./participantAvatarGroup";
-import ParticipantAvatar from "./participantAvatar";
 
 export default function TranscriptionHeader({ meeting }: { meeting: Meeting }) {
-  const recordingDate = meeting.entries?.[0]?.timestamp
-    ? new Date(meeting.entries[0].timestamp)
-    : new Date(meeting.createdAt || Date.now());
-
   return (
     <div className="bg-white top-0 z-10">
       <div className="px-6 py-4">
@@ -41,35 +34,12 @@ export default function TranscriptionHeader({ meeting }: { meeting: Meeting }) {
             </div>
             <div>
               <Badge className="border-0 px-3 py-1 bg-purple-50 text-purple-800">
-                <Gem className="w-3 h-3 mr-1" />
-                {meeting.platform}
+                <ShieldOff className="w-3 h-3 mr-1" />
+                {"Public"}
               </Badge>
             </div>
           </div>
         </div>
-
-        {/* Recording Info and Speaker Avatars */}
-        {/* <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 text-sm text-gray-600">
-            <ParticipantAvatar
-              fullName={meeting.userRecorder.fullName}
-              pictureUrl={meeting.userRecorder.pictureUrl}
-            />
-            <span>
-              Recorded by{" "}
-              <span className="font-medium text-gray-900">
-                {meeting.userRecorder.fullName}
-              </span>
-              , {format(recordingDate, "dd MMMM yy")}{" "}
-              {format(recordingDate, "HH:mm")}
-            </span>
-          </div>
-          <ParticipantAvatarGroup
-            participants={meeting.participants}
-            guests={meeting.guests}
-            maxVisible={8}
-          />
-        </div> */}
       </div>
     </div>
   );

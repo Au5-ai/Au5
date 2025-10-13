@@ -73,7 +73,7 @@ export function NavActions({
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 cursor-pointer"
+            className={`h-7 w-7 cursor-pointer hover:bg-yellow-200 ${currentFavoriteStatus ? `bg-yellow-100` : ``}`}
             onClick={handleToggleFavorite}
             disabled={!meetingId || !meetId || isToggling}>
             <motion.div

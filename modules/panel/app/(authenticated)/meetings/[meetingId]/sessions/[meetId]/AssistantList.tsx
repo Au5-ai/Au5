@@ -24,7 +24,7 @@ export const AssistantList: React.FC<AssistantListProps> = ({
     );
   }
   return (
-    <div className="grid grid-cols-1 gap-2">
+    <div className="grid grid-cols-2 gap-2">
       {assistants.map((assistant) => {
         const isUsed = usedAssistants.some((a) => a.id === assistant.id);
         const cardClass = isUsed
