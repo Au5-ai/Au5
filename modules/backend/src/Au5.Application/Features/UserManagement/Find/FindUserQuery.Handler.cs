@@ -2,7 +2,6 @@ namespace Au5.Application.Features.UserManagement.Find;
 
 public class FindUserQueryHandler : IRequestHandler<FindUserQuery, IReadOnlyCollection<Participant>>
 {
-
 	private const int MaxSearchResults = 25;
 	private readonly IApplicationDbContext _context;
 
