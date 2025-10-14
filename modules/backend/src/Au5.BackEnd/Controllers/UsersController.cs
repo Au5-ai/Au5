@@ -28,9 +28,9 @@ public class UsersController(ISender mediator) : BaseController
 
 	[Route("find")]
 	[HttpGet]
-	public async Task<IActionResult> FindUsers([FromQuery] FindUserQuery query)
+	public async Task<IActionResult> FindUsers([FromQuery] string query)
 	{
-		var result = await mediator.Send(query);
+		var result = await mediator.Send(new FindUserQuery(query));
 		return Ok(result);
 	}
 
