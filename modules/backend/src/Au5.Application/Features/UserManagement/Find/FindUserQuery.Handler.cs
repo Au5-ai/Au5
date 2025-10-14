@@ -2,6 +2,8 @@ namespace Au5.Application.Features.UserManagement.Find;
 
 public class FindUserQueryHandler : IRequestHandler<FindUserQuery, IReadOnlyCollection<Participant>>
 {
+
+	private const int MaxSearchResults = 25;
 	private readonly IApplicationDbContext _context;
 
 	public FindUserQueryHandler(IApplicationDbContext context)
@@ -20,11 +22,11 @@ public class FindUserQueryHandler : IRequestHandler<FindUserQuery, IReadOnlyColl
 
 		if (!string.IsNullOrEmpty(request.FullName))
 		{
-			query = query.Where(u => u.FullName.Contains(request.FullName));
+			query = query.Where(u => u.FullName.StartsWith(request.FullName));
 		}
 		else if (!string.IsNullOrEmpty(request.Email))
 		{
-			query = query.Where(u => u.Email.Contains(request.Email));
+			query = query.Where(u => u.Email.StartsWith(request.Email));
 		}
 
 		var users = await query
@@ -35,7 +37,7 @@ public class FindUserQueryHandler : IRequestHandler<FindUserQuery, IReadOnlyColl
 				Email = u.Email,
 				PictureUrl = u.PictureUrl
 			})
-			.Take(25)
+			.Take(MaxSearchResults)
 			.ToListAsync(cancellationToken);
 
 		return users;
