@@ -1,3 +1,4 @@
+using Au5.Application.Features.UserManagement.Find;
 using Au5.Application.Features.UserManagement.GetMyInfo;
 using Au5.Application.Features.UserManagement.GetUserMenus;
 using Au5.Application.Features.UserManagement.GetUsers;
@@ -23,6 +24,14 @@ public class UsersController(ISender mediator) : BaseController
 	public async Task<IActionResult> GetCurrentUserInfo()
 	{
 		return Ok(await mediator.Send(new GetMyInfoQuery()));
+	}
+
+	[Route("find")]
+	[HttpGet]
+	public async Task<IActionResult> FindUsers([FromQuery] FindUserQuery searchTerm)
+	{
+		var result = await mediator.Send(searchTerm);
+		return Ok(result);
 	}
 
 	[HttpGet("me/menus")]
