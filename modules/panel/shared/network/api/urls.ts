@@ -2,6 +2,9 @@ export const API_URLS = {
   AI: {
     GENERATE: "/ai/generate",
   },
+  SPACES: {
+    ROOT: "/spaces",
+  },
   ASSISTANTS: {
     ROOT: "/assistants",
   },
@@ -30,6 +33,7 @@ export const API_URLS = {
     LIST: "/users",
     ME: "/users/me",
     MY_MENU: "/users/me/menus",
+    FIND: "/users/find",
     INVITATIONS: "/users/invitations", // bulk invite
     USER_INVITATIONS: (userId: string) => `/users/${userId}/invitations`, // resend invite
     VERIFY: (userId: string, hash: string) =>

@@ -13,16 +13,36 @@ import { Label } from "@/shared/components/ui/label";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { Frame, Loader2, Plus } from "lucide-react";
 import UserSearchInput from "./searchInput";
+import { CreateSpaceCommand } from "@/shared/types/space";
+import { User } from "@/shared/types";
 
-export default function AddSpaceModal({ open, onOpenChange, onSpaceAdded }) {
+interface AddSpaceModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSpaceAdded: (command: CreateSpaceCommand) => Promise<void>;
+}
+
+interface SpaceFormState {
+  name: string;
+  description: string;
+  assignedUsers: User[];
+}
+
+const INITIAL_FORM_STATE: SpaceFormState = {
+  name: "",
+  description: "",
+  assignedUsers: [],
+};
+
+export default function AddSpaceModal({
+  open,
+  onOpenChange,
+  onSpaceAdded,
+}: AddSpaceModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    assigned_users: [],
-  });
+  const [formData, setFormData] = useState<SpaceFormState>(INITIAL_FORM_STATE);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!formData.name.trim()) {
@@ -30,22 +50,22 @@ export default function AddSpaceModal({ open, onOpenChange, onSpaceAdded }) {
     }
 
     setIsSubmitting(true);
-    await onSpaceAdded(formData);
+    const command: CreateSpaceCommand = {
+      name: formData.name,
+      description: formData.description,
+      users: formData.assignedUsers.map((user) => ({
+        userId: user.id,
+        isAdmin: false,
+      })),
+    };
+    await onSpaceAdded(command);
     setIsSubmitting(false);
 
-    setFormData({
-      name: "",
-      description: "",
-      assigned_users: [],
-    });
+    setFormData(INITIAL_FORM_STATE);
   };
 
   const handleCancel = () => {
-    setFormData({
-      name: "",
-      description: "",
-      assigned_users: [],
-    });
+    setFormData(INITIAL_FORM_STATE);
     onOpenChange(false);
   };
 
@@ -104,9 +124,9 @@ export default function AddSpaceModal({ open, onOpenChange, onSpaceAdded }) {
               Assign Users
             </Label>
             <UserSearchInput
-              selectedUsers={formData.assigned_users}
+              selectedUsers={formData.assignedUsers}
               onUsersChange={(users) =>
-                setFormData({ ...formData, assigned_users: users })
+                setFormData({ ...formData, assignedUsers: users })
               }
             />
           </div>

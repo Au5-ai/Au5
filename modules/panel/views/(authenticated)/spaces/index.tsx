@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Building2, Frame } from "lucide-react";
+import { Frame } from "lucide-react";
 import {
   Button,
   Separator,
@@ -12,6 +12,9 @@ import {
 import SpaceGrid from "./components/spaceGrid";
 import AddSpaceModal from "./components/addModal";
 import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
+import { spaceController } from "@/shared/network/api/spaceController";
+import { CreateSpaceCommand } from "@/shared/types/space";
+import { toast } from "sonner";
 
 export default function SpaceManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,20 +22,25 @@ export default function SpaceManagement() {
 
   const { data: spaces, isLoading } = useQuery({
     queryKey: ["spaces"],
-    queryFn: () => [],
+    queryFn: () => spaceController.getSpaces(),
     initialData: [],
   });
 
   const createSpaceMutation = useMutation({
-    mutationFn: (spaceData) => base44.entities.Space.create(spaceData),
+    mutationFn: (spaceData: CreateSpaceCommand) =>
+      spaceController.createSpace(spaceData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["spaces"] });
       setIsModalOpen(false);
+      toast.success("Space created successfully");
+    },
+    onError: (error: Error) => {
+      toast.error(`Failed to create space: ${error.message}`);
     },
   });
 
-  const handleSpaceAdded = async (spaceData) => {
-    await createSpaceMutation.mutateAsync(spaceData);
+  const handleSpaceAdded = async (command: CreateSpaceCommand) => {
+    await createSpaceMutation.mutateAsync(command);
   };
 
   return (
@@ -46,16 +54,14 @@ export default function SpaceManagement() {
           />
           <BreadcrumbLayout />
         </div>
-        <div className="ml-auto px-4">
-          {/* Render a component passed from children via a prop */}
-        </div>
+        <div className="ml-auto px-4"></div>
       </header>
       <div className="flex flex-1 flex-col px-6 py-4">
         <div className="container mx-auto mb-4 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold mb-1">Spaces</h1>
             <p className="text-muted-foreground">
-              Create and manage your organization's spaces
+              Create and manage your organization&apos;s spaces
             </p>
           </div>
           <div>
@@ -67,12 +73,9 @@ export default function SpaceManagement() {
             </Button>
           </div>
         </div>
-        <div className="min-h-screen w-full">
+        <div className="w-full">
           <div className="max-w-7xl mx-auto">
-            {/* Grid Section */}
             <SpaceGrid spaces={spaces} isLoading={isLoading} />
-
-            {/* Add Space Modal */}
             <AddSpaceModal
               open={isModalOpen}
               onOpenChange={setIsModalOpen}

@@ -82,12 +82,6 @@ export function NavUser(user: User) {
                 <Gem />
                 Request a feature
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => router.push("/system")}
-                className="cursor-pointer">
-                <Settings />
-                Settings
-              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem

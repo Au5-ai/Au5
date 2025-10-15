@@ -20,6 +20,11 @@ export const userController = {
     );
     return menu.map(mapMenuItem);
   },
+  find: (query: string): Promise<User[]> =>
+    apiRequestClient<User[]>(
+      `${API_URLS.USERS.FIND}?query=${encodeURIComponent(query)}`,
+      { method: "GET" },
+    ),
 };
 
 const iconMap: Record<string, LucideIcon> = {

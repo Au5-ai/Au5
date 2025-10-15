@@ -1,6 +1,6 @@
 import { Button } from "@/shared/components/ui";
 import { tokenStorageService } from "@/shared/lib/localStorage";
-import { userController } from "@/shared/network/api/user";
+import { userController } from "@/shared/network/api/userController";
 import { useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft, Settings } from "lucide-react";
 import Image from "next/image";
