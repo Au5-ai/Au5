@@ -13,13 +13,16 @@ import {
 import { User, UserMenuItem } from "@/shared/types";
 import * as React from "react";
 import Logo from "./logo";
+import { NavSpaces } from "./nav-spaces";
+import { MySpacesResponse } from "../types/space";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user?: User;
   menu?: UserMenuItem[];
+  spaces?: MySpacesResponse[];
 }
 
-export function AppSidebar({ user, menu, ...props }: AppSidebarProps) {
+export function AppSidebar({ user, menu, spaces, ...props }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -41,6 +44,7 @@ export function AppSidebar({ user, menu, ...props }: AppSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={menu} />
+        <NavSpaces spaces={spaces} />
       </SidebarContent>
       <SidebarFooter>{user && <NavUser {...user} />}</SidebarFooter>
       <SidebarRail />

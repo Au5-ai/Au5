@@ -1,6 +1,6 @@
 namespace Au5.Application.Features.Spaces.GetSpaces;
 
-public class GetSpacesQueryHandler : IRequestHandler<GetSpacesQuery, Result<List<SpaceResponse>>>
+public class GetSpacesQueryHandler : IRequestHandler<GetSpacesQuery, Result<IReadOnlyCollection<SpaceResponse>>>
 {
 	private readonly IApplicationDbContext _context;
 
@@ -9,7 +9,7 @@ public class GetSpacesQueryHandler : IRequestHandler<GetSpacesQuery, Result<List
 		_context = context;
 	}
 
-	public async ValueTask<Result<List<SpaceResponse>>> Handle(GetSpacesQuery request, CancellationToken cancellationToken)
+	public async ValueTask<Result<IReadOnlyCollection<SpaceResponse>>> Handle(GetSpacesQuery request, CancellationToken cancellationToken)
 	{
 		var spaces = await _context.Set<Space>()
 			.Include(s => s.Parent)

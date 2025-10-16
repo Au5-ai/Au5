@@ -1,6 +1,6 @@
 namespace Au5.Application.Features.Spaces.GetSpaces;
 
-public record GetSpacesQuery : IRequest<Result<List<SpaceResponse>>>;
+public record GetSpacesQuery : IRequest<Result<IReadOnlyCollection<SpaceResponse>>>;
 
 public record SpaceResponse
 {

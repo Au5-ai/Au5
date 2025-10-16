@@ -23,13 +23,11 @@ import {
 } from "@/shared/components/ui/sidebar";
 import { DropdownMenuGroup } from "@radix-ui/react-dropdown-menu";
 import { useLogout } from "@/shared/hooks/use-auth";
-import { useRouter } from "next/navigation";
 import { User } from "@/shared/types";
 
 export function NavUser(user: User) {
   const { isMobile } = useSidebar();
   const logoutMutation = useLogout();
-  const router = useRouter();
 
   return (
     <SidebarMenu>
