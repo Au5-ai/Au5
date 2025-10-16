@@ -11,8 +11,12 @@ export type { RoleDisplay } from "./user-utils";
 
 export const CopyToClipboard = (text: string) => {
   if (!text) return;
-  navigator.clipboard
-    .writeText(text)
-    .then(() => toast.success("Copied to clipboard!"))
-    .catch(() => toast.error("Failed to copy."));
+  if (typeof navigator.clipboard !== "undefined") {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => toast.success("Copied to clipboard!"))
+      .catch(() => toast.error("Failed to copy."));
+  } else {
+    toast.error("Clipboard API not supported.");
+  }
 };

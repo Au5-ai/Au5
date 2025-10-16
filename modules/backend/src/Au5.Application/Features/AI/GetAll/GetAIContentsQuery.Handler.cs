@@ -1,10 +1,10 @@
 namespace Au5.Application.Features.AI.GetAll;
 
-public class GetAIContentsQueryHandler(IApplicationDbContext dbContext) : IRequestHandler<GetAIContentsQuery, Result<IReadOnlyCollection<AIContentsReposne>>>
+public class GetAIContentsQueryHandler(IApplicationDbContext dbContext) : IRequestHandler<GetAIContentsQuery, Result<IReadOnlyCollection<AIContentsResponse>>>
 {
 	private readonly IApplicationDbContext _dbContext = dbContext;
 
-	public async ValueTask<Result<IReadOnlyCollection<AIContentsReposne>>> Handle(GetAIContentsQuery request, CancellationToken cancellationToken)
+	public async ValueTask<Result<IReadOnlyCollection<AIContentsResponse>>> Handle(GetAIContentsQuery request, CancellationToken cancellationToken)
 	{
 		var aiContents = await _dbContext.Set<AIContents>()
 			.Include(x => x.Assistant)
@@ -12,7 +12,7 @@ public class GetAIContentsQueryHandler(IApplicationDbContext dbContext) : IReque
 			.AsNoTracking()
 			.Where(a => a.MeetingId == request.MeetingId)
 			.OrderByDescending(x => x.CreatedAt)
-			.Select(x => new AIContentsReposne()
+			.Select(x => new AIContentsResponse()
 			{
 				Assistant = new AIContentAssistant()
 				{
