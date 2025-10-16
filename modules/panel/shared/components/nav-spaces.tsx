@@ -30,7 +30,7 @@ export function NavSpaces({
         {spaces?.map((item) => (
           <SidebarMenuItem key={item.id}>
             <SidebarMenuButton asChild>
-              <a href={item.id}>
+              <a href={`/spaces/${item.id}/meetings`}>
                 <Frame />
                 <span>{item.name}</span>
               </a>
