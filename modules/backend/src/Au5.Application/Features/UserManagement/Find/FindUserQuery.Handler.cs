@@ -12,21 +12,13 @@ public class FindUserQueryHandler : IRequestHandler<FindUserQuery, IReadOnlyColl
 
 	public async ValueTask<IReadOnlyCollection<Participant>> Handle(FindUserQuery request, CancellationToken cancellationToken)
 	{
-		if (string.IsNullOrEmpty(request.FullName) == string.IsNullOrEmpty(request.Email))
+		if (string.IsNullOrEmpty(request.Query))
 		{
 			return Array.Empty<Participant>();
 		}
 
 		var query = _context.Set<User>().Where(u => u.IsActive);
-
-		if (!string.IsNullOrEmpty(request.FullName))
-		{
-			query = query.Where(u => u.FullName.StartsWith(request.FullName));
-		}
-		else if (!string.IsNullOrEmpty(request.Email))
-		{
-			query = query.Where(u => u.Email.StartsWith(request.Email));
-		}
+		query = query.Where(u => u.FullName.StartsWith(request.Query, StringComparison.OrdinalIgnoreCase) || u.Email.StartsWith(request.Query, StringComparison.OrdinalIgnoreCase));
 
 		var users = await query
 			.Select(u => new Participant

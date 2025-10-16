@@ -20,7 +20,7 @@ public class FindUserQueryHandlerTests
 		mockContext.Setup(x => x.Set<User>()).Returns(mockSet.Object);
 
 		var handler = new FindUserQueryHandler(mockContext.Object);
-		var query = new FindUserQuery { FullName = "Mo Karimi" };
+		var query = new FindUserQuery("Mo Karimi");
 
 		var result = await handler.Handle(query, CancellationToken.None);
 
@@ -29,7 +29,7 @@ public class FindUserQueryHandlerTests
 	}
 
 	[Fact]
-	public async Task Should_ReturnEmpty_When_BothFullNameAndEmailProvided()
+	public async Task Should_ReturnEmpty_When_ThereIsNoResult()
 	{
 		var users = new List<User>
 		{
@@ -41,7 +41,7 @@ public class FindUserQueryHandlerTests
 		mockContext.Setup(x => x.Set<User>()).Returns(mockSet.Object);
 
 		var handler = new FindUserQueryHandler(mockContext.Object);
-		var query = new FindUserQuery { FullName = "Mo Kar", Email = "mo@ex" };
+		var query = new FindUserQuery("mo2@ex");
 
 		var result = await handler.Handle(query, CancellationToken.None);
 
@@ -60,7 +60,7 @@ public class FindUserQueryHandlerTests
 		mockContext.Setup(x => x.Set<User>()).Returns(mockSet.Object);
 
 		var handler = new FindUserQueryHandler(mockContext.Object);
-		var query = new FindUserQuery { };
+		var query = new FindUserQuery(string.Empty);
 
 		var result = await handler.Handle(query, CancellationToken.None);
 
@@ -80,7 +80,7 @@ public class FindUserQueryHandlerTests
 		mockContext.Setup(x => x.Set<User>()).Returns(mockSet.Object);
 
 		var handler = new FindUserQueryHandler(mockContext.Object);
-		var query = new FindUserQuery { Email = "mo@ex" };
+		var query = new FindUserQuery("mo@ex");
 
 		var result = await handler.Handle(query, CancellationToken.None);
 
@@ -101,7 +101,7 @@ public class FindUserQueryHandlerTests
 		mockContext.Setup(x => x.Set<User>()).Returns(mockSet.Object);
 
 		var handler = new FindUserQueryHandler(mockContext.Object);
-		var query = new FindUserQuery { FullName = "Mo Kar" };
+		var query = new FindUserQuery("Mo Kar");
 
 		var result = await handler.Handle(query, CancellationToken.None);
 

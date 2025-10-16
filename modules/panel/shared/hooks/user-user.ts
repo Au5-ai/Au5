@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { userController } from "../network/api/user";
+import { userController } from "../network/api/userController";
 import { tokenStorageService } from "../lib/localStorage";
 
 export function useCurrentUser() {

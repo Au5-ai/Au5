@@ -8,6 +8,7 @@ import {
   Brain,
   UserPlus,
   LucideIcon,
+  Frame,
 } from "lucide-react";
 
 export const userController = {
@@ -20,6 +21,11 @@ export const userController = {
     );
     return menu.map(mapMenuItem);
   },
+  find: (query: string): Promise<User[]> =>
+    apiRequestClient<User[]>(
+      `${API_URLS.USERS.FIND}?query=${encodeURIComponent(query)}`,
+      { method: "GET" },
+    ),
 };
 
 const iconMap: Record<string, LucideIcon> = {
@@ -28,6 +34,7 @@ const iconMap: Record<string, LucideIcon> = {
   Brain: Brain,
   Settings: Settings,
   UserPlus: UserPlus,
+  Frame: Frame,
 };
 
 function mapMenuItem(serverItem: UserMenuItem | undefined): UserMenuItem {

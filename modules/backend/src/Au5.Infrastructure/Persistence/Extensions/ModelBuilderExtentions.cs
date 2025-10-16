@@ -45,7 +45,8 @@ public static class ModelBuilderExtension
 				new Menu { Id = 200, Title = "Archived Transcripts", Url = "/meetings/archived", Icon = "ArchiveIcon", SortOrder = 2, IsActive = true },
 				new Menu { Id = 300, Title = "AI Tools", Url = "/assistants", Icon = "Brain", SortOrder = 3, IsActive = true },
 				new Menu { Id = 400, Title = "System Settings", Url = "/system", Icon = "Settings", SortOrder = 4, IsActive = true },
-				new Menu { Id = 500, Title = "User Management", Url = "/users", Icon = "UserPlus", SortOrder = 5, IsActive = true }
+				new Menu { Id = 500, Title = "User Management", Url = "/users", Icon = "UserPlus", SortOrder = 5, IsActive = true },
+				new Menu { Id = 600, Title = "Spaces", Url = "/spaces", Icon = "Frame", SortOrder = 6, IsActive = true }
 			};
 
 			var roleMenus = new[]
@@ -55,7 +56,8 @@ public static class ModelBuilderExtension
 				new RoleMenu { MenuId = 300, RoleType = RoleTypes.User },
 				new RoleMenu { MenuId = 300, RoleType = RoleTypes.Admin },
 				new RoleMenu { MenuId = 400, RoleType = RoleTypes.Admin },
-				new RoleMenu { MenuId = 500, RoleType = RoleTypes.Admin }
+				new RoleMenu { MenuId = 500, RoleType = RoleTypes.Admin },
+				new RoleMenu { MenuId = 600, RoleType = RoleTypes.Admin }
 			};
 
 			modelBuilder.Entity<Menu>().HasData(menus);

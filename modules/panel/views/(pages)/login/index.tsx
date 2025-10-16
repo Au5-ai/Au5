@@ -26,8 +26,8 @@ export default function LoginPage() {
             <Image
               src="/assets/images/hi5.png"
               alt="Welcome illustration"
-              width={192}
-              height={192}
+              width={256}
+              height={256}
               className="object-contain"
               style={{ height: "auto" }}
             />
