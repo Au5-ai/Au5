@@ -2,6 +2,7 @@ import React from "react";
 import { Badge, Card } from "@/shared/components/ui";
 import { Assistant } from "@/shared/types/assistants";
 import { Bot } from "lucide-react";
+import { truncateFirstLine } from "@/shared/lib/utils";
 
 export interface AssistantListProps {
   usedAssistants: Assistant[];
@@ -67,14 +68,7 @@ export const AssistantList: React.FC<AssistantListProps> = ({
                   </div>
                 </div>
                 <span className="text-gray-500 text-sm">
-                  {(() => {
-                    if (!assistant.description) return null;
-                    const firstLine = assistant.description.split(/\r?\n/)[0];
-                    if (firstLine.length > 48) {
-                      return firstLine.slice(0, 48) + " ...";
-                    }
-                    return firstLine;
-                  })()}
+                  {truncateFirstLine(assistant.description)}
                 </span>
               </div>
             </div>

@@ -67,4 +67,6 @@ export interface AIContent {
   meetingId: string;
   content: string;
   assistant: Assistant;
+  createdAt: string;
+  user?: User;
 }

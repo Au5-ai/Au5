@@ -6,3 +6,15 @@ export const formatDuration = (timeString: string): string => {
 
   return `${totalMinutes} min`;
 };
+
+export const truncateFirstLine = (
+  text: string | null | undefined,
+  maxLength: number = 48,
+): string | null => {
+  if (!text) return null;
+  const firstLine = text.split(/\r?\n/)[0];
+  if (firstLine.length > maxLength) {
+    return firstLine.slice(0, maxLength) + " ...";
+  }
+  return firstLine;
+};
