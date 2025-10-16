@@ -1,6 +1,6 @@
 namespace Au5.Application.Features.Spaces.GetUserSpaces;
 
-public record GetUserSpacesQuery : IRequest<IReadOnlyCollection<UserSpaceResponse>>;
+public record GetUserSpacesQuery : IRequest<Result<IReadOnlyCollection<UserSpaceResponse>>>;
 
 public record UserSpaceResponse
 {

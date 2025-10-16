@@ -1,6 +1,7 @@
 import {
   CreateSpaceCommand,
   CreateSpaceResponse,
+  MySpacesResponse,
   Space,
 } from "@/shared/types/space";
 import { apiRequestClient } from "../apiRequestClient";
@@ -18,8 +19,8 @@ export const spaceController = {
       body: JSON.stringify(data),
       headers: { "Content-Type": "application/json" },
     }),
-  mySpaces: (): Promise<Space[]> => {
-    return apiRequestClient<Space[]>(API_URLS.SPACES.MY_SPACES, {
+  mySpaces: (): Promise<MySpacesResponse[]> => {
+    return apiRequestClient<MySpacesResponse[]>(API_URLS.SPACES.MY_SPACES, {
       method: "GET",
     });
   },

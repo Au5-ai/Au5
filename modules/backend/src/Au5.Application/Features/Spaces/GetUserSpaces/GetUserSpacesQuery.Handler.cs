@@ -1,6 +1,6 @@
 namespace Au5.Application.Features.Spaces.GetUserSpaces;
 
-public class GetUserSpacesQueryHandler : IRequestHandler<GetUserSpacesQuery, IReadOnlyCollection<UserSpaceResponse>>
+public class GetUserSpacesQueryHandler : IRequestHandler<GetUserSpacesQuery, Result<IReadOnlyCollection<UserSpaceResponse>>>
 {
 	private readonly IApplicationDbContext _context;
 	private readonly ICurrentUserService _currentUserService;
@@ -11,7 +11,7 @@ public class GetUserSpacesQueryHandler : IRequestHandler<GetUserSpacesQuery, IRe
 		_currentUserService = currentUserService;
 	}
 
-	public async ValueTask<IReadOnlyCollection<UserSpaceResponse>> Handle(GetUserSpacesQuery request, CancellationToken cancellationToken)
+	public async ValueTask<Result<IReadOnlyCollection<UserSpaceResponse>>> Handle(GetUserSpacesQuery request, CancellationToken cancellationToken)
 	{
 		var userId = _currentUserService.UserId;
 
