@@ -1,5 +1,6 @@
 using Au5.Application.Features.Spaces.CreateSpace;
 using Au5.Application.Features.Spaces.GetSpaces;
+using Au5.Application.Features.Spaces.GetUserSpaces;
 
 namespace Au5.BackEnd.Controllers;
 
@@ -19,5 +20,13 @@ public class SpacesController(ISender mediator) : BaseController
 	public async Task<IActionResult> CreateSpace([FromBody] CreateSpaceCommand command, CancellationToken ct)
 	{
 		return Ok(await mediator.Send(command, ct));
+	}
+
+	[HttpGet]
+	[Route("my-spaces")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> GetMySpaces(CancellationToken ct)
+	{
+		return Ok(await mediator.Send(new GetUserSpacesQuery(), ct));
 	}
 }

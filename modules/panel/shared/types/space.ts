@@ -32,3 +32,9 @@ export interface CreateSpaceCommand {
 export interface CreateSpaceResponse {
   id: string;
 }
+
+export interface MySpacesResponse {
+  id: string;
+  name: string;
+  description: string;
+}

@@ -120,28 +120,6 @@ export default function MyMeetingPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          title="Open"
-                          className="cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Handle open action here
-                          }}>
-                          <Link className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          title="Share"
-                          className="cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Handle share action here
-                          }}>
-                          <Share2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
                           title="Delete"
                           className="cursor-pointer"
                           onClick={(e) => {

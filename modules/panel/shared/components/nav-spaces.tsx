@@ -1,43 +1,44 @@
 "use client";
 
-import { type LucideIcon } from "lucide-react";
+import { Frame, MoreHorizontal, Trash2 } from "lucide-react";
 
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuBadge,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/shared/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui";
+import { MySpacesResponse } from "../types/space";
 
 export function NavSpaces({
   spaces,
 }: {
-  spaces: {
-    name: string;
-    url: string;
-    icon: LucideIcon;
-    showBadge?: boolean;
-    badge?: string;
-  }[];
+  spaces: MySpacesResponse[] | undefined;
 }) {
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Spaces</SidebarGroupLabel>
       <SidebarMenu>
-        {spaces.map((item) => (
-          <SidebarMenuItem key={item.name}>
+        {spaces?.map((item) => (
+          <SidebarMenuItem key={item.id}>
             <SidebarMenuButton asChild>
-              <a href={item.url}>
-                <item.icon />
+              <a href={item.id}>
+                <Frame />
                 <span>{item.name}</span>
               </a>
             </SidebarMenuButton>
-            {item.showBadge && (
+            {/* {item.showBadge && (
               <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
-            )}
-            {/* <DropdownMenu>
+            )} */}
+            <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuAction showOnHover>
                   <MoreHorizontal />
@@ -46,20 +47,14 @@ export function NavSpaces({
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 className="w-48 rounded-lg"
-                side={isMobile ? "bottom" : "right"}
-                align={isMobile ? "end" : "start"}
-              >
-                <DropdownMenuItem>
-                  <Folder className="text-muted-foreground" />
-                  <span>View Space</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
+                side="right"
+                align="start">
                 <DropdownMenuItem>
                   <Trash2 className="text-muted-foreground" />
                   <span>Leave Space</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu> */}
+            </DropdownMenu>
           </SidebarMenuItem>
         ))}
       </SidebarMenu>

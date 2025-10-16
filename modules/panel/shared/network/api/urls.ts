@@ -4,6 +4,7 @@ export const API_URLS = {
   },
   SPACES: {
     ROOT: "/spaces",
+    MY_SPACES: "/spaces/my-spaces",
   },
   ASSISTANTS: {
     ROOT: "/assistants",

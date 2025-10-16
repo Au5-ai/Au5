@@ -26,19 +26,19 @@ public class UsersController(ISender mediator) : BaseController
 		return Ok(await mediator.Send(new GetMyInfoQuery()));
 	}
 
+	[HttpGet("me/menus")]
+	public async Task<IActionResult> GetCurrentUserMenus()
+	{
+		var query = new GetUserMenusQuery();
+		return Ok(await mediator.Send(query));
+	}
+
 	[Route("find")]
 	[HttpGet]
 	public async Task<IActionResult> FindUsers([FromQuery] string query)
 	{
 		var result = await mediator.Send(new FindUserQuery(query));
 		return Ok(result);
-	}
-
-	[HttpGet("me/menus")]
-	public async Task<IActionResult> GetCurrentUserMenus()
-	{
-		var query = new GetUserMenusQuery();
-		return Ok(await mediator.Send(query));
 	}
 
 	[HttpPost]
