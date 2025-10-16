@@ -46,6 +46,7 @@ import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { userController } from "../userController";
 import { toast } from "sonner";
 import { CheckIcon, MailWarningIcon } from "lucide-react";
+import { CopyToClipboard } from "@/shared/lib";
 
 export default function UserGrid({
   users,
@@ -61,9 +62,8 @@ export default function UserGrid({
 
   const handleCopyLink = () => {
     if (invitationLink) {
-      navigator.clipboard.writeText(invitationLink);
+      CopyToClipboard(invitationLink);
       setCopied(true);
-      toast.success("Invitation link copied to clipboard");
       setTimeout(() => setCopied(false), 2000);
     }
   };

@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Bot, Brain, PenLine, User, Plus, Copy } from "lucide-react";
+import {
+  Bot,
+  Brain,
+  PenLine,
+  User,
+  Plus,
+  Copy,
+  Trash2Icon,
+} from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Card, Button } from "@/shared/components/ui";
@@ -12,6 +20,7 @@ import remarkGfm from "remark-gfm";
 import { AssistantList } from "./AssistantList";
 import { AIContent } from "@/shared/types";
 import { assistantsController } from "@/shared/network/api/assistantsController";
+import { CopyToClipboard, truncateFirstLine } from "@/shared/lib";
 
 interface AIConversationProps {
   aiContents: AIContent[];
@@ -72,6 +81,7 @@ export default function AIConversation({
           content: messagesRef.current.join(""),
           meetingId,
           id: "0",
+          createdAt: "now",
         };
         aiContents.push(newContent);
         //if (onNewContent) onNewContent(newContent);
@@ -100,10 +110,6 @@ export default function AIConversation({
     const content =
       aiContents.find((content) => content.assistant?.id === assistant.id)
         ?.content || [];
-    console.log("Loading chat content:", content);
-    console.log("AI contents length:", assistant.id);
-    console.log("AI contents:", aiContents);
-
     setMessages(Array.isArray(content) ? content : [content]);
     setIsFetching(false);
   };
@@ -112,15 +118,6 @@ export default function AIConversation({
     setShowAssistantList(true);
     setSelectedChatIdx(null);
     setMessages([]);
-  };
-
-  const handleCopyMessages = () => {
-    const text = messages.join("");
-    if (!text) return;
-    navigator.clipboard
-      .writeText(text)
-      .then(() => toast.success("Copied to clipboard!"))
-      .catch(() => toast.error("Failed to copy."));
   };
 
   useEffect(() => {
@@ -147,7 +144,7 @@ export default function AIConversation({
   return (
     <div className="flex w-full h-screen overflow-hidden border-t">
       {/* Left Sidebar: Chat History */}
-      <div className="w-64 border-r flex flex-col">
+      <div className="w-80 border-r flex flex-col">
         <div className="flex items-center justify-between p-4 border-b">
           <Button
             size="sm"
@@ -158,21 +155,31 @@ export default function AIConversation({
             New Chat
           </Button>
         </div>
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto p-3">
           <span className="text-sm text-gray">Chats</span>
-          {usedAssistants.length === 0 ? (
+          {aiContents.length === 0 ? (
             <div className="text-muted-foreground text-center mt-8">
               No chats yet
             </div>
           ) : (
             <ul>
-              {usedAssistants.map((assistant, idx) => (
+              {aiContents.map((ai, idx) => (
                 <li
-                  key={assistant.id}
-                  className={`flex items-center mt-2 gap-2 px-4 py-3 cursor-pointer rounded-lg transition-colors ${selectedChatIdx === idx ? "bg-muted font-semibold" : "hover:bg-muted/60"}`}
+                  key={ai.id}
+                  className={`flex gap-2 items-start mt-2 px-2 py-2 cursor-pointer rounded-lg transition-colors ${selectedChatIdx === idx ? "bg-muted font-semibold" : "hover:bg-muted/60"}`}
                   onClick={() => onChatHistoryClicked(idx)}>
-                  {assistant.icon}
-                  <span className="truncate">{assistant.name}</span>
+                  <span>{ai.assistant.icon}</span>
+                  <div className="flex flex-col ml-auto items-start">
+                    <span className="truncate font-medium text-foreground text-sm">
+                      {ai.assistant.name}
+                    </span>
+                    <span className="mt-1 line-clamp-2 text-foreground-muted text-xs">
+                      {truncateFirstLine(ai.content, 60)}
+                    </span>
+                    <span className="mt-2 text-foreground-muted text-xs">
+                      {ai.createdAt}
+                    </span>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -181,9 +188,9 @@ export default function AIConversation({
       </div>
 
       {/* Right Panel: Chat or AssistantList */}
-      <div className="flex-1 flex flex-col h-full p-8">
+      <div className="flex-1 flex flex-col h-full pt-4">
         {showAssistantList ? (
-          <div className="flex-1 flex flex-col items-center">
+          <div className="flex-1 flex flex-col items-center pt-8">
             <h2 className="text-lg font-semibold mb-4 flex items-center">
               <Bot className="mr-1 h-4 w-4" />
               <span>AI Assistants</span>
@@ -195,53 +202,69 @@ export default function AIConversation({
             />
           </div>
         ) : selectedChatIdx !== null && usedAssistants[selectedChatIdx] ? (
-          <div className="flex-1 flex flex-col items-center justify-start p-6">
-            <Card className="flex flex-col w-full max-w-3xl mx-auto p-4 gap-8 shadow-none border-0 pt-8">
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-start justify-end">
-                <div className="px-4 py-2 rounded-2xl text-sm max-w-[75%] bg-primary text-white rounded-br-none">
-                  {usedAssistants[selectedChatIdx]?.instructions}
+          <>
+            <div className="flex items-center justify-between w-full mb-4 px-4">
+              <span className="ml-2 font-semibold text-lg">
+                {usedAssistants[selectedChatIdx].icon}{" "}
+                {usedAssistants[selectedChatIdx].name}
+              </span>
+              <div>
+                <div className="flex gap-2">
+                  <Button variant="ghost" size="sm">
+                    <Trash2Icon className="h-4 w-4 text-destructive" />
+                  </Button>
                 </div>
-                <div className="rounded-lg bg-muted ml-2 flex items-center justify-center min-w-[2.5rem] min-h-[2.5rem]">
-                  <User className="h-4 w-4 text-primary" />
-                </div>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-start justify-start">
-                <div className="rounded-lg bg-muted mr-2 flex items-center justify-center min-w-[2.5rem] min-h-[2.5rem]">
-                  {isFetching ? (
-                    <Brain className="h-4 w-4 text-primary animate-pulse" />
-                  ) : isStreaming ? (
-                    <PenLine className="h-4 w-4 text-primary animate-pulse" />
-                  ) : (
-                    <Bot className="h-4 w-4 text-primary" />
-                  )}
-                </div>
-                {isFetching == false && (
-                  <div className="relative w-[80%]">
-                    <div className="overflow-y-auto scrollbar-gutter-stable prose prose-slate max-w-none bg-muted text-foreground p-4 rounded-xl prose-p:my-1 prose-li:my-0 prose-ul:my-1 prose-ol:my-1 leading-relaxed">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {messages.join("")}
-                      </ReactMarkdown>
-                    </div>
-                    {isFetching == false && isStreaming == false && (
-                      <button
-                        className="cursor-pointer mt-2 p-2 rounded hover:bg-muted/80 transition-colors"
-                        onClick={handleCopyMessages}
-                        title="Copy to clipboard"
-                        type="button">
-                        <Copy className="h-4 w-4 text-muted-foreground" />
-                      </button>
+              </div>
+            </div>
+
+            <div className="flex-1 flex flex-col items-center justify-start p-6">
+              <Card className="flex flex-col w-full max-w-3xl mx-auto p-4 gap-8 shadow-none border-0">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-start justify-end">
+                  <div className="px-4 py-2 rounded-2xl text-sm max-w-[75%] bg-primary text-white rounded-br-none">
+                    {usedAssistants[selectedChatIdx]?.instructions}
+                  </div>
+                  <div className="rounded-lg bg-muted ml-2 flex items-center justify-center min-w-[2.5rem] min-h-[2.5rem]">
+                    <User className="h-4 w-4 text-primary" />
+                  </div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-start justify-start">
+                  <div className="rounded-lg bg-muted mr-2 flex items-center justify-center min-w-[2.5rem] min-h-[2.5rem]">
+                    {isFetching ? (
+                      <Brain className="h-4 w-4 text-primary animate-pulse" />
+                    ) : isStreaming ? (
+                      <PenLine className="h-4 w-4 text-primary animate-pulse" />
+                    ) : (
+                      <Bot className="h-4 w-4 text-primary" />
                     )}
                   </div>
-                )}
-              </motion.div>
-            </Card>
-          </div>
+                  {isFetching == false && (
+                    <div className="relative w-[80%]">
+                      <div className="overflow-y-auto scrollbar-gutter-stable prose prose-slate max-w-none bg-muted text-foreground p-4 rounded-xl prose-p:my-1 prose-li:my-0 prose-ul:my-1 prose-ol:my-1 leading-relaxed">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {messages.join("")}
+                        </ReactMarkdown>
+                      </div>
+                      {isFetching == false && isStreaming == false && (
+                        <button
+                          className="cursor-pointer mt-2 p-2 rounded hover:bg-muted/80 transition-colors"
+                          onClick={() => CopyToClipboard(messages.join(""))}
+                          title="Copy to clipboard"
+                          type="button">
+                          <Copy className="h-4 w-4 text-muted-foreground" />
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </motion.div>
+              </Card>
+            </div>
+          </>
         ) : null}
       </div>
     </div>
