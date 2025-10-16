@@ -18,7 +18,7 @@ public class FindUserQueryHandler : IRequestHandler<FindUserQuery, IReadOnlyColl
 		}
 
 		var query = _context.Set<User>().Where(u => u.IsActive);
-		query = query.Where(u => u.FullName.StartsWith(request.Query) || u.Email.StartsWith(request.Query));
+		query = query.Where(u => u.FullName.StartsWith(request.Query, StringComparison.OrdinalIgnoreCase) || u.Email.StartsWith(request.Query, StringComparison.OrdinalIgnoreCase));
 
 		var users = await query
 			.Select(u => new Participant

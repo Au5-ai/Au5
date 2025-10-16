@@ -1,9 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { IconArrowsUpDown } from "@tabler/icons-react";
 import {
   Table,
   TableBody,
@@ -14,7 +11,6 @@ import {
 } from "@/shared/components/ui/table";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
-import { Button } from "@/shared/components/ui/button";
 import {
   Avatar,
   AvatarFallback,
@@ -35,48 +31,6 @@ interface SpaceGridProps {
 }
 
 export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
-  const [sortConfig, setSortConfig] = useState({
-    key: "name",
-    direction: "asc",
-  });
-
-  const filteredAndSortedSpaces = React.useMemo(() => {
-    const filtered: Space[] = spaces;
-
-    if (sortConfig.key) {
-      filtered.sort((a, b) => {
-        const aValue = a[sortConfig.key as keyof Space];
-        const bValue = b[sortConfig.key as keyof Space];
-
-        if (
-          aValue === undefined ||
-          bValue === undefined ||
-          aValue === null ||
-          bValue === null
-        )
-          return 0;
-
-        if (aValue < bValue) {
-          return sortConfig.direction === "asc" ? -1 : 1;
-        }
-        if (aValue > bValue) {
-          return sortConfig.direction === "asc" ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-
-    return filtered;
-  }, [spaces, sortConfig]);
-
-  const handleSort = (key: string) => {
-    setSortConfig((current) => ({
-      key,
-      direction:
-        current.key === key && current.direction === "asc" ? "desc" : "asc",
-    }));
-  };
-
   if (isLoading) {
     return (
       <Card className="border-0 shadow-sm bg-white py-0">
