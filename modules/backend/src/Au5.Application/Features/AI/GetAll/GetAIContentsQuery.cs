@@ -1,8 +1,8 @@
 namespace Au5.Application.Features.AI.GetAll;
 
-public record GetAIContentsQuery(Guid MeetingId, string MeetId) : IRequest<Result<IReadOnlyCollection<AIContentsReposne>>>;
+public record GetAIContentsQuery(Guid MeetingId, string MeetId) : IRequest<Result<IReadOnlyCollection<AIContentsResponse>>>;
 
-public record AIContentsReposne
+public record AIContentsResponse
 {
 	public int Id { get; set; }
 
