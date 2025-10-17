@@ -22,6 +22,8 @@ export const API_URLS = {
       `/meetings/${meetingId}/sessions/${meetId}/transcription`,
     TOGGLE_FAVORITE: (meetingId: string, meetId: string) =>
       `/meetings/${meetingId}/sessions/${meetId}/toggle-favorite`,
+    TOGGLE_ARCHIVE: (meetingId: string, meetId: string) =>
+      `/meetings/${meetingId}/sessions/${meetId}/toggle-archive`,
   },
   SETUP: {
     HELLO_ADMIN: "/setUp/hello-admin",

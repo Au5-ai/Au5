@@ -3,6 +3,7 @@ using Au5.Application.Features.Meetings.AddBot;
 using Au5.Application.Features.Meetings.CloseMeetingByUser;
 using Au5.Application.Features.Meetings.GetFullTranscription;
 using Au5.Application.Features.Meetings.MyMeeting;
+using Au5.Application.Features.Meetings.ToggleArchive;
 using Au5.Application.Features.Meetings.ToggleFavorite;
 using Au5.Domain.Common;
 
@@ -62,5 +63,12 @@ public class MeetingsController(ISender mediator) : BaseController
 	public async Task<IActionResult> ToggleFavorite([FromRoute] Guid meetingId, [FromRoute] string meetId, CancellationToken cancellationToken)
 	{
 		return Ok(await mediator.Send(new ToggleFavoriteCommand(meetingId, meetId), cancellationToken));
+	}
+
+	[HttpPost("{meetingId}/sessions/{meetId}/toggle-archive")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> ToggleArchive([FromRoute] Guid meetingId, [FromRoute] string meetId, CancellationToken cancellationToken)
+	{
+		return Ok(await mediator.Send(new ToggleArchiveCommand(meetingId, meetId), cancellationToken));
 	}
 }

@@ -142,7 +142,7 @@ export default function AIConversation({
   }, [messages]);
 
   return (
-    <div className="flex w-full h-screen overflow-hidden border-t">
+    <div className="flex w-full h-full overflow-hidden border-t">
       {/* Left Sidebar: Chat History */}
       <div className="w-80 border-r flex flex-col">
         <div className="flex items-center justify-between p-4 border-b">

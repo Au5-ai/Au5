@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Star, Trash } from "lucide-react";
+import { Archive, ArchiveRestore, Star, Trash } from "lucide-react";
 import { meetingsController } from "@/shared/network/api/meetingsController";
 import { Button } from "@/shared/components/ui/button";
 import { GLOBAL_CAPTIONS } from "../../../../../../shared/i18n/captions";
@@ -12,21 +12,30 @@ import {
 } from "../../../../../../shared/components/ui";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { ArchiveConfirmationModal } from "./archiveConfirmationModal";
+import { set } from "date-fns";
 
 interface NavActionsProps {
   meetingId?: string;
   meetId?: string;
   isFavorite?: boolean;
+  meetingStatus?: string;
 }
 
 export function NavActions({
   meetingId,
   meetId,
   isFavorite = false,
+  meetingStatus,
 }: NavActionsProps) {
   const [isToggling, setIsToggling] = React.useState(false);
   const [currentFavoriteStatus, setCurrentFavoriteStatus] =
     React.useState(isFavorite);
+  const [showArchiveModal, setShowArchiveModal] = React.useState(false);
+  const [isArchiving, setIsArchiving] = React.useState(false);
+  const [isArchived, setIsArchived] = React.useState(
+    meetingStatus === "Archived",
+  );
 
   React.useEffect(() => {
     setCurrentFavoriteStatus(isFavorite);
@@ -48,21 +57,39 @@ export function NavActions({
       } else {
         toast.success("Meeting has been removed from your favorite list");
       }
-      console.log(response);
       setCurrentFavoriteStatus(response.isFavorite);
-      // await queryClient.invalidateQueries({ queryKey: ["meetings"] });
-      // await queryClient.invalidateQueries({
-      //   queryKey: ["transcription", meetingId],
-      // });
-      // await queryClient.refetchQueries({
-      //   queryKey: ["transcription", meetingId],
-      // });
     } catch (error) {
       console.error("Failed to toggle favorite:", error);
       toast.error("Failed to Change state of Favorite");
       setCurrentFavoriteStatus(!currentFavoriteStatus);
     } finally {
       setTimeout(() => setIsToggling(false), 300);
+    }
+  };
+
+  const handleArchiveConfirm = async () => {
+    if (!meetingId || !meetId) return;
+
+    try {
+      setIsArchiving(true);
+      const response = await meetingsController.toggleArchive(
+        meetingId,
+        meetId,
+      );
+
+      if (response.isArchived) {
+        toast.success(GLOBAL_CAPTIONS.pages.meetings.archivedSuccess);
+      } else {
+        toast.success(GLOBAL_CAPTIONS.pages.meetings.unarchivedSuccess);
+      }
+
+      setIsArchived(response.isArchived);
+    } catch (error) {
+      console.error("Failed to toggle archive:", error);
+      toast.error(GLOBAL_CAPTIONS.pages.meetings.archiveError);
+    } finally {
+      setIsArchiving(false);
+      setShowArchiveModal(false);
     }
   };
 
@@ -104,10 +131,30 @@ export function NavActions({
       <Button
         variant="ghost"
         size="sm"
-        className="h-8 px-3 cursor-pointer hover:bg-gray-100 text-red-600 hover:text-red-700 hover:bg-red-50">
-        <Trash className="h-4 w-4 mr-2" />
-        {GLOBAL_CAPTIONS.actions.moveToArchive}
+        onClick={() => setShowArchiveModal(true)}
+        disabled={!meetingId || !meetId}
+        className={`h-8 cursor-pointer hover:bg-gray-100 ${
+          isArchived
+            ? "text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100"
+            : "text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100"
+        }`}>
+        {isArchived ? (
+          <ArchiveRestore className="w-5 h-5 text-green-600" />
+        ) : (
+          <Archive className="w-5 h-5 text-orange-600" />
+        )}
+        {isArchived
+          ? GLOBAL_CAPTIONS.actions.removeFromArchive
+          : GLOBAL_CAPTIONS.actions.moveToArchive}
       </Button>
+
+      <ArchiveConfirmationModal
+        open={showArchiveModal}
+        onOpenChange={setShowArchiveModal}
+        isArchived={isArchived}
+        onConfirm={handleArchiveConfirm}
+        isLoading={isArchiving}
+      />
     </div>
   );
 }

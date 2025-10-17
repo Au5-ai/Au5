@@ -156,126 +156,106 @@ export default function TranscriptionPage() {
   }
 
   return (
-    <>
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
-            <BreadcrumbLayout />
-          </div>
-          <div className="ml-auto px-4">
-            <NavActions
-              meetingId={transcription?.id}
-              meetId={transcription?.meetingId}
-              isFavorite={transcription?.isFavorite}
-            />
-          </div>
-        </header>
-        <div className="min-h-screen w-full">
-          <Tabs
-            value={selectedTab}
-            onValueChange={setSelectedTab}
-            className="w-full">
-            <div className="bg-muted px-4">
-              <TabsList className="gap-4">
-                <TabsTrigger value="Transcription">
-                  <CaptionsIcon className="h-4 w-4" /> Transcription
-                </TabsTrigger>
+    <div className="min-h-screen w-full">
+      <TranscriptionHeader meeting={transcription} />
+      <Tabs
+        value={selectedTab}
+        onValueChange={setSelectedTab}
+        className="w-full gap-0">
+        <div className="bg-muted px-4 sticky top-0 z-20 h-12 flex items-center">
+          <TabsList className="gap-4">
+            <TabsTrigger value="Transcription">
+              <CaptionsIcon className="h-4 w-4" /> Transcription
+            </TabsTrigger>
 
-                <TabsTrigger value="AIConversation">
-                  <MessageCircleCode className="h-4 w-4" /> AI meeting notes
-                  <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums">
-                    {aiContents.length}
-                  </Badge>
-                </TabsTrigger>
-              </TabsList>
+            <TabsTrigger value="AIConversation">
+              <MessageCircleCode className="h-4 w-4" /> AI meeting notes
+              <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums">
+                {aiContents.length}
+              </Badge>
+            </TabsTrigger>
+          </TabsList>
+        </div>
+        <TabsContent value="Transcription">
+          <div className="flex">
+            <div className="flex-[2] bg-white">
+              <div className="sticky top-[48px] z-10 bg-white border-b border-gray-100">
+                <TranscriptionFilters
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  filterType={filterType}
+                  setFilterType={setFilterType}
+                  selectedSpeaker={selectedSpeaker}
+                  setSelectedSpeaker={setSelectedSpeaker}
+                  speakers={speakers}
+                />
+              </div>
+              <div className="divide-y divide-gray-100">
+                {filteredEntries.length > 0 ? (
+                  filteredEntries.map((entry, index) => (
+                    <TranscriptionEntry
+                      key={entry.blockId}
+                      entry={entry}
+                      index={index}
+                    />
+                  ))
+                ) : (
+                  <NoSearchResults />
+                )}
+              </div>
             </div>
-            <TabsContent value="Transcription">
-              <TranscriptionHeader meeting={transcription} />
-              <TranscriptionFilters
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                filterType={filterType}
-                setFilterType={setFilterType}
-                selectedSpeaker={selectedSpeaker}
-                setSelectedSpeaker={setSelectedSpeaker}
-                speakers={speakers}
-              />
-              <div className="">
-                <div className="flex">
-                  <div className="flex-[2] bg-white overflow-hidden divide-y divide-gray-100">
-                    {filteredEntries.length > 0 ? (
-                      filteredEntries.map((entry, index) => (
-                        <TranscriptionEntry
-                          key={entry.blockId}
-                          entry={entry}
-                          index={index}
-                        />
-                      ))
-                    ) : (
-                      <NoSearchResults />
-                    )}
-                  </div>
-                  <div className="flex-[1] bg-slate-50/50 border-gray-100 border-l">
-                    <div className="flex h-[calc(100vh-72px)] w-full sticky top-[72px]">
-                      <main className="flex-1 p-4">
-                        <div className="">
-                          <div className="flex justify-between mb-6">
-                            <span className="font-medium text-gray-900">
-                              Participants
-                            </span>
+            <div className="flex-[1] border-gray-100 border-l">
+              <div className="flex h-[calc(100vh-48px)] w-full sticky top-[48px]">
+                <main className="flex-1 p-4">
+                  <div className="">
+                    <div className="flex justify-between mb-6">
+                      <span className="font-medium text-gray-900">
+                        Participants
+                      </span>
 
-                            <ParticipantAvatarGroup
-                              participants={transcription.participants}
-                              guests={transcription.guests}
-                              maxVisible={8}
-                            />
-                          </div>
-                          <div className="flex items-center gap-3 text-sm text-gray-600 mb-6">
-                            <ParticipantAvatar
-                              fullName={transcription.userRecorder.fullName}
-                              pictureUrl={transcription.userRecorder.pictureUrl}
-                            />
-                            <span className="flex flex-col">
-                              <span>
-                                Recorded by{" "}
-                                <span className="font-medium text-gray-900">
-                                  {transcription.userRecorder.fullName}
-                                </span>
-                              </span>
-                              <span>
-                                {format(
-                                  recordingDate(transcription),
-                                  "dd MMMM yy",
-                                )}{" "}
-                                {format(recordingDate(transcription), "HH:mm")}
-                              </span>
-                            </span>
-                          </div>
-                        </div>
-                      </main>
+                      <ParticipantAvatarGroup
+                        participants={transcription.participants}
+                        guests={transcription.guests}
+                        maxVisible={8}
+                      />
+                    </div>
+                    <div className="flex items-center gap-3 text-sm text-gray-600 mb-6">
+                      <ParticipantAvatar
+                        fullName={transcription.userRecorder.fullName}
+                        pictureUrl={transcription.userRecorder.pictureUrl}
+                      />
+                      <span className="flex flex-col">
+                        <span>
+                          Recorded by{" "}
+                          <span className="font-medium text-gray-900">
+                            {transcription.userRecorder.fullName}
+                          </span>
+                        </span>
+                        <span>
+                          {format(recordingDate(transcription), "dd MMMM yy")}{" "}
+                          {format(recordingDate(transcription), "HH:mm")}
+                        </span>
+                      </span>
                     </div>
                   </div>
-                </div>
+                </main>
               </div>
-            </TabsContent>
-            <TabsContent value="AIConversation">
-              <AIConversation
-                onNewContent={(newContent) =>
-                  setAIContents((prev) => [...prev, newContent])
-                }
-                aiContents={aiContents}
-                meetId={meetId}
-                meetingId={meetingId}
-              />
-            </TabsContent>
-          </Tabs>
-        </div>
-      </SidebarInset>
-    </>
+            </div>
+          </div>
+        </TabsContent>
+        <TabsContent value="AIConversation">
+          <div className="sticky top-[48px] z-10 h-[calc(100vh-48px)]">
+            <AIConversation
+              onNewContent={(newContent) =>
+                setAIContents((prev) => [...prev, newContent])
+              }
+              aiContents={aiContents}
+              meetId={meetId}
+              meetingId={meetingId}
+            />
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }
