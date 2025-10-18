@@ -1,4 +1,4 @@
-import { AIContents, Meeting, MeetingData } from "@/shared/types";
+import { AIContent, Meeting, MeetingData } from "@/shared/types";
 import { apiRequestClient } from "../apiRequestClient";
 import { API_URLS } from "./urls";
 
@@ -8,8 +8,8 @@ export const meetingsController = {
       method: "GET",
     });
   },
-  getAIContents: (meetingId: string, meetId: string): Promise<AIContents[]> => {
-    return apiRequestClient<AIContents[]>(
+  getAIContents: (meetingId: string, meetId: string): Promise<AIContent[]> => {
+    return apiRequestClient<AIContent[]>(
       API_URLS.MEETING.AI_CONTENTS(meetingId, meetId),
       {
         method: "GET",
@@ -35,6 +35,17 @@ export const meetingsController = {
   ): Promise<{ isFavorite: boolean }> => {
     return apiRequestClient<{ isFavorite: boolean }>(
       API_URLS.MEETING.TOGGLE_FAVORITE(meetingId, meetId),
+      {
+        method: "POST",
+      },
+    );
+  },
+  toggleArchive: (
+    meetingId: string,
+    meetId: string,
+  ): Promise<{ isArchived: boolean }> => {
+    return apiRequestClient<{ isArchived: boolean }>(
+      API_URLS.MEETING.TOGGLE_ARCHIVE(meetingId, meetId),
       {
         method: "POST",
       },

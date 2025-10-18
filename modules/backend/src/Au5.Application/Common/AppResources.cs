@@ -41,6 +41,8 @@ internal static class AppResources
 		public const string NoContent = "No content is available for this meeting. The meeting may not have started or no transcription data exists.";
 		public const string InvalidTranscriptionModel = "Invalid transcription model specified. Please use either 'liveCaption' or 'liveAudio'.";
 		public const string FailedToToggleFavorite = "Failed to update favorite status. Please try again or contact support if the issue persists.";
+		public const string FailedToToggleArchive = "Failed to update archive status. Please try again or contact support if the issue persists.";
+		public const string CannotArchiveActiveMeeting = "Cannot archive an active meeting. Only ended meetings can be archived.";
 		public const string UnauthorizedToModify = "You are not authorized to modify this meeting. Only meeting participants can perform this action.";
 	}
 

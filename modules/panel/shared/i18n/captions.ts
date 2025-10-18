@@ -26,7 +26,8 @@ export const GLOBAL_CAPTIONS = {
     succeeded: "Succeeded",
     failed: "Failed",
     sending: "Sending...",
-    moveToArchive: "Move to Archived",
+    moveToArchive: "Move to Archive",
+    removeFromArchive: "Remove from Archive",
   },
   fields: {
     email: {
@@ -118,6 +119,9 @@ export const GLOBAL_CAPTIONS = {
     meetings: {
       aiAssistants: "AI Assistants",
       speakerSttistics: "Speaker Statistics",
+      archivedSuccess: "Meeting has been archived successfully",
+      unarchivedSuccess: "Meeting has been removed from archive successfully",
+      archiveError: "Failed to change archive status. Please try again.",
     },
   },
 } as const;
