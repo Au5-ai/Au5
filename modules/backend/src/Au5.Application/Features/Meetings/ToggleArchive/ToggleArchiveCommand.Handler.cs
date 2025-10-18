@@ -30,18 +30,16 @@ public class ToggleArchiveCommandHandler : IRequestHandler<ToggleArchiveCommand,
 			return Error.Forbidden(description: AppResources.Meeting.UnauthorizedToModify);
 		}
 
-		if (meeting.Status == MeetingStatus.Archived)
+		switch (meeting.Status)
 		{
-			meeting.Status = MeetingStatus.Ended;
-		}
-		else
-		{
-			if (meeting.Status != MeetingStatus.Ended)
-			{
+			case MeetingStatus.Archived:
+				meeting.Status = MeetingStatus.Ended;
+				break;
+			case MeetingStatus.Ended:
+				meeting.Status = MeetingStatus.Archived;
+				break;
+			default:
 				return Error.BadRequest(description: AppResources.Meeting.CannotArchiveActiveMeeting);
-			}
-
-			meeting.Status = MeetingStatus.Archived;
 		}
 
 		var result = await _dbContext.SaveChangesAsync(cancellationToken);

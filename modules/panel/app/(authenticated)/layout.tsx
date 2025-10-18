@@ -42,8 +42,13 @@ export default function AuthenticatedLayout({
               <BreadcrumbLayout />
             </div>
             <div className="ml-auto px-4">
-              <Button variant="outline" size="sm">
-                <IconBrandGithub /> Github
+              <Button variant="outline" size="sm" asChild>
+                <a
+                  href="https://github.com/Au5-ai/Au5"
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  <IconBrandGithub /> Github
+                </a>
               </Button>
             </div>
           </header>

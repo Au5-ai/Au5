@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Archive, ArchiveRestore, Star, Trash } from "lucide-react";
+import { Archive, ArchiveRestore, Star } from "lucide-react";
 import { meetingsController } from "@/shared/network/api/meetingsController";
 import { Button } from "@/shared/components/ui/button";
 import { GLOBAL_CAPTIONS } from "../../../../../../shared/i18n/captions";
@@ -13,7 +13,6 @@ import {
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { ArchiveConfirmationModal } from "./archiveConfirmationModal";
-import { set } from "date-fns";
 
 interface NavActionsProps {
   meetingId?: string;
