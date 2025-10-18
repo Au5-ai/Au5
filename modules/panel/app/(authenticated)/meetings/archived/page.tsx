@@ -7,17 +7,14 @@ import {
 } from "@/shared/components/ui/avatar";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
-import { Link, Share2, Star, Trash2 } from "lucide-react";
+import { Star, Trash2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { MeetingListSkeleton } from "@/app/(authenticated)/meetings/meeting-list-skeleton";
 import { useRouter } from "next/navigation";
 import { meetingsController } from "@/shared/network/api/meetingsController";
 import { MeetingItem } from "@/shared/types";
 import NoRecordsState from "@/shared/components/empty-states/no-record";
-import { SidebarInset, SidebarTrigger } from "@/shared/components/ui";
 import { NetworkError } from "@/shared/components/empty-states/error";
-import { Separator } from "@radix-ui/react-separator";
-import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
 import { API_URLS } from "@/shared/network/api/urls";
 
 export default function MyMeetingPage() {
@@ -51,20 +48,7 @@ export default function MyMeetingPage() {
   }
 
   return (
-    <SidebarInset>
-      <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-        <div className="flex items-center gap-2 px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator
-            orientation="vertical"
-            className="mr-2 data-[orientation=vertical]:h-4"
-          />
-          <BreadcrumbLayout />
-        </div>
-        <div className="ml-auto px-4">
-          {/* Render a component passed from children via a prop */}
-        </div>
-      </header>
+    <>
       {meetings.length === 0 && <NoRecordsState />}
       {meetings.length > 0 && (
         <div className="flex flex-1 flex-col">
@@ -120,33 +104,14 @@ export default function MyMeetingPage() {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="flex gap-2">
-                        {item.isFavorite && (
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        )}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          title="Open"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}>
-                          <Link className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          title="Share"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}>
-                          <Share2 className="h-4 w-4" />
-                        </Button>
                         <Button
                           variant="ghost"
                           size="icon"
                           title="Delete"
+                          className="cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
+                            // Handle delete action here
                           }}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -159,6 +124,6 @@ export default function MyMeetingPage() {
           ))}
         </div>
       )}
-    </SidebarInset>
+    </>
   );
 }

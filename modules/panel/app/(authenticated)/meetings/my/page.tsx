@@ -7,16 +7,13 @@ import {
 } from "@/shared/components/ui/avatar";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
-import { Link, Share2, Star, Trash2 } from "lucide-react";
+import { Star, Trash2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { MeetingListSkeleton } from "@/app/(authenticated)/meetings/meeting-list-skeleton";
 import { useRouter } from "next/navigation";
-import { SidebarInset, SidebarTrigger } from "@/shared/components/ui/sidebar";
-import { Separator } from "@/shared/components/ui/separator";
 import { meetingsController } from "@/shared/network/api/meetingsController";
 import { MeetingItem } from "@/shared/types";
 import { NetworkError } from "@/shared/components/empty-states/error";
-import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
 import NoRecordsState from "@/shared/components/empty-states/no-record";
 import { API_URLS } from "@/shared/network/api/urls";
 
@@ -47,20 +44,7 @@ export default function MyMeetingPage() {
   }
 
   return (
-    <SidebarInset>
-      <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-        <div className="flex items-center gap-2 px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator
-            orientation="vertical"
-            className="mr-2 data-[orientation=vertical]:h-4"
-          />
-          <BreadcrumbLayout />
-        </div>
-        <div className="ml-auto px-4">
-          {/* Render a component passed from children via a prop */}
-        </div>
-      </header>
+    <>
       {meetings.length === 0 && <NoRecordsState />}
       {meetings.length > 0 && (
         <div className="flex flex-1 flex-col">
@@ -137,6 +121,6 @@ export default function MyMeetingPage() {
           ))}
         </div>
       )}
-    </SidebarInset>
+    </>
   );
 }

@@ -33,7 +33,7 @@ export default function AuthenticatedLayout({
         <AppSidebar user={user} menu={menu} spaces={spaces} />
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-            <div className="flex items-center gap-2 px-4">
+            <div className="flex items-center gap-2 px-6">
               <SidebarTrigger className="-ml-1" />
               <Separator
                 orientation="vertical"
@@ -41,7 +41,7 @@ export default function AuthenticatedLayout({
               />
               <BreadcrumbLayout />
             </div>
-            <div className="ml-auto px-4">
+            <div className="ml-auto px-6">
               <Button variant="outline" size="sm" asChild>
                 <a
                   href="https://github.com/Au5-ai/Au5"
