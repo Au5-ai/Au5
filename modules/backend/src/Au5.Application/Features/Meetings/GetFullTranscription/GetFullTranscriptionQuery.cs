@@ -34,5 +34,5 @@ public class FullTranscriptionResponse
 
 	public IReadOnlyList<EntryDto> Entries { get; init; }
 
-	public IReadOnlyCollection<Space> Spaces { get; init; }
+	public IReadOnlyCollection<SpaceDto> Spaces { get; init; }
 }

@@ -1,4 +1,5 @@
 import { Assistant } from "./assistants";
+import { Space } from "./space";
 import { Participant, User } from "./user";
 
 export interface MeetingItem {
@@ -40,6 +41,7 @@ export interface Meeting {
   participants: Array<Participant>;
   guests: Array<Participant>;
   entries: Array<Entry>;
+  spaces: Array<Space>;
 }
 
 export interface Entry {

@@ -48,7 +48,12 @@ public class GetFullTranscriptionQueryHandler : IRequestHandler<GetFullTranscrip
 			Duration = meeting.Duration,
 			Status = meeting.Status.ToString(),
 			IsFavorite = meeting.IsFavorite,
-			Spaces = meeting.MeetingSpaces?.Select(m => m.Space).ToList(),
+			Spaces = meeting.MeetingSpaces?.Select(m => new SpaceDto()
+			{
+				Id = m.SpaceId,
+				Name = m.Space.Name,
+				Description = m.Space.Description
+			}).ToList(),
 			Participants = meeting.Participants
 										.Select(p => p.User.ToParticipant())
 										.ToList()

@@ -23,9 +23,10 @@ import AIConversation from "../aiConversation";
 import ParticipantAvatar from "@/shared/components/transcription/participantAvatar";
 import { format } from "date-fns";
 import ParticipantAvatarGroup from "@/shared/components/transcription/participantAvatarGroup";
-import { CollapsibleList } from "@/shared/components/collapsibleList";
-import { MySpacesResponse, Space } from "@/shared/types/space";
+import { MySpacesResponse } from "@/shared/types/space";
 import { useCurrentUserSpaces } from "@/shared/hooks/use-user";
+import { MeetingSpaceCollapsible } from "../meetingSpaceCollapsible";
+import { toast } from "sonner";
 
 export default function TranscriptionPage() {
   const [aiContents, setAIContents] = useState<AIContent[]>([]);
@@ -122,6 +123,25 @@ export default function TranscriptionPage() {
     return transcription.entries?.[0]?.timestamp
       ? new Date(transcription.entries[0].timestamp)
       : new Date(transcription.createdAt || Date.now());
+  };
+
+  const handleSpaceSelection = async (spaceId: string, isSelected: boolean) => {
+    try {
+      if (isSelected) {
+        await meetingsController.addMeetingToSpace(meetingId, meetId, spaceId);
+        toast.success("Meeting added to space successfully");
+      } else {
+        await meetingsController.removeMeetingFromSpace(
+          meetingId,
+          meetId,
+          spaceId,
+        );
+        toast.success("Meeting removed from space successfully");
+      }
+    } catch (error) {
+      console.error("Error updating space selection:", error);
+      toast.error("Failed to update space selection. Please try again.");
+    }
   };
 
   if (loading) {
@@ -242,13 +262,13 @@ export default function TranscriptionPage() {
                       </span>
                     </div>
                     <SidebarSeparator className="mx-0 mt-4 mb-4" />
-                    <CollapsibleList
+                    <MeetingSpaceCollapsible
                       defaultOpen={true}
-                      row={{
-                        icon: Blocks,
-                        name: "Add to your spaces",
-                        items: spaces?.map((space) => space.name) || [],
-                      }}
+                      spaces={spaces}
+                      icon={Blocks}
+                      name="Add to your spaces"
+                      selectedSpaceIds={transcription.spaces.map((x) => x.id)}
+                      onSelect={handleSpaceSelection}
                     />
                   </div>
                 </main>

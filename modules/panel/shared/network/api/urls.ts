@@ -24,6 +24,10 @@ export const API_URLS = {
       `/meetings/${meetingId}/sessions/${meetId}/toggle-favorite`,
     TOGGLE_ARCHIVE: (meetingId: string, meetId: string) =>
       `/meetings/${meetingId}/sessions/${meetId}/toggle-archive`,
+    ADD_TO_SPACE: (meetingId: string, meetId: string) =>
+      `/meetings/${meetingId}/sessions/${meetId}/spaces`,
+    REMOVE_FROM_SPACE: (meetingId: string, meetId: string, spaceId: string) =>
+      `/meetings/${meetingId}/sessions/${meetId}/spaces/${spaceId}`,
   },
   SETUP: {
     HELLO_ADMIN: "/setUp/hello-admin",
