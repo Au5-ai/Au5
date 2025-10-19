@@ -8,11 +8,15 @@ namespace Au5.UnitTests.Application.Features.MeetingSpaces.RemoveMeetingFromSpac
 public class RemoveMeetingFromSpaceCommandHandlerTestFixture
 {
 	public Mock<IApplicationDbContext> MockDbContext { get; } = new();
+
 	public RemoveMeetingFromSpaceCommandHandler Handler { get; private set; }
 
 	public MeetingSpace TestMeetingSpace { get; private set; }
+
 	public List<MeetingSpace> TestMeetingSpaces { get; private set; } = [];
+
 	public Guid TestMeetingId { get; } = Guid.NewGuid();
+
 	public Guid TestSpaceId { get; } = Guid.NewGuid();
 
 	public RemoveMeetingFromSpaceCommandHandlerTestFixture WithExistingMeetingSpace()

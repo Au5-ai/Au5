@@ -57,10 +57,9 @@ export const meetingsController = {
     spaceId: string,
   ): Promise<{ success: boolean; message: string }> => {
     return apiRequestClient<{ success: boolean; message: string }>(
-      API_URLS.MEETING.ADD_TO_SPACE(meetingId, meetId),
+      API_URLS.MEETING.ADD_TO_SPACE(meetingId, meetId, spaceId),
       {
         method: "POST",
-        body: JSON.stringify({ meetingId, spaceId }),
         headers: { "Content-Type": "application/json" },
       },
     );

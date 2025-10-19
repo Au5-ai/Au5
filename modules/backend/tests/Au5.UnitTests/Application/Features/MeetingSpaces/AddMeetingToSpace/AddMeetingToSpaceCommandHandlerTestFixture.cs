@@ -8,12 +8,17 @@ namespace Au5.UnitTests.Application.Features.MeetingSpaces.AddMeetingToSpace;
 public class AddMeetingToSpaceCommandHandlerTestFixture
 {
 	public Mock<IApplicationDbContext> MockDbContext { get; } = new();
+
 	public Mock<ICurrentUserService> MockCurrentUserService { get; } = new();
+
 	public AddMeetingToSpaceCommandHandler Handler { get; private set; }
 
 	public Meeting TestMeeting { get; private set; }
+
 	public Space TestSpace { get; private set; }
+
 	public List<MeetingSpace> TestMeetingSpaces { get; private set; } = [];
+
 	public Guid TestUserId { get; } = Guid.NewGuid();
 
 	public AddMeetingToSpaceCommandHandlerTestFixture WithValidMeeting()
@@ -91,6 +96,7 @@ public class AddMeetingToSpaceCommandHandlerTestFixture
 				UserId = TestUserId,
 				CreatedAt = DateTime.UtcNow
 			}
+
 		];
 
 		var meetingSpaceDbSet = TestMeetingSpaces.BuildMockDbSet();

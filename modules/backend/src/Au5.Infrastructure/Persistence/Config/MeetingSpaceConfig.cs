@@ -8,7 +8,7 @@ public class MeetingSpaceConfig : IEntityTypeConfiguration<MeetingSpace>
 {
 	public void Configure(EntityTypeBuilder<MeetingSpace> builder)
 	{
-		builder.HasKey(us => new { us.UserId, us.SpaceId })
+		builder.HasKey(us => new { us.MeetingId, us.SpaceId })
 			.HasName("PK_dbo_MeetingSpace");
 
 		builder.Property(x => x.CreatedAt)

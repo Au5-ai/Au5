@@ -75,10 +75,11 @@ public class MeetingsController(ISender mediator) : BaseController
 	}
 
 	[HttpPost]
-	[Route("{meetingId}/sessions/{meetId}/spaces")]
+	[Route("{meetingId}/sessions/{meetId}/spaces/{spaceId}")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	public async Task<IActionResult> AddMeetingToSpace([FromBody] AddMeetingToSpaceCommand command, CancellationToken ct)
+	public async Task<IActionResult> AddMeetingToSpace([FromRoute] Guid meetingId, [FromRoute] Guid spaceId, CancellationToken ct)
 	{
+		var command = new AddMeetingToSpaceCommand(meetingId, spaceId);
 		return Ok(await mediator.Send(command, ct));
 	}
 
