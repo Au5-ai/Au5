@@ -42,6 +42,8 @@ public class Meeting
 
 	public ICollection<Entry> Entries { get; set; }
 
+	public ICollection<MeetingSpace> MeetingSpaces { get; set; }
+
 	public bool IsActive()
 		=> Status is MeetingStatus.Recording or MeetingStatus.Paused;
 

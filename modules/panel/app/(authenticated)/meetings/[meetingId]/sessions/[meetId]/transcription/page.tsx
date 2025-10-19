@@ -7,26 +7,26 @@ import NoRecordsState from "@/shared/components/empty-states/no-record";
 import { LoadingPage } from "@/shared/components/loading-page";
 import {
   Badge,
-  Separator,
-  SidebarInset,
-  SidebarTrigger,
+  SidebarSeparator,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/shared/components/ui";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import BreadcrumbLayout from "@/shared/components/breadcrumb-layout";
-import { NavActions } from "@/app/(authenticated)/meetings/[meetingId]/sessions/[meetId]/navActions";
 import TranscriptionHeader from "@/shared/components/transcription/transcriptionHeader";
 import TranscriptionFilters from "@/shared/components/transcription/transcriptionFilters";
 import TranscriptionEntry from "@/shared/components/transcription/transcriptionEntry";
 import { NoSearchResults } from "@/shared/components/empty-states/no-search-result";
-import { CaptionsIcon, MessageCircleCode } from "lucide-react";
+import { Blocks, CaptionsIcon, Sparkles } from "lucide-react";
 import AIConversation from "../aiConversation";
 import ParticipantAvatar from "@/shared/components/transcription/participantAvatar";
 import { format } from "date-fns";
 import ParticipantAvatarGroup from "@/shared/components/transcription/participantAvatarGroup";
+import { MySpacesResponse } from "@/shared/types/space";
+import { useCurrentUserSpaces } from "@/shared/hooks/use-user";
+import { MeetingSpaceCollapsible } from "../meetingSpaceCollapsible";
+import { toast } from "sonner";
 
 export default function TranscriptionPage() {
   const [aiContents, setAIContents] = useState<AIContent[]>([]);
@@ -37,10 +37,15 @@ export default function TranscriptionPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [selectedSpeaker, setSelectedSpeaker] = useState("");
+  const [spaces, setSpaces] = useState<MySpacesResponse[] | undefined>([]);
 
   const params = useParams();
   const meetingId = params.meetingId as string;
   const meetId = params.meetId as string;
+  const currentUserSpaces = useCurrentUserSpaces();
+  useEffect(() => {
+    setSpaces(currentUserSpaces.data);
+  }, [currentUserSpaces.data]);
 
   useEffect(() => {
     const fetchAIContents = async () => {
@@ -120,6 +125,25 @@ export default function TranscriptionPage() {
       : new Date(transcription.createdAt || Date.now());
   };
 
+  const handleSpaceSelection = async (spaceId: string, isSelected: boolean) => {
+    try {
+      if (isSelected) {
+        await meetingsController.addMeetingToSpace(meetingId, meetId, spaceId);
+        toast.success("Meeting added to space successfully");
+      } else {
+        await meetingsController.removeMeetingFromSpace(
+          meetingId,
+          meetId,
+          spaceId,
+        );
+        toast.success("Meeting removed from space successfully");
+      }
+    } catch (error) {
+      console.error("Error updating space selection:", error);
+      toast.error("Failed to update space selection. Please try again.");
+    }
+  };
+
   if (loading) {
     return (
       <LoadingPage
@@ -169,7 +193,7 @@ export default function TranscriptionPage() {
             </TabsTrigger>
 
             <TabsTrigger value="AIConversation">
-              <MessageCircleCode className="h-4 w-4" /> AI meeting notes
+              <Sparkles className="h-4 w-4" /> AI meeting notes
               <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums">
                 {aiContents.length}
               </Badge>
@@ -237,6 +261,15 @@ export default function TranscriptionPage() {
                         </span>
                       </span>
                     </div>
+                    <SidebarSeparator className="mx-0 mt-4 mb-4" />
+                    <MeetingSpaceCollapsible
+                      defaultOpen={true}
+                      spaces={spaces}
+                      icon={Blocks}
+                      name="Add to your spaces"
+                      selectedSpaceIds={transcription.spaces.map((x) => x.id)}
+                      onSelect={handleSpaceSelection}
+                    />
                   </div>
                 </main>
               </div>

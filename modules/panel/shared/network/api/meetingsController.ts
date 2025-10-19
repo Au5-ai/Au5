@@ -51,4 +51,29 @@ export const meetingsController = {
       },
     );
   },
+  addMeetingToSpace: (
+    meetingId: string,
+    meetId: string,
+    spaceId: string,
+  ): Promise<{ success: boolean; message: string }> => {
+    return apiRequestClient<{ success: boolean; message: string }>(
+      API_URLS.MEETING.ADD_TO_SPACE(meetingId, meetId, spaceId),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+  },
+  removeMeetingFromSpace: (
+    meetingId: string,
+    meetId: string,
+    spaceId: string,
+  ): Promise<{ success: boolean; message: string }> => {
+    return apiRequestClient<{ success: boolean; message: string }>(
+      API_URLS.MEETING.REMOVE_FROM_SPACE(meetingId, meetId, spaceId),
+      {
+        method: "DELETE",
+      },
+    );
+  },
 };

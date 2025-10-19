@@ -5,6 +5,8 @@ using Au5.Application.Features.Meetings.GetFullTranscription;
 using Au5.Application.Features.Meetings.MyMeeting;
 using Au5.Application.Features.Meetings.ToggleArchive;
 using Au5.Application.Features.Meetings.ToggleFavorite;
+using Au5.Application.Features.MeetingSpaces.AddMeetingToSpace;
+using Au5.Application.Features.MeetingSpaces.RemoveMeetingFromSpace;
 using Au5.Domain.Common;
 
 namespace Au5.BackEnd.Controllers;
@@ -70,5 +72,23 @@ public class MeetingsController(ISender mediator) : BaseController
 	public async Task<IActionResult> ToggleArchive([FromRoute] Guid meetingId, [FromRoute] string meetId, CancellationToken cancellationToken)
 	{
 		return Ok(await mediator.Send(new ToggleArchiveCommand(meetingId, meetId), cancellationToken));
+	}
+
+	[HttpPost]
+	[Route("{meetingId}/sessions/{meetId}/spaces/{spaceId}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> AddMeetingToSpace([FromRoute] Guid meetingId, [FromRoute] Guid spaceId, CancellationToken ct)
+	{
+		var command = new AddMeetingToSpaceCommand(meetingId, spaceId);
+		return Ok(await mediator.Send(command, ct));
+	}
+
+	[HttpDelete]
+	[Route("{meetingId}/sessions/{meetId}/spaces/{spaceId}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> RemoveMeetingFromSpace([FromRoute] Guid meetingId, [FromRoute] Guid spaceId, CancellationToken ct)
+	{
+		var command = new RemoveMeetingFromSpaceCommand(meetingId, spaceId);
+		return Ok(await mediator.Send(command, ct));
 	}
 }

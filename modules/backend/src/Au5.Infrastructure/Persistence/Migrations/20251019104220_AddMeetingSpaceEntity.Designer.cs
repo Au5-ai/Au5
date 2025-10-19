@@ -4,6 +4,7 @@ using Au5.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251019104220_AddMeetingSpaceEntity")]
+    partial class AddMeetingSpaceEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -296,7 +299,7 @@ namespace Au5.Infrastructure.Migrations
 
             modelBuilder.Entity("Au5.Domain.Entities.MeetingSpace", b =>
                 {
-                    b.Property<Guid>("MeetingId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("SpaceId")
@@ -305,15 +308,15 @@ namespace Au5.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("MeetingId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("MeetingId", "SpaceId")
+                    b.HasKey("UserId", "SpaceId")
                         .HasName("PK_dbo_MeetingSpace");
 
-                    b.HasIndex("SpaceId");
+                    b.HasIndex("MeetingId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("SpaceId");
 
                     b.ToTable("MeetingSpace");
                 });

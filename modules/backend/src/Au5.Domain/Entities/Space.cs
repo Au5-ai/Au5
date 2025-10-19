@@ -17,6 +17,7 @@ public class Space
 
 	public ICollection<Space> Children { get; set; }
 
-	// Many-to-many relationship with Users
 	public ICollection<UserSpace> UserSpaces { get; set; }
+
+	public ICollection<MeetingSpace> MeetingSpaces { get; set; }
 }
