@@ -81,4 +81,17 @@ internal static class AppResources
 	{
 		public const string OpenAIConnectionFailed = "Can not connect to OpenAI platform, Please check and try again.";
 	}
+
+	/// <summary>
+	/// Meeting space related messages.
+	/// </summary>
+	internal static class MeetingSpace
+	{
+		public const string MeetingNotFound = "Meeting not found";
+		public const string SpaceNotFound = "Space not found";
+		public const string MeetingAlreadyInSpace = "Meeting is already added to this space";
+		public const string MeetingNotInSpace = "Meeting is not associated with this space";
+		public const string AddedSuccessfully = "Meeting successfully added to space";
+		public const string RemovedSuccessfully = "Meeting successfully removed from space";
+	}
 }

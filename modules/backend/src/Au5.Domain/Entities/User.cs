@@ -32,6 +32,8 @@ public class User
 
 	public ICollection<UserSpace> UserSpaces { get; set; }
 
+	public ICollection<MeetingSpace> MeetingSpaces { get; set; }
+
 	public bool IsRegistered()
 		=> Status == UserStatus.CompleteSignUp;
 

@@ -19,6 +19,8 @@ public class GetFullTranscriptionQueryHandler : IRequestHandler<GetFullTranscrip
 			.Include(x => x.Entries)
 				.ThenInclude(ent => ent.Reactions)
 				.ThenInclude(rac => rac.Reaction)
+			.Include(x => x.MeetingSpaces)
+				.ThenInclude(m => m.Space)
 			.FirstOrDefaultAsync(m => m.Id == request.MeetingId && m.MeetId == request.MeetId, cancellationToken);
 
 		if (meeting is null)
@@ -46,6 +48,7 @@ public class GetFullTranscriptionQueryHandler : IRequestHandler<GetFullTranscrip
 			Duration = meeting.Duration,
 			Status = meeting.Status.ToString(),
 			IsFavorite = meeting.IsFavorite,
+			Spaces = meeting.MeetingSpaces?.Select(m => m.Space).ToList(),
 			Participants = meeting.Participants
 										.Select(p => p.User.ToParticipant())
 										.ToList()

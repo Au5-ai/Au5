@@ -33,4 +33,6 @@ public class FullTranscriptionResponse
 	public IReadOnlyList<Participant> Guests { get; init; }
 
 	public IReadOnlyList<EntryDto> Entries { get; init; }
+
+	public IReadOnlyCollection<Space> Spaces { get; init; }
 }
