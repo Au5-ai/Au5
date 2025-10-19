@@ -21,7 +21,21 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/shared/components/ui/tooltip";
-import { Users, Building2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/shared/components/ui/dropdown-menu";
+import {
+  Users,
+  Building2,
+  MoreVertical,
+  Shield,
+  Edit,
+  Ban,
+  Eye,
+} from "lucide-react";
 import NoRecordsState from "@/shared/components/empty-states/no-record";
 import { Space } from "@/shared/types/space";
 
@@ -39,7 +53,7 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
             <Table>
               <TableHeader className="bg-gray-50">
                 <TableRow className="border-b border-gray-100">
-                  {Array(4)
+                  {Array(5)
                     .fill(0)
                     .map((_, i) => (
                       <TableHead key={i} className="font-medium text-gray-700">
@@ -55,36 +69,13 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
                     <TableRow
                       key={i}
                       className="animate-pulse border-b border-gray-50">
-                      <TableCell className="py-4">
-                        <div className="h-4 bg-gray-200 rounded w-32" />
-                      </TableCell>
-                      <TableCell>
-                        <div className="h-4 bg-gray-200 rounded w-48" />
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex -space-x-2">
-                          {Array(3)
-                            .fill(0)
-                            .map((_, j) => (
-                              <div
-                                key={j}
-                                className="w-8 h-8 bg-gray-200 rounded-lg"
-                              />
-                            ))}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex -space-x-2">
-                          {Array(2)
-                            .fill(0)
-                            .map((_, j) => (
-                              <div
-                                key={j}
-                                className="w-8 h-8 bg-gray-200 rounded-lg"
-                              />
-                            ))}
-                        </div>
-                      </TableCell>
+                      {Array(5)
+                        .fill(0)
+                        .map((_, j) => (
+                          <TableCell key={j} className="py-4">
+                            <div className="h-4 bg-gray-200 rounded w-32" />
+                          </TableCell>
+                        ))}
                     </TableRow>
                   ))}
               </TableBody>
@@ -125,6 +116,9 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
                 </TableHead>
                 <TableHead className="font-semibold text-gray-700">
                   Admins
+                </TableHead>
+                <TableHead className="font-semibold text-gray-700 text-right pr-4">
+                  Actions
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -214,7 +208,8 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
                           <Badge
                             variant="secondary"
                             className="bg-purple-100 text-purple-700 border-0">
-                            +{space.users.filter((u) => u.isAdmin).length - 3}
+                            +
+                            {space.users.filter((u) => u.isAdmin).length - 3}
                           </Badge>
                         )}
                       </div>
@@ -224,6 +219,33 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
                         <span className="text-sm">No admins</span>
                       </div>
                     )}
+                  </TableCell>
+                  <TableCell className="text-right pr-4">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="p-2 rounded-lg hover:bg-gray-100 transition">
+                          <MoreVertical className="w-5 h-5 text-gray-500" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-44">
+                        <DropdownMenuItem className="flex items-center gap-2">
+                          <Eye className="w-4 h-4 text-gray-600" />
+                          View Users
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex items-center gap-2">
+                          <Shield className="w-4 h-4 text-gray-600" />
+                          Set Admins
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex items-center gap-2">
+                          <Ban className="w-4 h-4 text-gray-600" />
+                          {space.isDisabled ? "Enable Space" : "Disable Space"}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex items-center gap-2">
+                          <Edit className="w-4 h-4 text-gray-600" />
+                          Edit Space
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}
