@@ -6,9 +6,12 @@ import { MeetingListSkeleton } from "@/shared/components/meetings/meeting-list-s
 import { meetingsController } from "@/shared/network/api/meetingsController";
 import { NetworkError } from "@/shared/components/empty-states/error";
 import { MeetingsList } from "@/shared/components/meetings";
+import { useCurrentUserSpaces } from "@/shared/hooks/use-user";
 
 export default function SpaceMeetingsView() {
   const params = useParams();
+  const { data: spaces } = useCurrentUserSpaces();
+  const title = spaces?.find((s) => s.id === params.spaceId)?.name || "Space";
   const spaceId = params.spaceId as string;
 
   const {
@@ -28,5 +31,5 @@ export default function SpaceMeetingsView() {
     return <NetworkError />;
   }
 
-  return <MeetingsList meetings={meetings} title={`Space Meetings`} />;
+  return <MeetingsList meetings={meetings} title={`${title} Meetings`} />;
 }
