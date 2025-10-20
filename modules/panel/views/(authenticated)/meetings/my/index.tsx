@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { MeetingListSkeleton } from "@/app/(authenticated)/meetings/meeting-list-skeleton";
+import { MeetingListSkeleton } from "@/shared/components/meetings/meeting-list-skeleton";
 import { meetingsController } from "@/shared/network/api/meetingsController";
 import { NetworkError } from "@/shared/components/empty-states/error";
 import { MeetingsList } from "@/shared/components/meetings";

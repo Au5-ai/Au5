@@ -1,7 +1,7 @@
 "use client";
 
 import { Card } from "@/shared/components/ui/card";
-import { MeetingData, MeetingItem } from "@/shared/types";
+import { MeetingData } from "@/shared/types";
 import { MeetingCard } from "./meeting-card";
 import NoRecordsState from "@/shared/components/empty-states/no-record";
 
