@@ -238,7 +238,7 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
                         </DropdownMenuItem>
                         <DropdownMenuItem className="flex items-center gap-2">
                           <Ban className="w-4 h-4 text-gray-600" />
-                          {space.isDisabled ? "Enable Space" : "Disable Space"}
+                          {space.isActive ? "Disable Space" : "Enable Space"}
                         </DropdownMenuItem>
                         <DropdownMenuItem className="flex items-center gap-2">
                           <Edit className="w-4 h-4 text-gray-600" />
