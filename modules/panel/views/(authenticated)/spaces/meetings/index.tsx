@@ -3,10 +3,10 @@
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { MeetingListSkeleton } from "@/shared/components/meetings/meeting-list-skeleton";
-import { meetingsController } from "@/shared/network/api/meetingsController";
 import { NetworkError } from "@/shared/components/empty-states/error";
 import { MeetingsList } from "@/shared/components/meetings";
 import { useCurrentUserSpaces } from "@/shared/hooks/use-user";
+import { spaceController } from "@/shared/network/api/spaceController";
 
 export default function SpaceMeetingsView() {
   const params = useParams();
@@ -20,7 +20,7 @@ export default function SpaceMeetingsView() {
     error,
   } = useQuery({
     queryKey: ["meetings", "space", spaceId],
-    queryFn: meetingsController.my, // Using my meetings for now
+    queryFn: spaceController.meetings(spaceId),
   });
 
   if (loading) {
