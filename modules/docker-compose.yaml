@@ -25,7 +25,7 @@ services:
 
   backend:
     build:
-      context: ../backend
+      context: ./backend
     image: au5-backend
     container_name: au5-backend
     environment:
@@ -41,7 +41,7 @@ services:
 
   botfather:
     build:
-      context: ../botFather
+      context: ./botFather
     image: au5-botfather
     container_name: au5-botfather
     volumes:
@@ -54,7 +54,7 @@ services:
 
   ai-engine:
     build:
-      context: ../aiEngine
+      context: ./aiEngine
     image: au5-ai-engine
     container_name: au5-ai-engine
     environment:
@@ -71,7 +71,7 @@ services:
 
   # panel:
   #   build:
-  #     context: ../panel
+  #     context: ./panel
   #   image: au5-panel
   #   container_name: au5-panel
   #   environment:
