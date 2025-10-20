@@ -223,7 +223,7 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
                   <TableCell className="text-right pr-4">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <button className="p-2 rounded-lg hover:bg-gray-100 transition">
+                        <button type="button" aria-label="Open space actions menu" className="p-2 rounded-lg hover:bg-gray-100 transition">
                           <MoreVertical className="w-5 h-5 text-gray-500" />
                         </button>
                       </DropdownMenuTrigger>
