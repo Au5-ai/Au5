@@ -1,4 +1,5 @@
 using Au5.Application.Features.Spaces.CreateSpace;
+using Au5.Application.Features.Spaces.GetSpaceMeetings;
 using Au5.Application.Features.Spaces.GetSpaces;
 using Au5.Application.Features.Spaces.GetUserSpaces;
 
@@ -28,5 +29,13 @@ public class SpacesController(ISender mediator) : BaseController
 	public async Task<IActionResult> GetMySpaces(CancellationToken ct)
 	{
 		return Ok(await mediator.Send(new GetUserSpacesQuery(), ct));
+	}
+
+	[HttpGet]
+	[Route("{spaceId}/meetings")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> GetSpaceMeetings([FromRoute] Guid spaceId, CancellationToken ct)
+	{
+		return Ok(await mediator.Send(new GetSpaceMeetingsQuery(spaceId), ct));
 	}
 }

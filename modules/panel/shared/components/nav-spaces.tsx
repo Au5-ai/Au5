@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui";
 import { MySpacesResponse } from "../types/space";
+import Link from "next/link";
 
 export function NavSpaces({
   spaces,
@@ -30,10 +31,10 @@ export function NavSpaces({
         {spaces?.map((item) => (
           <SidebarMenuItem key={item.id}>
             <SidebarMenuButton asChild>
-              <a href={`/spaces/${item.id}/meetings`}>
+              <Link href={`/spaces/${item.id}/meetings`}>
                 <Frame />
                 <span>{item.name}</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
             {/* {item.showBadge && (
               <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
