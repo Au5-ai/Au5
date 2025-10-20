@@ -25,8 +25,8 @@ export const spaceController = {
       method: "GET",
     });
   },
-  meetings: (spaceId: string) => (): Promise<MeetingData[]> => {
-    return apiRequestClient<MeetingData[]>(API_URLS.SPACES.MEETINGS(spaceId), {
+  meetings: (spaceId: string) => (): Promise<MeetingData> => {
+    return apiRequestClient<MeetingData>(API_URLS.SPACES.MEETINGS(spaceId), {
       method: "GET",
     });
   },
