@@ -8,10 +8,7 @@ export interface Space {
   id: string;
   name: string;
   description: string;
-  parentId: string | null;
-  parentName: string | null;
   isActive: boolean;
-  childrenCount: number;
   usersCount: number;
   users: SpaceUser[];
   createdAt?: string;

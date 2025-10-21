@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251010144437_RemoveAssistantID")]
-    partial class RemoveAssistantID
+    [Migration("20251021110006_InitDb")]
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,6 +32,9 @@ namespace Au5.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("AssistantId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("CompletionTokens")
                         .HasColumnType("int");
@@ -59,6 +62,8 @@ namespace Au5.Infrastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("PK_dbo_AIContents");
+
+                    b.HasIndex("AssistantId");
 
                     b.HasIndex("MeetingId");
 
@@ -120,6 +125,12 @@ namespace Au5.Infrastructure.Migrations
 
                     b.Property<bool>("IsDefault")
                         .HasColumnType("bit");
+
+                    b.Property<string>("LLMModel")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -286,6 +297,30 @@ namespace Au5.Infrastructure.Migrations
                     b.ToTable("Meeting");
                 });
 
+            modelBuilder.Entity("Au5.Domain.Entities.MeetingSpace", b =>
+                {
+                    b.Property<Guid>("MeetingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SpaceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("MeetingId", "SpaceId")
+                        .HasName("PK_dbo_MeetingSpace");
+
+                    b.HasIndex("SpaceId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("MeetingSpace");
+                });
+
             modelBuilder.Entity("Au5.Domain.Entities.Menu", b =>
                 {
                     b.Property<int>("Id")
@@ -374,6 +409,15 @@ namespace Au5.Infrastructure.Migrations
                             SortOrder = 5,
                             Title = "User Management",
                             Url = "/users"
+                        },
+                        new
+                        {
+                            Id = 600,
+                            Icon = "Frame",
+                            IsActive = true,
+                            SortOrder = 6,
+                            Title = "Spaces",
+                            Url = "/spaces"
                         });
                 });
 
@@ -506,6 +550,11 @@ namespace Au5.Infrastructure.Migrations
                         {
                             RoleType = (byte)1,
                             MenuId = 500
+                        },
+                        new
+                        {
+                            RoleType = (byte)1,
+                            MenuId = 600
                         });
                 });
 
@@ -529,13 +578,8 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id")
                         .HasName("PK_dbo_Space");
-
-                    b.HasIndex("ParentId");
 
                     b.ToTable("Space");
                 });
@@ -752,6 +796,12 @@ namespace Au5.Infrastructure.Migrations
 
             modelBuilder.Entity("Au5.Domain.Entities.AIContents", b =>
                 {
+                    b.HasOne("Au5.Domain.Entities.Assistant", "Assistant")
+                        .WithMany()
+                        .HasForeignKey("AssistantId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("Au5.Domain.Entities.Meeting", "Meeting")
                         .WithMany()
                         .HasForeignKey("MeetingId")
@@ -763,6 +813,8 @@ namespace Au5.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("Assistant");
 
                     b.Navigation("Meeting");
 
@@ -868,6 +920,33 @@ namespace Au5.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Au5.Domain.Entities.MeetingSpace", b =>
+                {
+                    b.HasOne("Au5.Domain.Entities.Meeting", "Meeting")
+                        .WithMany("MeetingSpaces")
+                        .HasForeignKey("MeetingId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Au5.Domain.Entities.Space", "Space")
+                        .WithMany("MeetingSpaces")
+                        .HasForeignKey("SpaceId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Au5.Domain.Entities.User", "User")
+                        .WithMany("MeetingSpaces")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Meeting");
+
+                    b.Navigation("Space");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Au5.Domain.Entities.Menu", b =>
                 {
                     b.HasOne("Au5.Domain.Entities.Menu", "Parent")
@@ -908,16 +987,6 @@ namespace Au5.Infrastructure.Migrations
                     b.Navigation("Menu");
                 });
 
-            modelBuilder.Entity("Au5.Domain.Entities.Space", b =>
-                {
-                    b.HasOne("Au5.Domain.Entities.Space", "Parent")
-                        .WithMany("Children")
-                        .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Parent");
-                });
-
             modelBuilder.Entity("Au5.Domain.Entities.UserSpace", b =>
                 {
                     b.HasOne("Au5.Domain.Entities.Space", "Space")
@@ -948,6 +1017,8 @@ namespace Au5.Infrastructure.Migrations
 
                     b.Navigation("Guests");
 
+                    b.Navigation("MeetingSpaces");
+
                     b.Navigation("Participants");
                 });
 
@@ -960,13 +1031,15 @@ namespace Au5.Infrastructure.Migrations
 
             modelBuilder.Entity("Au5.Domain.Entities.Space", b =>
                 {
-                    b.Navigation("Children");
+                    b.Navigation("MeetingSpaces");
 
                     b.Navigation("UserSpaces");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.User", b =>
                 {
+                    b.Navigation("MeetingSpaces");
+
                     b.Navigation("Meetings");
 
                     b.Navigation("UserSpaces");

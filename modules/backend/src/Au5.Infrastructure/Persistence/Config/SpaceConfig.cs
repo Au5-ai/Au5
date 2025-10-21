@@ -20,10 +20,5 @@ public class SpaceConfig : IEntityTypeConfiguration<Space>
 
 		builder.Property(x => x.IsActive)
 			.IsRequired();
-
-		builder.HasOne(s => s.Parent)
-			.WithMany(s => s.Children)
-			.HasForeignKey(s => s.ParentId)
-			.OnDelete(DeleteBehavior.Restrict);
 	}
 }

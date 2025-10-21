@@ -12,8 +12,6 @@ public class GetSpacesQueryHandler : IRequestHandler<GetSpacesQuery, Result<IRea
 	public async ValueTask<Result<IReadOnlyCollection<SpaceResponse>>> Handle(GetSpacesQuery request, CancellationToken cancellationToken)
 	{
 		var spaces = await _context.Set<Space>()
-			.Include(s => s.Parent)
-			.Include(s => s.Children)
 			.Include(s => s.UserSpaces)
 				.ThenInclude(us => us.User)
 			.Where(s => s.IsActive)
@@ -25,10 +23,7 @@ public class GetSpacesQueryHandler : IRequestHandler<GetSpacesQuery, Result<IRea
 			Id = s.Id,
 			Name = s.Name,
 			Description = s.Description,
-			ParentId = s.ParentId,
-			ParentName = s.Parent?.Name,
 			IsActive = s.IsActive,
-			ChildrenCount = s.Children?.Count ?? 0,
 			UsersCount = s.UserSpaces?.Count ?? 0,
 			Users = s.UserSpaces?.Select(us => new SpaceUserInfo
 			{

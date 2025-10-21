@@ -19,12 +19,11 @@ export default function BreadcrumbLayout() {
     const breadcrumbs = [];
 
     breadcrumbs.push(
-      <BreadcrumbItem key="playground" className="hidden md:block">
+      <BreadcrumbItem key="dashboard" className="hidden md:block">
         <BreadcrumbLink href="/playground">Playground</BreadcrumbLink>
       </BreadcrumbItem>,
     );
 
-    // Add current page if not dashboard
     if (
       segments.length > 1 ||
       (segments.length === 1 && segments[0] !== "dashboard")

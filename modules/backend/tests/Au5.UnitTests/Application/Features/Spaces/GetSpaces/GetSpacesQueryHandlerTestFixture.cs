@@ -75,12 +75,8 @@ public class GetSpacesQueryHandlerTestFixture
 			Id = Guid.NewGuid(),
 			Name = "Child Space",
 			Description = "Child description",
-			ParentId = parentSpace.Id,
-			Parent = parentSpace,
 			IsActive = true
 		};
-
-		parentSpace.Children = new List<Space> { childSpace };
 
 		TestSpaces.AddRange(new[] { parentSpace, childSpace });
 

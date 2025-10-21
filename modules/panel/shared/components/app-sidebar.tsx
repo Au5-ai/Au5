@@ -33,12 +33,8 @@ export function AppSidebar({ user, menu, spaces, ...props }: AppSidebarProps) {
             <Logo width={32} height={32} noBackground />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-medium">
-              {user?.fullName || "User"}
-            </span>
-            <span className="truncate text-xs">
-              {user?.email || "email@example.com"}
-            </span>
+            <span className="truncate font-medium">Au5.ai</span>
+            <span className="truncate text-xs">Meeting Note Taker</span>
           </div>
         </SidebarMenuButton>
       </SidebarHeader>

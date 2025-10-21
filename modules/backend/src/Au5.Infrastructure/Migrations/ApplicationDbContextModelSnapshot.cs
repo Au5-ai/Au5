@@ -4,7 +4,6 @@ using Au5.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,11 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251019104220_AddMeetingSpaceEntity")]
-    partial class AddMeetingSpaceEntity
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -299,7 +296,7 @@ namespace Au5.Infrastructure.Migrations
 
             modelBuilder.Entity("Au5.Domain.Entities.MeetingSpace", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("MeetingId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("SpaceId")
@@ -308,15 +305,15 @@ namespace Au5.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("MeetingId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("UserId", "SpaceId")
+                    b.HasKey("MeetingId", "SpaceId")
                         .HasName("PK_dbo_MeetingSpace");
 
-                    b.HasIndex("MeetingId");
-
                     b.HasIndex("SpaceId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("MeetingSpace");
                 });
@@ -578,13 +575,8 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id")
                         .HasName("PK_dbo_Space");
-
-                    b.HasIndex("ParentId");
 
                     b.ToTable("Space");
                 });
@@ -992,16 +984,6 @@ namespace Au5.Infrastructure.Migrations
                     b.Navigation("Menu");
                 });
 
-            modelBuilder.Entity("Au5.Domain.Entities.Space", b =>
-                {
-                    b.HasOne("Au5.Domain.Entities.Space", "Parent")
-                        .WithMany("Children")
-                        .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Parent");
-                });
-
             modelBuilder.Entity("Au5.Domain.Entities.UserSpace", b =>
                 {
                     b.HasOne("Au5.Domain.Entities.Space", "Space")
@@ -1046,8 +1028,6 @@ namespace Au5.Infrastructure.Migrations
 
             modelBuilder.Entity("Au5.Domain.Entities.Space", b =>
                 {
-                    b.Navigation("Children");
-
                     b.Navigation("MeetingSpaces");
 
                     b.Navigation("UserSpaces");
