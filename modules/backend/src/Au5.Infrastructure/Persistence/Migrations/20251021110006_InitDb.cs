@@ -56,17 +56,11 @@ namespace Au5.Infrastructure.Migrations
 					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					Name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
 					Description = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
-					IsActive = table.Column<bool>(type: "bit", nullable: false),
-					ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+					IsActive = table.Column<bool>(type: "bit", nullable: false)
 				},
 				constraints: table =>
 				{
 					table.PrimaryKey("PK_dbo_Space", x => x.Id);
-					table.ForeignKey(
-						name: "FK_Space_Space_ParentId",
-						column: x => x.ParentId,
-						principalTable: "Space",
-						principalColumn: "Id");
 				});
 
 			migrationBuilder.CreateTable(
@@ -151,6 +145,7 @@ namespace Au5.Infrastructure.Migrations
 					Icon = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
 					Description = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
 					Instructions = table.Column<string>(type: "varchar(2000)", unicode: false, maxLength: 2000, nullable: true),
+					LLMModel = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
 					OpenAIAssistantId = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
 					UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					IsDefault = table.Column<bool>(type: "bit", nullable: false),
@@ -183,7 +178,8 @@ namespace Au5.Infrastructure.Migrations
 					CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
 					ClosedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
 					Duration = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
-					Status = table.Column<byte>(type: "tinyint", nullable: false)
+					Status = table.Column<byte>(type: "tinyint", nullable: false),
+					IsFavorite = table.Column<bool>(type: "bit", nullable: false)
 				},
 				constraints: table =>
 				{
@@ -214,6 +210,41 @@ namespace Au5.Infrastructure.Migrations
 						principalColumn: "Id");
 					table.ForeignKey(
 						name: "FK_UserSpace_User_UserId",
+						column: x => x.UserId,
+						principalTable: "User",
+						principalColumn: "Id");
+				});
+
+			migrationBuilder.CreateTable(
+				name: "AIContents",
+				columns: table => new
+				{
+					Id = table.Column<int>(type: "int", nullable: false)
+						.Annotation("SqlServer:Identity", "1, 1"),
+					UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+					MeetingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+					AssistantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+					Content = table.Column<string>(type: "nvarchar(max)", maxLength: 200, nullable: false),
+					CompletionTokens = table.Column<int>(type: "int", nullable: false),
+					PromptTokens = table.Column<int>(type: "int", nullable: false),
+					TotalTokens = table.Column<int>(type: "int", nullable: false),
+					CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+				},
+				constraints: table =>
+				{
+					table.PrimaryKey("PK_dbo_AIContents", x => x.Id);
+					table.ForeignKey(
+						name: "FK_AIContents_Assistant_AssistantId",
+						column: x => x.AssistantId,
+						principalTable: "Assistant",
+						principalColumn: "Id");
+					table.ForeignKey(
+						name: "FK_AIContents_Meeting_MeetingId",
+						column: x => x.MeetingId,
+						principalTable: "Meeting",
+						principalColumn: "Id");
+					table.ForeignKey(
+						name: "FK_AIContents_User_UserId",
 						column: x => x.UserId,
 						principalTable: "User",
 						principalColumn: "Id");
@@ -261,6 +292,35 @@ namespace Au5.Infrastructure.Migrations
 						name: "FK_GuestsInMeeting_Meeting_MeetingId",
 						column: x => x.MeetingId,
 						principalTable: "Meeting",
+						principalColumn: "Id");
+				});
+
+			migrationBuilder.CreateTable(
+				name: "MeetingSpace",
+				columns: table => new
+				{
+					MeetingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+					SpaceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+					CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+					UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+				},
+				constraints: table =>
+				{
+					table.PrimaryKey("PK_dbo_MeetingSpace", x => new { x.MeetingId, x.SpaceId });
+					table.ForeignKey(
+						name: "FK_MeetingSpace_Meeting_MeetingId",
+						column: x => x.MeetingId,
+						principalTable: "Meeting",
+						principalColumn: "Id");
+					table.ForeignKey(
+						name: "FK_MeetingSpace_Space_SpaceId",
+						column: x => x.SpaceId,
+						principalTable: "Space",
+						principalColumn: "Id");
+					table.ForeignKey(
+						name: "FK_MeetingSpace_User_UserId",
+						column: x => x.UserId,
+						principalTable: "User",
 						principalColumn: "Id");
 				});
 
@@ -322,7 +382,8 @@ namespace Au5.Infrastructure.Migrations
 					{ 200, "ArchiveIcon", true, null, 2, "Archived Transcripts", "/meetings/archived" },
 					{ 300, "Brain", true, null, 3, "AI Tools", "/assistants" },
 					{ 400, "Settings", true, null, 4, "System Settings", "/system" },
-					{ 500, "UserPlus", true, null, 5, "User Management", "/users" }
+					{ 500, "UserPlus", true, null, 5, "User Management", "/users" },
+					{ 600, "Frame", true, null, 6, "Spaces", "/spaces" }
 				});
 
 			migrationBuilder.InsertData(
@@ -343,10 +404,26 @@ namespace Au5.Infrastructure.Migrations
 					{ 300, (byte)1 },
 					{ 400, (byte)1 },
 					{ 500, (byte)1 },
+					{ 600, (byte)1 },
 					{ 100, (byte)2 },
 					{ 200, (byte)2 },
 					{ 300, (byte)2 }
 				});
+
+			migrationBuilder.CreateIndex(
+				name: "IX_AIContents_AssistantId",
+				table: "AIContents",
+				column: "AssistantId");
+
+			migrationBuilder.CreateIndex(
+				name: "IX_AIContents_MeetingId",
+				table: "AIContents",
+				column: "MeetingId");
+
+			migrationBuilder.CreateIndex(
+				name: "IX_AIContents_UserId",
+				table: "AIContents",
+				column: "UserId");
 
 			migrationBuilder.CreateIndex(
 				name: "IX_AppliedReactions_EntryId",
@@ -379,6 +456,16 @@ namespace Au5.Infrastructure.Migrations
 				column: "BotInviterUserId");
 
 			migrationBuilder.CreateIndex(
+				name: "IX_MeetingSpace_SpaceId",
+				table: "MeetingSpace",
+				column: "SpaceId");
+
+			migrationBuilder.CreateIndex(
+				name: "IX_MeetingSpace_UserId",
+				table: "MeetingSpace",
+				column: "UserId");
+
+			migrationBuilder.CreateIndex(
 				name: "IX_Menus_ParentId",
 				table: "Menus",
 				column: "ParentId");
@@ -399,11 +486,6 @@ namespace Au5.Infrastructure.Migrations
 				column: "MenuId");
 
 			migrationBuilder.CreateIndex(
-				name: "IX_Space_ParentId",
-				table: "Space",
-				column: "ParentId");
-
-			migrationBuilder.CreateIndex(
 				name: "IX_User_Email",
 				table: "User",
 				column: "Email",
@@ -419,13 +501,16 @@ namespace Au5.Infrastructure.Migrations
 		protected override void Down(MigrationBuilder migrationBuilder)
 		{
 			migrationBuilder.DropTable(
+				name: "AIContents");
+
+			migrationBuilder.DropTable(
 				name: "AppliedReactions");
 
 			migrationBuilder.DropTable(
-				name: "Assistant");
+				name: "GuestsInMeeting");
 
 			migrationBuilder.DropTable(
-				name: "GuestsInMeeting");
+				name: "MeetingSpace");
 
 			migrationBuilder.DropTable(
 				name: "ParticipantInMeeting");
@@ -438,6 +523,9 @@ namespace Au5.Infrastructure.Migrations
 
 			migrationBuilder.DropTable(
 				name: "UserSpace");
+
+			migrationBuilder.DropTable(
+				name: "Assistant");
 
 			migrationBuilder.DropTable(
 				name: "Entry");

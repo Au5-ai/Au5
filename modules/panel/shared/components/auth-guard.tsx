@@ -21,6 +21,7 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
       setIsAuthenticated(isValid);
 
       if (!isValid) {
+        localStorage.removeItem("access_token");
         router.push(ROUTES.LOGIN);
       }
     };

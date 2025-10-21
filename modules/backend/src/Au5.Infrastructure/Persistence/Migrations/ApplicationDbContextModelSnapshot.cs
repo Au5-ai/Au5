@@ -575,13 +575,8 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id")
                         .HasName("PK_dbo_Space");
-
-                    b.HasIndex("ParentId");
 
                     b.ToTable("Space");
                 });
@@ -989,16 +984,6 @@ namespace Au5.Infrastructure.Migrations
                     b.Navigation("Menu");
                 });
 
-            modelBuilder.Entity("Au5.Domain.Entities.Space", b =>
-                {
-                    b.HasOne("Au5.Domain.Entities.Space", "Parent")
-                        .WithMany("Children")
-                        .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Parent");
-                });
-
             modelBuilder.Entity("Au5.Domain.Entities.UserSpace", b =>
                 {
                     b.HasOne("Au5.Domain.Entities.Space", "Space")
@@ -1043,8 +1028,6 @@ namespace Au5.Infrastructure.Migrations
 
             modelBuilder.Entity("Au5.Domain.Entities.Space", b =>
                 {
-                    b.Navigation("Children");
-
                     b.Navigation("MeetingSpaces");
 
                     b.Navigation("UserSpaces");

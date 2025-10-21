@@ -42,7 +42,6 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 			Id = Guid.NewGuid(),
 			Name = request.Name,
 			Description = request.Description,
-			ParentId = request.ParentId,
 			IsActive = true
 		};
 

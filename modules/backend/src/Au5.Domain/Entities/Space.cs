@@ -11,12 +11,6 @@ public class Space
 
 	public bool IsActive { get; set; }
 
-	public Guid? ParentId { get; set; }
-
-	public Space Parent { get; set; }
-
-	public ICollection<Space> Children { get; set; }
-
 	public ICollection<UserSpace> UserSpaces { get; set; }
 
 	public ICollection<MeetingSpace> MeetingSpaces { get; set; }
