@@ -20,11 +20,6 @@ The Au5 platform consists of the following modules:
 
 Before installing Au5, ensure you have one of the following container runtimes installed:
 
-### For Docker Installation:
-
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) or Docker Engine
-- Docker Compose v2.0 or higher
-
 ### For Podman Installation:
 
 - [Podman](https://podman.io/getting-started/installation) v4.0 or higher
@@ -32,55 +27,9 @@ Before installing Au5, ensure you have one of the following container runtimes i
 
 ## 🚀 Quick Start
 
-### Option 1: Docker Installation
-
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/your-org/Au5.git
-   cd Au5/modules
-   ```
-
-2. **Start all services using Docker Compose:**
-
-   ```bash
-   docker-compose up -d
-   ```
-
-3. **Initialize the database:**
-
-   ```powershell
-   # On Windows
-   .\init-database-v2.ps1
-
-   # On Linux/macOS
-   chmod +x init-database-v2.ps1
-   ./init-database-v2.ps1
-   ```
-
-4. **Access the services:**
-   - **Panel (Frontend)**: http://localhost:1368
-   - **Backend API**: http://localhost:1366
-   - **Bot Father**: http://localhost:1367
-   - **SQL Server**: localhost:1433
-   - **Redis**: localhost:6379
-
 ### Option 2: Podman Installation
 
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/your-org/Au5.git
-   cd Au5/modules
-   ```
-
-2. **Create the Au5 network:**
-
-   ```bash
-   podman network create au5
-   ```
-
-3. **Start all services using the Podman script:**
+1. **Start all services using the Podman script:**
 
    ```powershell
    # On Windows
@@ -91,7 +40,7 @@ Before installing Au5, ensure you have one of the following container runtimes i
    ./start-podman.ps1
    ```
 
-4. **Initialize the database:**
+2. **Initialize the database:**
 
    ```powershell
    # On Windows
@@ -102,36 +51,17 @@ Before installing Au5, ensure you have one of the following container runtimes i
    ./init-database-v2.ps1
    ```
 
-5. **Access the services:**
+3. **Access the services:**
    - **Panel (Frontend)**: http://localhost:1368
    - **Backend API**: http://localhost:1366
    - **Bot Father**: http://localhost:1367
    - **SQL Server**: localhost:1433
    - **Redis**: localhost:6379
 
-## 🛑 Stopping Services
+## Add Fake Data (Only for Development)
 
-### Docker
-
-```bash
-# Stop all services
-docker-compose down
-
-# Stop and remove volumes (WARNING: This will delete all data!)
-docker-compose down -v
-```
-
-### Podman
-
-```bash
-# Stop all services
-./stop-podman.ps1
-
-# Or manually:
-podman pod stop au5-pod
-podman pod rm -f au5-pod  # This removes all containers
-podman volume rm sqlserver_data redis_data  # This deletes all data
-```
+- Go to Panel (front-end) /setup and add Admin
+- Run https://github.com/Au5-ai/Au5/blob/main/modules/backend/src/Au5.Infrastructure/Persistence/Scripts/FakeData-ForTesting.sql script to add some record for your user.
 
 ## 📚 Module Documentation
 
