@@ -232,17 +232,6 @@ export default function TranscriptionPage() {
               <div className="flex h-[calc(100vh-48px)] w-full sticky top-[48px]">
                 <main className="flex-1 p-4">
                   <div className="">
-                    <div className="flex justify-between mb-6">
-                      <span className="font-medium text-gray-900">
-                        Participants
-                      </span>
-
-                      <ParticipantAvatarGroup
-                        participants={transcription.participants}
-                        guests={transcription.guests}
-                        maxVisible={8}
-                      />
-                    </div>
                     <div className="flex items-center gap-3 text-sm text-gray-600 mb-6">
                       <ParticipantAvatar
                         fullName={transcription.userRecorder.fullName}
@@ -261,7 +250,7 @@ export default function TranscriptionPage() {
                         </span>
                       </span>
                     </div>
-                    <SidebarSeparator className="mx-0 mt-4 mb-4" />
+                    <SidebarSeparator className="mx-0 mt-4 mb-4 bg-gray-100" />
                     <MeetingSpaceCollapsible
                       defaultOpen={true}
                       spaces={spaces}
@@ -270,6 +259,7 @@ export default function TranscriptionPage() {
                       selectedSpaceIds={transcription.spaces.map((x) => x.id)}
                       onSelect={handleSpaceSelection}
                     />
+                    <SidebarSeparator className="mx-0 mt-4 mb-4 bg-gray-100" />
                   </div>
                 </main>
               </div>

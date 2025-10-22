@@ -68,6 +68,13 @@ export function MeetingSpaceCollapsible({
           <CollapsibleContent>
             <SidebarGroupContent className="mt-2">
               <SidebarMenu>
+                {!spaces || spaces.length === 0 ? (
+                  <SidebarMenuItem>
+                    <div className="text-center w-full p-2 bg-yellow-100 text-yellow-800 text-sm rounded-md">
+                      No spaces found. Create a space to get started.
+                    </div>
+                  </SidebarMenuItem>
+                ) : null}
                 {spaces?.map((item) => (
                   <SidebarMenuItem key={item.id}>
                     <SidebarMenuButton
