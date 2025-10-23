@@ -9,11 +9,11 @@ public class AssistantConfig : IEntityTypeConfiguration<Assistant>
 	public void Configure(EntityTypeBuilder<Assistant> builder)
 	{
 		builder.HasKey(x => x.Id);
-		builder.Property(x => x.Name).IsRequired().HasMaxLength(200);
+		builder.Property(x => x.Name).IsUnicode(true).IsRequired().HasMaxLength(200);
 		builder.Property(x => x.Icon).IsUnicode(true).HasMaxLength(200);
 		builder.Property(x => x.OpenAIAssistantId).HasMaxLength(100);
-		builder.Property(x => x.Description).HasMaxLength(500);
-		builder.Property(x => x.Instructions).HasMaxLength(2000);
+		builder.Property(x => x.Description).IsUnicode(true).HasMaxLength(500);
+		builder.Property(x => x.Instructions).IsUnicode(true).HasMaxLength(2000);
 		builder.Property(x => x.IsDefault).IsRequired();
 		builder.Property(x => x.IsActive).IsRequired();
 		builder.Property(x => x.CreatedAt).IsRequired();

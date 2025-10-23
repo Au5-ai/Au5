@@ -191,10 +191,6 @@ export default function AIConversation({
       <div className="flex-1 flex flex-col h-full pt-4">
         {showAssistantList ? (
           <div className="flex-1 flex flex-col items-center pt-8">
-            <h2 className="text-lg font-semibold mb-4 flex items-center">
-              <Bot className="mr-1 h-4 w-4" />
-              <span>AI Assistants</span>
-            </h2>
             <AssistantList
               usedAssistants={usedAssistants}
               assistants={assistants}

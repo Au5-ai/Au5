@@ -1,5 +1,5 @@
 import React from "react";
-import { Bot, LaptopMinimal, Shield, Timer } from "lucide-react";
+import { Bot, LaptopMinimal, Shield, Timer, Users } from "lucide-react";
 import { Meeting } from "@/shared/types";
 import { NavActions } from "@/app/(authenticated)/meetings/[meetingId]/sessions/[meetId]/navActions";
 
@@ -34,6 +34,14 @@ export default function TranscriptionHeader({ meeting }: { meeting: Meeting }) {
                 <div className="flex items-center gap-1">
                   <Shield className="w-4 h-4" />
                   <span>Private</span>
+                </div>
+                <div className="w-1 h-1 rounded-full bg-gray-300" />
+                <div className="flex items-center gap-1">
+                  <Users className="w-4 h-4" />
+                  <span>
+                    Participants (
+                    {meeting.participants.length + meeting.guests.length})
+                  </span>
                 </div>
               </div>
             </div>
