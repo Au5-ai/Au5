@@ -51,6 +51,15 @@ export default function AIConversation({
         setSelectedChatIdx(prev.findIndex((a) => a.id === assistant.id));
         return prev;
       }
+
+      aiContents.unshift({
+        assistant,
+        content: "is generating...",
+        meetingId,
+        id: "0",
+        createdAt: "now",
+      });
+
       setSelectedChatIdx(0);
       return [assistant, ...prev];
     });
@@ -83,7 +92,7 @@ export default function AIConversation({
           id: "0",
           createdAt: "now",
         };
-        aiContents.push(newContent);
+        aiContents[0] = newContent;
         //if (onNewContent) onNewContent(newContent);
       },
       onError: (err) => {
@@ -169,7 +178,7 @@ export default function AIConversation({
                   className={`flex gap-2 items-start mt-2 px-2 py-2 cursor-pointer rounded-lg transition-colors ${selectedChatIdx === idx ? "bg-muted font-semibold" : "hover:bg-muted/60"}`}
                   onClick={() => onChatHistoryClicked(idx)}>
                   <span>{ai.assistant.icon}</span>
-                  <div className="flex flex-col ml-auto items-start">
+                  <div className="flex flex-col ml-auto items-start w-full">
                     <span className="truncate font-medium text-foreground text-sm">
                       {ai.assistant.name}
                     </span>
