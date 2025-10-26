@@ -151,9 +151,9 @@ export default function AIConversation({
   }, [messages]);
 
   return (
-    <div className="flex w-full h-full overflow-hidden border-t">
+    <div className="flex w-full h-full border-t">
       {/* Left Sidebar: Chat History */}
-      <div className="w-80 border-r flex flex-col">
+      <div className="w-80 border-r flex flex-col sticky top-[48px] z-10 h-[calc(100vh-48px)]">
         <div className="flex items-center justify-between p-4 border-b">
           <Button
             size="sm"
@@ -197,7 +197,7 @@ export default function AIConversation({
       </div>
 
       {/* Right Panel: Chat or AssistantList */}
-      <div className="flex-1 flex flex-col h-full pt-4">
+      <div className="flex-1 flex flex-col h-full">
         {showAssistantList ? (
           <div className="flex-1 flex flex-col items-center pt-8">
             <AssistantList
@@ -208,7 +208,7 @@ export default function AIConversation({
           </div>
         ) : selectedChatIdx !== null && usedAssistants[selectedChatIdx] ? (
           <>
-            <div className="flex items-center justify-between w-full mb-4 px-4">
+            <div className="flex items-center justify-between w-full mb-4 p-4 bg-white sticky top-[48px] z-10">
               <span className="ml-2 font-semibold text-lg">
                 {usedAssistants[selectedChatIdx].icon}{" "}
                 {usedAssistants[selectedChatIdx].name}

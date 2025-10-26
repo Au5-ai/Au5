@@ -267,16 +267,14 @@ export default function TranscriptionPage() {
           </div>
         </TabsContent>
         <TabsContent value="AIConversation">
-          <div className="sticky top-[48px] z-10 h-[calc(100vh-48px)]">
-            <AIConversation
-              onNewContent={(newContent) =>
-                setAIContents((prev) => [...prev, newContent])
-              }
-              aiContents={aiContents}
-              meetId={meetId}
-              meetingId={meetingId}
-            />
-          </div>
+          <AIConversation
+            onNewContent={(newContent) =>
+              setAIContents((prev) => [...prev, newContent])
+            }
+            aiContents={aiContents}
+            meetId={meetId}
+            meetingId={meetingId}
+          />
         </TabsContent>
       </Tabs>
     </div>
