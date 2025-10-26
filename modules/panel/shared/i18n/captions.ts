@@ -122,6 +122,8 @@ export const GLOBAL_CAPTIONS = {
       archivedSuccess: "Meeting has been archived successfully",
       unarchivedSuccess: "Meeting has been removed from archive successfully",
       archiveError: "Failed to change archive status. Please try again.",
+      deleteAIContentSuccess: "AI content has been deleted successfully",
+      deleteAIContentError: "Failed to delete AI content. Please try again.",
     },
   },
 } as const;

@@ -1,3 +1,4 @@
+using Au5.Application.Features.AI.Delete;
 using Au5.Application.Features.AI.Generate;
 
 namespace Au5.BackEnd.Controllers
@@ -18,6 +19,13 @@ namespace Au5.BackEnd.Controllers
 			}
 
 			return new EmptyResult();
+		}
+
+		[HttpDelete("meetings/{meetingId}/sessions/{meetId}/ai-contents/{id}")]
+		public async Task<IActionResult> DeleteAsync([FromRoute] Guid meetingId, [FromRoute] Guid id, CancellationToken cancellationToken = default)
+		{
+			var result = await sender.Send(new DeleteAIContentCommand(id, meetingId), cancellationToken);
+			return Ok(result);
 		}
 	}
 }

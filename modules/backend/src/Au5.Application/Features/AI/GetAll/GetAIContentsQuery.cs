@@ -4,7 +4,7 @@ public record GetAIContentsQuery(Guid MeetingId, string MeetId) : IRequest<Resul
 
 public record AIContentsResponse
 {
-	public int Id { get; set; }
+	public Guid Id { get; set; }
 
 	public Participant User { get; set; }
 

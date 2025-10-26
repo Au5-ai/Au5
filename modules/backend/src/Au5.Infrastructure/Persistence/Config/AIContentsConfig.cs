@@ -9,17 +9,19 @@ public class AIContentsConfig : IEntityTypeConfiguration<AIContents>
 	public void Configure(EntityTypeBuilder<AIContents> builder)
 	{
 		builder.HasKey(t => t.Id)
-		   .HasName("PK_dbo_AIContents");
+		.HasName("PK_dbo_AIContents");
 
 		builder.Property(x => x.Content)
-		   .IsRequired()
-		   .IsUnicode(true)
-		   .HasColumnType("nvarchar(max)");
+		.IsRequired()
+		.IsUnicode(true)
+		.HasColumnType("nvarchar(max)");
 
 		builder.Property(x => x.UserId).IsRequired();
 
 		builder.Property(x => x.AssistantId).IsRequired();
 
 		builder.Property(x => x.MeetingId).IsRequired();
+
+		builder.Property(x => x.IsActive).IsRequired();
 	}
 }

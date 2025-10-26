@@ -21,6 +21,8 @@ import { AssistantList } from "./AssistantList";
 import { AIContent } from "@/shared/types";
 import { assistantsController } from "@/shared/network/api/assistantsController";
 import { CopyToClipboard, truncateFirstLine } from "@/shared/lib";
+import { DeleteAIContentConfirmationModal } from "./deleteAIContentConfirmationModal";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 
 interface AIConversationProps {
   aiContents: AIContent[];
@@ -42,6 +44,8 @@ export default function AIConversation({
   const [isFetching, setIsFetching] = useState(false);
   const [selectedChatIdx, setSelectedChatIdx] = useState<number | null>(null);
   const [showAssistantList, setShowAssistantList] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const onAssistantClicked = (assistant: Assistant) => {
     setShowAssistantList(false);
@@ -127,6 +131,33 @@ export default function AIConversation({
     setShowAssistantList(true);
     setSelectedChatIdx(null);
     setMessages([]);
+  };
+
+  const handleDeleteClick = () => {
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (selectedChatIdx === null) return;
+
+    const currentContent = aiContents[selectedChatIdx];
+    if (!currentContent?.id) return;
+
+    try {
+      setIsDeleting(true);
+      await aiController.delete(meetingId, meetId, currentContent.id);
+      toast.success(GLOBAL_CAPTIONS.pages.meetings.deleteAIContentSuccess);
+      setShowDeleteModal(false);
+      setShowAssistantList(true);
+      setSelectedChatIdx(null);
+      setMessages([]);
+      window.location.reload();
+    } catch (error) {
+      console.error("Failed to delete AI content:", error);
+      toast.error(GLOBAL_CAPTIONS.pages.meetings.deleteAIContentError);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   useEffect(() => {
@@ -215,7 +246,7 @@ export default function AIConversation({
               </span>
               <div>
                 <div className="flex gap-2">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" onClick={handleDeleteClick}>
                     <Trash2Icon className="h-4 w-4 text-destructive" />
                   </Button>
                 </div>
@@ -272,6 +303,13 @@ export default function AIConversation({
           </>
         ) : null}
       </div>
+
+      <DeleteAIContentConfirmationModal
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        onConfirm={handleDeleteConfirm}
+        isLoading={isDeleting}
+      />
     </div>
   );
 }

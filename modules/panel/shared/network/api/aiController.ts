@@ -1,4 +1,4 @@
-import { apiRequestClientStream } from "../apiRequestClient";
+import { apiRequestClientStream, apiRequestClient } from "../apiRequestClient";
 import { API_URLS } from "./urls";
 
 export const aiController = {
@@ -59,5 +59,17 @@ export const aiController = {
         onError?.(err);
       }
     })();
+  },
+  delete: (
+    meetingId: string,
+    meetId: string,
+    id: string,
+  ): Promise<{ isSuccess: boolean }> => {
+    return apiRequestClient<{ isSuccess: boolean }>(
+      API_URLS.MEETING.DELETE_AI_CONTENT(meetingId, meetId, id),
+      {
+        method: "DELETE",
+      },
+    );
   },
 };

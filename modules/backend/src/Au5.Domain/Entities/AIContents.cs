@@ -3,7 +3,7 @@ namespace Au5.Domain.Entities;
 [Entity]
 public class AIContents
 {
-	public int Id { get; set; }
+	public Guid Id { get; set; }
 
 	public Guid UserId { get; set; }
 
@@ -26,4 +26,8 @@ public class AIContents
 	public int TotalTokens { get; set; }
 
 	public DateTime CreatedAt { get; set; }
+
+	public bool IsActive { get; set; }
+
+	public Guid RemoverUserId { get; set; }
 }

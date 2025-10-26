@@ -4,6 +4,7 @@ using Au5.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251026122818_RemoveAIContentEntity")]
+    partial class RemoveAIContentEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,57 +24,6 @@ namespace Au5.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Au5.Domain.Entities.AIContents", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AssistantId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("CompletionTokens")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("MeetingId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("PromptTokens")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("RemoverUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("TotalTokens")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id")
-                        .HasName("PK_dbo_AIContents");
-
-                    b.HasIndex("AssistantId");
-
-                    b.HasIndex("MeetingId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AIContents");
-                });
 
             modelBuilder.Entity("Au5.Domain.Entities.AppliedReactions", b =>
                 {
@@ -793,33 +745,6 @@ namespace Au5.Infrastructure.Migrations
                     b.HasIndex("SpaceId");
 
                     b.ToTable("UserSpace");
-                });
-
-            modelBuilder.Entity("Au5.Domain.Entities.AIContents", b =>
-                {
-                    b.HasOne("Au5.Domain.Entities.Assistant", "Assistant")
-                        .WithMany()
-                        .HasForeignKey("AssistantId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Au5.Domain.Entities.Meeting", "Meeting")
-                        .WithMany()
-                        .HasForeignKey("MeetingId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Au5.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Assistant");
-
-                    b.Navigation("Meeting");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.AppliedReactions", b =>

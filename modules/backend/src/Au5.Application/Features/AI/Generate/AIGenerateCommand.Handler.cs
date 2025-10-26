@@ -174,6 +174,7 @@ public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand,
 				TotalTokens = totalTokens,
 				CreatedAt = DateTime.Now,
 				UserId = _currentUserService.UserId,
+				IsActive = true,
 			};
 			_dbContext.Set<AIContents>().Add(aiContentNew);
 			await _dbContext.SaveChangesAsync(cancellationToken);
