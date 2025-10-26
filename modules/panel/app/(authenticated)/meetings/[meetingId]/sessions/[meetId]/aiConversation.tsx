@@ -23,6 +23,11 @@ import { assistantsController } from "@/shared/network/api/assistantsController"
 import { CopyToClipboard, truncateFirstLine } from "@/shared/lib";
 import { DeleteAIContentConfirmationModal } from "./deleteAIContentConfirmationModal";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/shared/components/ui";
 
 interface AIConversationProps {
   aiContents: AIContent[];
@@ -148,10 +153,15 @@ export default function AIConversation({
       await aiController.delete(meetingId, meetId, currentContent.id);
       toast.success(GLOBAL_CAPTIONS.pages.meetings.deleteAIContentSuccess);
       setShowDeleteModal(false);
+
+      setUsedAssistants((prev) =>
+        prev.filter((a) => a.id !== currentContent.assistant.id),
+      );
+
       setShowAssistantList(true);
       setSelectedChatIdx(null);
       setMessages([]);
-      window.location.reload();
+      aiContents.splice(selectedChatIdx, 1);
     } catch (error) {
       console.error("Failed to delete AI content:", error);
       toast.error(GLOBAL_CAPTIONS.pages.meetings.deleteAIContentError);
@@ -246,9 +256,30 @@ export default function AIConversation({
               </span>
               <div>
                 <div className="flex gap-2">
-                  <Button variant="ghost" size="sm" onClick={handleDeleteClick}>
-                    <Trash2Icon className="h-4 w-4 text-destructive" />
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleDeleteClick}
+                          disabled={
+                            aiContents[selectedChatIdx]?.id === "0" ||
+                            !aiContents[selectedChatIdx]?.id
+                          }>
+                          <Trash2Icon className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        {aiContents[selectedChatIdx]?.id === "0" ||
+                        !aiContents[selectedChatIdx]?.id
+                          ? "Please reload the page to delete this content"
+                          : "Delete AI content"}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               </div>
             </div>

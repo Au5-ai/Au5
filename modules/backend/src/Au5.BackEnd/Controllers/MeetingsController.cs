@@ -1,3 +1,4 @@
+using Au5.Application.Features.AI.Delete;
 using Au5.Application.Features.AI.GetAll;
 using Au5.Application.Features.Meetings.AddBot;
 using Au5.Application.Features.Meetings.CloseMeetingByUser;
@@ -24,6 +25,13 @@ public class MeetingsController(ISender mediator) : BaseController
 	public async Task<IActionResult> GetAllAIContentsAsync([FromRoute] Guid meetingId, [FromRoute] string meetId, CancellationToken cancellationToken)
 	{
 		return Ok(await mediator.Send(new GetAIContentsQuery(meetingId, meetId), cancellationToken));
+	}
+
+	[HttpDelete("{meetingId}/sessions/{meetId}/ai-contents/{id}")]
+	public async Task<IActionResult> DeleteAsync([FromRoute] Guid meetingId, [FromRoute] Guid id, CancellationToken cancellationToken = default)
+	{
+		var result = await mediator.Send(new DeleteAIContentCommand(id, meetingId), cancellationToken);
+		return Ok(result);
 	}
 
 	/// <summary>

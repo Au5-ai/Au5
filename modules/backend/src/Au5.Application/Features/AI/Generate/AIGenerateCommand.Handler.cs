@@ -23,7 +23,7 @@ public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand,
 		[EnumeratorCancellation] CancellationToken cancellationToken)
 	{
 		var aiContent = _dbContext.Set<AIContents>()
-			.FirstOrDefault(x => x.MeetingId == request.MeetingId && x.AssistantId == request.AssistantId);
+			.FirstOrDefault(x => x.MeetingId == request.MeetingId && x.AssistantId == request.AssistantId && x.IsActive);
 
 		if (aiContent is not null)
 		{
