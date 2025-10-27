@@ -29,5 +29,5 @@ public class AIContents
 
 	public bool IsActive { get; set; }
 
-	public Guid RemoverUserId { get; set; }
+	public Guid? RemoverUserId { get; set; }
 }

@@ -229,7 +229,7 @@ namespace Au5.Infrastructure.Migrations
 					TotalTokens = table.Column<int>(type: "int", nullable: false),
 					CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
 					IsActive = table.Column<bool>(type: "bit", nullable: false),
-					RemoverUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+					RemoverUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
 				},
 				constraints: table =>
 				{
