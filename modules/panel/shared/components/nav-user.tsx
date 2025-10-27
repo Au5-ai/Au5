@@ -75,7 +75,7 @@ export function NavUser(user: User) {
                 className="cursor-pointer"
                 onClick={() =>
                   (window.location.href =
-                    "https://github.com/Au5-ai/au5-issues/issues")
+                    "https://github.com/Au5-ai/au5/issues")
                 }>
                 <Gem />
                 Request a feature
