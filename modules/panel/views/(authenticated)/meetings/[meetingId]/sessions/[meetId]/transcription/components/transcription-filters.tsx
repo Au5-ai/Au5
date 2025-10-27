@@ -1,14 +1,14 @@
 import React from "react";
+import { Search, Mic, Users, MessageCircle } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
-import { Search, Mic, Users, MessageCircle } from "lucide-react";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "@/shared/components/ui/select";
 
 type TranscriptionFiltersProps = {
   searchQuery: string;
@@ -39,7 +39,6 @@ export default function TranscriptionFilters({
     <div className="bg-white">
       <div className="px-4 py-4">
         <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
-          {/* Search */}
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
@@ -50,7 +49,6 @@ export default function TranscriptionFilters({
             />
           </div>
 
-          {/* Type Filter */}
           <div className="flex items-center gap-1 bg-gray-50 rounded-lg p-1">
             {filterButtons.map((button) => {
               const Icon = button.icon;
@@ -72,7 +70,6 @@ export default function TranscriptionFilters({
             })}
           </div>
 
-          {/* Speaker Filter */}
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4 text-gray-400" />
             <Select

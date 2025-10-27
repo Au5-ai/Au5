@@ -1,10 +1,12 @@
+"use client";
+
 import React from "react";
 import { motion } from "framer-motion";
 import { MessageCircle, Mic } from "lucide-react";
 import { format } from "date-fns";
-import ReactionBadges from "./reactionBadges";
-import ParticipantAvatar from "./participantAvatar";
 import { Entry } from "@/shared/types";
+import ParticipantAvatar from "./participant-avatar";
+import ReactionBadges from "./reaction-badges";
 
 export default function TranscriptionEntry({
   entry,
@@ -24,9 +26,7 @@ export default function TranscriptionEntry({
         isChat ? "border-r-transparent bg-indigo-50/30" : "border-r-transparent"
       }`}>
       <div className="flex gap-2">
-        {/* Content */}
         <div className="flex-1 min-w-0">
-          {/* Header */}
           <div className="flex justify-between mb-2">
             <div className="flex gap-2">
               <div className="flex items-center">
@@ -61,7 +61,6 @@ export default function TranscriptionEntry({
             </div>
           </div>
 
-          {/* Content */}
           <div className="mb-3">
             <p
               className={`text-gray-800 leading-relaxed text-justify`}
@@ -70,12 +69,10 @@ export default function TranscriptionEntry({
             </p>
           </div>
 
-          {/* Reactions */}
           <ReactionBadges reactions={entry.reactions} />
         </div>
       </div>
 
-      {/* Hover indicator */}
       <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-500 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
     </motion.div>
   );

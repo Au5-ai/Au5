@@ -1,6 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { toast } from "sonner";
 import {
   Bot,
   Brain,
@@ -10,24 +14,21 @@ import {
   Copy,
   Trash2Icon,
 } from "lucide-react";
-import { toast } from "sonner";
-import { motion } from "framer-motion";
-import { Card, Button } from "@/shared/components/ui";
-import { Assistant } from "@/shared/types/assistants";
-import { aiController } from "@/shared/network/api/aiController";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { AssistantList } from "./AssistantList";
-import { AIContent } from "@/shared/types";
-import { assistantsController } from "@/shared/network/api/assistantsController";
-import { CopyToClipboard, truncateFirstLine } from "@/shared/lib";
-import { DeleteAIContentConfirmationModal } from "./deleteAIContentConfirmationModal";
-import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import {
+  Card,
+  Button,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/shared/components/ui";
+import { aiController } from "@/shared/network/api/aiController";
+import { assistantsController } from "@/shared/network/api/assistantsController";
+import { CopyToClipboard, truncateFirstLine } from "@/shared/lib";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
+import { Assistant } from "@/shared/types/assistants";
+import { AIContent } from "@/shared/types";
+import { AssistantList } from "./assistant-list";
+import { DeleteAIContentConfirmationModal } from "./delete-ai-content-confirmation-modal";
 
 interface AIConversationProps {
   aiContents: AIContent[];
@@ -41,7 +42,6 @@ export default function AIConversation({
   aiContents,
   meetId,
   meetingId,
-  onNewContent,
   onContentDeleted,
 }: AIConversationProps) {
   const [usedAssistants, setUsedAssistants] = useState<Assistant[]>([]);
@@ -53,6 +53,28 @@ export default function AIConversation({
   const [showAssistantList, setShowAssistantList] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const messagesRef = useRef<string[]>([]);
+
+  useEffect(() => {
+    if (Array.isArray(aiContents)) {
+      const assistantsFromContents = aiContents
+        .map((content) => content.assistant)
+        .filter((assistant): assistant is Assistant => !!assistant);
+      setUsedAssistants(assistantsFromContents);
+    }
+
+    const fetchAssistants = async () => {
+      const activeAssistants = await assistantsController.getActive(true);
+      setAssistants(activeAssistants);
+    };
+
+    fetchAssistants();
+  }, [aiContents, meetId, meetingId]);
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   const onAssistantClicked = (assistant: Assistant) => {
     setShowAssistantList(false);
@@ -104,7 +126,6 @@ export default function AIConversation({
           createdAt: "now",
         };
         aiContents[0] = newContent;
-        //if (onNewContent) onNewContent(newContent);
       },
       onError: (err) => {
         if (!cancel) {
@@ -128,8 +149,8 @@ export default function AIConversation({
     if (!assistant) return;
     setIsFetching(true);
     const content =
-      aiContents.find((content) => content.assistant?.id === assistant.id)
-        ?.content || [];
+      aiContents.find((item) => item.assistant?.id === assistant.id)?.content ||
+      [];
     setMessages(Array.isArray(content) ? content : [content]);
     setIsFetching(false);
   };
@@ -170,30 +191,8 @@ export default function AIConversation({
     }
   };
 
-  useEffect(() => {
-    if (Array.isArray(aiContents)) {
-      const assistantsFromContents = aiContents
-        .map((content) => content.assistant)
-        .filter((assistant): assistant is Assistant => !!assistant);
-      setUsedAssistants(assistantsFromContents);
-    }
-
-    const fetchAssistants = async () => {
-      const assistants = await assistantsController.getActive(true);
-      setAssistants(assistants);
-    };
-
-    fetchAssistants();
-  }, [aiContents, meetId, meetingId]);
-
-  const messagesRef = useRef<string[]>([]);
-  useEffect(() => {
-    messagesRef.current = messages;
-  }, [messages]);
-
   return (
     <div className="flex w-full h-full border-t">
-      {/* Left Sidebar: Chat History */}
       <div className="w-80 border-r flex flex-col sticky top-[48px] z-10 h-[calc(100vh-48px)]">
         <div className="flex items-center justify-between p-4 border-b">
           <Button
@@ -216,7 +215,11 @@ export default function AIConversation({
               {aiContents.map((ai, idx) => (
                 <li
                   key={ai.id}
-                  className={`flex gap-2 items-start mt-2 px-2 py-2 cursor-pointer rounded-lg transition-colors ${selectedChatIdx === idx ? "bg-muted font-semibold" : "hover:bg-muted/60"}`}
+                  className={`flex gap-2 items-start mt-2 px-2 py-2 cursor-pointer rounded-lg transition-colors ${
+                    selectedChatIdx === idx
+                      ? "bg-muted font-semibold"
+                      : "hover:bg-muted/60"
+                  }`}
                   onClick={() => onChatHistoryClicked(idx)}>
                   <span>{ai.assistant.icon}</span>
                   <div className="flex flex-col ml-auto items-start w-full">
@@ -237,7 +240,6 @@ export default function AIConversation({
         </div>
       </div>
 
-      {/* Right Panel: Chat or AssistantList */}
       <div className="flex-1 flex flex-col h-full">
         {showAssistantList ? (
           <div className="flex-1 flex flex-col items-center pt-8">
@@ -310,14 +312,14 @@ export default function AIConversation({
                       <Bot className="h-4 w-4 text-primary" />
                     )}
                   </div>
-                  {isFetching == false && (
+                  {isFetching === false && (
                     <div className="relative w-[80%]">
                       <div className="overflow-y-auto scrollbar-gutter-stable prose prose-slate max-w-none bg-muted text-foreground p-4 rounded-xl prose-p:my-1 prose-li:my-0 prose-ul:my-1 prose-ol:my-1 leading-relaxed">
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                           {messages.join("")}
                         </ReactMarkdown>
                       </div>
-                      {isFetching == false && isStreaming == false && (
+                      {isStreaming === false && (
                         <button
                           className="cursor-pointer mt-2 p-2 rounded hover:bg-muted/80 transition-colors"
                           onClick={() => CopyToClipboard(messages.join(""))}

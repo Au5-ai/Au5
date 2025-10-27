@@ -1,13 +1,12 @@
 import React from "react";
 import { Bot, LaptopMinimal, Shield, Timer, Users } from "lucide-react";
 import { Meeting } from "@/shared/types";
-import { NavActions } from "@/app/(authenticated)/meetings/[meetingId]/sessions/[meetId]/navActions";
+import { NavActions } from "./nav-actions";
 
 export default function TranscriptionHeader({ meeting }: { meeting: Meeting }) {
   return (
     <div className="bg-white top-0 z-10">
       <div className="px-4 py-4">
-        {/* Title Section */}
         <div className="flex justify-start gap-4">
           <img src="/assets/images/googleMeets.svg" alt="Logo" />{" "}
           <div className="flex justify-between items-starts w-full">
