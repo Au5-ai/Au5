@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251022120735_ChangeTypeOfInstruction")]
-    partial class ChangeTypeOfInstruction
+    [Migration("20251027001525_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,11 +27,9 @@ namespace Au5.Infrastructure.Migrations
 
             modelBuilder.Entity("Au5.Domain.Entities.AIContents", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AssistantId")
                         .HasColumnType("uniqueidentifier");
@@ -48,11 +46,17 @@ namespace Au5.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<Guid>("MeetingId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("PromptTokens")
                         .HasColumnType("int");
+
+                    b.Property<Guid>("RemoverUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("TotalTokens")
                         .HasColumnType("int");

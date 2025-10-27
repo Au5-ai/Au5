@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Au5.Infrastructure.Migrations
 {
 	/// <inheritdoc />
-	public partial class InitDb : Migration
+	public partial class Init : Migration
 	{
 		/// <inheritdoc />
 		protected override void Up(MigrationBuilder migrationBuilder)
@@ -141,10 +141,10 @@ namespace Au5.Infrastructure.Migrations
 				columns: table => new
 				{
 					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-					Name = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
+					Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
 					Icon = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-					Description = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
-					Instructions = table.Column<string>(type: "varchar(2000)", unicode: false, maxLength: 2000, nullable: true),
+					Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+					Instructions = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
 					LLMModel = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
 					OpenAIAssistantId = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
 					UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -219,8 +219,7 @@ namespace Au5.Infrastructure.Migrations
 				name: "AIContents",
 				columns: table => new
 				{
-					Id = table.Column<int>(type: "int", nullable: false)
-						.Annotation("SqlServer:Identity", "1, 1"),
+					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					MeetingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					AssistantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -228,7 +227,9 @@ namespace Au5.Infrastructure.Migrations
 					CompletionTokens = table.Column<int>(type: "int", nullable: false),
 					PromptTokens = table.Column<int>(type: "int", nullable: false),
 					TotalTokens = table.Column<int>(type: "int", nullable: false),
-					CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+					CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+					IsActive = table.Column<bool>(type: "bit", nullable: false),
+					RemoverUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
 				},
 				constraints: table =>
 				{
