@@ -162,7 +162,7 @@ export class UIHandlers {
 
   private handleGithubLink(): this {
     const btn = document.getElementById("github-link");
-    btn?.addEventListener("click", () => window.open("https://github.com/Au5-ai/au5", "_blank"));
+    btn?.addEventListener("click", () => window.open("https://github.com/Au5-ai/au5", "_blank", "noopener,noreferrer"));
     return this;
   }
 
@@ -174,7 +174,9 @@ export class UIHandlers {
 
   private handleAddIssueLink(): this {
     const btn = document.getElementById("issue-link");
-    btn?.addEventListener("click", () => window.open("https://github.com/Au5-ai/au5/issues", "_blank"));
+    btn?.addEventListener("click", () =>
+      window.open("https://github.com/Au5-ai/au5/issues", "_blank", "noopener,noreferrer")
+    );
     return this;
   }
 

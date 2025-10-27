@@ -74,8 +74,11 @@ export function NavUser(user: User) {
               <DropdownMenuItem
                 className="cursor-pointer"
                 onClick={() =>
-                  (window.location.href =
-                    "https://github.com/Au5-ai/au5/issues")
+                  window.open(
+                    "https://github.com/Au5-ai/au5/issues",
+                    "_blank",
+                    "noopener,noreferrer",
+                  )
                 }>
                 <Gem />
                 Request a feature

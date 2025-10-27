@@ -4397,7 +4397,11 @@ class UIHandlers {
     btn == null
       ? void 0
       : btn.addEventListener("click", () =>
-          window.open("https://github.com/Au5-ai/au5", "_blank")
+          window.open(
+            "https://github.com/Au5-ai/au5",
+            "_blank",
+            "noopener,noreferrer"
+          )
         );
     return this;
   }
