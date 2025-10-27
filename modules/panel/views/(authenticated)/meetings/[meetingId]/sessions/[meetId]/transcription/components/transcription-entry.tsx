@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 import { MessageCircle, Mic } from "lucide-react";
 import { format } from "date-fns";
 import { Entry } from "@/shared/types";
-import ParticipantAvatar from "../../../../../../../../shared/components/participant-avatar";
-import ReactionBadges from "./reaction-badges";
+import ParticipantAvatar from "@/shared/components/participant-avatar";
+import ReactionBadges from "./transcription-reaction-badges";
 
 export default function TranscriptionEntry({
   entry,

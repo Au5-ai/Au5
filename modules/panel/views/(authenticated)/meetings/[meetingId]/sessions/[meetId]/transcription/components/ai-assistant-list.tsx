@@ -5,13 +5,13 @@ import NoRecordsState from "@/shared/components/empty-states/no-record";
 import { Assistant } from "@/shared/types/assistants";
 import { truncateFirstLine } from "@/shared/lib/utils";
 
-export interface AssistantListProps {
+export interface AIAssistantListProps {
   usedAssistants: Assistant[];
   assistants: Assistant[];
   onClick?: (assistant: Assistant) => void;
 }
 
-export const AssistantList: React.FC<AssistantListProps> = ({
+export const AIAssistantList: React.FC<AIAssistantListProps> = ({
   usedAssistants,
   assistants,
   onClick,

@@ -27,7 +27,7 @@ import { CopyToClipboard, truncateFirstLine } from "@/shared/lib";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { Assistant } from "@/shared/types/assistants";
 import { AIContent } from "@/shared/types";
-import { AssistantList } from "./assistant-list";
+import { AIAssistantList } from "./ai-assistant-list";
 import { DeleteAIContentConfirmationModal } from "./delete-ai-content-confirmation-modal";
 
 interface AIConversationProps {
@@ -243,7 +243,7 @@ export default function AIConversation({
       <div className="flex-1 flex flex-col h-full">
         {showAssistantList ? (
           <div className="flex-1 flex flex-col items-center pt-8">
-            <AssistantList
+            <AIAssistantList
               usedAssistants={usedAssistants}
               assistants={assistants}
               onClick={onAssistantClicked}
