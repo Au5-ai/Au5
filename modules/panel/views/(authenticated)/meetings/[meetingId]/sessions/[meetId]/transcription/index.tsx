@@ -25,7 +25,7 @@ import AIConversation from "./components/ai-conversation";
 import TranscriptionHeader from "./components/transcription-header";
 import TranscriptionFilters from "./components/transcription-filters";
 import TranscriptionEntry from "./components/transcription-entry";
-import ParticipantAvatar from "../../../../../../../shared/components/participant-avatar";
+import ParticipantAvatar from "@/shared/components/participant-avatar";
 import { MeetingSpaceCollapsible } from "./components/meeting-space-collapsible";
 
 export default function TranscriptionView() {
