@@ -12,21 +12,21 @@ import {
   TooltipTrigger,
 } from "@/shared/components/ui/tooltip";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import { ArchiveConfirmationModal } from "../../../../../../../../shared/components/meetings/archive-confirmation-modal";
+import { ArchiveConfirmationModal } from "@/shared/components/meetings/archive-confirmation-modal";
 
-interface NavActionsProps {
+interface TranscriptionActionsProps {
   meetingId?: string;
   meetId?: string;
   isFavorite?: boolean;
   meetingStatus?: string;
 }
 
-export function NavActions({
+export function TranscriptionActions({
   meetingId,
   meetId,
   isFavorite = false,
   meetingStatus,
-}: NavActionsProps) {
+}: TranscriptionActionsProps) {
   const [isToggling, setIsToggling] = React.useState(false);
   const [currentFavoriteStatus, setCurrentFavoriteStatus] =
     React.useState(isFavorite);

@@ -1,6 +1,6 @@
 import React from "react";
 import { Participant } from "@/shared/types";
-import ParticipantAvatar from "./participant-avatar";
+import ParticipantAvatar from "../../../../../../../../shared/components/participant-avatar";
 
 export default function ParticipantAvatarGroup({
   participants,
