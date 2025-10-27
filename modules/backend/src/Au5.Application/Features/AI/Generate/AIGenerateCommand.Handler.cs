@@ -22,8 +22,8 @@ public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand,
 		AIGenerateCommand request,
 		[EnumeratorCancellation] CancellationToken cancellationToken)
 	{
-		var aiContent = _dbContext.Set<AIContents>()
-			.FirstOrDefault(x => x.MeetingId == request.MeetingId && x.AssistantId == request.AssistantId);
+		var aiContent = await _dbContext.Set<AIContents>()
+			.FirstOrDefaultAsync(x => x.MeetingId == request.MeetingId && x.AssistantId == request.AssistantId && x.IsActive, cancellationToken);
 
 		if (aiContent is not null)
 		{
@@ -174,6 +174,7 @@ public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand,
 				TotalTokens = totalTokens,
 				CreatedAt = DateTime.Now,
 				UserId = _currentUserService.UserId,
+				IsActive = true,
 			};
 			_dbContext.Set<AIContents>().Add(aiContentNew);
 			await _dbContext.SaveChangesAsync(cancellationToken);

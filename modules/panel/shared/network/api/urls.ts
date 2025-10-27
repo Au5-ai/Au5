@@ -18,6 +18,8 @@ export const API_URLS = {
     MY: `/meetings/my?status=ended`,
     AI_CONTENTS: (meetingId: string, meetId: string) =>
       `/meetings/${meetingId}/sessions/${meetId}/ai-contents`,
+    DELETE_AI_CONTENT: (meetingId: string, meetId: string, id: string) =>
+      `/meetings/${meetingId}/sessions/${meetId}/ai-contents/${id}`,
     ARCHIVED: `/meetings/my?status=archived`,
     TRANSCRIPTION: (meetingId: string, meetId: string) =>
       `/meetings/${meetingId}/sessions/${meetId}/transcription`,

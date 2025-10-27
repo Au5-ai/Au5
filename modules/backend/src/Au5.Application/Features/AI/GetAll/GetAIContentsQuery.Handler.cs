@@ -10,7 +10,7 @@ public class GetAIContentsQueryHandler(IApplicationDbContext dbContext) : IReque
 			.Include(x => x.Assistant)
 			.Include(x => x.User)
 			.AsNoTracking()
-			.Where(a => a.MeetingId == request.MeetingId)
+			.Where(a => a.MeetingId == request.MeetingId && a.IsActive)
 			.OrderByDescending(x => x.CreatedAt)
 			.Select(x => new AIContentsResponse()
 			{

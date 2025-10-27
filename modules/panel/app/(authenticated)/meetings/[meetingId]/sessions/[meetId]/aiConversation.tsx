@@ -21,12 +21,20 @@ import { AssistantList } from "./AssistantList";
 import { AIContent } from "@/shared/types";
 import { assistantsController } from "@/shared/network/api/assistantsController";
 import { CopyToClipboard, truncateFirstLine } from "@/shared/lib";
+import { DeleteAIContentConfirmationModal } from "./deleteAIContentConfirmationModal";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/shared/components/ui";
 
 interface AIConversationProps {
   aiContents: AIContent[];
   meetId: string;
   meetingId: string;
   onNewContent?: (content: AIContent) => void;
+  onContentDeleted?: (contentId: string) => void;
 }
 
 export default function AIConversation({
@@ -34,6 +42,7 @@ export default function AIConversation({
   meetId,
   meetingId,
   onNewContent,
+  onContentDeleted,
 }: AIConversationProps) {
   const [usedAssistants, setUsedAssistants] = useState<Assistant[]>([]);
   const [assistants, setAssistants] = useState<Assistant[]>([]);
@@ -42,6 +51,8 @@ export default function AIConversation({
   const [isFetching, setIsFetching] = useState(false);
   const [selectedChatIdx, setSelectedChatIdx] = useState<number | null>(null);
   const [showAssistantList, setShowAssistantList] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const onAssistantClicked = (assistant: Assistant) => {
     setShowAssistantList(false);
@@ -129,6 +140,36 @@ export default function AIConversation({
     setMessages([]);
   };
 
+  const handleDeleteClick = () => {
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (selectedChatIdx === null) return;
+
+    const currentContent = aiContents[selectedChatIdx];
+    if (!currentContent?.id) return;
+
+    try {
+      setIsDeleting(true);
+      await aiController.delete(meetingId, meetId, currentContent.id);
+      toast.success(GLOBAL_CAPTIONS.pages.meetings.deleteAIContentSuccess);
+      setShowDeleteModal(false);
+      setShowAssistantList(true);
+      setSelectedChatIdx(null);
+      setMessages([]);
+
+      if (onContentDeleted) {
+        onContentDeleted(currentContent.id);
+      }
+    } catch (error) {
+      console.error("Failed to delete AI content:", error);
+      toast.error(GLOBAL_CAPTIONS.pages.meetings.deleteAIContentError);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   useEffect(() => {
     if (Array.isArray(aiContents)) {
       const assistantsFromContents = aiContents
@@ -151,9 +192,9 @@ export default function AIConversation({
   }, [messages]);
 
   return (
-    <div className="flex w-full h-full overflow-hidden border-t">
+    <div className="flex w-full h-full border-t">
       {/* Left Sidebar: Chat History */}
-      <div className="w-80 border-r flex flex-col">
+      <div className="w-80 border-r flex flex-col sticky top-[48px] z-10 h-[calc(100vh-48px)]">
         <div className="flex items-center justify-between p-4 border-b">
           <Button
             size="sm"
@@ -197,7 +238,7 @@ export default function AIConversation({
       </div>
 
       {/* Right Panel: Chat or AssistantList */}
-      <div className="flex-1 flex flex-col h-full pt-4">
+      <div className="flex-1 flex flex-col h-full">
         {showAssistantList ? (
           <div className="flex-1 flex flex-col items-center pt-8">
             <AssistantList
@@ -208,16 +249,37 @@ export default function AIConversation({
           </div>
         ) : selectedChatIdx !== null && usedAssistants[selectedChatIdx] ? (
           <>
-            <div className="flex items-center justify-between w-full mb-4 px-4">
+            <div className="flex items-center justify-between w-full mb-4 p-4 bg-white sticky top-[48px] z-10">
               <span className="ml-2 font-semibold text-lg">
                 {usedAssistants[selectedChatIdx].icon}{" "}
                 {usedAssistants[selectedChatIdx].name}
               </span>
               <div>
                 <div className="flex gap-2">
-                  <Button variant="ghost" size="sm">
-                    <Trash2Icon className="h-4 w-4 text-destructive" />
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleDeleteClick}
+                          disabled={
+                            aiContents[selectedChatIdx]?.id === "0" ||
+                            !aiContents[selectedChatIdx]?.id
+                          }>
+                          <Trash2Icon className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        {aiContents[selectedChatIdx]?.id === "0" ||
+                        !aiContents[selectedChatIdx]?.id
+                          ? "Please reload the page to delete this content"
+                          : "Delete AI content"}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               </div>
             </div>
@@ -272,6 +334,13 @@ export default function AIConversation({
           </>
         ) : null}
       </div>
+
+      <DeleteAIContentConfirmationModal
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        onConfirm={handleDeleteConfirm}
+        isLoading={isDeleting}
+      />
     </div>
   );
 }
