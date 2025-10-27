@@ -2,7 +2,7 @@ import React from "react";
 import { Badge } from "@/shared/components/ui/badge";
 import { Reaction } from "@/shared/types";
 
-export default function ReactionBadges({
+export default function TranscriptionReactionBadges({
   reactions,
 }: {
   reactions: Reaction[];

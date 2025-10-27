@@ -1,6 +1,6 @@
 import React from "react";
-import ParticipantAvatar from "./participantAvatar";
 import { Participant } from "@/shared/types";
+import ParticipantAvatar from "@/shared/components/participant-avatar";
 
 export default function ParticipantAvatarGroup({
   participants,
@@ -14,14 +14,12 @@ export default function ParticipantAvatarGroup({
   const uniqueParticipants = React.useMemo(() => {
     const participantsMap = new Map<string, Participant>();
 
-    // Add participants
     participants?.forEach((participant) => {
       if (participant.fullName && !participantsMap.has(participant.fullName)) {
         participantsMap.set(participant.fullName, participant);
       }
     });
 
-    // Add guests
     guests?.forEach((guest) => {
       if (guest.fullName && !participantsMap.has(guest.fullName)) {
         participantsMap.set(guest.fullName, guest);

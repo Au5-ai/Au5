@@ -1,16 +1,17 @@
 import React from "react";
-import { Badge, Card } from "@/shared/components/ui";
-import { Assistant } from "@/shared/types/assistants";
 import { Bot } from "lucide-react";
-import { truncateFirstLine } from "@/shared/lib/utils";
+import { Badge, Card } from "@/shared/components/ui";
 import NoRecordsState from "@/shared/components/empty-states/no-record";
+import { Assistant } from "@/shared/types/assistants";
+import { truncateFirstLine } from "@/shared/lib/utils";
 
-export interface AssistantListProps {
+export interface AIAssistantListProps {
   usedAssistants: Assistant[];
   assistants: Assistant[];
   onClick?: (assistant: Assistant) => void;
 }
-export const AssistantList: React.FC<AssistantListProps> = ({
+
+export const AIAssistantList: React.FC<AIAssistantListProps> = ({
   usedAssistants,
   assistants,
   onClick,
@@ -28,6 +29,7 @@ export const AssistantList: React.FC<AssistantListProps> = ({
       </div>
     );
   }
+
   return (
     <>
       <h2 className="text-lg font-semibold mb-4 flex items-center">
@@ -41,6 +43,7 @@ export const AssistantList: React.FC<AssistantListProps> = ({
           const cardClass = isUsed
             ? "flex flex-col items-start gap-2 p-3 shadow-none rounded-lg cursor-pointer bg-green-100 border border-green-300"
             : "flex flex-col items-start gap-2 p-3 shadow-none rounded-lg cursor-pointer hover:bg-red-50 hover:shadow-sm";
+
           return (
             <Card
               onClick={() => onClick?.(assistant)}

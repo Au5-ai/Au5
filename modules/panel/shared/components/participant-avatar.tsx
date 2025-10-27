@@ -1,6 +1,14 @@
 import React from "react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/shared/components/ui/tooltip";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/shared/components/ui/avatar";
 
 export default function ParticipantAvatar({
   fullName,
@@ -11,11 +19,11 @@ export default function ParticipantAvatar({
   pictureUrl: string;
   className?: string;
 }) {
-  const getColorFromName = (fullName: string) => {
-    if (!fullName) return "#6b7280";
+  const getColorFromName = (name: string) => {
+    if (!name) return "#6b7280";
     let hash = 0;
-    for (let i = 0; i < fullName.length; i++) {
-      hash = fullName.charCodeAt(i) + ((hash << 5) - hash);
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
     }
     const hue = hash % 360;
     return `hsl(${hue}, 70%, 65%)`;
@@ -25,7 +33,7 @@ export default function ParticipantAvatar({
 
   return (
     <Tooltip>
-      <TooltipTrigger className={`flex items-start`}>
+      <TooltipTrigger className="flex items-start">
         <div className="avatar-container">
           <Avatar className={`rounded-lg ${className ?? ""}`}>
             <AvatarImage src={pictureUrl} alt={fullName} />

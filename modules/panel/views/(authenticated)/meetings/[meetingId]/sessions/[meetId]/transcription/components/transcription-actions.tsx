@@ -2,31 +2,31 @@
 
 import * as React from "react";
 import { Archive, ArchiveRestore, Star } from "lucide-react";
+import { motion } from "framer-motion";
+import { toast } from "sonner";
 import { meetingsController } from "@/shared/network/api/meetingsController";
 import { Button } from "@/shared/components/ui/button";
-import { GLOBAL_CAPTIONS } from "../../../../../../shared/i18n/captions";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "../../../../../../shared/components/ui";
-import { toast } from "sonner";
-import { motion } from "framer-motion";
-import { ArchiveConfirmationModal } from "./archiveConfirmationModal";
+} from "@/shared/components/ui/tooltip";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
+import { ArchiveConfirmationModal } from "@/shared/components/meetings/archive-confirmation-modal";
 
-interface NavActionsProps {
+interface TranscriptionActionsProps {
   meetingId?: string;
   meetId?: string;
   isFavorite?: boolean;
   meetingStatus?: string;
 }
 
-export function NavActions({
+export function TranscriptionActions({
   meetingId,
   meetId,
   isFavorite = false,
   meetingStatus,
-}: NavActionsProps) {
+}: TranscriptionActionsProps) {
   const [isToggling, setIsToggling] = React.useState(false);
   const [currentFavoriteStatus, setCurrentFavoriteStatus] =
     React.useState(isFavorite);
@@ -45,17 +45,19 @@ export function NavActions({
 
     try {
       setIsToggling(true);
-
       setCurrentFavoriteStatus(!currentFavoriteStatus);
+
       const response = await meetingsController.toggleFavorite(
         meetingId,
         meetId,
       );
+
       if (response.isFavorite) {
         toast.success("Meeting has been added to your favorite list");
       } else {
         toast.success("Meeting has been removed from your favorite list");
       }
+
       setCurrentFavoriteStatus(response.isFavorite);
     } catch (error) {
       console.error("Failed to toggle favorite:", error);
@@ -99,7 +101,9 @@ export function NavActions({
           <Button
             variant="ghost"
             size="icon"
-            className={`h-7 w-7 cursor-pointer hover:bg-yellow-200 ${currentFavoriteStatus ? `bg-yellow-100` : ``}`}
+            className={`h-7 w-7 cursor-pointer hover:bg-yellow-200 ${
+              currentFavoriteStatus ? `bg-yellow-100` : ``
+            }`}
             onClick={handleToggleFavorite}
             disabled={!meetingId || !meetId || isToggling}>
             <motion.div
