@@ -34,6 +34,7 @@ interface AIConversationProps {
   meetId: string;
   meetingId: string;
   onNewContent?: (content: AIContent) => void;
+  onContentDeleted?: (contentId: string) => void;
 }
 
 export default function AIConversation({
@@ -41,6 +42,7 @@ export default function AIConversation({
   meetId,
   meetingId,
   onNewContent,
+  onContentDeleted,
 }: AIConversationProps) {
   const [usedAssistants, setUsedAssistants] = useState<Assistant[]>([]);
   const [assistants, setAssistants] = useState<Assistant[]>([]);
@@ -153,15 +155,13 @@ export default function AIConversation({
       await aiController.delete(meetingId, meetId, currentContent.id);
       toast.success(GLOBAL_CAPTIONS.pages.meetings.deleteAIContentSuccess);
       setShowDeleteModal(false);
-
-      setUsedAssistants((prev) =>
-        prev.filter((a) => a.id !== currentContent.assistant.id),
-      );
-
       setShowAssistantList(true);
       setSelectedChatIdx(null);
       setMessages([]);
-      aiContents.splice(selectedChatIdx, 1);
+
+      if (onContentDeleted) {
+        onContentDeleted(currentContent.id);
+      }
     } catch (error) {
       console.error("Failed to delete AI content:", error);
       toast.error(GLOBAL_CAPTIONS.pages.meetings.deleteAIContentError);

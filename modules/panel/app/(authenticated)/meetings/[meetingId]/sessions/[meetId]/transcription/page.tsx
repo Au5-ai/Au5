@@ -22,7 +22,6 @@ import { Blocks, CaptionsIcon, Sparkles } from "lucide-react";
 import AIConversation from "../aiConversation";
 import ParticipantAvatar from "@/shared/components/transcription/participantAvatar";
 import { format } from "date-fns";
-import ParticipantAvatarGroup from "@/shared/components/transcription/participantAvatarGroup";
 import { MySpacesResponse } from "@/shared/types/space";
 import { useCurrentUserSpaces } from "@/shared/hooks/use-user";
 import { MeetingSpaceCollapsible } from "../meetingSpaceCollapsible";
@@ -270,6 +269,9 @@ export default function TranscriptionPage() {
           <AIConversation
             onNewContent={(newContent) =>
               setAIContents((prev) => [...prev, newContent])
+            }
+            onContentDeleted={(contentId) =>
+              setAIContents((prev) => prev.filter((c) => c.id !== contentId))
             }
             aiContents={aiContents}
             meetId={meetId}
