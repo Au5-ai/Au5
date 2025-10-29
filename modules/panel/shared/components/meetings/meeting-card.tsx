@@ -20,7 +20,7 @@ import {
 import { meetingsController } from "@/shared/network/api/meetingsController";
 import { toast } from "sonner";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import { ArchiveConfirmationModal } from "@/app/(authenticated)/meetings/[meetingId]/sessions/[meetId]/archiveConfirmationModal";
+import { ArchiveConfirmationModal } from "./archive-confirmation-modal";
 
 interface MeetingCardProps {
   item: MeetingItem;
