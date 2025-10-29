@@ -26,7 +26,6 @@ export function ConfigureStep({ next }: { next: () => void }) {
             pictureUrl: user.pictureUrl,
           },
           service: {
-            jwtToken: tokenStorageService.get(),
             panelUrl: systemConfig.panelUrl,
             baseUrl: systemConfig.serviceBaseUrl,
             direction: systemConfig.direction,
@@ -37,6 +36,8 @@ export function ConfigureStep({ next }: { next: () => void }) {
           },
         };
 
+        const token = tokenStorageService.get();
+
         window.postMessage(
           {
             source: "AU5_PANEL",
@@ -45,6 +46,18 @@ export function ConfigureStep({ next }: { next: () => void }) {
           },
           "*",
         );
+
+        if (token) {
+          window.postMessage(
+            {
+              source: "AU5_PANEL",
+              type: "TOKEN_UPDATE",
+              payload: token,
+            },
+            "*",
+          );
+        }
+
         localStorage.setItem("exConfig", "true");
         localStorage.setItem("config", JSON.stringify(config));
         queryClient.setQueryData(["currentUser"], {
