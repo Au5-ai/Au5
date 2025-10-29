@@ -1,6 +1,7 @@
 import * as signalR from "@microsoft/signalr";
 import {AppConfiguration, IMeetingPlatform, IMessage, MessageTypes, UserJoinedInMeetingMessage} from "../core/types";
 import {ChatPanel} from "../ui/chatPanel";
+import {TokenManager} from "../core/tokenManager";
 
 export class MeetingHubClient {
   private connection: signalR.HubConnection;
@@ -8,16 +9,19 @@ export class MeetingHubClient {
   private config: AppConfiguration;
   private platform: IMeetingPlatform;
   private chatPanel: ChatPanel;
+  private tokenManager: TokenManager;
 
   constructor(config: AppConfiguration, platform: IMeetingPlatform, chatPanel: ChatPanel) {
     this.config = config;
     this.platform = platform;
     this.meetId = platform.getMeetId();
     this.chatPanel = chatPanel;
+    this.tokenManager = new TokenManager();
     this.connection = new signalR.HubConnectionBuilder()
       .withUrl(this.config.service.hubUrl, {
-        accessTokenFactory: () => {
-          return this.config.service.jwtToken || "";
+        accessTokenFactory: async () => {
+          const token = await this.tokenManager.getToken();
+          return token || "";
         }
       })
       .withAutomaticReconnect()

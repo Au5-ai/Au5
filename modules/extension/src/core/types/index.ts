@@ -30,7 +30,6 @@ export interface ServiceIntegration {
   hubUrl: string;
   companyName: string;
   botName: string;
-  jwtToken: string;
 }
 
 export interface AppConfiguration {

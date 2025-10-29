@@ -498,27 +498,80 @@ async function apiRequest(url, options = {}) {
   }
   return response.json();
 }
+const ACCESS_TOKEN_KEY = "access_token";
+class TokenManager {
+  async getToken() {
+    try {
+      return await new Promise((resolve, reject) => {
+        chrome.storage.local.get(ACCESS_TOKEN_KEY, (result) => {
+          const token = result[ACCESS_TOKEN_KEY];
+          resolve(token || null);
+        });
+      });
+    } catch (error) {
+      console.error("Error retrieving token:", error);
+      return null;
+    }
+  }
+  async setToken(token) {
+    try {
+      await new Promise((resolve, reject) => {
+        chrome.storage.local.set({ [ACCESS_TOKEN_KEY]: token }, () => {
+          if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError);
+          } else {
+            resolve();
+          }
+        });
+      });
+    } catch (error) {
+      console.error("Error saving token:", error);
+      throw error;
+    }
+  }
+  async removeToken() {
+    try {
+      await new Promise((resolve, reject) => {
+        chrome.storage.local.remove(ACCESS_TOKEN_KEY, () => {
+          if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError);
+          } else {
+            resolve();
+          }
+        });
+      });
+    } catch (error) {
+      console.error("Error removing token:", error);
+      throw error;
+    }
+  }
+}
 class BackEndApi {
   constructor(config2) {
+    __publicField(this, "tokenManager");
     this.config = config2;
+    this.tokenManager = new TokenManager();
   }
   async addBot(body) {
+    const token = await this.tokenManager.getToken();
     return apiRequest(ApiRoutes.getInstance(this.config).addBot(body.meetingId, body.meetId), {
       method: "POST",
       body,
-      authToken: this.config.service.jwtToken
+      authToken: token || ""
     });
   }
   async getReactions() {
+    const token = await this.tokenManager.getToken();
     return apiRequest(ApiRoutes.getInstance(this.config).getReactions(), {
       method: "GET",
-      authToken: this.config.service.jwtToken
+      authToken: token || ""
     });
   }
   async closeMeeting(body) {
+    const token = await this.tokenManager.getToken();
     return apiRequest(ApiRoutes.getInstance(this.config).closeMeeting(body.meetingId, body.meetId), {
       method: "POST",
-      authToken: this.config.service.jwtToken
+      authToken: token || ""
     });
   }
 }
@@ -3354,13 +3407,16 @@ class MeetingHubClient {
     __publicField(this, "config");
     __publicField(this, "platform");
     __publicField(this, "chatPanel");
+    __publicField(this, "tokenManager");
     this.config = config2;
     this.platform = platform2;
     this.meetId = platform2.getMeetId();
     this.chatPanel = chatPanel2;
+    this.tokenManager = new TokenManager();
     this.connection = new HubConnectionBuilder().withUrl(this.config.service.hubUrl, {
-      accessTokenFactory: () => {
-        return this.config.service.jwtToken || "";
+      accessTokenFactory: async () => {
+        const token = await this.tokenManager.getToken();
+        return token || "";
       }
     }).withAutomaticReconnect().build();
     this.connection.onclose((err) => {
