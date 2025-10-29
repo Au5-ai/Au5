@@ -5,7 +5,6 @@ export interface AppConfig {
     pictureUrl?: string;
   };
   service: {
-    jwtToken: string;
     panelUrl: string;
     baseUrl: string;
     direction: string;
