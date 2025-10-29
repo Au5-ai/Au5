@@ -26,10 +26,10 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: () => authController.logout(),
-    onSuccess: () => {
+    onSettled: () => {
       tokenStorageService.remove();
       queryClient.clear();
-      
+
       if (typeof window !== "undefined") {
         window.postMessage(
           {
@@ -40,24 +40,7 @@ export function useLogout() {
           "*",
         );
       }
-      
-      router.push(ROUTES.LOGIN);
-    },
-    onError: () => {
-      tokenStorageService.remove();
-      queryClient.clear();
-      
-      if (typeof window !== "undefined") {
-        window.postMessage(
-          {
-            source: "AU5_PANEL",
-            type: "TOKEN_REMOVE",
-            payload: null,
-          },
-          "*",
-        );
-      }
-      
+
       router.push(ROUTES.LOGIN);
     },
   });
