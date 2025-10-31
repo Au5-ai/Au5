@@ -9,12 +9,14 @@ namespace Au5.UnitTests.Application.Features.SystemConfiguration;
 public class SystemConfigCommandHandlerTests
 {
 	private readonly Mock<IApplicationDbContext> _dbContextMock;
+	private readonly Mock<IDataProvider> _dataProviderMock;
 	private readonly SystemConfigCommandHandler _handler;
 
 	public SystemConfigCommandHandlerTests()
 	{
 		_dbContextMock = new();
-		_handler = new SystemConfigCommandHandler(_dbContextMock.Object);
+		_dataProviderMock = new();
+		_handler = new SystemConfigCommandHandler(_dbContextMock.Object, _dataProviderMock.Object);
 	}
 
 	[Fact]

@@ -1,5 +1,4 @@
 using Au5.Application.Features.Meetings.AddBot;
-using Au5.Application.Services;
 using Au5.Application.Services.Models;
 using Au5.Domain.Entities;
 using Au5.Shared;
@@ -15,6 +14,8 @@ public class AddBotCommandHandlerTests
 	private readonly Mock<ICacheProvider> _cacheProviderMock;
 	private readonly Mock<ICurrentUserService> _currentUserServiceMock;
 	private readonly Mock<DbSet<Meeting>> _meetingDbSetMock;
+	private readonly Mock<IDataProvider> _dataProviderMock;
+	private readonly Mock<IMeetingService> _meetingServiceMock;
 	private readonly AddBotCommandHandler _handler;
 
 	public AddBotCommandHandlerTests()
@@ -25,13 +26,17 @@ public class AddBotCommandHandlerTests
 		_cacheProviderMock = new Mock<ICacheProvider>();
 		_meetingDbSetMock = new Mock<DbSet<Meeting>>();
 		_currentUserServiceMock = new Mock<ICurrentUserService>();
+		_dataProviderMock = new Mock<IDataProvider>();
+		_meetingServiceMock = new Mock<IMeetingService>();
 
 		_handler = new AddBotCommandHandler(
 			_dbContextMock.Object,
 			_botFatherMock.Object,
 			_meetingUrlServiceMock.Object,
 			_cacheProviderMock.Object,
-			_currentUserServiceMock.Object);
+			_currentUserServiceMock.Object,
+			_dataProviderMock.Object,
+			_meetingServiceMock.Object);
 	}
 
 	[Fact]
@@ -142,11 +147,14 @@ public class AddBotCommandHandlerTests
 
 		_botFatherMock.Setup(x => x.CreateBotContainerAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()))
 			.ReturnsAsync((Result<string>)"bot-created");
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+		_dataProviderMock.Setup(x => x.Now).Returns(now);
 
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
 		Assert.NotNull(capturedMeeting);
+
 		Assert.Equal("Meet-meet-123", capturedMeeting.MeetId);
 		Assert.Equal("Meeting Transcription", capturedMeeting.MeetName);
 		Assert.Equal("MeetBot", capturedMeeting.BotName);
@@ -155,8 +163,8 @@ public class AddBotCommandHandlerTests
 		Assert.Equal(MeetingStatus.AddingBot, capturedMeeting.Status);
 		Assert.False(capturedMeeting.IsBotAdded);
 		Assert.NotEmpty(capturedMeeting.HashToken);
-		Assert.True(capturedMeeting.CreatedAt <= DateTime.Now);
-		Assert.True(capturedMeeting.CreatedAt >= DateTime.Now.AddMinutes(-1));
+		Assert.True(capturedMeeting.CreatedAt <= now);
+		Assert.True(capturedMeeting.CreatedAt >= now.AddMinutes(-1));
 	}
 
 	[Fact]
@@ -234,7 +242,7 @@ public class AddBotCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		var expectedCacheKey = MeetingService.GetMeetingKey("test-meet-id");
+		_meetingServiceMock.Verify(x => x.GetMeetingKey("test-meet-id"), Times.AtLeastOnce);
 	}
 
 	[Fact]
@@ -272,7 +280,7 @@ public class AddBotCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		var expectedCacheKey = MeetingService.GetMeetingKey("test-meet-id");
+		_meetingServiceMock.Verify(x => x.GetMeetingKey("test-meet-id"), Times.AtLeastOnce);
 	}
 
 	[Fact]

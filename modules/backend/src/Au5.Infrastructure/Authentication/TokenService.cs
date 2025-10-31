@@ -15,16 +15,18 @@ public class TokenService : ITokenService
 	private const string CacheBlackListPrefix = "jwt_bl_";
 	private readonly ICacheProvider _cacheProvider;
 	private readonly JwtSettings _jwt;
+	private readonly IDataProvider _dataProvider;
 
-	public TokenService(IOptions<JwtSettings> jwtOptions, ICacheProvider cacheProvider)
+	public TokenService(IOptions<JwtSettings> jwtOptions, ICacheProvider cacheProvider, IDataProvider dataProvider)
 	{
 		_jwt = jwtOptions.Value;
 		_cacheProvider = cacheProvider;
+		_dataProvider = dataProvider;
 	}
 
 	public TokenResponse GenerateToken(Guid extensionId, string fullName, RoleTypes role)
 	{
-		var jti = Guid.NewGuid().ToString();
+		var jti = _dataProvider.NewGuid().ToString();
 
 		var claims = new[]
 		{
@@ -41,7 +43,7 @@ public class TokenService : ITokenService
 			issuer: _jwt.Issuer,
 			audience: _jwt.Audience,
 			claims: claims,
-			expires: DateTime.Now.AddMinutes(_jwt.ExpiryMinutes),
+			expires: _dataProvider.Now.AddMinutes(_jwt.ExpiryMinutes),
 			signingCredentials: creds);
 
 		return new TokenResponse(new JwtSecurityTokenHandler().WriteToken(token), _jwt.ExpiryMinutes * 60, string.Empty, "Bearer");
@@ -60,7 +62,7 @@ public class TokenService : ITokenService
 		}
 
 		var key = BuildKey(userId, jti);
-		var ttl = expiry - DateTime.Now;
+		var ttl = expiry - _dataProvider.Now;
 
 		if (ttl <= TimeSpan.Zero)
 		{

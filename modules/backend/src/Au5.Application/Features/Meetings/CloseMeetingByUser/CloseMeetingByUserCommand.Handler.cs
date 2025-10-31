@@ -8,17 +8,20 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 	private readonly IMeetingService _meetingService;
 	private readonly IBotFatherAdapter _botFather;
 	private readonly ICurrentUserService _currentUserService;
+	private readonly IDataProvider _dataProvider;
 
 	public CloseMeetingByUserCommandHandler(
 		IApplicationDbContext dbContext,
 		IMeetingService meetingService,
 		IBotFatherAdapter botFather,
-		ICurrentUserService currentUserService)
+		ICurrentUserService currentUserService,
+		IDataProvider dataProvider)
 	{
 		_meetingService = meetingService;
 		_dbContext = dbContext;
 		_botFather = botFather;
 		_currentUserService = currentUserService;
+		_dataProvider = dataProvider;
 	}
 
 	public async ValueTask<Result<bool>> Handle(CloseMeetingByUserCommand request, CancellationToken cancellationToken)
@@ -42,8 +45,8 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 		if (meetingContent is not null)
 		{
 			meeting.Status = MeetingStatus.Ended;
-			meeting.Duration = meeting.CreatedAt.DiffTo(DateTime.Now).ToReadableString();
-			meeting.ClosedAt = DateTime.Now;
+			meeting.Duration = meeting.CreatedAt.DiffTo(_dataProvider.Now).ToReadableString();
+			meeting.ClosedAt = _dataProvider.Now;
 			meeting.Entries = meetingContent.Entries;
 			meeting.Participants = meetingContent.Participants;
 			meeting.Guests = meetingContent.Guests;

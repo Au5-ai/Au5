@@ -3,11 +3,12 @@ using Au5.Application.Dtos.AI;
 
 namespace Au5.Application.Features.Assistants.AddAssistant;
 
-public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngineAdapter aiEngine, ICurrentUserService currentUserService) : IRequestHandler<AddAssistantCommand, Result<AddAssisstantResponse>>
+public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngineAdapter aiEngine, ICurrentUserService currentUserService, IDataProvider dataProvider) : IRequestHandler<AddAssistantCommand, Result<AddAssisstantResponse>>
 {
 	private readonly IApplicationDbContext _dbContext = dbContext;
 	private readonly IAIEngineAdapter _aiEngine = aiEngine;
 	private readonly ICurrentUserService _currentUserService = currentUserService;
+	private readonly IDataProvider _dataProvider = dataProvider;
 
 	public async ValueTask<Result<AddAssisstantResponse>> Handle(AddAssistantCommand request, CancellationToken cancellationToken)
 	{
@@ -37,7 +38,7 @@ public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngi
 		var isDefault = _currentUserService.Role == RoleTypes.Admin;
 		var entity = new Assistant
 		{
-			Id = Guid.NewGuid(),
+			Id = _dataProvider.NewGuid(),
 			Name = request.Name,
 			Icon = request.Icon,
 			Description = request.Description,
@@ -45,7 +46,7 @@ public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngi
 			LLMModel = request.LLMModel,
 			IsDefault = isDefault,
 			IsActive = true,
-			CreatedAt = DateTime.UtcNow,
+			CreatedAt = _dataProvider.UtcNow,
 			UserId = _currentUserService.UserId,
 			OpenAIAssistantId = assistantId
 		};

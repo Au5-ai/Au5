@@ -7,10 +7,12 @@ namespace Au5.Application.Features.UserManagement.VerifyUser.Command;
 public class VerifyUserCommandHandler : IRequestHandler<VerifyUserCommand, Result<VerifyUserResponse>>
 {
 	private readonly IApplicationDbContext _dbContext;
+	private readonly IDataProvider _dataProvider;
 
-	public VerifyUserCommandHandler(IApplicationDbContext dbContext)
+	public VerifyUserCommandHandler(IApplicationDbContext dbContext, IDataProvider dataProvider)
 	{
 		_dbContext = dbContext;
+		_dataProvider = dataProvider;
 	}
 
 	public async ValueTask<Result<VerifyUserResponse>> Handle(VerifyUserCommand request, CancellationToken cancellationToken)
@@ -35,7 +37,7 @@ public class VerifyUserCommandHandler : IRequestHandler<VerifyUserCommand, Resul
 		user.Password = HashHelper.HashPassword(request.Password, request.UserId);
 		user.Status = UserStatus.CompleteSignUp;
 		user.IsActive = true;
-		user.LastPasswordChangeAt = DateTime.Now;
+		user.LastPasswordChangeAt = _dataProvider.Now;
 
 		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
 

@@ -10,14 +10,14 @@ public class MeetingServiceTests
 {
 	private readonly Mock<ICacheProvider> _cacheProviderMock;
 	private readonly Mock<IApplicationDbContext> _dbContextMock;
-	private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
+	private readonly Mock<IDataProvider> _dateTimeProviderMock;
 	private readonly MeetingService _meetingService;
 
 	public MeetingServiceTests()
 	{
 		_cacheProviderMock = new Mock<ICacheProvider>();
 		_dbContextMock = new Mock<IApplicationDbContext>();
-		_dateTimeProviderMock = new Mock<IDateTimeProvider>();
+		_dateTimeProviderMock = new Mock<IDataProvider>();
 
 		// Set up the default SystemConfig for tests
 		var systemConfigs = new List<SystemConfig>
@@ -444,13 +444,15 @@ public class MeetingServiceTests
 	[Fact]
 	public async Task UpsertBlock_WhenMeetingDoesNotExist_ShouldReturnFalse()
 	{
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		var entry = new EntryMessage
 		{
 			MeetId = "meet123",
 			BlockId = Guid.NewGuid(),
 			Content = "Test content",
 			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Mohammad K" },
-			Timestamp = DateTime.Now,
+			Timestamp = now,
 			EntryType = "Transcription"
 		};
 
@@ -473,13 +475,15 @@ public class MeetingServiceTests
 			Entries = []
 		};
 
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		var entry = new EntryMessage
 		{
 			MeetId = "meet123",
 			BlockId = Guid.NewGuid(),
 			Content = "Test content",
 			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Mohammad K" },
-			Timestamp = DateTime.Now,
+			Timestamp = now,
 			EntryType = "Transcription"
 		};
 
@@ -497,6 +501,8 @@ public class MeetingServiceTests
 		var blockId = Guid.NewGuid();
 		var participantId = Guid.NewGuid();
 
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		var existingEntry = new Entry
 		{
 			Id = 1,
@@ -504,7 +510,7 @@ public class MeetingServiceTests
 			Content = "Original content",
 			ParticipantId = participantId,
 			FullName = "Mohammad K",
-			Timestamp = DateTime.Now.AddMinutes(-5),
+			Timestamp = now.AddMinutes(-5),
 			EntryType = "Transcription",
 			Reactions = []
 		};
@@ -523,7 +529,7 @@ public class MeetingServiceTests
 			BlockId = blockId,
 			Content = "Updated content",
 			Participant = new Participant { Id = participantId, FullName = "Mohammad K" },
-			Timestamp = DateTime.Now,
+			Timestamp = now,
 			EntryType = "Transcription"
 		};
 
@@ -549,13 +555,15 @@ public class MeetingServiceTests
 			Entries = []
 		};
 
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		var entry = new EntryMessage
 		{
 			MeetId = "meet123",
 			BlockId = Guid.NewGuid(),
 			Content = "New content",
 			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Jane Doe" },
-			Timestamp = DateTime.Now,
+			Timestamp = now,
 			EntryType = "Transcription"
 		};
 

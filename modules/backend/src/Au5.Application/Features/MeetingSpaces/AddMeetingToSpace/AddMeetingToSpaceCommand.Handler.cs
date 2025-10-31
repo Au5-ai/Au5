@@ -6,11 +6,13 @@ public class AddMeetingToSpaceCommandHandler : IRequestHandler<AddMeetingToSpace
 {
 	private readonly IApplicationDbContext _dbContext;
 	private readonly ICurrentUserService _currentUserService;
+	private readonly IDataProvider _dataProvider;
 
-	public AddMeetingToSpaceCommandHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
+	public AddMeetingToSpaceCommandHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService, IDataProvider dataProvider)
 	{
 		_dbContext = dbContext;
 		_currentUserService = currentUserService;
+		_dataProvider = dataProvider;
 	}
 
 	public async ValueTask<Result<AddMeetingToSpaceResponse>> Handle(AddMeetingToSpaceCommand request, CancellationToken cancellationToken)
@@ -44,7 +46,7 @@ public class AddMeetingToSpaceCommandHandler : IRequestHandler<AddMeetingToSpace
 			MeetingId = request.MeetingId,
 			SpaceId = request.SpaceId,
 			UserId = _currentUserService.UserId,
-			CreatedAt = DateTime.UtcNow
+			CreatedAt = _dataProvider.UtcNow
 		};
 
 		_dbContext.Set<MeetingSpace>().Add(meetingSpace);

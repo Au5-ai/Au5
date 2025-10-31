@@ -41,7 +41,7 @@ public class AddAdminQueryHandlerTests : BaseIntegrationTest
 			Password = "HashedPassword",
 			Email = "admin0@gmail.com",
 			Role = RoleTypes.Admin,
-			CreatedAt = DateTime.Now,
+			CreatedAt = DateTime.Parse("2025-01-15T10:00:00"),
 			PictureUrl = "DefaultPictureUrl",
 			IsActive = true
 		});

@@ -60,7 +60,8 @@ public class LoginCommandHandlerTestFixture
 
 	public LoginCommandHandler BuildHandler()
 	{
-		Handler = new LoginCommandHandler(MockDbContext.Object, MockTokenService.Object);
+		var dataProviderMock = new Mock<IDataProvider>();
+		Handler = new LoginCommandHandler(MockDbContext.Object, MockTokenService.Object, dataProviderMock.Object);
 		return Handler;
 	}
 }

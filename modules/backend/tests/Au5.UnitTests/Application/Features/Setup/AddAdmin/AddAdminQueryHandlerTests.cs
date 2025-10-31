@@ -11,17 +11,19 @@ public class AddAdminQueryHandlerTests
 {
 	private readonly Mock<IApplicationDbContext> _mockDbContext;
 	private readonly Mock<DbSet<User>> _mockUserDbSet;
+	private readonly Mock<IDataProvider> _dataProviderMock;
 	private readonly AddAdminQueryHandler _handler;
 
 	public AddAdminQueryHandlerTests()
 	{
 		_mockDbContext = new Mock<IApplicationDbContext>();
 		_mockUserDbSet = new Mock<DbSet<User>>();
+		_dataProviderMock = new Mock<IDataProvider>();
 
 		_mockDbContext.Setup(x => x.Set<User>())
 			.Returns(_mockUserDbSet.Object);
 
-		_handler = new AddAdminQueryHandler(_mockDbContext.Object);
+		_handler = new AddAdminQueryHandler(_mockDbContext.Object, _dataProviderMock.Object);
 	}
 
 	[Fact]

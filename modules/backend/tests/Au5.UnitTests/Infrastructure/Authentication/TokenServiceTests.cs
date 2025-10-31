@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using Au5.Shared;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Au5.UnitTests.Infrastructure.Authentication;
@@ -7,6 +8,7 @@ public class TokenServiceTests
 {
 	private readonly JwtSettings _jwtSettings;
 	private readonly Mock<ICacheProvider> _cacheProviderMock;
+	private readonly Mock<IDataProvider> _dataProviderMock;
 	private readonly IOptions<JwtSettings> _jwtOptions;
 	private readonly TokenService _tokenService;
 
@@ -21,12 +23,13 @@ public class TokenServiceTests
 		};
 
 		_cacheProviderMock = new Mock<ICacheProvider>();
+		_dataProviderMock = new Mock<IDataProvider>();
 
 		var optionsMock = new Mock<IOptions<JwtSettings>>();
 		optionsMock.Setup(o => o.Value).Returns(_jwtSettings);
 		_jwtOptions = optionsMock.Object;
 
-		_tokenService = new TokenService(_jwtOptions, _cacheProviderMock.Object);
+		_tokenService = new TokenService(_jwtOptions, _cacheProviderMock.Object, _dataProviderMock.Object);
 	}
 
 	[Fact]
@@ -35,6 +38,11 @@ public class TokenServiceTests
 		var participantId = Guid.NewGuid();
 		var participantName = "Test User";
 		var role = RoleTypes.Admin;
+		var now = DateTime.Now;
+		var jti = Guid.NewGuid();
+
+		_dataProviderMock.Setup(x => x.NewGuid()).Returns(jti);
+		_dataProviderMock.Setup(x => x.Now).Returns(now);
 
 		var tokenResponse = _tokenService.GenerateToken(participantId, participantName, role);
 
@@ -104,28 +112,29 @@ public class TokenServiceTests
 	[Fact]
 	public async Task BlacklistTokenAsync_ShouldDoNothingIfTokenAlreadyExpired()
 	{
-		// Arrange
 		var userId = Guid.NewGuid().ToString();
 		var jti = Guid.NewGuid().ToString();
-		var expired = DateTime.Now.AddSeconds(-10);
+		var now = DateTime.Now;
+		var expired = now.AddSeconds(-10);
 
-		// Act
+		_dataProviderMock.Setup(x => x.Now).Returns(now);
+
 		await _tokenService.BlacklistTokenAsync(userId, jti, expired);
 
-		// Assert
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<TimeSpan>()), Times.Never);
 	}
 
 	[Fact]
 	public async Task BlacklistTokenAsync_ShouldCacheWithCorrectKeyAndTTL()
 	{
-		// Arrange
 		var userId = Guid.NewGuid().ToString();
 		var jti = Guid.NewGuid().ToString();
-		var expiry = DateTime.Now.AddMinutes(10);
+		var now = DateTime.Now;
+		var expiry = now.AddMinutes(10);
 		var expectedKey = $"jwt_bl_{userId}_{jti}";
 
-		// Act
+		_dataProviderMock.Setup(x => x.Now).Returns(now);
+
 		await _tokenService.BlacklistTokenAsync(userId, jti, expiry);
 
 		// Assert

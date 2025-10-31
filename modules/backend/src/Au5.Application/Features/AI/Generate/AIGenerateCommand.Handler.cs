@@ -10,12 +10,14 @@ public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand,
 	private readonly IAIEngineAdapter _aiEngineAdapter;
 	private readonly IApplicationDbContext _dbContext;
 	private readonly ICurrentUserService _currentUserService;
+	private readonly IDataProvider _dataProvider;
 
-	public AIGenerateCommandHandler(IAIEngineAdapter aiEngineAdapter, IApplicationDbContext dbContext, ICurrentUserService currentUserService)
+	public AIGenerateCommandHandler(IAIEngineAdapter aiEngineAdapter, IApplicationDbContext dbContext, ICurrentUserService currentUserService, IDataProvider dataProvider)
 	{
 		_aiEngineAdapter = aiEngineAdapter;
 		_dbContext = dbContext;
 		_currentUserService = currentUserService;
+		_dataProvider = dataProvider;
 	}
 
 	public async IAsyncEnumerable<string> Handle(
@@ -172,7 +174,7 @@ public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand,
 				CompletionTokens = completionTokens,
 				PromptTokens = promptTokens,
 				TotalTokens = totalTokens,
-				CreatedAt = DateTime.Now,
+				CreatedAt = _dataProvider.Now,
 				UserId = _currentUserService.UserId,
 				IsActive = true,
 			};

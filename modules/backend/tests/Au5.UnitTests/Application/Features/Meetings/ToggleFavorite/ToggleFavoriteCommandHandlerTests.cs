@@ -190,6 +190,8 @@ public class ToggleFavoriteCommandHandlerTests
 
 	private static Meeting CreateMeeting(Guid meetingId, string meetId, bool isFavorite)
 	{
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		return new Meeting
 		{
 			Id = meetingId,
@@ -198,8 +200,8 @@ public class ToggleFavoriteCommandHandlerTests
 			Platform = "GoogleMeet",
 			BotName = "TestBot",
 			IsBotAdded = true,
-			CreatedAt = DateTime.UtcNow,
-			ClosedAt = DateTime.UtcNow,
+			CreatedAt = now,
+			ClosedAt = now,
 			Duration = "30m",
 			Status = MeetingStatus.Ended,
 			IsFavorite = isFavorite,

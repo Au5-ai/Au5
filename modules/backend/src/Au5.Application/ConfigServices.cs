@@ -9,7 +9,7 @@ public static class ConfigureServices
 {
 	public static IServiceCollection RegisterApplicationServices(this IServiceCollection services)
 	{
-		services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
+		services.AddSingleton<IDataProvider, SystemDataProvider>();
 		services.AddScoped<IMeetingService, MeetingService>();
 		services.AddScoped<IMeetingUrlService, MeetingUrlService>();
 		services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());

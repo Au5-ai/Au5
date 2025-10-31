@@ -1,5 +1,6 @@
 using Au5.Application.Features.Spaces.CreateSpace;
 using Au5.Domain.Entities;
+using Au5.Shared;
 using MockQueryable.Moq;
 
 namespace Au5.UnitTests.Application.Features.Spaces.CreateSpace;
@@ -60,6 +61,8 @@ public class CreateSpaceCommandHandlerTestFixture
 
 	public CreateSpaceCommandHandlerTestFixture WithValidUsers(int userCount = 2)
 	{
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		TestUsers = [];
 		for (var i = 0; i < userCount; i++)
 		{
@@ -70,7 +73,7 @@ public class CreateSpaceCommandHandlerTestFixture
 				Email = $"user{i + 1}@example.com",
 				PictureUrl = $"https://example.com/user{i + 1}.jpg",
 				IsActive = true,
-				CreatedAt = DateTime.UtcNow,
+				CreatedAt = now,
 				Role = RoleTypes.User,
 				Status = UserStatus.CompleteSignUp
 			});
@@ -84,13 +87,15 @@ public class CreateSpaceCommandHandlerTestFixture
 
 	public CreateSpaceCommandHandlerTestFixture WithInactiveUser()
 	{
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		var inactiveUser = new User
 		{
 			Id = Guid.NewGuid(),
 			FullName = "Inactive User",
 			Email = "inactive@example.com",
 			IsActive = false,
-			CreatedAt = DateTime.UtcNow,
+			CreatedAt = now,
 			Role = RoleTypes.User,
 			Status = UserStatus.CompleteSignUp
 		};
@@ -165,7 +170,8 @@ public class CreateSpaceCommandHandlerTestFixture
 
 	public CreateSpaceCommandHandler BuildHandler()
 	{
-		Handler = new CreateSpaceCommandHandler(MockDbContext.Object);
+		var dataProviderMock = new Mock<IDataProvider>();
+		Handler = new CreateSpaceCommandHandler(MockDbContext.Object, dataProviderMock.Object);
 		return Handler;
 	}
 

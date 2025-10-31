@@ -5,10 +5,12 @@ namespace Au5.Application.Features.SystemConfigs.SetConfig;
 public class SystemConfigCommandHandler : IRequestHandler<SystemConfigCommand, Result>
 {
 	private readonly IApplicationDbContext _dbContext;
+	private readonly IDataProvider _dataProvider;
 
-	public SystemConfigCommandHandler(IApplicationDbContext dbContext)
+	public SystemConfigCommandHandler(IApplicationDbContext dbContext, IDataProvider dataProvider)
 	{
 		_dbContext = dbContext;
+		_dataProvider = dataProvider;
 	}
 
 	public async ValueTask<Result> Handle(SystemConfigCommand request, CancellationToken cancellationToken)
@@ -46,7 +48,7 @@ public class SystemConfigCommandHandler : IRequestHandler<SystemConfigCommand, R
 		{
 			_dbContext.Set<SystemConfig>().Add(new SystemConfig()
 			{
-				Id = Guid.NewGuid(),
+				Id = _dataProvider.NewGuid(),
 				OrganizationName = request.OrganizationName,
 				BotName = request.BotName,
 				HubUrl = request.HubUrl,
