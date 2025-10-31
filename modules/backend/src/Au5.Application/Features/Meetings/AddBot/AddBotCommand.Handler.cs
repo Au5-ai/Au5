@@ -64,16 +64,17 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 			return Error.Failure(description: AppResources.Meeting.FailedToAddBot);
 		}
 
-		var cachedMeeting = await _cacheProvider.GetAsync<Meeting>(_meetingService.GetMeetingKey(request.MeetId));
+		var meetingKey = _meetingService.GetMeetingKey(request.MeetId);
+		var cachedMeeting = await _cacheProvider.GetAsync<Meeting>(meetingKey);
 
 		if (cachedMeeting is null || cachedMeeting.Status == MeetingStatus.Ended)
 		{
-			await _cacheProvider.SetAsync(_meetingService.GetMeetingKey(request.MeetId), meeting, TimeSpan.FromHours(1));
+			await _cacheProvider.SetAsync(meetingKey, meeting, TimeSpan.FromHours(1));
 		}
 		else
 		{
 			cachedMeeting.Id = meetingId;
-			await _cacheProvider.SetAsync(_meetingService.GetMeetingKey(request.MeetId), cachedMeeting, TimeSpan.FromHours(1));
+			await _cacheProvider.SetAsync(meetingKey, cachedMeeting, TimeSpan.FromHours(1));
 		}
 
 		var payload = BuildBotPayload(request, config, hashToken);
