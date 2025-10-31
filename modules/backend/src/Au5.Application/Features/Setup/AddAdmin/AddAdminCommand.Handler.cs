@@ -5,10 +5,12 @@ namespace Au5.Application.Features.Setup.AddAdmin;
 public class AddAdminQueryHandler : IRequestHandler<AddAdminCommand, Result<AddAdminResponse>>
 {
 	private readonly IApplicationDbContext _dbContext;
+	private readonly IDataProvider _dataProvider;
 
-	public AddAdminQueryHandler(IApplicationDbContext dbContext)
+	public AddAdminQueryHandler(IApplicationDbContext dbContext, IDataProvider dataProvider)
 	{
 		_dbContext = dbContext;
+		_dataProvider = dataProvider;
 	}
 
 	public async ValueTask<Result<AddAdminResponse>> Handle(AddAdminCommand request, CancellationToken cancellationToken)
@@ -19,7 +21,7 @@ public class AddAdminQueryHandler : IRequestHandler<AddAdminCommand, Result<AddA
 			return Error.Unauthorized(description: AppResources.Auth.UnAuthorizedAction);
 		}
 
-		var userId = Guid.NewGuid();
+		var userId = _dataProvider.NewGuid();
 		admin = new User
 		{
 			Id = userId,
@@ -28,7 +30,7 @@ public class AddAdminQueryHandler : IRequestHandler<AddAdminCommand, Result<AddA
 			Password = HashHelper.HashPassword(request.Password, userId),
 			IsActive = true,
 			Role = RoleTypes.Admin,
-			CreatedAt = DateTime.Now,
+			CreatedAt = _dataProvider.Now,
 			PictureUrl = string.Empty,
 			Status = UserStatus.CompleteSignUp
 		};

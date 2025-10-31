@@ -5,10 +5,12 @@ namespace Au5.Application.Features.Spaces.CreateSpace;
 public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Result<CreateSpaceResponse>>
 {
 	private readonly IApplicationDbContext _context;
+	private readonly IDataProvider _dataProvider;
 
-	public CreateSpaceCommandHandler(IApplicationDbContext context)
+	public CreateSpaceCommandHandler(IApplicationDbContext context, IDataProvider dataProvider)
 	{
 		_context = context;
+		_dataProvider = dataProvider;
 	}
 
 	public async ValueTask<Result<CreateSpaceResponse>> Handle(CreateSpaceCommand request, CancellationToken cancellationToken)
@@ -39,7 +41,7 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 
 		var space = new Space
 		{
-			Id = Guid.NewGuid(),
+			Id = _dataProvider.NewGuid(),
 			Name = request.Name,
 			Description = request.Description,
 			IsActive = true
@@ -53,7 +55,7 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 			{
 				UserId = user.UserId,
 				SpaceId = space.Id,
-				JoinedAt = DateTime.UtcNow,
+				JoinedAt = _dataProvider.UtcNow,
 				IsAdmin = user.IsAdmin
 			}).ToList();
 

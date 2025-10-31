@@ -8,18 +8,18 @@ public class MeetingService : IMeetingService
 	private readonly SemaphoreSlim _lock = new(1, 1);
 	private readonly ICacheProvider _cacheProvider;
 	private readonly IApplicationDbContext _dbContext;
-	private readonly IDateTimeProvider _dateTimeProvider;
+	private readonly IDataProvider _dataProvider;
 
-	public MeetingService(ICacheProvider cacheProvider, IApplicationDbContext dbContext, IDateTimeProvider dateTimeProvider)
+	public MeetingService(ICacheProvider cacheProvider, IApplicationDbContext dbContext, IDataProvider dataProvider)
 	{
 		_cacheProvider = cacheProvider ?? throw new ArgumentNullException(nameof(cacheProvider));
 		_dbContext = dbContext;
-		_dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
+		_dataProvider = dataProvider ?? throw new ArgumentNullException(nameof(dataProvider));
 	}
 
-	public static string GetMeetingKey(string meetId)
+	public string GetMeetingKey(string meetId)
 	{
-		var today = DateTime.Now.Date;
+		var today = _dataProvider.Now.Date;
 		return $"meeting:{meetId}:{today:yyyyMMdd}";
 	}
 
@@ -136,7 +136,7 @@ public class MeetingService : IMeetingService
 			}
 			else
 			{
-				var now = _dateTimeProvider.Now;
+				var now = _dataProvider.Now;
 				var start = meeting.CreatedAt;
 
 				meeting.Entries.Add(CreateEntryFromMessage(entry, start, now));
@@ -253,7 +253,7 @@ public class MeetingService : IMeetingService
 
 	private Meeting CreateNewMeeting(UserJoinedInMeetingMessage userJoined)
 	{
-		var meetingId = Guid.NewGuid();
+		var meetingId = _dataProvider.NewGuid();
 		var hashToken = HashHelper.HashSafe(meetingId.ToString());
 
 		return new Meeting
@@ -261,7 +261,7 @@ public class MeetingService : IMeetingService
 			Id = meetingId,
 			MeetId = userJoined.MeetId,
 			Entries = [],
-			CreatedAt = _dateTimeProvider.Now,
+			CreatedAt = _dataProvider.Now,
 			Platform = userJoined.Platform,
 			Participants = [],
 			Guests = [],

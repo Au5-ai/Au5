@@ -87,6 +87,8 @@ public class AddMeetingToSpaceCommandHandlerTestFixture
 
 	public AddMeetingToSpaceCommandHandlerTestFixture WithExistingMeetingSpace()
 	{
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		TestMeetingSpaces =
 		[
 			new MeetingSpace
@@ -94,7 +96,7 @@ public class AddMeetingToSpaceCommandHandlerTestFixture
 				MeetingId = TestMeeting?.Id ?? Guid.NewGuid(),
 				SpaceId = TestSpace?.Id ?? Guid.NewGuid(),
 				UserId = TestUserId,
-				CreatedAt = DateTime.UtcNow
+				CreatedAt = now
 			}
 
 		];
@@ -127,7 +129,8 @@ public class AddMeetingToSpaceCommandHandlerTestFixture
 
 	public AddMeetingToSpaceCommandHandler BuildHandler()
 	{
-		Handler = new AddMeetingToSpaceCommandHandler(MockDbContext.Object, MockCurrentUserService.Object);
+		var dataProviderMock = new Mock<IDataProvider>();
+		Handler = new AddMeetingToSpaceCommandHandler(MockDbContext.Object, MockCurrentUserService.Object, dataProviderMock.Object);
 		return Handler;
 	}
 

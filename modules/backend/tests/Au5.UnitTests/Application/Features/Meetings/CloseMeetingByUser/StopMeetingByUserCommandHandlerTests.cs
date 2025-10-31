@@ -10,6 +10,7 @@ public class CloseMeetingByUserCommandHandlerTests
 	private readonly Mock<IMeetingService> _meetingServiceMock;
 	private readonly Mock<IBotFatherAdapter> _botFatherAdapter;
 	private readonly Mock<ICurrentUserService> _currentUserServiceMock;
+	private readonly Mock<IDataProvider> _dataProviderMock;
 	private readonly CloseMeetingByUserCommandHandler _handler;
 
 	public CloseMeetingByUserCommandHandlerTests()
@@ -18,7 +19,8 @@ public class CloseMeetingByUserCommandHandlerTests
 		_meetingServiceMock = new();
 		_botFatherAdapter = new();
 		_currentUserServiceMock = new();
-		_handler = new CloseMeetingByUserCommandHandler(_dbContextMock.Object, _meetingServiceMock.Object, _botFatherAdapter.Object, _currentUserServiceMock.Object);
+		_dataProviderMock = new();
+		_handler = new CloseMeetingByUserCommandHandler(_dbContextMock.Object, _meetingServiceMock.Object, _botFatherAdapter.Object, _currentUserServiceMock.Object, _dataProviderMock.Object);
 	}
 
 	[Fact]
@@ -46,12 +48,14 @@ public class CloseMeetingByUserCommandHandlerTests
 	[Fact]
 	public async Task Should_ReturnFailure_When_MeetingContentIsNull()
 	{
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		var meeting = new Meeting
 		{
 			Id = Guid.NewGuid(),
 			MeetId = "meet-2",
 			Status = MeetingStatus.AddingBot,
-			CreatedAt = DateTime.Now.AddHours(-1)
+			CreatedAt = now.AddHours(-1)
 		};
 
 		var systemConfig = new SystemConfig
@@ -79,12 +83,14 @@ public class CloseMeetingByUserCommandHandlerTests
 	[Fact]
 	public async Task Should_CloseMeetingAndReturnSuccess_When_MeetingAndContentExist()
 	{
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		var meeting = new Meeting
 		{
 			Id = Guid.NewGuid(),
 			MeetId = "meet-3",
 			Status = MeetingStatus.Recording,
-			CreatedAt = DateTime.Now.AddHours(-2)
+			CreatedAt = now.AddHours(-2)
 		};
 		var systemConfig = new SystemConfig
 		{
@@ -126,12 +132,14 @@ public class CloseMeetingByUserCommandHandlerTests
 	[Fact]
 	public async Task Should_ReturnFailure_When_SaveChangesFails()
 	{
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		var meeting = new Meeting
 		{
 			Id = Guid.NewGuid(),
 			MeetId = "meet-4",
 			Status = MeetingStatus.AddingBot,
-			CreatedAt = DateTime.Now.AddHours(-2)
+			CreatedAt = now.AddHours(-2)
 		};
 
 		var systemConfig = new SystemConfig
@@ -170,12 +178,14 @@ public class CloseMeetingByUserCommandHandlerTests
 	[Fact]
 	public async Task Should_ReturnFailure_When_ThereIsNoConfigs()
 	{
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		var meeting = new Meeting
 		{
 			Id = Guid.NewGuid(),
 			MeetId = "meet-4",
 			Status = MeetingStatus.AddingBot,
-			CreatedAt = DateTime.Now.AddHours(-2)
+			CreatedAt = now.AddHours(-2)
 		};
 
 		var meetingDbSet = new List<Meeting> { meeting }.BuildMockDbSet();

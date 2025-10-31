@@ -215,6 +215,8 @@ public class ToggleArchiveCommandHandlerTests
 
 	private static Meeting CreateMeeting(Guid meetingId, string meetId, MeetingStatus status)
 	{
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		return new Meeting
 		{
 			Id = meetingId,
@@ -223,8 +225,8 @@ public class ToggleArchiveCommandHandlerTests
 			Platform = "GoogleMeet",
 			BotName = "TestBot",
 			IsBotAdded = true,
-			CreatedAt = DateTime.UtcNow,
-			ClosedAt = DateTime.UtcNow,
+			CreatedAt = now,
+			ClosedAt = now,
 			Duration = "30m",
 			Status = status,
 			IsFavorite = false,

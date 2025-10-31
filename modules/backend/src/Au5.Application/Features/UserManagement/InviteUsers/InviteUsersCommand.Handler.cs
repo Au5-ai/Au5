@@ -7,11 +7,13 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 {
 	private readonly IApplicationDbContext _context;
 	private readonly IEmailProvider _emailProvider;
+	private readonly IDataProvider _dataProvider;
 
-	public InviteUsersCommandHandler(IApplicationDbContext context, IEmailProvider emailProvider)
+	public InviteUsersCommandHandler(IApplicationDbContext context, IEmailProvider emailProvider, IDataProvider dataProvider)
 	{
 		_context = context;
 		_emailProvider = emailProvider;
+		_dataProvider = dataProvider;
 	}
 
 	public async ValueTask<Result<InviteUsersResponse>> Handle(InviteUsersCommand request, CancellationToken cancellationToken)
@@ -35,10 +37,10 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 			{
 				var user = new User
 				{
-					Id = Guid.NewGuid(),
+					Id = _dataProvider.NewGuid(),
 					Email = userInvited.Email,
 					IsActive = false,
-					CreatedAt = DateTime.Now,
+					CreatedAt = _dataProvider.Now,
 					FullName = "Not Entered",
 					Password = "Not Entered",
 					PictureUrl = string.Empty,

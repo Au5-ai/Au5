@@ -104,6 +104,8 @@ public class GetSpacesQueryHandlerTestFixture
 			TestUsers.Add(user);
 		}
 
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		// Add users to the first space
 		if (TestSpaces.Any())
 		{
@@ -116,7 +118,7 @@ public class GetSpacesQueryHandlerTestFixture
 					User = user,
 					SpaceId = firstSpace.Id,
 					Space = firstSpace,
-					JoinedAt = DateTime.UtcNow.AddDays(-1),
+					JoinedAt = now.AddDays(-1),
 					IsAdmin = user.Id == TestUsers.First().Id
 				};
 				TestUserSpaces.Add(userSpace);

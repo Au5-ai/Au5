@@ -2,10 +2,11 @@ using Au5.Application.Common;
 
 namespace Au5.Application.Features.Authentication.Login;
 
-public sealed class LoginCommandHandler(IApplicationDbContext dbContext, ITokenService tokenService) : IRequestHandler<LoginCommand, Result<TokenResponse>>
+public sealed class LoginCommandHandler(IApplicationDbContext dbContext, ITokenService tokenService, IDataProvider dataProvider) : IRequestHandler<LoginCommand, Result<TokenResponse>>
 {
 	private readonly IApplicationDbContext _dbContext = dbContext;
 	private readonly ITokenService _tokenService = tokenService;
+	private readonly IDataProvider _dataProvider = dataProvider;
 
 	public async ValueTask<Result<TokenResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
 	{
@@ -18,7 +19,7 @@ public sealed class LoginCommandHandler(IApplicationDbContext dbContext, ITokenS
 			return Error.Unauthorized(description: AppResources.Auth.InvalidUsernameOrPassword);
 		}
 
-		user.LastLoginAt = DateTime.Now;
+		user.LastLoginAt = _dataProvider.Now;
 		await _dbContext.SaveChangesAsync(cancellationToken);
 		return _tokenService.GenerateToken(user.Id, user.FullName, user.Role);
 	}

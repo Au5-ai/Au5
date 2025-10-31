@@ -11,13 +11,15 @@ public class InviteUsersCommandHandlerTests
 {
 	private readonly Mock<IApplicationDbContext> _dbContextMock;
 	private readonly Mock<IEmailProvider> _emailProviderMock;
+	private readonly Mock<IDataProvider> _dataProviderMock;
 	private readonly InviteUsersCommandHandler _handler;
 
 	public InviteUsersCommandHandlerTests()
 	{
 		_dbContextMock = new Mock<IApplicationDbContext>();
 		_emailProviderMock = new Mock<IEmailProvider>();
-		_handler = new InviteUsersCommandHandler(_dbContextMock.Object, _emailProviderMock.Object);
+		_dataProviderMock = new Mock<IDataProvider>();
+		_handler = new InviteUsersCommandHandler(_dbContextMock.Object, _emailProviderMock.Object, _dataProviderMock.Object);
 	}
 
 	[Fact]

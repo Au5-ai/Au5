@@ -2,6 +2,8 @@ namespace Au5.Application.Common.Abstractions;
 
 public interface IMeetingService
 {
+	string GetMeetingKey(string meetId);
+
 	Task<Meeting> AddUserToMeeting(UserJoinedInMeetingMessage userJoined);
 
 	Task AddGuestsToMeet(List<Participant> users, string meetId);
