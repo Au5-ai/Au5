@@ -11,8 +11,33 @@ class CaptionMutationHandler {
         this.captionProcessor = new captionProcessor_1.CaptionProcessor(page);
     }
     async observe(pushToHub) {
-        let ctx = await this.findTranscriptContainer();
+        let ctx = await this.findTranscriptContainerWithRetry();
         await this.observeTranscriptContainer(ctx, pushToHub);
+    }
+    async findTranscriptContainerWithRetry(maxRetries = 5, delayMs = 2000) {
+        let lastError = null;
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                logger_1.logger.info(`[CaptionMutationHandler] Attempting to find transcript container (${attempt}/${maxRetries})...`);
+                const ctx = await this.findTranscriptContainer();
+                if (ctx.transcriptContainer) {
+                    logger_1.logger.info(`[CaptionMutationHandler] Transcript container found successfully using ${ctx.canUseAriaBasedTranscriptSelector ? "ARIA" : "fallback"} selector`);
+                    return ctx;
+                }
+                throw new Error("Transcript container is null");
+            }
+            catch (error) {
+                lastError = error;
+                logger_1.logger.warn(`[CaptionMutationHandler] Attempt ${attempt}/${maxRetries} failed: ${lastError.message}`);
+                if (attempt < maxRetries) {
+                    const waitTime = delayMs * attempt;
+                    logger_1.logger.info(`[CaptionMutationHandler] Waiting ${waitTime}ms before retry...`);
+                    await new Promise((resolve) => setTimeout(resolve, waitTime));
+                }
+            }
+        }
+        throw new Error(`Failed to find transcript container after ${maxRetries} attempts. Last error: ${lastError?.message}. ` +
+            `This usually means captions are not enabled or the caption UI is not visible yet.`);
     }
     async findTranscriptContainer() {
         const ctx = {
@@ -20,8 +45,9 @@ class CaptionMutationHandler {
             canUseAriaBasedTranscriptSelector: false,
         };
         const dom = await this.captionProcessor.getCaptionContainer(this.config.transcriptSelectors.aria, this.config.transcriptSelectors.fallback);
-        if (!dom)
+        if (!dom || !dom.container) {
             throw new Error("Transcript container not found in DOM");
+        }
         ctx.transcriptContainer = dom.container;
         ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
         return ctx;

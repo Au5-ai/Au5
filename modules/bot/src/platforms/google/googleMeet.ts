@@ -5,7 +5,7 @@ import {
   EntryMessage,
 } from "../../types";
 import { logger } from "../../common/utils/logger";
-import { randomDelay } from "../../common/utils";
+import { randomDelay, delay } from "../../common/utils";
 import { CaptionMutationHandler } from "./captionMutationHandler";
 import {
   Google_Caption_Configuration,
@@ -93,10 +93,19 @@ export class GoogleMeet implements IMeetingPlatform {
       this.config.meeting_settings.transcription_model == "liveCaption"
     ) {
       Google_Caption_Configuration.language = this.config.language || "en-US";
+
+      logger.info("[GoogleMeet] Enabling captions...");
       await new CaptionEnabler(this.page).activate(
         Google_Caption_Configuration.language
       );
-      new CaptionMutationHandler(
+
+      logger.info(
+        "[GoogleMeet] Captions enabled, waiting for UI to stabilize..."
+      );
+      await delay(2000);
+
+      logger.info("[GoogleMeet] Starting transcription observation...");
+      await new CaptionMutationHandler(
         this.page,
         Google_Caption_Configuration
       ).observe(handler);

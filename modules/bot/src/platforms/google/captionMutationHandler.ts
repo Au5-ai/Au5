@@ -28,7 +28,9 @@ export class CaptionMutationHandler {
       this.config.transcriptSelectors.fallback
     );
 
-    if (!dom) throw new Error("Transcript container not found in DOM");
+    if (!dom) {
+      throw new Error("Transcript container not found in DOM");
+    }
     ctx.transcriptContainer = dom.container;
     ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
     return ctx;
