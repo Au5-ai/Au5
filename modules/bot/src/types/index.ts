@@ -1,24 +1,4 @@
 /**
- * Represents the supported meeting platforms.
- * - "googleMeet": Google Meet platform.
- * - "zoom": Zoom platform.
- * - "teams": Microsoft Teams platform.
- */
-export type MeetingPlatform = "googleMeet" | "zoom" | "teams";
-
-/**
- * Defines the auto-leave timeout settings for a meeting.
- * @property waitingEnter - Timeout (in ms) while waiting to enter the meeting.
- * @property noParticipant - Timeout (in ms) when no participant is present.
- * @property allParticipantsLeft - Timeout (in ms) after all participants have left.
- */
-export type AutoLeaveTimeouts = {
-  waitingEnter: number;
-  noParticipant: number;
-  allParticipantsLeft: number;
-};
-
-/**
  * Configuration options for a meeting session.
  * @property hubUrl - The URL of the hub service.
  * @property platform - The meeting platform in use.
@@ -52,6 +32,26 @@ export type MeetingConfiguration = {
 };
 
 /**
+ * Represents the supported meeting platforms.
+ * - "googleMeet": Google Meet platform.
+ * - "zoom": Zoom platform.
+ * - "teams": Microsoft Teams platform.
+ */
+export type MeetingPlatform = "googleMeet" | "zoom" | "teams";
+
+/**
+ * Defines the auto-leave timeout settings for a meeting.
+ * @property waitingEnter - Timeout (in ms) while waiting to enter the meeting.
+ * @property noParticipant - Timeout (in ms) when no participant is present.
+ * @property allParticipantsLeft - Timeout (in ms) after all participants have left.
+ */
+export type AutoLeaveTimeouts = {
+  waitingEnter: number;
+  noParticipant: number;
+  allParticipantsLeft: number;
+};
+
+/**
  * Interface for meeting platform handlers.
  * @method handle - Handles the meeting session logic.
  * @returns Promise that resolves when handling is complete.
@@ -63,9 +63,11 @@ export interface IMeetingPlatform {
   joinMeeting(): Promise<boolean>;
   leaveMeeting(): Promise<boolean>;
   observeTranscriptions(
-    handler: (message: EntryMessage) => void
+    pushToHubCallback: (message: EntryMessage) => void
   ): Promise<void>;
-  observeParticipations(handler: (participant: any) => void): Promise<void>;
+  observeParticipations(
+    pushToHubCallback: (participant: any) => void
+  ): Promise<void>;
 }
 
 export interface Participant {

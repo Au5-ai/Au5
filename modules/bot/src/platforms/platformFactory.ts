@@ -2,7 +2,7 @@
 // import { Teams } from './teams';
 
 import { IMeetingPlatform, MeetingConfiguration } from "../types";
-import { GoogleMeet } from "./google/googleMeet";
+import { GoogleMeet } from "./google";
 
 export function platformFactory(
   config: MeetingConfiguration,

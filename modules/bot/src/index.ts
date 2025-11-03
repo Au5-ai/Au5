@@ -4,7 +4,6 @@ import { MeetingConfiguration } from "./types";
 import fetch, { Headers, Request, Response } from "node-fetch";
 import { logger } from "./common/utils/logger";
 
-// Polyfill global fetch (for Node.js)
 (global as any).fetch = fetch;
 (global as any).Headers = Headers;
 (global as any).Request = Request;
@@ -30,7 +29,9 @@ async function loadConfig(): Promise<MeetingConfiguration> {
   }
 }
 
-async function bootstrapBot(config: MeetingConfiguration): Promise<void> {
+async function main() {
+  logger.info("🚀 Starting Meeting Bot...");
+  const config = await loadConfig();
   try {
     await addNewBotToMeeting(config);
   } catch (error) {
@@ -41,12 +42,6 @@ async function bootstrapBot(config: MeetingConfiguration): Promise<void> {
     );
     process.exit(1);
   }
-}
-
-async function main() {
-  logger.info("🚀 Starting Meeting Bot...");
-  const config = await loadConfig();
-  await bootstrapBot(config);
   logger.info("✅ Meeting Bot started successfully.");
 }
 
