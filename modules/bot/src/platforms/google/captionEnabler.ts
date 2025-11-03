@@ -2,13 +2,13 @@ import { ElementHandle, Page } from "playwright";
 import { logger } from "../../common/utils/logger";
 import { delay } from "../../common/utils";
 
-/**
- * Class to handle enabling live captions in Google Meet.
- */
 export class CaptionEnabler {
   private readonly MAX_RETRIES = 3;
   private readonly RETRY_DELAY_MS = 1000;
   private readonly STEP_DELAY_MS = 700;
+  private readonly COMBOBOX_TIMEOUT_MS = 3000;
+  private readonly DROPDOWN_DELAY_MS = 500;
+  private readonly LANGUAGE_SELECTION_DELAY_MS = 500;
 
   constructor(private page: Page) {}
 
@@ -171,13 +171,13 @@ export class CaptionEnabler {
         logger.info("[CaptionEnabler] Captions verified as enabled");
         return true;
       } else {
-        logger.info(
+        logger.warn(
           "[CaptionEnabler] Could not verify captions are enabled, but continuing"
         );
         return false;
       }
     } catch (error) {
-      logger.info(
+      logger.error(
         `[CaptionEnabler] Verification failed: ${(error as Error).message}`
       );
       return false;
@@ -212,9 +212,6 @@ export class CaptionEnabler {
         }
 
         if (options.length > 0) {
-          logger.info(
-            "[CaptionEnabler] No matching language found, selecting first available option"
-          );
           options[0].scrollIntoView({ block: "center" });
           options[0].click();
           return true;
@@ -226,7 +223,7 @@ export class CaptionEnabler {
       if (fallbackSuccess) {
         logger.info("[CaptionEnabler] Fallback language selection succeeded");
       } else {
-        logger.info("[CaptionEnabler] Fallback language selection failed");
+        logger.warn("[CaptionEnabler] Fallback language selection failed");
       }
     } catch (error) {
       logger.error(
@@ -281,14 +278,14 @@ export class CaptionEnabler {
       return findButton();
     });
 
-    const element = handle.asElement() as ElementHandle<HTMLElement> | null;
+    const element = handle.asElement();
     if (element) {
       logger.info("[CaptionEnabler] Caption button found");
+      return element as ElementHandle<HTMLElement>;
     } else {
-      logger.info("[CaptionEnabler] Caption button not found");
+      logger.warn("[CaptionEnabler] Caption button not found");
+      return null;
     }
-
-    return element;
   }
 
   private async activateLanguageDropdownOverlay(): Promise<boolean> {
@@ -296,17 +293,15 @@ export class CaptionEnabler {
 
     return await this.page.evaluate(() => {
       const findOverlay = (): HTMLElement | null => {
-        // Priority 1: Exact class combination
         const exactSelector = ".NmXUuc.P9KVBf.IGXezb";
         let overlay = document.querySelector(exactSelector) as HTMLElement;
         if (overlay) return overlay;
 
-        // Priority 2: Individual classes present
         overlay = document.querySelector(
           '[class*="NmXUuc"][class*="P9KVBf"][class*="IGXezb"]'
         ) as HTMLElement;
         if (overlay) return overlay;
-        return overlay;
+        return null;
       };
 
       const overlay = findOverlay();
@@ -327,20 +322,20 @@ export class CaptionEnabler {
 
     try {
       const combobox = await this.page.waitForSelector('[role="combobox"]', {
-        timeout: 3000,
+        timeout: this.COMBOBOX_TIMEOUT_MS,
         state: "visible",
       });
 
       if (combobox) {
         await combobox.click({ force: true });
-        await delay(500);
+        await delay(this.DROPDOWN_DELAY_MS);
         logger.info("[CaptionEnabler] Dropdown clicked successfully");
         return true;
       }
 
       return false;
     } catch (error) {
-      logger.info(
+      logger.warn(
         `[CaptionEnabler] Combobox not visible, trying alternative approach: ${
           (error as Error).message
         }`
@@ -367,7 +362,7 @@ export class CaptionEnabler {
         });
 
         if (fallbackSuccess) {
-          await delay(500);
+          await delay(this.DROPDOWN_DELAY_MS);
           logger.info("[CaptionEnabler] Dropdown clicked via fallback method");
         }
 
@@ -386,7 +381,7 @@ export class CaptionEnabler {
   private async selectLanguageOption(languageValue: string): Promise<boolean> {
     logger.info(`[CaptionEnabler] Selecting language option: ${languageValue}`);
 
-    await delay(500);
+    await delay(this.LANGUAGE_SELECTION_DELAY_MS);
 
     return await this.page.evaluate((value) => {
       const option = document.querySelector(

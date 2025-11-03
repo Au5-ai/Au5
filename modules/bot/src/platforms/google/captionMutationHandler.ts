@@ -1,20 +1,30 @@
 import { EntryMessage } from "../../types";
 import { Page } from "playwright-core";
 import { Caption, GoogleCaptionConfiguration, MutationContext } from "./types";
-import { CaptionProcessor } from "./captionProcessor";
+import { CaptionExtractor } from "./captionExtractor";
 import { logger } from "../../common/utils/logger";
+import { ScreenshotManager } from "../../common/utils/screenshot";
 
 export class CaptionMutationHandler {
-  private captionProcessor: CaptionProcessor;
+  private captionExtractor: CaptionExtractor;
   private previousTranscripts: Record<string, string> = {};
+  private screenshotManager: ScreenshotManager;
 
   constructor(private page: Page, private config: GoogleCaptionConfiguration) {
-    this.captionProcessor = new CaptionProcessor(page);
+    this.captionExtractor = new CaptionExtractor(page);
+    this.screenshotManager = new ScreenshotManager();
   }
 
   async observe(pushToHub: (message: EntryMessage) => void) {
-    let ctx = await this.findTranscriptContainer();
-    await this.observeTranscriptContainer(ctx, pushToHub);
+    try {
+      let ctx = await this.findTranscriptContainer();
+      await this.observeTranscriptContainer(ctx, pushToHub);
+    } catch (error) {
+      logger.error(
+        `[GoogleMeet][Observe] Failed to start transcription observation: ${error}`
+      );
+      throw error;
+    }
   }
 
   private async findTranscriptContainer(): Promise<MutationContext> {
@@ -23,17 +33,44 @@ export class CaptionMutationHandler {
       canUseAriaBasedTranscriptSelector: false,
     };
 
-    const dom = await this.captionProcessor.getCaptionContainer(
-      this.config.transcriptSelectors.aria,
-      this.config.transcriptSelectors.fallback
-    );
+    const maxRetries = 5;
+    const retryDelays = [1000, 2000, 3000, 4000, 5000];
 
-    if (!dom) {
-      throw new Error("Transcript container not found in DOM");
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      const dom = await this.captionExtractor.getCaptionContainer(
+        this.config.transcriptSelectors.aria,
+        this.config.transcriptSelectors.fallback
+      );
+
+      if (dom && dom.container) {
+        ctx.transcriptContainer = dom.container;
+        ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
+        logger.info(
+          `[GoogleMeet] Transcript container found on attempt ${attempt + 1}`
+        );
+        return ctx;
+      }
+
+      if (attempt < maxRetries - 1) {
+        logger.warn(
+          `[GoogleMeet] Transcript container not found, retrying in ${
+            retryDelays[attempt]
+          }ms (attempt ${attempt + 1}/${maxRetries})...`
+        );
+        await new Promise((resolve) =>
+          setTimeout(resolve, retryDelays[attempt])
+        );
+      }
     }
-    ctx.transcriptContainer = dom.container;
-    ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
-    return ctx;
+
+    const screenshotPath = await this.screenshotManager.takeScreenshot(
+      this.page,
+      `transcript-not-found-${Date.now()}.png`
+    );
+    logger.error(
+      `[GoogleMeet] Transcript container not found after ${maxRetries} attempts. Screenshot saved to: ${screenshotPath}`
+    );
+    throw new Error("Transcript container not found in DOM");
   }
 
   private async observeTranscriptContainer(

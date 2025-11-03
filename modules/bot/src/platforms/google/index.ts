@@ -38,10 +38,13 @@ export class GoogleMeet implements IMeetingPlatform {
 
       if (!isAdmitted) {
         logger.info(
-          `[GoogleMeet][Join] Bot "${botDisplayName}" was not admitted to the meeting.`
+          `[GoogleMeet][NotJoin] Bot "${botDisplayName}" was not admitted to the meeting.`
         );
         return false;
       }
+      logger.info(
+        `[GoogleMeet][Join] Bot "${botDisplayName}" was admitted to the meeting.`
+      );
       return true;
     } catch (error: any) {
       logger.error(
