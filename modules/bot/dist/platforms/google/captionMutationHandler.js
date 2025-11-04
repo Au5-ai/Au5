@@ -1,56 +1,50 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CaptionMutationHandler = void 0;
-const captionProcessor_1 = require("./captionProcessor");
+const captionExtractor_1 = require("./captionExtractor");
 const logger_1 = require("../../common/utils/logger");
+const screenshot_1 = require("../../common/utils/screenshot");
 class CaptionMutationHandler {
     constructor(page, config) {
         this.page = page;
         this.config = config;
         this.previousTranscripts = {};
-        this.captionProcessor = new captionProcessor_1.CaptionProcessor(page);
+        this.captionExtractor = new captionExtractor_1.CaptionExtractor(page);
+        this.screenshotManager = new screenshot_1.ScreenshotManager();
     }
     async observe(pushToHub) {
-        let ctx = await this.findTranscriptContainerWithRetry();
-        await this.observeTranscriptContainer(ctx, pushToHub);
-    }
-    async findTranscriptContainerWithRetry(maxRetries = 5, delayMs = 2000) {
-        let lastError = null;
-        for (let attempt = 1; attempt <= maxRetries; attempt++) {
-            try {
-                logger_1.logger.info(`[CaptionMutationHandler] Attempting to find transcript container (${attempt}/${maxRetries})...`);
-                const ctx = await this.findTranscriptContainer();
-                if (ctx.transcriptContainer) {
-                    logger_1.logger.info(`[CaptionMutationHandler] Transcript container found successfully using ${ctx.canUseAriaBasedTranscriptSelector ? "ARIA" : "fallback"} selector`);
-                    return ctx;
-                }
-                throw new Error("Transcript container is null");
-            }
-            catch (error) {
-                lastError = error;
-                logger_1.logger.warn(`[CaptionMutationHandler] Attempt ${attempt}/${maxRetries} failed: ${lastError.message}`);
-                if (attempt < maxRetries) {
-                    const waitTime = delayMs * attempt;
-                    logger_1.logger.info(`[CaptionMutationHandler] Waiting ${waitTime}ms before retry...`);
-                    await new Promise((resolve) => setTimeout(resolve, waitTime));
-                }
-            }
+        try {
+            let ctx = await this.findTranscriptContainer();
+            await this.observeTranscriptContainer(ctx, pushToHub);
         }
-        throw new Error(`Failed to find transcript container after ${maxRetries} attempts. Last error: ${lastError?.message}. ` +
-            `This usually means captions are not enabled or the caption UI is not visible yet.`);
+        catch (error) {
+            logger_1.logger.error(`[GoogleMeet][Observe] Failed to start transcription observation: ${error}`);
+            throw error;
+        }
     }
     async findTranscriptContainer() {
         const ctx = {
             transcriptContainer: null,
             canUseAriaBasedTranscriptSelector: false,
         };
-        const dom = await this.captionProcessor.getCaptionContainer(this.config.transcriptSelectors.aria, this.config.transcriptSelectors.fallback);
-        if (!dom || !dom.container) {
-            throw new Error("Transcript container not found in DOM");
+        const maxRetries = 5;
+        const retryDelays = [1000, 2000, 3000, 4000, 5000];
+        for (let attempt = 0; attempt < maxRetries; attempt++) {
+            const dom = await this.captionExtractor.getCaptionContainer(this.config.transcriptSelectors.aria, this.config.transcriptSelectors.fallback);
+            if (dom && dom.container) {
+                ctx.transcriptContainer = dom.container;
+                ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
+                logger_1.logger.info(`[GoogleMeet] Transcript container found on attempt ${attempt + 1}`);
+                return ctx;
+            }
+            if (attempt < maxRetries - 1) {
+                logger_1.logger.warn(`[GoogleMeet] Transcript container not found, retrying in ${retryDelays[attempt]}ms (attempt ${attempt + 1}/${maxRetries})...`);
+                await new Promise((resolve) => setTimeout(resolve, retryDelays[attempt]));
+            }
         }
-        ctx.transcriptContainer = dom.container;
-        ctx.canUseAriaBasedTranscriptSelector = dom.usedAria;
-        return ctx;
+        const screenshotPath = await this.screenshotManager.takeScreenshot(this.page, `transcript-not-found-${Date.now()}.png`);
+        logger_1.logger.error(`[GoogleMeet] Transcript container not found after ${maxRetries} attempts. Screenshot saved to: ${screenshotPath}`);
+        throw new Error("Transcript container not found in DOM");
     }
     async observeTranscriptContainer(ctx, pushToHub) {
         if (!ctx.transcriptContainer) {

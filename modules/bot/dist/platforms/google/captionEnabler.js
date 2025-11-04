@@ -3,15 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CaptionEnabler = void 0;
 const logger_1 = require("../../common/utils/logger");
 const utils_1 = require("../../common/utils");
-/**
- * Class to handle enabling live captions in Google Meet.
- */
 class CaptionEnabler {
     constructor(page) {
         this.page = page;
         this.MAX_RETRIES = 3;
-        this.RETRY_DELAY_MS = 1000;
+        this.RETRY_DELAY_MS = 10000;
         this.STEP_DELAY_MS = 700;
+        this.COMBOBOX_TIMEOUT_MS = 3000;
+        this.DROPDOWN_DELAY_MS = 500;
+        this.LANGUAGE_SELECTION_DELAY_MS = 500;
     }
     async activate(languageValue) {
         logger_1.logger.info("[CaptionEnabler] Starting caption activation process...");
@@ -97,53 +97,16 @@ class CaptionEnabler {
             });
             if (captionsEnabled) {
                 logger_1.logger.info("[CaptionEnabler] Captions verified as enabled");
-                // Wait for caption container to appear
-                const containerAppeared = await this.waitForCaptionContainer();
-                if (containerAppeared) {
-                    logger_1.logger.info("[CaptionEnabler] Caption container is now visible");
-                }
-                else {
-                    logger_1.logger.info("[CaptionEnabler] Caption container not visible yet, but captions are enabled");
-                }
                 return true;
             }
             else {
-                logger_1.logger.info("[CaptionEnabler] Could not verify captions are enabled, but continuing");
+                logger_1.logger.warn("[CaptionEnabler] Could not verify captions are enabled, but continuing");
                 return false;
             }
         }
         catch (error) {
-            logger_1.logger.info(`[CaptionEnabler] Verification failed: ${error.message}`);
+            logger_1.logger.error(`[CaptionEnabler] Verification failed: ${error.message}`);
             return false;
-        }
-    }
-    async waitForCaptionContainer(maxWaitMs = 5000) {
-        logger_1.logger.info("[CaptionEnabler] Waiting for caption container to appear...");
-        try {
-            // Try ARIA selector first
-            const ariaSelector = 'div[role="region"][tabindex="0"]';
-            await this.page.waitForSelector(ariaSelector, {
-                timeout: maxWaitMs,
-                state: "visible",
-            });
-            logger_1.logger.info("[CaptionEnabler] Caption container found via ARIA selector");
-            return true;
-        }
-        catch (error) {
-            // Try fallback selector
-            try {
-                const fallbackSelector = ".a4cQT";
-                await this.page.waitForSelector(fallbackSelector, {
-                    timeout: 2000,
-                    state: "visible",
-                });
-                logger_1.logger.info("[CaptionEnabler] Caption container found via fallback selector");
-                return true;
-            }
-            catch (fallbackError) {
-                logger_1.logger.info("[CaptionEnabler] Caption container not visible within timeout period");
-                return false;
-            }
         }
     }
     async selectLanguageFallback(languageValue) {
@@ -163,7 +126,6 @@ class CaptionEnabler {
                     }
                 }
                 if (options.length > 0) {
-                    logger_1.logger.info("[CaptionEnabler] No matching language found, selecting first available option");
                     options[0].scrollIntoView({ block: "center" });
                     options[0].click();
                     return true;
@@ -174,7 +136,7 @@ class CaptionEnabler {
                 logger_1.logger.info("[CaptionEnabler] Fallback language selection succeeded");
             }
             else {
-                logger_1.logger.info("[CaptionEnabler] Fallback language selection failed");
+                logger_1.logger.warn("[CaptionEnabler] Fallback language selection failed");
             }
         }
         catch (error) {
@@ -222,26 +184,25 @@ class CaptionEnabler {
         const element = handle.asElement();
         if (element) {
             logger_1.logger.info("[CaptionEnabler] Caption button found");
+            return element;
         }
         else {
-            logger_1.logger.info("[CaptionEnabler] Caption button not found");
+            logger_1.logger.warn("[CaptionEnabler] Caption button not found");
+            return null;
         }
-        return element;
     }
     async activateLanguageDropdownOverlay() {
         logger_1.logger.info("[CaptionEnabler] Activating language dropdown overlay...");
         return await this.page.evaluate(() => {
             const findOverlay = () => {
-                // Priority 1: Exact class combination
                 const exactSelector = ".NmXUuc.P9KVBf.IGXezb";
                 let overlay = document.querySelector(exactSelector);
                 if (overlay)
                     return overlay;
-                // Priority 2: Individual classes present
                 overlay = document.querySelector('[class*="NmXUuc"][class*="P9KVBf"][class*="IGXezb"]');
                 if (overlay)
                     return overlay;
-                return overlay;
+                return null;
             };
             const overlay = findOverlay();
             if (overlay) {
@@ -258,19 +219,19 @@ class CaptionEnabler {
         logger_1.logger.info("[CaptionEnabler] Attempting to click language dropdown...");
         try {
             const combobox = await this.page.waitForSelector('[role="combobox"]', {
-                timeout: 3000,
+                timeout: this.COMBOBOX_TIMEOUT_MS,
                 state: "visible",
             });
             if (combobox) {
                 await combobox.click({ force: true });
-                await (0, utils_1.delay)(500);
+                await (0, utils_1.delay)(this.DROPDOWN_DELAY_MS);
                 logger_1.logger.info("[CaptionEnabler] Dropdown clicked successfully");
                 return true;
             }
             return false;
         }
         catch (error) {
-            logger_1.logger.info(`[CaptionEnabler] Combobox not visible, trying alternative approach: ${error.message}`);
+            logger_1.logger.warn(`[CaptionEnabler] Combobox not visible, trying alternative approach: ${error.message}`);
             try {
                 const fallbackSuccess = await this.page.evaluate(() => {
                     const combobox = document.querySelector('[role="combobox"]');
@@ -287,7 +248,7 @@ class CaptionEnabler {
                     return false;
                 });
                 if (fallbackSuccess) {
-                    await (0, utils_1.delay)(500);
+                    await (0, utils_1.delay)(this.DROPDOWN_DELAY_MS);
                     logger_1.logger.info("[CaptionEnabler] Dropdown clicked via fallback method");
                 }
                 return fallbackSuccess;
@@ -300,7 +261,7 @@ class CaptionEnabler {
     }
     async selectLanguageOption(languageValue) {
         logger_1.logger.info(`[CaptionEnabler] Selecting language option: ${languageValue}`);
-        await (0, utils_1.delay)(500);
+        await (0, utils_1.delay)(this.LANGUAGE_SELECTION_DELAY_MS);
         return await this.page.evaluate((value) => {
             const option = document.querySelector(`[role="option"][data-value="${value}"]`);
             if (option) {

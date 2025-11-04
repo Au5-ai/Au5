@@ -1,0 +1,20 @@
+{
+  "meetId": "qrh-spgq-zok",
+  "hashToken": "test-token-456",
+  "meetingUrl": "https://meet.google.com/qrh-spgq-zok",
+  "botDisplayName": "Test Bot",
+  "platform": "GoogleMeet",
+  "hubUrl": "http://localhost:1366/meetingHub",
+  "language": "en-US",
+  "delayBeforeInteraction": 5000,
+  "meeting_settings": {
+    "transcription": true,
+    "transcription_model": "liveCaption",
+    "participation": false
+  },
+  "autoLeave": {
+    "waitingEnter": 300000,
+    "noParticipant": 60000,
+    "lastParticipantLeft": 30000
+  }
+}

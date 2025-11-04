@@ -10,6 +10,7 @@ import {
 export class MeetingJoiner {
   private selectors = {
     leaveButton: `//button[@aria-label="Leave call"]`,
+    peopleButton: `button[aria-label*="People"][data-panel-id="1"]`,
     enterNameField: 'input[type="text"][aria-label="Your name"]',
     joinButton: '//button[.//span[text()="Ask to join" or text()="Join now"]]',
     muteButton: '[aria-label*="Turn off microphone"]',
@@ -53,9 +54,15 @@ export class MeetingJoiner {
 
   private async waitForAdmission(timeout: number): Promise<boolean> {
     try {
-      await this.page.waitForSelector(this.selectors.leaveButton, {
+      logger.info(
+        "[GoogleMeet][Admission] Waiting for bot to be admitted into the meeting..."
+      );
+      await this.page.waitForSelector(this.selectors.peopleButton, {
         timeout,
       });
+      logger.info(
+        "[GoogleMeet][Admission] Bot successfully admitted - People button detected."
+      );
       return true;
     } catch {
       logger.warn(

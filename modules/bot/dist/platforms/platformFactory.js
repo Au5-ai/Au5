@@ -3,11 +3,11 @@
 // import { Teams } from './teams';
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.platformFactory = platformFactory;
-const googleMeet_1 = require("./google/googleMeet");
+const google_1 = require("./google");
 function platformFactory(config, page) {
     switch (config.platform.toUpperCase()) {
         case "GOOGLEMEET":
-            return new googleMeet_1.GoogleMeet(config, page);
+            return new google_1.GoogleMeet(config, page);
         case "ZOOM":
             // return new Zoom(config, page);
             throw new Error(`[PlatformFactory] Zoom platform not implemented yet.`);
