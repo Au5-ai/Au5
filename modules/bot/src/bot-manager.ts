@@ -1,10 +1,10 @@
 import { IMeetingPlatform, MeetingConfiguration, EntryMessage } from "./types";
 import { logger } from "./common/utils/logger";
 import { LogMessages } from "./common/constants";
-import { MeetingHubClient } from "./hub/meetingHubClient";
-import { platformFactory } from "./platforms/platformFactory";
-import { BrowserSetup } from "./common/browserSetup";
-import { ShutdownManager } from "./common/shutdownManager";
+import { MeetingHubClient } from "./hub/meeting-hub-client";
+import { platformFactory } from "./platforms/platform-factory";
+import { BrowserSetup } from "./common/browser-setup";
+import { ShutdownManager } from "./common/shutdown-manager";
 import { Browser } from "playwright-core";
 
 interface BotManagerState {

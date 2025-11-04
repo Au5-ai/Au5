@@ -1,7 +1,7 @@
 import { EntryMessage } from "../../types";
 import { Page } from "playwright-core";
 import { Caption, GoogleCaptionConfiguration, MutationContext } from "./types";
-import { CaptionExtractor } from "./captionExtractor";
+import { CaptionExtractor } from "./caption-extractor";
 import { logger } from "../../common/utils/logger";
 import { ScreenshotManager } from "../../common/utils/screenshot";
 

@@ -4,9 +4,9 @@ import { delay } from "../../common/utils";
 
 export class CaptionEnabler {
   private readonly MAX_RETRIES = 3;
-  private readonly RETRY_DELAY_MS = 10000;
+  private readonly RETRY_DELAY_MS = 1_000;
   private readonly STEP_DELAY_MS = 700;
-  private readonly COMBOBOX_TIMEOUT_MS = 3000;
+  private readonly COMBOBOX_TIMEOUT_MS = 3_000;
   private readonly DROPDOWN_DELAY_MS = 500;
   private readonly LANGUAGE_SELECTION_DELAY_MS = 500;
 

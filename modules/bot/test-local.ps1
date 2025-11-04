@@ -16,16 +16,6 @@ if (-not (Test-Path "test-config.json")) {
 $configContent = Get-Content "test-config.json" -Raw
 Write-Host "[OK] Configuration loaded from test-config.json" -ForegroundColor Green
 
-# Check if meetingUrl is set
-if ($configContent -match '"meetingUrl":\s*"YOUR_GOOGLE_MEET_URL_HERE"') {
-    Write-Host "[WARNING] Please update the meetingUrl in test-config.json!" -ForegroundColor Yellow
-    Write-Host "Replace 'YOUR_GOOGLE_MEET_URL_HERE' with an actual Google Meet URL." -ForegroundColor Yellow
-    $continue = Read-Host "Continue anyway? (y/N)"
-    if ($continue -ne 'y' -and $continue -ne 'Y') {
-        exit 0
-    }
-}
-
 # Check if node_modules exists
 if (-not (Test-Path "node_modules")) {
     Write-Host "[INFO] Installing dependencies..." -ForegroundColor Yellow
@@ -59,7 +49,7 @@ if (-not (Test-Path "screenshots")) {
 
 # Set environment variable and run
 Write-Host ""
-Write-Host "[START] Starting bot..." -ForegroundColor Green
+Write-Host $"[START] Starting bot to {($configContent | ConvertFrom-Json).meetingUrl}" -ForegroundColor Green
 Write-Host "[INFO] Screenshots will be saved to: $(Get-Location)\screenshots" -ForegroundColor Cyan
 Write-Host "[INFO] Press Ctrl+C to stop the bot" -ForegroundColor Yellow
 Write-Host ""

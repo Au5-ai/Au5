@@ -1,5 +1,5 @@
 import { ErrorMessages } from "./common/constants";
-import { addNewBotToMeeting } from "./botManager";
+import { addNewBotToMeeting } from "./bot-manager";
 import { MeetingConfiguration } from "./types";
 import fetch, { Headers, Request, Response } from "node-fetch";
 import { logger } from "./common/utils/logger";

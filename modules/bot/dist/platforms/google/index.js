@@ -3,10 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GoogleMeet = void 0;
 const logger_1 = require("../../common/utils/logger");
 const utils_1 = require("../../common/utils");
-const captionMutationHandler_1 = require("./captionMutationHandler");
+const caption_mutation_handler_1 = require("./caption-mutation-handler");
 const constants_1 = require("./constants");
-const captionEnabler_1 = require("./captionEnabler");
-const meetingJoiner_1 = require("./meetingJoiner");
+const caption_enabler_1 = require("./caption-enabler");
+const meeting_joiner_1 = require("./meeting-joiner");
 class GoogleMeet {
     constructor(config, page) {
         this.config = config;
@@ -20,7 +20,7 @@ class GoogleMeet {
         }
         try {
             const prepareDelayMs = this.config.delayBeforeInteraction ?? 5000;
-            const joiner = new meetingJoiner_1.MeetingJoiner(this.page, prepareDelayMs);
+            const joiner = new meeting_joiner_1.MeetingJoiner(this.page, prepareDelayMs);
             const isAdmitted = await joiner.join(meetingUrl, botDisplayName, this.config.autoLeave.waitingEnter);
             if (!isAdmitted) {
                 logger_1.logger.info(`[GoogleMeet][NotJoin] Bot "${botDisplayName}" was not admitted to the meeting.`);
@@ -38,15 +38,13 @@ class GoogleMeet {
         if (this.config.meeting_settings.transcription &&
             this.config.meeting_settings.transcription_model === "liveCaption") {
             const captionConfig = {
-                ...constants_1.Google_Caption_Configuration,
+                ...constants_1.GOOGLE_CAPTION_CONFIGURATION,
                 language: this.config.language || "en-US",
             };
-            logger_1.logger.info("[GoogleMeet] Enabling captions...");
-            await new captionEnabler_1.CaptionEnabler(this.page).activate(captionConfig.language);
-            logger_1.logger.info("[GoogleMeet] Captions enabled, waiting for UI to stabilize...");
+            await new caption_enabler_1.CaptionEnabler(this.page).activate(captionConfig.language);
             await (0, utils_1.delay)(constants_1.CAPTION_UI_STABILIZATION_DELAY);
             logger_1.logger.info("[GoogleMeet] Starting transcription observation...");
-            await new captionMutationHandler_1.CaptionMutationHandler(this.page, captionConfig).observe(pushToHubCallback);
+            await new caption_mutation_handler_1.CaptionMutationHandler(this.page, captionConfig).observe(pushToHubCallback);
         }
     }
     async observeParticipations(pushToHub) {
