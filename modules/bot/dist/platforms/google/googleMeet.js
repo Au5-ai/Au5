@@ -64,8 +64,12 @@ class GoogleMeet {
         if (this.config.meeting_settings.transcription &&
             this.config.meeting_settings.transcription_model == "liveCaption") {
             constants_1.Google_Caption_Configuration.language = this.config.language || "en-US";
+            logger_1.logger.info("[GoogleMeet] Enabling captions...");
             await new captionEnabler_1.CaptionEnabler(this.page).activate(constants_1.Google_Caption_Configuration.language);
-            new captionMutationHandler_1.CaptionMutationHandler(this.page, constants_1.Google_Caption_Configuration).observe(handler);
+            logger_1.logger.info("[GoogleMeet] Captions enabled, waiting for UI to stabilize...");
+            await (0, utils_1.delay)(2000);
+            logger_1.logger.info("[GoogleMeet] Starting transcription observation...");
+            await new captionMutationHandler_1.CaptionMutationHandler(this.page, constants_1.Google_Caption_Configuration).observe(handler);
         }
     }
     async observeParticipations(handler) { }

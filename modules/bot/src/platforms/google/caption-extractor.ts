@@ -2,7 +2,7 @@ import { ElementHandle, Page } from "playwright";
 import { Caption } from "./types";
 import { logger } from "../../common/utils/logger";
 
-export class CaptionProcessor {
+export class CaptionExtractor {
   constructor(private page: Page) {}
 
   /**

@@ -7,7 +7,7 @@ class CaptionEnabler {
     constructor(page) {
         this.page = page;
         this.MAX_RETRIES = 3;
-        this.RETRY_DELAY_MS = 10000;
+        this.RETRY_DELAY_MS = 1000;
         this.STEP_DELAY_MS = 700;
         this.COMBOBOX_TIMEOUT_MS = 3000;
         this.DROPDOWN_DELAY_MS = 500;

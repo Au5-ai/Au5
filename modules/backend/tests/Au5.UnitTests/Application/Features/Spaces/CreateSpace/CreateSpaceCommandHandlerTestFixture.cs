@@ -124,7 +124,7 @@ public class CreateSpaceCommandHandlerTestFixture
 			.Callback<Space>(s => spaces.Add(s));
 
 		MockDbContext.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
-			.ReturnsAsync(Au5.Shared.Result.Success())
+			.ReturnsAsync(Result.Success())
 			.Callback(() =>
 			{
 				if (spaces.Any())
@@ -140,7 +140,7 @@ public class CreateSpaceCommandHandlerTestFixture
 	public CreateSpaceCommandHandlerTestFixture WithFailedSave()
 	{
 		MockDbContext.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
-			.ReturnsAsync(Au5.Shared.Result.Failure(Au5.Shared.Error.Failure("Database save failed")));
+			.ReturnsAsync(Result.Failure(Error.Failure("Database save failed")));
 
 		return this;
 	}

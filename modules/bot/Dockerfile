@@ -50,6 +50,9 @@
     # Ensure the Playwright cache directory has proper permissions (adjust path if needed)
     RUN mkdir -p /root/ms-playwright && chmod -R 777 /root/ms-playwright
     
+    # Create screenshots directory with proper permissions
+    RUN mkdir -p /app/screenshots && chmod -R 777 /app/screenshots
+    
     # Copy an entrypoint script that will start Xvfb and run our bot
     COPY runner.sh /app/runner.sh
     RUN chmod +x /app/runner.sh

@@ -33,41 +33,34 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-const constants_1 = require("./common/constants");
-const bot_manager_1 = require("./bot-manager");
-const node_fetch_1 = __importStar(require("node-fetch"));
-const logger_1 = require("./common/utils/logger");
-global.fetch = node_fetch_1.default;
-global.Headers = node_fetch_1.Headers;
-global.Request = node_fetch_1.Request;
-global.Response = node_fetch_1.Response;
-async function loadConfig() {
-    const rawConfig = process.env.MEETING_CONFIG;
-    if (!rawConfig) {
-        logger_1.logger.error(constants_1.ErrorMessages.MEETING_CONFIG_NOT_SET);
-        process.exit(1);
+exports.MeetingHubClient = void 0;
+const signalR = __importStar(require("@microsoft/signalr"));
+class MeetingHubClient {
+    constructor(config) {
+        this.config = config;
+        this.connection = new signalR.HubConnectionBuilder()
+            .withUrl(this.config.hubUrl)
+            .withAutomaticReconnect()
+            .build();
     }
-    try {
-        return JSON.parse(rawConfig);
+    async startConnection() {
+        try {
+            await this.connection.start();
+            await this.connection.invoke("BotJoinedInMeeting", this.config.meetId);
+        }
+        catch (err) {
+            console.error("[SignalR] Connection failed:", err);
+            return false;
+        }
+        return true;
     }
-    catch (error) {
-        logger_1.logger.error(`${constants_1.ErrorMessages.INVALID_MEETING_CONFIG_JSON}: ${error instanceof Error ? error.message : error}`);
-        process.exit(1);
+    async sendMessage(payload) {
+        try {
+            await this.connection.invoke(payload.type, payload);
+        }
+        catch (err) {
+            console.error(`[SignalR] Failed to send message (${payload.type}):`, err);
+        }
     }
 }
-async function main() {
-    logger_1.logger.info("🚀 Starting Meeting Bot...");
-    const config = await loadConfig();
-    try {
-        await (0, bot_manager_1.addNewBotToMeeting)(config);
-    }
-    catch (error) {
-        logger_1.logger.error(`${constants_1.ErrorMessages.RUNNING_BOT}: ${error instanceof Error ? error.message : error}`);
-        process.exit(1);
-    }
-    logger_1.logger.info("✅ Meeting Bot started successfully.");
-}
-main().catch((err) => {
-    logger_1.logger.error("Unexpected error occurred while starting the bot:", err);
-    process.exit(1);
-});
+exports.MeetingHubClient = MeetingHubClient;

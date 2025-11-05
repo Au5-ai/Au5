@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CaptionMutationHandler = void 0;
-const captionExtractor_1 = require("./captionExtractor");
+const caption_extractor_1 = require("./caption-extractor");
 const logger_1 = require("../../common/utils/logger");
 const screenshot_1 = require("../../common/utils/screenshot");
 class CaptionMutationHandler {
@@ -9,7 +9,7 @@ class CaptionMutationHandler {
         this.page = page;
         this.config = config;
         this.previousTranscripts = {};
-        this.captionExtractor = new captionExtractor_1.CaptionExtractor(page);
+        this.captionExtractor = new caption_extractor_1.CaptionExtractor(page);
         this.screenshotManager = new screenshot_1.ScreenshotManager();
     }
     async observe(pushToHub) {

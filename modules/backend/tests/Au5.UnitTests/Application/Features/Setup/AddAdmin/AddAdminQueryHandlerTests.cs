@@ -1,8 +1,6 @@
-using Au5.Application.Common.Abstractions;
 using Au5.Application.Features.Setup.AddAdmin;
 using Au5.Domain.Entities;
 using Au5.Shared;
-using Microsoft.EntityFrameworkCore;
 using MockQueryable.Moq;
 
 namespace Au5.UnitTests.Application.Features.Setup.AddAdmin;

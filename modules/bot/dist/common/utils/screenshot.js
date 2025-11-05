@@ -33,41 +33,40 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-const constants_1 = require("./common/constants");
-const bot_manager_1 = require("./bot-manager");
-const node_fetch_1 = __importStar(require("node-fetch"));
-const logger_1 = require("./common/utils/logger");
-global.fetch = node_fetch_1.default;
-global.Headers = node_fetch_1.Headers;
-global.Request = node_fetch_1.Request;
-global.Response = node_fetch_1.Response;
-async function loadConfig() {
-    const rawConfig = process.env.MEETING_CONFIG;
-    if (!rawConfig) {
-        logger_1.logger.error(constants_1.ErrorMessages.MEETING_CONFIG_NOT_SET);
-        process.exit(1);
+exports.ScreenshotManager = void 0;
+const logger_1 = require("./logger");
+const path = __importStar(require("path"));
+const fs = __importStar(require("fs"));
+class ScreenshotManager {
+    constructor(baseDir) {
+        this.screenshotDir = baseDir || path.join(process.cwd(), "screenshots");
+        this.ensureDirectoryExists();
     }
-    try {
-        return JSON.parse(rawConfig);
+    ensureDirectoryExists() {
+        if (!fs.existsSync(this.screenshotDir)) {
+            fs.mkdirSync(this.screenshotDir, { recursive: true });
+            logger_1.logger.info(`[Screenshot] Created directory: ${this.screenshotDir}`);
+        }
     }
-    catch (error) {
-        logger_1.logger.error(`${constants_1.ErrorMessages.INVALID_MEETING_CONFIG_JSON}: ${error instanceof Error ? error.message : error}`);
-        process.exit(1);
+    async takeScreenshot(page, filename, fullPage = true) {
+        const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+        const screenshotName = filename || `screenshot-${timestamp}.png`;
+        const screenshotPath = path.join(this.screenshotDir, screenshotName);
+        try {
+            await page.screenshot({
+                path: screenshotPath,
+                fullPage,
+            });
+            logger_1.logger.info(`[Screenshot] Saved to: ${screenshotPath}`);
+            return screenshotPath;
+        }
+        catch (error) {
+            logger_1.logger.error(`[Screenshot] Failed to take screenshot: ${error}`);
+            throw error;
+        }
+    }
+    getScreenshotDirectory() {
+        return this.screenshotDir;
     }
 }
-async function main() {
-    logger_1.logger.info("🚀 Starting Meeting Bot...");
-    const config = await loadConfig();
-    try {
-        await (0, bot_manager_1.addNewBotToMeeting)(config);
-    }
-    catch (error) {
-        logger_1.logger.error(`${constants_1.ErrorMessages.RUNNING_BOT}: ${error instanceof Error ? error.message : error}`);
-        process.exit(1);
-    }
-    logger_1.logger.info("✅ Meeting Bot started successfully.");
-}
-main().catch((err) => {
-    logger_1.logger.error("Unexpected error occurred while starting the bot:", err);
-    process.exit(1);
-});
+exports.ScreenshotManager = ScreenshotManager;
