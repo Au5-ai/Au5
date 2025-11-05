@@ -1,7 +1,6 @@
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using Au5.Application.Dtos.AI;
-using Au5.Application.Features.Meetings.GetFullTranscription;
 
 namespace Au5.Application.Features.AI.Generate;
 
@@ -58,51 +57,6 @@ public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand,
 			yield break;
 		}
 
-		var orderedEntries = meeting.Entries
-			.OrderBy(e => e.Timestamp)
-			.ToList();
-
-		var baseTime = meeting.CreatedAt;
-
-		var fullTranscription = new FullTranscriptionResponse
-		{
-			Title = meeting.MeetName,
-			UserRecorder = meeting.User.ToParticipant(),
-			Platform = meeting.Platform,
-			CreatedAt = meeting.CreatedAt.ToString("o"),
-			ClosedAt = meeting.ClosedAt.ToString("o"),
-			Duration = meeting.Duration,
-			Participants = meeting.Participants
-										.Select(p => p.User.ToParticipant())
-										.ToList()
-										.AsReadOnly(),
-			Guests = meeting.Guests?.Select(g => g.ToParticipant())
-									.ToList()
-									.AsReadOnly(),
-			Entries = orderedEntries.Select(entry => new EntryDto
-			{
-				ParticipantId = entry.ParticipantId,
-				FullName = entry.FullName ?? string.Empty,
-				Content = entry.Content,
-				Timestamp = entry.Timestamp.ToString("o"),
-				Timeline = (entry.Timestamp - baseTime).ToString(@"hh\:mm\:ss"),
-				EntryType = entry.EntryType,
-				Reactions = entry.Reactions.Select(ar =>
-					new ReactionDto
-					{
-						Id = ar.ReactionId,
-						Participants = ar.Participants,
-						Type = ar.Reaction.Type,
-						Emoji = ar.Reaction.Emoji,
-						ClassName = ar.Reaction.ClassName
-					})
-				.ToList()
-				.AsReadOnly()
-			})
-			.ToList()
-			.AsReadOnly()
-		};
-
 		var runThreadRequest = new RunThreadRequest
 		{
 			AssistantId = assistant.OpenAIAssistantId,
@@ -113,7 +67,7 @@ public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand,
 					new ThreadMessage()
 					{
 						Role = "user",
-						Content = JsonSerializer.Serialize(fullTranscription)
+						Content = FormatTranscription(meeting)
 					}
 				}
 			},
@@ -181,5 +135,28 @@ public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand,
 			_dbContext.Set<AIContents>().Add(aiContentNew);
 			await _dbContext.SaveChangesAsync(cancellationToken);
 		}
+	}
+
+	private static string FormatTranscription(Meeting meeting)
+	{
+		var sb = new System.Text.StringBuilder();
+		var orderedEntries = meeting.Entries.OrderBy(e => e.Timestamp);
+
+		foreach (var entry in orderedEntries)
+		{
+			sb.AppendLine($"[Speaker: {entry.FullName ?? "Unknown"}]");
+			sb.AppendLine(entry.Content);
+
+			if (entry.Reactions != null && entry.Reactions.Count != 0)
+			{
+				var reactions = entry.Reactions
+					.Select(r => $"{r.Reaction.Emoji} {r.Reaction.Type} from {string.Join(", ", r.Participants.Select(x => x.FullName))}");
+				sb.AppendLine($"(Reactions: {string.Join(", ", reactions)})");
+			}
+
+			sb.AppendLine();
+		}
+
+		return sb.ToString();
 	}
 }
