@@ -82,5 +82,5 @@ async function onTranscriptionReceived(message: EntryMessage): Promise<void> {
   }
 }
 
-process.on("SIGTERM", () => shutdownManager.handleProcessShutdown("SIGTERM"));
-process.on("SIGINT", () => shutdownManager.handleProcessShutdown("SIGINT"));
+process.on("SIGTERM", () => shutdownManager?.handleProcessShutdown("SIGTERM"));
+process.on("SIGINT", () => shutdownManager?.handleProcessShutdown("SIGINT"));
