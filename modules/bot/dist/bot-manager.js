@@ -54,5 +54,5 @@ async function onTranscriptionReceived(message) {
         await state.hubClient.sendMessage(message);
     }
 }
-process.on("SIGTERM", () => shutdownManager.handleProcessShutdown("SIGTERM"));
-process.on("SIGINT", () => shutdownManager.handleProcessShutdown("SIGINT"));
+process.on("SIGTERM", () => shutdownManager?.handleProcessShutdown("SIGTERM"));
+process.on("SIGINT", () => shutdownManager?.handleProcessShutdown("SIGINT"));

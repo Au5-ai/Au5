@@ -41,8 +41,8 @@ export const AIAssistantList: React.FC<AIAssistantListProps> = ({
         {assistants.map((assistant) => {
           const isUsed = usedAssistants.some((a) => a.id === assistant.id);
           const cardClass = isUsed
-            ? "flex flex-col items-start gap-2 p-3 shadow-none rounded-lg cursor-pointer bg-green-100 border border-green-300"
-            : "flex flex-col items-start gap-2 p-3 shadow-none rounded-lg cursor-pointer hover:bg-red-50 hover:shadow-sm";
+            ? "flex min-w-[400px] flex-col items-start gap-2 p-3 shadow-none rounded-lg cursor-pointer bg-green-100 border border-green-300"
+            : "flex min-w-[400px] flex-col items-start gap-2 p-3 shadow-none rounded-lg cursor-pointer hover:bg-red-50 hover:shadow-sm";
 
           return (
             <Card

@@ -28,6 +28,9 @@ export const GLOBAL_CAPTIONS = {
     sending: "Sending...",
     moveToArchive: "Move to Archive",
     removeFromArchive: "Remove from Archive",
+    export: "Export",
+    exportToText: "Export to Text",
+    exportToPdf: "Export to PDF (Coming Soon)",
   },
   fields: {
     email: {
@@ -124,6 +127,8 @@ export const GLOBAL_CAPTIONS = {
       archiveError: "Failed to change archive status. Please try again.",
       deleteAIContentSuccess: "AI content has been deleted successfully",
       deleteAIContentError: "Failed to delete AI content. Please try again.",
+      exportSuccess: "Meeting transcription exported successfully",
+      exportError: "Failed to export meeting transcription. Please try again.",
     },
   },
 } as const;

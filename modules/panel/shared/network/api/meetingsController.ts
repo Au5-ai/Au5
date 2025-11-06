@@ -1,5 +1,5 @@
 import { AIContent, Meeting, MeetingData } from "@/shared/types";
-import { apiRequestClient } from "../apiRequestClient";
+import { apiRequestClient, apiRequestClientText } from "../apiRequestClient";
 import { API_URLS } from "./urls";
 
 export const meetingsController = {
@@ -73,6 +73,14 @@ export const meetingsController = {
       API_URLS.MEETING.REMOVE_FROM_SPACE(meetingId, meetId, spaceId),
       {
         method: "DELETE",
+      },
+    );
+  },
+  exportToText: (meetingId: string, meetId: string): Promise<string> => {
+    return apiRequestClientText(
+      API_URLS.MEETING.EXPORT_TEXT(meetingId, meetId),
+      {
+        method: "GET",
       },
     );
   },

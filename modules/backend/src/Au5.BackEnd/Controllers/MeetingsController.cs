@@ -2,6 +2,7 @@ using Au5.Application.Features.AI.Delete;
 using Au5.Application.Features.AI.GetAll;
 using Au5.Application.Features.Meetings.AddBot;
 using Au5.Application.Features.Meetings.CloseMeetingByUser;
+using Au5.Application.Features.Meetings.ExportToText;
 using Au5.Application.Features.Meetings.GetFullTranscription;
 using Au5.Application.Features.Meetings.MyMeeting;
 using Au5.Application.Features.Meetings.ToggleArchive;
@@ -98,5 +99,16 @@ public class MeetingsController(ISender mediator) : BaseController
 	{
 		var command = new RemoveMeetingFromSpaceCommand(meetingId, spaceId);
 		return Ok(await mediator.Send(command, ct));
+	}
+
+	[HttpGet("{meetingId}/sessions/{meetId}/export/text")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> ExportToText([FromRoute] Guid meetingId, [FromRoute] string meetId, CancellationToken cancellationToken)
+	{
+		var result = await mediator.Send(new ExportToTextQuery(meetingId, meetId), cancellationToken);
+
+		return result.IsSuccess
+			? Content(result.Data!, "text/plain", System.Text.Encoding.UTF8)
+			: BadRequest(result.Error);
 	}
 }
