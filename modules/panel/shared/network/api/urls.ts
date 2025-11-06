@@ -31,6 +31,8 @@ export const API_URLS = {
       `/meetings/${meetingId}/sessions/${meetId}/spaces/${spaceId}`,
     REMOVE_FROM_SPACE: (meetingId: string, meetId: string, spaceId: string) =>
       `/meetings/${meetingId}/sessions/${meetId}/spaces/${spaceId}`,
+    EXPORT_TEXT: (meetingId: string, meetId: string) =>
+      `/meetings/${meetingId}/sessions/${meetId}/export/text`,
   },
   SETUP: {
     HELLO_ADMIN: "/setUp/hello-admin",

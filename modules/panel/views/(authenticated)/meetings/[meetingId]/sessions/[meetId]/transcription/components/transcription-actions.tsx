@@ -1,7 +1,15 @@
 "use client";
 
 import * as React from "react";
-import { Archive, ArchiveRestore, Star } from "lucide-react";
+import {
+  Archive,
+  ArchiveRestore,
+  Star,
+  Download,
+  FileText,
+  FileDown,
+  Pen,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { meetingsController } from "@/shared/network/api/meetingsController";
@@ -11,8 +19,15 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/shared/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/shared/components/ui/dropdown-menu";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { ArchiveConfirmationModal } from "@/shared/components/meetings/archive-confirmation-modal";
+import { Separator } from "@/shared/components/ui";
 
 interface TranscriptionActionsProps {
   meetingId?: string;
@@ -35,6 +50,7 @@ export function TranscriptionActions({
   const [isArchived, setIsArchived] = React.useState(
     meetingStatus === "Archived",
   );
+  const [isExporting, setIsExporting] = React.useState(false);
 
   React.useEffect(() => {
     setCurrentFavoriteStatus(isFavorite);
@@ -94,16 +110,80 @@ export function TranscriptionActions({
     }
   };
 
+  const handleExportToText = async () => {
+    if (!meetingId || !meetId) return;
+
+    try {
+      setIsExporting(true);
+      const textContent = await meetingsController.exportToText(
+        meetingId,
+        meetId,
+      );
+
+      const blob = new Blob([textContent], { type: "text/plain" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `meeting-${meetingId}-${meetId}-transcription.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success(GLOBAL_CAPTIONS.pages.meetings.exportSuccess);
+    } catch (error) {
+      console.error("Failed to export transcription:", error);
+      toast.error(GLOBAL_CAPTIONS.pages.meetings.exportError);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleExportToPdf = () => {
+    toast.info("PDF export feature coming soon!");
+  };
+
   return (
     <div className="flex items-center gap-2 text-sm">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            disabled={!meetingId || !meetId || isExporting}
+            className="h-8 gap-2 cursor-pointer">
+            <Download className="w-4 h-4" />
+            {GLOBAL_CAPTIONS.actions.export}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuItem
+            onClick={handleExportToText}
+            disabled={isExporting}
+            className="cursor-pointer gap-2">
+            <FileText className="w-4 h-4" />
+            {GLOBAL_CAPTIONS.actions.exportToText}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={handleExportToPdf}
+            disabled
+            className="gap-2 opacity-60">
+            <FileDown className="w-4 h-4" />
+            {GLOBAL_CAPTIONS.actions.exportToPdf}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Separator
+        orientation="vertical"
+        className="data-[orientation=vertical]:h-4"
+      />
+
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
             variant="ghost"
             size="icon"
-            className={`h-7 w-7 cursor-pointer hover:bg-yellow-200 ${
-              currentFavoriteStatus ? `bg-yellow-100` : ``
-            }`}
+            className={`h-8 w-8 cursor-pointer hover:bg-yellow-200`}
             onClick={handleToggleFavorite}
             disabled={!meetingId || !meetId || isToggling}>
             <motion.div
@@ -131,26 +211,49 @@ export function TranscriptionActions({
         </TooltipContent>
       </Tooltip>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => setShowArchiveModal(true)}
-        disabled={!meetingId || !meetId}
-        className={`h-8 cursor-pointer hover:bg-gray-100 ${
-          isArchived
-            ? "text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100"
-            : "text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100"
-        }`}>
-        {isArchived ? (
-          <ArchiveRestore className="w-5 h-5 text-green-600" />
-        ) : (
-          <Archive className="w-5 h-5 text-orange-600" />
-        )}
-        {isArchived
-          ? GLOBAL_CAPTIONS.actions.removeFromArchive
-          : GLOBAL_CAPTIONS.actions.moveToArchive}
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            disabled={!meetingId || !meetId}
+            className={`h-8 cursor-pointer hover:bg-gray-100`}>
+            <Pen className="w-5 h-5" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Rename Meeting</p>
+        </TooltipContent>
+      </Tooltip>
 
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowArchiveModal(true)}
+            disabled={!meetingId || !meetId}
+            className={`h-8 cursor-pointer hover:bg-gray-100 ${
+              isArchived
+                ? "text-green-600 hover:text-green-700  hover:bg-green-100"
+                : ""
+            }`}>
+            {isArchived ? (
+              <ArchiveRestore className="w-5 h-5" />
+            ) : (
+              <Archive className="w-5 h-5" />
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>
+            {" "}
+            {isArchived
+              ? GLOBAL_CAPTIONS.actions.removeFromArchive
+              : GLOBAL_CAPTIONS.actions.moveToArchive}{" "}
+          </p>
+        </TooltipContent>
+      </Tooltip>
       <ArchiveConfirmationModal
         open={showArchiveModal}
         onOpenChange={setShowArchiveModal}

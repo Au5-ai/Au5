@@ -258,6 +258,26 @@ export default function AIConversation({
               </span>
               <div>
                 <div className="flex gap-2">
+                  {isStreaming === false && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => CopyToClipboard(messages.join(""))}
+                            title="Copy to clipboard"
+                            type="button">
+                            <Copy className="h-4 w-4 text-muted-foreground" />
+                          </Button>
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Copy to clipboard</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <span>
@@ -287,14 +307,12 @@ export default function AIConversation({
             </div>
 
             <div className="flex-1 flex flex-col items-center justify-start p-6">
-              <Card className="flex flex-col w-full max-w-3xl mx-auto p-4 gap-8 shadow-none border-0">
+              <Card className="flex flex-col w-full max-w-3xl mx-auto p-0 gap-8 shadow-none border-0">
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="flex items-start justify-start">
-                  <div
-                    dir="auto"
-                    className="rounded-lg bg-muted mr-2 flex items-center justify-center min-w-[2.5rem] min-h-[2.5rem]">
+                  <div className="rounded-lg bg-muted mr-2 flex items-center justify-center min-w-[2.5rem] min-h-[2.5rem]">
                     {isFetching ? (
                       <Brain className="h-4 w-4 text-primary animate-pulse" />
                     ) : isStreaming ? (
@@ -305,20 +323,13 @@ export default function AIConversation({
                   </div>
                   {isFetching === false && (
                     <div className="relative w-[80%]">
-                      <div className="overflow-y-auto scrollbar-gutter-stable prose prose-slate max-w-none bg-muted text-foreground p-4 rounded-xl prose-p:my-1 prose-li:my-0 prose-ul:my-1 prose-ol:my-1 leading-relaxed">
+                      <div
+                        dir="auto"
+                        className="overflow-y-auto scrollbar-gutter-stable prose prose-slate max-w-none bg-muted text-foreground p-4 rounded-xl prose-p:my-1 prose-li:my-0 prose-ul:my-1 prose-ol:my-1 leading-relaxed">
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                           {messages.join("")}
                         </ReactMarkdown>
                       </div>
-                      {isStreaming === false && (
-                        <button
-                          className="cursor-pointer mt-2 p-2 rounded hover:bg-muted/80 transition-colors"
-                          onClick={() => CopyToClipboard(messages.join(""))}
-                          title="Copy to clipboard"
-                          type="button">
-                          <Copy className="h-4 w-4 text-muted-foreground" />
-                        </button>
-                      )}
                     </div>
                   )}
                 </motion.div>
