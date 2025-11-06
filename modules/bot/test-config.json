@@ -1,7 +1,7 @@
 {
-  "meetId": "qrh-spgq-zok",
+  "meetId": "xpe-kxcs-epm",
   "hashToken": "test-token-456",
-  "meetingUrl": "https://meet.google.com/qrh-spgq-zok",
+  "meetingUrl": "https://meet.google.com/xpe-kxcs-epm",
   "botDisplayName": "Test Bot",
   "platform": "GoogleMeet",
   "hubUrl": "http://localhost:1366/meetingHub",

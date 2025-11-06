@@ -291,19 +291,10 @@ export default function AIConversation({
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex items-start justify-end">
-                  <div className="px-4 py-2 rounded-2xl text-sm max-w-[75%] bg-primary text-white rounded-br-none">
-                    {usedAssistants[selectedChatIdx]?.instructions}
-                  </div>
-                  <div className="rounded-lg bg-muted ml-2 flex items-center justify-center min-w-[2.5rem] min-h-[2.5rem]">
-                    <User className="h-4 w-4 text-primary" />
-                  </div>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
                   className="flex items-start justify-start">
-                  <div className="rounded-lg bg-muted mr-2 flex items-center justify-center min-w-[2.5rem] min-h-[2.5rem]">
+                  <div
+                    dir="auto"
+                    className="rounded-lg bg-muted mr-2 flex items-center justify-center min-w-[2.5rem] min-h-[2.5rem]">
                     {isFetching ? (
                       <Brain className="h-4 w-4 text-primary animate-pulse" />
                     ) : isStreaming ? (
