@@ -66,7 +66,7 @@ export interface IMeetingPlatform {
     pushToHubCallback: (message: EntryMessage) => void
   ): Promise<void>;
   observeParticipations(
-    pushToHubCallback: (participant: any) => void
+    pushToHubCallback: (participant: Participant) => void
   ): Promise<void>;
 }
 

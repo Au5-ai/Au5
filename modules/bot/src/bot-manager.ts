@@ -1,4 +1,9 @@
-import { IMeetingPlatform, MeetingConfiguration, EntryMessage } from "./types";
+import {
+  IMeetingPlatform,
+  MeetingConfiguration,
+  EntryMessage,
+  Participant,
+} from "./types";
 import { logger } from "./common/utils/logger";
 import { LogMessages } from "./common/constants";
 import { MeetingHubClient } from "./hub/meeting-hub-client";
@@ -49,6 +54,7 @@ export async function addNewBotToMeeting(
   if (hasJoined) {
     await initializeHubClient(config);
     await state.platform.observeTranscriptions(onTranscriptionReceived);
+    await state.platform.observeParticipations(onParticipantChanged);
   }
 }
 
@@ -82,5 +88,12 @@ async function onTranscriptionReceived(message: EntryMessage): Promise<void> {
   }
 }
 
+async function onParticipantChanged(participant: Participant): Promise<void> {
+  if (!state.hubClient) {
+    logger.error(LogMessages.BotManager.hubClientNotInitialized);
+    return;
+  }
+  console.log("Participant changed:", participant);
+}
 process.on("SIGTERM", () => shutdownManager?.handleProcessShutdown("SIGTERM"));
 process.on("SIGINT", () => shutdownManager?.handleProcessShutdown("SIGINT"));

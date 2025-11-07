@@ -3,10 +3,12 @@ import {
   IMeetingPlatform,
   MeetingConfiguration,
   EntryMessage,
+  Participant,
 } from "../../types";
 import { logger } from "../../common/utils/logger";
 import { delay } from "../../common/utils";
 import { CaptionMutationHandler } from "./caption-mutation-handler";
+import { ParticipantMutationHandler } from "./participant-mutation-handler";
 import {
   GOOGLE_CAPTION_CONFIGURATION,
   CAPTION_UI_STABILIZATION_DELAY,
@@ -77,9 +79,20 @@ export class GoogleMeet implements IMeetingPlatform {
   }
 
   async observeParticipations(
-    pushToHub: (participant: any) => void
+    pushToHub: (participant: Participant) => void
   ): Promise<void> {
-    logger.warn("[GoogleMeet] Participation observation not yet implemented.");
+    logger.info("[GoogleMeet][Participants] Starting participant observation...");
+    
+    try {
+      await delay(2000);
+      await new ParticipantMutationHandler(this.page).observe(pushToHub);
+      logger.info("[GoogleMeet][Participants] Participant observation started successfully");
+    } catch (error: any) {
+      logger.error(
+        `[GoogleMeet][Participants] Failed to start participant observation: ${error.message}`
+      );
+      throw error;
+    }
   }
 
   async leaveMeeting(): Promise<boolean> {
