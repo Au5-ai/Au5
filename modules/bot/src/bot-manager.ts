@@ -3,6 +3,7 @@ import {
   MeetingConfiguration,
   EntryMessage,
   Participant,
+  GuestJoinedInMeetingMessage,
 } from "./types";
 import { logger } from "./common/utils/logger";
 import { LogMessages } from "./common/constants";
@@ -88,12 +89,25 @@ async function onTranscriptionReceived(message: EntryMessage): Promise<void> {
   }
 }
 
-async function onParticipantChanged(participant: Participant): Promise<void> {
+async function onParticipantChanged(
+  participants: Participant[]
+): Promise<void> {
   if (!state.hubClient) {
     logger.error(LogMessages.BotManager.hubClientNotInitialized);
     return;
   }
-  console.log("Participant changed:", participant);
+
+  if (!state.config) {
+    logger.error("[BotManager] Meeting configuration is not set.");
+    return;
+  }
+  const message: GuestJoinedInMeetingMessage = {
+    meetId: state.config.meetId,
+    participants: participants,
+    type: "GuestJoinedInMeeting",
+  };
+  await state.hubClient.sendMessage(message);
+  console.log("Participants changed:", participants);
 }
 process.on("SIGTERM", () => shutdownManager?.handleProcessShutdown("SIGTERM"));
 process.on("SIGINT", () => shutdownManager?.handleProcessShutdown("SIGINT"));

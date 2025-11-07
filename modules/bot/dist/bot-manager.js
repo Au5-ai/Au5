@@ -55,12 +55,22 @@ async function onTranscriptionReceived(message) {
         await state.hubClient.sendMessage(message);
     }
 }
-async function onParticipantChanged(participant) {
+async function onParticipantChanged(participants) {
     if (!state.hubClient) {
         logger_1.logger.error(constants_1.LogMessages.BotManager.hubClientNotInitialized);
         return;
     }
-    console.log("Participant changed:", participant);
+    if (!state.config) {
+        logger_1.logger.error("[BotManager] Meeting configuration is not set.");
+        return;
+    }
+    const message = {
+        meetId: state.config.meetId,
+        participants: participants,
+        type: "GuestJoinedInMeeting",
+    };
+    await state.hubClient.sendMessage(message);
+    console.log("Participants changed:", participants);
 }
 process.on("SIGTERM", () => shutdownManager?.handleProcessShutdown("SIGTERM"));
 process.on("SIGINT", () => shutdownManager?.handleProcessShutdown("SIGINT"));

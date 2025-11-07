@@ -54,7 +54,7 @@ public class MeetingService : IMeetingService
 		}
 	}
 
-	public async Task AddGuestsToMeet(List<Participant> users, string meetId)
+	public async Task AddGuestsToMeet(string meetId, IReadOnlyCollection<Participant> guests)
 	{
 		var key = GetMeetingKey(meetId);
 		var meeting = await _cacheProvider.GetAsync<Meeting>(key);
@@ -64,15 +64,15 @@ public class MeetingService : IMeetingService
 			return;
 		}
 
-		foreach (var user in users)
+		foreach (var guest in guests)
 		{
-			if (!meeting.Guests.Any(g => g.FullName == user.FullName))
+			if (!meeting.Guests.Any(g => g.FullName == guest.FullName))
 			{
 				meeting.Guests.Add(new GuestsInMeeting
 				{
 					MeetingId = meeting.Id,
-					FullName = user.FullName,
-					PictureUrl = user.PictureUrl
+					FullName = guest.FullName,
+					PictureUrl = guest.PictureUrl
 				});
 			}
 		}

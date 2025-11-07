@@ -44,25 +44,21 @@ class GoogleMeet {
             };
             await new caption_enabler_1.CaptionEnabler(this.page).activate(captionConfig.language);
             await (0, utils_1.delay)(constants_1.CAPTION_UI_STABILIZATION_DELAY);
-            logger_1.logger.info("[GoogleMeet] Starting transcription observation...");
+            logger_1.logger.info("[GoogleMeet][Participants] Starting participant observation...");
             await new caption_mutation_handler_1.CaptionMutationHandler(this.page, captionConfig).observe(pushToHubCallback);
         }
     }
-    async observeParticipations(pushToHub) {
-        logger_1.logger.info("[GoogleMeet][Participants] Starting participant observation...");
+    async observeParticipations(pushToHubCallback) {
         try {
             await (0, utils_1.delay)(2000);
-            await new participant_mutation_handler_1.ParticipantMutationHandler(this.page).observe(pushToHub);
-            logger_1.logger.info("[GoogleMeet][Participants] Participant observation started successfully");
+            await new participant_mutation_handler_1.ParticipantMutationHandler(this.page, pushToHubCallback).observe();
         }
         catch (error) {
-            logger_1.logger.error(`[GoogleMeet][Participants] Failed to start participant observation: ${error.message}`);
             throw error;
         }
     }
     async leaveMeeting() {
         if (!this.page || this.page.isClosed()) {
-            logger_1.logger.warn("[GoogleMeet][Leave] Page context is unavailable or already closed.");
             return false;
         }
         try {
@@ -71,13 +67,11 @@ class GoogleMeet {
                 if (typeof leaveFn === "function") {
                     return leaveFn();
                 }
-                console.error("[GoogleMeet][Leave] performLeaveAction function not found on window.");
                 return false;
             });
             return result;
         }
         catch (error) {
-            logger_1.logger.error(`[GoogleMeet][Leave] Failed to trigger leave action: ${error.message}`);
             return false;
         }
     }

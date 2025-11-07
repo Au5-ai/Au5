@@ -1,25 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ParticipantMutationHandler = void 0;
-const logger_1 = require("../../common/utils/logger");
 class ParticipantMutationHandler {
-    constructor(page) {
+    constructor(page, pushToHub) {
         this.page = page;
+        this.pushToHub = pushToHub;
         this.knownParticipantIds = new Set();
     }
-    async observe(pushToHub) {
-        await this.initializeExistingParticipants(pushToHub);
+    async observe() {
+        await this.initializeExistingParticipants();
         await this.page.exposeFunction("onParticipantDetected", async (participant) => {
             if (!this.knownParticipantIds.has(participant.id)) {
                 this.knownParticipantIds.add(participant.id);
-                logger_1.logger.info(`New participant detected: ${participant.fullName} (${participant.id})`);
-                pushToHub(participant);
+                this.pushToHub([participant]);
             }
         });
         await this.page.evaluate(() => {
             const selector = "div[data-participant-id]";
             const knownIds = new Set();
-            const extractParticipantData = (element) => {
+            const extractParticipantData = async (element) => {
+                await new Promise((resolve) => setTimeout(resolve, 3000));
                 const participantId = element.getAttribute("data-participant-id");
                 if (!participantId)
                     return null;
@@ -33,8 +33,8 @@ class ParticipantMutationHandler {
                     pictureUrl,
                 };
             };
-            const processParticipant = (element) => {
-                const participantData = extractParticipantData(element);
+            const processParticipant = async (element) => {
+                const participantData = await extractParticipantData(element);
                 if (participantData && !knownIds.has(participantData.id)) {
                     knownIds.add(participantData.id);
                     window.onParticipantDetected(participantData);
@@ -61,10 +61,9 @@ class ParticipantMutationHandler {
                 childList: true,
                 subtree: true,
             });
-            console.log(`Started observing mutations for selector: ${selector}`);
         });
     }
-    async initializeExistingParticipants(pushToHub) {
+    async initializeExistingParticipants() {
         const existingParticipants = await this.page.evaluate(() => {
             const selector = "div[data-participant-id]";
             const participantElements = document.querySelectorAll(selector);
@@ -85,14 +84,16 @@ class ParticipantMutationHandler {
             });
             return participants;
         });
+        const participantsMusebePushed = [];
         existingParticipants.forEach((participant) => {
             if (!this.knownParticipantIds.has(participant.id)) {
                 this.knownParticipantIds.add(participant.id);
-                logger_1.logger.info(`Existing participant found: ${participant.fullName} (${participant.id})`);
-                pushToHub(participant);
+                participantsMusebePushed.push(participant);
             }
         });
-        logger_1.logger.info(`Initialized with ${existingParticipants.length} existing participants`);
+        if (participantsMusebePushed.length > 0) {
+            this.pushToHub(participantsMusebePushed);
+        }
     }
 }
 exports.ParticipantMutationHandler = ParticipantMutationHandler;
