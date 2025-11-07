@@ -10,5 +10,8 @@ func main() {
 	http.HandleFunc("/remove-container", removeContainerHandler)
 	http.HandleFunc("/removal-status", checkRemovalStatusHandler)
 	fmt.Println("BotFather is listening on :8081")
-	http.ListenAndServe(":8081", nil)
+	
+	if err := http.ListenAndServe(":8081", nil); err != nil {
+		log.Fatalf("failed to start server: %v", err)
+	}
 }
