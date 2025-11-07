@@ -14,10 +14,13 @@ builder.AddServiceDefaults();
 	builder.Services.RegisterApplicationServices()
 					.RegisterInfrastructureServices(builder.Configuration);
 
+	var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins")
+												  .Get<string[]>();
 	builder.Services.AddCors(options =>
 	{
 		options.AddDefaultPolicy(policy =>
 			policy
+				.WithOrigins(allowedOrigins)
 				.AllowAnyHeader()
 				.AllowAnyMethod()
 				.AllowAnyOrigin());
@@ -28,7 +31,7 @@ builder.AddServiceDefaults();
 		options.AddPolicy("AllowAllWithCredentials", policy =>
 		{
 			policy
-				.SetIsOriginAllowed(origin => true)
+				.WithOrigins(allowedOrigins)
 				.AllowAnyMethod()
 				.AllowAnyHeader()
 				.AllowCredentials();
