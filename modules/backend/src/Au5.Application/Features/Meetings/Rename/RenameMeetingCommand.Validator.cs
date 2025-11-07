@@ -4,7 +4,7 @@ public class RenameMeetingCommandValidator : AbstractValidator<RenameMeetingComm
 {
 	public RenameMeetingCommandValidator()
 	{
-		RuleFor(s => s.meetingId).NotEmpty().NotNull();
-		RuleFor(s => s.newTitle).NotEmpty().NotNull();
+		RuleFor(s => s.meetingId).NotEmpty();
+		RuleFor(s => s.newTitle).NotEmpty();
 	}
 }

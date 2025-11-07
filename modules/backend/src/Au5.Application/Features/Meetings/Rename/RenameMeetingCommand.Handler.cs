@@ -16,7 +16,7 @@ public class RenameMeetingCommandHandler : IRequestHandler<RenameMeetingCommand,
 		var validationResult = validator.Validate(request);
 		if (!validationResult.IsValid)
 		{
-			return Error.Validation(string.Join(',', validationResult.Errors));
+			return Error.Validation(description: string.Join(',', validationResult.Errors));
 		}
 
 		var currentMeet = await _dbContext.Set<Meeting>().FirstOrDefaultAsync(s => s.MeetId == request.meetingId);
