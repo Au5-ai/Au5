@@ -20,23 +20,22 @@ builder.AddServiceDefaults();
 	{
 		options.AddDefaultPolicy(policy =>
 			policy
-				.WithOrigins(allowedOrigins)
+				.WithOrigins(allowedOrigins ??
+							throw new InvalidOperationException("CORS allowed origins are not configured in appsettings.json."))
 				.AllowAnyHeader()
-				.AllowAnyMethod()
-				.AllowAnyOrigin());
-	});
+				.AllowAnyMethod());
 
-	builder.Services.AddCors(options =>
-	{
 		options.AddPolicy("AllowAllWithCredentials", policy =>
 		{
 			policy
-				.WithOrigins(allowedOrigins)
+				.WithOrigins(allowedOrigins ??
+							throw new InvalidOperationException("CORS allowed origins are not configured in appsettings.json."))
 				.AllowAnyMethod()
 				.AllowAnyHeader()
 				.AllowCredentials();
 		});
 	});
+
 	builder.Services.AddControllers();
 	builder.Logging.ClearProviders();
 	builder.Logging.AddConsole();
