@@ -16,7 +16,7 @@ public class RenameMeetingCommandHandler : IRequestHandler<RenameMeetingCommand,
 		var validationResult = validator.Validate(request);
 		if (!validationResult.IsValid)
 		{
-			return Error.Validation(description: string.Join(',', validationResult.Errors));
+			return Error.Validation(description: string.Join(", ", validationResult.Errors));
 		}
 
 		var currentMeet = await _dbContext.Set<Meeting>().FirstOrDefaultAsync(s => s.MeetId == request.meetingId);
@@ -29,7 +29,11 @@ public class RenameMeetingCommandHandler : IRequestHandler<RenameMeetingCommand,
 		if(request.newTitle != currentMeet.MeetName)
 		{
 			currentMeet.MeetName = request.newTitle;
-			await _dbContext.SaveChangesAsync(cancellationToken);
+			var saveResult = await _dbContext.SaveChangesAsync(cancellationToken);
+			if (saveResult.IsFailure)
+			{
+				return saveResult.Error;
+			}
 		}
 
 		return new RenameMeetingCommandResponse();

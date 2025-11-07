@@ -60,7 +60,8 @@ public class MeetingsController(ISender mediator) : BaseController
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> RenameMeeting([FromBody] RenameMeetingCommand command, CancellationToken cancellationToken)
 	{
-		return Ok(await mediator.Send(command, cancellationToken));
+		var result = await mediator.Send(command, cancellationToken);
+		return result.IsSuccess ? Ok(result.Data) : BadRequest(result.Error);
 	}
 
 	[HttpPost("{meetingId}/sessions/{meetId}/bots")]
