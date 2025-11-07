@@ -4,6 +4,7 @@ exports.GoogleMeet = void 0;
 const logger_1 = require("../../common/utils/logger");
 const utils_1 = require("../../common/utils");
 const caption_mutation_handler_1 = require("./caption-mutation-handler");
+const participant_mutation_handler_1 = require("./participant-mutation-handler");
 const constants_1 = require("./constants");
 const caption_enabler_1 = require("./caption-enabler");
 const meeting_joiner_1 = require("./meeting-joiner");
@@ -48,7 +49,16 @@ class GoogleMeet {
         }
     }
     async observeParticipations(pushToHub) {
-        logger_1.logger.warn("[GoogleMeet] Participation observation not yet implemented.");
+        logger_1.logger.info("[GoogleMeet][Participants] Starting participant observation...");
+        try {
+            await (0, utils_1.delay)(2000);
+            await new participant_mutation_handler_1.ParticipantMutationHandler(this.page).observe(pushToHub);
+            logger_1.logger.info("[GoogleMeet][Participants] Participant observation started successfully");
+        }
+        catch (error) {
+            logger_1.logger.error(`[GoogleMeet][Participants] Failed to start participant observation: ${error.message}`);
+            throw error;
+        }
     }
     async leaveMeeting() {
         if (!this.page || this.page.isClosed()) {

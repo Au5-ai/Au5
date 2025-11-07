@@ -81,12 +81,16 @@ export class GoogleMeet implements IMeetingPlatform {
   async observeParticipations(
     pushToHub: (participant: Participant) => void
   ): Promise<void> {
-    logger.info("[GoogleMeet][Participants] Starting participant observation...");
-    
+    logger.info(
+      "[GoogleMeet][Participants] Starting participant observation..."
+    );
+
     try {
       await delay(2000);
-      await new ParticipantMutationHandler(this.page).observe(pushToHub);
-      logger.info("[GoogleMeet][Participants] Participant observation started successfully");
+      //await new ParticipantMutationHandler(this.page).observe(pushToHub);
+      logger.info(
+        "[GoogleMeet][Participants] Participant observation started successfully"
+      );
     } catch (error: any) {
       logger.error(
         `[GoogleMeet][Participants] Failed to start participant observation: ${error.message}`
