@@ -189,7 +189,7 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync((Meeting)null);
 
-		await _meetingService.AddGuestsToMeet(guests, "meet123");
+		await _meetingService.AddGuestsToMeet("meet123", guests);
 
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), It.IsAny<TimeSpan>()), Times.Never);
 	}
@@ -218,7 +218,7 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync(endedMeeting);
 
-		await _meetingService.AddGuestsToMeet(guests, "meet123");
+		await _meetingService.AddGuestsToMeet("meet123", guests);
 
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), It.IsAny<TimeSpan>()), Times.Never);
 	}
@@ -253,7 +253,7 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync(activeMeeting);
 
-		await _meetingService.AddGuestsToMeet(guests, "meet123");
+		await _meetingService.AddGuestsToMeet("meet123", guests);
 
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.Is<Meeting>(m => m.Guests.Count == 2), TimeSpan.FromHours(1)), Times.Once);
 	}
@@ -291,7 +291,7 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync(activeMeeting);
 
-		await _meetingService.AddGuestsToMeet(guests, "meet123");
+		await _meetingService.AddGuestsToMeet("meet123", guests);
 
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.Is<Meeting>(m => m.Guests.Count == 1), TimeSpan.FromHours(1)), Times.Once);
 	}

@@ -86,7 +86,6 @@ export interface EntryMessage extends Message {
   blockId: string;
   participant: Participant;
   content: string;
-  timestamp: Date;
   entryType: "Transcription";
   readonly type: "Entry";
 }
