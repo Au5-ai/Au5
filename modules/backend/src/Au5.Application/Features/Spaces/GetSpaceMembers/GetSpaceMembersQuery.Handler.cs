@@ -2,14 +2,17 @@ using Au5.Application.Features.Spaces.GetSpaces;
 
 namespace Au5.Application.Features.Spaces.GetSpaceMembers;
 
-public class GetSpaceMembersQueryHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
+public class GetSpaceMembersQueryHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
 	: IRequestHandler<GetSpaceMembersQuery, Result<GetSpaceMembersResponse>>
 {
+	private readonly IApplicationDbContext _dbContext = dbContext;
+	private readonly ICurrentUserService _currentUserService = currentUserService;
+
 	public async ValueTask<Result<GetSpaceMembersResponse>> Handle(GetSpaceMembersQuery request, CancellationToken cancellationToken)
 	{
-		Guid currentUserId = currentUserService.UserId;
+		Guid currentUserId = _currentUserService.UserId;
 
-		var space = await context.Set<Space>()
+		var space = await _dbContext.Set<Space>()
 			.Include(s => s.UserSpaces)
 				.ThenInclude(us => us.User)
 			.AsNoTracking()
