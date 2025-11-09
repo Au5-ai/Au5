@@ -67,12 +67,13 @@ var app = builder.Build();
 	app.MapDefaultEndpoints();
 
 	app.UseCors("AllowAllWithCredentials");
-	app.UseRouting();
 
 	if (app.Environment.IsProduction())
 	{
 		app.UseHttpsRedirection();
 	}
+
+	app.UseRouting();
 
 	app.UseAuthentication();
 	app.UseMiddleware<JwtBlacklistMiddleware>();
