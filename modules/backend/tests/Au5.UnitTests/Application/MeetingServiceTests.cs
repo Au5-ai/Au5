@@ -176,11 +176,10 @@ public class MeetingServiceTests
 	[Fact]
 	public async Task AddGuestsToMeet_WhenMeetingDoesNotExist_ShouldNotAddGuests()
 	{
-		var guests = new List<Participant>
+		var guests = new List<Guest>
 		{
 			new()
 			{
-				Id = Guid.NewGuid(),
 				FullName = "Guest User",
 				PictureUrl = "https://example.com/guest.jpg"
 			}
@@ -205,11 +204,10 @@ public class MeetingServiceTests
 			Guests = []
 		};
 
-		var guests = new List<Participant>
+		var guests = new List<Guest>
 		{
 			new()
 			{
-				Id = Guid.NewGuid(),
 				FullName = "Guest User",
 				PictureUrl = "https://example.com/guest.jpg"
 			}
@@ -234,17 +232,15 @@ public class MeetingServiceTests
 			Guests = []
 		};
 
-		var guests = new List<Participant>
+		var guests = new List<Guest>
 		{
 			new()
 			{
-				Id = Guid.NewGuid(),
 				FullName = "Guest User 1",
 				PictureUrl = "https://example.com/guest1.jpg"
 			},
 			new()
 			{
-				Id = Guid.NewGuid(),
 				FullName = "Guest User 2",
 				PictureUrl = "https://example.com/guest2.jpg"
 			}
@@ -278,11 +274,10 @@ public class MeetingServiceTests
 			]
 		};
 
-		var guests = new List<Participant>
+		var guests = new List<Guest>
 		{
 			new()
 			{
-				Id = Guid.NewGuid(),
 				FullName = existingGuestName,
 				PictureUrl = "https://example.com/guest.jpg"
 			}

@@ -9,46 +9,39 @@ class ParticipantMutationHandler {
     }
     async observe() {
         await this.initializeExistingParticipants();
-        await this.page.exposeFunction("onParticipantDetected", async (participant) => {
-            if (!this.knownParticipantIds.has(participant.id)) {
-                this.knownParticipantIds.add(participant.id);
-                this.pushToHub([participant]);
-            }
+        await this.page.exposeFunction("onParticipantDetected", async (participants) => {
+            this.processNewParticipants(participants);
         });
-        await this.page.evaluate(() => {
-            const selector = "div[data-participant-id]";
-            const knownIds = new Set();
-            const extractParticipantData = async (element) => {
-                await new Promise((resolve) => setTimeout(resolve, 3000));
-                const participantId = element.getAttribute("data-participant-id");
-                if (!participantId)
-                    return null;
-                const nameElement = element.querySelector("span.notranslate");
-                const fullName = nameElement?.textContent?.trim() || "Unknown Participant";
-                const imgElement = element.querySelector("img");
-                const pictureUrl = imgElement?.src || "";
-                return {
-                    fullName,
-                    pictureUrl,
-                };
-            };
-            const processParticipant = async (element) => {
-                const participantData = await extractParticipantData(element);
-                if (participantData && !knownIds.has(participantData.id)) {
-                    knownIds.add(participantData.id);
-                    window.onParticipantDetected(participantData);
-                }
+        await this.page.evaluate((selector) => {
+            const extractParticipants = () => {
+                const participantElements = document.querySelectorAll(selector);
+                const participants = [];
+                participantElements.forEach((element) => {
+                    const participantId = element.getAttribute("data-participant-id");
+                    if (!participantId)
+                        return;
+                    const nameElement = element.querySelector("span.notranslate");
+                    const fullName = nameElement?.textContent?.trim() || "Unknown Participant";
+                    const imgElement = element.querySelector("img");
+                    const pictureUrl = imgElement?.src || "";
+                    participants.push({
+                        id: participantId,
+                        fullName,
+                        pictureUrl,
+                    });
+                });
+                return participants;
             };
             const observer = new MutationObserver((mutations) => {
                 mutations.forEach((mutation) => {
                     mutation.addedNodes.forEach((node) => {
                         if (node instanceof HTMLElement) {
-                            const participantDivs = node.querySelectorAll(selector);
-                            participantDivs.forEach((div) => {
-                                if (div instanceof HTMLElement) {
-                                    processParticipant(div);
+                            setTimeout(() => {
+                                const participants = extractParticipants();
+                                if (participants.length > 0) {
+                                    window.onParticipantDetected(participants);
                                 }
-                            });
+                            }, 3000);
                         }
                     });
                 });
@@ -57,11 +50,14 @@ class ParticipantMutationHandler {
                 childList: true,
                 subtree: true,
             });
-        });
+        }, ParticipantMutationHandler.PARTICIPANT_SELECTOR);
     }
     async initializeExistingParticipants() {
-        const existingParticipants = await this.page.evaluate(() => {
-            const selector = "div[data-participant-id]";
+        const existingParticipants = await this.extractParticipantsFromPage();
+        this.processNewParticipants(existingParticipants);
+    }
+    async extractParticipantsFromPage() {
+        return await this.page.evaluate((selector) => {
             const participantElements = document.querySelectorAll(selector);
             const participants = [];
             participantElements.forEach((element) => {
@@ -76,21 +72,27 @@ class ParticipantMutationHandler {
                     id: participantId,
                     fullName,
                     pictureUrl,
-                    email: "",
                 });
             });
             return participants;
-        });
-        const participantsMusebePushed = [];
-        existingParticipants.forEach((participant) => {
+        }, ParticipantMutationHandler.PARTICIPANT_SELECTOR);
+    }
+    processNewParticipants(participants) {
+        const newParticipants = participants.filter((participant) => {
             if (!this.knownParticipantIds.has(participant.id)) {
                 this.knownParticipantIds.add(participant.id);
-                participantsMusebePushed.push(participant);
+                return true;
             }
+            return false;
         });
-        if (participantsMusebePushed.length > 0) {
-            this.pushToHub(participantsMusebePushed);
+        if (newParticipants.length > 0) {
+            this.pushToHub(newParticipants.map((p) => ({
+                id: "",
+                fullName: p.fullName,
+                pictureUrl: p.pictureUrl,
+            })));
         }
     }
 }
 exports.ParticipantMutationHandler = ParticipantMutationHandler;
+ParticipantMutationHandler.PARTICIPANT_SELECTOR = "div[data-participant-id]";

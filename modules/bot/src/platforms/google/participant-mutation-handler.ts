@@ -15,54 +15,47 @@ export class ParticipantMutationHandler {
 
     await this.page.exposeFunction(
       "onParticipantDetected",
-      async (participant: Participant) => {
-        if (!this.knownParticipantIds.has(participant.id)) {
-          this.knownParticipantIds.add(participant.id);
-          this.pushToHub([participant]);
-        }
+      async (participants: Participant[]) => {
+        this.processNewParticipants(participants);
       }
     );
 
     await this.page.evaluate((selector) => {
-      const knownIds = new Set<string>();
+      const extractParticipants = () => {
+        const participantElements = document.querySelectorAll(selector);
+        const participants: Participant[] = [];
 
-      const extractParticipantData = (element: HTMLElement): any | null => {
-        const participantId = element.getAttribute("data-participant-id");
-        if (!participantId) return null;
+        participantElements.forEach((element) => {
+          const participantId = element.getAttribute("data-participant-id");
+          if (!participantId) return;
 
-        const nameElement = element.querySelector("span.notranslate");
-        const fullName =
-          nameElement?.textContent?.trim() || "Unknown Participant";
+          const nameElement = element.querySelector("span.notranslate");
+          const fullName =
+            nameElement?.textContent?.trim() || "Unknown Participant";
 
-        const imgElement = element.querySelector("img");
-        const pictureUrl = imgElement?.src || "";
+          const imgElement = element.querySelector("img");
+          const pictureUrl = imgElement?.src || "";
 
-        return {
-          id: participantId,
-          fullName,
-          pictureUrl,
-        };
-      };
+          participants.push({
+            id: participantId,
+            fullName,
+            pictureUrl,
+          });
+        });
 
-      const processParticipant = (element: HTMLElement) => {
-        const participantData = extractParticipantData(element);
-        if (participantData && !knownIds.has(participantData.id)) {
-          knownIds.add(participantData.id);
-          (window as any).onParticipantDetected(participantData);
-        }
+        return participants;
       };
 
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
           mutation.addedNodes.forEach((node) => {
             if (node instanceof HTMLElement) {
-              const participantDivs = node.querySelectorAll(selector);
-              console.log("Detected participant divs:", participantDivs);
-              participantDivs.forEach((div) => {
-                if (div instanceof HTMLElement) {
-                  processParticipant(div);
+              setTimeout(() => {
+                const participants = extractParticipants();
+                if (participants.length > 0) {
+                  (window as any).onParticipantDetected(participants);
                 }
-              });
+              }, 3000);
             }
           });
         });
@@ -76,7 +69,12 @@ export class ParticipantMutationHandler {
   }
 
   private async initializeExistingParticipants(): Promise<void> {
-    const existingParticipants = await this.page.evaluate((selector) => {
+    const existingParticipants = await this.extractParticipantsFromPage();
+    this.processNewParticipants(existingParticipants);
+  }
+
+  private async extractParticipantsFromPage(): Promise<Participant[]> {
+    return await this.page.evaluate((selector) => {
       const participantElements = document.querySelectorAll(selector);
       const participants: any[] = [];
 
@@ -100,19 +98,25 @@ export class ParticipantMutationHandler {
 
       return participants;
     }, ParticipantMutationHandler.PARTICIPANT_SELECTOR);
+  }
 
-    const participantsToBePushed: Participant[] = existingParticipants.filter(
-      (participant: Participant) => {
-        if (!this.knownParticipantIds.has(participant.id)) {
-          this.knownParticipantIds.add(participant.id);
-          return true;
-        }
-        return false;
+  private processNewParticipants(participants: Participant[]): void {
+    const newParticipants = participants.filter((participant) => {
+      if (!this.knownParticipantIds.has(participant.id)) {
+        this.knownParticipantIds.add(participant.id);
+        return true;
       }
-    );
+      return false;
+    });
 
-    if (participantsToBePushed.length > 0) {
-      this.pushToHub(participantsToBePushed);
+    if (newParticipants.length > 0) {
+      this.pushToHub(
+        newParticipants.map((p) => ({
+          id: "",
+          fullName: p.fullName,
+          pictureUrl: p.pictureUrl,
+        }))
+      );
     }
   }
 }
