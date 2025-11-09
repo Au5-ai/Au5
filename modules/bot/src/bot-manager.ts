@@ -103,11 +103,11 @@ async function onParticipantChanged(
   }
   const message: GuestJoinedInMeetingMessage = {
     meetId: state.config.meetId,
-    participants: participants,
+    guests: participants,
     type: "GuestJoinedInMeeting",
   };
   await state.hubClient.sendMessage(message);
-  console.log("Participants changed:", participants);
+  logger.info("[BotManager] Guest joined:", participants);
 }
 process.on("SIGTERM", () => shutdownManager?.handleProcessShutdown("SIGTERM"));
 process.on("SIGINT", () => shutdownManager?.handleProcessShutdown("SIGINT"));

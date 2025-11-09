@@ -54,7 +54,7 @@ public class MeetingService : IMeetingService
 		}
 	}
 
-	public async Task AddGuestsToMeet(string meetId, IReadOnlyCollection<Participant> guests)
+	public async Task AddGuestsToMeet(string meetId, IReadOnlyCollection<Guest> guests)
 	{
 		var key = GetMeetingKey(meetId);
 		var meeting = await _cacheProvider.GetAsync<Meeting>(key);

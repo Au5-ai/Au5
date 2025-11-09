@@ -58,9 +58,9 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 		}
 	}
 
-	public void GuestJoinedInMeeting(GuestJoinedInMeetingMessage message)
+	public async Task GuestJoinedInMeeting(GuestJoinedInMeetingMessage message)
 	{
-		meetingService.AddGuestsToMeet(message.MeetId, message.Participants);
+		await meetingService.AddGuestsToMeet(message.MeetId, message.Guests);
 	}
 
 	public async Task ReactionApplied(ReactionAppliedMessage reaction)

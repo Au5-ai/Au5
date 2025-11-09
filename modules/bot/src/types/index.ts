@@ -92,6 +92,6 @@ export interface EntryMessage extends Message {
 
 export interface GuestJoinedInMeetingMessage extends Message {
   meetId: string;
-  participants: Participant[];
+  guests: Participant[];
   readonly type: "GuestJoinedInMeeting";
 }

@@ -6,7 +6,7 @@ public interface IMeetingService
 
 	Task<Meeting> AddUserToMeeting(UserJoinedInMeetingMessage userJoined);
 
-	Task AddGuestsToMeet(string meetId, IReadOnlyCollection<Participant> guests);
+	Task AddGuestsToMeet(string meetId, IReadOnlyCollection<Guest> guests);
 
 	Task<string> BotIsAdded(string meetId);
 

@@ -1,9 +1,9 @@
 ﻿import { Page } from "playwright-core";
 import { Participant } from "../../types";
-import { logger } from "../../common/utils/logger";
 
 export class ParticipantMutationHandler {
   private knownParticipantIds = new Set<string>();
+  private static readonly PARTICIPANT_SELECTOR = "div[data-participant-id]";
 
   constructor(
     private page: Page,
@@ -23,15 +23,10 @@ export class ParticipantMutationHandler {
       }
     );
 
-    await this.page.evaluate(() => {
-      const selector = "div[data-participant-id]";
+    await this.page.evaluate((selector) => {
       const knownIds = new Set<string>();
 
-      const extractParticipantData = async (
-        element: HTMLElement
-      ): Promise<any | null> => {
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-
+      const extractParticipantData = (element: HTMLElement): any | null => {
         const participantId = element.getAttribute("data-participant-id");
         if (!participantId) return null;
 
@@ -49,8 +44,8 @@ export class ParticipantMutationHandler {
         };
       };
 
-      const processParticipant = async (element: HTMLElement) => {
-        const participantData = await extractParticipantData(element);
+      const processParticipant = (element: HTMLElement) => {
+        const participantData = extractParticipantData(element);
         if (participantData && !knownIds.has(participantData.id)) {
           knownIds.add(participantData.id);
           (window as any).onParticipantDetected(participantData);
@@ -61,11 +56,8 @@ export class ParticipantMutationHandler {
         mutations.forEach((mutation) => {
           mutation.addedNodes.forEach((node) => {
             if (node instanceof HTMLElement) {
-              if (node.matches(selector)) {
-                processParticipant(node);
-              }
-
               const participantDivs = node.querySelectorAll(selector);
+              console.log("Detected participant divs:", participantDivs);
               participantDivs.forEach((div) => {
                 if (div instanceof HTMLElement) {
                   processParticipant(div);
@@ -80,12 +72,11 @@ export class ParticipantMutationHandler {
         childList: true,
         subtree: true,
       });
-    });
+    }, ParticipantMutationHandler.PARTICIPANT_SELECTOR);
   }
 
   private async initializeExistingParticipants(): Promise<void> {
-    const existingParticipants = await this.page.evaluate(() => {
-      const selector = "div[data-participant-id]";
+    const existingParticipants = await this.page.evaluate((selector) => {
       const participantElements = document.querySelectorAll(selector);
       const participants: any[] = [];
 
@@ -108,19 +99,20 @@ export class ParticipantMutationHandler {
       });
 
       return participants;
-    });
+    }, ParticipantMutationHandler.PARTICIPANT_SELECTOR);
 
-    const participantsMusebePushed: Participant[] = [];
-
-    existingParticipants.forEach((participant: Participant) => {
-      if (!this.knownParticipantIds.has(participant.id)) {
-        this.knownParticipantIds.add(participant.id);
-        participantsMusebePushed.push(participant);
+    const participantsToBePushed: Participant[] = existingParticipants.filter(
+      (participant: Participant) => {
+        if (!this.knownParticipantIds.has(participant.id)) {
+          this.knownParticipantIds.add(participant.id);
+          return true;
+        }
+        return false;
       }
-    });
+    );
 
-    if (participantsMusebePushed.length > 0) {
-      this.pushToHub(participantsMusebePushed);
+    if (participantsToBePushed.length > 0) {
+      this.pushToHub(participantsToBePushed);
     }
   }
 }

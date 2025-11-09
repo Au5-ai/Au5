@@ -28,7 +28,6 @@ class ParticipantMutationHandler {
                 const imgElement = element.querySelector("img");
                 const pictureUrl = imgElement?.src || "";
                 return {
-                    id: participantId,
                     fullName,
                     pictureUrl,
                 };
@@ -44,9 +43,6 @@ class ParticipantMutationHandler {
                 mutations.forEach((mutation) => {
                     mutation.addedNodes.forEach((node) => {
                         if (node instanceof HTMLElement) {
-                            if (node.matches(selector)) {
-                                processParticipant(node);
-                            }
                             const participantDivs = node.querySelectorAll(selector);
                             participantDivs.forEach((div) => {
                                 if (div instanceof HTMLElement) {
@@ -80,6 +76,7 @@ class ParticipantMutationHandler {
                     id: participantId,
                     fullName,
                     pictureUrl,
+                    email: "",
                 });
             });
             return participants;
