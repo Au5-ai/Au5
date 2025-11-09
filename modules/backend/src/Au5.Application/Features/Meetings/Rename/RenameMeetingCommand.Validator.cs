@@ -6,10 +6,10 @@ public class RenameMeetingCommandValidator : AbstractValidator<RenameMeetingComm
 {
 	public RenameMeetingCommandValidator()
 	{
-		RuleFor(s => s.meetingId)
+		RuleFor(s => s.MeetingId)
 			.NotEmpty()
 			.WithMessage(AppResources.Validation.Required);
-		RuleFor(s => s.newTitle)
+		RuleFor(s => s.NewTitle)
 			.NotEmpty()
 			.WithMessage(AppResources.Validation.Required);
 	}
