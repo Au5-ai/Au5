@@ -11,7 +11,7 @@ builder.AddServiceDefaults();
 	builder.Services.AddSignalR();
 	builder.Services.AddJwtAuthentication(builder.Configuration);
 
-	builder.Services.Configure<JwtBearerOptions>(options =>
+	builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
 	{
 		if (builder.Environment.IsProduction())
 		{
