@@ -61,9 +61,7 @@ public class GetSpaceMembersQueryHandlerTests
 			.WithActiveSpace()
 			.WithUsers(2, true);
 
-		// Make the current user inactive
 		var currentUser = fixture.TestUsers.First(x => !x.IsActive);
-		currentUser.IsActive = false;
 
 		fixture.WithCurrentUser(currentUser.Id);
 
@@ -71,7 +69,6 @@ public class GetSpaceMembersQueryHandlerTests
 
 		var result = await fixture.BuildHandler().Handle(query, CancellationToken.None);
 
-		// Assert that access is granted, but the inactive user is not in the returned list
 		Assert.True(result.IsSuccess);
 		Assert.NotNull(result.Data);
 		Assert.Single(result.Data!.Users);
