@@ -63,10 +63,7 @@ export function TranscriptionActions({
       setIsToggling(true);
       setCurrentFavoriteStatus(!currentFavoriteStatus);
 
-      const response = await meetingsController.toggleFavorite(
-        meetingId,
-        meetId,
-      );
+      const response = await meetingsController.toggleFavorite(meetingId);
 
       if (response.isFavorite) {
         toast.success("Meeting has been added to your favorite list");
@@ -91,7 +88,7 @@ export function TranscriptionActions({
       setIsArchiving(true);
       const response = await meetingsController.toggleArchive(
         meetingId,
-        meetId,
+        isArchived,
       );
 
       if (response.isArchived) {
@@ -115,10 +112,7 @@ export function TranscriptionActions({
 
     try {
       setIsExporting(true);
-      const textContent = await meetingsController.exportToText(
-        meetingId,
-        meetId,
-      );
+      const textContent = await meetingsController.exportToText(meetingId);
 
       const blob = new Blob([textContent], { type: "text/plain" });
       const url = window.URL.createObjectURL(blob);

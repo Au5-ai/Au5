@@ -7,7 +7,7 @@ namespace Au5.BackEnd.Controllers;
 [Route("configs")]
 public class ConfigsController(ISender mediator) : BaseController
 {
-	[HttpPut("system")]
+	[HttpPost("system")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> UpdateSystemConfig([FromBody] SystemConfigCommand command)
 	{

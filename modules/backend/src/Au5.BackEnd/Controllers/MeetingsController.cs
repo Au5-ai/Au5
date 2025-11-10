@@ -11,7 +11,7 @@ namespace Au5.BackEnd.Controllers;
 
 public class MeetingsController(ISender mediator) : BaseController
 {
-	[HttpGet("{meetingId}/transcription")]
+	[HttpGet("{meetingId}/transcript")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> GetTranscriptions([FromRoute] Guid meetingId, CancellationToken cancellationToken)
 	{
