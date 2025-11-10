@@ -463,14 +463,14 @@ const _ApiRoutes = class _ApiRoutes {
     }
     return _ApiRoutes.instance;
   }
-  addBot(meetingId, meetId) {
-    return `${this.config.service.baseUrl}/meetings/${meetingId}/sessions/${meetId}/bots`;
+  addBot() {
+    return `${this.config.service.baseUrl}/meetings/bots`;
   }
   getReactions() {
     return `${this.config.service.baseUrl}/reactions`;
   }
-  closeMeeting(meetingId, meetId) {
-    return `${this.config.service.baseUrl}/meetings/${meetingId}/sessions/${meetId}/close`;
+  closeMeeting(meetingId) {
+    return `${this.config.service.baseUrl}/meetings/${meetingId}/close`;
   }
 };
 __publicField(_ApiRoutes, "instance");
@@ -554,7 +554,7 @@ class BackEndApi {
   }
   async addBot(body) {
     const token = await this.tokenManager.getToken();
-    return apiRequest(ApiRoutes.getInstance(this.config).addBot(body.meetingId, body.meetId), {
+    return apiRequest(ApiRoutes.getInstance(this.config).addBot(), {
       method: "POST",
       body,
       authToken: token || ""
@@ -569,7 +569,7 @@ class BackEndApi {
   }
   async closeMeeting(body) {
     const token = await this.tokenManager.getToken();
-    return apiRequest(ApiRoutes.getInstance(this.config).closeMeeting(body.meetingId, body.meetId), {
+    return apiRequest(ApiRoutes.getInstance(this.config).closeMeeting(body.meetingId), {
       method: "POST",
       authToken: token || ""
     });
@@ -3599,7 +3599,6 @@ class UIHandlers {
       }
       const meetId = this.platform.getMeetId();
       const response = await this.backendApi.addBot({
-        meetingId: "00000000-0000-0000-0000-000000000000",
         meetId,
         botName: this.config.service.botName,
         platform: this.platform.getPlatformName()

@@ -22,7 +22,7 @@ function handleConfigUpdate(config) {
     return;
   }
   chrome.storage.local.set({ [CONFIGURATION_KEY]: JSON.stringify(config) }, () => {
-    console.log("✅ Config saved from content.js:", config);
+    console.log("Config saved from content.js:", config);
   });
 }
 function handleTokenUpdate(token) {
@@ -31,20 +31,11 @@ function handleTokenUpdate(token) {
     console.error("chrome.storage.local is undefined in content.js");
     return;
   }
-  console.log("Saving auth token to extension storage...", token);
   try {
     chrome.storage.local.set({ [ACCESS_TOKEN_KEY]: token }, () => {
       if (chrome.runtime.lastError) {
         console.error("Error saving auth token:", chrome.runtime.lastError);
         return;
-      }
-      console.log("Auth token saved from content.js with key:", ACCESS_TOKEN_KEY);
-      try {
-        chrome.storage.local.get(ACCESS_TOKEN_KEY, (result) => {
-          console.log("Verification - Token in storage:", result[ACCESS_TOKEN_KEY] ? "Yes" : "No");
-        });
-      } catch (e) {
-        console.warn("Extension context invalidated during verification");
       }
     });
   } catch (e) {
