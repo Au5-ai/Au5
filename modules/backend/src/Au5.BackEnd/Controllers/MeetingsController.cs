@@ -4,7 +4,6 @@ using Au5.Application.Features.AI.GetAll;
 using Au5.Application.Features.Meetings.CloseMeetingByUser;
 using Au5.Application.Features.Meetings.Export;
 using Au5.Application.Features.Meetings.GetFullTranscription;
-using Au5.Application.Features.Meetings.MyMeeting;
 using Au5.Application.Features.Meetings.Rename;
 using Au5.Application.Features.Meetings.ToggleArchive;
 using Au5.Application.Features.Meetings.ToggleFavorite;
@@ -51,7 +50,6 @@ public class MeetingsController(ISender mediator) : BaseController
 		return Ok(await mediator.Send(command with { MeetingId = meetingId }, cancellationToken));
 	}
 
-	[HttpPost("{meetingId}/sessions/{meetId}/bots")]
 	[HttpDelete("{meetingId}/ai-contents/{id}")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> DeleteAsync([FromRoute] Guid meetingId, [FromRoute] Guid id, CancellationToken cancellationToken = default)
