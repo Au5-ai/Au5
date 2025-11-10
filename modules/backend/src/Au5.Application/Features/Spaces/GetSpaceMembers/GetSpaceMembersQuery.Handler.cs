@@ -13,7 +13,7 @@ public class GetSpaceMembersQueryHandler(IApplicationDbContext dbContext, ICurre
 		Guid currentUserId = _currentUserService.UserId;
 
 		var space = await _dbContext.Set<Space>()
-			.Include(s => s.UserSpaces)
+			.Include(s => s.UserSpaces.Where(x => x.User.IsActive))
 				.ThenInclude(us => us.User)
 			.AsNoTracking()
 			.FirstOrDefaultAsync(s => s.Id == request.SpaceId && s.IsActive, cancellationToken);
