@@ -19,7 +19,7 @@ namespace Au5.IntegrationTests.Application.Features.Spaces
 				Id = Guid.NewGuid(),
 				FullName = "User 1",
 				Email = "user1@example.com",
-				PictureUrl = " ",
+				PictureUrl = string.Empty,
 				Password = "FakePassword1!",
 				IsActive = true,
 				CreatedAt = DateTime.UtcNow,
@@ -32,7 +32,7 @@ namespace Au5.IntegrationTests.Application.Features.Spaces
 				Id = Guid.NewGuid(),
 				FullName = "User 2",
 				Email = "user2@example.com",
-				PictureUrl = " ",
+				PictureUrl = string.Empty,
 				Password = "FakePassword2!",
 				IsActive = true,
 				CreatedAt = DateTime.UtcNow,
@@ -40,36 +40,20 @@ namespace Au5.IntegrationTests.Application.Features.Spaces
 				Status = UserStatus.CompleteSignUp
 			};
 
-			DbContext.Set<User>().AddRange(user1, user2);
-			await DbContext.SaveChangesAsync(CancellationToken.None);
-
 			var space = new Space
 			{
 				Id = Guid.NewGuid(),
 				Name = "Integration Test Space",
 				Description = "Space for integration test",
-				IsActive = true
+				IsActive = true,
+				UserSpaces =
+				[
+					new() { User = user1, IsAdmin = true, JoinedAt = DateTime.UtcNow },
+					new() { User = user2, IsAdmin = false, JoinedAt = DateTime.UtcNow }
+				]
 			};
 
 			DbContext.Set<Space>().Add(space);
-			await DbContext.SaveChangesAsync(CancellationToken.None);
-
-			var us1 = new UserSpace
-			{
-				SpaceId = space.Id,
-				UserId = user1.Id,
-				IsAdmin = true,
-				JoinedAt = DateTime.UtcNow
-			};
-			var us2 = new UserSpace
-			{
-				SpaceId = space.Id,
-				UserId = user2.Id,
-				IsAdmin = false,
-				JoinedAt = DateTime.UtcNow
-			};
-
-			DbContext.Set<UserSpace>().AddRange(us1, us2);
 			await DbContext.SaveChangesAsync(CancellationToken.None);
 
 			TestCurrentUserService.UserId = user1.Id;
@@ -122,11 +106,11 @@ namespace Au5.IntegrationTests.Application.Features.Spaces
 				Id = Guid.NewGuid(),
 				Name = "Integration Test Space",
 				IsActive = true,
-				UserSpaces = new List<UserSpace>
-				{
-					new () { UserId = user1.Id, IsAdmin = true, JoinedAt = DateTime.UtcNow },
-					new () { UserId = user2.Id, IsAdmin = false, JoinedAt = DateTime.UtcNow }
-				}
+				UserSpaces =
+				[
+					new () { User = user1, IsAdmin = true, JoinedAt = DateTime.UtcNow },
+					new () { User = user2, IsAdmin = false, JoinedAt = DateTime.UtcNow }
+				]
 			};
 
 			DbContext.Set<Space>().Add(space);
@@ -140,6 +124,38 @@ namespace Au5.IntegrationTests.Application.Features.Spaces
 
 			Assert.False(result.IsSuccess);
 			Assert.Equal("Space.Access.Denied", result.Error.Code);
+		}
+
+		[Fact]
+		public async Task Handle_Should_GrantAccessAndFilter_When_CurrentUserIsMemberButInactive()
+		{
+			var user1 = new User { Id = Guid.NewGuid(), FullName = "User 1", Email = "user1@example.com", PictureUrl = string.Empty, Password = "p1", IsActive = false, CreatedAt = DateTime.UtcNow, Role = RoleTypes.User, Status = UserStatus.CompleteSignUp };
+			var user2 = new User { Id = Guid.NewGuid(), FullName = "User 2", Email = "user2@example.com", PictureUrl = string.Empty, Password = "p2", IsActive = true, CreatedAt = DateTime.UtcNow, Role = RoleTypes.User, Status = UserStatus.CompleteSignUp };
+
+			var space = new Space
+			{
+				Id = Guid.NewGuid(),
+				Name = "Test Space",
+				IsActive = true,
+				UserSpaces = new List<UserSpace>
+				{
+					new() { User = user1, IsAdmin = true, JoinedAt = DateTime.UtcNow },
+					new() { User = user2, IsAdmin = false, JoinedAt = DateTime.UtcNow }
+				}
+			};
+			DbContext.Set<Space>().Add(space);
+			await DbContext.SaveChangesAsync(CancellationToken.None);
+
+			TestCurrentUserService.UserId = user1.Id;
+			TestCurrentUserService.IsAuthenticated = true;
+
+			var query = new GetSpaceMembersQuery(space.Id);
+			var result = await Mediator.Send(query);
+
+			Assert.True(result.IsSuccess);
+			Assert.NotNull(result.Data);
+			Assert.Single(result.Data!.Users);
+			Assert.Equal(user2.Id, result.Data.Users.First().UserId);
 		}
 	}
 }

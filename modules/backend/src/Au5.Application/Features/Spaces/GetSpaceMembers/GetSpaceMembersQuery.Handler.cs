@@ -13,19 +13,21 @@ public class GetSpaceMembersQueryHandler(IApplicationDbContext dbContext, ICurre
 		Guid currentUserId = _currentUserService.UserId;
 
 		var space = await _dbContext.Set<Space>()
-			.Include(s => s.UserSpaces.Where(x => x.User.IsActive))
+			.Include(s => s.UserSpaces)
 				.ThenInclude(us => us.User)
 			.AsNoTracking()
 			.FirstOrDefaultAsync(s => s.Id == request.SpaceId && s.IsActive, cancellationToken);
 
-		if (!space?.UserSpaces?.Any(x => x.UserId == currentUserId) ?? true)
+		if (space is null || (!space.UserSpaces?.Any(x => x.UserId == currentUserId) ?? true))
 		{
-			return Error.Failure("Space.Access.Denied", "You do not have access to this space");
+			return Error.Forbidden("Space.Access.Denied", "You do not have access to this space");
 		}
 
 		return new GetSpaceMembersResponse()
 		{
-			Users = [.. space.UserSpaces.Select(member => new SpaceUserInfo
+			Users = [.. space.UserSpaces
+				.Where(member => member.User.IsActive)
+				.Select(member => new SpaceUserInfo
 			{
 				UserId = member.UserId,
 				Email = member.User.Email,

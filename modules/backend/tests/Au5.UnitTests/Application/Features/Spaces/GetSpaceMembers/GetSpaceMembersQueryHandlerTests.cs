@@ -54,4 +54,28 @@ public class GetSpaceMembersQueryHandlerTests
 		Assert.False(result.IsSuccess);
 		Assert.Equal("Space.Access.Denied", result.Error.Code);
 	}
+
+	[Fact]
+	public async Task Should_GrantAccess_When_CurrentUserIsMemberButInactive()
+	{
+		var fixture = new GetSpaceMembersQueryHandlerTestFixture()
+			.WithActiveSpace()
+			.WithUsers(2);
+
+		// Make the current user inactive
+		var currentUser = fixture.TestUsers.First();
+		currentUser.IsActive = false;
+
+		fixture.WithCurrentUser(currentUser.Id);
+
+		var query = new GetSpaceMembersQuery(fixture.TestSpace.Id);
+
+		var result = await fixture.BuildHandler().Handle(query, CancellationToken.None);
+
+		// Assert that access is granted, but the inactive user is not in the returned list
+		Assert.True(result.IsSuccess);
+		Assert.NotNull(result.Data);
+		Assert.Single(result.Data!.Users);
+		Assert.NotEqual(currentUser.Id, result.Data.Users.First().UserId);
+	}
 }
