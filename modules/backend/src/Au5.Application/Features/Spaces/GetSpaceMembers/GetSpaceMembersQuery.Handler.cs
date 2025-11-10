@@ -12,27 +12,26 @@ public class GetSpaceMembersQueryHandler(IApplicationDbContext dbContext, ICurre
 	{
 		Guid currentUserId = _currentUserService.UserId;
 
-		var space = await _dbContext.Set<Space>()
-			.Include(s => s.UserSpaces)
-				.ThenInclude(us => us.User)
+		var spaceInfo = await _dbContext.Set<Space>()
+			.Where(s => s.Id == request.SpaceId)
+			.Select(s => new { s.IsActive, IsMember = s.UserSpaces.Any(us => us.UserId == currentUserId) })
 			.AsNoTracking()
-			.FirstOrDefaultAsync(s => s.Id == request.SpaceId && s.IsActive, cancellationToken);
+			.FirstOrDefaultAsync(cancellationToken);
 
-		if (space is null)
+		if (spaceInfo is null || !spaceInfo.IsActive)
 		{
 			return Error.NotFound("Space.NotFound", "The requested space does not exist or is inactive.");
 		}
 
-		if (!space.UserSpaces.Any(x => x.UserId == currentUserId))
+		if (!spaceInfo.IsMember)
 		{
 			return Error.Forbidden("Space.Access.Denied", "You do not have access to this space");
 		}
 
-		return new GetSpaceMembersResponse()
-		{
-			Users = [.. space.UserSpaces
-				.Where(member => member.User.IsActive)
-				.Select(member => new SpaceUserInfo
+		var users = await _dbContext.Set<UserSpace>()
+			.Where(us => us.SpaceId == request.SpaceId && us.User.IsActive)
+			.AsNoTracking()
+			.Select(member => new SpaceUserInfo
 			{
 				UserId = member.UserId,
 				Email = member.User.Email,
@@ -40,7 +39,12 @@ public class GetSpaceMembersQueryHandler(IApplicationDbContext dbContext, ICurre
 				IsAdmin = member.IsAdmin,
 				FullName = member.User.FullName,
 				PictureUrl = member.User.PictureUrl
-			})]
+			})
+			.ToListAsync(cancellationToken);
+
+		return new GetSpaceMembersResponse()
+		{
+			Users = users
 		};
 	}
 }

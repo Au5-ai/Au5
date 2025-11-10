@@ -59,10 +59,10 @@ public class GetSpaceMembersQueryHandlerTests
 	{
 		var fixture = new GetSpaceMembersQueryHandlerTestFixture()
 			.WithActiveSpace()
-			.WithUsers(2);
+			.WithUsers(2, true);
 
 		// Make the current user inactive
-		var currentUser = fixture.TestUsers.First();
+		var currentUser = fixture.TestUsers.First(x => !x.IsActive);
 		currentUser.IsActive = false;
 
 		fixture.WithCurrentUser(currentUser.Id);

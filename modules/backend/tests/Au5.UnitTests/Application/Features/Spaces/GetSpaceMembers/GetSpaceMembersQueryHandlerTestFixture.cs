@@ -52,26 +52,32 @@ public class GetSpaceMembersQueryHandlerTestFixture
 		return this;
 	}
 
-	public GetSpaceMembersQueryHandlerTestFixture WithUsers(int count = 2)
+	public GetSpaceMembersQueryHandlerTestFixture WithUsers(int count = 2, bool includeInactiveUser = false)
 	{
-		if (TestSpace == null)
+		if (TestSpace is null)
 		{
 			WithActiveSpace();
 		}
 
-		TestUsers = [];
-		TestUserSpaces = [];
+		TestUsers = new List<User>();
+		TestUserSpaces = new List<UserSpace>();
+
+		var joinedAt = DateTime.UtcNow;
 
 		for (int i = 0; i < count; i++)
 		{
+			bool isInactiveUser = includeInactiveUser && i == count - 1;
+
 			var user = new User
 			{
 				Id = Guid.NewGuid(),
 				FullName = $"Test User {i + 1}",
 				Email = $"user{i + 1}@example.com",
-				IsActive = true,
+				IsActive = !isInactiveUser,
 				PictureUrl = $"https://example.com/user{i + 1}.jpg",
-				CreatedAt = DateTime.UtcNow
+				CreatedAt = DateTime.UtcNow,
+				Role = RoleTypes.User,
+				Status = UserStatus.CompleteSignUp
 			};
 
 			var userSpace = new UserSpace
@@ -79,7 +85,7 @@ public class GetSpaceMembersQueryHandlerTestFixture
 				SpaceId = TestSpace.Id,
 				UserId = user.Id,
 				IsAdmin = i == 0,
-				JoinedAt = DateTime.UtcNow,
+				JoinedAt = joinedAt,
 				User = user
 			};
 
@@ -89,9 +95,14 @@ public class GetSpaceMembersQueryHandlerTestFixture
 
 		TestSpace.UserSpaces = TestUserSpaces;
 
-		// Setup DbSet
 		MockDbContext.Setup(db => db.Set<Space>())
 			.Returns(new List<Space> { TestSpace }.BuildMockDbSet().Object);
+
+		MockDbContext.Setup(db => db.Set<UserSpace>())
+			.Returns(TestUserSpaces.BuildMockDbSet().Object);
+
+		MockDbContext.Setup(db => db.Set<User>())
+			.Returns(TestUsers.BuildMockDbSet().Object);
 
 		return this;
 	}
