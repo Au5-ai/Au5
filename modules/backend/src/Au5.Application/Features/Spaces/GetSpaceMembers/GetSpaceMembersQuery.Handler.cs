@@ -5,14 +5,11 @@ namespace Au5.Application.Features.Spaces.GetSpaceMembers;
 public class GetSpaceMembersQueryHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
 	: IRequestHandler<GetSpaceMembersQuery, Result<GetSpaceMembersResponse>>
 {
-	private readonly IApplicationDbContext _dbContext = dbContext;
-	private readonly ICurrentUserService _currentUserService = currentUserService;
-
 	public async ValueTask<Result<GetSpaceMembersResponse>> Handle(GetSpaceMembersQuery request, CancellationToken cancellationToken)
 	{
-		Guid currentUserId = _currentUserService.UserId;
+		Guid currentUserId = currentUserService.UserId;
 
-		var spaceInfo = await _dbContext.Set<Space>()
+		var spaceInfo = await dbContext.Set<Space>()
 			.Where(s => s.Id == request.SpaceId)
 			.Select(s => new { s.IsActive, IsMember = s.UserSpaces.Any(us => us.UserId == currentUserId) })
 			.AsNoTracking()
@@ -28,7 +25,7 @@ public class GetSpaceMembersQueryHandler(IApplicationDbContext dbContext, ICurre
 			return Error.Forbidden("Space.Access.Denied", "You do not have access to this space");
 		}
 
-		var users = await _dbContext.Set<UserSpace>()
+		var users = await dbContext.Set<UserSpace>()
 			.Where(us => us.SpaceId == request.SpaceId && us.User.IsActive)
 			.AsNoTracking()
 			.Select(member => new SpaceUserInfo

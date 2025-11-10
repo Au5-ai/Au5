@@ -6,5 +6,5 @@ public record GetSpaceMembersQuery(Guid SpaceId) : IRequest<Result<GetSpaceMembe
 
 public record GetSpaceMembersResponse
 {
-	public List<SpaceUserInfo> Users { get; init; }
+	public IReadOnlyList<SpaceUserInfo> Users { get; init; }
 }
