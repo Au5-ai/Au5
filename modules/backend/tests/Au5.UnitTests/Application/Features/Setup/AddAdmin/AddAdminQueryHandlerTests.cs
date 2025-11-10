@@ -1,4 +1,4 @@
-using Au5.Application.Features.Setup.AddAdmin;
+using Au5.Application.Features.Admin.Create;
 using Au5.Domain.Entities;
 using Au5.Shared;
 using MockQueryable.Moq;
@@ -10,7 +10,7 @@ public class AddAdminQueryHandlerTests
 	private readonly Mock<IApplicationDbContext> _mockDbContext;
 	private readonly Mock<DbSet<User>> _mockUserDbSet;
 	private readonly Mock<IDataProvider> _dataProviderMock;
-	private readonly AddAdminQueryHandler _handler;
+	private readonly CreateAdminCommandHandler _handler;
 
 	public AddAdminQueryHandlerTests()
 	{
@@ -21,7 +21,7 @@ public class AddAdminQueryHandlerTests
 		_mockDbContext.Setup(x => x.Set<User>())
 			.Returns(_mockUserDbSet.Object);
 
-		_handler = new AddAdminQueryHandler(_mockDbContext.Object, _dataProviderMock.Object);
+		_handler = new CreateAdminCommandHandler(_mockDbContext.Object, _dataProviderMock.Object);
 	}
 
 	[Fact]
@@ -39,7 +39,7 @@ public class AddAdminQueryHandlerTests
 		var users = new[] { existingAdmin }.BuildMockDbSet();
 
 		_mockDbContext.Setup(x => x.Set<User>()).Returns(users.Object);
-		var request = new AddAdminCommand("newadmin@test.com", "New Admin", "Password123", "Password123");
+		var request = new CreateAdminCommand("newadmin@test.com", "New Admin", "Password123", "Password123");
 
 		var result = await _handler.Handle(request, CancellationToken.None);
 
@@ -56,7 +56,7 @@ public class AddAdminQueryHandlerTests
 		_mockDbContext.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
 						.ReturnsAsync(Result.Success());
 
-		var request = new AddAdminCommand("newadmin@test.com", "New Admin", "Password123", "Password123");
+		var request = new CreateAdminCommand("newadmin@test.com", "New Admin", "Password123", "Password123");
 
 		var result = await _handler.Handle(request, CancellationToken.None);
 
