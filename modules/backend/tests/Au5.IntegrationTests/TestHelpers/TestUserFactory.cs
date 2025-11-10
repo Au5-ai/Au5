@@ -8,6 +8,7 @@ public static class TestUserFactory
 	public static User Create(
 		string fullName,
 		string email,
+		DateTime createdAt,
 		string password = "FakePassword1!",
 		bool isActive = true,
 		RoleTypes role = RoleTypes.User,
@@ -24,7 +25,7 @@ public static class TestUserFactory
 			Role = role,
 			Status = status,
 			PictureUrl = pictureUrl,
-			CreatedAt = DateTime.UtcNow,
+			CreatedAt = createdAt,
 			Meetings = [],
 			UserSpaces = [],
 			MeetingSpaces = []

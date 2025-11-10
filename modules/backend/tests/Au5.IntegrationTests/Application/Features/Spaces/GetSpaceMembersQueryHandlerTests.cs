@@ -14,9 +14,9 @@ namespace Au5.IntegrationTests.Application.Features.Spaces
 		[Fact]
 		public async Task Handle_Should_ReturnUsers_When_CurrentUserHasAccess()
 		{
-			var user1 = TestUserFactory.Create("User 1", "user1@example.com");
-			var user2 = TestUserFactory.Create("User 2", "user2@example.com");
-
+			var now = DateTime.UtcNow;
+			var user1 = TestUserFactory.Create("User 1", "user1@example.com", now);
+			var user2 = TestUserFactory.Create("User 2", "user2@example.com", now);
 			var space = new Space
 			{
 				Id = Guid.NewGuid(),
@@ -25,8 +25,8 @@ namespace Au5.IntegrationTests.Application.Features.Spaces
 				IsActive = true,
 				UserSpaces =
 				[
-					new() { User = user1, IsAdmin = true, JoinedAt = DateTime.UtcNow },
-					new() { User = user2, IsAdmin = false, JoinedAt = DateTime.UtcNow }
+					new() { User = user1, IsAdmin = true, JoinedAt = now },
+					new() { User = user2, IsAdmin = false, JoinedAt = now }
 				]
 			};
 
@@ -54,9 +54,9 @@ namespace Au5.IntegrationTests.Application.Features.Spaces
 		[Fact]
 		public async Task Handle_Should_ReturnAccessDenied_When_CurrentUserHasNoAccess()
 		{
-			var user1 = TestUserFactory.Create("User 1", "user1@example.com");
-			var user2 = TestUserFactory.Create("User 2", "user2@example.com");
-
+			var now = DateTime.UtcNow;
+			var user1 = TestUserFactory.Create("User 1", "user1@example.com", now);
+			var user2 = TestUserFactory.Create("User 2", "user2@example.com", now);
 			var space = new Space
 			{
 				Id = Guid.NewGuid(),
@@ -64,8 +64,8 @@ namespace Au5.IntegrationTests.Application.Features.Spaces
 				IsActive = true,
 				UserSpaces =
 				[
-					new () { User = user1, IsAdmin = true, JoinedAt = DateTime.UtcNow },
-					new () { User = user2, IsAdmin = false, JoinedAt = DateTime.UtcNow }
+					new () { User = user1, IsAdmin = true, JoinedAt = now },
+					new () { User = user2, IsAdmin = false, JoinedAt = now }
 				]
 			};
 
@@ -85,9 +85,9 @@ namespace Au5.IntegrationTests.Application.Features.Spaces
 		[Fact]
 		public async Task Handle_Should_GrantAccessAndFilter_When_CurrentUserIsMemberButInactive()
 		{
-			var user1 = TestUserFactory.Create("User 1", "user1@example.com", isActive: false);
-			var user2 = TestUserFactory.Create("User 2", "user2@example.com");
-
+			var now = DateTime.UtcNow;
+			var user1 = TestUserFactory.Create("User 1", "user1@example.com", now, isActive: false);
+			var user2 = TestUserFactory.Create("User 2", "user2@example.com", now);
 			var space = new Space
 			{
 				Id = Guid.NewGuid(),
@@ -95,8 +95,8 @@ namespace Au5.IntegrationTests.Application.Features.Spaces
 				IsActive = true,
 				UserSpaces =
 				[
-					new() { User = user1, IsAdmin = true, JoinedAt = DateTime.UtcNow },
-					new() { User = user2, IsAdmin = false, JoinedAt = DateTime.UtcNow }
+					new() { User = user1, IsAdmin = true, JoinedAt = now },
+					new() { User = user2, IsAdmin = false, JoinedAt = now }
 				]
 			};
 			DbContext.Set<Space>().Add(space);
