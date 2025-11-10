@@ -4,7 +4,7 @@ export const API_URLS = {
   },
   SPACES: {
     ROOT: "/spaces",
-    MY_SPACES: "/spaces/my-spaces",
+    MY_SPACES: "/users/me/spaces",
     MEETINGS: (spaceId: string) => `/spaces/${spaceId}/meetings`,
   },
   ASSISTANTS: {
@@ -24,9 +24,9 @@ export const API_URLS = {
     TRANSCRIPTION: (meetingId: string, meetId: string) =>
       `/meetings/${meetingId}/sessions/${meetId}/transcription`,
     TOGGLE_FAVORITE: (meetingId: string, meetId: string) =>
-      `/meetings/${meetingId}/sessions/${meetId}/toggle-favorite`,
+      `/meetings/${meetingId}/sessions/${meetId}/favorite`,
     TOGGLE_ARCHIVE: (meetingId: string, meetId: string) =>
-      `/meetings/${meetingId}/sessions/${meetId}/toggle-archive`,
+      `/meetings/${meetingId}/sessions/${meetId}/archive`,
     ADD_TO_SPACE: (meetingId: string, meetId: string, spaceId: string) =>
       `/meetings/${meetingId}/sessions/${meetId}/spaces/${spaceId}`,
     REMOVE_FROM_SPACE: (meetingId: string, meetId: string, spaceId: string) =>

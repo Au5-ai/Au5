@@ -58,7 +58,7 @@ public class BotFatherAdapter(IHttpClientFactory httpClientFactory, ILogger<BotF
 					response.StatusCode,
 					errorContent);
 
-				return Error.Failure(description: failureMessage);
+				return Error.Failure(failureMessage);
 			}
 
 			return await response.Content.ReadAsStringAsync(cancellationToken);

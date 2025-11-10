@@ -18,7 +18,7 @@ public class ExportToTextQueryHandler : IRequestHandler<ExportToTextQuery, Resul
 				.ThenInclude(p => p.User)
 			.Include(x => x.Guests)
 			.Include(x => x.Entries)
-			.FirstOrDefaultAsync(m => m.Id == request.MeetingId && m.MeetId == request.MeetId, cancellationToken);
+			.FirstOrDefaultAsync(m => m.Id == request.MeetingId, cancellationToken);
 
 		if (meeting is null)
 		{

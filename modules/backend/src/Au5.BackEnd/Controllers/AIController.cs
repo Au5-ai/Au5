@@ -2,10 +2,12 @@ using Au5.Application.Features.AI.Generate;
 
 namespace Au5.BackEnd.Controllers;
 
-public class AIController(ISender sender) : BaseController
+[Route("ai-generations")]
+public class AIGenerationsController(ISender sender) : BaseController
 {
-	[HttpPost("generate")]
-	public async Task<IActionResult> GenerateAsync([FromBody] AIGenerateCommand request, CancellationToken cancellationToken = default)
+	[HttpPost]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> CreateGeneration([FromBody] AIGenerateCommand request, CancellationToken cancellationToken = default)
 	{
 		Response.Headers.Append("Content-Type", "text/event-stream");
 		Response.Headers.Append("Cache-Control", "no-cache");
