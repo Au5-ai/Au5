@@ -39,7 +39,7 @@ public class GetSpaceMembersQueryHandlerTests
 	}
 
 	[Fact]
-	public async Task Should_ReturnAccessDenied_When_SpaceInactive()
+	public async Task Should_ReturnNotFound_When_SpaceInactive()
 	{
 		var fixture = new GetSpaceMembersQueryHandlerTestFixture()
 			.WithInactiveSpace()
