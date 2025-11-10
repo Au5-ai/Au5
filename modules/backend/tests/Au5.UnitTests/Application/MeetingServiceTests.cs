@@ -176,11 +176,10 @@ public class MeetingServiceTests
 	[Fact]
 	public async Task AddGuestsToMeet_WhenMeetingDoesNotExist_ShouldNotAddGuests()
 	{
-		var guests = new List<Participant>
+		var guests = new List<Guest>
 		{
 			new()
 			{
-				Id = Guid.NewGuid(),
 				FullName = "Guest User",
 				PictureUrl = "https://example.com/guest.jpg"
 			}
@@ -189,7 +188,7 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync((Meeting)null);
 
-		await _meetingService.AddGuestsToMeet(guests, "meet123");
+		await _meetingService.AddGuestsToMeet("meet123", guests);
 
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), It.IsAny<TimeSpan>()), Times.Never);
 	}
@@ -205,11 +204,10 @@ public class MeetingServiceTests
 			Guests = []
 		};
 
-		var guests = new List<Participant>
+		var guests = new List<Guest>
 		{
 			new()
 			{
-				Id = Guid.NewGuid(),
 				FullName = "Guest User",
 				PictureUrl = "https://example.com/guest.jpg"
 			}
@@ -218,7 +216,7 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync(endedMeeting);
 
-		await _meetingService.AddGuestsToMeet(guests, "meet123");
+		await _meetingService.AddGuestsToMeet("meet123", guests);
 
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), It.IsAny<TimeSpan>()), Times.Never);
 	}
@@ -234,17 +232,15 @@ public class MeetingServiceTests
 			Guests = []
 		};
 
-		var guests = new List<Participant>
+		var guests = new List<Guest>
 		{
 			new()
 			{
-				Id = Guid.NewGuid(),
 				FullName = "Guest User 1",
 				PictureUrl = "https://example.com/guest1.jpg"
 			},
 			new()
 			{
-				Id = Guid.NewGuid(),
 				FullName = "Guest User 2",
 				PictureUrl = "https://example.com/guest2.jpg"
 			}
@@ -253,7 +249,7 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync(activeMeeting);
 
-		await _meetingService.AddGuestsToMeet(guests, "meet123");
+		await _meetingService.AddGuestsToMeet("meet123", guests);
 
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.Is<Meeting>(m => m.Guests.Count == 2), TimeSpan.FromHours(1)), Times.Once);
 	}
@@ -278,11 +274,10 @@ public class MeetingServiceTests
 			]
 		};
 
-		var guests = new List<Participant>
+		var guests = new List<Guest>
 		{
 			new()
 			{
-				Id = Guid.NewGuid(),
 				FullName = existingGuestName,
 				PictureUrl = "https://example.com/guest.jpg"
 			}
@@ -291,7 +286,7 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync(activeMeeting);
 
-		await _meetingService.AddGuestsToMeet(guests, "meet123");
+		await _meetingService.AddGuestsToMeet("meet123", guests);
 
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.Is<Meeting>(m => m.Guests.Count == 1), TimeSpan.FromHours(1)), Times.Once);
 	}

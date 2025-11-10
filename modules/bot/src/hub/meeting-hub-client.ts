@@ -1,5 +1,5 @@
 import * as signalR from "@microsoft/signalr";
-import { MeetingConfiguration, EntryMessage } from "../types";
+import { MeetingConfiguration, EntryMessage, Message } from "../types";
 
 export class MeetingHubClient {
   private connection: signalR.HubConnection;
@@ -22,7 +22,7 @@ export class MeetingHubClient {
     return true;
   }
 
-  public async sendMessage(payload: EntryMessage): Promise<void> {
+  public async sendMessage(payload: Message): Promise<void> {
     try {
       await this.connection.invoke(payload.type, payload);
     } catch (err) {

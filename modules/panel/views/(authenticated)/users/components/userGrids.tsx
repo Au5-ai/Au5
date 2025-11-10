@@ -44,7 +44,6 @@ import { getRoleDisplay } from "@/shared/lib/utils";
 import { USER_MANAGEMENT_CAPTIONS } from "../i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { userController } from "../userController";
-import { toast } from "sonner";
 import { CheckIcon, MailWarningIcon } from "lucide-react";
 import { CopyToClipboard } from "@/shared/lib";
 
@@ -303,47 +302,44 @@ export default function UserGrid({
         <DialogContent className="max-w-md bg-white border-gray-200">
           <DialogHeader>
             <DialogTitle>{modalTitle}</DialogTitle>
-            <DialogDescription>
-              <div className="text-gray-600 text-sm mb-8">
-                Copy this URL and send it to the user manually if needed.
-              </div>
-              <div className="flex items-start gap-2 py-4 bg-yellow-50 border border-yellow-200 rounded px-3">
-                <MailWarningIcon />
-                <span className="text-yellow-800 text-sm">
-                  <b>Security Notice:</b> Only share this invitation link with
-                  the intended user. Anyone with the link can access the
-                  invitation.
-                </span>
-              </div>
-
-              {invitationLink ? (
-                <div className="flex flex-col gap-2 py-4">
-                  <div className="relative w-full">
-                    <input
-                      type="text"
-                      value={invitationLink}
-                      readOnly
-                      className="w-full pr-20 pl-2 py-2 border rounded bg-gray-50 text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
-                      onClick={(e) => (e.target as HTMLInputElement).select()}
-                    />
-                    <Button
-                      type="button"
-                      aria-label="Copy invitation link"
-                      onClick={handleCopyLink}
-                      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 px-2 min-w-0"
-                      tabIndex={0}>
-                      {copied ? (
-                        <CheckIcon className="w-4 h-4" />
-                      ) : (
-                        <IconCopy className="w-4 h-4" />
-                      )}
-                      Copy Url
-                    </Button>
-                  </div>
-                </div>
-              ) : null}
+            <DialogDescription className="text-gray-600 text-sm mb-8">
+              Copy this URL and send it to the user manually if needed.
             </DialogDescription>
           </DialogHeader>
+          <div className="flex items-start gap-2 py-4 bg-yellow-50 border border-yellow-200 rounded px-3">
+            <MailWarningIcon />
+            <span className="text-yellow-800 text-sm">
+              <b>Security Notice:</b> Only share this invitation link with the
+              intended user. Anyone with the link can access the invitation.
+            </span>
+          </div>
+
+          {invitationLink ? (
+            <div className="flex flex-col gap-2 py-4">
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  value={invitationLink}
+                  readOnly
+                  className="w-full pr-20 pl-2 py-2 border rounded bg-gray-50 text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  onClick={(e) => (e.target as HTMLInputElement).select()}
+                />
+                <Button
+                  type="button"
+                  aria-label="Copy invitation link"
+                  onClick={handleCopyLink}
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-8 px-2 min-w-0"
+                  tabIndex={0}>
+                  {copied ? (
+                    <CheckIcon className="w-4 h-4" />
+                  ) : (
+                    <IconCopy className="w-4 h-4" />
+                  )}
+                  Copy Url
+                </Button>
+              </div>
+            </div>
+          ) : null}
         </DialogContent>
       </Dialog>
     </Card>

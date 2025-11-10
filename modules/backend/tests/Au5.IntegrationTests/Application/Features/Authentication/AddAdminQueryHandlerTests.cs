@@ -1,5 +1,5 @@
 using System.Net;
-using Au5.Application.Features.Setup.AddAdmin;
+using Au5.Application.Features.Admin.Create;
 using Au5.Domain.Common;
 using Au5.Domain.Entities;
 
@@ -15,7 +15,7 @@ public class AddAdminQueryHandlerTests : BaseIntegrationTest
 	[Fact]
 	public async Task Handle_Should_ReturnCorrectResponse_When_ThereIsNoAdmin()
 	{
-		var command = new AddAdminCommand("admin@gmail.com", "Mohammad Karimi", "!qa1z@wsX", "!qa1z@wsX");
+		var command = new CreateAdminCommand("admin@gmail.com", "Mohammad Karimi", "!qa1z@wsX", "!qa1z@wsX");
 		var result = await Mediator.Send(command);
 
 		Assert.True(result.IsSuccess);
@@ -47,7 +47,7 @@ public class AddAdminQueryHandlerTests : BaseIntegrationTest
 		});
 		await DbContext.SaveChangesAsync();
 
-		var command = new AddAdminCommand("admin@gmail.com", "Mohammad Karimi", "!qa1z@wsX", "!qa1z@wsX");
+		var command = new CreateAdminCommand("admin@gmail.com", "Mohammad Karimi", "!qa1z@wsX", "!qa1z@wsX");
 		var result = await Mediator.Send(command);
 
 		Assert.False(result.IsSuccess);

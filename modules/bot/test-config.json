@@ -1,11 +1,11 @@
 {
-  "meetId": "xpe-kxcs-epm",
+  "meetId": "vhd-oeeq-fqo",
   "hashToken": "test-token-456",
-  "meetingUrl": "https://meet.google.com/xpe-kxcs-epm",
-  "botDisplayName": "Test Bot",
+  "meetingUrl": "https://meet.google.com/vhd-oeeq-fqo",
+  "botDisplayName": "Cando",
   "platform": "GoogleMeet",
   "hubUrl": "http://localhost:1366/meetingHub",
-  "language": "en-US",
+  "language": "fa-IR",
   "delayBeforeInteraction": 5000,
   "meeting_settings": {
     "transcription": true,

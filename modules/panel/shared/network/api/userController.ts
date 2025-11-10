@@ -23,7 +23,7 @@ export const userController = {
   },
   find: (query: string): Promise<User[]> =>
     apiRequestClient<User[]>(
-      `${API_URLS.USERS.FIND}?query=${encodeURIComponent(query)}`,
+      `${API_URLS.USERS.SEARCH}?query=${encodeURIComponent(query)}`,
       { method: "GET" },
     ),
 };
