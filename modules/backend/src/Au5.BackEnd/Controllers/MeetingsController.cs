@@ -1,15 +1,11 @@
 using Au5.Application.Features.AI.Delete;
+using Au5.Application.Features.AI.Generate;
 using Au5.Application.Features.AI.GetAll;
 using Au5.Application.Features.Meetings.CloseMeetingByUser;
-using Au5.Application.Features.Meetings.ExportToText;
+using Au5.Application.Features.Meetings.Export;
 using Au5.Application.Features.Meetings.GetFullTranscription;
-using Au5.Application.Features.Meetings.MyMeeting;
 using Au5.Application.Features.Meetings.ToggleArchive;
 using Au5.Application.Features.Meetings.ToggleFavorite;
-using Au5.Application.Features.MeetingSpaces.AddMeetingToSpace;
-using Au5.Application.Features.MeetingSpaces.RemoveMeetingFromSpace;
-using Au5.Application.Features.Spaces.GetSpaceMeetings;
-using Au5.Domain.Common;
 
 namespace Au5.BackEnd.Controllers;
 
@@ -27,6 +23,23 @@ public class MeetingsController(ISender mediator) : BaseController
 	public async Task<IActionResult> GetAllAIContentsAsync([FromRoute] Guid meetingId, CancellationToken cancellationToken)
 	{
 		return Ok(await mediator.Send(new GetAIContentsQuery(meetingId), cancellationToken));
+	}
+
+	[HttpPost("{meetingId}/ai-contents")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> CreateAIContent([FromRoute] Guid meetingId, [FromBody] AIGenerateCommand request, CancellationToken cancellationToken)
+	{
+		Response.Headers.Append("Content-Type", "text/event-stream");
+		Response.Headers.Append("Cache-Control", "no-cache");
+		Response.Headers.Append("Connection", "keep-alive");
+
+		await foreach (var message in mediator.CreateStream(request with { MeetingId = meetingId }, cancellationToken))
+		{
+			await Response.WriteAsync(message, cancellationToken);
+			await Response.Body.FlushAsync(cancellationToken);
+		}
+
+		return new EmptyResult();
 	}
 
 	[HttpDelete("{meetingId}/ai-contents/{id}")]
@@ -76,18 +89,7 @@ public class MeetingsController(ISender mediator) : BaseController
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> ExportMeeting([FromRoute] Guid meetingId, [FromQuery] string format, CancellationToken cancellationToken)
 	{
-		if (!string.Equals(format, "text", StringComparison.OrdinalIgnoreCase))
-		{
-			return BadRequest(new ProblemDetails
-			{
-				Title = "Invalid format",
-				Status = StatusCodes.Status400BadRequest,
-				Detail = "Only 'text' format is currently supported.",
-				Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1"
-			});
-		}
-
-		var result = await mediator.Send(new ExportToTextQuery(meetingId), cancellationToken);
+		var result = await mediator.Send(new ExportQuery(meetingId, format), cancellationToken);
 
 		return result.IsSuccess
 			? Content(result.Data!, "text/plain", System.Text.Encoding.UTF8)
