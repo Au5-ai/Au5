@@ -15,8 +15,7 @@ public class GetSpaceMembersQueryHandlerTests
 		var query = new GetSpaceMembersQuery(fixture.TestSpace.Id);
 
 		var result = await fixture.BuildHandler()
-			.Handle(query, CancellationToken.None)
-			.AsTask();
+			.Handle(query, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
 		Assert.NotNull(result.Data);
@@ -52,7 +51,7 @@ public class GetSpaceMembersQueryHandlerTests
 		var result = await fixture.BuildHandler().Handle(query, CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
-		Assert.Equal("Space.Access.Denied", result.Error.Code);
+		Assert.Equal("Space.NotFound", result.Error.Code);
 	}
 
 	[Fact]

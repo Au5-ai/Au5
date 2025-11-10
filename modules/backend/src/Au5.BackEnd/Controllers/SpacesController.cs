@@ -56,6 +56,8 @@ public class SpacesController(ISender mediator) : BaseController
 	[HttpGet]
 	[Route("{spaceId}/members")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	public async Task<IActionResult> GetSpaceMembers([FromRoute] Guid spaceId, CancellationToken ct)
 	{
 		return Ok(await mediator.Send(new GetSpaceMembersQuery(spaceId), ct));

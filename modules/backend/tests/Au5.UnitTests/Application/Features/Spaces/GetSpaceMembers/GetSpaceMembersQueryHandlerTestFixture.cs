@@ -54,8 +54,13 @@ public class GetSpaceMembersQueryHandlerTestFixture
 
 	public GetSpaceMembersQueryHandlerTestFixture WithUsers(int count = 2)
 	{
-		TestUsers = new List<User>();
-		TestUserSpaces = new List<UserSpace>();
+		if (TestSpace == null)
+		{
+			WithActiveSpace();
+		}
+
+		TestUsers = [];
+		TestUserSpaces = [];
 
 		for (int i = 0; i < count; i++)
 		{

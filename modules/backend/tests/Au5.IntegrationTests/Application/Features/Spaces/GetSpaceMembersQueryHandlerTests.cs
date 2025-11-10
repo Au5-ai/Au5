@@ -1,6 +1,6 @@
 using Au5.Application.Features.Spaces.GetSpaceMembers;
-using Au5.Domain.Common;
 using Au5.Domain.Entities;
+using Au5.IntegrationTests.TestHelpers;
 
 namespace Au5.IntegrationTests.Application.Features.Spaces
 {
@@ -14,31 +14,8 @@ namespace Au5.IntegrationTests.Application.Features.Spaces
 		[Fact]
 		public async Task Handle_Should_ReturnUsers_When_CurrentUserHasAccess()
 		{
-			var user1 = new User
-			{
-				Id = Guid.NewGuid(),
-				FullName = "User 1",
-				Email = "user1@example.com",
-				PictureUrl = string.Empty,
-				Password = "FakePassword1!",
-				IsActive = true,
-				CreatedAt = DateTime.UtcNow,
-				Role = RoleTypes.User,
-				Status = UserStatus.CompleteSignUp
-			};
-
-			var user2 = new User
-			{
-				Id = Guid.NewGuid(),
-				FullName = "User 2",
-				Email = "user2@example.com",
-				PictureUrl = string.Empty,
-				Password = "FakePassword2!",
-				IsActive = true,
-				CreatedAt = DateTime.UtcNow,
-				Role = RoleTypes.User,
-				Status = UserStatus.CompleteSignUp
-			};
+			var user1 = TestUserFactory.Create("User 1", "user1@example.com");
+			var user2 = TestUserFactory.Create("User 2", "user2@example.com");
 
 			var space = new Space
 			{
@@ -77,29 +54,8 @@ namespace Au5.IntegrationTests.Application.Features.Spaces
 		[Fact]
 		public async Task Handle_Should_ReturnAccessDenied_When_CurrentUserHasNoAccess()
 		{
-			var user1 = new User
-			{
-				Id = Guid.NewGuid(),
-				FullName = "User 1",
-				Email = "user1@example.com",
-				PictureUrl = string.Empty,
-				IsActive = true,
-				CreatedAt = DateTime.UtcNow,
-				Password = "FakePassword1!",
-			};
-			var user2 = new User
-			{
-				Id = Guid.NewGuid(),
-				FullName = "User 2",
-				Email = "user2@example.com",
-				PictureUrl = string.Empty,
-				IsActive = true,
-				CreatedAt = DateTime.UtcNow,
-				Password = "FakePassword2!",
-			};
-
-			DbContext.Set<User>().AddRange(user1, user2);
-			await DbContext.SaveChangesAsync(CancellationToken.None);
+			var user1 = TestUserFactory.Create("User 1", "user1@example.com");
+			var user2 = TestUserFactory.Create("User 2", "user2@example.com");
 
 			var space = new Space
 			{
@@ -129,19 +85,19 @@ namespace Au5.IntegrationTests.Application.Features.Spaces
 		[Fact]
 		public async Task Handle_Should_GrantAccessAndFilter_When_CurrentUserIsMemberButInactive()
 		{
-			var user1 = new User { Id = Guid.NewGuid(), FullName = "User 1", Email = "user1@example.com", PictureUrl = string.Empty, Password = "p1", IsActive = false, CreatedAt = DateTime.UtcNow, Role = RoleTypes.User, Status = UserStatus.CompleteSignUp };
-			var user2 = new User { Id = Guid.NewGuid(), FullName = "User 2", Email = "user2@example.com", PictureUrl = string.Empty, Password = "p2", IsActive = true, CreatedAt = DateTime.UtcNow, Role = RoleTypes.User, Status = UserStatus.CompleteSignUp };
+			var user1 = TestUserFactory.Create("User 1", "user1@example.com", isActive: false);
+			var user2 = TestUserFactory.Create("User 2", "user2@example.com");
 
 			var space = new Space
 			{
 				Id = Guid.NewGuid(),
 				Name = "Test Space",
 				IsActive = true,
-				UserSpaces = new List<UserSpace>
-				{
+				UserSpaces =
+				[
 					new() { User = user1, IsAdmin = true, JoinedAt = DateTime.UtcNow },
 					new() { User = user2, IsAdmin = false, JoinedAt = DateTime.UtcNow }
-				}
+				]
 			};
 			DbContext.Set<Space>().Add(space);
 			await DbContext.SaveChangesAsync(CancellationToken.None);

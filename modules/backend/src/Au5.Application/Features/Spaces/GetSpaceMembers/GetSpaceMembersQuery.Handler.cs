@@ -18,7 +18,12 @@ public class GetSpaceMembersQueryHandler(IApplicationDbContext dbContext, ICurre
 			.AsNoTracking()
 			.FirstOrDefaultAsync(s => s.Id == request.SpaceId && s.IsActive, cancellationToken);
 
-		if (space is null || (!space.UserSpaces?.Any(x => x.UserId == currentUserId) ?? true))
+		if (space is null)
+		{
+			return Error.NotFound("Space.NotFound", "The requested space does not exist or is inactive.");
+		}
+
+		if (!space.UserSpaces?.Any(x => x.UserId == currentUserId) ?? true)
 		{
 			return Error.Forbidden("Space.Access.Denied", "You do not have access to this space");
 		}
