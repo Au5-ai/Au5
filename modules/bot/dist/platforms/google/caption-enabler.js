@@ -8,7 +8,7 @@ class CaptionEnabler {
         this.page = page;
         this.MAX_RETRIES = 3;
         this.RETRY_DELAY_MS = 1000;
-        this.STEP_DELAY_MS = 700;
+        this.STEP_DELAY_MS = 3000;
         this.COMBOBOX_TIMEOUT_MS = 3000;
         this.DROPDOWN_DELAY_MS = 500;
         this.LANGUAGE_SELECTION_DELAY_MS = 500;
@@ -17,15 +17,18 @@ class CaptionEnabler {
         logger_1.logger.info("[CaptionEnabler] Starting caption activation process...");
         try {
             await this.retryWithBackoff(async () => await this.dismissOverlayIfPresent(), "Dismiss overlay", 1);
-            const turnOnButton = await this.retryWithBackoff(async () => await this.findTurnOnCaptionButton(), "Find caption button", this.MAX_RETRIES);
-            if (!turnOnButton) {
-                throw new Error("Caption button not found after retries");
-            }
             await this.retryWithBackoff(async () => {
-                await turnOnButton.click({ force: true });
+                const clicked = await this.clickCaptionButton();
+                if (!clicked) {
+                    throw new Error("Caption button not found or click failed");
+                }
                 await (0, utils_1.delay)(this.STEP_DELAY_MS);
+                const verified = await this.verifyCaptionButtonClicked();
+                if (!verified) {
+                    throw new Error("Caption button click did not enable captions");
+                }
                 return true;
-            }, "Click caption button", this.MAX_RETRIES);
+            }, "Click caption button and verify", this.MAX_RETRIES);
             const overlayReady = await this.retryWithBackoff(async () => await this.activateLanguageDropdownOverlay(), "Activate language overlay", this.MAX_RETRIES);
             if (!overlayReady) {
                 logger_1.logger.info("[CaptionEnabler] Language overlay not available, captions may be enabled without language selection");
@@ -109,6 +112,31 @@ class CaptionEnabler {
             return false;
         }
     }
+    async verifyCaptionButtonClicked() {
+        logger_1.logger.info("[CaptionEnabler] Verifying caption button state changed...");
+        await (0, utils_1.delay)(300);
+        try {
+            const stateChanged = await this.page.evaluate(() => {
+                const captionButton = Array.from(document.querySelectorAll('[role="button"]')).find((btn) => btn.textContent?.toLowerCase().includes("closed_caption"));
+                if (!captionButton) {
+                    return false;
+                }
+                return true;
+            });
+            if (stateChanged) {
+                logger_1.logger.info("[CaptionEnabler] Caption button state confirmed as ON");
+                return true;
+            }
+            else {
+                logger_1.logger.warn("[CaptionEnabler] Caption button still shows OFF state after click");
+                return false;
+            }
+        }
+        catch (error) {
+            logger_1.logger.error(`[CaptionEnabler] State verification failed: ${error.message}`);
+            return false;
+        }
+    }
     async selectLanguageFallback(languageValue) {
         logger_1.logger.info(`[CaptionEnabler] Attempting fallback language selection for: ${languageValue}`);
         try {
@@ -156,9 +184,9 @@ class CaptionEnabler {
             return false;
         });
     }
-    async findTurnOnCaptionButton() {
-        logger_1.logger.info("[CaptionEnabler] Searching for caption button...");
-        const handle = await this.page.evaluateHandle(() => {
+    async clickCaptionButton() {
+        logger_1.logger.info("[CaptionEnabler] Finding and clicking caption button...");
+        return await this.page.evaluate(() => {
             const findButton = () => {
                 const buttons = document.querySelectorAll('[role="button"]');
                 for (const btn of buttons) {
@@ -179,17 +207,14 @@ class CaptionEnabler {
                 }
                 return null;
             };
-            return findButton();
+            const button = findButton();
+            if (button) {
+                button.scrollIntoView({ block: "center", behavior: "smooth" });
+                button.click();
+                return true;
+            }
+            return false;
         });
-        const element = handle.asElement();
-        if (element) {
-            logger_1.logger.info("[CaptionEnabler] Caption button found");
-            return element;
-        }
-        else {
-            logger_1.logger.warn("[CaptionEnabler] Caption button not found");
-            return null;
-        }
     }
     async activateLanguageDropdownOverlay() {
         logger_1.logger.info("[CaptionEnabler] Activating language dropdown overlay...");
