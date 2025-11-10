@@ -1,4 +1,4 @@
-using Au5.Application.Features.Spaces.GetSpaces;
+using Au5.Application.Dtos.Spaces;
 
 namespace Au5.Application.Features.Spaces.GetSpaceMembers;
 

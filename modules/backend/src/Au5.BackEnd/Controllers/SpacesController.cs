@@ -60,6 +60,12 @@ public class SpacesController(ISender mediator) : BaseController
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	public async Task<IActionResult> GetSpaceMembers([FromRoute] Guid spaceId, CancellationToken ct)
 	{
-		return Ok(await mediator.Send(new GetSpaceMembersQuery(spaceId), ct));
+		var result = await mediator.Send(new GetSpaceMembersQuery(spaceId), ct);
+		if (result.IsFailure)
+		{
+			return new ObjectResult(result.Error) { StatusCode = (int)result.Error.Type };
+		}
+
+		return Ok(result.Data);
 	}
 }

@@ -13,7 +13,7 @@ public static class TestUserFactory
 		bool isActive = true,
 		RoleTypes role = RoleTypes.User,
 		UserStatus status = UserStatus.CompleteSignUp,
-		string pictureUrl = " ")
+		string pictureUrl = "")
 	{
 		return new User
 		{

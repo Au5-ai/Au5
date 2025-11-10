@@ -1,4 +1,4 @@
-using Au5.Application.Features.Spaces.GetSpaces;
+using Au5.Application.Dtos.Spaces;
 
 namespace Au5.Application.Features.Spaces.GetSpaceMembers;
 
@@ -23,7 +23,7 @@ public class GetSpaceMembersQueryHandler(IApplicationDbContext dbContext, ICurre
 			return Error.NotFound("Space.NotFound", "The requested space does not exist or is inactive.");
 		}
 
-		if (space.UserSpaces?.Any(x => x.UserId == currentUserId) != true)
+		if (space.UserSpaces?.Any(x => x.UserId == currentUserId) is not true)
 		{
 			return Error.Forbidden("Space.Access.Denied", "You do not have access to this space");
 		}
