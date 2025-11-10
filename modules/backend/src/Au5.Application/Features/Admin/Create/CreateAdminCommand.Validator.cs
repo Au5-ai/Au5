@@ -1,8 +1,8 @@
-namespace Au5.Application.Features.Setup.AddAdmin;
+namespace Au5.Application.Features.Admin.Create;
 
-public class AddAdminCommandValidator : AbstractValidator<AddAdminCommand>
+public class CreateAdminCommandValidator : AbstractValidator<CreateAdminCommand>
 {
-	public AddAdminCommandValidator()
+	public CreateAdminCommandValidator()
 	{
 		RuleFor(x => x.FullName)
 			.MaximumLength(50).WithMessage("MaxLength is 50")

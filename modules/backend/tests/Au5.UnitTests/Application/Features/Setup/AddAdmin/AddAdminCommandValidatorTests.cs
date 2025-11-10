@@ -1,21 +1,21 @@
-using Au5.Application.Features.Setup.AddAdmin;
+using Au5.Application.Features.Admin.Create;
 using FluentValidation.TestHelper;
 
 namespace Au5.UnitTests.Application.Features.Setup.AddAdmin;
 
-public class AddAdminCommandValidatorTests
+public class CreateAdminCommandValidatorTests
 {
-	private readonly AddAdminCommandValidator _validator;
+	private readonly CreateAdminCommandValidator _validator;
 
-	public AddAdminCommandValidatorTests()
+	public CreateAdminCommandValidatorTests()
 	{
-		_validator = new AddAdminCommandValidator();
+		_validator = new CreateAdminCommandValidator();
 	}
 
 	[Fact]
 	public void Should_Pass_When_CommandIsValid()
 	{
-		var command = new AddAdminCommand(
+		var command = new CreateAdminCommand(
 			Email: "valid.user@test.com",
 			FullName: "Valid User",
 			Password: "StrongP@ss1",
@@ -29,7 +29,7 @@ public class AddAdminCommandValidatorTests
 	[Fact]
 	public void Should_Fail_When_FullNameIsEmpty()
 	{
-		var command = new AddAdminCommand(
+		var command = new CreateAdminCommand(
 			Email: "valid@test.com",
 			FullName: string.Empty,
 			Password: "StrongP@ss1",
@@ -44,7 +44,7 @@ public class AddAdminCommandValidatorTests
 	[Fact]
 	public void Should_Fail_When_EmailIsInvalid()
 	{
-		var command = new AddAdminCommand(
+		var command = new CreateAdminCommand(
 			Email: "not-an-email",
 			FullName: "Test User",
 			Password: "StrongP@ss1",
@@ -64,7 +64,7 @@ public class AddAdminCommandValidatorTests
 	[InlineData("NoSpecial1", "Password must contain at least one special character.")]
 	public void Should_Fail_When_PasswordDoesNotMeetComplexity(string password, string expectedMessage)
 	{
-		var command = new AddAdminCommand(
+		var command = new CreateAdminCommand(
 			Email: "valid@test.com",
 			FullName: "Test User",
 			Password: password,
@@ -79,7 +79,7 @@ public class AddAdminCommandValidatorTests
 	[Fact]
 	public void Should_Fail_When_RepeatedPasswordDoesNotMatch()
 	{
-		var command = new AddAdminCommand(
+		var command = new CreateAdminCommand(
 			Email: "valid@test.com",
 			FullName: "Test User",
 			Password: "StrongP@ss1",

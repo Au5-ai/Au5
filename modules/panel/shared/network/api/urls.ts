@@ -1,11 +1,12 @@
 export const API_URLS = {
-  AI: {
-    GENERATE: "/ai/generate",
-  },
   SPACES: {
     ROOT: "/spaces",
-    MY_SPACES: "/spaces/my-spaces",
+    MY_SPACES: "/users/spaces",
     MEETINGS: (spaceId: string) => `/spaces/${spaceId}/meetings`,
+    ADD_MEETING: (spaceId: string, meetingId: string) =>
+      `/spaces/${spaceId}/meetings/${meetingId}`,
+    REMOVE_MEETING: (spaceId: string, meetingId: string) =>
+      `/spaces/${spaceId}/meetings/${meetingId}`,
   },
   ASSISTANTS: {
     ROOT: "/assistants",
@@ -15,40 +16,42 @@ export const API_URLS = {
     LOGOUT: "/authentication/logout",
   },
   MEETING: {
-    MY: `/meetings/my?status=ended`,
-    AI_CONTENTS: (meetingId: string, meetId: string) =>
-      `/meetings/${meetingId}/sessions/${meetId}/ai-contents`,
-    DELETE_AI_CONTENT: (meetingId: string, meetId: string, id: string) =>
-      `/meetings/${meetingId}/sessions/${meetId}/ai-contents/${id}`,
-    ARCHIVED: `/meetings/my?status=archived`,
-    TRANSCRIPTION: (meetingId: string, meetId: string) =>
-      `/meetings/${meetingId}/sessions/${meetId}/transcription`,
-    TOGGLE_FAVORITE: (meetingId: string, meetId: string) =>
-      `/meetings/${meetingId}/sessions/${meetId}/toggle-favorite`,
-    TOGGLE_ARCHIVE: (meetingId: string, meetId: string) =>
-      `/meetings/${meetingId}/sessions/${meetId}/toggle-archive`,
-    ADD_TO_SPACE: (meetingId: string, meetId: string, spaceId: string) =>
-      `/meetings/${meetingId}/sessions/${meetId}/spaces/${spaceId}`,
-    REMOVE_FROM_SPACE: (meetingId: string, meetId: string, spaceId: string) =>
-      `/meetings/${meetingId}/sessions/${meetId}/spaces/${spaceId}`,
-    EXPORT_TEXT: (meetingId: string, meetId: string) =>
-      `/meetings/${meetingId}/sessions/${meetId}/export/text`,
+    AI_CONTENTS: (meetingId: string) => `/meetings/${meetingId}/ai-contents`,
+    DELETE_AI_CONTENT: (meetingId: string, id: string) =>
+      `/meetings/${meetingId}/ai-contents/${id}`,
+    ARCHIVED: `/users/me/meetings?status=archived`,
+    TRANSCRIPTION: (meetingId: string) => `/meetings/${meetingId}/transcript`,
+    TOGGLE_FAVORITE: (meetingId: string) => `/meetings/${meetingId}/favorite`,
+    ARCHIVE: (meetingId: string) => `/meetings/${meetingId}/archive`,
+    UNARCHIVE: (meetingId: string) => `/meetings/${meetingId}/unarchive`,
+    EXPORT: (meetingId: string, format: string = "text") =>
+      `/meetings/${meetingId}/export?format=${format}`,
+    CLOSE: (meetingId: string) => `/meetings/${meetingId}/close`,
+    ADD_BOT: "/meetings/bots",
+    GENERATE_AI: (meetingId: string) => `/meetings/${meetingId}/ai-contents`,
   },
   SETUP: {
-    HELLO_ADMIN: "/setUp/hello-admin",
+    HELLO_ADMIN: "/admin/hello",
+    ADD_ADMIN: "/admin/hello",
   },
   SYSTEM: {
-    CONFIG: "/system/config",
-    EXTENSION_CONFIG: "/system/extension-config",
+    CONFIG: "/configs/system",
+    EXTENSION_CONFIG: "/configs/extension",
   },
   USERS: {
     LIST: "/users",
     ME: "/users/me",
     MY_MENU: "/users/me/menus",
-    FIND: "/users/find",
-    INVITATIONS: "/users/invitations", // bulk invite
-    USER_INVITATIONS: (userId: string) => `/users/${userId}/invitations`, // resend invite
+    MY_MEETINGS: (status?: string) =>
+      status
+        ? `/users/me/meetings?status=${status}`
+        : "/users/me/meetings?status=ended",
+    SEARCH: "/users/search",
+    INVITATIONS: "/users/invitations",
+    RESEND_INVITATION: (userId: string) =>
+      `/users/invitations/${userId}/resend`,
     VERIFY: (userId: string, hash: string) =>
       `/users/${userId}/verify?hash=${hash}`,
+    VERIFY_POST: (userId: string) => `/users/${userId}/verify`,
   },
 } as const;

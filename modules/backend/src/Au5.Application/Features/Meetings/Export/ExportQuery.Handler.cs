@@ -1,8 +1,8 @@
 using System.Text;
 
-namespace Au5.Application.Features.Meetings.ExportToText;
+namespace Au5.Application.Features.Meetings.Export;
 
-public class ExportToTextQueryHandler : IRequestHandler<ExportToTextQuery, Result<string>>
+public class ExportToTextQueryHandler : IRequestHandler<ExportQuery, Result<string>>
 {
 	private readonly IApplicationDbContext _dbContext;
 
@@ -11,14 +11,14 @@ public class ExportToTextQueryHandler : IRequestHandler<ExportToTextQuery, Resul
 		_dbContext = dbContext;
 	}
 
-	public async ValueTask<Result<string>> Handle(ExportToTextQuery request, CancellationToken cancellationToken)
+	public async ValueTask<Result<string>> Handle(ExportQuery request, CancellationToken cancellationToken)
 	{
 		var meeting = await _dbContext.Set<Meeting>()
 			.Include(x => x.Participants)
 				.ThenInclude(p => p.User)
 			.Include(x => x.Guests)
 			.Include(x => x.Entries)
-			.FirstOrDefaultAsync(m => m.Id == request.MeetingId && m.MeetId == request.MeetId, cancellationToken);
+			.FirstOrDefaultAsync(m => m.Id == request.MeetingId, cancellationToken);
 
 		if (meeting is null)
 		{

@@ -1,19 +1,19 @@
 using Au5.Application.Common;
 
-namespace Au5.Application.Features.Setup.AddAdmin;
+namespace Au5.Application.Features.Admin.Create;
 
-public class AddAdminQueryHandler : IRequestHandler<AddAdminCommand, Result<AddAdminResponse>>
+public class CreateAdminCommandHandler : IRequestHandler<CreateAdminCommand, Result<CreateAdminResponse>>
 {
 	private readonly IApplicationDbContext _dbContext;
 	private readonly IDataProvider _dataProvider;
 
-	public AddAdminQueryHandler(IApplicationDbContext dbContext, IDataProvider dataProvider)
+	public CreateAdminCommandHandler(IApplicationDbContext dbContext, IDataProvider dataProvider)
 	{
 		_dbContext = dbContext;
 		_dataProvider = dataProvider;
 	}
 
-	public async ValueTask<Result<AddAdminResponse>> Handle(AddAdminCommand request, CancellationToken cancellationToken)
+	public async ValueTask<Result<CreateAdminResponse>> Handle(CreateAdminCommand request, CancellationToken cancellationToken)
 	{
 		var admin = await _dbContext.Set<User>().FirstOrDefaultAsync(x => x.Role == RoleTypes.Admin && x.IsActive, cancellationToken);
 		if (admin is not null)
@@ -40,7 +40,7 @@ public class AddAdminQueryHandler : IRequestHandler<AddAdminCommand, Result<AddA
 
 		return dbResult.IsFailure
 			? Error.Failure(description: AppResources.System.FailedToAddAdmin)
-			: new AddAdminResponse
+			: new CreateAdminResponse
 			{
 				IsDone = dbResult.IsSuccess
 			};

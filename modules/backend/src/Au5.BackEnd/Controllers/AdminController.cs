@@ -1,21 +1,23 @@
-using Au5.Application.Features.Setup.AddAdmin;
+using Au5.Application.Features.Admin.Create;
 using Au5.Application.Features.Setup.HelloAdmin;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
 
-public class SetUpController(ISender mediator) : BaseController
+[Route("admin")]
+public class AdminController(ISender mediator) : BaseController
 {
-	[HttpGet("hello-admin")]
+	[HttpGet("hello")]
 	[AllowAnonymous]
 	public async Task<IActionResult> HelloAdmin()
 	{
 		return Ok(await mediator.Send(new HelloAdminQuery()));
 	}
 
-	[HttpPost("hello-admin")]
+	[HttpPost("hello")]
 	[AllowAnonymous]
-	public async Task<IActionResult> AddAdmin([FromBody] AddAdminCommand command)
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> CreateAdmin([FromBody] CreateAdminCommand command)
 	{
 		return Ok(await mediator.Send(command));
 	}

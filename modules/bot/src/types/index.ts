@@ -66,7 +66,7 @@ export interface IMeetingPlatform {
     pushToHubCallback: (message: EntryMessage) => void
   ): Promise<void>;
   observeParticipations(
-    pushToHubCallback: (participant: any) => void
+    pushToHubCallback: (participant: Participant[]) => void
   ): Promise<void>;
 }
 
@@ -76,12 +76,22 @@ export interface Participant {
   pictureUrl: string;
 }
 
-export interface EntryMessage {
+export interface Message {
+  meetId: string;
+  readonly type: string;
+}
+
+export interface EntryMessage extends Message {
   meetId: string;
   blockId: string;
   participant: Participant;
   content: string;
-  timestamp: Date;
   entryType: "Transcription";
   readonly type: "Entry";
+}
+
+export interface GuestJoinedInMeetingMessage extends Message {
+  meetId: string;
+  guests: Participant[];
+  readonly type: "GuestJoinedInMeeting";
 }

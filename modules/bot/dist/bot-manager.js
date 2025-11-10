@@ -29,6 +29,7 @@ async function addNewBotToMeeting(config) {
     if (hasJoined) {
         await initializeHubClient(config);
         await state.platform.observeTranscriptions(onTranscriptionReceived);
+        await state.platform.observeParticipations(onParticipantChanged);
     }
 }
 async function initializeHubClient(config) {
@@ -53,6 +54,23 @@ async function onTranscriptionReceived(message) {
     if (!state.isPaused) {
         await state.hubClient.sendMessage(message);
     }
+}
+async function onParticipantChanged(participants) {
+    if (!state.hubClient) {
+        logger_1.logger.error(constants_1.LogMessages.BotManager.hubClientNotInitialized);
+        return;
+    }
+    if (!state.config) {
+        logger_1.logger.error("[BotManager] Meeting configuration is not set.");
+        return;
+    }
+    const message = {
+        meetId: state.config.meetId,
+        guests: participants,
+        type: "GuestJoinedInMeeting",
+    };
+    await state.hubClient.sendMessage(message);
+    logger_1.logger.info("[BotManager] Guest joined:", participants);
 }
 process.on("SIGTERM", () => shutdownManager?.handleProcessShutdown("SIGTERM"));
 process.on("SIGINT", () => shutdownManager?.handleProcessShutdown("SIGINT"));

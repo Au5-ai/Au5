@@ -1,5 +1,3 @@
-using Au5.Application.Messages;
-
 namespace Au5.BackEnd.Hubs;
 public interface IMeetingHub
 {

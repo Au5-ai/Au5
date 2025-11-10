@@ -21,7 +21,7 @@ public class GetFullTranscriptionQueryHandler : IRequestHandler<GetFullTranscrip
 				.ThenInclude(rac => rac.Reaction)
 			.Include(x => x.MeetingSpaces)
 				.ThenInclude(m => m.Space)
-			.FirstOrDefaultAsync(m => m.Id == request.MeetingId && m.MeetId == request.MeetId, cancellationToken);
+			.FirstOrDefaultAsync(m => m.Id == request.MeetingId, cancellationToken);
 
 		if (meeting is null)
 		{
