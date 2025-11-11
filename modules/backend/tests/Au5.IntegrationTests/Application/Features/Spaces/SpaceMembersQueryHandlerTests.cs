@@ -1,12 +1,12 @@
-using Au5.Application.Features.Spaces.GetSpaceMembers;
+using Au5.Application.Features.Spaces.SpaceMembers;
 using Au5.Domain.Entities;
 using Au5.IntegrationTests.TestHelpers;
 
 namespace Au5.IntegrationTests.Application.Features.Spaces
 {
-	public class GetSpaceMembersQueryHandlerIntegrationTests : BaseIntegrationTest
+	public class SpaceMembersQueryHandlerIntegrationTests : BaseIntegrationTest
 	{
-		public GetSpaceMembersQueryHandlerIntegrationTests(IntegrationTestWebApp webApp)
+		public SpaceMembersQueryHandlerIntegrationTests(IntegrationTestWebApp webApp)
 			: base(webApp)
 		{
 		}
@@ -36,7 +36,7 @@ namespace Au5.IntegrationTests.Application.Features.Spaces
 			TestCurrentUserService.UserId = user1.Id;
 			TestCurrentUserService.IsAuthenticated = true;
 
-			var query = new GetSpaceMembersQuery(space.Id);
+			var query = new SpaceMemebersQuery(space.Id);
 			var result = await Mediator.Send(query);
 
 			Assert.True(result.IsSuccess);
@@ -75,7 +75,7 @@ namespace Au5.IntegrationTests.Application.Features.Spaces
 			TestCurrentUserService.UserId = Guid.NewGuid();
 			TestCurrentUserService.IsAuthenticated = true;
 
-			var query = new GetSpaceMembersQuery(space.Id);
+			var query = new SpaceMemebersQuery(space.Id);
 			var result = await Mediator.Send(query);
 
 			Assert.False(result.IsSuccess);
@@ -105,13 +105,11 @@ namespace Au5.IntegrationTests.Application.Features.Spaces
 			TestCurrentUserService.UserId = user1.Id;
 			TestCurrentUserService.IsAuthenticated = true;
 
-			var query = new GetSpaceMembersQuery(space.Id);
+			var query = new SpaceMemebersQuery(space.Id);
 			var result = await Mediator.Send(query);
 
-			Assert.True(result.IsSuccess);
-			Assert.NotNull(result.Data);
-			Assert.Single(result.Data!.Users);
-			Assert.Equal(user2.Id, result.Data.Users.First().UserId);
+			Assert.False(result.IsSuccess);
+			Assert.Equal("Space.Access.Denied", result.Error.Code);
 		}
 	}
 }

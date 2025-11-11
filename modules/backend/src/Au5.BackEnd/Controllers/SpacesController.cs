@@ -3,8 +3,8 @@ using Au5.Application.Features.MeetingSpaces.AddMeetingToSpace;
 using Au5.Application.Features.MeetingSpaces.RemoveMeetingFromSpace;
 using Au5.Application.Features.Spaces.CreateSpace;
 using Au5.Application.Features.Spaces.GetSpaceMeetings;
-using Au5.Application.Features.Spaces.GetSpaceMembers;
 using Au5.Application.Features.Spaces.GetSpaces;
+using Au5.Application.Features.Spaces.SpaceMembers;
 
 namespace Au5.BackEnd.Controllers;
 
@@ -60,12 +60,6 @@ public class SpacesController(ISender mediator) : BaseController
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	public async Task<IActionResult> GetSpaceMembers([FromRoute] Guid spaceId, CancellationToken ct)
 	{
-		var result = await mediator.Send(new GetSpaceMembersQuery(spaceId), ct);
-		if (result.IsFailure)
-		{
-			return new ObjectResult(result.Error) { StatusCode = (int)result.Error.Type };
-		}
-
-		return Ok(result.Data);
+		return Ok(await mediator.Send(new SpaceMemebersQuery(spaceId), ct));
 	}
 }

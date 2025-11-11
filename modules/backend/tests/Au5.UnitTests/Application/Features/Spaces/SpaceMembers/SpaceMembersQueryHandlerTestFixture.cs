@@ -1,16 +1,16 @@
-using Au5.Application.Features.Spaces.GetSpaceMembers;
+using Au5.Application.Features.Spaces.SpaceMembers;
 using Au5.Domain.Entities;
 using MockQueryable.Moq;
 
-namespace Au5.UnitTests.Application.Features.Spaces.GetSpaceMembers;
+namespace Au5.UnitTests.Application.Features.Spaces.SpaceMembers;
 
-public class GetSpaceMembersQueryHandlerTestFixture
+public class SpaceMembersQueryHandlerTestFixture
 {
 	public Mock<IApplicationDbContext> MockDbContext { get; } = new();
 
 	public Mock<ICurrentUserService> MockCurrentUserService { get; } = new();
 
-	public GetSpaceMembersQueryHandler Handler { get; private set; }
+	public SpaceMembersQueryHandler Handler { get; private set; }
 
 	public Space TestSpace { get; private set; }
 
@@ -18,7 +18,7 @@ public class GetSpaceMembersQueryHandlerTestFixture
 
 	public List<UserSpace> TestUserSpaces { get; private set; } = [];
 
-	public GetSpaceMembersQueryHandlerTestFixture WithActiveSpace(Guid? spaceId = null)
+	public SpaceMembersQueryHandlerTestFixture WithActiveSpace(Guid? spaceId = null)
 	{
 		TestSpace = new Space
 		{
@@ -35,7 +35,7 @@ public class GetSpaceMembersQueryHandlerTestFixture
 		return this;
 	}
 
-	public GetSpaceMembersQueryHandlerTestFixture WithInactiveSpace()
+	public SpaceMembersQueryHandlerTestFixture WithInactiveSpace()
 	{
 		TestSpace = new Space
 		{
@@ -52,7 +52,7 @@ public class GetSpaceMembersQueryHandlerTestFixture
 		return this;
 	}
 
-	public GetSpaceMembersQueryHandlerTestFixture WithUsers(int count = 2, bool includeInactiveUser = false)
+	public SpaceMembersQueryHandlerTestFixture WithUsers(int count = 2, bool includeInactiveUser = false)
 	{
 		if (TestSpace is null)
 		{
@@ -95,19 +95,30 @@ public class GetSpaceMembersQueryHandlerTestFixture
 
 		TestSpace.UserSpaces = TestUserSpaces;
 
-		MockDbContext.Setup(db => db.Set<Space>())
-			.Returns(new List<Space> { TestSpace }.BuildMockDbSet().Object);
+		var activeUserSpaces = TestUserSpaces
+			.Where(us => us.User.IsActive)
+			.ToList();
 
-		MockDbContext.Setup(db => db.Set<UserSpace>())
-			.Returns(TestUserSpaces.BuildMockDbSet().Object);
+		var activeSpaceMock = new List<Space>
+		{
+			new()
+			{
+				Id = TestSpace.Id,
+				Name = TestSpace.Name,
+				Description = TestSpace.Description,
+				IsActive = TestSpace.IsActive,
+				UserSpaces = activeUserSpaces
+			}
+		}.BuildMockDbSet();
 
-		MockDbContext.Setup(db => db.Set<User>())
-			.Returns(TestUsers.BuildMockDbSet().Object);
+		MockDbContext.Setup(db => db.Set<Space>()).Returns(activeSpaceMock.Object);
+		MockDbContext.Setup(db => db.Set<UserSpace>()).Returns(TestUserSpaces.BuildMockDbSet().Object);
+		MockDbContext.Setup(db => db.Set<User>()).Returns(TestUsers.BuildMockDbSet().Object);
 
 		return this;
 	}
 
-	public GetSpaceMembersQueryHandlerTestFixture WithCurrentUser(Guid? userId = null)
+	public SpaceMembersQueryHandlerTestFixture WithCurrentUser(Guid? userId = null)
 	{
 		MockCurrentUserService.Setup(s => s.UserId)
 			.Returns(userId ?? TestUsers.FirstOrDefault()?.Id ?? Guid.NewGuid());
@@ -115,9 +126,9 @@ public class GetSpaceMembersQueryHandlerTestFixture
 		return this;
 	}
 
-	public GetSpaceMembersQueryHandler BuildHandler()
+	public SpaceMembersQueryHandler BuildHandler()
 	{
-		Handler = new GetSpaceMembersQueryHandler(MockDbContext.Object, MockCurrentUserService.Object);
+		Handler = new SpaceMembersQueryHandler(MockDbContext.Object, MockCurrentUserService.Object);
 		return Handler;
 	}
 }
