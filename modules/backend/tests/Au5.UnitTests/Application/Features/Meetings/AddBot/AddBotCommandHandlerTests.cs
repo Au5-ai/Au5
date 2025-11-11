@@ -54,7 +54,7 @@ public class AddBotCommandHandlerTests
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success());
 
-		_meetingUrlServiceMock.Setup(x => x.GetMeetingUrl("Meets", "test-meet-id"))
+		_meetingUrlServiceMock.Setup(x => x.GetMeetingProviderUrl("Meets", "test-meet-id"))
 			.Returns("https://meets.google.com/test-meet-id");
 
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
@@ -139,7 +139,7 @@ public class AddBotCommandHandlerTests
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success());
 
-		_meetingUrlServiceMock.Setup(x => x.GetMeetingUrl("Meet", "Meet-meet-123"))
+		_meetingUrlServiceMock.Setup(x => x.GetMeetingProviderUrl("Meet", "Meet-meet-123"))
 			.Returns("https://Meet.us/j/Meet-meet-123");
 
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
@@ -187,7 +187,7 @@ public class AddBotCommandHandlerTests
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success());
 
-		_meetingUrlServiceMock.Setup(x => x.GetMeetingUrl("Meets", "Meets-meet-456"))
+		_meetingUrlServiceMock.Setup(x => x.GetMeetingProviderUrl("Meets", "Meets-meet-456"))
 			.Returns("https://meets.google.com/Meets-meet-456");
 
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
@@ -230,7 +230,7 @@ public class AddBotCommandHandlerTests
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success());
 
-		_meetingUrlServiceMock.Setup(x => x.GetMeetingUrl("Meets", "test-meet-id"))
+		_meetingUrlServiceMock.Setup(x => x.GetMeetingProviderUrl("Meets", "test-meet-id"))
 			.Returns("https://meets.google.com/test-meet-id");
 
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
@@ -268,7 +268,7 @@ public class AddBotCommandHandlerTests
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success());
 
-		_meetingUrlServiceMock.Setup(x => x.GetMeetingUrl("Meets", "test-meet-id"))
+		_meetingUrlServiceMock.Setup(x => x.GetMeetingProviderUrl("Meets", "test-meet-id"))
 			.Returns("https://meets.google.com/test-meet-id");
 
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
@@ -300,7 +300,7 @@ public class AddBotCommandHandlerTests
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success());
 
-		_meetingUrlServiceMock.Setup(x => x.GetMeetingUrl("Meets", "test-meet-id"))
+		_meetingUrlServiceMock.Setup(x => x.GetMeetingProviderUrl("Meets", "test-meet-id"))
 			.Returns("https://meets.google.com/test-meet-id");
 
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))

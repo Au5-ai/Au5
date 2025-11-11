@@ -12,7 +12,7 @@ public class MeetingUrlServiceTests
 	[InlineData("GoogleMeet", "abc-xyz", "https://meet.google.com/abc-xyz")]
 	public void GetMeetingUrl_Should_ReturnExpectedUrl_When_PlatformIsSupported(string platform, string meetId, string expectedUrl)
 	{
-		var result = _service.GetMeetingUrl(platform, meetId);
+		var result = _service.GetMeetingProviderUrl(platform, meetId);
 
 		Assert.Equal(expectedUrl, result);
 	}
@@ -23,6 +23,6 @@ public class MeetingUrlServiceTests
 		var platform = "skype";
 		var meetId = "someId";
 
-		Assert.Throws<NotSupportedException>(() => _service.GetMeetingUrl(platform, meetId));
+		Assert.Throws<NotSupportedException>(() => _service.GetMeetingProviderUrl(platform, meetId));
 	}
 }

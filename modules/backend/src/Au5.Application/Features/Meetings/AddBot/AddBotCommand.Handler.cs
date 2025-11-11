@@ -87,7 +87,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 		{
 			HubUrl = config.BotHubUrl,
 			Platform = request.Platform,
-			MeetingUrl = _meetingUrlService.GetMeetingUrl(request.Platform, request.MeetId),
+			MeetingUrl = _meetingUrlService.GetMeetingProviderUrl(request.Platform, request.MeetId),
 			BotDisplayName = config.BotName,
 			MeetId = request.MeetId,
 			HashToken = hashToken,
