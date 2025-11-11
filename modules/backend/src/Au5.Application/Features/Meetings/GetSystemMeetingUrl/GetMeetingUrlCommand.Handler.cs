@@ -27,10 +27,7 @@ public class GetMeetingUrlCommandHandler : IRequestHandler<GetMeetingUrlCommand,
 			return Error.NotFound(description: "No meeting with this ID was found.");
 		}
 
-		if (meeting.PublicLinkEnabled is not true)
-		{
-			meeting.PublicLinkEnabled = true;
-		}
+		meeting.PublicLinkEnabled = true;
 
 		meeting.PublicLinkExpiration = DateTime.UtcNow.AddDays(request.ExpirationDays);
 

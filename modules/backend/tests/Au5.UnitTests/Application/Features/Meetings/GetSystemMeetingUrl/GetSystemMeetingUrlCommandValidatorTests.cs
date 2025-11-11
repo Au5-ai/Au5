@@ -1,7 +1,7 @@
 using Au5.Application.Features.Meetings.GetSystemMeetingUrl;
 using FluentValidation.TestHelper;
 
-namespace Au5.UnitTests.Application.Features.Meetings.Rename
+namespace Au5.UnitTests.Application.Features.Meetings.GetSystemMeetingUrl
 {
 	public class GetSystemMeetingUrlCommandValidatorTests
 	{
@@ -39,7 +39,7 @@ namespace Au5.UnitTests.Application.Features.Meetings.Rename
 		[InlineData("8e0fde5b-352b-44d0-8e11-05ca9b4b6862", "30")]
 		[InlineData("8e0fde5b-352b-44d0-8e11-05ca9b4b6862", "60")]
 		[InlineData("8e0fde5b-352b-44d0-8e11-05ca9b4b6862", "90")]
-		public void Should_NotReturnValidationError_When_RequestIsCorrectl(string meetingIdStr, string expirationDaysStr)
+		public void Should_NotReturnValidationError_When_RequestIsCorrectly(string meetingIdStr, string expirationDaysStr)
 		{
 			var meetingId = Guid.TryParse(meetingIdStr, out var parsedGuid) ? parsedGuid : Guid.Empty;
 			var expirationDays = int.Parse(expirationDaysStr);

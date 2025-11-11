@@ -1,12 +1,10 @@
 using Au5.Application.Features.Meetings.GetSystemMeetingUrl;
-using Au5.Application.Features.Meetings.Rename;
 using Au5.Domain.Entities;
 using Au5.Shared;
 using Microsoft.Extensions.Configuration;
 using MockQueryable.Moq;
-using static System.Net.WebRequestMethods;
 
-namespace Au5.UnitTests.Application.Features.Meetings.Rename
+namespace Au5.UnitTests.Application.Features.Meetings.GetSystemMeetingUrl
 {
 	public class GetSystemMeetingUrlCommandHandlerTests
 	{
@@ -56,8 +54,15 @@ namespace Au5.UnitTests.Application.Features.Meetings.Rename
 			var configurationMock = new Mock<IConfiguration>();
 
 			dbContextMock.Setup(db => db.Set<Meeting>()).Returns(mockDbSet.Object);
+			dbContextMock.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
+			 .ReturnsAsync(Result.Success());
+
 			configurationMock.Setup(c => c["System:BaseUrl"])
 			 .Returns(bseTestUrl);
+
+			var expectedUrl = $"{bseTestUrl}/public/meeting/{id}/{meetId}";
+			urlServiceMock.Setup(s => s.GetSystemMeetingUrl(bseTestUrl, id, meetId))
+			  .Returns(expectedUrl);
 
 			var handler = new GetMeetingUrlCommandHandler(urlServiceMock.Object, dbContextMock.Object, configurationMock.Object);
 			var command = new GetMeetingUrlCommand(id, 30);
