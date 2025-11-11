@@ -9,4 +9,6 @@ public record UserSpaceResponse
 	public string Name { get; init; }
 
 	public string Description { get; init; }
+
+	public bool IsAdmin { get; init; }
 }

@@ -23,7 +23,8 @@ public class GetUserSpacesQueryHandler : IRequestHandler<GetUserSpacesQuery, Res
 			{
 				Id = us.SpaceId,
 				Name = us.Space.Name,
-				Description = us.Space.Description
+				Description = us.Space.Description,
+				IsAdmin = us.IsAdmin
 			})
 			.ToListAsync(cancellationToken);
 

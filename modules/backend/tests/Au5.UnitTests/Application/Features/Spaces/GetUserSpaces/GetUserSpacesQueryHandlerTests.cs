@@ -37,6 +37,7 @@ public class GetUserSpacesQueryHandlerTests
 		Assert.Equal(3, result.Data.Count);
 
 		var firstSpace = result.Data.First();
+		Assert.True(firstSpace.IsAdmin);
 		Assert.NotEqual(Guid.Empty, firstSpace.Id);
 		Assert.Equal("Space 1", firstSpace.Name);
 		Assert.Equal("Description for space 1", firstSpace.Description);
@@ -56,6 +57,7 @@ public class GetUserSpacesQueryHandlerTests
 
 		var result = await fixture.Handler.Handle(query, CancellationToken.None);
 
+		Assert.Contains(result.Data, s => s.IsAdmin);
 		Assert.True(result.IsSuccess);
 		Assert.NotNull(result.Data);
 		Assert.Equal(2, result.Data.Count);
@@ -102,6 +104,7 @@ public class GetUserSpacesQueryHandlerTests
 
 		var space = result.Data.First();
 		Assert.Equal(spaceId, space.Id);
+		Assert.True(space.IsAdmin);
 		Assert.Equal("Engineering Team", space.Name);
 		Assert.Equal("Engineering space description", space.Description);
 	}
@@ -143,6 +146,7 @@ public class GetUserSpacesQueryHandlerTests
 		Assert.Single(result.Data);
 
 		var space = result.Data.First();
+		Assert.True(space.IsAdmin);
 		Assert.Equal(string.Empty, space.Description);
 	}
 
@@ -162,6 +166,7 @@ public class GetUserSpacesQueryHandlerTests
 		Assert.True(result.IsSuccess);
 		Assert.NotNull(result.Data);
 		Assert.Equal(5, result.Data.Count);
+		Assert.Contains(result.Data, s => s.IsAdmin);
 
 		var spaceNames = result.Data.Select(s => s.Name).ToList();
 		Assert.Contains("Space 1", spaceNames);
