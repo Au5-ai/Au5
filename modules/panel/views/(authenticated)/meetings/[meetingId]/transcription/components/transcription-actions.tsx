@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import {
   Archive,
@@ -27,26 +25,33 @@ import {
 } from "@/shared/components/ui/dropdown-menu";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { ArchiveConfirmationModal } from "@/shared/components/meetings/archive-confirmation-modal";
+import { RenameMeetingModal } from "@/shared/components/meetings/rename-meeting-modal";
 import { Separator } from "@/shared/components/ui";
 
 interface TranscriptionActionsProps {
   meetingId?: string;
   meetId?: string;
+  meetingName?: string;
   isFavorite?: boolean;
   meetingStatus?: string;
+  onMeetingRenamed?: (newName: string) => void;
 }
 
 export function TranscriptionActions({
   meetingId,
   meetId,
+  meetingName = "",
   isFavorite = false,
   meetingStatus,
+  onMeetingRenamed,
 }: TranscriptionActionsProps) {
   const [isToggling, setIsToggling] = React.useState(false);
   const [currentFavoriteStatus, setCurrentFavoriteStatus] =
     React.useState(isFavorite);
   const [showArchiveModal, setShowArchiveModal] = React.useState(false);
+  const [showRenameModal, setShowRenameModal] = React.useState(false);
   const [isArchiving, setIsArchiving] = React.useState(false);
+  const [isRenaming, setIsRenaming] = React.useState(false);
   const [isArchived, setIsArchived] = React.useState(
     meetingStatus === "Archived",
   );
@@ -104,6 +109,24 @@ export function TranscriptionActions({
     } finally {
       setIsArchiving(false);
       setShowArchiveModal(false);
+    }
+  };
+
+  const handleRenameConfirm = async (newName: string) => {
+    if (!meetingId || !meetId) return;
+
+    try {
+      setIsRenaming(true);
+      await meetingsController.rename(meetingId, newName);
+
+      toast.success(GLOBAL_CAPTIONS.pages.meetings.renameSuccess);
+      onMeetingRenamed?.(newName);
+    } catch (error) {
+      console.error("Failed to rename meeting:", error);
+      toast.error(GLOBAL_CAPTIONS.pages.meetings.renameError);
+    } finally {
+      setIsRenaming(false);
+      setShowRenameModal(false);
     }
   };
 
@@ -210,6 +233,7 @@ export function TranscriptionActions({
           <Button
             variant="ghost"
             size="sm"
+            onClick={() => setShowRenameModal(true)}
             disabled={!meetingId || !meetId}
             className={`h-8 cursor-pointer hover:bg-gray-100`}>
             <Pen className="w-5 h-5" />
@@ -254,6 +278,13 @@ export function TranscriptionActions({
         isArchived={isArchived}
         onConfirm={handleArchiveConfirm}
         isLoading={isArchiving}
+      />
+      <RenameMeetingModal
+        open={showRenameModal}
+        onOpenChange={setShowRenameModal}
+        currentName={meetingName}
+        onConfirm={handleRenameConfirm}
+        isLoading={isRenaming}
       />
     </div>
   );

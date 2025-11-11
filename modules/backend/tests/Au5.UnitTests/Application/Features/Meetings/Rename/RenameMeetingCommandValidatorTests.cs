@@ -8,15 +8,12 @@ namespace Au5.UnitTests.Application.Features.Meetings.Rename
 		private readonly RenameMeetingCommandValidator _validator = new();
 
 		[Theory]
-		[InlineData("", "Interview Meet")]
-		[InlineData(null, "Interview Meet")]
-		[InlineData("12", "")]
-		[InlineData("12", null)]
-		[InlineData("", "")]
-		[InlineData(null, null)]
-		public void Should_ReturnValidationError_When_FieldIsEmptyOrNull(string meetId, string newName)
+		[InlineData("00000000-0000-0000-0000-000000000000", "Interview Meet")]
+		[InlineData("12e1c2b4-9a61-4f3f-b4a2-1a22a1c5d7f8", null)]
+		[InlineData("00000000-0000-0000-0000-000000000000", "")]
+		public void Should_ReturnValidationError_When_FieldIsEmptyOrNull(string meetingId, string newName)
 		{
-			var command = new RenameMeetingCommand(meetId, newName);
+			var command = new RenameMeetingCommand(Guid.Parse(meetingId), newName);
 
 			var result = _validator.TestValidate(command);
 
@@ -27,7 +24,7 @@ namespace Au5.UnitTests.Application.Features.Meetings.Rename
 		[Fact]
 		public void Should_NotReturnValidationError_When_RequestIsCorrectl()
 		{
-			var command = new RenameMeetingCommand("1", "Interview Meet");
+			var command = new RenameMeetingCommand(Guid.NewGuid(), "Interview Meet");
 			var result = _validator.TestValidate(command);
 
 			result.ShouldNotHaveAnyValidationErrors();

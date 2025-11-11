@@ -54,6 +54,19 @@ export const meetingsController = {
       },
     );
   },
+  rename: (
+    meetingId: string,
+    newName: string,
+  ): Promise<{ isSuccess: boolean; message: string }> => {
+    return apiRequestClient<{ isSuccess: boolean; message: string }>(
+      API_URLS.MEETING.RENAME(meetingId),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newTitle: newName }),
+      },
+    );
+  },
   addMeetingToSpace: (
     meetingId: string,
     spaceId: string,
