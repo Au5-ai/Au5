@@ -129,6 +129,8 @@ export const GLOBAL_CAPTIONS = {
       deleteAIContentError: "Failed to delete AI content. Please try again.",
       exportSuccess: "Meeting transcription exported successfully",
       exportError: "Failed to export meeting transcription. Please try again.",
+      renameSuccess: "Meeting has been renamed successfully",
+      renameError: "Failed to rename meeting. Please try again.",
     },
   },
 } as const;

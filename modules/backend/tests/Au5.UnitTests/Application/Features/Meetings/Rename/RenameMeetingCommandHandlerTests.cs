@@ -10,9 +10,10 @@ namespace Au5.UnitTests.Application.Features.Meetings.Rename
 		[Fact]
 		public async Task Handle_ShouldReturnNotFound_WhenMeeting_NotExists()
 		{
+			var meetingId = Guid.NewGuid();
 			var meetings = new List<Meeting>
 			{
-				new() { MeetId = "1", MeetName = "Title" }
+				new() { Id = meetingId, MeetName = "Title" }
 			};
 
 			var mockDbSet = meetings.BuildMockDbSet();
@@ -21,7 +22,7 @@ namespace Au5.UnitTests.Application.Features.Meetings.Rename
 			dbContextMock.Setup(db => db.Set<Meeting>()).Returns(mockDbSet.Object);
 
 			var handler = new RenameMeetingCommandHandler(dbContextMock.Object);
-			var command = new RenameMeetingCommand("2", "New Title");
+			var command = new RenameMeetingCommand(Guid.NewGuid(), "New Title");
 
 			var result = await handler.Handle(command, CancellationToken.None);
 
@@ -32,9 +33,10 @@ namespace Au5.UnitTests.Application.Features.Meetings.Rename
 		[Fact]
 		public async Task Handle_ShouldUpdateMeetingName_WhenValid()
 		{
+			var meetingId = Guid.NewGuid();
 			var meetings = new List<Meeting>
 			{
-				new() { MeetId = "1", MeetName = "Old Name" }
+				new() { Id = meetingId, MeetName = "Old Name" }
 			};
 
 			var mockDbSet = meetings.BuildMockDbSet();
@@ -45,7 +47,7 @@ namespace Au5.UnitTests.Application.Features.Meetings.Rename
 						 .ReturnsAsync(Result.Success());
 
 			var handler = new RenameMeetingCommandHandler(dbContextMock.Object);
-			var command = new RenameMeetingCommand("1", "New Title");
+			var command = new RenameMeetingCommand(meetingId, "New Title");
 
 			var result = await handler.Handle(command, CancellationToken.None);
 

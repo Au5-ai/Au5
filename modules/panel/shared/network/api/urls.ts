@@ -26,6 +26,7 @@ export const API_URLS = {
     UNARCHIVE: (meetingId: string) => `/meetings/${meetingId}/unarchive`,
     EXPORT: (meetingId: string, format: string = "text") =>
       `/meetings/${meetingId}/export?format=${format}`,
+    RENAME: (meetingId: string) => `/meetings/${meetingId}/rename`,
     CLOSE: (meetingId: string) => `/meetings/${meetingId}/close`,
     ADD_BOT: "/meetings/bots",
     GENERATE_AI: (meetingId: string) => `/meetings/${meetingId}/ai-contents`,

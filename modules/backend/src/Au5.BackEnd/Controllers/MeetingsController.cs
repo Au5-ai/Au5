@@ -45,7 +45,7 @@ public class MeetingsController(ISender mediator) : BaseController
 
 	[HttpPost("{meetingId}/rename")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	public async Task<IActionResult> RenameMeeting([FromRoute] string meetingId, [FromBody] RenameMeetingCommand command, CancellationToken cancellationToken)
+	public async Task<IActionResult> RenameMeeting([FromRoute] Guid meetingId, [FromBody] RenameMeetingCommand command, CancellationToken cancellationToken)
 	{
 		return Ok(await mediator.Send(command with { MeetingId = meetingId }, cancellationToken));
 	}
