@@ -2,14 +2,22 @@ using Au5.BackEnd.GlobalHandler;
 using Au5.BackEnd.Middlewares;
 using Au5.Infrastructure.Persistence.Context;
 using Au5.ServiceDefaults;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.AddServiceDefaults();
 {
 	builder.Services.AddSignalR();
 	builder.Services.AddJwtAuthentication(builder.Configuration);
+
+	builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+	{
+		if (builder.Environment.IsProduction())
+		{
+			options.RequireHttpsMetadata = true;
+		}
+	});
 
 	builder.Services.RegisterApplicationServices()
 					.RegisterInfrastructureServices(builder.Configuration);
@@ -59,12 +67,19 @@ var app = builder.Build();
 		{
 			db.Database.Migrate();
 		}
-	}
+		}
 
 	app.UseExceptionHandler();
 	app.MapDefaultEndpoints();
 
 	app.UseCors("AllowAllWithCredentials");
+
+	if (app.Environment.IsProduction())
+	{
+		app.UseHsts();
+		app.UseHttpsRedirection();
+	}
+
 	app.UseRouting();
 
 	app.UseAuthentication();
