@@ -37,7 +37,6 @@ public class GetUserSpacesQueryHandlerTests
 		Assert.Equal(3, result.Data.Count);
 
 		var adminSpace = result.Data.Single(s => s.IsAdmin);
-		Assert.NotNull(adminSpace);
 		Assert.Equal("Space 1", adminSpace.Name);
 		Assert.Equal("Description for space 1", adminSpace.Description);
 		Assert.NotEqual(Guid.Empty, adminSpace.Id);
