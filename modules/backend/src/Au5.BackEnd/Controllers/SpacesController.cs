@@ -4,6 +4,7 @@ using Au5.Application.Features.MeetingSpaces.RemoveMeetingFromSpace;
 using Au5.Application.Features.Spaces.CreateSpace;
 using Au5.Application.Features.Spaces.GetSpaceMeetings;
 using Au5.Application.Features.Spaces.GetSpaces;
+using Au5.Application.Features.Spaces.SpaceMembers;
 
 namespace Au5.BackEnd.Controllers;
 
@@ -50,5 +51,15 @@ public class SpacesController(ISender mediator) : BaseController
 	{
 		var command = new RemoveMeetingFromSpaceCommand(meetingId, spaceId);
 		return Ok(await mediator.Send(command, ct));
+	}
+
+	[HttpGet]
+	[Route("{spaceId}/members")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	public async Task<IActionResult> GetSpaceMembers([FromRoute] Guid spaceId, CancellationToken ct)
+	{
+		return Ok(await mediator.Send(new SpaceMemebersQuery(spaceId), ct));
 	}
 }

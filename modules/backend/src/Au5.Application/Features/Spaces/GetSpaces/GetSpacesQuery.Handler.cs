@@ -1,3 +1,5 @@
+using Au5.Application.Dtos.Spaces;
+
 namespace Au5.Application.Features.Spaces.GetSpaces;
 
 public class GetSpacesQueryHandler : IRequestHandler<GetSpacesQuery, Result<IReadOnlyCollection<SpaceResponse>>>
