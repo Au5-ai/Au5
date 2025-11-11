@@ -4,6 +4,7 @@ public static class MessageTypesConstants
 {
 	public const string UserJoinedInMeeting = "UserJoinedInMeeting";
 	public const string BotJoinedInMeeting = "BotJoinedInMeeting";
+	public const string GuestJoinedInMeeting = "GuestJoinedInMeeting";
 	public const string Entry = "Entry";
 	public const string ReactionApplied = "ReactionApplied";
 	public const string GeneralMessage = "GeneralMessage";

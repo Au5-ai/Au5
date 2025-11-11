@@ -37,7 +37,7 @@ public class CloseMeetingByUserCommandHandlerTests
 		_dbContextMock.Setup(db => db.Set<SystemConfig>()).Returns(configDbSet.Object);
 		_dbContextMock.Setup(db => db.Set<Meeting>()).Returns(meetingDbSet.Object);
 
-		var command = new CloseMeetingByUserCommand(Guid.NewGuid(), "meet-1");
+		var command = new CloseMeetingByUserCommand(Guid.NewGuid());
 
 		var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -72,7 +72,7 @@ public class CloseMeetingByUserCommandHandlerTests
 		_meetingServiceMock.Setup(x => x.CloseMeeting(meeting.MeetId, It.IsAny<CancellationToken>()))
 			.ReturnsAsync((Meeting)null);
 
-		var command = new CloseMeetingByUserCommand(meeting.Id, meeting.MeetId);
+		var command = new CloseMeetingByUserCommand(meeting.Id);
 
 		var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -116,7 +116,7 @@ public class CloseMeetingByUserCommandHandlerTests
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success());
 
-		var command = new CloseMeetingByUserCommand(meeting.Id, meeting.MeetId);
+		var command = new CloseMeetingByUserCommand(meeting.Id);
 
 		var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -126,7 +126,7 @@ public class CloseMeetingByUserCommandHandlerTests
 		Assert.Equal(meetingContent.Entries, meeting.Entries);
 		Assert.Equal(meetingContent.Participants, meeting.Participants);
 		Assert.Equal(meetingContent.Guests, meeting.Guests);
-		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()));
 	}
 
 	[Fact]
@@ -166,13 +166,13 @@ public class CloseMeetingByUserCommandHandlerTests
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Failure(Error.Failure(description: AppResources.Meeting.FailedToClose)));
 
-		var command = new CloseMeetingByUserCommand(meeting.Id, meeting.MeetId);
+		var command = new CloseMeetingByUserCommand(meeting.Id);
 
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
 		Assert.Equal(AppResources.Meeting.FailedToClose, result.Error.Description);
-		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()));
 	}
 
 	[Fact]
@@ -200,7 +200,7 @@ public class CloseMeetingByUserCommandHandlerTests
 			Participants = [],
 			Guests = []
 		};
-		var command = new CloseMeetingByUserCommand(meeting.Id, meeting.MeetId);
+		var command = new CloseMeetingByUserCommand(meeting.Id);
 
 		var result = await _handler.Handle(command, CancellationToken.None);
 

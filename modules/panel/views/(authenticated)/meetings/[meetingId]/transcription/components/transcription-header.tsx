@@ -7,11 +7,20 @@ import { TranscriptionActions } from "./transcription-actions";
 
 interface TranscriptionHeaderProps {
   meeting: Meeting;
+  onMeetingUpdate?: () => void;
 }
 
 export default function TranscriptionHeader({
   meeting,
+  onMeetingUpdate,
 }: TranscriptionHeaderProps) {
+  const [currentTitle, setCurrentTitle] = React.useState(meeting.title);
+
+  const handleMeetingRenamed = (newName: string) => {
+    setCurrentTitle(newName);
+    onMeetingUpdate?.();
+  };
+
   return (
     <div className="bg-white top-0 z-10">
       <div className="px-4 py-4">
@@ -20,15 +29,17 @@ export default function TranscriptionHeader({
           <div className="flex justify-between items-start w-full">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                {meeting.title}
+                {currentTitle}
               </h1>
               <MeetingMetadata meeting={meeting} />
             </div>
             <TranscriptionActions
               meetingId={meeting.id}
               meetId={meeting.meetingId}
+              meetingName={currentTitle}
               isFavorite={meeting.isFavorite}
               meetingStatus={meeting.status}
+              onMeetingRenamed={handleMeetingRenamed}
             />
           </div>
         </div>

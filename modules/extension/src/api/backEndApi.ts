@@ -13,7 +13,7 @@ export class BackEndApi {
 
   public async addBot(body: RequestAddBotModel): Promise<any> {
     const token = await this.tokenManager.getToken();
-    return apiRequest<any, RequestAddBotModel>(ApiRoutes.getInstance(this.config).addBot(body.meetingId, body.meetId), {
+    return apiRequest<any, RequestAddBotModel>(ApiRoutes.getInstance(this.config).addBot(), {
       method: "POST",
       body,
       authToken: token || ""
@@ -30,7 +30,7 @@ export class BackEndApi {
 
   public async closeMeeting(body: CloseMeetingModel): Promise<any> {
     const token = await this.tokenManager.getToken();
-    return apiRequest<any>(ApiRoutes.getInstance(this.config).closeMeeting(body.meetingId, body.meetId), {
+    return apiRequest<any>(ApiRoutes.getInstance(this.config).closeMeeting(body.meetingId), {
       method: "POST",
       authToken: token || ""
     });

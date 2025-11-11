@@ -27,7 +27,7 @@ public class ToggleArchiveCommandHandlerTests
 		var userId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
 		var meetId = "test-meet-id";
-		var command = new ToggleArchiveCommand(meetingId, meetId);
+		var command = new ToggleArchiveCommand(meetingId);
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
@@ -57,7 +57,7 @@ public class ToggleArchiveCommandHandlerTests
 		var userId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
 		var meetId = "test-meet-id";
-		var command = new ToggleArchiveCommand(meetingId, meetId);
+		var command = new ToggleArchiveCommand(meetingId);
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
@@ -87,7 +87,7 @@ public class ToggleArchiveCommandHandlerTests
 		var userId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
 		var meetId = "test-meet-id";
-		var command = new ToggleArchiveCommand(meetingId, meetId);
+		var command = new ToggleArchiveCommand(meetingId);
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
@@ -107,8 +107,7 @@ public class ToggleArchiveCommandHandlerTests
 	{
 		var userId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
-		var meetId = "test-meet-id";
-		var command = new ToggleArchiveCommand(meetingId, meetId);
+		var command = new ToggleArchiveCommand(Guid.NewGuid());
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
@@ -136,7 +135,7 @@ public class ToggleArchiveCommandHandlerTests
 		var otherUserId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
 		var meetId = "test-meet-id";
-		var command = new ToggleArchiveCommand(meetingId, meetId);
+		var command = new ToggleArchiveCommand(meetingId);
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
@@ -163,7 +162,7 @@ public class ToggleArchiveCommandHandlerTests
 		var userId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
 		var meetId = "test-meet-id";
-		var command = new ToggleArchiveCommand(meetingId, meetId);
+		var command = new ToggleArchiveCommand(meetingId);
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
@@ -190,7 +189,7 @@ public class ToggleArchiveCommandHandlerTests
 		var userId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
 		var meetId = "test-meet-id";
-		var command = new ToggleArchiveCommand(meetingId, meetId);
+		var command = new ToggleArchiveCommand(meetingId);
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 

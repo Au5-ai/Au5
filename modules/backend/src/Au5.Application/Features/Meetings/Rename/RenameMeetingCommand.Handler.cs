@@ -6,20 +6,21 @@ public class RenameMeetingCommandHandler(IApplicationDbContext dbContext) : IReq
 
 	public async ValueTask<Result<RenameMeetingCommandResponse>> Handle(RenameMeetingCommand request, CancellationToken cancellationToken)
 	{
-		var currentMeet = await _dbContext.Set<Meeting>().FirstOrDefaultAsync(s => s.MeetId == request.MeetingId, cancellationToken);
+		var currentMeet = await _dbContext.Set<Meeting>()
+			.FirstOrDefaultAsync(s => s.Id == request.MeetingId, cancellationToken);
 
 		if (currentMeet is null)
 		{
 			return Error.NotFound(description: "No meeting with this ID was found.");
 		}
 
-		if(request.NewTitle != currentMeet.MeetName)
+		if (request.NewTitle != currentMeet.MeetName)
 		{
 			currentMeet.MeetName = request.NewTitle;
 			var saveResult = await _dbContext.SaveChangesAsync(cancellationToken);
 			if (saveResult.IsFailure)
 			{
-				return Error.Failure(description: "Failed to save changes. Please try again later.");
+				return Error.Failure("Failed to save changes. Please try again later.");
 			}
 		}
 

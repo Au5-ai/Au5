@@ -27,26 +27,33 @@ import {
 } from "@/shared/components/ui/dropdown-menu";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { ArchiveConfirmationModal } from "@/shared/components/meetings/archive-confirmation-modal";
+import { RenameMeetingModal } from "@/shared/components/meetings/rename-meeting-modal";
 import { Separator } from "@/shared/components/ui";
 
 interface TranscriptionActionsProps {
   meetingId?: string;
   meetId?: string;
+  meetingName?: string;
   isFavorite?: boolean;
   meetingStatus?: string;
+  onMeetingRenamed?: (newName: string) => void;
 }
 
 export function TranscriptionActions({
   meetingId,
   meetId,
+  meetingName = "",
   isFavorite = false,
   meetingStatus,
+  onMeetingRenamed,
 }: TranscriptionActionsProps) {
   const [isToggling, setIsToggling] = React.useState(false);
   const [currentFavoriteStatus, setCurrentFavoriteStatus] =
     React.useState(isFavorite);
   const [showArchiveModal, setShowArchiveModal] = React.useState(false);
+  const [showRenameModal, setShowRenameModal] = React.useState(false);
   const [isArchiving, setIsArchiving] = React.useState(false);
+  const [isRenaming, setIsRenaming] = React.useState(false);
   const [isArchived, setIsArchived] = React.useState(
     meetingStatus === "Archived",
   );
@@ -63,10 +70,7 @@ export function TranscriptionActions({
       setIsToggling(true);
       setCurrentFavoriteStatus(!currentFavoriteStatus);
 
-      const response = await meetingsController.toggleFavorite(
-        meetingId,
-        meetId,
-      );
+      const response = await meetingsController.toggleFavorite(meetingId);
 
       if (response.isFavorite) {
         toast.success("Meeting has been added to your favorite list");
@@ -91,7 +95,7 @@ export function TranscriptionActions({
       setIsArchiving(true);
       const response = await meetingsController.toggleArchive(
         meetingId,
-        meetId,
+        isArchived,
       );
 
       if (response.isArchived) {
@@ -110,15 +114,30 @@ export function TranscriptionActions({
     }
   };
 
+  const handleRenameConfirm = async (newName: string) => {
+    if (!meetingId || !meetId) return;
+
+    try {
+      setIsRenaming(true);
+      await meetingsController.rename(meetingId, newName);
+
+      toast.success(GLOBAL_CAPTIONS.pages.meetings.renameSuccess);
+      onMeetingRenamed?.(newName);
+    } catch (error) {
+      console.error("Failed to rename meeting:", error);
+      toast.error(GLOBAL_CAPTIONS.pages.meetings.renameError);
+    } finally {
+      setIsRenaming(false);
+      setShowRenameModal(false);
+    }
+  };
+
   const handleExportToText = async () => {
     if (!meetingId || !meetId) return;
 
     try {
       setIsExporting(true);
-      const textContent = await meetingsController.exportToText(
-        meetingId,
-        meetId,
-      );
+      const textContent = await meetingsController.exportToText(meetingId);
 
       const blob = new Blob([textContent], { type: "text/plain" });
       const url = window.URL.createObjectURL(blob);
@@ -216,6 +235,7 @@ export function TranscriptionActions({
           <Button
             variant="ghost"
             size="sm"
+            onClick={() => setShowRenameModal(true)}
             disabled={!meetingId || !meetId}
             className={`h-8 cursor-pointer hover:bg-gray-100`}>
             <Pen className="w-5 h-5" />
@@ -260,6 +280,13 @@ export function TranscriptionActions({
         isArchived={isArchived}
         onConfirm={handleArchiveConfirm}
         isLoading={isArchiving}
+      />
+      <RenameMeetingModal
+        open={showRenameModal}
+        onOpenChange={setShowRenameModal}
+        currentName={meetingName}
+        onConfirm={handleRenameConfirm}
+        isLoading={isRenaming}
       />
     </div>
   );

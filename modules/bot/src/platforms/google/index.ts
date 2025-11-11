@@ -3,10 +3,12 @@ import {
   IMeetingPlatform,
   MeetingConfiguration,
   EntryMessage,
+  Participant,
 } from "../../types";
 import { logger } from "../../common/utils/logger";
 import { delay } from "../../common/utils";
 import { CaptionMutationHandler } from "./caption-mutation-handler";
+import { ParticipantMutationHandler } from "./participant-mutation-handler";
 import {
   GOOGLE_CAPTION_CONFIGURATION,
   CAPTION_UI_STABILIZATION_DELAY,
@@ -69,7 +71,9 @@ export class GoogleMeet implements IMeetingPlatform {
       await new CaptionEnabler(this.page).activate(captionConfig.language);
       await delay(CAPTION_UI_STABILIZATION_DELAY);
 
-      logger.info("[GoogleMeet] Starting transcription observation...");
+      logger.info(
+        "[GoogleMeet][Participants] Starting participant observation..."
+      );
       await new CaptionMutationHandler(this.page, captionConfig).observe(
         pushToHubCallback
       );
@@ -77,16 +81,21 @@ export class GoogleMeet implements IMeetingPlatform {
   }
 
   async observeParticipations(
-    pushToHub: (participant: any) => void
+    pushToHubCallback: (participants: Participant[]) => void
   ): Promise<void> {
-    logger.warn("[GoogleMeet] Participation observation not yet implemented.");
+    try {
+      await delay(2000);
+      await new ParticipantMutationHandler(
+        this.page,
+        pushToHubCallback
+      ).observe();
+    } catch (error: any) {
+      throw error;
+    }
   }
 
   async leaveMeeting(): Promise<boolean> {
     if (!this.page || this.page.isClosed()) {
-      logger.warn(
-        "[GoogleMeet][Leave] Page context is unavailable or already closed."
-      );
       return false;
     }
 
@@ -96,17 +105,11 @@ export class GoogleMeet implements IMeetingPlatform {
         if (typeof leaveFn === "function") {
           return leaveFn();
         }
-        console.error(
-          "[GoogleMeet][Leave] performLeaveAction function not found on window."
-        );
         return false;
       });
 
       return result;
     } catch (error: any) {
-      logger.error(
-        `[GoogleMeet][Leave] Failed to trigger leave action: ${error.message}`
-      );
       return false;
     }
   }

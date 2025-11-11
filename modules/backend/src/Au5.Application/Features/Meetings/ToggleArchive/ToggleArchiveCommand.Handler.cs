@@ -17,7 +17,7 @@ public class ToggleArchiveCommandHandler : IRequestHandler<ToggleArchiveCommand,
 	{
 		var meeting = await _dbContext.Set<Meeting>()
 			.Include(x => x.Participants)
-			.FirstOrDefaultAsync(x => x.Id == request.MeetingId && x.MeetId == request.MeetId, cancellationToken);
+			.FirstOrDefaultAsync(x => x.Id == request.MeetingId, cancellationToken);
 
 		if (meeting is null)
 		{

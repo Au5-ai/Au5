@@ -12,15 +12,15 @@ export class ApiRoutes {
     return ApiRoutes.instance;
   }
 
-  public addBot(meetingId: string, meetId: string): string {
-    return `${this.config.service.baseUrl}/meetings/${meetingId}/sessions/${meetId}/bots`;
+  public addBot(): string {
+    return `${this.config.service.baseUrl}/meetings/bots`;
   }
 
   public getReactions(): string {
     return `${this.config.service.baseUrl}/reactions`;
   }
 
-  public closeMeeting(meetingId: string, meetId: string): string {
-    return `${this.config.service.baseUrl}/meetings/${meetingId}/sessions/${meetId}/close`;
+  public closeMeeting(meetingId: string): string {
+    return `${this.config.service.baseUrl}/meetings/${meetingId}/close`;
   }
 }

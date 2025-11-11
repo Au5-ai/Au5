@@ -20,7 +20,7 @@ public class GetFullTranscriptionQueryHandlerTests
 		var dbSet = new List<Meeting>().BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<Meeting>()).Returns(dbSet.Object);
 
-		var query = new GetFullTranscriptionQuery(Guid.NewGuid(), "not-exist");
+		var query = new GetFullTranscriptionQuery(Guid.NewGuid());
 
 		var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -114,7 +114,7 @@ public class GetFullTranscriptionQueryHandlerTests
 		var dbSet = new List<Meeting> { meeting }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<Meeting>()).Returns(dbSet.Object);
 
-		var query = new GetFullTranscriptionQuery(meetingId, "dzc-awqw-ioi");
+		var query = new GetFullTranscriptionQuery(meetingId);
 
 		var result = await _handler.Handle(query, CancellationToken.None);
 

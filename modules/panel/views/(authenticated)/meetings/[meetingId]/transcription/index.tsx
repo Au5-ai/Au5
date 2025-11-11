@@ -41,7 +41,6 @@ export default function TranscriptionView() {
 
   const params = useParams();
   const meetingId = params.meetingId as string;
-  const meetId = params.meetId as string;
 
   const currentUserSpaces = useCurrentUserSpaces();
 
@@ -51,10 +50,7 @@ export default function TranscriptionView() {
 
   useEffect(() => {
     const fetchAIContents = async () => {
-      const contents = await meetingsController.getAIContents(
-        meetingId,
-        meetId,
-      );
+      const contents = await meetingsController.getAIContents(meetingId);
       if (contents) {
         setAIContents(contents);
       }
@@ -64,10 +60,7 @@ export default function TranscriptionView() {
       try {
         setLoading(true);
         setError(null);
-        const data = await meetingsController.getTranscription(
-          meetingId,
-          meetId,
-        );
+        const data = await meetingsController.getTranscription(meetingId);
         setTranscription(data);
       } catch (err) {
         console.error("Failed to load transcription:", err);
@@ -77,11 +70,11 @@ export default function TranscriptionView() {
       }
     };
 
-    if (meetingId && meetId) {
+    if (meetingId) {
       fetchAIContents();
       loadTranscription();
     }
-  }, [meetingId, meetId]);
+  }, [meetingId]);
 
   const speakers: string[] = useMemo(() => {
     if (!transcription?.entries) return [];
@@ -132,14 +125,10 @@ export default function TranscriptionView() {
   const handleSpaceSelection = async (spaceId: string, isSelected: boolean) => {
     try {
       if (isSelected) {
-        await meetingsController.addMeetingToSpace(meetingId, meetId, spaceId);
+        await meetingsController.addMeetingToSpace(meetingId, spaceId);
         toast.success("Meeting added to space successfully");
       } else {
-        await meetingsController.removeMeetingFromSpace(
-          meetingId,
-          meetId,
-          spaceId,
-        );
+        await meetingsController.removeMeetingFromSpace(meetingId, spaceId);
         toast.success("Meeting removed from space successfully");
       }
     } catch (err) {
@@ -283,7 +272,6 @@ export default function TranscriptionView() {
               )
             }
             aiContents={aiContents}
-            meetId={meetId}
             meetingId={meetingId}
           />
         </TabsContent>

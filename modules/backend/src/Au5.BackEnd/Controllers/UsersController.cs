@@ -1,11 +1,15 @@
-using Au5.Application.Features.UserManagement.Find;
+using System.ComponentModel.DataAnnotations;
+using Au5.Application.Features.Meetings.MyMeeting;
+using Au5.Application.Features.Spaces.GetUserSpaces;
 using Au5.Application.Features.UserManagement.GetMyInfo;
 using Au5.Application.Features.UserManagement.GetUserMenus;
 using Au5.Application.Features.UserManagement.GetUsers;
 using Au5.Application.Features.UserManagement.InviteUsers;
 using Au5.Application.Features.UserManagement.ResendVerificationEmail;
+using Au5.Application.Features.UserManagement.Search;
 using Au5.Application.Features.UserManagement.VerifyUser.Command;
 using Au5.Application.Features.UserManagement.VerifyUser.Query;
+using Au5.Domain.Common;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
@@ -33,11 +37,32 @@ public class UsersController(ISender mediator) : BaseController
 		return Ok(await mediator.Send(query));
 	}
 
-	[Route("find")]
-	[HttpGet]
-	public async Task<IActionResult> FindUsers([FromQuery] string query)
+	[HttpGet("me/meetings")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> MyMeetings([FromQuery] string status, CancellationToken cancellationToken)
 	{
-		var result = await mediator.Send(new FindUserQuery(query));
+		var meetingStatus = MeetingStatus.Ended;
+		if (status.Equals("archived", StringComparison.OrdinalIgnoreCase))
+		{
+			meetingStatus = MeetingStatus.Archived;
+		}
+
+		return Ok(await mediator.Send(new MyMeetingQuery(meetingStatus), cancellationToken));
+	}
+
+	[HttpGet]
+	[Route("spaces")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> GetMySpaces(CancellationToken ct)
+	{
+		return Ok(await mediator.Send(new GetUserSpacesQuery(), ct));
+	}
+
+	[Route("search")]
+	[HttpGet]
+	public async Task<IActionResult> SearchUsers([FromQuery][Required][MinLength(2)][MaxLength(100)] string query)
+	{
+		var result = await mediator.Send(new SearchUserQuery(query));
 		return Ok(result);
 	}
 
@@ -50,7 +75,7 @@ public class UsersController(ISender mediator) : BaseController
 	}
 
 	[AllowAnonymous]
-	[HttpPost("{userId}/invitations")]
+	[HttpPost("invitations/{userId}/resend")]
 	public async Task<IActionResult> ResendInvitation([FromRoute] Guid userId)
 	{
 		return Ok(await mediator.Send(new ResendVerificationEmailCommand() { UserId = userId }));

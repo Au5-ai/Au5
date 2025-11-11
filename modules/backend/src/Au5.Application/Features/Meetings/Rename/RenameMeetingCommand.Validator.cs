@@ -9,6 +9,7 @@ public class RenameMeetingCommandValidator : AbstractValidator<RenameMeetingComm
 		RuleFor(s => s.MeetingId)
 			.NotEmpty()
 			.WithMessage(AppResources.Validation.Required);
+
 		RuleFor(s => s.NewTitle)
 			.NotEmpty()
 			.WithMessage(AppResources.Validation.Required);

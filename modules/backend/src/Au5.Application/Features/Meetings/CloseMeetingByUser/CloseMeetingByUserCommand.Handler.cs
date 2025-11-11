@@ -33,14 +33,14 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 		}
 
 		var meeting = await _dbContext.Set<Meeting>()
-		.FirstOrDefaultAsync(x => x.Id == request.MeetingId && x.MeetId == request.MeetId && x.Status != MeetingStatus.Ended, cancellationToken: cancellationToken);
+		.FirstOrDefaultAsync(x => x.Id == request.MeetingId && x.Status != MeetingStatus.Ended, cancellationToken: cancellationToken);
 
 		if (meeting is null)
 		{
 			return Error.BadRequest(description: AppResources.Meeting.NotFound);
 		}
 
-		var meetingContent = await _meetingService.CloseMeeting(request.MeetId, cancellationToken);
+		var meetingContent = await _meetingService.CloseMeeting(meeting.MeetId, cancellationToken);
 
 		if (meetingContent is not null)
 		{

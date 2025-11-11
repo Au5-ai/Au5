@@ -40,7 +40,9 @@ export function AppSidebar({ user, menu, spaces, ...props }: AppSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={menu} />
-        <NavSpaces spaces={spaces} />
+        {spaces !== undefined && spaces.length > 0 && (
+          <NavSpaces spaces={spaces} />
+        )}
       </SidebarContent>
       <SidebarFooter>{user && <NavUser {...user} />}</SidebarFooter>
       <SidebarRail />

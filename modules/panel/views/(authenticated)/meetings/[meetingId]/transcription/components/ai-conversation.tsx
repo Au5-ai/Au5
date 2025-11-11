@@ -21,7 +21,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/shared/components/ui";
-import { aiController } from "@/shared/network/api/aiController";
 import { assistantsController } from "@/shared/network/api/assistantsController";
 import { CopyToClipboard, truncateFirstLine } from "@/shared/lib";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
@@ -29,10 +28,10 @@ import { Assistant } from "@/shared/types/assistants";
 import { AIContent } from "@/shared/types";
 import { AIAssistantList } from "./ai-assistant-list";
 import { DeleteAIContentConfirmationModal } from "./delete-ai-content-confirmation-modal";
+import { meetingsController } from "@/shared/network/api/meetingsController";
 
 interface AIConversationProps {
   aiContents: AIContent[];
-  meetId: string;
   meetingId: string;
   onNewContent?: (content: AIContent) => void;
   onContentDeleted?: (contentId: string) => void;
@@ -40,7 +39,6 @@ interface AIConversationProps {
 
 export default function AIConversation({
   aiContents,
-  meetId,
   meetingId,
   onContentDeleted,
 }: AIConversationProps) {
@@ -70,7 +68,7 @@ export default function AIConversation({
     };
 
     fetchAssistants();
-  }, [aiContents, meetId, meetingId]);
+  }, [aiContents, meetingId]);
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -104,9 +102,8 @@ export default function AIConversation({
     setIsFetching(true);
     setIsStreaming(false);
 
-    aiController.generate({
+    meetingsController.generate({
       meetingId,
-      meetId,
       assistantId: assistant.id,
       signal: controller.signal,
       onStart: () => {
@@ -173,7 +170,7 @@ export default function AIConversation({
 
     try {
       setIsDeleting(true);
-      await aiController.delete(meetingId, meetId, currentContent.id);
+      await meetingsController.delete(meetingId, currentContent.id);
       toast.success(GLOBAL_CAPTIONS.pages.meetings.deleteAIContentSuccess);
       setShowDeleteModal(false);
       setShowAssistantList(true);

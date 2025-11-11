@@ -58,6 +58,11 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 		}
 	}
 
+	public async Task GuestJoinedInMeeting(GuestJoinedInMeetingMessage message)
+	{
+		await meetingService.AddGuestsToMeet(message.MeetId, message.Guests);
+	}
+
 	public async Task ReactionApplied(ReactionAppliedMessage reaction)
 	{
 		await meetingService.AppliedReaction(reaction);
@@ -94,22 +99,3 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 		await Clients.OthersInGroup(groupName).SendAsync(METHOD, msg).ConfigureAwait(false);
 	}
 }
-
-
-// public void ParticipantJoinMeeting(Participants participants)
-// {
-//    public record Participants
-// {
-//    public string MeetingId { get; set; }
-//    public List<string> User { get; set; }
-// }
-//    if (string.IsNullOrWhiteSpace(participants.MeetingId))
-//    {
-//        return;
-//    }
-//    if (participants.User is null)
-//    {
-//        return;
-//    }
-//    meetingService.AddParticipantToMeet(participants.User, participants.MeetingId);
-// }

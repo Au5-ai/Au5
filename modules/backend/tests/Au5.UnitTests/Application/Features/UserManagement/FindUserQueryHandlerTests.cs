@@ -1,10 +1,10 @@
-using Au5.Application.Features.UserManagement.Find;
+using Au5.Application.Features.UserManagement.Search;
 using Au5.Domain.Entities;
 using MockQueryable.Moq;
 
 namespace Au5.UnitTests.Application.Features.UserManagement;
 
-public class FindUserQueryHandlerTests
+public class SearchUserQueryHandlerTests
 {
 	[Fact]
 	public async Task Should_ExcludeInactiveUsers_FromSearchResults()
@@ -19,8 +19,8 @@ public class FindUserQueryHandlerTests
 		var mockContext = new Mock<IApplicationDbContext>();
 		mockContext.Setup(x => x.Set<User>()).Returns(mockSet.Object);
 
-		var handler = new FindUserQueryHandler(mockContext.Object);
-		var query = new FindUserQuery("Mo Karimi");
+		var handler = new SearchUserQueryHandler(mockContext.Object);
+		var query = new SearchUserQuery("Mo Karimi");
 
 		var result = await handler.Handle(query, CancellationToken.None);
 
@@ -40,8 +40,8 @@ public class FindUserQueryHandlerTests
 		var mockContext = new Mock<IApplicationDbContext>();
 		mockContext.Setup(x => x.Set<User>()).Returns(mockSet.Object);
 
-		var handler = new FindUserQueryHandler(mockContext.Object);
-		var query = new FindUserQuery("mo2@ex");
+		var handler = new SearchUserQueryHandler(mockContext.Object);
+		var query = new SearchUserQuery("mo2@ex");
 
 		var result = await handler.Handle(query, CancellationToken.None);
 
@@ -59,8 +59,8 @@ public class FindUserQueryHandlerTests
 		var mockContext = new Mock<IApplicationDbContext>();
 		mockContext.Setup(x => x.Set<User>()).Returns(mockSet.Object);
 
-		var handler = new FindUserQueryHandler(mockContext.Object);
-		var query = new FindUserQuery(string.Empty);
+		var handler = new SearchUserQueryHandler(mockContext.Object);
+		var query = new SearchUserQuery(string.Empty);
 
 		var result = await handler.Handle(query, CancellationToken.None);
 
@@ -79,8 +79,8 @@ public class FindUserQueryHandlerTests
 		var mockContext = new Mock<IApplicationDbContext>();
 		mockContext.Setup(x => x.Set<User>()).Returns(mockSet.Object);
 
-		var handler = new FindUserQueryHandler(mockContext.Object);
-		var query = new FindUserQuery("mo@ex");
+		var handler = new SearchUserQueryHandler(mockContext.Object);
+		var query = new SearchUserQuery("mo@ex");
 
 		var result = await handler.Handle(query, CancellationToken.None);
 
@@ -100,8 +100,8 @@ public class FindUserQueryHandlerTests
 		var mockContext = new Mock<IApplicationDbContext>();
 		mockContext.Setup(x => x.Set<User>()).Returns(mockSet.Object);
 
-		var handler = new FindUserQueryHandler(mockContext.Object);
-		var query = new FindUserQuery("Mo Kar");
+		var handler = new SearchUserQueryHandler(mockContext.Object);
+		var query = new SearchUserQuery("Mo Kar");
 
 		var result = await handler.Handle(query, CancellationToken.None);
 

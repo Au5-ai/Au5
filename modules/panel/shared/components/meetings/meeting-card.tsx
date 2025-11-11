@@ -21,6 +21,7 @@ import { meetingsController } from "@/shared/network/api/meetingsController";
 import { toast } from "sonner";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { ArchiveConfirmationModal } from "./archive-confirmation-modal";
+import { ROUTES } from "@/shared/routes";
 
 interface MeetingCardProps {
   item: MeetingItem;
@@ -38,8 +39,7 @@ export function MeetingCard({ item }: MeetingCardProps) {
 
   const onMeetingClick = (item: MeetingItem) => {
     const meetingId = item.meetingId;
-    const meetId = item.meetId;
-    router.push(API_URLS.MEETING.TRANSCRIPTION(meetingId, meetId));
+    router.push(ROUTES.MEETINGS.TRANSCRIPTION(meetingId));
   };
 
   const handleArchiveClick = (e: React.MouseEvent) => {
@@ -58,7 +58,7 @@ export function MeetingCard({ item }: MeetingCardProps) {
       setIsArchiving(true);
       const response = await meetingsController.toggleArchive(
         item.meetingId,
-        item.meetId,
+        isArchived,
       );
 
       if (response.isArchived) {

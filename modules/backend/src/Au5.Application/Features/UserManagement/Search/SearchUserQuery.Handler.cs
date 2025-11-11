@@ -1,16 +1,16 @@
-namespace Au5.Application.Features.UserManagement.Find;
+namespace Au5.Application.Features.UserManagement.Search;
 
-public class FindUserQueryHandler : IRequestHandler<FindUserQuery, IReadOnlyCollection<Participant>>
+public class SearchUserQueryHandler : IRequestHandler<SearchUserQuery, IReadOnlyCollection<Participant>>
 {
 	private const int MaxSearchResults = 25;
 	private readonly IApplicationDbContext _context;
 
-	public FindUserQueryHandler(IApplicationDbContext context)
+	public SearchUserQueryHandler(IApplicationDbContext context)
 	{
 		_context = context;
 	}
 
-	public async ValueTask<IReadOnlyCollection<Participant>> Handle(FindUserQuery request, CancellationToken cancellationToken)
+	public async ValueTask<IReadOnlyCollection<Participant>> Handle(SearchUserQuery request, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrEmpty(request.Query))
 		{

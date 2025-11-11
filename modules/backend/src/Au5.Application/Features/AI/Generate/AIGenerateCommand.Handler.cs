@@ -49,7 +49,7 @@ public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand,
 			.Include(x => x.Entries)
 				.ThenInclude(ent => ent.Reactions)
 				.ThenInclude(rac => rac.Reaction)
-			.FirstOrDefaultAsync(m => m.Id == request.MeetingId && m.MeetId == request.MeetId, cancellationToken);
+			.FirstOrDefaultAsync(m => m.Id == request.MeetingId, cancellationToken);
 
 		if (meeting is null)
 		{

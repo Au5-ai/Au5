@@ -99,7 +99,6 @@ export class CaptionMutationHandler {
             pictureUrl: caption.pictureUrl,
           },
           content: caption.transcript,
-          timestamp: new Date(),
           meetId: "",
           entryType: "Transcription",
           type: "Entry",
