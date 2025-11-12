@@ -9,7 +9,6 @@ export interface Space {
   name: string;
   description: string;
   isActive: boolean;
-  usersCount: number;
   users: SpaceUser[];
   createdAt?: string;
 }
