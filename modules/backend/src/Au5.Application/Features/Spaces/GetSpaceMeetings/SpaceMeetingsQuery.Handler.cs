@@ -3,11 +3,11 @@ using Au5.Application.Features.Meetings.MyMeeting;
 namespace Au5.Application.Features.Spaces.GetSpaceMeetings;
 
 public class GetSpaceMeetingsQueryHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
-	: IRequestHandler<GetSpaceMeetingsQuery, Result<IReadOnlyCollection<MyMeetingsGroupedResponse>>>
+	: IRequestHandler<SpaceMeetingsQuery, Result<IReadOnlyCollection<MyMeetingsGroupedResponse>>>
 {
 	private readonly ICurrentUserService _currentUserService = currentUserService;
 
-	public async ValueTask<Result<IReadOnlyCollection<MyMeetingsGroupedResponse>>> Handle(GetSpaceMeetingsQuery request, CancellationToken cancellationToken)
+	public async ValueTask<Result<IReadOnlyCollection<MyMeetingsGroupedResponse>>> Handle(SpaceMeetingsQuery request, CancellationToken cancellationToken)
 	{
 		var currentUserId = _currentUserService.UserId;
 

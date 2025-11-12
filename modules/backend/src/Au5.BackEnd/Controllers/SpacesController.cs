@@ -15,7 +15,7 @@ public class SpacesController(ISender mediator) : BaseController
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> GetSpaces(CancellationToken ct)
 	{
-		return Ok(await mediator.Send(new GetSpacesQuery(), ct));
+		return Ok(await mediator.Send(new SpacesQuery(), ct));
 	}
 
 	[HttpPost]
@@ -32,7 +32,7 @@ public class SpacesController(ISender mediator) : BaseController
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> GetSpaceMeetings([FromRoute] Guid spaceId, CancellationToken ct)
 	{
-		return Ok(await mediator.Send(new GetSpaceMeetingsQuery(spaceId), ct));
+		return Ok(await mediator.Send(new SpaceMeetingsQuery(spaceId), ct));
 	}
 
 	[HttpPost]

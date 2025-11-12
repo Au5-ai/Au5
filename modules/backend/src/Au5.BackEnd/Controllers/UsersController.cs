@@ -55,7 +55,7 @@ public class UsersController(ISender mediator) : BaseController
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> GetMySpaces(CancellationToken ct)
 	{
-		return Ok(await mediator.Send(new GetUserSpacesQuery(), ct));
+		return Ok(await mediator.Send(new UserSpacesQuery(), ct));
 	}
 
 	[Route("search")]
