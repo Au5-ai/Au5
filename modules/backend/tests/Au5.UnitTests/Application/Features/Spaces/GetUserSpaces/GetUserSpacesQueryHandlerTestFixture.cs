@@ -132,8 +132,8 @@ public class GetUserSpacesQueryHandlerTestFixture
 		return this;
 	}
 
-	public GetUserSpacesQuery CreateQuery()
+	public UserSpacesQuery CreateQuery()
 	{
-		return new GetUserSpacesQuery();
+		return new UserSpacesQuery();
 	}
 }
