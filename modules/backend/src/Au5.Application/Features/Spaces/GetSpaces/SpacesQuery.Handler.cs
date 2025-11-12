@@ -1,15 +1,12 @@
+using Au5.Application.Dtos.Spaces;
+
 namespace Au5.Application.Features.Spaces.GetSpaces;
 
-public class GetSpacesQueryHandler : IRequestHandler<GetSpacesQuery, Result<IReadOnlyCollection<SpaceResponse>>>
+public class GetSpacesQueryHandler(IApplicationDbContext context) : IRequestHandler<SpacesQuery, Result<IReadOnlyCollection<SpaceResponse>>>
 {
-	private readonly IApplicationDbContext _context;
+	private readonly IApplicationDbContext _context = context;
 
-	public GetSpacesQueryHandler(IApplicationDbContext context)
-	{
-		_context = context;
-	}
-
-	public async ValueTask<Result<IReadOnlyCollection<SpaceResponse>>> Handle(GetSpacesQuery request, CancellationToken cancellationToken)
+	public async ValueTask<Result<IReadOnlyCollection<SpaceResponse>>> Handle(SpacesQuery request, CancellationToken cancellationToken)
 	{
 		var spaces = await _context.Set<Space>()
 			.Include(s => s.UserSpaces)
@@ -24,7 +21,6 @@ public class GetSpacesQueryHandler : IRequestHandler<GetSpacesQuery, Result<IRea
 			Name = s.Name,
 			Description = s.Description,
 			IsActive = s.IsActive,
-			UsersCount = s.UserSpaces?.Count ?? 0,
 			Users = s.UserSpaces?.Select(us => new SpaceUserInfo
 			{
 				UserId = us.UserId,

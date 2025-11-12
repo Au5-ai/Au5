@@ -9,7 +9,7 @@ public class GetSpacesQueryHandlerTests
 			.WithEmptySpaces()
 			.BuildHandler();
 
-		var query = fixture.CreateQuery();
+		var query = GetSpacesQueryHandlerTestFixture.CreateQuery();
 
 		var result = await fixture.Handler.Handle(query, CancellationToken.None);
 
@@ -26,7 +26,7 @@ public class GetSpacesQueryHandlerTests
 			.WithInactiveSpaces(2)
 			.BuildHandler();
 
-		var query = fixture.CreateQuery();
+		var query = GetSpacesQueryHandlerTestFixture.CreateQuery();
 
 		var result = await fixture.Handler.Handle(query, CancellationToken.None);
 
@@ -43,7 +43,7 @@ public class GetSpacesQueryHandlerTests
 			.WithActiveSpaces(2)
 			.BuildHandler();
 
-		var query = fixture.CreateQuery();
+		var query = GetSpacesQueryHandlerTestFixture.CreateQuery();
 
 		var result = await fixture.Handler.Handle(query, CancellationToken.None);
 
@@ -56,8 +56,6 @@ public class GetSpacesQueryHandlerTests
 		Assert.Equal("Test Space 1", firstSpace.Name);
 		Assert.Equal("Description for space 1", firstSpace.Description);
 		Assert.True(firstSpace.IsActive);
-		Assert.Equal(0, firstSpace.ChildrenCount);
-		Assert.Equal(0, firstSpace.UsersCount);
 		Assert.Empty(firstSpace.Users);
 	}
 
@@ -69,7 +67,7 @@ public class GetSpacesQueryHandlerTests
 			.WithSpacesWithUsers(2)
 			.BuildHandler();
 
-		var query = fixture.CreateQuery();
+		var query = GetSpacesQueryHandlerTestFixture.CreateQuery();
 
 		var result = await fixture.Handler.Handle(query, CancellationToken.None);
 
@@ -78,7 +76,6 @@ public class GetSpacesQueryHandlerTests
 		Assert.Single(result.Data);
 
 		var space = result.Data.First();
-		Assert.Equal(2, space.UsersCount);
 		Assert.Equal(2, space.Users.Count);
 
 		var firstUser = space.Users.First();
@@ -104,7 +101,7 @@ public class GetSpacesQueryHandlerTests
 		// Set UserSpaces to null for the first space
 		fixture.TestSpaces.First().UserSpaces = null;
 
-		var query = fixture.CreateQuery();
+		var query = GetSpacesQueryHandlerTestFixture.CreateQuery();
 
 		var result = await fixture.Handler.Handle(query, CancellationToken.None);
 
@@ -113,7 +110,6 @@ public class GetSpacesQueryHandlerTests
 		Assert.Single(result.Data);
 
 		var space = result.Data.First();
-		Assert.Equal(0, space.UsersCount);
 		Assert.Empty(space.Users);
 	}
 
@@ -124,16 +120,13 @@ public class GetSpacesQueryHandlerTests
 			.WithActiveSpaces(1)
 			.BuildHandler();
 
-		var query = fixture.CreateQuery();
+		var query = GetSpacesQueryHandlerTestFixture.CreateQuery();
 
 		var result = await fixture.Handler.Handle(query, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
 		Assert.NotNull(result.Data);
 		Assert.Single(result.Data);
-
-		var space = result.Data.First();
-		Assert.Equal(0, space.ChildrenCount);
 	}
 
 	[Fact]
@@ -143,17 +136,13 @@ public class GetSpacesQueryHandlerTests
 			.WithActiveSpaces(1)
 			.BuildHandler();
 
-		var query = fixture.CreateQuery();
+		var query = GetSpacesQueryHandlerTestFixture.CreateQuery();
 
 		var result = await fixture.Handler.Handle(query, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
 		Assert.NotNull(result.Data);
 		Assert.Single(result.Data);
-
-		var space = result.Data.First();
-		Assert.Null(space.ParentId);
-		Assert.Null(space.ParentName);
 	}
 
 	[Fact]
@@ -163,7 +152,7 @@ public class GetSpacesQueryHandlerTests
 			.WithActiveSpaces(3)
 			.BuildHandler();
 
-		var query = fixture.CreateQuery();
+		var query = GetSpacesQueryHandlerTestFixture.CreateQuery();
 
 		var result = await fixture.Handler.Handle(query, CancellationToken.None);
 
@@ -185,7 +174,7 @@ public class GetSpacesQueryHandlerTests
 			.WithActiveSpaces(1)
 			.BuildHandler();
 
-		var query = fixture.CreateQuery();
+		var query = GetSpacesQueryHandlerTestFixture.CreateQuery();
 
 		var result = await fixture.Handler.Handle(query, CancellationToken.None);
 

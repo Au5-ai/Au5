@@ -16,9 +16,14 @@ public class GetSpacesQueryHandlerTestFixture
 
 	public List<UserSpace> TestUserSpaces { get; private set; } = [];
 
+	public static SpacesQuery CreateQuery()
+	{
+		return new SpacesQuery();
+	}
+
 	public GetSpacesQueryHandlerTestFixture WithActiveSpaces(int spaceCount = 3)
 	{
-		TestSpaces = new List<Space>();
+		TestSpaces = [];
 		for (var i = 0; i < spaceCount; i++)
 		{
 			var space = new Space
@@ -88,8 +93,8 @@ public class GetSpacesQueryHandlerTestFixture
 
 	public GetSpacesQueryHandlerTestFixture WithSpacesWithUsers(int userCount = 2)
 	{
-		TestUsers = new List<User>();
-		TestUserSpaces = new List<UserSpace>();
+		TestUsers = [];
+		TestUserSpaces = [];
 
 		for (var i = 0; i < userCount; i++)
 		{
@@ -107,7 +112,7 @@ public class GetSpacesQueryHandlerTestFixture
 		var now = DateTime.Parse("2025-01-15T10:00:00");
 
 		// Add users to the first space
-		if (TestSpaces.Any())
+		if (TestSpaces.Count != 0)
 		{
 			var firstSpace = TestSpaces.First();
 			foreach (var user in TestUsers)
@@ -132,7 +137,7 @@ public class GetSpacesQueryHandlerTestFixture
 
 	public GetSpacesQueryHandlerTestFixture WithEmptySpaces()
 	{
-		TestSpaces = new List<Space>();
+		TestSpaces = [];
 		var mockSet = TestSpaces.BuildMockDbSet();
 		MockDbContext.Setup(db => db.Set<Space>()).Returns(mockSet.Object);
 
@@ -143,10 +148,5 @@ public class GetSpacesQueryHandlerTestFixture
 	{
 		Handler = new GetSpacesQueryHandler(MockDbContext.Object);
 		return this;
-	}
-
-	public GetSpacesQuery CreateQuery()
-	{
-		return new GetSpacesQuery();
 	}
 }
