@@ -50,5 +50,17 @@ RUN dotnet publish "./Au5.BackEnd.csproj" -c $BUILD_CONFIGURATION -o /app/publis
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
+
+# Environment variables for CORS
+ENV Cors__AllowedOrigins__0="http://localhost:3001"
+ENV Cors__AllowedOrigins__1="https://localhost:8000"
+ENV Cors__AllowedOrigins__2="https://localhost:8001"
+
+# Environment variables for JWT Settings
+ENV JwtSettings__SecretKey="YOUR_SECRET_KEY_CHANGE_IN_PRODUCTION"
+ENV JwtSettings__Issuer="YOUR_ISSUER"
+ENV JwtSettings__Audience="YOUR_AUDIENCE"
+ENV JwtSettings__ExpiryMinutes="1000"
+
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Au5.BackEnd.dll"]
