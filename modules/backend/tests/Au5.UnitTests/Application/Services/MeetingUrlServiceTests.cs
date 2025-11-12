@@ -25,4 +25,16 @@ public class MeetingUrlServiceTests
 
 		Assert.Throws<NotSupportedException>(() => _service.GetMeetingProviderUrl(platform, meetId));
 	}
+
+	[Fact]
+	public void GeneratePublicMeetingUrl_Should_ReturnCorrectUrl()
+	{
+		var baseUrl = "https://mydomain.com";
+		var meetingId = Guid.NewGuid();
+		var meetId = "5";
+
+		var generatedLink = _service.GeneratePublicMeetingUrl(baseUrl, meetingId, meetId);
+		var expectedUrl = $"{baseUrl}/public/meeting/{meetingId}/{meetId}";
+		Assert.Equal(generatedLink, expectedUrl);
+	}
 }

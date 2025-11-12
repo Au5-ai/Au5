@@ -13,7 +13,7 @@ public class MeetingUrlService : IMeetingUrlService
 		};
 	}
 
-	public string GetSystemMeetingUrl(string baseUrl, Guid meetingId, string meetId)
+	public string GeneratePublicMeetingUrl(string baseUrl, Guid meetingId, string meetId)
 	{
 		return $"{baseUrl}/public/meeting/{meetingId}/{meetId}";
 	}

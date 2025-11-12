@@ -106,7 +106,7 @@ public class MeetingsController(ISender mediator) : BaseController
 			: BadRequest(result.Error);
 	}
 
-	[HttpPost("meeting/{meetingId}/public-link")]
+	[HttpPost("{meetingId}/public-link")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> GetSystemMeetingUrl([FromRoute] Guid meetingId, [FromBody] GetMeetingUrlCommand command, CancellationToken cancellationToken)
 	{

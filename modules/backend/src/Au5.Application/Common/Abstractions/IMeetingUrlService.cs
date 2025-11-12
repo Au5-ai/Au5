@@ -4,5 +4,5 @@ public interface IMeetingUrlService
 {
 	string GetMeetingProviderUrl(string platform, string meetId);
 
-	string GetSystemMeetingUrl(string baseUrl, Guid meetingId, string meetId);
+	string GeneratePublicMeetingUrl(string baseUrl, Guid meetingId, string meetId);
 }

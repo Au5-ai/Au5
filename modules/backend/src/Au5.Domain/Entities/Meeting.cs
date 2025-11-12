@@ -36,9 +36,9 @@ public class Meeting
 
 	public bool IsFavorite { get; set; }
 
-	public bool PublicLinkEnabled { get; set; }
+	public bool? PublicLinkEnabled { get; set; }
 
-	public DateTime PublicLinkExpiration { get; set; }
+	public DateTime? PublicLinkExpiration { get; set; }
 
 	public ICollection<ParticipantInMeeting> Participants { get; set; }
 
