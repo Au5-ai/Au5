@@ -145,7 +145,7 @@ public class RemoveMemberFromSpaceCommandHandlerTests : BaseIntegrationTest
 		var result = await Mediator.Send(command);
 
 		Assert.False(result.IsSuccess);
-		Assert.Equal("UserSpace.NotFound", result.Error.Code);
+		Assert.Equal("Space.InvalidUsers", result.Error.Code);
 	}
 
 	[Fact]

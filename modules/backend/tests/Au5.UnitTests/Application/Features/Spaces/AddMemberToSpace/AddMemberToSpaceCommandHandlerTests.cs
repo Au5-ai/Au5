@@ -54,7 +54,7 @@ public class AddMemberToSpaceCommandHandlerTests
 		var result = await handler.Handle(command, CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
-		Assert.Equal("User is already a active member.", result.Error.Description);
+		Assert.Equal("User is already an active member.", result.Error.Description);
 	}
 
 	[Fact]

@@ -81,9 +81,9 @@ public class SpacesController(ISender mediator) : BaseController
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
-	public async Task<IActionResult> RemoveMemberFromSpace([FromRoute] Guid spaceId, [FromRoute] Guid MemberUserId, CancellationToken ct)
+	public async Task<IActionResult> RemoveMemberFromSpace([FromRoute] Guid spaceId, [FromRoute] Guid memberUserId, CancellationToken ct)
 	{
-		var command = new RemoveMemberFromSpaceCommand(spaceId, MemberUserId);
+		var command = new RemoveMemberFromSpaceCommand(spaceId, memberUserId);
 		return Ok(await mediator.Send(command, ct));
 	}
 }

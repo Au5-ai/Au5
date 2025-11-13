@@ -97,7 +97,7 @@ internal static class AppResources
 		public const string SpaceAccessDeniedMessage = "You do not have access to this space.";
 
 		public const string SpaceUserAlreadyExistCode = "User.AlreadyMember";
-		public const string SpaceUserAlreadyExistMessage = "User is already a active member.";
+		public const string SpaceUserAlreadyExistMessage = "User is already an active member.";
 
 		public const string NameRequired = "Space name is required.";
 		public const string NameMaxLength = "Space name must not exceed 100 characters.";

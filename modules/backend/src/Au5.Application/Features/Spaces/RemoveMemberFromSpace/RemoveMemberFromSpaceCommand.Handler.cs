@@ -1,5 +1,4 @@
 using Au5.Application.Common;
-using Au5.Application.Dtos.Spaces;
 
 namespace Au5.Application.Features.Spaces.RemoveMemberFromSpace;
 
@@ -18,39 +17,27 @@ public class RemoveMemberFromSpaceCommandHandler : IRequestHandler<RemoveMemberF
 	{
 		var currentUserId = _currentUserService.UserId;
 
-		var spaceData = await _dbContext.Set<Space>()
+		var spaceInfo = await _dbContext.Set<Space>()
 						.Where(s => s.Id == request.SpaceId && s.IsActive)
 						.Select(s => new
 						{
-							Members = s.UserSpaces
-								.Where(us => us.User.IsActive)
-								.Select(us => new SpaceUserInfo
-								{
-									UserId = us.UserId,
-									IsAdmin = us.IsAdmin
-								})
-								  .ToArray()
+							IsCurrentUserAdmin = s.UserSpaces.Any(us => us.UserId == currentUserId && us.User.IsActive && us.IsAdmin),
+							IsTargetUserMember = s.UserSpaces.Any(us => us.UserId == request.MemberUserId && us.User.IsActive)
 						})
 						.AsNoTracking()
 						.FirstOrDefaultAsync(cancellationToken);
 
-		if (spaceData is null)
+		if (spaceInfo is null)
 		{
 			return Error.NotFound(AppResources.Space.NotFoundCode, AppResources.Space.NotFoundMessage);
 		}
 
-		var requestUserMembership = spaceData.Members
-			.FirstOrDefault(us => us.UserId == request.MemberUserId);
-
-		if (requestUserMembership is null)
+		if (!spaceInfo.IsTargetUserMember)
 		{
 			return Error.NotFound(AppResources.Space.InvalidUsersCode, AppResources.Space.InvalidUsersMessage);
 		}
 
-		var currentUserMembership = spaceData.Members
-			.FirstOrDefault(us => us.UserId == currentUserId);
-
-		var isAdmin = _currentUserService.Role == RoleTypes.Admin || currentUserMembership?.IsAdmin == true;
+		var isAdmin = _currentUserService.Role == RoleTypes.Admin || spaceInfo.IsCurrentUserAdmin;
 
 		if (!isAdmin)
 		{

@@ -1,5 +1,4 @@
 using Au5.Application.Common;
-using Au5.Application.Dtos.Spaces;
 
 namespace Au5.Application.Features.Spaces.AddMemberToSpace;
 
@@ -20,40 +19,29 @@ public class AddMemberToSpaceCommandHandler : IRequestHandler<AddMemberToSpaceCo
 	{
 		var currentUserId = _currentUserService.UserId;
 
-		var spaceData = await _dbContext.Set<Space>()
+		var spaceInfo = await _dbContext.Set<Space>()
 						.Where(s => s.Id == request.SpaceId && s.IsActive)
 						.Select(s => new
 						{
-							Members = s.UserSpaces
-								.Where(us => us.User.IsActive)
-								.Select(us => new SpaceUserInfo
-								{
-									UserId = us.UserId,
-									IsAdmin = us.IsAdmin
-								})
-								  .ToArray()
+							IsCurrentUserAdmin = s.UserSpaces.Any(us => us.UserId == currentUserId && us.User.IsActive && us.IsAdmin),
+							IsNewUserMember = s.UserSpaces.Any(us => us.UserId == request.NewMemberUserId && us.User.IsActive)
 						})
 						.AsNoTracking()
 						.FirstOrDefaultAsync(cancellationToken);
 
-		if (spaceData is null)
+		if (spaceInfo is null)
 		{
 			return Error.NotFound(AppResources.Space.NotFoundCode, AppResources.Space.NotFoundMessage);
 		}
 
-		var currentUserMembership = spaceData.Members
-			.FirstOrDefault(us => us.UserId == currentUserId);
-
-		var isAdmin = _currentUserService.Role == RoleTypes.Admin || currentUserMembership?.IsAdmin == true;
+		var isAdmin = _currentUserService.Role == RoleTypes.Admin || spaceInfo.IsCurrentUserAdmin;
 
 		if (!isAdmin)
 		{
 			return Error.Forbidden(AppResources.Space.SpaceAccessDeniedCode, AppResources.Space.SpaceAccessDeniedMessage);
 		}
 
-		var isOldActiveMember = spaceData.Members?.Any(us => us.UserId == request.NewMemberUserId) ?? false;
-
-		if (isOldActiveMember)
+		if (spaceInfo.IsNewUserMember)
 		{
 			return Error.BadRequest(AppResources.Space.SpaceUserAlreadyExistCode, AppResources.Space.SpaceUserAlreadyExistMessage);
 		}
@@ -66,7 +54,7 @@ public class AddMemberToSpaceCommandHandler : IRequestHandler<AddMemberToSpaceCo
 			JoinedAt = _dataProvider.UtcNow
 		};
 
-		_dbContext.Set<UserSpace>().AddRange(newUserSpace);
+		_dbContext.Set<UserSpace>().Add(newUserSpace);
 		await _dbContext.SaveChangesAsync(cancellationToken);
 
 		return new AddMemberToSpaceResponse(true, AppResources.Space.AddedSuccessfully);
