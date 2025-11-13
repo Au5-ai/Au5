@@ -1,10 +1,12 @@
 using Au5.Application.Dtos.MeetingDtos;
 using Au5.Application.Features.MeetingSpaces.AddMeetingToSpace;
 using Au5.Application.Features.MeetingSpaces.RemoveMeetingFromSpace;
+using Au5.Application.Features.Spaces.AddMemberToSpace;
 using Au5.Application.Features.Spaces.CreateSpace;
 using Au5.Application.Features.Spaces.GetSpaceMeetings;
+using Au5.Application.Features.Spaces.GetSpaceMembers;
 using Au5.Application.Features.Spaces.GetSpaces;
-using Au5.Application.Features.Spaces.SpaceMembers;
+using Au5.Application.Features.Spaces.RemoveMemberFromSpace;
 
 namespace Au5.BackEnd.Controllers;
 
@@ -61,5 +63,27 @@ public class SpacesController(ISender mediator) : BaseController
 	public async Task<IActionResult> GetSpaceMembers([FromRoute] Guid spaceId, CancellationToken ct)
 	{
 		return Ok(await mediator.Send(new SpaceMemebersQuery(spaceId), ct));
+	}
+
+	[HttpPost]
+	[Route("members")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	public async Task<IActionResult> AddMemberToSpace([FromBody] AddMemberToSpaceCommand request, CancellationToken ct)
+	{
+		return Ok(await mediator.Send(request, ct));
+	}
+
+	[HttpDelete]
+	[Route("{spaceId}/members/{MemberUserId}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	public async Task<IActionResult> RemoveMemberFromSpace([FromRoute] Guid spaceId, [FromRoute] Guid memberUserId, CancellationToken ct)
+	{
+		var command = new RemoveMemberFromSpaceCommand(spaceId, memberUserId);
+		return Ok(await mediator.Send(command, ct));
 	}
 }

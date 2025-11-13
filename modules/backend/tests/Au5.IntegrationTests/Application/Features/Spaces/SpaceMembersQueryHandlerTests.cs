@@ -1,4 +1,4 @@
-using Au5.Application.Features.Spaces.SpaceMembers;
+using Au5.Application.Features.Spaces.GetSpaceMembers;
 using Au5.Domain.Entities;
 using Au5.IntegrationTests.TestHelpers;
 

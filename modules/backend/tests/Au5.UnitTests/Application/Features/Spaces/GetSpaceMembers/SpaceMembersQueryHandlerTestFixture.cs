@@ -1,8 +1,8 @@
-using Au5.Application.Features.Spaces.SpaceMembers;
+using Au5.Application.Features.Spaces.GetSpaceMembers;
 using Au5.Domain.Entities;
 using MockQueryable.Moq;
 
-namespace Au5.UnitTests.Application.Features.Spaces.SpaceMembers;
+namespace Au5.UnitTests.Application.Features.Spaces.GetSpaceMembers;
 
 public class SpaceMembersQueryHandlerTestFixture
 {
@@ -64,9 +64,9 @@ public class SpaceMembersQueryHandlerTestFixture
 
 		var joinedAt = DateTime.UtcNow;
 
-		for (int i = 0; i < count; i++)
+		for (var i = 0; i < count; i++)
 		{
-			bool isInactiveUser = includeInactiveUser && i == count - 1;
+			var isInactiveUser = includeInactiveUser && i == count - 1;
 
 			var user = new User
 			{
