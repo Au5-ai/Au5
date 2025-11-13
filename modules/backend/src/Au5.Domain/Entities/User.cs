@@ -28,7 +28,7 @@ public class User
 
 	public UserStatus Status { get; set; }
 
-	public string RefreshToken { get; set; } = string.Empty;
+	public string RefreshToken { get; set; }
 
 	public DateTime? RefreshTokenExpiry { get; set; }
 
@@ -52,23 +52,9 @@ public class User
 		};
 	}
 
-	public void SetRefreshToken(string token, int expiryDays)
-	{
-		RefreshToken = token;
-		RefreshTokenExpiry = DateTime.UtcNow.AddDays(expiryDays);
-	}
-
 	public void RevokeRefreshToken()
 	{
 		RefreshToken = null;
 		RefreshTokenExpiry = null;
-	}
-
-	public bool IsRefreshTokenValid(string token)
-	{
-		return !string.IsNullOrEmpty(RefreshToken) &&
-			   RefreshToken == token &&
-			   RefreshTokenExpiry.HasValue &&
-			   RefreshTokenExpiry > DateTime.UtcNow;
 	}
 }

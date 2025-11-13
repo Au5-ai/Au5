@@ -29,18 +29,25 @@ public sealed class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCom
 			return Error.Unauthorized(description: AppResources.Auth.InvalidRefreshToken);
 		}
 
-		if (!user.IsRefreshTokenValid(request.RefreshToken))
+		if (!(user.RefreshTokenExpiry > _dataProvider.UtcNow))
 		{
-			user.RevokeRefreshToken(); // Security measure: revoke if invalid
+			user.RevokeRefreshToken(); // Security measure: revoke if expired
 			await _dbContext.SaveChangesAsync(cancellationToken);
 			return Error.Unauthorized(description: AppResources.Auth.RefreshTokenExpired);
 		}
 
 		var tokenResponse = _tokenService.GenerateToken(user.Id, user.FullName, user.Role);
+		var expiryDays = _tokenService.GetRefreshTokenExpiryDays();
 
-		user.SetRefreshToken(tokenResponse.RefreshToken, _tokenService.GetRefreshTokenExpiryDays());
+		SetUserRefreshToken(user, tokenResponse.RefreshToken, expiryDays);
 		await _dbContext.SaveChangesAsync(cancellationToken);
 
 		return tokenResponse;
+	}
+
+	private void SetUserRefreshToken(User user, string refreshToken, int expiryDays)
+	{
+		user.RefreshToken = refreshToken;
+		user.RefreshTokenExpiry = _dataProvider.UtcNow.AddDays(expiryDays);
 	}
 }

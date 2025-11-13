@@ -22,6 +22,9 @@ public class UserConfig : IEntityTypeConfiguration<User>
 		builder.HasIndex(x => x.Email)
 			.IsUnique();
 
+		builder.Property(x => x.RefreshToken)
+			.IsRequired(false);
+
 		builder.Property(x => x.FullName)
 			.IsRequired()
 			.HasMaxLength(50);
