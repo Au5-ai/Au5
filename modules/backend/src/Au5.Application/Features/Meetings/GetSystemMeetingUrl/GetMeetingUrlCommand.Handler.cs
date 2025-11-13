@@ -18,8 +18,15 @@ public class GetMeetingUrlCommandHandler(
 			return Error.NotFound(description: "No meeting with this ID was found.");
 		}
 
+		var existingConfig = await _dbContext.Set<SystemConfig>().FirstOrDefaultAsync(cancellationToken);
+		if (existingConfig is null)
+		{
+			return Error.Failure(description: "System configuration not found.");
+		}
+
+		var expiryDate = _dataProvider.Now.AddDays(request.ExpirationDays);
 		meeting.PublicLinkEnabled = true;
-		meeting.PublicLinkExpiration = _dataProvider.UtcNow.AddDays(request.ExpirationDays);
+		meeting.PublicLinkExpiration = expiryDate;
 
 		var saveResult = await _dbContext.SaveChangesAsync(cancellationToken);
 		if (saveResult.IsFailure)
@@ -27,15 +34,8 @@ public class GetMeetingUrlCommandHandler(
 			return Error.Failure(description: "Failed to save changes. Please try again later.");
 		}
 
-		var existingConfig = await _dbContext.Set<SystemConfig>().FirstOrDefaultAsync(cancellationToken);
-
-		if(existingConfig is null)
-		{
-			return Error.Failure(description: "System configuration not found.");
-		}
-
 		var generatedLink = _meetingUrlService.GeneratePublicMeetingUrl(existingConfig.ServiceBaseUrl, meeting.Id, meeting.MeetId);
 
-		return new GetMeetingUrlResponse(generatedLink);
+		return new GetMeetingUrlResponse(generatedLink, expiryDate);
 	}
 }

@@ -5,7 +5,6 @@ using Au5.Application.Features.Meetings.CloseMeetingByUser;
 using Au5.Application.Features.Meetings.Export;
 using Au5.Application.Features.Meetings.GetFullTranscription;
 using Au5.Application.Features.Meetings.GetSystemMeetingUrl;
-using Au5.Application.Features.Meetings.MyMeeting;
 using Au5.Application.Features.Meetings.Rename;
 using Au5.Application.Features.Meetings.ToggleArchive;
 using Au5.Application.Features.Meetings.ToggleFavorite;

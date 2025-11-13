@@ -29,8 +29,8 @@ public class GetSystemMeetingUrlCommandHandlerTests
 
 		dbContextMock.Setup(db => db.Set<Meeting>()).Returns(mockDbSet.Object);
 		dbContextMock.Setup(db => db.Set<SystemConfig>()).Returns(mockSystemConfig.Object);
-		dataProviderMock.Setup(x => x.UtcNow)
-			.Returns(DateTime.UtcNow);
+		dataProviderMock.Setup(x => x.Now)
+			.Returns(DateTime.Now);
 
 		var handler = new GetMeetingUrlCommandHandler(urlServiceMock.Object, dbContextMock.Object, dataProviderMock.Object);
 		var command = new GetMeetingUrlCommand(Guid.NewGuid(), 30);
