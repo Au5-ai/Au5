@@ -36,7 +36,7 @@ public class RemoveMemberFromSpaceCommandHandler : IRequestHandler<RemoveMemberF
 
 		if (spaceData is null)
 		{
-			return Error.NotFound("Space.NotFound", "The requested space does not exist or is inactive.");
+			return Error.NotFound(AppResources.Space.NotFoundCode, AppResources.Space.NotFoundMessage);
 		}
 
 		var requestUserMembership = spaceData.Members
@@ -44,7 +44,7 @@ public class RemoveMemberFromSpaceCommandHandler : IRequestHandler<RemoveMemberF
 
 		if (requestUserMembership is null)
 		{
-			return Error.NotFound("UserSpace.NotFound", "The requested membership was not found.");
+			return Error.NotFound(AppResources.Space.InvalidUsersCode, AppResources.Space.InvalidUsersMessage);
 		}
 
 		var currentUserMembership = spaceData.Members
@@ -54,7 +54,7 @@ public class RemoveMemberFromSpaceCommandHandler : IRequestHandler<RemoveMemberF
 
 		if (!isAdmin)
 		{
-			return Error.Forbidden("Space.Access.Denied", "You do not have access to this space.");
+			return Error.Forbidden(AppResources.Space.SpaceAccessDeniedCode, AppResources.Space.SpaceAccessDeniedMessage);
 		}
 
 		var userSpace = await _dbContext.Set<UserSpace>()

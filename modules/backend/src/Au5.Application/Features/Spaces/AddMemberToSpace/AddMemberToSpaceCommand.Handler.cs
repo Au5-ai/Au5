@@ -38,7 +38,7 @@ public class AddMemberToSpaceCommandHandler : IRequestHandler<AddMemberToSpaceCo
 
 		if (spaceData is null)
 		{
-			return Error.NotFound("Space.NotFound", "The requested space does not exist or is inactive.");
+			return Error.NotFound(AppResources.Space.NotFoundCode, AppResources.Space.NotFoundMessage);
 		}
 
 		var currentUserMembership = spaceData.Members
@@ -48,14 +48,14 @@ public class AddMemberToSpaceCommandHandler : IRequestHandler<AddMemberToSpaceCo
 
 		if (!isAdmin)
 		{
-			return Error.Forbidden("Space.Access.Denied", "You do not have access to this space.");
+			return Error.Forbidden(AppResources.Space.SpaceAccessDeniedCode, AppResources.Space.SpaceAccessDeniedMessage);
 		}
 
 		var isOldActiveMember = spaceData.Members?.Any(us => us.UserId == request.NewMemberUserId) ?? false;
 
 		if (isOldActiveMember)
 		{
-			return Error.BadRequest("User is already a active member.");
+			return Error.BadRequest(AppResources.Space.SpaceUserAlreadyExistCode, AppResources.Space.SpaceUserAlreadyExistMessage);
 		}
 
 		UserSpace newUserSpace = new()

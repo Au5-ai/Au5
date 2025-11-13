@@ -68,6 +68,9 @@ public class SpacesController(ISender mediator) : BaseController
 	[HttpPost]
 	[Route("members")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	public async Task<IActionResult> AddMemberToSpace([FromBody] AddMemberToSpaceCommand request, CancellationToken ct)
 	{
 		return Ok(await mediator.Send(request, ct));
@@ -76,6 +79,8 @@ public class SpacesController(ISender mediator) : BaseController
 	[HttpDelete]
 	[Route("{spaceId}/members/{MemberUserId}")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	public async Task<IActionResult> RemoveMemberFromSpace([FromRoute] Guid spaceId, [FromRoute] Guid MemberUserId, CancellationToken ct)
 	{
 		var command = new RemoveMemberFromSpaceCommand(spaceId, MemberUserId);

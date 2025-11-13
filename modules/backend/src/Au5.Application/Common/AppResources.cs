@@ -93,6 +93,12 @@ internal static class AppResources
 		public const string CreateFailedCode = "Space.CreateFailed";
 		public const string CreateFailedMessage = "Failed to create space";
 
+		public const string SpaceAccessDeniedCode = "Space.Access.Denied";
+		public const string SpaceAccessDeniedMessage = "You do not have access to this space.";
+
+		public const string SpaceUserAlreadyExistCode = "User.AlreadyMember";
+		public const string SpaceUserAlreadyExistMessage = "User is already a active member.";
+
 		public const string NameRequired = "Space name is required.";
 		public const string NameMaxLength = "Space name must not exceed 100 characters.";
 		public const string DescriptionMaxLength = "Space description must not exceed 500 characters.";
