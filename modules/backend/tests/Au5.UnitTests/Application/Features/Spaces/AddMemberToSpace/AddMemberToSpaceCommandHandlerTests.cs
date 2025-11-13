@@ -71,7 +71,7 @@ public class AddMemberToSpaceCommandHandlerTests
 		var result = await handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		fixture.MockDbContext.Verify(db => db.Set<UserSpace>().AddRange(It.IsAny<UserSpace>()), Times.Once);
+		fixture.MockDbContext.Verify(db => db.Set<UserSpace>().Add(It.IsAny<UserSpace>()), Times.Once);
 		fixture.MockDbContext.Verify(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 	}
 
