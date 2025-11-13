@@ -97,6 +97,7 @@ internal static class AppResources
 		public const string NameMaxLength = "Space name must not exceed 100 characters.";
 		public const string DescriptionMaxLength = "Space description must not exceed 500 characters.";
 		public const string InvalidUserIds = "All user IDs must be valid GUIDs.";
+		public const string AddedSuccessfully = "User successfully added to space";
 	}
 
 	internal static class Assistant
