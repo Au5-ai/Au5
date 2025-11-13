@@ -60,7 +60,8 @@ ENV Cors__AllowedOrigins__2="https://localhost:8001"
 ENV JwtSettings__SecretKey="YOUR_SECRET_KEY_CHANGE_IN_PRODUCTION"
 ENV JwtSettings__Issuer="YOUR_ISSUER"
 ENV JwtSettings__Audience="YOUR_AUDIENCE"
-ENV JwtSettings__ExpiryMinutes="1000"
+ENV JwtSettings__ExpiryMinutes="1000",
+ENV JwtSettings__RefreshTokenExpiryDays="30"
 
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Au5.BackEnd.dll"]
