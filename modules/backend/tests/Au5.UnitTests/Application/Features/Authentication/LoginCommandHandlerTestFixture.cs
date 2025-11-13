@@ -51,12 +51,24 @@ public class LoginCommandHandlerTestFixture
 		return this;
 	}
 
-	public LoginCommandHandlerTestFixture WithToken(string token = "fake-token")
-	{
-		MockTokenService.Setup(ts => ts.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<RoleTypes>()))
-						.Returns(new TokenResponse(token, 3600, string.Empty, "Bearer"));
-		return this;
-	}
+	public LoginCommandHandlerTestFixture WithToken(
+        string token = "fake-token",
+        string refreshToken = "fake-refresh-token",
+        int expiresIn = 3600,
+        int refreshTokenExpiresIn = 2592000)
+    {
+        MockTokenService.Setup(ts => ts.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<RoleTypes>()))
+                        .Returns(new TokenResponse(
+                            AccessToken: token,
+                            ExpiresIn: expiresIn,
+                            RefreshToken: refreshToken,
+                            RefreshTokenExpiresIn: refreshTokenExpiresIn,
+                            TokenType: "Bearer"));
+        MockTokenService.Setup(ts => ts.GetRefreshTokenExpiryDays())
+                        .Returns(30); // Default to 30 days
+
+        return this;
+    }
 
 	public LoginCommandHandler BuildHandler()
 	{

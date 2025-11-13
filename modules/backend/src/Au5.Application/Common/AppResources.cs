@@ -28,6 +28,13 @@ internal static class AppResources
 		public const string InvalidUsernameOrPassword = "The username or password you entered is incorrect. Please check your credentials and try again.";
 		public const string UnAuthorizedAction = "You are not authorized to perform this action. Please contact your administrator if you believe this is an error.";
 		public const string UserRoleNotFound = "The current user does not have a valid role assigned. Please contact the administrator.";
+		public const string InvalidRefreshToken = "Invalid refresh token.";
+		public const string RefreshTokenExpired = "Refresh token expired. Please login again.";
+		public const string RefreshTokenRequired = "Refresh token is required.";
+		public const string TokenRevokedSuccessfully = "Token revoked successfully.";
+		public const string InvalidAccessToken = "Invalid access token.";
+		public const string SessionEnded = "Session ended. Please login again.";
+		public const string UserInactive = "User account is inactive.";
 	}
 
 	/// <summary>

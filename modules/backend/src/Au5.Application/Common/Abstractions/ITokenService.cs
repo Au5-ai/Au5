@@ -6,6 +6,8 @@ public interface ITokenService
 {
 	TokenResponse GenerateToken(Guid extensionId, string fullName, RoleTypes role);
 
+	int GetRefreshTokenExpiryDays();
+
 	Task BlacklistTokenAsync(string userId, string jti, DateTime expiry);
 
 	Task<bool> IsTokenBlacklistedAsync(string userId, string jti);

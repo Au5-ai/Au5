@@ -1,5 +1,7 @@
 using Au5.Application.Common.Abstractions;
 using Au5.Application.Features.Authentication.Login;
+using Au5.Application.Features.Authentication.RefreshToken;
+using Au5.Application.Features.Authentication.RevokeToken;
 using Au5.Shared;
 using Microsoft.AspNetCore.Authorization;
 
@@ -13,6 +15,22 @@ public class AuthenticationController(ISender mediator, ITokenService tokenServi
 	public async Task<IActionResult> Login([FromBody] LoginCommand requestModel, CancellationToken ct)
 	{
 		return Ok(await mediator.Send(requestModel, ct));
+	}
+
+	[HttpPost("refresh")]
+	[AllowAnonymous]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenCommand request, CancellationToken ct)
+	{
+		return Ok(await mediator.Send(request, ct));
+	}
+
+	[HttpPost("revoke")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenCommand request, CancellationToken ct)
+	{
+		return Ok(await mediator.Send(request, ct));
 	}
 
 	[HttpPost("logout")]

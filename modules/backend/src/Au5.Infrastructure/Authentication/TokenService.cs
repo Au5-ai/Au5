@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Au5.Application.Common.Abstractions;
 using Au5.Application.Features.Authentication.Login;
@@ -13,6 +14,8 @@ namespace Au5.Infrastructure.Authentication;
 public class TokenService : ITokenService
 {
 	private const string CacheBlackListPrefix = "jwt_bl_";
+	private const int RefreshTokenLength = 32; // 256 bits
+
 	private readonly ICacheProvider _cacheProvider;
 	private readonly JwtSettings _jwt;
 	private readonly IDataProvider _dataProvider;
@@ -27,6 +30,7 @@ public class TokenService : ITokenService
 	public TokenResponse GenerateToken(Guid extensionId, string fullName, RoleTypes role)
 	{
 		var jti = _dataProvider.NewGuid().ToString();
+		var refreshToken = GenerateRefreshToken();
 
 		var claims = new[]
 		{
@@ -46,8 +50,15 @@ public class TokenService : ITokenService
 			expires: _dataProvider.Now.AddMinutes(_jwt.ExpiryMinutes),
 			signingCredentials: creds);
 
-		return new TokenResponse(new JwtSecurityTokenHandler().WriteToken(token), _jwt.ExpiryMinutes * 60, string.Empty, "Bearer");
+		return new TokenResponse(
+			AccessToken: new JwtSecurityTokenHandler().WriteToken(token),
+			ExpiresIn: _jwt.ExpiryMinutes * 60, // in seconds
+			RefreshToken: refreshToken,
+			RefreshTokenExpiresIn: _jwt.RefreshTokenExpiryDays * 24 * 60 * 60, // Convert days to seconds
+			TokenType: "Bearer");
 	}
+
+	public int GetRefreshTokenExpiryDays() => _jwt.RefreshTokenExpiryDays;
 
 	public async Task BlacklistTokenAsync(string userId, string jti, DateTime expiry)
 	{
@@ -74,12 +85,7 @@ public class TokenService : ITokenService
 
 	public async Task<bool> IsTokenBlacklistedAsync(string userId, string jti)
 	{
-		if (string.IsNullOrWhiteSpace(userId))
-		{
-			return false;
-		}
-
-		if (string.IsNullOrWhiteSpace(jti))
+		if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(jti))
 		{
 			return false;
 		}
@@ -91,5 +97,13 @@ public class TokenService : ITokenService
 	private static string BuildKey(string userId, string jti)
 	{
 		return $"{CacheBlackListPrefix}{userId}_{jti}";
+	}
+
+	private string GenerateRefreshToken()
+	{
+		var randomNumber = new byte[RefreshTokenLength];
+		using var rng = RandomNumberGenerator.Create();
+		rng.GetBytes(randomNumber);
+		return Convert.ToBase64String(randomNumber);
 	}
 }
