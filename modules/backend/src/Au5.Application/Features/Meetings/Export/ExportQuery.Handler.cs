@@ -5,6 +5,9 @@ namespace Au5.Application.Features.Meetings.Export;
 
 public class ExportToTextQueryHandler : IRequestHandler<ExportQuery, Result<string>>
 {
+	private static readonly Regex DurationRegex =
+	new(@"(\d+)([dhms])", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
 	private readonly IApplicationDbContext _dbContext;
 
 	public ExportToTextQueryHandler(IApplicationDbContext dbContext)
@@ -85,11 +88,9 @@ public class ExportToTextQueryHandler : IRequestHandler<ExportQuery, Result<stri
 			return 0;
 		}
 
-		var regex = new Regex(@"(\d+)([dhms])", RegexOptions.IgnoreCase);
-
 		int days = 0, hours = 0, minutes = 0, seconds = 0;
 
-		foreach (Match match in regex.Matches(input))
+		foreach (Match match in DurationRegex.Matches(input))
 		{
 			var value = int.Parse(match.Groups[1].Value);
 			var unit = match.Groups[2].Value.ToLower();
