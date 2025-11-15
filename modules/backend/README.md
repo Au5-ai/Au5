@@ -22,7 +22,8 @@
     "SecretKey": "YOURSecretKey",
     "Issuer": "Au5",
     "Audience": "Au5-clients",
-    "ExpiryMinutes": 1000
+    "ExpiryMinutes": 1000,
+	"RefreshTokenExpiryDays": 30
   }
 }
 

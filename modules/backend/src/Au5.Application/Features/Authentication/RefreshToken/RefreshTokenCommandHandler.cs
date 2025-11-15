@@ -1,14 +1,15 @@
 using Au5.Application.Common;
+using Au5.Application.Features.Authentication.Login;
 
-namespace Au5.Application.Features.Authentication.Login;
+namespace Au5.Application.Features.Authentication.RefreshToken;
 
-public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, Result<TokenResponse>>
+public sealed class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, Result<TokenResponse>>
 {
 	private readonly IApplicationDbContext _dbContext;
 	private readonly ITokenService _tokenService;
 	private readonly IDataProvider _dataProvider;
 
-	public LoginCommandHandler(
+	public RefreshTokenCommandHandler(
 		IApplicationDbContext dbContext,
 		ITokenService tokenService,
 		IDataProvider dataProvider)
@@ -18,23 +19,29 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, Result<T
 		_dataProvider = dataProvider;
 	}
 
-	public async ValueTask<Result<TokenResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
+	public async ValueTask<Result<TokenResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
 	{
 		var user = await _dbContext.Set<User>()
-			.FirstOrDefaultAsync(u => u.Email == request.Username && u.IsActive, cancellationToken);
+			.FirstOrDefaultAsync(u => u.RefreshToken == request.RefreshToken && u.IsActive, cancellationToken);
 
-		if (user is null || user.Password != HashHelper.HashPassword(request.Password, user.Id))
+		if (user == null)
 		{
-			return Error.Unauthorized(description: AppResources.Auth.InvalidUsernameOrPassword);
+			return Error.Unauthorized(description: AppResources.Auth.InvalidRefreshToken);
+		}
+
+		if (!(user.RefreshTokenExpiry > _dataProvider.UtcNow))
+		{
+			user.RevokeRefreshToken(); // Security measure: revoke if expired
+			await _dbContext.SaveChangesAsync(cancellationToken);
+			return Error.Unauthorized(description: AppResources.Auth.RefreshTokenExpired);
 		}
 
 		var tokenResponse = _tokenService.GenerateToken(user.Id, user.FullName, user.Role);
 		var expiryDays = _tokenService.GetRefreshTokenExpiryDays();
 
 		SetUserRefreshToken(user, tokenResponse.RefreshToken, expiryDays);
-		user.LastLoginAt = _dataProvider.UtcNow;
-
 		await _dbContext.SaveChangesAsync(cancellationToken);
+
 		return tokenResponse;
 	}
 

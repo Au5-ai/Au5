@@ -28,6 +28,10 @@ public class User
 
 	public UserStatus Status { get; set; }
 
+	public string RefreshToken { get; set; }
+
+	public DateTime? RefreshTokenExpiry { get; set; }
+
 	public ICollection<Meeting> Meetings { get; set; }
 
 	public ICollection<UserSpace> UserSpaces { get; set; }
@@ -46,5 +50,11 @@ public class User
 			PictureUrl = PictureUrl,
 			Email = Email
 		};
+	}
+
+	public void RevokeRefreshToken()
+	{
+		RefreshToken = null;
+		RefreshTokenExpiry = null;
 	}
 }
