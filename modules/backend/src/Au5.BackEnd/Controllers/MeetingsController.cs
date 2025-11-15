@@ -4,6 +4,7 @@ using Au5.Application.Features.AI.GetAll;
 using Au5.Application.Features.Meetings.CloseMeetingByUser;
 using Au5.Application.Features.Meetings.Export;
 using Au5.Application.Features.Meetings.GetFullTranscription;
+using Au5.Application.Features.Meetings.GetSystemMeetingUrl;
 using Au5.Application.Features.Meetings.Rename;
 using Au5.Application.Features.Meetings.ToggleArchive;
 using Au5.Application.Features.Meetings.ToggleFavorite;
@@ -102,6 +103,13 @@ public class MeetingsController(ISender mediator) : BaseController
 		return result.IsSuccess
 			? Content(result.Data!, "text/plain", System.Text.Encoding.UTF8)
 			: BadRequest(result.Error);
+	}
+
+	[HttpPost("{meetingId}/public-link")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> GetSystemMeetingUrl([FromRoute] Guid meetingId, [FromBody] GetMeetingUrlCommand command, CancellationToken cancellationToken)
+	{
+		return Ok(await mediator.Send(command with { MeetingId = meetingId }, cancellationToken));
 	}
 }
 

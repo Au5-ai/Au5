@@ -1,10 +1,8 @@
-using Au5.Application.Common.Abstractions;
-
 namespace Au5.Application.Services;
 
 public class MeetingUrlService : IMeetingUrlService
 {
-	public string GetMeetingUrl(string platform, string meetId)
+	public string GetMeetingProviderUrl(string platform, string meetId)
 	{
 		return platform.ToLowerInvariant() switch
 		{
@@ -13,5 +11,10 @@ public class MeetingUrlService : IMeetingUrlService
 			"teams" => $"https://teams.microsoft.com/l/meetup-join/{meetId}",
 			_ => throw new NotSupportedException($"Platform '{platform}' is not supported")
 		};
+	}
+
+	public string GeneratePublicMeetingUrl(string baseUrl, Guid meetingId, string meetId)
+	{
+		return $"{baseUrl}/public/meeting/{meetingId}/{meetId}";
 	}
 }
