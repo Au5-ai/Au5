@@ -1,9 +1,13 @@
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Au5.Application.Features.Meetings.Export;
 
 public class ExportToTextQueryHandler : IRequestHandler<ExportQuery, Result<string>>
 {
+	private static readonly Regex DurationRegex =
+	new(@"(\d+)([dhms])", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
 	private readonly IApplicationDbContext _dbContext;
 
 	public ExportToTextQueryHandler(IApplicationDbContext dbContext)
@@ -36,7 +40,7 @@ public class ExportToTextQueryHandler : IRequestHandler<ExportQuery, Result<stri
 		sb.AppendLine($"Meeting Transcription: {meeting.MeetName}");
 		sb.AppendLine($"Meeting started: {meeting.CreatedAt:M/d/yyyy, h:mm:ss tt}");
 
-		var durationMinutes = ParseDuration(meeting.Duration);
+		var durationMinutes = ParseReadableDurationToMinutes(meeting.Duration);
 		sb.AppendLine($"Duration: {durationMinutes} minutes");
 
 		var participantNames = GetParticipantNames(meeting);
@@ -77,12 +81,38 @@ public class ExportToTextQueryHandler : IRequestHandler<ExportQuery, Result<stri
 		return names.Count != 0 ? string.Join(", ", names) : "No participants";
 	}
 
-	private static int ParseDuration(string duration)
+	private static int ParseReadableDurationToMinutes(string input)
 	{
-		return string.IsNullOrEmpty(duration)
-			? 0
-			: TimeSpan.TryParse(duration, out var timeSpan)
-				? (int)timeSpan.TotalMinutes
-				: 0;
+		if (string.IsNullOrWhiteSpace(input))
+		{
+			return 0;
+		}
+
+		int days = 0, hours = 0, minutes = 0, seconds = 0;
+
+		foreach (Match match in DurationRegex.Matches(input))
+		{
+			var value = int.Parse(match.Groups[1].Value);
+			var unit = match.Groups[2].Value.ToLower();
+
+			switch (unit)
+			{
+				case "d":
+					days = value;
+					break;
+				case "h":
+					hours = value;
+					break;
+				case "m":
+					minutes = value;
+					break;
+				case "s":
+					seconds = value;
+					break;
+			}
+		}
+
+		var total = new TimeSpan(days, hours, minutes, seconds);
+		return (int)total.TotalMinutes;
 	}
 }
