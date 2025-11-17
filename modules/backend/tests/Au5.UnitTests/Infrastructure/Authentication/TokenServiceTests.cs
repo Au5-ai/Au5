@@ -38,13 +38,14 @@ public class TokenServiceTests
 		var participantId = Guid.NewGuid();
 		var participantName = "Test User";
 		var role = RoleTypes.Admin;
+		var organizationId = Guid.NewGuid();
 		var now = DateTime.Now;
 		var jti = Guid.NewGuid();
 
 		_dataProviderMock.Setup(x => x.NewGuid()).Returns(jti);
 		_dataProviderMock.Setup(x => x.Now).Returns(now);
 
-		var tokenResponse = _tokenService.GenerateToken(participantId, participantName, role);
+		var tokenResponse = _tokenService.GenerateToken(participantId, participantName, role, organizationId);
 
 		Assert.False(string.IsNullOrWhiteSpace(tokenResponse.AccessToken));
 
@@ -72,6 +73,7 @@ public class TokenServiceTests
 		Assert.NotNull(jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier));
 		Assert.NotNull(jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name));
 		Assert.NotNull(jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role));
+		Assert.NotNull(jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimConstants.OrganizationId));
 		Assert.NotNull(jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti));
 	}
 

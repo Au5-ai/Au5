@@ -1,4 +1,3 @@
-using Au5.Application.Common.Abstractions;
 using Au5.Application.Features.Setup.HelloAdmin;
 using Au5.Domain.Entities;
 using MockQueryable.Moq;

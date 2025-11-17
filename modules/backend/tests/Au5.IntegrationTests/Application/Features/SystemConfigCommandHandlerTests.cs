@@ -1,13 +1,13 @@
-using Au5.Application.Features.SystemConfigs.SetConfig;
+using Au5.Application.Features.Organizations.SetConfig;
 using Au5.Domain.Entities;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 namespace Au5.IntegrationTests.Application.Features;
 
-public class SystemConfigCommandHandlerTests : BaseIntegrationTest
+public class OrganizationCommandHandlerTests : BaseIntegrationTest
 {
-	public SystemConfigCommandHandlerTests(IntegrationTestWebApp factory)
+	public OrganizationCommandHandlerTests(IntegrationTestWebApp factory)
 		: base(factory)
 	{
 	}
@@ -15,116 +15,65 @@ public class SystemConfigCommandHandlerTests : BaseIntegrationTest
 	[Fact]
 	public async Task Should_AddConfig_When_ThereIsNoConfigAsync()
 	{
-		var command = new SystemConfigCommand()
+		var command = new OrganizationCommand()
 		{
 			BotName = "TestBot",
 			Direction = "ltr",
-			HubUrl = "https://example.com/hub",
 			Language = "fa-IR",
 			OrganizationName = "Test Organization",
-			PanelUrl = "https://example.com/panel",
-			ServiceBaseUrl = "https://example.com/api",
-			OpenAIToken = "sk-test-token",
-			AutoLeaveWaitingEnter = 10,
-			AutoLeaveNoParticipant = 5,
-			AutoLeaveAllParticipantsLeft = 2,
-			MeetingVideoRecording = true,
-			BotFatherUrl = "https://botfather.example.com",
-			BotHubUrl = "https://bot-hub.example.com",
-			MeetingAudioRecording = true,
-			MeetingTranscription = true,
-			MeetingTranscriptionModel = "liveCaption"
 		};
 
 		_ = await Mediator.Send(command);
 
-		var config = await DbContext.Set<SystemConfig>().FirstOrDefaultAsync();
+		var config = await DbContext.Set<Organization>().FirstOrDefaultAsync();
 		Assert.NotNull(config);
 		Assert.Equal("TestBot", config.BotName);
 		Assert.Equal("ltr", config.Direction);
-		Assert.Equal("https://example.com/hub", config.HubUrl);
 		Assert.Equal("fa-IR", config.Language);
 		Assert.Equal("Test Organization", config.OrganizationName);
-		Assert.Equal("https://example.com/panel", config.PanelUrl);
-		Assert.Equal("https://example.com/api", config.ServiceBaseUrl);
-		Assert.Equal("sk-test-token", config.OpenAIToken);
 	}
 
 	[Fact]
 	public async Task Should_Update_Organization_When_ConfigExistsAnd_ForceUpdate_IsTrue()
 	{
-		DbContext.Set<SystemConfig>().Add(new SystemConfig
+		DbContext.Set<Organization>().Add(new Organization
 		{
 			Id = Guid.NewGuid(),
 			BotName = "TestBot",
 			Direction = "ltr",
-			HubUrl = "https://example.com/hub",
 			Language = "fa-IR",
 			OrganizationName = "Test Organization",
-			PanelUrl = "https://example.com/panel",
-			ServiceBaseUrl = "https://example.com/api",
-			OpenAIToken = "sk-test-token",
-			AutoLeaveWaitingEnter = 10,
-			AutoLeaveNoParticipant = 5,
-			AutoLeaveAllParticipantsLeft = 2,
-			MeetingVideoRecording = true,
-			BotFatherUrl = "https://botfather.example.com",
-			BotHubUrl = "https://bot-hub.example.com",
-			MeetingAudioRecording = true,
-			MeetingTranscription = true,
-			MeetingTranscriptionModel = "liveCaption"
 		});
 		await DbContext.SaveChangesAsync(CancellationToken.None);
 
-		var command = new SystemConfigCommand
+		var command = new OrganizationCommand
 		{
 			OrganizationName = "NewOrg",
 			BotName = "NewBot",
-			HubUrl = "https://newhub.com",
 			Direction = "rtl",
 			Language = "en-EN",
-			ServiceBaseUrl = "https://new.service",
-			PanelUrl = "https://new.panel",
-			OpenAIToken = "new-token",
-			AutoLeaveWaitingEnter = 10,
-			AutoLeaveNoParticipant = 5,
-			AutoLeaveAllParticipantsLeft = 2,
-			MeetingVideoRecording = true,
-			BotFatherUrl = "https://botfather.example.com",
-			BotHubUrl = "https://bot-hub.example.com",
-			MeetingAudioRecording = true,
-			MeetingTranscription = true,
-			MeetingTranscriptionModel = "liveCaption",
 		};
 
 		_ = await Mediator.Send(command);
 
-		var config = await DbContext.Set<SystemConfig>().FirstOrDefaultAsync();
+		var config = await DbContext.Set<Organization>().FirstOrDefaultAsync();
 		Assert.NotNull(config);
 		Assert.True(config.Id != Guid.Empty);
 		Assert.Equal("NewBot", config.BotName);
 		Assert.Equal("rtl", config.Direction);
-		Assert.Equal("https://newhub.com", config.HubUrl);
 		Assert.Equal("en-EN", config.Language);
 		Assert.Equal("NewOrg", config.OrganizationName);
-		Assert.Equal("https://new.panel", config.PanelUrl);
-		Assert.Equal("https://new.service", config.ServiceBaseUrl);
-		Assert.Equal("new-token", config.OpenAIToken);
 	}
 
 	[Fact]
 	public async Task Should_ValidationError_When_OrganizationIsNotCorrect()
 	{
-		var invalidCommand = new SystemConfigCommand
+		var invalidCommand = new OrganizationCommand
 		{
 			OrganizationName = "NewOrg",
 			BotName = "NewBot",
-			HubUrl = "https://newhub.com",
 			Direction = "rtl",
 			Language = "fa",
-			ServiceBaseUrl = "https://new.service",
-			PanelUrl = "https://new.panel",
-			OpenAIToken = "new-token",
 		};
 
 		await Assert.ThrowsAsync<ValidationException>(async () => await Mediator.Send(invalidCommand));

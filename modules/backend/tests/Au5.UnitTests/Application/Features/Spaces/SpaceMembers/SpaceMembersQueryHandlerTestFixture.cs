@@ -26,7 +26,7 @@ public class SpaceMembersQueryHandlerTestFixture
 			Name = "Test Space",
 			Description = "Test Space Description",
 			IsActive = true,
-			UserSpaces = new List<UserSpace>()
+			UserSpaces = []
 		};
 
 		MockDbContext.Setup(db => db.Set<Space>())
@@ -43,7 +43,7 @@ public class SpaceMembersQueryHandlerTestFixture
 			Name = "Inactive Space",
 			Description = "Inactive Space Description",
 			IsActive = false,
-			UserSpaces = new List<UserSpace>()
+			UserSpaces = []
 		};
 
 		MockDbContext.Setup(db => db.Set<Space>())
@@ -59,14 +59,14 @@ public class SpaceMembersQueryHandlerTestFixture
 			WithActiveSpace();
 		}
 
-		TestUsers = new List<User>();
-		TestUserSpaces = new List<UserSpace>();
+		TestUsers = [];
+		TestUserSpaces = [];
 
 		var joinedAt = DateTime.UtcNow;
 
-		for (int i = 0; i < count; i++)
+		for (var i = 0; i < count; i++)
 		{
-			bool isInactiveUser = includeInactiveUser && i == count - 1;
+			var isInactiveUser = includeInactiveUser && i == count - 1;
 
 			var user = new User
 			{

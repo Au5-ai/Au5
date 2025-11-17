@@ -19,7 +19,8 @@ public class CreateAdminCommandValidatorTests
 			Email: "valid.user@test.com",
 			FullName: "Valid User",
 			Password: "StrongP@ss1",
-			RepeatedPassword: "StrongP@ss1");
+			RepeatedPassword: "StrongP@ss1",
+			OrganizationName: "Test Organization");
 
 		var result = _validator.TestValidate(command);
 
@@ -33,7 +34,8 @@ public class CreateAdminCommandValidatorTests
 			Email: "valid@test.com",
 			FullName: string.Empty,
 			Password: "StrongP@ss1",
-			RepeatedPassword: "StrongP@ss1");
+			RepeatedPassword: "StrongP@ss1",
+			OrganizationName: "Test Organization");
 
 		var result = _validator.TestValidate(command);
 
@@ -48,7 +50,8 @@ public class CreateAdminCommandValidatorTests
 			Email: "not-an-email",
 			FullName: "Test User",
 			Password: "StrongP@ss1",
-			RepeatedPassword: "StrongP@ss1");
+			RepeatedPassword: "StrongP@ss1",
+			OrganizationName: "Test Organization");
 
 		var result = _validator.TestValidate(command);
 
@@ -68,7 +71,8 @@ public class CreateAdminCommandValidatorTests
 			Email: "valid@test.com",
 			FullName: "Test User",
 			Password: password,
-			RepeatedPassword: password);
+			RepeatedPassword: password,
+			OrganizationName: "Test Organization");
 
 		var result = _validator.TestValidate(command);
 
@@ -83,7 +87,8 @@ public class CreateAdminCommandValidatorTests
 			Email: "valid@test.com",
 			FullName: "Test User",
 			Password: "StrongP@ss1",
-			RepeatedPassword: "Mismatch1!");
+			RepeatedPassword: "Mismatch1!",
+			OrganizationName: "Test Organization");
 
 		var result = _validator.TestValidate(command);
 

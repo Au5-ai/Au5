@@ -14,32 +14,19 @@ public class AddBotCommandHandlerTests : BaseIntegrationTest
 	}
 
 	[Fact]
-	public async Task Should_AddBot_Successfully_When_SystemConfigExists()
+	public async Task Should_AddBot_Successfully_When_OrganizationExists()
 	{
 		var userId = UserId;
 		TestCurrentUserService.UserId = userId;
 		TestCurrentUserService.IsAuthenticated = true;
 
-		DbContext.Set<SystemConfig>().Add(new SystemConfig
+		DbContext.Set<Organization>().Add(new Organization
 		{
 			Id = Guid.NewGuid(),
 			BotName = "TestBot",
 			Direction = "ltr",
-			HubUrl = "https://example.com/hub",
 			Language = "fa-IR",
 			OrganizationName = "Test Organization",
-			PanelUrl = "https://example.com/panel",
-			ServiceBaseUrl = "https://example.com/api",
-			OpenAIToken = "sk-test-token",
-			AutoLeaveWaitingEnter = 10,
-			AutoLeaveNoParticipant = 5,
-			AutoLeaveAllParticipantsLeft = 2,
-			MeetingVideoRecording = true,
-			BotFatherUrl = BaseApiAddress,
-			BotHubUrl = "https://bot-hub.example.com",
-			MeetingAudioRecording = true,
-			MeetingTranscription = true,
-			MeetingTranscriptionModel = "liveCaption"
 		});
 		await DbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -59,32 +46,19 @@ public class AddBotCommandHandlerTests : BaseIntegrationTest
 	}
 
 	[Fact]
-	public async Task Should_AddBot_Successfully_When_SystemConfigExists2()
+	public async Task Should_AddBot_Successfully_When_OrganizationExists2()
 	{
 		var userId = UserId;
 		TestCurrentUserService.UserId = userId;
 		TestCurrentUserService.IsAuthenticated = true;
 
-		DbContext.Set<SystemConfig>().Add(new SystemConfig
+		DbContext.Set<Organization>().Add(new Organization
 		{
 			Id = Guid.NewGuid(),
 			BotName = "TestBot",
 			Direction = "ltr",
-			HubUrl = "https://example.com/hub",
 			Language = "fa-IR",
 			OrganizationName = "Test Organization",
-			PanelUrl = "https://example.com/panel",
-			ServiceBaseUrl = "https://example.com/api",
-			OpenAIToken = "sk-test-token",
-			AutoLeaveWaitingEnter = 10,
-			AutoLeaveNoParticipant = 5,
-			AutoLeaveAllParticipantsLeft = 2,
-			MeetingVideoRecording = true,
-			BotFatherUrl = BaseApiAddress,
-			BotHubUrl = "https://bot-hub.example.com",
-			MeetingAudioRecording = true,
-			MeetingTranscription = true,
-			MeetingTranscriptionModel = "liveCaption"
 		});
 		await DbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -104,32 +78,19 @@ public class AddBotCommandHandlerTests : BaseIntegrationTest
 	}
 
 	[Fact]
-	public async Task Should_AddBot_Successfully_When_SystemConfigExists3()
+	public async Task Should_AddBot_Successfully_When_OrganizationExists3()
 	{
 		var userId = UserId;
 		TestCurrentUserService.UserId = userId;
 		TestCurrentUserService.IsAuthenticated = true;
 
-		DbContext.Set<SystemConfig>().Add(new SystemConfig
+		DbContext.Set<Organization>().Add(new Organization
 		{
 			Id = Guid.NewGuid(),
 			BotName = "TestBot",
 			Direction = "ltr",
-			HubUrl = "https://example.com/hub",
 			Language = "fa-IR",
 			OrganizationName = "Test Organization",
-			PanelUrl = "https://example.com/panel",
-			ServiceBaseUrl = "https://example.com/api",
-			OpenAIToken = "sk-test-token",
-			AutoLeaveWaitingEnter = 10,
-			AutoLeaveNoParticipant = 5,
-			AutoLeaveAllParticipantsLeft = 2,
-			MeetingVideoRecording = true,
-			BotFatherUrl = BaseApiAddress,
-			BotHubUrl = "https://bot-hub.example.com",
-			MeetingAudioRecording = true,
-			MeetingTranscription = true,
-			MeetingTranscriptionModel = "liveCaption"
 		});
 		await DbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -149,32 +110,19 @@ public class AddBotCommandHandlerTests : BaseIntegrationTest
 	}
 
 	[Fact]
-	public async Task Should_AddBot_Successfully_When_SystemConfigExists4()
+	public async Task Should_AddBot_Successfully_When_OrganizationExists4()
 	{
 		var userId = UserId;
 		TestCurrentUserService.UserId = userId;
 		TestCurrentUserService.IsAuthenticated = true;
 
-		DbContext.Set<SystemConfig>().Add(new SystemConfig
+		DbContext.Set<Organization>().Add(new Organization
 		{
 			Id = Guid.NewGuid(),
 			BotName = "TestBot",
 			Direction = "ltr",
-			HubUrl = "https://example.com/hub",
 			Language = "fa-IR",
 			OrganizationName = "Test Organization",
-			PanelUrl = "https://example.com/panel",
-			ServiceBaseUrl = "https://example.com/api",
-			OpenAIToken = "sk-test-token",
-			AutoLeaveWaitingEnter = 10,
-			AutoLeaveNoParticipant = 5,
-			AutoLeaveAllParticipantsLeft = 2,
-			MeetingVideoRecording = true,
-			BotFatherUrl = BaseApiAddress,
-			BotHubUrl = "https://bot-hub.example.com",
-			MeetingAudioRecording = true,
-			MeetingTranscription = true,
-			MeetingTranscriptionModel = "liveCaption"
 		});
 		await DbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -204,32 +152,19 @@ public class AnotherTest : BaseIntegrationTest
 	}
 
 	[Fact]
-	public async Task Should_AddBot_Successfully_When_SystemConfigExists1()
+	public async Task Should_AddBot_Successfully_When_OrganizationExists1()
 	{
 		var userId = UserId;
 		TestCurrentUserService.UserId = userId;
 		TestCurrentUserService.IsAuthenticated = true;
 
-		DbContext.Set<SystemConfig>().Add(new SystemConfig
+		DbContext.Set<Organization>().Add(new Organization
 		{
 			Id = Guid.NewGuid(),
 			BotName = "TestBot",
 			Direction = "ltr",
-			HubUrl = "https://example.com/hub",
 			Language = "fa-IR",
 			OrganizationName = "Test Organization",
-			PanelUrl = "https://example.com/panel",
-			ServiceBaseUrl = "https://example.com/api",
-			OpenAIToken = "sk-test-token",
-			AutoLeaveWaitingEnter = 10,
-			AutoLeaveNoParticipant = 5,
-			AutoLeaveAllParticipantsLeft = 2,
-			MeetingVideoRecording = true,
-			BotFatherUrl = BaseApiAddress,
-			BotHubUrl = "https://bot-hub.example.com",
-			MeetingAudioRecording = true,
-			MeetingTranscription = true,
-			MeetingTranscriptionModel = "liveCaption"
 		});
 		await DbContext.SaveChangesAsync(CancellationToken.None);
 

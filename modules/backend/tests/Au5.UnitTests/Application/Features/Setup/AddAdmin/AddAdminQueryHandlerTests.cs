@@ -1,3 +1,4 @@
+using Au5.Application.Common.Options;
 using Au5.Application.Features.Admin.Create;
 using Au5.Domain.Entities;
 using Au5.Shared;
@@ -9,54 +10,49 @@ public class AddAdminQueryHandlerTests
 {
 	private readonly Mock<IApplicationDbContext> _mockDbContext;
 	private readonly Mock<DbSet<User>> _mockUserDbSet;
+	private readonly Mock<DbSet<Organization>> _mockOrganizationDbSet;
 	private readonly Mock<IDataProvider> _dataProviderMock;
+	private readonly Mock<IOptions<OrganizationOptions>> _mockOrganizationOptions;
 	private readonly CreateAdminCommandHandler _handler;
 
 	public AddAdminQueryHandlerTests()
 	{
 		_mockDbContext = new Mock<IApplicationDbContext>();
 		_mockUserDbSet = new Mock<DbSet<User>>();
+		_mockOrganizationDbSet = new Mock<DbSet<Organization>>();
 		_dataProviderMock = new Mock<IDataProvider>();
+		_mockOrganizationOptions = new Mock<IOptions<OrganizationOptions>>();
+
+		_mockOrganizationOptions.Setup(x => x.Value).Returns(new OrganizationOptions
+		{
+			OrganizationName = "Test Org",
+			BotName = "Test Bot",
+			Direction = "ltr",
+			Language = "en-US",
+		});
 
 		_mockDbContext.Setup(x => x.Set<User>())
 			.Returns(_mockUserDbSet.Object);
+		_mockDbContext.Setup(x => x.Set<Organization>())
+			.Returns(_mockOrganizationDbSet.Object);
 
-		_handler = new CreateAdminCommandHandler(_mockDbContext.Object, _dataProviderMock.Object);
-	}
-
-	[Fact]
-	public async Task Handle_ShouldReturnUnauthorized_WhenAdminAlreadyExists()
-	{
-		var existingAdmin = new User
-		{
-			Id = Guid.NewGuid(),
-			Email = "admin@test.com",
-			FullName = "Admin User",
-			IsActive = true,
-			Role = RoleTypes.Admin
-		};
-
-		var users = new[] { existingAdmin }.BuildMockDbSet();
-
-		_mockDbContext.Setup(x => x.Set<User>()).Returns(users.Object);
-		var request = new CreateAdminCommand("newadmin@test.com", "New Admin", "Password123", "Password123");
-
-		var result = await _handler.Handle(request, CancellationToken.None);
-
-		Assert.False(result.IsSuccess);
-		Assert.Equal(AppResources.Auth.UnAuthorizedAction, result.Error.Description);
+		_handler = new CreateAdminCommandHandler(_mockDbContext.Object, _dataProviderMock.Object, _mockOrganizationOptions.Object);
 	}
 
 	[Fact]
 	public async Task Handle_ShouldAddAdmin_WhenNoAdminExists()
 	{
-		var dbSet = new List<User> { }.BuildMockDbSet();
+		var userDbSet = new List<User> { }.BuildMockDbSet();
+		var organizationDbSet = new List<Organization> { }.BuildMockDbSet();
 
-		_mockDbContext.Setup(x => x.Set<User>()).Returns(dbSet.Object);
+		_mockDbContext.Setup(x => x.Set<User>()).Returns(userDbSet.Object);
+		_mockDbContext.Setup(x => x.Set<Organization>()).Returns(organizationDbSet.Object);
 		_mockDbContext.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
 						.ReturnsAsync(Result.Success());
 
-		var request = new CreateAdminCommand("newadmin@test.com", "New Admin", "Password123", "Password123");
+		_dataProviderMock.Setup(x => x.NewGuid()).Returns(Guid.NewGuid());
+
+		var request = new CreateAdminCommand("newadmin@test.com", "New Admin", "Password123", "Password123", "Test Organization");
 
 		var result = await _handler.Handle(request, CancellationToken.None);
 
@@ -64,7 +60,8 @@ public class AddAdminQueryHandlerTests
 		Assert.NotNull(result.Data);
 		Assert.True(result.Data.IsDone);
 
-		dbSet.Verify(m => m.Add(It.IsAny<User>()), Times.Once);
+		organizationDbSet.Verify(m => m.Add(It.IsAny<Organization>()), Times.Once);
+		userDbSet.Verify(m => m.Add(It.IsAny<User>()), Times.Once);
 		_mockDbContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 	}
 }

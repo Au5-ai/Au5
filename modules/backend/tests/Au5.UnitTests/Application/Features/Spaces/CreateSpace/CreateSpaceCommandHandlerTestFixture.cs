@@ -7,7 +7,11 @@ namespace Au5.UnitTests.Application.Features.Spaces.CreateSpace;
 
 public class CreateSpaceCommandHandlerTestFixture
 {
+	private Guid _organizationId = Guid.NewGuid();
+
 	public Mock<IApplicationDbContext> MockDbContext { get; } = new();
+
+	public Mock<ICurrentUserService> MockCurrentUserService { get; } = new();
 
 	public CreateSpaceCommandHandler Handler { get; private set; }
 
@@ -119,9 +123,13 @@ public class CreateSpaceCommandHandlerTestFixture
 	public CreateSpaceCommandHandlerTestFixture WithSuccessfulSave()
 	{
 		var spaces = new List<Space>();
+		var userSpaces = new List<UserSpace>();
 
 		MockDbContext.Setup(db => db.Set<Space>().Add(It.IsAny<Space>()))
 			.Callback<Space>(s => spaces.Add(s));
+
+		MockDbContext.Setup(db => db.Set<UserSpace>().AddRange(It.IsAny<IEnumerable<UserSpace>>()))
+			.Callback<IEnumerable<UserSpace>>(us => userSpaces.AddRange(us));
 
 		MockDbContext.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success())
@@ -168,26 +176,34 @@ public class CreateSpaceCommandHandlerTestFixture
 		return this;
 	}
 
+	public CreateSpaceCommandHandlerTestFixture WithOrganizationId(Guid organizationId)
+	{
+		_organizationId = organizationId;
+		return this;
+	}
+
 	public CreateSpaceCommandHandler BuildHandler()
 	{
 		var dataProviderMock = new Mock<IDataProvider>();
-		Handler = new CreateSpaceCommandHandler(MockDbContext.Object, dataProviderMock.Object);
+		dataProviderMock.Setup(d => d.NewGuid()).Returns(Guid.NewGuid());
+		dataProviderMock.Setup(d => d.UtcNow).Returns(DateTime.UtcNow);
+		MockCurrentUserService.Setup(u => u.OrganizationId).Returns(_organizationId);
+		Handler = new CreateSpaceCommandHandler(MockDbContext.Object, dataProviderMock.Object, MockCurrentUserService.Object);
 		return Handler;
 	}
 
-	public CreateSpaceCommand CreateValidCommand(bool withParent = false, bool withUsers = true)
+	public CreateSpaceCommand CreateValidCommand(bool withUsers = true)
 	{
 		var command = new CreateSpaceCommand
 		{
 			Name = "Test Space",
 			Description = "Test Description",
-			ParentId = withParent ? TestParentSpace?.Id : null,
 			Users = withUsers && TestUsers.Any()
-				? TestUsers.Select((user, index) => new UserInSpace
+				? [.. TestUsers.Select((user, index) => new UserInSpace
 				{
 					UserId = user.Id,
 					IsAdmin = index == 0 // First user is admin
-				}).ToList()
+				})]
 				: []
 		};
 

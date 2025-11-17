@@ -6,7 +6,11 @@ namespace Au5.UnitTests.Application.Features.Spaces.GetSpaces;
 
 public class GetSpacesQueryHandlerTestFixture
 {
+	private readonly Guid _organizationId = Guid.NewGuid();
+
 	public Mock<IApplicationDbContext> MockDbContext { get; } = new();
+
+	public Mock<ICurrentUserService> MockCurrentUserService { get; } = new();
 
 	public GetSpacesQueryHandler Handler { get; private set; }
 
@@ -31,7 +35,8 @@ public class GetSpacesQueryHandlerTestFixture
 				Id = Guid.NewGuid(),
 				Name = $"Test Space {i + 1}",
 				Description = $"Description for space {i + 1}",
-				IsActive = true
+				IsActive = true,
+				OrganizationId = _organizationId
 			};
 			TestSpaces.Add(space);
 		}
@@ -52,7 +57,8 @@ public class GetSpacesQueryHandlerTestFixture
 				Id = Guid.NewGuid(),
 				Name = $"Inactive Space {i + 1}",
 				Description = $"Description for inactive space {i + 1}",
-				IsActive = false
+				IsActive = false,
+				OrganizationId = _organizationId
 			};
 			inactiveSpaces.Add(space);
 		}
@@ -72,7 +78,8 @@ public class GetSpacesQueryHandlerTestFixture
 			Id = Guid.NewGuid(),
 			Name = "Parent Space",
 			Description = "Parent description",
-			IsActive = true
+			IsActive = true,
+			OrganizationId = _organizationId
 		};
 
 		var childSpace = new Space
@@ -80,7 +87,8 @@ public class GetSpacesQueryHandlerTestFixture
 			Id = Guid.NewGuid(),
 			Name = "Child Space",
 			Description = "Child description",
-			IsActive = true
+			IsActive = true,
+			OrganizationId = _organizationId
 		};
 
 		TestSpaces.AddRange(new[] { parentSpace, childSpace });
@@ -144,9 +152,36 @@ public class GetSpacesQueryHandlerTestFixture
 		return this;
 	}
 
+	public GetSpacesQueryHandlerTestFixture WithSpacesFromDifferentOrganization(int spaceCount = 2)
+	{
+		var differentOrgId = Guid.NewGuid();
+		var otherSpaces = new List<Space>();
+
+		for (var i = 0; i < spaceCount; i++)
+		{
+			var space = new Space
+			{
+				Id = Guid.NewGuid(),
+				Name = $"Other Org Space {i + 1}",
+				Description = $"Description for other org space {i + 1}",
+				IsActive = true,
+				OrganizationId = differentOrgId
+			};
+			otherSpaces.Add(space);
+		}
+
+		TestSpaces.AddRange(otherSpaces);
+
+		var allSpaces = TestSpaces.BuildMockDbSet();
+		MockDbContext.Setup(db => db.Set<Space>()).Returns(allSpaces.Object);
+
+		return this;
+	}
+
 	public GetSpacesQueryHandlerTestFixture BuildHandler()
 	{
-		Handler = new GetSpacesQueryHandler(MockDbContext.Object);
+		MockCurrentUserService.Setup(u => u.OrganizationId).Returns(_organizationId);
+		Handler = new GetSpacesQueryHandler(MockDbContext.Object, MockCurrentUserService.Object);
 		return this;
 	}
 }

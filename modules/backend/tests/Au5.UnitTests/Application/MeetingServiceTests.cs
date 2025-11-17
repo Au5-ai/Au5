@@ -19,14 +19,14 @@ public class MeetingServiceTests
 		_dbContextMock = new Mock<IApplicationDbContext>();
 		_dateTimeProviderMock = new Mock<IDataProvider>();
 
-		// Set up the default SystemConfig for tests
-		var systemConfigs = new List<SystemConfig>
+		// Set up the default Organization for tests
+		var organizations = new List<Organization>
 		{
 			new() { Id = Guid.NewGuid(), BotName = "Cando" }
 		};
 
-		var systemConfigDbSet = systemConfigs.BuildMockDbSet();
-		_dbContextMock.Setup(x => x.Set<SystemConfig>()).Returns(systemConfigDbSet.Object);
+		var organizationDbSet = organizations.BuildMockDbSet();
+		_dbContextMock.Setup(x => x.Set<Organization>()).Returns(organizationDbSet.Object);
 
 		_meetingService = new MeetingService(_cacheProviderMock.Object, _dbContextMock.Object, _dateTimeProviderMock.Object);
 	}

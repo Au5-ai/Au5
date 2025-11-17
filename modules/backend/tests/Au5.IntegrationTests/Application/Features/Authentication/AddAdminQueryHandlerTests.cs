@@ -15,7 +15,7 @@ public class AddAdminQueryHandlerTests : BaseIntegrationTest
 	[Fact]
 	public async Task Handle_Should_ReturnCorrectResponse_When_ThereIsNoAdmin()
 	{
-		var command = new CreateAdminCommand("admin@gmail.com", "Mohammad Karimi", "!qa1z@wsX", "!qa1z@wsX");
+		var command = new CreateAdminCommand("admin@gmail.com", "Mohammad Karimi", "!qa1z@wsX", "!qa1z@wsX", "Test Organization");
 		var result = await Mediator.Send(command);
 
 		Assert.True(result.IsSuccess);
@@ -29,11 +29,26 @@ public class AddAdminQueryHandlerTests : BaseIntegrationTest
 		Assert.True(user.IsActive);
 		Assert.Equal(string.Empty, user.PictureUrl);
 		Assert.NotEqual(Guid.Empty, user.Id);
+
+		var organization = DbContext.Set<Organization>().FirstOrDefault();
+		Assert.NotNull(organization);
+		Assert.NotEqual(Guid.Empty, organization.Id);
+		Assert.Equal(user.OrganizationId, organization.Id);
 	}
 
 	[Fact]
 	public async Task Handle_Should_ReturnUnauthorized_When_ThereIsAdmin()
 	{
+		var organizationId = Guid.NewGuid();
+		DbContext.Set<Organization>().Add(new Organization
+		{
+			Id = organizationId,
+			OrganizationName = "Test Org",
+			BotName = "Test Bot",
+			Direction = "ltr",
+			Language = "en-US",
+		});
+
 		DbContext.Set<User>().Add(new User
 		{
 			Id = Guid.NewGuid(),
@@ -43,11 +58,12 @@ public class AddAdminQueryHandlerTests : BaseIntegrationTest
 			Role = RoleTypes.Admin,
 			CreatedAt = DateTime.Parse("2025-01-15T10:00:00"),
 			PictureUrl = "DefaultPictureUrl",
-			IsActive = true
+			IsActive = true,
+			OrganizationId = organizationId
 		});
 		await DbContext.SaveChangesAsync();
 
-		var command = new CreateAdminCommand("admin@gmail.com", "Mohammad Karimi", "!qa1z@wsX", "!qa1z@wsX");
+		var command = new CreateAdminCommand("admin@gmail.com", "Mohammad Karimi", "!qa1z@wsX", "!qa1z@wsX", "Test Organization");
 		var result = await Mediator.Send(command);
 
 		Assert.False(result.IsSuccess);
