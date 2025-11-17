@@ -42,8 +42,6 @@ public class OrganizationOptions
 
 	public string MeetingTranscriptionModel { get; set; }
 
-	public string LlmModel { get; set; }
-
 	public string SmtpHost { get; set; }
 
 	public string SmtpPassword { get; set; }

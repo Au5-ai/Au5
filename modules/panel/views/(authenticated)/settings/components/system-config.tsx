@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { Button } from "@/shared/components/ui/button";
-import { Switch } from "@/shared/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -13,10 +12,8 @@ import {
 import { LoadingPage } from "@/shared/components/loading-page";
 import { toast } from "sonner";
 import { SystemConfigs } from "@/shared/types";
-import { validateUrl } from "@/shared/lib/utils";
 import { systemController } from "@/shared/network/api/systemController";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import { Eye, EyeOff } from "lucide-react";
 
 const defaultConfigs: SystemConfigs = {
   organizationName: "",
@@ -34,8 +31,6 @@ export function SystemConfigsTab() {
   const [errors, setErrors] = useState<
     Partial<Record<keyof SystemConfigs, string>>
   >({});
-  const [showPassword, setShowPassword] = useState(false);
-  const [showOpenAIToken, setShowOpenAIToken] = useState(false);
 
   useEffect(() => {
     const loadConfig = async () => {

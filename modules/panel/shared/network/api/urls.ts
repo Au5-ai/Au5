@@ -36,7 +36,7 @@ export const API_URLS = {
     ADD_ADMIN: "/admin/hello",
   },
   ORGANIZATION: {
-    CONFIG: "/organizations/system",
+    CONFIG: "/organizations",
     EXTENSION_CONFIG: "/organizations/extension",
   },
   USERS: {
