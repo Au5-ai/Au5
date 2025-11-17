@@ -19,7 +19,7 @@ public class ExtensionConfigQueryHandler : IRequestHandler<ExtensionConfigQuery,
 
 	public async ValueTask<Result<ExtensionConfigResponse>> Handle(ExtensionConfigQuery _, CancellationToken cancellationToken)
 	{
-		var existingConfig = await _dbContext.Set<Organization>().FirstOrDefaultAsync(x => x.Id == _currentUser.UserId, cancellationToken);
+		var existingConfig = await _dbContext.Set<Organization>().FirstOrDefaultAsync(x => x.Id == _currentUser.OrganizationId, cancellationToken);
 
 		if (existingConfig is null)
 		{
