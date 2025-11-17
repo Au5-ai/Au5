@@ -7,18 +7,18 @@ import Image from "next/image";
 import { toast } from "sonner";
 import { CAPTIONS } from "../i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import { systemController } from "../systemController";
+import { organizationsController } from "../organizationsController";
 
 export function ConfigureStep({ next }: { next: () => void }) {
   const queryClient = useQueryClient();
   const handleSendConfigs = async () => {
     try {
-      const [user, systemConfig] = await Promise.all([
+      const [user, extensionConfig] = await Promise.all([
         userController.me(),
-        systemController.getExtensionConfig(),
+        organizationsController.getExtensionConfig(),
       ]);
 
-      if (user && systemConfig) {
+      if (user && extensionConfig) {
         const config = {
           user: {
             id: user.id,
@@ -26,13 +26,13 @@ export function ConfigureStep({ next }: { next: () => void }) {
             pictureUrl: user.pictureUrl,
           },
           service: {
-            panelUrl: systemConfig.panelUrl,
-            baseUrl: systemConfig.serviceBaseUrl,
-            direction: systemConfig.direction,
-            language: systemConfig.language,
-            hubUrl: systemConfig.hubUrl,
-            companyName: systemConfig.organizationName,
-            botName: systemConfig.botName,
+            panelUrl: extensionConfig.panelUrl,
+            baseUrl: extensionConfig.serviceBaseUrl,
+            direction: extensionConfig.direction,
+            language: extensionConfig.language,
+            hubUrl: extensionConfig.hubUrl,
+            companyName: extensionConfig.organizationName,
+            botName: extensionConfig.botName,
           },
         };
 
