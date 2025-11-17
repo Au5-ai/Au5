@@ -74,12 +74,12 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 
 		if (cachedMeeting is null || cachedMeeting.Status == MeetingStatus.Ended)
 		{
-			await _cacheProvider.SetAsync(meetingKey, meeting, TimeSpan.FromHours(1));
+			await _cacheProvider.SetAsync(meetingKey, meeting, TimeSpan.FromHours(2));
 		}
 		else
 		{
 			cachedMeeting.Id = meetingId;
-			await _cacheProvider.SetAsync(meetingKey, cachedMeeting, TimeSpan.FromHours(1));
+			await _cacheProvider.SetAsync(meetingKey, cachedMeeting, TimeSpan.FromHours(2));
 		}
 
 		var payload = BuildBotPayload(request, config, hashToken);
