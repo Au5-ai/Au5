@@ -2,8 +2,12 @@ namespace Au5.Application.Features.Organizations.ExtensionConfig;
 
 public record ExtensionConfigResponse
 {
-	public string BotName { get; init; }
+	public Participant User { get; init; }
+	public Service Service { get; init; }
+}
 
+public record Service
+{
 	public string HubUrl { get; init; }
 
 	public string Direction { get; init; }

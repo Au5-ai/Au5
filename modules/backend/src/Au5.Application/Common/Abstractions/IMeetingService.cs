@@ -8,7 +8,7 @@ public interface IMeetingService
 
 	Task AddGuestsToMeet(string meetId, IReadOnlyCollection<Guest> guests);
 
-	Task<string> BotIsAdded(string meetId);
+	Task<bool> BotIsAdded(string meetId, string botName);
 
 	Task<bool> PauseMeeting(string meetId, bool isPause);
 

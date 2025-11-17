@@ -8,13 +8,14 @@ using Microsoft.AspNetCore.Authorization;
 namespace Au5.BackEnd.Hubs;
 
 [Authorize]
-public class MeetingHub(IMeetingService meetingService) : Hub
+public class MeetingHub(IMeetingService meetingService, ICurrentUserService currentUserService) : Hub
 {
 	private const string METHOD = "ReceiveMessage";
+	private readonly ICurrentUserService _currentUserService = currentUserService;
 
 	public async Task UserJoinedInMeeting(UserJoinedInMeetingMessage msg)
 	{
-		if (string.IsNullOrWhiteSpace(msg.MeetId) || msg.User is null || string.IsNullOrWhiteSpace(Context.ConnectionId))
+		if (string.IsNullOrWhiteSpace(msg.MeetId) || !_currentUserService.IsAuthenticated || string.IsNullOrWhiteSpace(Context.ConnectionId))
 		{
 			return;
 		}
@@ -38,10 +39,9 @@ public class MeetingHub(IMeetingService meetingService) : Hub
 		await BroadcastToGroupExceptCallerAsync(requestToAddBotMessage.MeetId, requestToAddBotMessage).ConfigureAwait(false);
 	}
 
-	public async Task BotJoinedInMeeting(string meetId)
+	public async Task BotJoinedInMeeting(string meetId, string botName)
 	{
-		var botName = await meetingService.BotIsAdded(meetId);
-		if (string.IsNullOrWhiteSpace(botName))
+		if (!await meetingService.BotIsAdded(meetId, botName))
 		{
 			return;
 		}

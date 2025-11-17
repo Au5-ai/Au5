@@ -77,25 +77,25 @@ public class MeetingService : IMeetingService
 		await _cacheProvider.SetAsync(key, meeting, CacheExpiration);
 	}
 
-	public async Task<string> BotIsAdded(string meetId)
+	public async Task<bool> BotIsAdded(string meetId, string botName)
 	{
 		var key = GetMeetingKey(meetId);
 		var meeting = await _cacheProvider.GetAsync<Meeting>(key);
 
 		if (meeting is null || meeting.IsEnded())
 		{
-			return string.Empty;
+			return false;
 		}
 
 		if (!meeting.IsBotAdded)
 		{
-			meeting.BotName = "Cando"; //TODO: Get this name from param and Bot joined to meeting
+			meeting.BotName = botName;
 			meeting.IsBotAdded = true;
 			meeting.Status = MeetingStatus.Recording;
 		}
 
 		await _cacheProvider.SetAsync(key, meeting, CacheExpiration);
-		return meeting.BotName;
+		return true;
 	}
 
 	public async Task<bool> PauseMeeting(string meetId, bool isPause)

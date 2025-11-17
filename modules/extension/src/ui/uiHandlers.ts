@@ -196,7 +196,6 @@ export class UIHandlers {
       const response = await this.backendApi
         .addBot({
           meetId: meetId,
-          botName: this.config.service.botName,
           platform: this.platform.getPlatformName()
         })
         .catch(error => {
@@ -209,7 +208,6 @@ export class UIHandlers {
         const message = {
           type: MessageTypes.RequestToAddBot,
           meetId: meetId,
-          botName: this.config.service.botName,
           user: this.config.user
         } as RequestToAddBotMessage;
         this.meetingHubClient?.sendMessage(message);
