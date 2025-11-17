@@ -62,5 +62,11 @@ ENV JwtSettings__Issuer="YOUR_ISSUER"
 ENV JwtSettings__Audience="YOUR_AUDIENCE"
 ENV JwtSettings__ExpiryMinutes="1000"
 
+# Environment variables for Organization Configuration
+ENV Organization__OrganizationName="Asax"
+ENV Organization__BotName="Cando"
+ENV Organization__Direction="rtl"
+ENV Organization__Language="fa-IR"
+
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Au5.BackEnd.dll"]

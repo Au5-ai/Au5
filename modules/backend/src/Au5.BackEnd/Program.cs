@@ -19,7 +19,7 @@ builder.AddServiceDefaults();
 		}
 	});
 
-	builder.Services.RegisterApplicationServices()
+	builder.Services.RegisterApplicationServices(builder.Configuration)
 					.RegisterInfrastructureServices(builder.Configuration);
 
 	var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins")

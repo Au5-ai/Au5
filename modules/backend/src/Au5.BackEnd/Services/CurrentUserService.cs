@@ -34,6 +34,15 @@ public class CurrentUserService : ICurrentUserService
 		}
 	}
 
+    public Guid OrganizationId
+    {
+        get
+        {
+            var orgIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimConstants.OrganizationId)?.Value;
+            return Guid.TryParse(orgIdClaim, out var orgId) ? orgId : Guid.Empty;
+        }
+    }
+
     public bool IsAuthenticated =>
         _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated == true;
 }
