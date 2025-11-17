@@ -1,10 +1,10 @@
 using Au5.Application.Common;
 
-namespace Au5.Application.Features.Meetings.GetSystemMeetingUrl;
+namespace Au5.Application.Features.Meetings.PublicUrl;
 
-public class GetMeetingUrlCommandValidator : AbstractValidator<GetMeetingUrlCommand>
+public class PublicMeetingUrlCommandValidator : AbstractValidator<PublicMeetingUrlCommand>
 {
-	public GetMeetingUrlCommandValidator()
+	public PublicMeetingUrlCommandValidator()
 	{
 		RuleFor(s => s.MeetingId)
 			.NotEmpty()
