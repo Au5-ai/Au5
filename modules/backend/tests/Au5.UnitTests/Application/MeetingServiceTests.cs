@@ -285,9 +285,9 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync((Meeting)null);
 
-		var result = await _meetingService.BotIsAdded("meet123");
+		var result = await _meetingService.BotIsAdded("meet123", "cando");
 
-		Assert.Equal(string.Empty, result);
+		Assert.False(result);
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), It.IsAny<TimeSpan>()), Times.Never);
 	}
 
@@ -305,9 +305,9 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync(endedMeeting);
 
-		var result = await _meetingService.BotIsAdded("meet123");
+		var result = await _meetingService.BotIsAdded("meet123", "cando");
 
-		Assert.Equal(string.Empty, result);
+		Assert.False(result);
 	}
 
 	[Fact]
@@ -325,9 +325,8 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync(activeMeeting);
 
-		var result = await _meetingService.BotIsAdded("meet123");
+		var result = await _meetingService.BotIsAdded("meet123", "Cando");
 
-		Assert.Equal("Cando", result);
 		Assert.True(activeMeeting.IsBotAdded);
 		Assert.Equal("Cando", activeMeeting.BotName);
 		Assert.Equal(MeetingStatus.Recording, activeMeeting.Status);
@@ -349,9 +348,9 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync(activeMeeting);
 
-		var result = await _meetingService.BotIsAdded("meet123");
+		var result = await _meetingService.BotIsAdded("meet123", "Cando");
 
-		Assert.Equal("Cando", result);
+		Assert.True(result);
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromHours(1)), Times.Once);
 	}
 

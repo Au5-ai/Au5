@@ -64,6 +64,8 @@ public class AddBotCommandHandlerTests
 		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
 
 		var organization = CreateOrganization();
+		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
+
 		var organizations = new List<Organization> { organization };
 		var organizationDbSet = organizations.BuildMockDbSet();
 
@@ -119,6 +121,8 @@ public class AddBotCommandHandlerTests
 		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
 
 		var organization = CreateOrganization();
+		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
+
 		var organizations = new List<Organization> { organization };
 		var organizationDbSet = organizations.BuildMockDbSet();
 
@@ -145,6 +149,8 @@ public class AddBotCommandHandlerTests
 		var command = new AddBotCommand("Meet", "MeetBot", "Meet-meet-123");
 
 		var organization = CreateOrganization();
+		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
+
 		var organizations = new List<Organization> { organization };
 		var organizationDbSet = organizations.BuildMockDbSet();
 
@@ -192,6 +198,8 @@ public class AddBotCommandHandlerTests
 
 		var command = new AddBotCommand("Meets", "MeetsBot", "Meets-meet-456");
 		var organization = CreateOrganization();
+		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
+
 		var organizations = new List<Organization> { organization };
 		var organizationDbSet = organizations.BuildMockDbSet();
 
@@ -229,6 +237,8 @@ public class AddBotCommandHandlerTests
 		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
 
 		var organization = CreateOrganization();
+		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
+
 		var organizations = new List<Organization> { organization };
 		var organizationDbSet = organizations.BuildMockDbSet();
 
@@ -260,6 +270,8 @@ public class AddBotCommandHandlerTests
 		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
 
 		var organization = CreateOrganization();
+		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
+
 		var organizations = new List<Organization> { organization };
 		var organizationDbSet = organizations.BuildMockDbSet();
 
@@ -298,6 +310,8 @@ public class AddBotCommandHandlerTests
 		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
 
 		var organization = CreateOrganization();
+		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
+
 		var organizations = new List<Organization> { organization };
 		var organizationDbSet = organizations.BuildMockDbSet();
 
@@ -333,6 +347,8 @@ public class AddBotCommandHandlerTests
 
 		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
 		var organization = CreateOrganization();
+		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
+
 		var organizations = new List<Organization> { organization };
 		var organizationDbSet = organizations.BuildMockDbSet();
 
@@ -369,6 +385,8 @@ public class AddBotCommandHandlerTests
 
 		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
 		var organization = CreateOrganization();
+		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
+
 		var organizations = new List<Organization> { organization };
 		var organizationDbSet = organizations.BuildMockDbSet();
 
@@ -406,6 +424,8 @@ public class AddBotCommandHandlerTests
 
 		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
 		var organization = CreateOrganization();
+		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
+
 		var organizations = new List<Organization> { organization };
 		var organizationDbSet = organizations.BuildMockDbSet();
 
@@ -449,6 +469,8 @@ public class AddBotCommandHandlerTests
 
 		var command = new AddBotCommand("Zoom", "ZoomBot", "zoom-123");
 		var organization = CreateOrganization();
+		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
+
 		var organizations = new List<Organization> { organization };
 		var organizationDbSet = organizations.BuildMockDbSet();
 

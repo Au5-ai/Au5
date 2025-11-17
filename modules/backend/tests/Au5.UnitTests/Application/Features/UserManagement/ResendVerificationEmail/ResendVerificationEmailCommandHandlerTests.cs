@@ -111,17 +111,19 @@ public class ResendVerificationEmailCommandHandlerTests
 	public async Task Should_ReturnError_When_EmailProviderReturnsNull()
 	{
 		var userId = Guid.NewGuid();
+		var organizationId = Guid.NewGuid();
 		var user = new User
 		{
 			Id = userId,
 			Email = "test@example.com",
 			FullName = "Test User",
-			Status = UserStatus.SendVerificationLink
+			Status = UserStatus.SendVerificationLink,
+			OrganizationId = organizationId
 		};
 
 		var organization = new Organization
 		{
-			Id = Guid.NewGuid(),
+			Id = organizationId,
 			OrganizationName = "Test Organization"
 		};
 
@@ -150,17 +152,19 @@ public class ResendVerificationEmailCommandHandlerTests
 	public async Task Should_ReturnError_When_EmailProviderReturnsEmptyList()
 	{
 		var userId = Guid.NewGuid();
+		var organizationId = Guid.NewGuid();
 		var user = new User
 		{
 			Id = userId,
 			Email = "test@example.com",
 			FullName = "Test User",
-			Status = UserStatus.SendVerificationLink
+			Status = UserStatus.SendVerificationLink,
+			OrganizationId = organizationId
 		};
 
 		var organization = new Organization
 		{
-			Id = Guid.NewGuid(),
+			Id = organizationId,
 			OrganizationName = "Test Organization"
 		};
 
@@ -191,17 +195,19 @@ public class ResendVerificationEmailCommandHandlerTests
 		var userId = Guid.NewGuid();
 		var verificationLink = "https://panel.test.com/verify/abc123";
 
+		var organizationId = Guid.NewGuid();
 		var user = new User
 		{
 			Id = userId,
 			Email = "test@example.com",
 			FullName = "Test User",
-			Status = UserStatus.SendVerificationLink
+			Status = UserStatus.SendVerificationLink,
+			OrganizationId = organizationId
 		};
 
 		var organization = new Organization
 		{
-			Id = Guid.NewGuid(),
+			Id = organizationId,
 			OrganizationName = "Test Organization"
 		};
 
@@ -233,17 +239,19 @@ public class ResendVerificationEmailCommandHandlerTests
 	public async Task Should_PassCorrectUserToEmailProvider_When_SendingEmail()
 	{
 		var userId = Guid.NewGuid();
+		var organizationId = Guid.NewGuid();
 		var user = new User
 		{
 			Id = userId,
 			Email = "test@example.com",
 			FullName = "Test User",
-			Status = UserStatus.SendVerificationLink
+			Status = UserStatus.SendVerificationLink,
+			OrganizationId = organizationId
 		};
 
 		var organization = new Organization
 		{
-			Id = Guid.NewGuid(),
+			Id = organizationId,
 			OrganizationName = "Test Organization"
 		};
 
@@ -280,17 +288,19 @@ public class ResendVerificationEmailCommandHandlerTests
 		var userId = Guid.NewGuid();
 		var organizationName = "Acme Corporation";
 
+		var organizationId = Guid.NewGuid();
 		var user = new User
 		{
 			Id = userId,
 			Email = "test@example.com",
 			FullName = "Test User",
-			Status = UserStatus.SendVerificationLink
+			Status = UserStatus.SendVerificationLink,
+			OrganizationId = organizationId
 		};
 
 		var organization = new Organization
 		{
-			Id = Guid.NewGuid(),
+			Id = organizationId,
 			OrganizationName = organizationName
 		};
 
@@ -325,17 +335,19 @@ public class ResendVerificationEmailCommandHandlerTests
 	public async Task Should_PassSmtpOptionsToEmailProvider_When_SendingEmail()
 	{
 		var userId = Guid.NewGuid();
+		var organizationId = Guid.NewGuid();
 		var user = new User
 		{
 			Id = userId,
 			Email = "test@example.com",
 			FullName = "Test User",
-			Status = UserStatus.SendVerificationLink
+			Status = UserStatus.SendVerificationLink,
+			OrganizationId = organizationId
 		};
 
 		var organization = new Organization
 		{
-			Id = Guid.NewGuid(),
+			Id = organizationId,
 			OrganizationName = "Test Organization"
 		};
 
@@ -463,17 +475,19 @@ public class ResendVerificationEmailCommandHandlerTests
 		var firstLink = "https://panel.test.com/verify/first";
 		var secondLink = "https://panel.test.com/verify/second";
 
+		var organizationId = Guid.NewGuid();
 		var user = new User
 		{
 			Id = userId,
 			Email = "test@example.com",
 			FullName = "Test User",
-			Status = UserStatus.SendVerificationLink
+			Status = UserStatus.SendVerificationLink,
+			OrganizationId = organizationId
 		};
 
 		var organization = new Organization
 		{
-			Id = Guid.NewGuid(),
+			Id = organizationId,
 			OrganizationName = "Test Organization"
 		};
 
