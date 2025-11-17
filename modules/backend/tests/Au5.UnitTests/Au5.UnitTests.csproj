@@ -42,6 +42,7 @@
 
   <ItemGroup>
     <Folder Include="Application\Features\Meetings\CloseMeetingByUser\" />
+    <Folder Include="Application\Features\Organizations\ExtensionConfig\" />
     <Folder Include="Application\Features\Setup\HelloAdmin\" />
     <Folder Include="Infrastructure\Adapters\" />
     <Folder Include="Infrastructure\Providers\" />
