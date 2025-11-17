@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AddUserRequest, AddUserResponse } from "./types";
 import { useRouter } from "next/navigation";
-import { setupController } from "./setupController";
+import { signupController } from "./signupController";
 import { handleAuthSuccess } from "@/shared/hooks/use-auth";
 import { authController } from "@/shared/network/api/authController";
 import { ROUTES } from "@/shared/routes";
@@ -12,7 +12,7 @@ export function useSignup() {
   const router = useRouter();
 
   return useMutation<AddUserResponse, unknown, AddUserRequest>({
-    mutationFn: setupController.addAdmin,
+    mutationFn: signupController.createAdmin,
     onSuccess: async (response, signupData) => {
       if (!response.isDone) {
         throw new Error(GLOBAL_CAPTIONS.pages.signup.singupException);

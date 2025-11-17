@@ -7,6 +7,7 @@ export interface AddUserRequest {
   fullName: string;
   password: string;
   repeatedPassword: string;
+  organizationName: string;
 }
 
 export interface AddUserResponse {

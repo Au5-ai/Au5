@@ -22,7 +22,7 @@ export default function SystemConfigPage() {
           <TabsList>
             <TabsTrigger value="SystemConfigsTab">
               <Settings className="mr-1 h-4 w-4" />{" "}
-              {SYSTEM_CAPTIONS.tabs.systemConfiguration}
+              {SYSTEM_CAPTIONS.tabs.configuration}
             </TabsTrigger>
             <TabsTrigger value="Reactions">
               <Target className="mr-1 h-4 w-4" />{" "}

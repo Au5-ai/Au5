@@ -1,8 +1,8 @@
 export const SYSTEM_CAPTIONS = {
-  title: "System Settings",
-  description: "Configure your bot and meeting system parameters",
+  title: "Settings",
+  description: "Configure your bot and meeting organization parameters",
   tabs: {
-    systemConfiguration: "System Configuration",
+    configuration: "Configuration",
     reactions: "Reactions",
     ai: "AI",
     autoCorrection: "Auto Correction",

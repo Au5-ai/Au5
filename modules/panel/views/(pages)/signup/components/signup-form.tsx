@@ -23,6 +23,7 @@ export function SignupForm({
   const [formData, setFormData] = useState({
     email: "",
     fullname: "",
+    organizationName: "",
     password: "",
     confirmPassword: "",
   });
@@ -30,6 +31,7 @@ export function SignupForm({
   const [errors, setErrors] = useState({
     email: "",
     fullname: "",
+    organizationName: "",
     password: "",
     confirmPassword: "",
   });
@@ -48,6 +50,7 @@ export function SignupForm({
     const newErrors = {
       email: "",
       fullname: "",
+      organizationName: "",
       password: "",
       confirmPassword: "",
     };
@@ -65,6 +68,17 @@ export function SignupForm({
       formData.fullname.trim().length > 50
     ) {
       newErrors.fullname = GLOBAL_CAPTIONS.validation.fullname.invalidLength;
+    }
+
+    if (!formData.organizationName.trim()) {
+      newErrors.organizationName =
+        GLOBAL_CAPTIONS.validation.organizationName.required;
+    } else if (
+      formData.organizationName.trim().length < 2 ||
+      formData.organizationName.trim().length > 100
+    ) {
+      newErrors.organizationName =
+        GLOBAL_CAPTIONS.validation.organizationName.invalidLength;
     }
 
     if (!formData.password) {
@@ -91,6 +105,7 @@ export function SignupForm({
       const signupData: AddUserRequest = {
         email: formData.email,
         fullName: formData.fullname,
+        organizationName: formData.organizationName,
         password: formData.password,
         repeatedPassword: formData.confirmPassword,
       };
@@ -114,6 +129,29 @@ export function SignupForm({
           <form onSubmit={handleSubmit}>
             <div className="grid gap-6">
               <div className="grid gap-6">
+                <div className="grid gap-2">
+                  <Label htmlFor="organizationName">
+                    {GLOBAL_CAPTIONS.fields.organizationName.label}
+                  </Label>
+                  <Input
+                    id="organizationName"
+                    type="text"
+                    placeholder={
+                      GLOBAL_CAPTIONS.fields.organizationName.placeholder
+                    }
+                    value={formData.organizationName}
+                    onChange={(e) =>
+                      handleInputChange("organizationName", e.target.value)
+                    }
+                    className={errors.organizationName ? "border-red-500" : ""}
+                    required
+                  />
+                  {errors.organizationName && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.organizationName}
+                    </p>
+                  )}
+                </div>
                 <div className="grid gap-2">
                   <Label htmlFor="email">
                     {GLOBAL_CAPTIONS.fields.email.label}

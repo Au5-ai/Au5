@@ -18,26 +18,6 @@ export interface AppConfig {
 export interface SystemConfigs {
   organizationName: string;
   botName: string;
-  botFatherUrl: string;
-  botHubUrl: string;
-  hubUrl: string;
-  serviceBaseUrl: string;
-  aiProviderUrl: string;
-  panelUrl: string;
   direction: string;
   language: string;
-  openAIToken: string;
-  openAIProxyUrl: string;
-  meetingTranscriptionModel: string;
-  autoLeaveWaitingEnter: number;
-  autoLeaveNoParticipant: number;
-  autoLeaveAllParticipantsLeft: number;
-  meetingVideoRecording: boolean;
-  meetingAudioRecording: boolean;
-  meetingTranscription: boolean;
-  smtpUseSSl: boolean;
-  smtpHost: string;
-  smtpPort: number;
-  smtpUser: string;
-  smtpPassword: string;
 }
