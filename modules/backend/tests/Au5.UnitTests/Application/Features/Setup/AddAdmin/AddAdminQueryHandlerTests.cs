@@ -25,8 +25,6 @@ public class AddAdminQueryHandlerTests
 
 		_mockOrganizationOptions.Setup(x => x.Value).Returns(new OrganizationOptions
 		{
-			OrganizationName = "Test Org",
-			BotName = "Test Bot",
 			Direction = "ltr",
 			Language = "en-US",
 		});

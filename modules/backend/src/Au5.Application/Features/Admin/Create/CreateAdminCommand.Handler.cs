@@ -28,7 +28,7 @@ public class CreateAdminCommandHandler : IRequestHandler<CreateAdminCommand, Res
 		{
 			Id = organizationId,
 			OrganizationName = request.OrganizationName,
-			BotName = _organizationOptions.BotName,
+			BotName = $"{request.OrganizationName}_Bot",
 			Direction = _organizationOptions.Direction,
 			Language = _organizationOptions.Language,
 		};

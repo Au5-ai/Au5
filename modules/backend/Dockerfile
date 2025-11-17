@@ -63,8 +63,6 @@ ENV JwtSettings__Audience="YOUR_AUDIENCE"
 ENV JwtSettings__ExpiryMinutes="1000"
 
 # Environment variables for Organization Configuration
-ENV Organization__OrganizationName="Au5"
-ENV Organization__BotName="Au5 Bot"
 ENV Organization__HubUrl="http://localhost:1366/meetingHub"
 ENV Organization__Direction="rtl"
 ENV Organization__Language="fa-IR"

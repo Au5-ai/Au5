@@ -4,10 +4,6 @@ public class OrganizationOptions
 {
 	public const string SectionName = "Organization";
 
-	public string OrganizationName { get; set; }
-
-	public string BotName { get; set; }
-
 	public string HubUrl { get; set; }
 
 	public string Direction { get; set; }
