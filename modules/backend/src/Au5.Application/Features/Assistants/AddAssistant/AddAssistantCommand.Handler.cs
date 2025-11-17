@@ -1,31 +1,34 @@
 using Au5.Application.Common;
+using Au5.Application.Common.Options;
 using Au5.Application.Dtos.AI;
+using Microsoft.Extensions.Options;
 
 namespace Au5.Application.Features.Assistants.AddAssistant;
 
-public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngineAdapter aiEngine, ICurrentUserService currentUserService, IDataProvider dataProvider) : IRequestHandler<AddAssistantCommand, Result<AddAssisstantResponse>>
+public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngineAdapter aiEngine, ICurrentUserService currentUserService, IDataProvider dataProvider, IOptions<OrganizationOptions> options) : IRequestHandler<AddAssistantCommand, Result<AddAssisstantResponse>>
 {
 	private readonly IApplicationDbContext _dbContext = dbContext;
 	private readonly IAIEngineAdapter _aiEngine = aiEngine;
 	private readonly ICurrentUserService _currentUserService = currentUserService;
 	private readonly IDataProvider _dataProvider = dataProvider;
+	private readonly OrganizationOptions _organizationOptions = options.Value;
 
 	public async ValueTask<Result<AddAssisstantResponse>> Handle(AddAssistantCommand request, CancellationToken cancellationToken)
 	{
-		var config = await _dbContext.Set<SystemConfig>().AsNoTracking().FirstOrDefaultAsync(cancellationToken);
+		var config = await _dbContext.Set<Organization>().AsNoTracking().FirstOrDefaultAsync(cancellationToken);
 		if (config is null)
 		{
 			return Error.Failure(description: AppResources.System.IsNotConfigured);
 		}
 
 		var assistantId = await _aiEngine.CreateAssistantAsync(
-			config.AIProviderUrl,
+			_organizationOptions.AIProviderUrl,
 			new CreateAssistantRequest()
 			{
 				Instructions = request.Instructions,
 				Model = request.LLMModel,
-				ApiKey = config.OpenAIToken,
-				ProxyUrl = config.OpenAIProxyUrl,
+				ApiKey = _organizationOptions.OpenAIToken,
+				ProxyUrl = _organizationOptions.OpenAIProxyUrl,
 				Name = request.Name,
 				Tools = []
 			}, cancellationToken);
@@ -48,6 +51,7 @@ public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngi
 			IsActive = true,
 			CreatedAt = _dataProvider.UtcNow,
 			UserId = _currentUserService.UserId,
+			OrganizationId = _currentUserService.OrganizationId,
 			OpenAIAssistantId = assistantId
 		};
 

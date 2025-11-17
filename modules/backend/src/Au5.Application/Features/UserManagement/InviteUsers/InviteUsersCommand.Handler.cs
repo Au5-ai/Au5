@@ -1,5 +1,7 @@
 using Au5.Application.Common;
+using Au5.Application.Common.Options;
 using Au5.Application.Dtos;
+using Microsoft.Extensions.Options;
 
 namespace Au5.Application.Features.UserManagement.InviteUsers;
 
@@ -8,22 +10,32 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 	private readonly IApplicationDbContext _context;
 	private readonly IEmailProvider _emailProvider;
 	private readonly IDataProvider _dataProvider;
+	private readonly ICurrentUserService _currentUser;
+	private readonly OrganizationOptions _organizationOptions;
 
-	public InviteUsersCommandHandler(IApplicationDbContext context, IEmailProvider emailProvider, IDataProvider dataProvider)
+	public InviteUsersCommandHandler(
+		IApplicationDbContext context,
+		IEmailProvider emailProvider,
+		IDataProvider dataProvider,
+		IOptions<OrganizationOptions> options,
+		ICurrentUserService currentUser)
 	{
 		_context = context;
 		_emailProvider = emailProvider;
 		_dataProvider = dataProvider;
+		_organizationOptions = options.Value;
+		_currentUser = currentUser;
+		_currentUser = currentUser;
 	}
 
 	public async ValueTask<Result<InviteUsersResponse>> Handle(InviteUsersCommand request, CancellationToken cancellationToken)
 	{
 		List<User> invited = [];
 		InviteUsersResponse response = new() { Success = [], Failed = [] };
-		var config = await _context.Set<SystemConfig>().AsNoTracking().FirstOrDefaultAsync(cancellationToken: cancellationToken);
+		var config = await _context.Set<Organization>().Where(x => x.Id == _currentUser.OrganizationId).AsNoTracking().FirstOrDefaultAsync(cancellationToken: cancellationToken);
 		if (config is null)
 		{
-			return Error.Failure(description: AppResources.System.IsNotConfigured);
+			return Error.Unauthorized(description: AppResources.System.IsNotConfigured);
 		}
 
 		var emails = request.Invites.Select(x => x.Email).ToArray();
@@ -45,7 +57,8 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 					Password = "Not Entered",
 					PictureUrl = string.Empty,
 					Role = userInvited.Role,
-					Status = UserStatus.SendVerificationLink
+					Status = UserStatus.SendVerificationLink,
+					OrganizationId = _currentUser.OrganizationId
 				};
 				_context.Set<User>().Add(user);
 				invited.Add(user);
@@ -62,12 +75,12 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 		{
 			await _emailProvider.SendInviteAsync(invited, config.OrganizationName, new SmtpOptions()
 			{
-				Host = config.SmtpHost,
-				BaseUrl = config.PanelUrl,
-				Password = config.SmtpPassword,
-				Port = config.SmtpPort,
-				User = config.SmtpUser,
-				UseSsl = config.SmtpUseSSl
+				Host = _organizationOptions.SmtpHost,
+				BaseUrl = _organizationOptions.PanelUrl,
+				Password = _organizationOptions.SmtpPassword,
+				Port = _organizationOptions.SmtpPort,
+				User = _organizationOptions.SmtpUser,
+				UseSsl = _organizationOptions.SmtpUseSSl
 			});
 		}
 		else

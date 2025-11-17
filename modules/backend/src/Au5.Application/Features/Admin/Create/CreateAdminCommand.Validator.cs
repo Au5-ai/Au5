@@ -23,5 +23,9 @@ public class CreateAdminCommandValidator : AbstractValidator<CreateAdminCommand>
 		RuleFor(x => x.RepeatedPassword)
 			.NotEmpty().WithMessage("Repeated password is required.")
 			.Equal(x => x.Password).WithMessage("Passwords do not match.");
+
+		RuleFor(x => x.OrganizationName)
+			.NotEmpty().WithMessage("Organization name is required.")
+			.MaximumLength(100).WithMessage("Organization name must not exceed 100 characters.");
 	}
 }

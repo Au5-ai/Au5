@@ -34,89 +34,18 @@ namespace Au5.Infrastructure.Migrations
 				});
 
 			migrationBuilder.CreateTable(
-				name: "Reaction",
-				columns: table => new
-				{
-					Id = table.Column<int>(type: "int", nullable: false)
-						.Annotation("SqlServer:Identity", "1, 1"),
-					Type = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
-					Emoji = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-					ClassName = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
-					IsActive = table.Column<bool>(type: "bit", nullable: false)
-				},
-				constraints: table =>
-				{
-					table.PrimaryKey("PK_dbo_Reaction", x => x.Id);
-				});
-
-			migrationBuilder.CreateTable(
-				name: "Space",
-				columns: table => new
-				{
-					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-					Name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
-					Description = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
-					IsActive = table.Column<bool>(type: "bit", nullable: false)
-				},
-				constraints: table =>
-				{
-					table.PrimaryKey("PK_dbo_Space", x => x.Id);
-				});
-
-			migrationBuilder.CreateTable(
-				name: "SystemConfig",
+				name: "Organization",
 				columns: table => new
 				{
 					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					OrganizationName = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
 					BotName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-					HubUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
 					Direction = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
-					Language = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
-					ServiceBaseUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
-					BotFatherUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
-					BotHubUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
-					AIProviderUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
-					OpenAIToken = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
-					OpenAIProxyUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
-					PanelUrl = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
-					AutoLeaveWaitingEnter = table.Column<int>(type: "int", nullable: false),
-					AutoLeaveNoParticipant = table.Column<int>(type: "int", nullable: false),
-					AutoLeaveAllParticipantsLeft = table.Column<int>(type: "int", nullable: false),
-					MeetingVideoRecording = table.Column<bool>(type: "bit", nullable: false),
-					MeetingAudioRecording = table.Column<bool>(type: "bit", nullable: false),
-					MeetingTranscription = table.Column<bool>(type: "bit", nullable: false),
-					MeetingTranscriptionModel = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
-					SmtpHost = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-					SmtpPassword = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
-					SmtpPort = table.Column<int>(type: "int", nullable: false),
-					SmtpUser = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-					SmtpUseSSl = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+					Language = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false)
 				},
 				constraints: table =>
 				{
-					table.PrimaryKey("PK_dbo_SystemConfig", x => x.Id);
-				});
-
-			migrationBuilder.CreateTable(
-				name: "User",
-				columns: table => new
-				{
-					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-					FullName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-					PictureUrl = table.Column<string>(type: "varchar(250)", unicode: false, maxLength: 250, nullable: true),
-					Email = table.Column<string>(type: "varchar(75)", unicode: false, maxLength: 75, nullable: false),
-					Password = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
-					IsActive = table.Column<bool>(type: "bit", nullable: false),
-					CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-					LastLoginAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-					LastPasswordChangeAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-					Role = table.Column<byte>(type: "tinyint", nullable: false),
-					Status = table.Column<int>(type: "int", nullable: false)
-				},
-				constraints: table =>
-				{
-					table.PrimaryKey("PK_dbo_User", x => x.Id);
+					table.PrimaryKey("PK_dbo_Organization", x => x.Id);
 				});
 
 			migrationBuilder.CreateTable(
@@ -137,6 +66,75 @@ namespace Au5.Infrastructure.Migrations
 				});
 
 			migrationBuilder.CreateTable(
+				name: "Reaction",
+				columns: table => new
+				{
+					Id = table.Column<int>(type: "int", nullable: false)
+						.Annotation("SqlServer:Identity", "1, 1"),
+					Type = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
+					Emoji = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+					ClassName = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
+					IsActive = table.Column<bool>(type: "bit", nullable: false),
+					OrganizationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+				},
+				constraints: table =>
+				{
+					table.PrimaryKey("PK_dbo_Reaction", x => x.Id);
+					table.ForeignKey(
+						name: "FK_Reaction_Organization_OrganizationId",
+						column: x => x.OrganizationId,
+						principalTable: "Organization",
+						principalColumn: "Id");
+				});
+
+			migrationBuilder.CreateTable(
+				name: "Space",
+				columns: table => new
+				{
+					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+					Name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
+					Description = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
+					IsActive = table.Column<bool>(type: "bit", nullable: false),
+					OrganizationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+				},
+				constraints: table =>
+				{
+					table.PrimaryKey("PK_dbo_Space", x => x.Id);
+					table.ForeignKey(
+						name: "FK_Space_Organization_OrganizationId",
+						column: x => x.OrganizationId,
+						principalTable: "Organization",
+						principalColumn: "Id");
+				});
+
+			migrationBuilder.CreateTable(
+				name: "User",
+				columns: table => new
+				{
+					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+					FullName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+					PictureUrl = table.Column<string>(type: "varchar(250)", unicode: false, maxLength: 250, nullable: true),
+					Email = table.Column<string>(type: "varchar(75)", unicode: false, maxLength: 75, nullable: false),
+					Password = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
+					IsActive = table.Column<bool>(type: "bit", nullable: false),
+					CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+					LastLoginAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+					LastPasswordChangeAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+					Role = table.Column<byte>(type: "tinyint", nullable: false),
+					Status = table.Column<int>(type: "int", nullable: false),
+					OrganizationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+				},
+				constraints: table =>
+				{
+					table.PrimaryKey("PK_dbo_User", x => x.Id);
+					table.ForeignKey(
+						name: "FK_User_Organization_OrganizationId",
+						column: x => x.OrganizationId,
+						principalTable: "Organization",
+						principalColumn: "Id");
+				});
+
+			migrationBuilder.CreateTable(
 				name: "Assistant",
 				columns: table => new
 				{
@@ -150,11 +148,17 @@ namespace Au5.Infrastructure.Migrations
 					UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
 					IsDefault = table.Column<bool>(type: "bit", nullable: false),
 					IsActive = table.Column<bool>(type: "bit", nullable: false),
-					CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+					CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+					OrganizationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
 				},
 				constraints: table =>
 				{
 					table.PrimaryKey("PK_Assistant", x => x.Id);
+					table.ForeignKey(
+						name: "FK_Assistant_Organization_OrganizationId",
+						column: x => x.OrganizationId,
+						principalTable: "Organization",
+						principalColumn: "Id");
 					table.ForeignKey(
 						name: "FK_Assistant_User_UserId",
 						column: x => x.UserId,
@@ -388,20 +392,12 @@ namespace Au5.Infrastructure.Migrations
 				});
 
 			migrationBuilder.InsertData(
-				table: "Reaction",
-				columns: new[] { "Id", "ClassName", "Emoji", "IsActive", "Type" },
-				values: new object[,]
-				{
-					{ 1, "reaction-task bg-blue-100 text-blue-700 border-blue-200", "⚡", false, "Task" },
-					{ 2, "reaction-important bg-amber-100 text-amber-700 border-amber-200", "⭐", false, "GoodPoint" },
-					{ 3, "reaction-bug bg-rose-100 text-rose-700 border-rose-200", "🐞", false, "Bug" }
-				});
-
-			migrationBuilder.InsertData(
 				table: "RoleMenus",
 				columns: new[] { "MenuId", "RoleType" },
 				values: new object[,]
 				{
+					{ 100, (byte)1 },
+					{ 200, (byte)1 },
 					{ 300, (byte)1 },
 					{ 400, (byte)1 },
 					{ 500, (byte)1 },
@@ -435,6 +431,11 @@ namespace Au5.Infrastructure.Migrations
 				name: "IX_AppliedReactions_ReactionId",
 				table: "AppliedReactions",
 				column: "ReactionId");
+
+			migrationBuilder.CreateIndex(
+				name: "IX_Assistant_OrganizationId",
+				table: "Assistant",
+				column: "OrganizationId");
 
 			migrationBuilder.CreateIndex(
 				name: "IX_Assistant_UserId",
@@ -482,15 +483,30 @@ namespace Au5.Infrastructure.Migrations
 				column: "UserId");
 
 			migrationBuilder.CreateIndex(
+				name: "IX_Reaction_OrganizationId",
+				table: "Reaction",
+				column: "OrganizationId");
+
+			migrationBuilder.CreateIndex(
 				name: "IX_RoleMenus_MenuId",
 				table: "RoleMenus",
 				column: "MenuId");
+
+			migrationBuilder.CreateIndex(
+				name: "IX_Space_OrganizationId",
+				table: "Space",
+				column: "OrganizationId");
 
 			migrationBuilder.CreateIndex(
 				name: "IX_User_Email",
 				table: "User",
 				column: "Email",
 				unique: true);
+
+			migrationBuilder.CreateIndex(
+				name: "IX_User_OrganizationId",
+				table: "User",
+				column: "OrganizationId");
 
 			migrationBuilder.CreateIndex(
 				name: "IX_UserSpace_SpaceId",
@@ -520,9 +536,6 @@ namespace Au5.Infrastructure.Migrations
 				name: "RoleMenus");
 
 			migrationBuilder.DropTable(
-				name: "SystemConfig");
-
-			migrationBuilder.DropTable(
 				name: "UserSpace");
 
 			migrationBuilder.DropTable(
@@ -545,6 +558,9 @@ namespace Au5.Infrastructure.Migrations
 
 			migrationBuilder.DropTable(
 				name: "User");
+
+			migrationBuilder.DropTable(
+				name: "Organization");
 		}
 	}
 }

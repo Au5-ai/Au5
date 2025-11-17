@@ -1,4 +1,4 @@
-namespace Au5.Application.Features.SystemConfigs.ExtensionConfig;
+namespace Au5.Application.Features.Organizations.ExtensionConfig;
 
 public record ExtensionConfigResponse
 {

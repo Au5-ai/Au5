@@ -21,6 +21,6 @@ public sealed class LoginCommandHandler(IApplicationDbContext dbContext, ITokenS
 
 		user.LastLoginAt = _dataProvider.Now;
 		await _dbContext.SaveChangesAsync(cancellationToken);
-		return _tokenService.GenerateToken(user.Id, user.FullName, user.Role);
+		return _tokenService.GenerateToken(user.Id, user.FullName, user.Role, user.OrganizationId);
 	}
 }

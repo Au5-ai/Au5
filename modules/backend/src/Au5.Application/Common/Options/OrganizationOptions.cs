@@ -1,7 +1,9 @@
-namespace Au5.Application.Features.SystemConfigs.GetConfig;
+namespace Au5.Application.Common.Options;
 
-public record SystemConfigResponse
+public class OrganizationOptions
 {
+	public const string SectionName = "Organization";
+
 	public string OrganizationName { get; set; }
 
 	public string BotName { get; set; }
@@ -18,13 +20,13 @@ public record SystemConfigResponse
 
 	public string BotHubUrl { get; set; }
 
+	public string AIProviderUrl { get; set; }
+
 	public string OpenAIToken { get; set; }
 
 	public string OpenAIProxyUrl { get; set; }
 
 	public string PanelUrl { get; set; }
-
-	public string AIProviderUrl { get; set; }
 
 	public int AutoLeaveWaitingEnter { get; set; }
 
@@ -40,15 +42,15 @@ public record SystemConfigResponse
 
 	public string MeetingTranscriptionModel { get; set; }
 
-	public string LLMModel { get; set; }
-
-	public bool SmtpUseSSl { get; set; }
+	public string LlmModel { get; set; }
 
 	public string SmtpHost { get; set; }
+
+	public string SmtpPassword { get; set; }
 
 	public int SmtpPort { get; set; }
 
 	public string SmtpUser { get; set; }
 
-	public string SmtpPassword { get; set; }
+	public bool SmtpUseSSl { get; set; }
 }

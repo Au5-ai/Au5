@@ -14,10 +14,11 @@ public class GetUserSpacesQueryHandler : IRequestHandler<UserSpacesQuery, Result
 	public async ValueTask<Result<IReadOnlyCollection<UserSpaceResponse>>> Handle(UserSpacesQuery request, CancellationToken cancellationToken)
 	{
 		var userId = _currentUserService.UserId;
+		var organizationId = _currentUserService.OrganizationId;
 
 		var userSpaces = await _context.Set<UserSpace>()
 			.Include(us => us.Space)
-			.Where(us => us.UserId == userId && us.Space.IsActive)
+			.Where(us => us.UserId == userId && us.Space.IsActive && us.Space.OrganizationId == organizationId)
 			.AsNoTracking()
 			.Select(us => new UserSpaceResponse
 			{

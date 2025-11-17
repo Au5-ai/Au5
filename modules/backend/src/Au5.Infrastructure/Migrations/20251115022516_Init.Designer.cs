@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251027001751_Init")]
+    [Migration("20251115022516_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -148,10 +148,15 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrganizationId");
 
                     b.HasIndex("UserId");
 
@@ -425,6 +430,42 @@ namespace Au5.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Au5.Domain.Entities.Organization", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BotName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Direction")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(5)");
+
+                    b.Property<string>("OrganizationName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("Id")
+                        .HasName("PK_dbo_Organization");
+
+                    b.ToTable("Organization");
+                });
+
             modelBuilder.Entity("Au5.Domain.Entities.ParticipantInMeeting", b =>
                 {
                     b.Property<int>("Id")
@@ -472,6 +513,9 @@ namespace Au5.Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -481,33 +525,9 @@ namespace Au5.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("PK_dbo_Reaction");
 
-                    b.ToTable("Reaction");
+                    b.HasIndex("OrganizationId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ClassName = "reaction-task bg-blue-100 text-blue-700 border-blue-200",
-                            Emoji = "⚡",
-                            IsActive = false,
-                            Type = "Task"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ClassName = "reaction-important bg-amber-100 text-amber-700 border-amber-200",
-                            Emoji = "⭐",
-                            IsActive = false,
-                            Type = "GoodPoint"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ClassName = "reaction-bug bg-rose-100 text-rose-700 border-rose-200",
-                            Emoji = "🐞",
-                            IsActive = false,
-                            Type = "Bug"
-                        });
+                    b.ToTable("Reaction");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.RoleMenu", b =>
@@ -539,6 +559,16 @@ namespace Au5.Infrastructure.Migrations
                         {
                             RoleType = (byte)2,
                             MenuId = 300
+                        },
+                        new
+                        {
+                            RoleType = (byte)1,
+                            MenuId = 100
+                        },
+                        new
+                        {
+                            RoleType = (byte)1,
+                            MenuId = 200
                         },
                         new
                         {
@@ -582,142 +612,15 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id")
                         .HasName("PK_dbo_Space");
 
+                    b.HasIndex("OrganizationId");
+
                     b.ToTable("Space");
-                });
-
-            modelBuilder.Entity("Au5.Domain.Entities.SystemConfig", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AIProviderUrl")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<int>("AutoLeaveAllParticipantsLeft")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AutoLeaveNoParticipant")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AutoLeaveWaitingEnter")
-                        .HasColumnType("int");
-
-                    b.Property<string>("BotFatherUrl")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("BotHubUrl")
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("BotName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Direction")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("HubUrl")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(5)");
-
-                    b.Property<bool>("MeetingAudioRecording")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("MeetingTranscription")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("MeetingTranscriptionModel")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<bool>("MeetingVideoRecording")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("OpenAIProxyUrl")
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("OpenAIToken")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("OrganizationName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("PanelUrl")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("ServiceBaseUrl")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("SmtpHost")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("SmtpPassword")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int>("SmtpPort")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("SmtpUseSSl")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("SmtpUser")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)");
-
-                    b.HasKey("Id")
-                        .HasName("PK_dbo_SystemConfig");
-
-                    b.ToTable("SystemConfig");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.User", b =>
@@ -750,6 +653,9 @@ namespace Au5.Infrastructure.Migrations
                     b.Property<DateTime?>("LastPasswordChangeAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -772,6 +678,8 @@ namespace Au5.Infrastructure.Migrations
 
                     b.HasIndex("Email")
                         .IsUnique();
+
+                    b.HasIndex("OrganizationId");
 
                     b.ToTable("User");
                 });
@@ -885,11 +793,19 @@ namespace Au5.Infrastructure.Migrations
 
             modelBuilder.Entity("Au5.Domain.Entities.Assistant", b =>
                 {
+                    b.HasOne("Au5.Domain.Entities.Organization", "Organization")
+                        .WithMany("Assistants")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("Au5.Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("Organization");
 
                     b.Navigation("User");
                 });
@@ -980,6 +896,17 @@ namespace Au5.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Au5.Domain.Entities.Reaction", b =>
+                {
+                    b.HasOne("Au5.Domain.Entities.Organization", "Organization")
+                        .WithMany("Reactions")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
+                });
+
             modelBuilder.Entity("Au5.Domain.Entities.RoleMenu", b =>
                 {
                     b.HasOne("Au5.Domain.Entities.Menu", "Menu")
@@ -989,6 +916,28 @@ namespace Au5.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Menu");
+                });
+
+            modelBuilder.Entity("Au5.Domain.Entities.Space", b =>
+                {
+                    b.HasOne("Au5.Domain.Entities.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("Au5.Domain.Entities.User", b =>
+                {
+                    b.HasOne("Au5.Domain.Entities.Organization", "Organization")
+                        .WithMany("Users")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.UserSpace", b =>
@@ -1031,6 +980,15 @@ namespace Au5.Infrastructure.Migrations
                     b.Navigation("Children");
 
                     b.Navigation("RoleMenus");
+                });
+
+            modelBuilder.Entity("Au5.Domain.Entities.Organization", b =>
+                {
+                    b.Navigation("Assistants");
+
+                    b.Navigation("Reactions");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Au5.Domain.Entities.Space", b =>

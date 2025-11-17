@@ -1,4 +1,6 @@
 using Au5.Application.Common;
+using Au5.Application.Common.Options;
+using Microsoft.Extensions.Options;
 
 namespace Au5.Application.Features.Admin.Create;
 
@@ -6,23 +8,35 @@ public class CreateAdminCommandHandler : IRequestHandler<CreateAdminCommand, Res
 {
 	private readonly IApplicationDbContext _dbContext;
 	private readonly IDataProvider _dataProvider;
+	private readonly OrganizationOptions _organizationOptions;
 
-	public CreateAdminCommandHandler(IApplicationDbContext dbContext, IDataProvider dataProvider)
+	public CreateAdminCommandHandler(
+		IApplicationDbContext dbContext,
+		IDataProvider dataProvider,
+		IOptions<OrganizationOptions> organizationOptions)
 	{
 		_dbContext = dbContext;
 		_dataProvider = dataProvider;
+		_organizationOptions = organizationOptions.Value;
 	}
 
 	public async ValueTask<Result<CreateAdminResponse>> Handle(CreateAdminCommand request, CancellationToken cancellationToken)
 	{
-		var admin = await _dbContext.Set<User>().FirstOrDefaultAsync(x => x.Role == RoleTypes.Admin && x.IsActive, cancellationToken);
-		if (admin is not null)
+		var organizationId = _dataProvider.NewGuid();
+
+		var organization = new Organization
 		{
-			return Error.Unauthorized(description: AppResources.Auth.UnAuthorizedAction);
-		}
+			Id = organizationId,
+			OrganizationName = request.OrganizationName,
+			BotName = _organizationOptions.BotName,
+			Direction = _organizationOptions.Direction,
+			Language = _organizationOptions.Language,
+		};
+
+		_dbContext.Set<Organization>().Add(organization);
 
 		var userId = _dataProvider.NewGuid();
-		admin = new User
+		var admin = new User
 		{
 			Id = userId,
 			Email = request.Email,
@@ -32,7 +46,8 @@ public class CreateAdminCommandHandler : IRequestHandler<CreateAdminCommand, Res
 			Role = RoleTypes.Admin,
 			CreatedAt = _dataProvider.Now,
 			PictureUrl = string.Empty,
-			Status = UserStatus.CompleteSignUp
+			Status = UserStatus.CompleteSignUp,
+			OrganizationId = organizationId
 		};
 
 		_dbContext.Set<User>().Add(admin);

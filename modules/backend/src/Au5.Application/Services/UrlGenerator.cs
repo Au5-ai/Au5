@@ -1,8 +1,8 @@
 namespace Au5.Application.Services;
 
-public class MeetingUrlService : IMeetingUrlService
+public class UrlGenerator : IUrlGenerator
 {
-	public string GetMeetingProviderUrl(string platform, string meetId)
+	public string GenerateMeetingUrl(string platform, string meetId)
 	{
 		return platform.ToLowerInvariant() switch
 		{
@@ -11,6 +11,11 @@ public class MeetingUrlService : IMeetingUrlService
 			"teams" => $"https://teams.microsoft.com/l/meetup-join/{meetId}",
 			_ => throw new NotSupportedException($"Platform '{platform}' is not supported")
 		};
+	}
+
+	public string GenerateExtensionConfigUrl(string baseUrl, Guid Id, string email)
+	{
+		return $"{baseUrl}/onboarding?id={Id}&hash={HashHelper.HashSafe(email)}";
 	}
 
 	public string GeneratePublicMeetingUrl(string baseUrl, Guid meetingId, string meetId)
