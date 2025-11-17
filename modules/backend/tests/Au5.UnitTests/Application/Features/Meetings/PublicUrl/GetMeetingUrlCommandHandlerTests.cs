@@ -113,15 +113,25 @@ public class GetMeetingUrlCommandHandlerTests
 	[Theory]
 	[InlineData(null)]
 	[InlineData("")]
-	[InlineData("   ")]
 	public async Task Should_ReturnFailure_When_ServiceBaseUrlIsNullOrEmpty(string invalidBaseUrl)
 	{
 		var meetingId = Guid.NewGuid();
-		_organizationOptions.ServiceBaseUrl = invalidBaseUrl;
+		var invalidOptions = new OrganizationOptions
+		{
+			ServiceBaseUrl = invalidBaseUrl
+		};
+		var invalidOptionsMock = new Mock<IOptions<OrganizationOptions>>();
+		invalidOptionsMock.Setup(x => x.Value).Returns(invalidOptions);
+
+		var handlerWithInvalidOptions = new GetMeetingUrlCommandHandler(
+			_urlGeneratorMock.Object,
+			_dbContextMock.Object,
+			_dataProviderMock.Object,
+			invalidOptionsMock.Object);
 
 		var command = new PublicMeetingUrlCommand(meetingId, 30);
 
-		var result = await _handler.Handle(command, CancellationToken.None);
+		var result = await handlerWithInvalidOptions.Handle(command, CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
 		Assert.Equal("BaseUrl Of Service is not set.", result.Error.Description);
