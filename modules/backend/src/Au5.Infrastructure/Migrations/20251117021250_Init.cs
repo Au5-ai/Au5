@@ -183,7 +183,9 @@ namespace Au5.Infrastructure.Migrations
 					ClosedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
 					Duration = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
 					Status = table.Column<byte>(type: "tinyint", nullable: false),
-					IsFavorite = table.Column<bool>(type: "bit", nullable: false)
+					IsFavorite = table.Column<bool>(type: "bit", nullable: false),
+					PublicLinkEnabled = table.Column<bool>(type: "bit", nullable: true),
+					PublicLinkExpiration = table.Column<DateTime>(type: "datetime2", nullable: true)
 				},
 				constraints: table =>
 				{
@@ -386,7 +388,7 @@ namespace Au5.Infrastructure.Migrations
 					{ 100, "ClosedCaption", true, null, 1, "My Meetings", "/meetings/my" },
 					{ 200, "ArchiveIcon", true, null, 2, "Archived Transcripts", "/meetings/archived" },
 					{ 300, "Brain", true, null, 3, "AI Tools", "/assistants" },
-					{ 400, "Settings", true, null, 4, "System Settings", "/system" },
+					{ 400, "Settings", true, null, 4, "Settings", "/settings" },
 					{ 500, "UserPlus", true, null, 5, "User Management", "/users" },
 					{ 600, "Frame", true, null, 6, "Spaces", "/spaces" }
 				});

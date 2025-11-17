@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251115022516_Init")]
+    [Migration("20251117021250_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -295,6 +295,12 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(20)");
 
+                    b.Property<bool?>("PublicLinkEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("PublicLinkExpiration")
+                        .HasColumnType("datetime2");
+
                     b.Property<byte>("Status")
                         .HasColumnType("tinyint");
 
@@ -407,8 +413,8 @@ namespace Au5.Infrastructure.Migrations
                             Icon = "Settings",
                             IsActive = true,
                             SortOrder = 4,
-                            Title = "System Settings",
-                            Url = "/system"
+                            Title = "Settings",
+                            Url = "/settings"
                         },
                         new
                         {

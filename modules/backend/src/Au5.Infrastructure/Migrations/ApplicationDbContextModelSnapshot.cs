@@ -292,6 +292,12 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(20)");
 
+                    b.Property<bool?>("PublicLinkEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("PublicLinkExpiration")
+                        .HasColumnType("datetime2");
+
                     b.Property<byte>("Status")
                         .HasColumnType("tinyint");
 
@@ -404,8 +410,8 @@ namespace Au5.Infrastructure.Migrations
                             Icon = "Settings",
                             IsActive = true,
                             SortOrder = 4,
-                            Title = "System Settings",
-                            Url = "/system"
+                            Title = "Settings",
+                            Url = "/settings"
                         },
                         new
                         {
