@@ -37,7 +37,10 @@ public class ResendVerificationEmailCommandHandler : IRequestHandler<ResendVerif
 			return Error.BadRequest(description: AppResources.User.EmailAlreadyVerified);
 		}
 
-		var config = await _dbContext.Set<Organization>().AsNoTracking().FirstOrDefaultAsync(cancellationToken: cancellationToken);
+		var config = await _dbContext.Set<Organization>()
+			.AsNoTracking()
+			.FirstOrDefaultAsync(o => o.Id == user.OrganizationId, cancellationToken: cancellationToken);
+
 		if (config is null)
 		{
 			return Error.Failure(description: AppResources.System.IsNotConfigured);

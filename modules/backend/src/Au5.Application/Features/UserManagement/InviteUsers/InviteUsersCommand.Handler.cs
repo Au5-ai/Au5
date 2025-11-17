@@ -25,7 +25,6 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 		_dataProvider = dataProvider;
 		_organizationOptions = options.Value;
 		_currentUser = currentUser;
-		_currentUser = currentUser;
 	}
 
 	public async ValueTask<Result<InviteUsersResponse>> Handle(InviteUsersCommand request, CancellationToken cancellationToken)

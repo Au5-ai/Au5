@@ -41,7 +41,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 		var meetingId = _dataProvider.NewGuid();
 		var hashToken = HashHelper.HashSafe(meetingId.ToString());
 
-		var config = await _dbContext.Set<Organization>().AsNoTracking().FirstOrDefaultAsync(cancellationToken);
+		var config = await _dbContext.Set<Organization>().AsNoTracking().FirstOrDefaultAsync(o => o.Id == _currentUserService.OrganizationId, cancellationToken);
 		if (config is null)
 		{
 			return Error.Failure(description: AppResources.System.IsNotConfigured);

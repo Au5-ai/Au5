@@ -25,39 +25,4 @@ public class CloseMeetingByUserCommandHandlerTests
 		_options = new();
 		_handler = new CloseMeetingByUserCommandHandler(_dbContextMock.Object, _meetingServiceMock.Object, _botFatherAdapter.Object, _currentUserServiceMock.Object, _dataProviderMock.Object, _options.Object);
 	}
-
-	[Fact]
-	public async Task Should_ReturnFailure_When_ThereIsNoConfigs()
-	{
-		var now = DateTime.Parse("2025-01-15T10:00:00");
-
-		var meeting = new Meeting
-		{
-			Id = Guid.NewGuid(),
-			MeetId = "meet-4",
-			Status = MeetingStatus.AddingBot,
-			CreatedAt = now.AddHours(-2)
-		};
-
-		var meetingDbSet = new List<Meeting> { meeting }.BuildMockDbSet();
-		var configDbSet = new List<Organization>().BuildMockDbSet();
-
-		_dbContextMock.Setup(db => db.Set<Organization>()).Returns(configDbSet.Object);
-		_dbContextMock.Setup(db => db.Set<Meeting>()).Returns(meetingDbSet.Object);
-
-		var meetingContent = new Meeting
-		{
-			Entries = [],
-			Participants = [],
-			Guests = []
-		};
-		var command = new CloseMeetingByUserCommand(meeting.Id);
-
-		var result = await _handler.Handle(command, CancellationToken.None);
-
-		Assert.False(result.IsSuccess);
-		Assert.Equal(AppResources.System.IsNotConfigured, result.Error.Description);
-		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
-		_botFatherAdapter.Verify(x => x.RemoveBotContainerAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
-	}
 }

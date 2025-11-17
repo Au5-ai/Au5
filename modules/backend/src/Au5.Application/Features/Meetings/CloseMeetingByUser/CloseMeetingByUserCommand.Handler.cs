@@ -31,12 +31,6 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 
 	public async ValueTask<Result<bool>> Handle(CloseMeetingByUserCommand request, CancellationToken cancellationToken)
 	{
-		var config = await _dbContext.Set<Organization>().AsNoTracking().FirstOrDefaultAsync(cancellationToken);
-		if (config is null)
-		{
-			return Error.Failure(description: AppResources.System.IsNotConfigured);
-		}
-
 		var meeting = await _dbContext.Set<Meeting>()
 		.FirstOrDefaultAsync(x => x.Id == request.MeetingId && x.Status != MeetingStatus.Ended, cancellationToken: cancellationToken);
 

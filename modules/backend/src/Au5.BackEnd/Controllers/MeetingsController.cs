@@ -1,6 +1,7 @@
 using Au5.Application.Features.AI.Delete;
 using Au5.Application.Features.AI.Generate;
 using Au5.Application.Features.AI.GetAll;
+using Au5.Application.Features.Meetings.AddBot;
 using Au5.Application.Features.Meetings.CloseMeetingByUser;
 using Au5.Application.Features.Meetings.Export;
 using Au5.Application.Features.Meetings.GetFullTranscription;
@@ -61,7 +62,7 @@ public class MeetingsController(ISender mediator) : BaseController
 
 	[HttpPost("bots")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	public async Task<IActionResult> AddBotToMeeting([FromBody] AddBotRequest request, CancellationToken cancellationToken)
+	public async Task<IActionResult> AddBotToMeeting([FromBody] AddBotCommand request, CancellationToken cancellationToken)
 	{
 		return Ok(await mediator.Send(request, cancellationToken));
 	}
@@ -112,5 +113,3 @@ public class MeetingsController(ISender mediator) : BaseController
 		return Ok(await mediator.Send(command with { MeetingId = meetingId }, cancellationToken));
 	}
 }
-
-public record AddBotRequest(string Platform, string BotName);
