@@ -52,7 +52,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 			Id = meetingId,
 			MeetId = request.MeetId,
 			MeetName = "Meeting Transcription",
-			BotName = request.BotName,
+			BotName = config.BotName,
 			IsBotAdded = false,
 			BotInviterUserId = _currentUserService.UserId,
 			CreatedAt = _dataProvider.Now,

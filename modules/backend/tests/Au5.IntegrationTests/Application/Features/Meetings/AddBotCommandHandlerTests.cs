@@ -39,7 +39,7 @@ public class AddBotCommandHandlerTests : BaseIntegrationTest
 
 		AddExceptedResponse(expectedResponse);
 
-		var command = new AddBotCommand("GoogleMeet", "Cando", "FakeMeetId");
+		var command = new AddBotCommand("GoogleMeet", "FakeMeetId");
 		var response = await Mediator.Send(command);
 
 		Assert.True(response.IsSuccess);
@@ -71,7 +71,7 @@ public class AddBotCommandHandlerTests : BaseIntegrationTest
 
 		AddExceptedResponse(expectedResponse);
 
-		var command = new AddBotCommand("GoogleMeet", "Cando", "FakeMeetId");
+		var command = new AddBotCommand("GoogleMeet", "FakeMeetId");
 		var response = await Mediator.Send(command);
 
 		Assert.True(response.IsSuccess);
@@ -103,7 +103,7 @@ public class AddBotCommandHandlerTests : BaseIntegrationTest
 
 		AddExceptedResponse(expectedResponse);
 
-		var command = new AddBotCommand("GoogleMeet", "Cando", "FakeMeetId");
+		var command = new AddBotCommand("GoogleMeet", "FakeMeetId");
 		var response = await Mediator.Send(command);
 
 		Assert.True(response.IsSuccess);
@@ -135,7 +135,7 @@ public class AddBotCommandHandlerTests : BaseIntegrationTest
 
 		AddExceptedResponse(expectedResponse);
 
-		var command = new AddBotCommand("GoogleMeet", "Cando", "FakeMeetId");
+		var command = new AddBotCommand("GoogleMeet", "FakeMeetId");
 		var response = await Mediator.Send(command);
 
 		Assert.True(response.IsSuccess);
@@ -177,7 +177,7 @@ public class AnotherTest : BaseIntegrationTest
 
 		AddExceptedResponse(expectedResponse);
 
-		var command = new AddBotCommand("GoogleMeet", "Cando", "FakeMeetId");
+		var command = new AddBotCommand("GoogleMeet", "FakeMeetId");
 		var response = await Mediator.Send(command);
 
 		Assert.True(response.IsSuccess);

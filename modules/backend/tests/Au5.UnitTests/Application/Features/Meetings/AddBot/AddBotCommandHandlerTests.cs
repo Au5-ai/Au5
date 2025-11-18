@@ -61,7 +61,7 @@ public class AddBotCommandHandlerTests
 	public async Task Handle_ShouldReturnSuccess_WhenValidRequest()
 	{
 		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(Guid.NewGuid());
-		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
+		var command = new AddBotCommand("Meets", "test-meet-id");
 
 		var organization = CreateOrganization();
 		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
@@ -97,7 +97,7 @@ public class AddBotCommandHandlerTests
 	{
 		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(Guid.NewGuid());
 
-		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
+		var command = new AddBotCommand("Meets", "test-meet-id");
 
 		var organizations = new List<Organization>();
 		var organizationDbSet = organizations.BuildMockDbSet();
@@ -118,7 +118,7 @@ public class AddBotCommandHandlerTests
 	{
 		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(Guid.NewGuid());
 
-		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
+		var command = new AddBotCommand("Meets", "test-meet-id");
 
 		var organization = CreateOrganization();
 		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
@@ -146,7 +146,7 @@ public class AddBotCommandHandlerTests
 		var userId = Guid.NewGuid();
 		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(userId);
 
-		var command = new AddBotCommand("Meet", "MeetBot", "Meet-meet-123");
+		var command = new AddBotCommand("Meet", "Meet-meet-123");
 
 		var organization = CreateOrganization();
 		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
@@ -181,7 +181,7 @@ public class AddBotCommandHandlerTests
 
 		Assert.Equal("Meet-meet-123", capturedMeeting.MeetId);
 		Assert.Equal("Meeting Transcription", capturedMeeting.MeetName);
-		Assert.Equal("MeetBot", capturedMeeting.BotName);
+		Assert.Equal("Au5 Bot", capturedMeeting.BotName);
 		Assert.Equal(userId, capturedMeeting.BotInviterUserId);
 		Assert.Equal("Meet", capturedMeeting.Platform);
 		Assert.Equal(MeetingStatus.AddingBot, capturedMeeting.Status);
@@ -196,7 +196,7 @@ public class AddBotCommandHandlerTests
 	{
 		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(Guid.NewGuid());
 
-		var command = new AddBotCommand("Meets", "MeetsBot", "Meets-meet-456");
+		var command = new AddBotCommand("Meets", "Meets-meet-456");
 		var organization = CreateOrganization();
 		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
 
@@ -234,7 +234,7 @@ public class AddBotCommandHandlerTests
 	{
 		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(Guid.NewGuid());
 
-		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
+		var command = new AddBotCommand("Meets", "test-meet-id");
 
 		var organization = CreateOrganization();
 		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
@@ -267,7 +267,7 @@ public class AddBotCommandHandlerTests
 	{
 		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(Guid.NewGuid());
 
-		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
+		var command = new AddBotCommand("Meets", "test-meet-id");
 
 		var organization = CreateOrganization();
 		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
@@ -307,7 +307,7 @@ public class AddBotCommandHandlerTests
 	{
 		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(Guid.NewGuid());
 
-		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
+		var command = new AddBotCommand("Meets", "test-meet-id");
 
 		var organization = CreateOrganization();
 		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
@@ -345,7 +345,7 @@ public class AddBotCommandHandlerTests
 	{
 		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(Guid.NewGuid());
 
-		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
+		var command = new AddBotCommand("Meets", "test-meet-id");
 		var organization = CreateOrganization();
 		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
 
@@ -383,7 +383,7 @@ public class AddBotCommandHandlerTests
 	{
 		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(Guid.NewGuid());
 
-		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
+		var command = new AddBotCommand("Meets", "test-meet-id");
 		var organization = CreateOrganization();
 		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
 
@@ -422,7 +422,7 @@ public class AddBotCommandHandlerTests
 	{
 		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(Guid.NewGuid());
 
-		var command = new AddBotCommand("Meets", "TestBot", "test-meet-id");
+		var command = new AddBotCommand("Meets", "test-meet-id");
 		var organization = CreateOrganization();
 		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
 
@@ -458,7 +458,7 @@ public class AddBotCommandHandlerTests
 			x => x.SetAsync(
 				It.IsAny<string>(),
 				It.Is<Meeting>(m => m.Status == MeetingStatus.AddingBot),
-				It.Is<TimeSpan>(t => t == TimeSpan.FromHours(1))),
+				It.Is<TimeSpan>(t => t == TimeSpan.FromHours(2))),
 			Times.Once);
 	}
 
@@ -467,7 +467,7 @@ public class AddBotCommandHandlerTests
 	{
 		_currentUserServiceMock.Setup(Object => Object.UserId).Returns(Guid.NewGuid());
 
-		var command = new AddBotCommand("Zoom", "ZoomBot", "zoom-123");
+		var command = new AddBotCommand("Zoom", "zoom-123");
 		var organization = CreateOrganization();
 		_currentUserServiceMock.Setup(Object => Object.OrganizationId).Returns(organization.Id);
 

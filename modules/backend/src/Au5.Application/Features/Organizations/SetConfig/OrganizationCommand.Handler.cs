@@ -5,15 +5,19 @@ namespace Au5.Application.Features.Organizations.SetConfig;
 public class OrganizationCommandHandler : IRequestHandler<OrganizationCommand, Result>
 {
 	private readonly IApplicationDbContext _dbContext;
+	private readonly ICurrentUserService _currentUser;
 
-	public OrganizationCommandHandler(IApplicationDbContext dbContext)
+	public OrganizationCommandHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
 	{
 		_dbContext = dbContext;
+		_currentUser = currentUserService;
 	}
 
 	public async ValueTask<Result> Handle(OrganizationCommand request, CancellationToken cancellationToken)
 	{
-		var organization = await _dbContext.Set<Organization>().FirstOrDefaultAsync(cancellationToken);
+		var organization = await _dbContext.Set<Organization>()
+			.FirstOrDefaultAsync(x => x.Id == _currentUser.OrganizationId, cancellationToken);
+
 		if (organization is null)
 		{
 			return Error.Unauthorized(description: AppResources.System.IsNotConfigured);

@@ -7,12 +7,14 @@ namespace Au5.UnitTests.Application.Features.Organizations.GetConfig;
 public class OrganizationQueryHandlerTests
 {
 	private readonly Mock<IApplicationDbContext> _dbContextMock;
+	private readonly Mock<ICurrentUserService> _currentUser;
 	private readonly OrganizationQueryHandler _handler;
 
 	public OrganizationQueryHandlerTests()
 	{
 		_dbContextMock = new Mock<IApplicationDbContext>();
-		_handler = new OrganizationQueryHandler(_dbContextMock.Object);
+		_currentUser = new Mock<ICurrentUserService>();
+		_handler = new OrganizationQueryHandler(_dbContextMock.Object, _currentUser.Object);
 	}
 
 	[Fact]
@@ -40,7 +42,7 @@ public class OrganizationQueryHandlerTests
 			Direction = "ltr",
 			Language = "en"
 		};
-
+		_currentUser.Setup(x => x.OrganizationId).Returns(organization.Id);
 		_dbContextMock.Setup(db => db.Set<Organization>())
 			.Returns(new List<Organization> { organization }.BuildMockDbSet().Object);
 
@@ -76,7 +78,7 @@ public class OrganizationQueryHandlerTests
 			Direction = "rtl",
 			Language = "ar"
 		};
-
+		_currentUser.Setup(x => x.OrganizationId).Returns(organization1.Id);
 		_dbContextMock.Setup(db => db.Set<Organization>())
 			.Returns(new List<Organization> { organization1, organization2 }.BuildMockDbSet().Object);
 
@@ -100,7 +102,7 @@ public class OrganizationQueryHandlerTests
 			Direction = "ltr",
 			Language = "en"
 		};
-
+		_currentUser.Setup(x => x.OrganizationId).Returns(organization.Id);
 		_dbContextMock.Setup(db => db.Set<Organization>())
 			.Returns(new List<Organization> { organization }.BuildMockDbSet().Object);
 
@@ -123,7 +125,7 @@ public class OrganizationQueryHandlerTests
 			Direction = "ltr",
 			Language = "en"
 		};
-
+		_currentUser.Setup(x => x.OrganizationId).Returns(organization.Id);
 		_dbContextMock.Setup(db => db.Set<Organization>())
 			.Returns(new List<Organization> { organization }.BuildMockDbSet().Object);
 
@@ -146,7 +148,7 @@ public class OrganizationQueryHandlerTests
 			Direction = "rtl",
 			Language = "ar"
 		};
-
+		_currentUser.Setup(x => x.OrganizationId).Returns(organization.Id);
 		_dbContextMock.Setup(db => db.Set<Organization>())
 			.Returns(new List<Organization> { organization }.BuildMockDbSet().Object);
 
@@ -169,7 +171,7 @@ public class OrganizationQueryHandlerTests
 			Direction = "ltr",
 			Language = "fr"
 		};
-
+		_currentUser.Setup(x => x.OrganizationId).Returns(organization.Id);
 		_dbContextMock.Setup(db => db.Set<Organization>())
 			.Returns(new List<Organization> { organization }.BuildMockDbSet().Object);
 
@@ -208,7 +210,7 @@ public class OrganizationQueryHandlerTests
 			Direction = string.Empty,
 			Language = string.Empty
 		};
-
+		_currentUser.Setup(x => x.OrganizationId).Returns(organization.Id);
 		_dbContextMock.Setup(db => db.Set<Organization>())
 			.Returns(new List<Organization> { organization }.BuildMockDbSet().Object);
 
@@ -235,7 +237,7 @@ public class OrganizationQueryHandlerTests
 			Direction = "ltr",
 			Language = "en-US"
 		};
-
+		_currentUser.Setup(x => x.OrganizationId).Returns(organization.Id);
 		_dbContextMock.Setup(db => db.Set<Organization>())
 			.Returns(new List<Organization> { organization }.BuildMockDbSet().Object);
 

@@ -8,19 +8,21 @@ namespace Au5.UnitTests.Application.Features.Organizations;
 public class OrganizationCommandHandlerTests
 {
 	private readonly Mock<IApplicationDbContext> _dbContextMock;
+	private readonly Mock<ICurrentUserService> _currentUser;
 	private readonly OrganizationCommandHandler _handler;
 
 	public OrganizationCommandHandlerTests()
 	{
 		_dbContextMock = new();
-		_handler = new OrganizationCommandHandler(_dbContextMock.Object);
+		_currentUser = new();
+		_handler = new OrganizationCommandHandler(_dbContextMock.Object, _currentUser.Object);
 	}
 
 	[Fact]
 	public async Task Should_UpdatesConfigAndReturnsSuccess_When_ExistingConfig()
 	{
 		var config = new Organization { Id = Guid.NewGuid() };
-
+		_currentUser.Setup(x => x.OrganizationId).Returns(config.Id);
 		var dbSet = new List<Organization> { config }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<Organization>()).Returns(dbSet.Object);
 
@@ -81,7 +83,7 @@ public class OrganizationCommandHandlerTests
 			Direction = "Outbound",
 			Language = "ar",
 		};
-
+		_currentUser.Setup(x => x.OrganizationId).Returns(existingConfig.Id);
 		var dbSet = new List<Organization> { existingConfig }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<Organization>()).Returns(dbSet.Object);
 
@@ -115,7 +117,7 @@ public class OrganizationCommandHandlerTests
 			Direction = "Outbound",
 			Language = "ar",
 		};
-
+		_currentUser.Setup(x => x.OrganizationId).Returns(existingConfig.Id);
 		var dbSet = new List<Organization> { existingConfig }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<Organization>()).Returns(dbSet.Object);
 
@@ -151,7 +153,7 @@ public class OrganizationCommandHandlerTests
 			Direction = "Outbound",
 			Language = "ar",
 		};
-
+		_currentUser.Setup(x => x.OrganizationId).Returns(targetConfig.Id);
 		var dbSet = new List<Organization> { targetConfig }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<Organization>()).Returns(dbSet.Object);
 
@@ -185,7 +187,7 @@ public class OrganizationCommandHandlerTests
 			Direction = "Outbound",
 			Language = "ar",
 		};
-
+		_currentUser.Setup(x => x.OrganizationId).Returns(existingConfig.Id);
 		var dbSet = new List<Organization> { existingConfig }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<Organization>()).Returns(dbSet.Object);
 
