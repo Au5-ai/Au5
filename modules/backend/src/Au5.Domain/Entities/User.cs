@@ -28,6 +28,11 @@ public class User
 
 	public UserStatus Status { get; set; }
 
+	public Guid OrganizationId { get; set; }
+
+	[JsonIgnore]
+	public Organization Organization { get; set; }
+
 	public ICollection<Meeting> Meetings { get; set; }
 
 	public ICollection<UserSpace> UserSpaces { get; set; }

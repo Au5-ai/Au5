@@ -20,5 +20,13 @@ public class SpaceConfig : IEntityTypeConfiguration<Space>
 
 		builder.Property(x => x.IsActive)
 			.IsRequired();
+
+		builder.Property(x => x.OrganizationId)
+			.IsRequired();
+
+		builder.HasOne(x => x.Organization)
+			.WithMany()
+			.HasForeignKey(x => x.OrganizationId)
+			.OnDelete(DeleteBehavior.Restrict);
 	}
 }

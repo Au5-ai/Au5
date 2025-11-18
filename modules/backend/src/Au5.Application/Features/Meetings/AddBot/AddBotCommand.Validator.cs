@@ -6,10 +6,6 @@ public class AddBotCommandValiadtor : AbstractValidator<AddBotCommand>
 {
 	public AddBotCommandValiadtor()
 	{
-		RuleFor(x => x.BotName)
-		   .NotEmpty()
-		   .WithMessage(AppResources.Validation.Required);
-
 		RuleFor(x => x.MeetId)
 		   .NotEmpty()
 		   .WithMessage(AppResources.Validation.Required);

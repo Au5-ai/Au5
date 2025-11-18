@@ -237,7 +237,7 @@ export class ChatPanel {
       const botRequested = document.createElement("div");
       botRequested.className = "au5-join-time";
 
-      botRequested.innerText = `🤖 ${request.botName} bot requested by ${request.user.fullName}`;
+      botRequested.innerText = `🤖 bot requested by ${request.user.fullName}`;
       this.transcriptionsContainerEl.appendChild(botRequested);
     }
   }

@@ -2,36 +2,36 @@ using Au5.Application.Common.Abstractions;
 using Au5.Application.Dtos;
 using Au5.Domain.Entities;
 using Au5.Infrastructure.Adapters;
-using Au5.Shared;
 using Microsoft.Extensions.Logging;
 using MimeKit;
 
 namespace Au5.Infrastructure.Providers;
 
-public class EmailProvider(ISmtpClientWrapper smtpClient, ILogger<EmailProvider> logger) : IEmailProvider
+public class EmailProvider(ISmtpClientWrapper smtpClient, IUrlGenerator urlGenerator, ILogger<EmailProvider> logger) : IEmailProvider
 {
 	private readonly ISmtpClientWrapper _smtpClient = smtpClient;
+	private readonly IUrlGenerator _urlGenerator = urlGenerator;
 
-	public async Task<List<InviteResponse>> SendInviteAsync(List<User> invited, string organizationName, SmtpOptions smtpOption)
+	public async Task<List<InviteResponse>> SendInviteAsync(IReadOnlyCollection<User> invited, string organizationName, SmtpOptions smtpOption)
 	{
 		List<InviteResponse> respose = [];
 		try
 		{
-			//var secureSocketOptions = smtpOption.UseSsl ?
-			//				  MailKit.Security.SecureSocketOptions.StartTls :
-			//				  MailKit.Security.SecureSocketOptions.None;
+			// var secureSocketOptions = smtpOption.UseSsl ?
+			// MailKit.Security.SecureSocketOptions.StartTls :
+			// MailKit.Security.SecureSocketOptions.None;
 
-			//await _smtpClient.ConnectAsync(smtpOption.Host, smtpOption.Port, secureSocketOptions);
+			// await _smtpClient.ConnectAsync(smtpOption.Host, smtpOption.Port, secureSocketOptions);
 
-			//if (!string.IsNullOrWhiteSpace(smtpOption.User) &&
-			//	!string.IsNullOrWhiteSpace(smtpOption.Password) &&
-			//	_smtpClient.Capabilities.HasFlag(MailKit.Net.Smtp.SmtpCapabilities.Authentication))
-			//{
-			//	await _smtpClient.AuthenticateAsync(smtpOption.User, smtpOption.Password);
-			//}
+			// if (!string.IsNullOrWhiteSpace(smtpOption.User) &&
+			// !string.IsNullOrWhiteSpace(smtpOption.Password) &&
+			// _smtpClient.Capabilities.HasFlag(MailKit.Net.Smtp.SmtpCapabilities.Authentication))
+			// {
+			// await _smtpClient.AuthenticateAsync(smtpOption.User, smtpOption.Password);
+			// }
 			foreach (var user in invited)
 			{
-				var link = VerificationLinkGenerator.Generate(smtpOption.BaseUrl, user.Id, user.Email);
+				var link = _urlGenerator.GenerateExtensionConfigUrl(smtpOption.BaseUrl, user.Id, user.Email);
 				respose.Add(new InviteResponse() { Link = link, UserId = user.Id });
 				var emailBody = BuildInviteEmailBody(link, organizationName);
 

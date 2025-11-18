@@ -17,6 +17,8 @@ public class AddMeetingToSpaceCommandHandler : IRequestHandler<AddMeetingToSpace
 
 	public async ValueTask<Result<AddMeetingToSpaceResponse>> Handle(AddMeetingToSpaceCommand request, CancellationToken cancellationToken)
 	{
+		var organizationId = _currentUserService.OrganizationId;
+
 		var meeting = await _dbContext.Set<Meeting>()
 			.FirstOrDefaultAsync(m => m.Id == request.MeetingId, cancellationToken);
 
@@ -26,7 +28,7 @@ public class AddMeetingToSpaceCommandHandler : IRequestHandler<AddMeetingToSpace
 		}
 
 		var space = await _dbContext.Set<Space>()
-			.FirstOrDefaultAsync(s => s.Id == request.SpaceId && s.IsActive, cancellationToken);
+			.FirstOrDefaultAsync(s => s.Id == request.SpaceId && s.IsActive && s.OrganizationId == organizationId, cancellationToken);
 
 		if (space == null)
 		{

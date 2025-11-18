@@ -6,7 +6,5 @@ public class RequestToAddBotMessage : Message
 
 	public Participant User { get; set; }
 
-	public string BotName { get; set; }
-
 	public string Platform { get; set; }
 }

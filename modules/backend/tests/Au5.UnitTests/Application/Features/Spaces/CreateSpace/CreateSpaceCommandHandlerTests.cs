@@ -15,7 +15,7 @@ public class CreateSpaceCommandHandlerTests
 			.WithNoUsers()
 			.WithSuccessfulSave();
 
-		var command = fixture.CreateValidCommand(withParent: false, withUsers: false);
+		var command = fixture.CreateValidCommand(withUsers: false);
 
 		var result = await fixture.BuildHandler().Handle(command, CancellationToken.None);
 
@@ -26,55 +26,25 @@ public class CreateSpaceCommandHandlerTests
 	}
 
 	[Fact]
-	public async Task Should_ReturnParentNotFoundError_When_ParentSpaceDoesNotExist()
+	public async Task Should_CreateSpaceSuccessfully_When_ValidSpaceWithUsers()
 	{
 		var fixture = new CreateSpaceCommandHandlerTestFixture()
 			.WithNoParentSpace()
-			.WithNoUsers()
+			.WithValidUsers(2)
 			.WithSuccessfulSave();
 
-		var command = new CreateSpaceCommand
-		{
-			Name = "Test Space",
-			Description = "Test Description",
-			ParentId = Guid.NewGuid(), // Non-existent parent
-			Users = []
-		};
+		var command = fixture.CreateValidCommand(withUsers: true);
 
 		var result = await fixture.BuildHandler().Handle(command, CancellationToken.None);
 
-		Assert.False(result.IsSuccess);
-		Assert.Equal(SpaceResources.ParentNotFoundCode, result.Error.Code);
-		Assert.Equal(SpaceResources.ParentNotFoundMessage, result.Error.Description);
+		Assert.True(result.IsSuccess);
+		Assert.NotNull(result.Data);
+		Assert.NotEqual(Guid.Empty, result.Data.Id);
 
-		fixture.MockDbContext.Verify(db => db.Set<SpaceEntity>(), Times.Once);
-		fixture.MockDbContext.Verify(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
-	}
-
-	[Fact]
-	public async Task Should_ReturnParentNotFoundError_When_ParentSpaceIsInactive()
-	{
-		var fixture = new CreateSpaceCommandHandlerTestFixture()
-			.WithInactiveParentSpace()
-			.WithNoUsers()
-			.WithSuccessfulSave();
-
-		var command = new CreateSpaceCommand
-		{
-			Name = "Test Space",
-			Description = "Test Description",
-			ParentId = fixture.TestParentSpace.Id,
-			Users = []
-		};
-
-		var result = await fixture.BuildHandler().Handle(command, CancellationToken.None);
-
-		Assert.False(result.IsSuccess);
-		Assert.Equal(SpaceResources.ParentNotFoundCode, result.Error.Code);
-		Assert.Equal(SpaceResources.ParentNotFoundMessage, result.Error.Description);
-
-		fixture.MockDbContext.Verify(db => db.Set<SpaceEntity>(), Times.Once);
-		fixture.MockDbContext.Verify(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+		fixture.MockDbContext.Verify(db => db.Set<SpaceEntity>(), Times.AtLeastOnce);
+		fixture.MockDbContext.Verify(db => db.Set<User>(), Times.Once);
+		fixture.MockDbContext.Verify(db => db.Set<UserSpace>(), Times.Once);
+		fixture.MockDbContext.Verify(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 	}
 
 	[Fact]
@@ -89,7 +59,6 @@ public class CreateSpaceCommandHandlerTests
 		{
 			Name = "Test Space",
 			Description = "Test Description",
-			ParentId = null,
 			Users =
 			[
 				new UserInSpace { UserId = fixture.TestUsers[0].Id, IsAdmin = true },
@@ -120,7 +89,6 @@ public class CreateSpaceCommandHandlerTests
 		{
 			Name = "Test Space",
 			Description = "Test Description",
-			ParentId = null,
 			Users =
 			[
 				new UserInSpace { UserId = fixture.TestUsers[0].Id, IsAdmin = true },
@@ -146,7 +114,7 @@ public class CreateSpaceCommandHandlerTests
 			.WithNoUsers()
 			.WithFailedSave();
 
-		var command = fixture.CreateValidCommand(withParent: false, withUsers: false);
+		var command = fixture.CreateValidCommand(withUsers: false);
 
 		var result = await fixture.BuildHandler().Handle(command, CancellationToken.None);
 
@@ -170,7 +138,6 @@ public class CreateSpaceCommandHandlerTests
 		{
 			Name = "Test Space",
 			Description = "Test Description",
-			ParentId = null,
 			Users = null
 		};
 
@@ -195,7 +162,6 @@ public class CreateSpaceCommandHandlerTests
 		{
 			Name = "Test Space",
 			Description = "Test Description",
-			ParentId = null,
 			Users = []
 		};
 
@@ -206,5 +172,116 @@ public class CreateSpaceCommandHandlerTests
 		fixture.MockDbContext.Verify(db => db.Set<SpaceEntity>(), Times.AtLeastOnce);
 		fixture.MockDbContext.Verify(db => db.Set<User>(), Times.Never);
 		fixture.MockDbContext.Verify(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+	}
+
+	[Fact]
+	public async Task Should_SetSpacePropertiesCorrectly_When_CreatingSpace()
+	{
+		var fixture = new CreateSpaceCommandHandlerTestFixture()
+			.WithNoParentSpace()
+			.WithNoUsers()
+			.WithSuccessfulSave();
+
+		var command = new CreateSpaceCommand
+		{
+			Name = "My Test Space",
+			Description = "My Test Description",
+			Users = null
+		};
+
+		SpaceEntity capturedSpace = null;
+		fixture.MockDbContext.Setup(db => db.Set<SpaceEntity>().Add(It.IsAny<SpaceEntity>()))
+			.Callback<SpaceEntity>(s => capturedSpace = s);
+
+		var result = await fixture.BuildHandler().Handle(command, CancellationToken.None);
+
+		Assert.True(result.IsSuccess);
+		Assert.NotNull(capturedSpace);
+		Assert.Equal("My Test Space", capturedSpace.Name);
+		Assert.Equal("My Test Description", capturedSpace.Description);
+		Assert.True(capturedSpace.IsActive);
+		Assert.NotEqual(Guid.Empty, capturedSpace.OrganizationId);
+	}
+
+	[Fact]
+	public async Task Should_CreateUserSpacesWithCorrectProperties_When_UsersProvided()
+	{
+		var fixture = new CreateSpaceCommandHandlerTestFixture()
+			.WithNoParentSpace()
+			.WithValidUsers(3)
+			.WithSuccessfulSave();
+
+		var command = new CreateSpaceCommand
+		{
+			Name = "Test Space",
+			Description = "Test Description",
+			Users =
+			[
+				new UserInSpace { UserId = fixture.TestUsers[0].Id, IsAdmin = true },
+				new UserInSpace { UserId = fixture.TestUsers[1].Id, IsAdmin = false },
+				new UserInSpace { UserId = fixture.TestUsers[2].Id, IsAdmin = false }
+			]
+		};
+
+		List<UserSpace> capturedUserSpaces = null;
+		fixture.MockDbContext.Setup(db => db.Set<UserSpace>().AddRange(It.IsAny<IEnumerable<UserSpace>>()))
+			.Callback<IEnumerable<UserSpace>>(us => capturedUserSpaces = [.. us]);
+
+		var result = await fixture.BuildHandler().Handle(command, CancellationToken.None);
+
+		Assert.True(result.IsSuccess);
+		Assert.NotNull(capturedUserSpaces);
+		Assert.Equal(3, capturedUserSpaces.Count);
+		Assert.True(capturedUserSpaces[0].IsAdmin);
+		Assert.False(capturedUserSpaces[1].IsAdmin);
+		Assert.False(capturedUserSpaces[2].IsAdmin);
+	}
+
+	[Fact]
+	public async Task Should_AssignOrganizationIdToSpace_When_CreatingSpace()
+	{
+		var organizationId = Guid.NewGuid();
+		var fixture = new CreateSpaceCommandHandlerTestFixture()
+			.WithNoParentSpace()
+			.WithNoUsers()
+			.WithSuccessfulSave()
+			.WithOrganizationId(organizationId);
+
+		var command = fixture.CreateValidCommand(withUsers: false);
+
+		SpaceEntity capturedSpace = null;
+		fixture.MockDbContext.Setup(db => db.Set<SpaceEntity>().Add(It.IsAny<SpaceEntity>()))
+			.Callback<SpaceEntity>(s => capturedSpace = s);
+
+		var result = await fixture.BuildHandler().Handle(command, CancellationToken.None);
+
+		Assert.True(result.IsSuccess);
+		Assert.NotNull(capturedSpace);
+		Assert.Equal(organizationId, capturedSpace.OrganizationId);
+	}
+
+	[Fact]
+	public async Task Should_ValidateAllUsers_When_MultipleUsersProvided()
+	{
+		var fixture = new CreateSpaceCommandHandlerTestFixture()
+			.WithNoParentSpace()
+			.WithValidUsers(5)
+			.WithSuccessfulSave();
+
+		var command = new CreateSpaceCommand
+		{
+			Name = "Test Space",
+			Description = "Test Description",
+			Users = [.. fixture.TestUsers.Select((u, i) => new UserInSpace
+			{
+				UserId = u.Id,
+				IsAdmin = i == 0
+			})]
+		};
+
+		var result = await fixture.BuildHandler().Handle(command, CancellationToken.None);
+
+		Assert.True(result.IsSuccess);
+		fixture.MockDbContext.Verify(db => db.Set<User>(), Times.Once);
 	}
 }

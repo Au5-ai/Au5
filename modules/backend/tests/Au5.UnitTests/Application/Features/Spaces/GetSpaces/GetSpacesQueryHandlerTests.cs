@@ -185,4 +185,110 @@ public class GetSpacesQueryHandlerTests
 		Assert.NotNull(result.Data);
 		Assert.Single(result.Data);
 	}
+
+	[Fact]
+	public async Task Should_FilterByOrganizationId_When_MultipleOrganizationsExist()
+	{
+		var fixture = new GetSpacesQueryHandlerTestFixture()
+			.WithActiveSpaces(2)
+			.WithSpacesFromDifferentOrganization(3)
+			.BuildHandler();
+
+		var query = GetSpacesQueryHandlerTestFixture.CreateQuery();
+
+		var result = await fixture.Handler.Handle(query, CancellationToken.None);
+
+		Assert.True(result.IsSuccess);
+		Assert.NotNull(result.Data);
+		Assert.Equal(2, result.Data.Count);
+		Assert.All(result.Data, space => Assert.StartsWith("Test Space", space.Name));
+	}
+
+	[Fact]
+	public async Task Should_IncludeUserSpacesWithUsers_When_QueryingSpaces()
+	{
+		var fixture = new GetSpacesQueryHandlerTestFixture()
+			.WithActiveSpaces(1)
+			.WithSpacesWithUsers(3)
+			.BuildHandler();
+
+		var query = GetSpacesQueryHandlerTestFixture.CreateQuery();
+
+		var result = await fixture.Handler.Handle(query, CancellationToken.None);
+
+		Assert.True(result.IsSuccess);
+		Assert.NotNull(result.Data);
+		Assert.Single(result.Data);
+
+		var space = result.Data.First();
+		Assert.Equal(3, space.Users.Count);
+		Assert.All(space.Users, user =>
+		{
+			Assert.NotEqual(Guid.Empty, user.UserId);
+			Assert.NotNull(user.FullName);
+			Assert.NotNull(user.Email);
+		});
+	}
+
+	[Fact]
+	public async Task Should_ReturnEmptyUsersList_When_SpaceHasNoUserSpaces()
+	{
+		var fixture = new GetSpacesQueryHandlerTestFixture()
+			.WithActiveSpaces(2)
+			.BuildHandler();
+
+		var query = GetSpacesQueryHandlerTestFixture.CreateQuery();
+
+		var result = await fixture.Handler.Handle(query, CancellationToken.None);
+
+		Assert.True(result.IsSuccess);
+		Assert.NotNull(result.Data);
+		Assert.Equal(2, result.Data.Count);
+		Assert.All(result.Data, space => Assert.Empty(space.Users));
+	}
+
+	[Fact]
+	public async Task Should_MapAllSpaceProperties_When_ReturningSpaces()
+	{
+		var fixture = new GetSpacesQueryHandlerTestFixture()
+			.WithActiveSpaces(1)
+			.BuildHandler();
+
+		var query = GetSpacesQueryHandlerTestFixture.CreateQuery();
+
+		var result = await fixture.Handler.Handle(query, CancellationToken.None);
+
+		Assert.True(result.IsSuccess);
+		Assert.NotNull(result.Data);
+		Assert.Single(result.Data);
+
+		var space = result.Data.First();
+		Assert.NotEqual(Guid.Empty, space.Id);
+		Assert.NotNull(space.Name);
+		Assert.NotNull(space.Description);
+		Assert.True(space.IsActive);
+		Assert.NotNull(space.Users);
+	}
+
+	[Fact]
+	public async Task Should_ReturnCorrectUserAdminStatus_When_UserSpacesHaveAdminFlag()
+	{
+		var fixture = new GetSpacesQueryHandlerTestFixture()
+			.WithActiveSpaces(1)
+			.WithSpacesWithUsers(2)
+			.BuildHandler();
+
+		var query = GetSpacesQueryHandlerTestFixture.CreateQuery();
+
+		var result = await fixture.Handler.Handle(query, CancellationToken.None);
+
+		Assert.True(result.IsSuccess);
+		var space = result.Data.First();
+		Assert.Equal(2, space.Users.Count);
+
+		var adminUser = space.Users.First();
+		var regularUser = space.Users.Last();
+		Assert.True(adminUser.IsAdmin);
+		Assert.False(regularUser.IsAdmin);
+	}
 }

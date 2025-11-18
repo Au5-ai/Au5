@@ -13,7 +13,10 @@ public class GetAssistantsQueryHandler : IRequestHandler<GetAssistantsQuery, Res
 
 	public async ValueTask<Result<IReadOnlyCollection<Assistant>>> Handle(GetAssistantsQuery request, CancellationToken cancellationToken)
 	{
-		var assistants = _dbContext.Set<Assistant>().AsNoTracking();
+		var organizationId = _currentUserService.OrganizationId;
+		var assistants = _dbContext.Set<Assistant>()
+			.Where(a => a.OrganizationId == organizationId)
+			.AsNoTracking();
 
 		if (_currentUserService.Role == RoleTypes.Admin)
 		{

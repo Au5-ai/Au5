@@ -1,48 +1,26 @@
 import { Button } from "@/shared/components/ui";
 import { tokenStorageService } from "@/shared/lib/localStorage";
-import { userController } from "@/shared/network/api/userController";
-import { useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft, Settings } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { CAPTIONS } from "../i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import { systemController } from "../systemController";
+import { organizationsController } from "../organizationsController";
 
 export function ConfigureStep({ next }: { next: () => void }) {
-  const queryClient = useQueryClient();
   const handleSendConfigs = async () => {
     try {
-      const [user, systemConfig] = await Promise.all([
-        userController.me(),
-        systemController.getExtensionConfig(),
-      ]);
+      const extensionConfig =
+        await organizationsController.getExtensionConfig();
 
-      if (user && systemConfig) {
-        const config = {
-          user: {
-            id: user.id,
-            fullName: user.fullName,
-            pictureUrl: user.pictureUrl,
-          },
-          service: {
-            panelUrl: systemConfig.panelUrl,
-            baseUrl: systemConfig.serviceBaseUrl,
-            direction: systemConfig.direction,
-            language: systemConfig.language,
-            hubUrl: systemConfig.hubUrl,
-            companyName: systemConfig.organizationName,
-            botName: systemConfig.botName,
-          },
-        };
-
+      if (extensionConfig) {
         const token = tokenStorageService.get();
 
         window.postMessage(
           {
             source: "AU5_PANEL",
             type: "CONFIG_UPDATE",
-            payload: config,
+            payload: extensionConfig,
           },
           "*",
         );
@@ -57,12 +35,6 @@ export function ConfigureStep({ next }: { next: () => void }) {
             "*",
           );
         }
-
-        localStorage.setItem("exConfig", "true");
-        localStorage.setItem("config", JSON.stringify(config));
-        queryClient.setQueryData(["currentUser"], {
-          ...user,
-        });
         toast.success(CAPTIONS.configurationSentSuccess);
         next();
       }
