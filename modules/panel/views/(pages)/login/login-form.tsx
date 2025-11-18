@@ -10,6 +10,7 @@ import { loginCaptions } from "./i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/shared/routes";
+import { toast } from "sonner";
 
 export function LoginForm({
   className,
@@ -20,10 +21,26 @@ export function LoginForm({
   const loginMutation = useLogin();
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    loginMutation.mutate({ username, password });
-    router.push(ROUTES.PLAYGROUND);
+
+    loginMutation.mutate(
+      { username, password },
+      {
+        //Only redirect on success
+        onSuccess: () => {
+          router.push(ROUTES.PLAYGROUND);
+        },
+        // Show error when login fails or backend is down
+        onError: (error: unknown) => {
+          const message =
+            error instanceof Error
+              ? error.message
+              : "Login failed. Please try again.";
+          toast.error(message);
+        },
+      },
+    );
   };
 
   return (
@@ -63,13 +80,7 @@ export function LoginForm({
             required
           />
         </div>
-        {/* {loginMutation.error && (
-          <div className="text-sm text-red-600 text-center">
-            {loginMutation.error instanceof Error
-              ? loginMutation.error.message
-              : "Login failed. Please try again."}
-          </div>
-        )} */}
+
         <Button
           type="submit"
           className="w-full cursor-pointer"
