@@ -1,7 +1,7 @@
 using Au5.Application.Features.Admin.Create;
 using FluentValidation.TestHelper;
 
-namespace Au5.UnitTests.Application.Features.Setup.AddAdmin;
+namespace Au5.UnitTests.Application.Features.Admin.Create;
 
 public class CreateAdminCommandValidatorTests
 {

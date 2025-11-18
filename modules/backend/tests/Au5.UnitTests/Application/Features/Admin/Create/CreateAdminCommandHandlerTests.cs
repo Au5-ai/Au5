@@ -4,9 +4,9 @@ using Au5.Domain.Entities;
 using Au5.Shared;
 using MockQueryable.Moq;
 
-namespace Au5.UnitTests.Application.Features.Setup.AddAdmin;
+namespace Au5.UnitTests.Application.Features.Admin.Create;
 
-public class AddAdminQueryHandlerTests
+public class CreateAdminCommandHandlerTests
 {
 	private readonly Mock<IApplicationDbContext> _mockDbContext;
 	private readonly Mock<DbSet<User>> _mockUserDbSet;
@@ -15,7 +15,7 @@ public class AddAdminQueryHandlerTests
 	private readonly Mock<IOptions<OrganizationOptions>> _mockOrganizationOptions;
 	private readonly CreateAdminCommandHandler _handler;
 
-	public AddAdminQueryHandlerTests()
+	public CreateAdminCommandHandlerTests()
 	{
 		_mockDbContext = new Mock<IApplicationDbContext>();
 		_mockUserDbSet = new Mock<DbSet<User>>();

@@ -1,7 +1,3 @@
-export interface HelloAdminResponse {
-  helloFromAdmin: boolean;
-}
-
 export interface AddUserRequest {
   email: string;
   fullName: string;
