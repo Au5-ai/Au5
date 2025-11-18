@@ -1,5 +1,6 @@
 using Au5.BackEnd.GlobalHandler;
 using Au5.BackEnd.Middlewares;
+using Au5.Domain.Common;
 using Au5.Infrastructure.Persistence.Context;
 using Au5.ServiceDefaults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -56,6 +57,10 @@ builder.AddServiceDefaults();
 	builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
 	builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 	builder.Services.AddProblemDetails();
+	builder.Services.AddAuthorizationBuilder()
+		.AddPolicy(AuthorizationPolicies.AdminOnly, policy => policy.RequireRole(RoleNames.Admin))
+		.AddPolicy(AuthorizationPolicies.UserOnly, policy => policy.RequireRole(RoleNames.User))
+		.AddPolicy(AuthorizationPolicies.UserOrAdmin, policy => policy.RequireRole(RoleNames.User, RoleNames.Admin));
 }
 
 var app = builder.Build();
@@ -67,7 +72,7 @@ var app = builder.Build();
 		{
 			db.Database.Migrate();
 		}
-		}
+	}
 
 	app.UseExceptionHandler();
 	app.MapDefaultEndpoints();

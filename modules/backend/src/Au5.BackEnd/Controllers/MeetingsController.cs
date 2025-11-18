@@ -9,9 +9,11 @@ using Au5.Application.Features.Meetings.PublicUrl;
 using Au5.Application.Features.Meetings.Rename;
 using Au5.Application.Features.Meetings.ToggleArchive;
 using Au5.Application.Features.Meetings.ToggleFavorite;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
 
+[Authorize(Policy = AuthorizationPolicies.UserOrAdmin)]
 public class MeetingsController(ISender mediator) : BaseController
 {
 	[HttpGet("{meetingId}/transcript")]
