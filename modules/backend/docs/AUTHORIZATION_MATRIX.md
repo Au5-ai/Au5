@@ -42,7 +42,7 @@ This document describes the current authorization policies and access control fo
 | GET    | `/users/spaces`                      | ✅    | ✅   | ❌        | UserOrAdmin    |
 | GET    | `/users/search`                      | ✅    | ❌   | ❌        | AdminOnly      |
 | POST   | `/users/invitations`                 | ✅    | ❌   | ❌        | AdminOnly      |
-| POST   | `/users/invitations/{userId}/resend` | ✅    | ✅   | ✅        | AllowAnonymous |
+| POST   | `/users/invitations/{userId}/resend` | ✅    | ✅   | ✅        | AdminOnly      |
 | GET    | `/users/{userId}/verify`             | ✅    | ✅   | ✅        | AllowAnonymous |
 | POST   | `/users/{userId}/verify`             | ✅    | ✅   | ✅        | AllowAnonymous |
 
@@ -100,21 +100,21 @@ This document describes the current authorization policies and access control fo
 
 ### Meetings (`/meetings`)
 
-| Method | Endpoint                                        | Admin | User | Anonymous | Policy    |
-| ------ | ----------------------------------------------- | ----- | ---- | --------- | --------- |
-| GET    | `/meetings/{meetingId}/transcript`              | ✅    | ✅   | ❌        | Authorize |
-| GET    | `/meetings/{meetingId}/ai-contents`             | ✅    | ✅   | ❌        | Authorize |
-| POST   | `/meetings/{meetingId}/ai-contents`             | ✅    | ✅   | ❌        | Authorize |
-| DELETE | `/meetings/{meetingId}/ai-contents/{contentId}` | ✅    | ✅   | ❌        | Authorize |
-| POST   | `/meetings/{meetingId}/bot`                     | ✅    | ✅   | ❌        | Authorize |
-| POST   | `/meetings/{meetingId}/close`                   | ✅    | ✅   | ❌        | Authorize |
-| PUT    | `/meetings/{meetingId}/rename`                  | ✅    | ✅   | ❌        | Authorize |
-| PATCH  | `/meetings/{meetingId}/toggle-favorite`         | ✅    | ✅   | ❌        | Authorize |
-| PATCH  | `/meetings/{meetingId}/toggle-archive`          | ✅    | ✅   | ❌        | Authorize |
-| POST   | `/meetings/{meetingId}/export`                  | ✅    | ✅   | ❌        | Authorize |
-| GET    | `/meetings/{meetingId}/public-url`              | ✅    | ✅   | ❌        | Authorize |
-| POST   | `/meetings/{meetingId}/public-url`              | ✅    | ✅   | ❌        | Authorize |
-| DELETE | `/meetings/{meetingId}/public-url`              | ✅    | ✅   | ❌        | Authorize |
+| Method | Endpoint                                        | Admin | User | Anonymous | Policy      |
+| ------ | ----------------------------------------------- | ----- | ---- | --------- | ----------- |
+| GET    | `/meetings/{meetingId}/transcript`              | ✅    | ✅   | ❌        | UserOrAdmin |
+| GET    | `/meetings/{meetingId}/ai-contents`             | ✅    | ✅   | ❌        | UserOrAdmin |
+| POST   | `/meetings/{meetingId}/ai-contents`             | ✅    | ✅   | ❌        | UserOrAdmin |
+| DELETE | `/meetings/{meetingId}/ai-contents/{contentId}` | ✅    | ✅   | ❌        | UserOrAdmin |
+| POST   | `/meetings/{meetingId}/bot`                     | ✅    | ✅   | ❌        | UserOrAdmin |
+| POST   | `/meetings/{meetingId}/close`                   | ✅    | ✅   | ❌        | UserOrAdmin |
+| PUT    | `/meetings/{meetingId}/rename`                  | ✅    | ✅   | ❌        | UserOrAdmin |
+| PATCH  | `/meetings/{meetingId}/toggle-favorite`         | ✅    | ✅   | ❌        | UserOrAdmin |
+| PATCH  | `/meetings/{meetingId}/toggle-archive`          | ✅    | ✅   | ❌        | UserOrAdmin |
+| POST   | `/meetings/{meetingId}/export`                  | ✅    | ✅   | ❌        | UserOrAdmin |
+| GET    | `/meetings/{meetingId}/public-url`              | ✅    | ✅   | ❌        | UserOrAdmin |
+| POST   | `/meetings/{meetingId}/public-url`              | ✅    | ✅   | ❌        | UserOrAdmin |
+| DELETE | `/meetings/{meetingId}/public-url`              | ✅    | ✅   | ❌        | UserOrAdmin |
 
 **Controller-Level Policy:** None (inherits from BaseController)
 

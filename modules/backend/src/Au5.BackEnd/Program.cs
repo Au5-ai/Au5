@@ -58,9 +58,9 @@ builder.AddServiceDefaults();
 	builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 	builder.Services.AddProblemDetails();
 	builder.Services.AddAuthorizationBuilder()
-		.AddPolicy(AuthorizationPolicies.AdminOnly, policy => policy.RequireRole(RoleNames.Admin))
-		.AddPolicy(AuthorizationPolicies.UserOnly, policy => policy.RequireRole(RoleNames.User))
-		.AddPolicy(AuthorizationPolicies.UserOrAdmin, policy => policy.RequireRole(RoleNames.User, RoleNames.Admin));
+		.AddPolicy(AuthorizationPolicies.AdminOnly, policy => policy.RequireRole(nameof(RoleTypes.Admin)))
+		.AddPolicy(AuthorizationPolicies.UserOnly, policy => policy.RequireRole(nameof(RoleTypes.User)))
+		.AddPolicy(AuthorizationPolicies.UserOrAdmin, policy => policy.RequireRole(nameof(RoleTypes.Admin), nameof(RoleTypes.User)));
 }
 
 var app = builder.Build();

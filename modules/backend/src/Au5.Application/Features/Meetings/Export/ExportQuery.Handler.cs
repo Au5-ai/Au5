@@ -36,8 +36,7 @@ public class ExportToTextQueryHandler : IRequestHandler<ExportQuery, Result<stri
 		sb.AppendLine($"Meeting Transcription: {meeting.MeetName}");
 		sb.AppendLine($"Meeting started: {meeting.CreatedAt:M/d/yyyy, h:mm:ss tt}");
 
-		var durationMinutes = ParseDuration(meeting.Duration);
-		sb.AppendLine($"Duration: {durationMinutes} minutes");
+		sb.AppendLine($"Duration: {meeting.Duration} minutes");
 
 		var participantNames = GetParticipantNames(meeting);
 		sb.AppendLine($"Participants: {participantNames}");
@@ -62,7 +61,7 @@ public class ExportToTextQueryHandler : IRequestHandler<ExportQuery, Result<stri
 
 	private static string GetParticipantNames(Meeting meeting)
 	{
-		var names = new List<string>();
+		List<string> names = [];
 
 		if (meeting.Participants != null)
 		{
@@ -75,14 +74,5 @@ public class ExportToTextQueryHandler : IRequestHandler<ExportQuery, Result<stri
 		}
 
 		return names.Count != 0 ? string.Join(", ", names) : "No participants";
-	}
-
-	private static int ParseDuration(string duration)
-	{
-		return string.IsNullOrEmpty(duration)
-			? 0
-			: TimeSpan.TryParse(duration, out var timeSpan)
-				? (int)timeSpan.TotalMinutes
-				: 0;
 	}
 }

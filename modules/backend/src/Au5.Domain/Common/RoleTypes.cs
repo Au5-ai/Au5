@@ -2,12 +2,13 @@ namespace Au5.Domain.Common;
 
 public enum RoleTypes : byte
 {
+	/// <summary>
+	/// Administrator role with full system access.
+	/// </summary>
 	Admin = 1,
-	User = 2,
-}
 
-public class RoleNames
-{
-	public const string Admin = "Admin";
-	public const string User = "User";
+	/// <summary>
+	/// Standard user role with limited access.
+	/// </summary>
+	User = 2,
 }
