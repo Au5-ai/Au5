@@ -41,7 +41,7 @@ public class ExportQueryHandlerTests
 			Id = meetingId,
 			MeetName = "Test Meeting",
 			CreatedAt = createdAt,
-			Duration = "00:30:00",
+			Duration = "30m",
 			Participants = [],
 			Guests = [],
 			Entries = []
@@ -56,7 +56,7 @@ public class ExportQueryHandlerTests
 
 		Assert.True(result.IsSuccess);
 		Assert.Contains("Meeting Transcription: Test Meeting", result.Data);
-		Assert.Contains("Duration: 30 minutes", result.Data);
+		Assert.Contains("Duration: 30m", result.Data);
 	}
 
 	[Fact]
@@ -328,7 +328,7 @@ public class ExportQueryHandlerTests
 		var result = await _handler.Handle(query, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Contains("Duration: 0 minutes", result.Data);
+		Assert.Contains("Duration: 0m", result.Data);
 	}
 
 	[Fact]
@@ -355,34 +355,7 @@ public class ExportQueryHandlerTests
 		var result = await _handler.Handle(query, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Contains("Duration: 0 minutes", result.Data);
-	}
-
-	[Fact]
-	public async Task Should_HandleInvalidDuration_When_DurationIsInvalidFormat()
-	{
-		var meetingId = Guid.NewGuid();
-
-		var meeting = new Meeting
-		{
-			Id = meetingId,
-			MeetName = "Invalid Duration",
-			CreatedAt = DateTime.UtcNow,
-			Duration = "invalid",
-			Participants = [],
-			Guests = [],
-			Entries = []
-		};
-
-		_dbContextMock.Setup(db => db.Set<Meeting>())
-			.Returns(new List<Meeting> { meeting }.BuildMockDbSet().Object);
-
-		var query = new ExportQuery(meetingId, "text");
-
-		var result = await _handler.Handle(query, CancellationToken.None);
-
-		Assert.True(result.IsSuccess);
-		Assert.Contains("Duration: 0 minutes", result.Data);
+		Assert.Contains("Duration: 0m", result.Data);
 	}
 
 	[Fact]
@@ -395,7 +368,7 @@ public class ExportQueryHandlerTests
 			Id = meetingId,
 			MeetName = "Long Meeting",
 			CreatedAt = DateTime.UtcNow,
-			Duration = "02:30:00",
+			Duration = "150m",
 			Participants = [],
 			Guests = [],
 			Entries = []
@@ -409,7 +382,7 @@ public class ExportQueryHandlerTests
 		var result = await _handler.Handle(query, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Contains("Duration: 150 minutes", result.Data);
+		Assert.Contains("Duration: 150m", result.Data);
 	}
 
 	[Fact]
@@ -502,7 +475,7 @@ public class ExportQueryHandlerTests
 			Id = meetingId,
 			MeetName = "Date Format Test",
 			CreatedAt = createdAt,
-			Duration = "00:30:00",
+			Duration = "30m",
 			Participants = [],
 			Guests = [],
 			Entries = []
@@ -519,7 +492,7 @@ public class ExportQueryHandlerTests
 		Assert.Contains("Meeting started:", result.Data);
 		Assert.Contains("Date Format Test", result.Data);
 		Assert.Contains("2025", result.Data);
-		Assert.Contains("Duration: 30 minutes", result.Data);
+		Assert.Contains("Duration: 30m", result.Data);
 	}
 
 	[Fact]
@@ -588,7 +561,7 @@ public class ExportQueryHandlerTests
 			Id = meetingId,
 			MeetName = "Sprint Planning",
 			CreatedAt = createdAt,
-			Duration = "01:30:00",
+			Duration = "90m",
 			Participants =
 			[
 				new ParticipantInMeeting
@@ -629,7 +602,7 @@ public class ExportQueryHandlerTests
 
 		Assert.True(result.IsSuccess);
 		Assert.Contains("Meeting Transcription: Sprint Planning", result.Data);
-		Assert.Contains("Duration: 90 minutes", result.Data);
+		Assert.Contains("Duration: 90m", result.Data);
 		Assert.Contains("Participants: Product Owner, Stakeholder", result.Data);
 		Assert.Contains("05:00 Product Owner: Let's review the backlog", result.Data);
 		Assert.Contains("06:00 Stakeholder: Sounds good", result.Data);
