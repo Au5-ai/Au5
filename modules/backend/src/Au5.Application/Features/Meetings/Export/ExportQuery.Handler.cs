@@ -36,7 +36,7 @@ public class ExportToTextQueryHandler : IRequestHandler<ExportQuery, Result<stri
 		sb.AppendLine($"Meeting Transcription: {meeting.MeetName}");
 		sb.AppendLine($"Meeting started: {meeting.CreatedAt:M/d/yyyy, h:mm:ss tt}");
 
-		sb.AppendLine($"Duration: {meeting.Duration} minutes");
+		sb.AppendLine($"Duration: {(string.IsNullOrEmpty(meeting.Duration) ? "0m" : meeting.Duration)}");
 
 		var participantNames = GetParticipantNames(meeting);
 		sb.AppendLine($"Participants: {participantNames}");

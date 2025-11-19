@@ -28,6 +28,15 @@ export async function apiRequestClient<T>(
     const response = await fetch(url, config);
 
     if (!response.ok) {
+      if (response.status === 403) {
+        window.location.href = "/403";
+        throw new ApiError(403, "Forbidden", {
+          title: "Forbidden",
+          detail: "You don't have permission to access this resource.",
+          status: 403,
+        });
+      }
+
       const errorData: ProblemDetails = await response.json().catch(() => ({
         title: "Unknown Error",
         detail: "An unknown error occurred.",
@@ -111,6 +120,15 @@ export async function apiRequestClientText(
     const response = await fetch(url, config);
 
     if (!response.ok) {
+      if (response.status === 403) {
+        window.location.href = "/403";
+        throw new ApiError(403, "Forbidden", {
+          title: "Forbidden",
+          detail: "You don't have permission to access this resource.",
+          status: 403,
+        });
+      }
+
       const errorData: ProblemDetails = await response.json().catch(() => ({
         title: "Unknown Error",
         detail: "An unknown error occurred.",
