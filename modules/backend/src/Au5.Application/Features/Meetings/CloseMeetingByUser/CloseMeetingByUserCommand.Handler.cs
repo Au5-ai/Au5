@@ -36,7 +36,7 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 
 		if (meeting is null)
 		{
-			return Error.BadRequest(description: AppResources.Meeting.NotFound);
+			return Error.BadRequest("Meeting.NotFound", AppResources.Meeting.NotFound);
 		}
 
 		var meetingContent = await _meetingService.CloseMeeting(meeting.MeetId, cancellationToken);
@@ -60,9 +60,9 @@ public class CloseMeetingByUserCommandHandler : IRequestHandler<CloseMeetingByUs
 
 			return dbResult.IsSuccess
 				? true
-				: Error.Failure(description: AppResources.Meeting.FailedToClose);
+				: Error.Failure("Meeting.FailedToClose", AppResources.Meeting.FailedToClose);
 		}
 
-		return Error.Failure(description: AppResources.Meeting.NoContent);
+		return Error.Failure("Meeting.NoContent", AppResources.Meeting.NoContent);
 	}
 }

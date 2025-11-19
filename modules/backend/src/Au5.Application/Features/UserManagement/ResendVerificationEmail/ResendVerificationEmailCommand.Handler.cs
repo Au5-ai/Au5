@@ -29,12 +29,12 @@ public class ResendVerificationEmailCommandHandler : IRequestHandler<ResendVerif
 
 		if (user is null)
 		{
-			return Error.BadRequest(description: AppResources.User.UserNotFound);
+			return Error.BadRequest("User.NotFound", AppResources.User.UserNotFound);
 		}
 
 		if (user.IsRegistered())
 		{
-			return Error.BadRequest(description: AppResources.User.EmailAlreadyVerified);
+			return Error.BadRequest("User.AlreadyVerified", AppResources.User.EmailAlreadyVerified);
 		}
 
 		var config = await _dbContext.Set<Organization>()
@@ -43,7 +43,7 @@ public class ResendVerificationEmailCommandHandler : IRequestHandler<ResendVerif
 
 		if (config is null)
 		{
-			return Error.Failure(description: AppResources.System.IsNotConfigured);
+			return Error.Failure("Organization.NotConfigured", AppResources.System.IsNotConfigured);
 		}
 
 		var response = await _emailProvider.SendInviteAsync([user], config.OrganizationName, new SmtpOptions()
@@ -56,6 +56,6 @@ public class ResendVerificationEmailCommandHandler : IRequestHandler<ResendVerif
 			UseSsl = _organizationOptions.SmtpUseSSl
 		});
 
-		return (response is null || response.Count is 0) ? Error.Failure(description: AppResources.System.FailedToSMTPConnection) : new ResendVerificationEmailResponse(response.First().Link);
+		return (response is null || response.Count is 0) ? Error.Failure("Email.FailedToSend", AppResources.System.FailedToSMTPConnection) : new ResendVerificationEmailResponse(response.First().Link);
 	}
 }

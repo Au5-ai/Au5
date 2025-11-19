@@ -16,7 +16,7 @@ public sealed class LoginCommandHandler(IApplicationDbContext dbContext, ITokenS
 
 		if (user is null || user.Password != HashHelper.HashPassword(request.Password, user.Id))
 		{
-			return Error.Unauthorized(description: AppResources.Auth.InvalidUsernameOrPassword);
+			return Error.Unauthorized("Auth.InvalidCredentials", AppResources.Auth.InvalidUsernameOrPassword);
 		}
 
 		user.LastLoginAt = _dataProvider.Now;

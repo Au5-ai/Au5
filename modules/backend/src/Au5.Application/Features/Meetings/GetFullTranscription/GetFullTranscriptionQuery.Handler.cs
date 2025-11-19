@@ -25,7 +25,7 @@ public class GetFullTranscriptionQueryHandler : IRequestHandler<GetFullTranscrip
 
 		if (meeting is null)
 		{
-			return Error.NotFound(description: "No meeting with this ID was found.");
+			return Error.NotFound("Meeting.NotFound", "No meeting with this ID was found.");
 		}
 
 		var orderedEntries = meeting.Entries

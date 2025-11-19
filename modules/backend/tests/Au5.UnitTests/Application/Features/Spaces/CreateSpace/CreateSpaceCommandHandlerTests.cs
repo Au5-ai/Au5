@@ -119,7 +119,7 @@ public class CreateSpaceCommandHandlerTests
 		var result = await fixture.BuildHandler().Handle(command, CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
-		Assert.Equal(SpaceResources.CreateFailedCode, result.Error.Code);
+		Assert.Equal("Space.FailedToCreate", result.Error.Code);
 		Assert.Equal(SpaceResources.CreateFailedMessage, result.Error.Description);
 
 		fixture.MockDbContext.Verify(db => db.Set<SpaceEntity>(), Times.Once);

@@ -19,7 +19,7 @@ public class OrganizationQueryHandler : IRequestHandler<OrganizationQuery, Resul
 			.FirstOrDefaultAsync(x => x.Id == _currentUser.OrganizationId, cancellationToken);
 
 		return organization is null
-			? Error.Failure(description: AppResources.System.IsNotConfigured)
+			? Error.Failure("Organization.NotConfigured", AppResources.System.IsNotConfigured)
 			: new OrganizationResponse
 			{
 				OrganizationName = organization.OrganizationName,

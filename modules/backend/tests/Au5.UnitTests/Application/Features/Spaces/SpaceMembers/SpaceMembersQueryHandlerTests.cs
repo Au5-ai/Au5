@@ -35,7 +35,7 @@ public class SpaceMembersQueryHandlerTests
 		var result = await fixture.BuildHandler().Handle(query, CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
-		Assert.Equal("Space.Access.Denied", result.Error.Code);
+		Assert.Equal("Space.AccessDenied", result.Error.Code);
 	}
 
 	[Fact]
@@ -70,6 +70,6 @@ public class SpaceMembersQueryHandlerTests
 		var result = await fixture.BuildHandler().Handle(query, CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
-		Assert.Equal("Space.Access.Denied", result.Error.Code);
+		Assert.Equal("Space.AccessDenied", result.Error.Code);
 	}
 }

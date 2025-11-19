@@ -24,7 +24,7 @@ public class AddMeetingToSpaceCommandHandler : IRequestHandler<AddMeetingToSpace
 
 		if (meeting == null)
 		{
-			return Error.NotFound(description: AppResources.MeetingSpace.MeetingNotFound);
+			return Error.NotFound("Meeting.NotFound", AppResources.MeetingSpace.MeetingNotFound);
 		}
 
 		var space = await _dbContext.Set<Space>()
@@ -32,7 +32,7 @@ public class AddMeetingToSpaceCommandHandler : IRequestHandler<AddMeetingToSpace
 
 		if (space == null)
 		{
-			return Error.NotFound(description: AppResources.MeetingSpace.SpaceNotFound);
+			return Error.NotFound("Space.NotFound", AppResources.MeetingSpace.SpaceNotFound);
 		}
 
 		var existingMeetingSpace = await _dbContext.Set<MeetingSpace>()
@@ -40,7 +40,7 @@ public class AddMeetingToSpaceCommandHandler : IRequestHandler<AddMeetingToSpace
 
 		if (existingMeetingSpace != null)
 		{
-			return Error.BadRequest(description: AppResources.MeetingSpace.MeetingAlreadyInSpace);
+			return Error.BadRequest("MeetingSpace.AlreadyExists", AppResources.MeetingSpace.MeetingAlreadyInSpace);
 		}
 
 		var meetingSpace = new MeetingSpace

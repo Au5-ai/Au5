@@ -22,7 +22,7 @@ public class ExportToTextQueryHandler : IRequestHandler<ExportQuery, Result<stri
 
 		if (meeting is null)
 		{
-			return Error.NotFound(description: "No meeting with this ID was found.");
+			return Error.NotFound("Meeting.NotFound", "No meeting with this ID was found.");
 		}
 
 		var textContent = GenerateTextExport(meeting);
