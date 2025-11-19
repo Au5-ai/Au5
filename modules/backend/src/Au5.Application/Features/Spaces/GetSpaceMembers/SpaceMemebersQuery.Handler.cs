@@ -16,9 +16,10 @@ public sealed class SpaceMembersQueryHandler : IRequestHandler<SpaceMemebersQuer
 	public async ValueTask<Result<SpaceMembersResponse>> Handle(SpaceMemebersQuery request, CancellationToken cancellationToken)
 	{
 		var currentUserId = _currentUserService.UserId;
+		var organizationId = _currentUserService.OrganizationId;
 
 		var spaceData = await _dbContext.Set<Space>()
-			.Where(s => s.Id == request.SpaceId && s.IsActive)
+			.Where(s => s.Id == request.SpaceId && s.IsActive && s.OrganizationId == organizationId)
 			.Select(s => new
 			{
 				Members = s.UserSpaces
@@ -44,7 +45,7 @@ public sealed class SpaceMembersQueryHandler : IRequestHandler<SpaceMemebersQuer
 
 		if (!spaceData.Members.Any(us => us.UserId == currentUserId))
 		{
-			return Error.Forbidden("Space.Access.Denied", "You do not have access to this space.");
+			return Error.Forbidden("Space.AccessDenied", "You do not have access to this space.");
 		}
 
 		return new SpaceMembersResponse { Users = spaceData.Members };

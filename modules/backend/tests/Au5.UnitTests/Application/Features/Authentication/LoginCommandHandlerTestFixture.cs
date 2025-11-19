@@ -53,7 +53,7 @@ public class LoginCommandHandlerTestFixture
 
 	public LoginCommandHandlerTestFixture WithToken(string token = "fake-token")
 	{
-		MockTokenService.Setup(ts => ts.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<RoleTypes>()))
+		MockTokenService.Setup(ts => ts.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<RoleTypes>(), It.IsAny<Guid>()))
 						.Returns(new TokenResponse(token, 3600, string.Empty, "Bearer"));
 		return this;
 	}

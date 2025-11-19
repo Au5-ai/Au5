@@ -14,10 +14,12 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
 
+[Authorize(Policy = AuthorizationPolicies.UserOrAdmin)]
 public class UsersController(ISender mediator) : BaseController
 {
 	[HttpGet]
 	[Route("")]
+	[Authorize(Policy = AuthorizationPolicies.AdminOnly)]
 	public async Task<IActionResult> GetUsers()
 	{
 		var result = await mediator.Send(new GetUsersQuery());
@@ -58,8 +60,9 @@ public class UsersController(ISender mediator) : BaseController
 		return Ok(await mediator.Send(new UserSpacesQuery(), ct));
 	}
 
-	[Route("search")]
 	[HttpGet]
+	[Route("search")]
+	[Authorize(Policy = AuthorizationPolicies.AdminOnly)]
 	public async Task<IActionResult> SearchUsers([FromQuery][Required][MinLength(2)][MaxLength(100)] string query)
 	{
 		var result = await mediator.Send(new SearchUserQuery(query));
@@ -68,14 +71,15 @@ public class UsersController(ISender mediator) : BaseController
 
 	[HttpPost]
 	[Route("invitations")]
+	[Authorize(Policy = AuthorizationPolicies.AdminOnly)]
 	public async Task<IActionResult> InviteUsers([FromBody] List<InviteUsersRequest> invites)
 	{
 		var result = await mediator.Send(new InviteUsersCommand(invites));
 		return Ok(result);
 	}
 
-	[AllowAnonymous]
 	[HttpPost("invitations/{userId}/resend")]
+	[Authorize(Policy = AuthorizationPolicies.AdminOnly)]
 	public async Task<IActionResult> ResendInvitation([FromRoute] Guid userId)
 	{
 		return Ok(await mediator.Send(new ResendVerificationEmailCommand() { UserId = userId }));

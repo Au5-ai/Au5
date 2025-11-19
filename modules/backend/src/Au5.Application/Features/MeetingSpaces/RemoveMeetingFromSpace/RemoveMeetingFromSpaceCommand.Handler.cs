@@ -18,7 +18,7 @@ public class RemoveMeetingFromSpaceCommandHandler : IRequestHandler<RemoveMeetin
 
 		if (meetingSpace == null)
 		{
-			return Error.NotFound(description: AppResources.MeetingSpace.MeetingNotInSpace);
+			return Error.NotFound("MeetingSpace.NotFound", AppResources.MeetingSpace.MeetingNotInSpace);
 		}
 
 		_dbContext.Set<MeetingSpace>().Remove(meetingSpace);

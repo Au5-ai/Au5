@@ -11,7 +11,7 @@ public class RenameMeetingCommandHandler(IApplicationDbContext dbContext) : IReq
 
 		if (currentMeet is null)
 		{
-			return Error.NotFound(description: "No meeting with this ID was found.");
+			return Error.NotFound("Meeting.NotFound", "No meeting with this ID was found.");
 		}
 
 		if (request.NewTitle != currentMeet.MeetName)
@@ -20,7 +20,7 @@ public class RenameMeetingCommandHandler(IApplicationDbContext dbContext) : IReq
 			var saveResult = await _dbContext.SaveChangesAsync(cancellationToken);
 			if (saveResult.IsFailure)
 			{
-				return Error.Failure("Failed to save changes. Please try again later.");
+				return Error.Failure("Meeting.FailedToUpdate", "Failed to save changes. Please try again later.");
 			}
 		}
 

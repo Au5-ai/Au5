@@ -31,13 +31,12 @@ export const API_URLS = {
     ADD_BOT: "/meetings/bots",
     GENERATE_AI: (meetingId: string) => `/meetings/${meetingId}/ai-contents`,
   },
-  SETUP: {
-    HELLO_ADMIN: "/admin/hello",
+  SINGUP: {
     ADD_ADMIN: "/admin/hello",
   },
-  SYSTEM: {
-    CONFIG: "/configs/system",
-    EXTENSION_CONFIG: "/configs/extension",
+  ORGANIZATION: {
+    CONFIG: "/organizations",
+    EXTENSION_CONFIG: "/organizations/extension",
   },
   USERS: {
     LIST: "/users",

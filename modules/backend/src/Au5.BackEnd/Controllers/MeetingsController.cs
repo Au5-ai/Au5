@@ -1,15 +1,19 @@
 using Au5.Application.Features.AI.Delete;
 using Au5.Application.Features.AI.Generate;
 using Au5.Application.Features.AI.GetAll;
+using Au5.Application.Features.Meetings.AddBot;
 using Au5.Application.Features.Meetings.CloseMeetingByUser;
 using Au5.Application.Features.Meetings.Export;
 using Au5.Application.Features.Meetings.GetFullTranscription;
+using Au5.Application.Features.Meetings.PublicUrl;
 using Au5.Application.Features.Meetings.Rename;
 using Au5.Application.Features.Meetings.ToggleArchive;
 using Au5.Application.Features.Meetings.ToggleFavorite;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
 
+[Authorize(Policy = AuthorizationPolicies.UserOrAdmin)]
 public class MeetingsController(ISender mediator) : BaseController
 {
 	[HttpGet("{meetingId}/transcript")]
@@ -60,7 +64,7 @@ public class MeetingsController(ISender mediator) : BaseController
 
 	[HttpPost("bots")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	public async Task<IActionResult> AddBotToMeeting([FromBody] AddBotRequest request, CancellationToken cancellationToken)
+	public async Task<IActionResult> AddBotToMeeting([FromBody] AddBotCommand request, CancellationToken cancellationToken)
 	{
 		return Ok(await mediator.Send(request, cancellationToken));
 	}
@@ -103,6 +107,11 @@ public class MeetingsController(ISender mediator) : BaseController
 			? Content(result.Data!, "text/plain", System.Text.Encoding.UTF8)
 			: BadRequest(result.Error);
 	}
-}
 
-public record AddBotRequest(string Platform, string BotName);
+	[HttpPost("{meetingId}/public-link")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> GetSystemMeetingUrl([FromRoute] Guid meetingId, [FromBody] PublicMeetingUrlCommand command, CancellationToken cancellationToken)
+	{
+		return Ok(await mediator.Send(command with { MeetingId = meetingId }, cancellationToken));
+	}
+}

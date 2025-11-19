@@ -2,12 +2,14 @@ namespace Au5.Application.Features.UserManagement.Search;
 
 public class SearchUserQueryHandler : IRequestHandler<SearchUserQuery, IReadOnlyCollection<Participant>>
 {
-	private const int MaxSearchResults = 25;
+	private const int MaxSearchResults = 10;
 	private readonly IApplicationDbContext _context;
+	private readonly ICurrentUserService _currentUser;
 
-	public SearchUserQueryHandler(IApplicationDbContext context)
+	public SearchUserQueryHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
 	{
 		_context = context;
+		_currentUser = currentUserService;
 	}
 
 	public async ValueTask<IReadOnlyCollection<Participant>> Handle(SearchUserQuery request, CancellationToken cancellationToken)
@@ -17,7 +19,7 @@ public class SearchUserQueryHandler : IRequestHandler<SearchUserQuery, IReadOnly
 			return Array.Empty<Participant>();
 		}
 
-		var query = _context.Set<User>().Where(u => u.IsActive);
+		var query = _context.Set<User>().Where(u => u.IsActive && u.OrganizationId == _currentUser.OrganizationId);
 		query = query.Where(u => u.FullName.StartsWith(request.Query) || u.Email.StartsWith(request.Query));
 
 		var users = await query

@@ -267,7 +267,7 @@ class ChatPanel {
       botContainer.classList.add("hidden");
       const botRequested = document.createElement("div");
       botRequested.className = "au5-join-time";
-      botRequested.innerText = `🤖 ${request.botName} bot requested by ${request.user.fullName}`;
+      botRequested.innerText = `🤖 bot requested by ${request.user.fullName}`;
       this.transcriptionsContainerEl.appendChild(botRequested);
     }
   }
@@ -464,13 +464,13 @@ const _ApiRoutes = class _ApiRoutes {
     return _ApiRoutes.instance;
   }
   addBot() {
-    return `${this.config.service.baseUrl}/meetings/bots`;
+    return `${this.config.service.serviceBaseUrl}/meetings/bots`;
   }
   getReactions() {
-    return `${this.config.service.baseUrl}/reactions`;
+    return `${this.config.service.serviceBaseUrl}/reactions`;
   }
   closeMeeting(meetingId) {
-    return `${this.config.service.baseUrl}/meetings/${meetingId}/close`;
+    return `${this.config.service.serviceBaseUrl}/meetings/${meetingId}/close`;
   }
 };
 __publicField(_ApiRoutes, "instance");
@@ -3600,7 +3600,6 @@ class UIHandlers {
       const meetId = this.platform.getMeetId();
       const response = await this.backendApi.addBot({
         meetId,
-        botName: this.config.service.botName,
         platform: this.platform.getPlatformName()
       }).catch((error) => {
         showToast("Failed to add bot :(");
@@ -3611,7 +3610,6 @@ class UIHandlers {
         const message = {
           type: MessageTypes.RequestToAddBot,
           meetId,
-          botName: this.config.service.botName,
           user: this.config.user
         };
         (_a = this.meetingHubClient) == null ? void 0 : _a.sendMessage(message);

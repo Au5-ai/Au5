@@ -6,27 +6,20 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 {
 	private readonly IApplicationDbContext _context;
 	private readonly IDataProvider _dataProvider;
+	private readonly ICurrentUserService _currentUserService;
 
-	public CreateSpaceCommandHandler(IApplicationDbContext context, IDataProvider dataProvider)
+	public CreateSpaceCommandHandler(IApplicationDbContext context, IDataProvider dataProvider, ICurrentUserService currentUserService)
 	{
 		_context = context;
 		_dataProvider = dataProvider;
+		_currentUserService = currentUserService;
 	}
 
 	public async ValueTask<Result<CreateSpaceResponse>> Handle(CreateSpaceCommand request, CancellationToken cancellationToken)
 	{
-		if (request.ParentId.HasValue)
-		{
-			var parentExists = await _context.Set<Space>()
-				.AnyAsync(s => s.Id == request.ParentId.Value && s.IsActive, cancellationToken);
+		var organizationId = _currentUserService.OrganizationId;
 
-			if (!parentExists)
-			{
-				return Error.NotFound(AppResources.Space.ParentNotFoundCode, AppResources.Space.ParentNotFoundMessage);
-			}
-		}
-
-		if (request.Users != null && request.Users.Any())
+		if (request.Users != null && request.Users.Count != 0)
 		{
 			var userIds = request.Users.Select(u => u.UserId).ToList();
 			var existingUsersCount = await _context.Set<User>()
@@ -35,7 +28,7 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 
 			if (existingUsersCount != userIds.Count)
 			{
-				return Error.Validation(AppResources.Space.InvalidUsersCode, AppResources.Space.InvalidUsersMessage);
+				return Error.Validation("Space.InvalidUsers", AppResources.Space.InvalidUsersMessage);
 			}
 		}
 
@@ -44,7 +37,8 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 			Id = _dataProvider.NewGuid(),
 			Name = request.Name,
 			Description = request.Description,
-			IsActive = true
+			IsActive = true,
+			OrganizationId = organizationId
 		};
 
 		_context.Set<Space>().Add(space);
@@ -65,7 +59,7 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 		var result = await _context.SaveChangesAsync(cancellationToken);
 
 		return result.IsFailure
-			? Error.Failure(AppResources.Space.CreateFailedCode, AppResources.Space.CreateFailedMessage)
+			? Error.Failure("Space.FailedToCreate", AppResources.Space.CreateFailedMessage)
 			: new CreateSpaceResponse
 			{
 				Id = space.Id,

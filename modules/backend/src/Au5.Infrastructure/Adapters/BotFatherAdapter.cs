@@ -66,7 +66,7 @@ public class BotFatherAdapter(IHttpClientFactory httpClientFactory, ILogger<BotF
 		catch (Exception ex)
 		{
 			_logger.LogError(ex, "Error communicating with BotFather at {Url}", url);
-			return Error.Failure(description: AppResources.BotFather.FailedCommunicateWithBotFather);
+			return Error.Failure("BotFather.CommunicationFailed", description: AppResources.BotFather.FailedCommunicateWithBotFather);
 		}
 	}
 }

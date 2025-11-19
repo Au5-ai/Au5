@@ -16,6 +16,11 @@ public interface ICurrentUserService
     RoleTypes? Role { get; }
 
 	/// <summary>
+	/// Gets the current user's organization identifier.
+	/// </summary>
+    Guid OrganizationId { get; }
+
+	/// <summary>
 	/// Gets a value indicating whether gets whether the current request is from an authenticated user.
 	/// </summary>
     bool IsAuthenticated { get; }

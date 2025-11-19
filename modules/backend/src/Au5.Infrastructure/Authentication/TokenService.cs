@@ -24,7 +24,7 @@ public class TokenService : ITokenService
 		_dataProvider = dataProvider;
 	}
 
-	public TokenResponse GenerateToken(Guid extensionId, string fullName, RoleTypes role)
+	public TokenResponse GenerateToken(Guid extensionId, string fullName, RoleTypes role, Guid organizationId)
 	{
 		var jti = _dataProvider.NewGuid().ToString();
 
@@ -32,7 +32,8 @@ public class TokenService : ITokenService
 		{
 			new Claim(ClaimConstants.UserId, extensionId.ToString()),
 			new Claim(ClaimConstants.Name, fullName ?? string.Empty),
-			new Claim(ClaimConstants.Role, ((byte)role).ToString()),
+			new Claim(ClaimConstants.Role, role.ToString()),
+			new Claim(ClaimConstants.OrganizationId, organizationId.ToString()),
 			new Claim(ClaimConstants.Jti, jti)
 		};
 

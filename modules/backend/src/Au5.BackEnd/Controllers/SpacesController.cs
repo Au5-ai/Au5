@@ -7,13 +7,16 @@ using Au5.Application.Features.Spaces.GetSpaceMeetings;
 using Au5.Application.Features.Spaces.GetSpaceMembers;
 using Au5.Application.Features.Spaces.GetSpaces;
 using Au5.Application.Features.Spaces.RemoveMemberFromSpace;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
 
+[Authorize(Policy = AuthorizationPolicies.UserOrAdmin)]
 public class SpacesController(ISender mediator) : BaseController
 {
 	[HttpGet]
 	[Route("")]
+	[Authorize(Policy = AuthorizationPolicies.AdminOnly)]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> GetSpaces(CancellationToken ct)
 	{
@@ -22,6 +25,7 @@ public class SpacesController(ISender mediator) : BaseController
 
 	[HttpPost]
 	[Route("")]
+	[Authorize(Policy = AuthorizationPolicies.AdminOnly)]
 	[ProducesResponseType(typeof(SpaceDto), StatusCodes.Status201Created)]
 	public async Task<IActionResult> CreateSpace([FromBody] CreateSpaceCommand command, CancellationToken ct)
 	{

@@ -21,7 +21,6 @@ export interface UserInSpace {
 export interface CreateSpaceCommand {
   name: string;
   description: string;
-  parentId?: string;
   users: UserInSpace[];
 }
 

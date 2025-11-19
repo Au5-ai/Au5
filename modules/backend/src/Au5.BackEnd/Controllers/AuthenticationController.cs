@@ -16,6 +16,7 @@ public class AuthenticationController(ISender mediator, ITokenService tokenServi
 	}
 
 	[HttpPost("logout")]
+	[Authorize(Policy = AuthorizationPolicies.UserOrAdmin)]
 	public async Task<IActionResult> Logout()
 	{
 		var userId = User.FindFirst(ClaimConstants.UserId)?.Value;
