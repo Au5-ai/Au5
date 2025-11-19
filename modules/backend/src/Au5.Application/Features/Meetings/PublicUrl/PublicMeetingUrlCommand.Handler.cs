@@ -18,14 +18,14 @@ public class GetMeetingUrlCommandHandler(
 	{
 		if (_organizationOptions is null || string.IsNullOrEmpty(_organizationOptions.ServiceBaseUrl))
 		{
-			return Error.Failure(description: "BaseUrl Of Service is not set.");
+			return Error.Failure("Organization.NotConfigured", "BaseUrl Of Service is not set.");
 		}
 
 		var meeting = await _dbContext.Set<Meeting>().FirstOrDefaultAsync(s => s.Id == request.MeetingId, cancellationToken);
 
 		if (meeting is null)
 		{
-			return Error.NotFound(description: "No meeting with this ID was found.");
+			return Error.NotFound("Meeting.NotFound", "No meeting with this ID was found.");
 		}
 
 		var expiryDate = _dataProvider.Now.AddDays(request.ExpirationDays);
@@ -35,7 +35,7 @@ public class GetMeetingUrlCommandHandler(
 		var saveResult = await _dbContext.SaveChangesAsync(cancellationToken);
 		if (saveResult.IsFailure)
 		{
-			return Error.Failure(description: "Failed to save changes. Please try again later.");
+			return Error.Failure("Meeting.FailedToUpdate", "Failed to save changes. Please try again later.");
 		}
 
 		var generatedLink = _urlGenerator.GeneratePublicMeetingUrl(_organizationOptions.ServiceBaseUrl, meeting.Id, meeting.MeetId);

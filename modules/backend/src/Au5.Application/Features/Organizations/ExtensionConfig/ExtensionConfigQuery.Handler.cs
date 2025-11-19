@@ -23,7 +23,7 @@ public class ExtensionConfigQueryHandler : IRequestHandler<ExtensionConfigQuery,
 
 		if (existingConfig is null)
 		{
-			return Error.Failure(description: AppResources.System.IsNotConfigured);
+			return Error.Failure("Organization.NotConfigured", AppResources.System.IsNotConfigured);
 		}
 
 		var currentUser = await _dbContext.Set<User>().AsNoTracking().Select(x => new Participant()
@@ -36,7 +36,7 @@ public class ExtensionConfigQueryHandler : IRequestHandler<ExtensionConfigQuery,
 
 		if (currentUser is null)
 		{
-			return Error.Unauthorized(description: AppResources.User.UserNotFound);
+			return Error.Unauthorized("User.NotFound", AppResources.User.UserNotFound);
 		}
 
 		return new ExtensionConfigResponse()

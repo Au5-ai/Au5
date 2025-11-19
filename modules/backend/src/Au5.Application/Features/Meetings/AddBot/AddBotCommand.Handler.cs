@@ -44,7 +44,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 		var config = await _dbContext.Set<Organization>().AsNoTracking().FirstOrDefaultAsync(o => o.Id == _currentUserService.OrganizationId, cancellationToken);
 		if (config is null)
 		{
-			return Error.Failure(description: AppResources.System.IsNotConfigured);
+			return Error.Failure("Organization.NotConfigured", AppResources.System.IsNotConfigured);
 		}
 
 		var meeting = new Meeting
@@ -66,7 +66,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
 		if (!dbResult.IsSuccess)
 		{
-			return Error.Failure(description: AppResources.Meeting.FailedToAddBot);
+			return Error.Failure("Meeting.FailedToAddBot", AppResources.Meeting.FailedToAddBot);
 		}
 
 		var meetingKey = _meetingService.GetMeetingKey(request.MeetId);

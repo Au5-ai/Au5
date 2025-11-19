@@ -18,7 +18,7 @@ public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngi
 		var config = await _dbContext.Set<Organization>().AsNoTracking().FirstOrDefaultAsync(cancellationToken);
 		if (config is null)
 		{
-			return Error.Failure(description: AppResources.System.IsNotConfigured);
+			return Error.Failure("Organization.NotConfigured", AppResources.System.IsNotConfigured);
 		}
 
 		var assistantId = await _aiEngine.CreateAssistantAsync(
@@ -35,7 +35,7 @@ public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngi
 
 		if (string.IsNullOrEmpty(assistantId))
 		{
-			return Error.Failure(AppResources.Assistant.Code, AppResources.Assistant.OpenAIConnectionFailed);
+			return Error.Failure("Assistant.FailedToCreate", AppResources.Assistant.OpenAIConnectionFailed);
 		}
 
 		var isDefault = _currentUserService.Role == RoleTypes.Admin;
@@ -58,6 +58,6 @@ public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngi
 		_dbContext.Set<Assistant>().Add(entity);
 		var response = await _dbContext.SaveChangesAsync(cancellationToken);
 
-		return response.IsFailure ? Error.Failure(description: AppResources.DatabaseFailureMessage) : new AddAssisstantResponse(entity.Id);
+		return response.IsFailure ? Error.Failure("Assistant.FailedToSave", AppResources.DatabaseFailureMessage) : new AddAssisstantResponse(entity.Id);
 	}
 }

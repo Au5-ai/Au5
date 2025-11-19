@@ -16,7 +16,7 @@ public class GetSpaceMeetingsQueryHandler(IApplicationDbContext context, ICurren
 
 		if (!userHasAccess)
 		{
-			return Error.Failure("Space.Access.Denied", "You do not have access to this space");
+			return Error.Failure("Space.AccessDenied", "You do not have access to this space");
 		}
 
 		var query = context.Set<MeetingSpace>()

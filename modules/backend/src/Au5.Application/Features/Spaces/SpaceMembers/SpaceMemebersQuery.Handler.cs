@@ -45,7 +45,7 @@ public sealed class SpaceMembersQueryHandler : IRequestHandler<SpaceMemebersQuer
 
 		if (!spaceData.Members.Any(us => us.UserId == currentUserId))
 		{
-			return Error.Forbidden("Space.Access.Denied", "You do not have access to this space.");
+			return Error.Forbidden("Space.AccessDenied", "You do not have access to this space.");
 		}
 
 		return new SpaceMembersResponse { Users = spaceData.Members };

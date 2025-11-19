@@ -35,7 +35,7 @@ public class SpaceMeetingsQueryHandlerTests
 		var result = await _handler.Handle(query, CancellationToken.None);
 
 		Assert.True(result.IsFailure);
-		Assert.Equal("Space.Access.Denied", result.Error.Code);
+		Assert.Equal("Space.AccessDenied", result.Error.Code);
 		Assert.Equal("You do not have access to this space", result.Error.Description);
 	}
 

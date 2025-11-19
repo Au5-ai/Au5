@@ -34,7 +34,7 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 		var config = await _context.Set<Organization>().Where(x => x.Id == _currentUser.OrganizationId).AsNoTracking().FirstOrDefaultAsync(cancellationToken: cancellationToken);
 		if (config is null)
 		{
-			return Error.Unauthorized(description: AppResources.System.IsNotConfigured);
+			return Error.Unauthorized("Organization.NotConfigured", AppResources.System.IsNotConfigured);
 		}
 
 		var emails = request.Invites.Select(x => x.Email).ToArray();

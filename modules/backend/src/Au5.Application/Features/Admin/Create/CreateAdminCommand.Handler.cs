@@ -54,7 +54,7 @@ public class CreateAdminCommandHandler : IRequestHandler<CreateAdminCommand, Res
 		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
 
 		return dbResult.IsFailure
-			? Error.Failure(description: AppResources.System.FailedToAddAdmin)
+			? Error.Failure("Admin.FailedToCreate", AppResources.System.FailedToAddAdmin)
 			: new CreateAdminResponse
 			{
 				IsDone = dbResult.IsSuccess

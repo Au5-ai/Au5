@@ -28,7 +28,7 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 
 			if (existingUsersCount != userIds.Count)
 			{
-				return Error.Validation(AppResources.Space.InvalidUsersCode, AppResources.Space.InvalidUsersMessage);
+				return Error.Validation("Space.InvalidUsers", AppResources.Space.InvalidUsersMessage);
 			}
 		}
 
@@ -59,7 +59,7 @@ public class CreateSpaceCommandHandler : IRequestHandler<CreateSpaceCommand, Res
 		var result = await _context.SaveChangesAsync(cancellationToken);
 
 		return result.IsFailure
-			? Error.Failure(AppResources.Space.CreateFailedCode, AppResources.Space.CreateFailedMessage)
+			? Error.Failure("Space.FailedToCreate", AppResources.Space.CreateFailedMessage)
 			: new CreateSpaceResponse
 			{
 				Id = space.Id,

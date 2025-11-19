@@ -20,7 +20,7 @@ public class OrganizationCommandHandler : IRequestHandler<OrganizationCommand, R
 
 		if (organization is null)
 		{
-			return Error.Unauthorized(description: AppResources.System.IsNotConfigured);
+			return Error.Unauthorized("Organization.NotConfigured", AppResources.System.IsNotConfigured);
 		}
 
 		organization.OrganizationName = request.OrganizationName;
@@ -29,6 +29,6 @@ public class OrganizationCommandHandler : IRequestHandler<OrganizationCommand, R
 		organization.Language = request.Language;
 
 		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
-		return dbResult.IsSuccess ? Result.Success() : Error.Failure(description: AppResources.System.FailedToConfig);
+		return dbResult.IsSuccess ? Result.Success() : Error.Failure("Organization.FailedToUpdate", AppResources.System.FailedToConfig);
 	}
 }
