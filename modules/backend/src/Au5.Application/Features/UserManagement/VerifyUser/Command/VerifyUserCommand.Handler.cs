@@ -18,17 +18,17 @@ public class VerifyUserCommandHandler : IRequestHandler<VerifyUserCommand, Resul
 		var user = await _dbContext.Set<User>().FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
 		if (user is null)
 		{
-			return Error.BadRequest(description: AppResources.User.UserNotFound);
+			return Error.BadRequest("User.NotFound", AppResources.User.UserNotFound);
 		}
 
 		if (user.IsRegistered())
 		{
-			return Error.Unauthorized(description: AppResources.Auth.UnAuthorizedAction);
+			return Error.Unauthorized("User.AlreadyRegistered", AppResources.Auth.UnAuthorizedAction);
 		}
 
 		if (HashHelper.HashSafe(user.Email) != request.HashedEmail)
 		{
-			return Error.BadRequest(description: AppResources.User.UserNotFound);
+			return Error.BadRequest("User.NotFound", AppResources.User.UserNotFound);
 		}
 
 		user.FullName = request.FullName;
@@ -40,7 +40,7 @@ public class VerifyUserCommandHandler : IRequestHandler<VerifyUserCommand, Resul
 		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
 
 		return dbResult.IsFailure
-			? Error.Failure(description: AppResources.User.FailedToUpdateUserInfo)
+			? Error.Failure("User.FailedToUpdate", AppResources.User.FailedToUpdateUserInfo)
 			: new VerifyUserResponse
 			{
 				IsDone = dbResult.IsSuccess

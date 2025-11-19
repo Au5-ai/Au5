@@ -18,17 +18,17 @@ public class VerifyUserQueryHandler : IRequestHandler<VerifyUserQuery, Result<Ve
 		var user = await _context.Set<User>().FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
 		if (user is null)
 		{
-			return Error.BadRequest(description: AppResources.User.UserNotFound);
+			return Error.BadRequest("User.NotFound", AppResources.User.UserNotFound);
 		}
 
 		if (HashHelper.HashSafe(user.Email) != request.HashedEmail)
 		{
-			return Error.BadRequest(description: AppResources.User.UserNotFound);
+			return Error.BadRequest("User.NotFound", AppResources.User.UserNotFound);
 		}
 
 		if (user.IsRegistered())
 		{
-			return Error.Unauthorized(description: AppResources.Auth.UnAuthorizedAction);
+			return Error.Unauthorized("User.AlreadyRegistered", AppResources.Auth.UnAuthorizedAction);
 		}
 
 		return new VerifyUserResponse(user.Email);

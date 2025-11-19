@@ -11,6 +11,7 @@ import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/shared/routes";
 import { toast } from "sonner";
+import { ApiError } from "@/shared/types/network";
 
 export function LoginForm({
   className,
@@ -27,17 +28,19 @@ export function LoginForm({
     loginMutation.mutate(
       { username, password },
       {
-        //Only redirect on success
         onSuccess: () => {
           router.push(ROUTES.PLAYGROUND);
         },
-        // Show error when login fails or backend is down
         onError: (error: unknown) => {
-          const message =
-            error instanceof Error
-              ? error.message
-              : "Login failed. Please try again.";
-          toast.error(message);
+          if (error instanceof ApiError) {
+            toast.error(
+              error.problemDetails.detail || error.problemDetails.title,
+            );
+          } else if (error instanceof Error) {
+            toast.error(error.message);
+          } else {
+            toast.error("Login failed. Please try again.");
+          }
         },
       },
     );

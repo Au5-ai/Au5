@@ -1,4 +1,3 @@
-import { toast } from "sonner";
 import { API_BASE_URL } from "../config";
 import { ApiError, ProblemDetails } from "../types/network";
 
@@ -53,17 +52,19 @@ export async function apiRequestClient<T>(
     return await response.json();
   } catch (error) {
     if (error instanceof ApiError) {
-      toast.error(error.problemDetails.detail);
       throw error;
     }
 
-    toast.error("An unexpected error occurred during the request.");
+    const errorMessage =
+      error instanceof Error && error.message === "Failed to fetch"
+        ? "Unable to connect to the server. Please check your connection and try again."
+        : error instanceof Error
+          ? error.message
+          : "An unexpected error occurred during the request.";
+
     throw new ApiError(0, "Network Error", {
       title: "Network Error",
-      detail:
-        error instanceof Error
-          ? error.message
-          : "An unexpected error occurred during the request.",
+      detail: errorMessage,
     });
   }
 }
@@ -145,17 +146,19 @@ export async function apiRequestClientText(
     return await response.text();
   } catch (error) {
     if (error instanceof ApiError) {
-      toast.error(error.problemDetails.detail);
       throw error;
     }
 
-    toast.error("An unexpected error occurred during the request.");
+    const errorMessage =
+      error instanceof Error && error.message === "Failed to fetch"
+        ? "Unable to connect to the server. Please check your connection and try again."
+        : error instanceof Error
+          ? error.message
+          : "An unexpected error occurred during the request.";
+
     throw new ApiError(0, "Network Error", {
       title: "Network Error",
-      detail:
-        error instanceof Error
-          ? error.message
-          : "An unexpected error occurred during the request.",
+      detail: errorMessage,
     });
   }
 }
