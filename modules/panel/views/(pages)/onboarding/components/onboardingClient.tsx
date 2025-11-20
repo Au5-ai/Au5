@@ -2,11 +2,10 @@
 import Logo from "@/shared/components/logo";
 import { Card, CardContent } from "@/shared/components/ui";
 import { CheckCircle2, Circle } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CAPTIONS } from "../i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import Custom404 from "@/shared/components/not-found";
 import { LoadingPage } from "@/shared/components/loading-page";
 import { userController } from "../controllers/userController";
 import { ConfigureStep } from "./steps/configure-step";
@@ -15,6 +14,7 @@ import { DownloadStep } from "./steps/download-step";
 import { AddUserStep } from "./steps/addUser-step";
 
 export default function OnboardingClient() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<"loading" | "ok" | "error">("loading");
   const [email, setEmail] = useState<string | null>(null);
@@ -24,20 +24,24 @@ export default function OnboardingClient() {
     const userId = searchParams.get("id");
     const hash = searchParams.get("hash");
     if (!userId || !hash) {
-      setStatus("error");
+      router.push("/403");
       return;
     }
     const verify = async () => {
       try {
         const response = await userController.verify(userId, hash);
-        setStatus(response ? "ok" : "error");
-        setEmail(response.email);
+        if (response) {
+          setStatus("ok");
+          setEmail(response.email);
+        } else {
+          router.push("/403");
+        }
       } catch {
-        setStatus("error");
+        router.push("/403");
       }
     };
     verify();
-  }, [searchParams]);
+  }, [searchParams, router]);
 
   const nextStep = () => {
     if (currentStep < 4) {
@@ -139,9 +143,5 @@ export default function OnboardingClient() {
     );
   }
 
-  return (
-    <div className="bg-gradient bg-muted flex min-h-svh flex-col items-center justify-center">
-      <Custom404 />
-    </div>
-  );
+  return null;
 }
