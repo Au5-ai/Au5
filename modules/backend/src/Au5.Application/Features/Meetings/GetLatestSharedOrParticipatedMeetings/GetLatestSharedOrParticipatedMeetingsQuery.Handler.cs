@@ -22,10 +22,12 @@ public class GetLatestSharedOrParticipatedMeetingsQueryHandler : IRequestHandler
 
 		var query = _dbContext.Set<Meeting>()
 			.AsNoTracking()
+			.Include(x => x.Guests)
+			.Include(x => x.Participants).ThenInclude(p => p.User)
 			.Where(x => x.Status != MeetingStatus.Archived)
 			.Where(x =>
 				x.Participants.Any(p => p.UserId == currentUserId) ||
-				(userSpaceIds.Any() && _dbContext.Set<MeetingSpace>().Any(ms => ms.MeetingId == x.Id && userSpaceIds.Contains(ms.SpaceId))));
+				x.MeetingSpaces.Any(ms => userSpaceIds.Contains(ms.SpaceId)));
 
 		var meetingsRaw = await query
 			.OrderByDescending(x => x.CreatedAt)
