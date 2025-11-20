@@ -6,13 +6,13 @@ import { CheckCircle2, Circle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { CAPTIONS } from "./i18n";
-import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import Custom404 from "@/shared/components/not-found";
 import { userController } from "./userController";
 import { ConfigureStep } from "./steps/configure-step";
 import { CompleteStep } from "./steps/complete-step";
 import { DownloadStep } from "./steps/download-step";
 import { AddUserStep } from "./steps/addUser-step";
+import OnboardingLoading from "@/shared/components/OnboardingLoading";   
 
 export default function OnboardingClientWrapper() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -80,23 +80,14 @@ export default function OnboardingClientWrapper() {
   ] as const;
 
   if (status === "loading") {
-    return (
-      <div className="bg-gradient bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-        <div className="min-h-100 w-full flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600 font-medium">{GLOBAL_CAPTIONS.loading}</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <OnboardingLoading />;
   }
 
   if (status === "ok") {
     return (
       <div className="bg-gradient bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
         <div className="flex flex-col gap-6">
-          <Logo href="#" text={GLOBAL_CAPTIONS.brandName} />
+          <Logo href="#" text="Au5" />
           <div className="flex items-center justify-center w-[800px]">
             <div className="flex rounded-xl border shadow-sm w-full h-[600px] gap-2 bg-card text-card-foreground">
               <div className="w-64 p-4 bg-muted rounded-tr-none rounded-br-none rounded-xl">
