@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import OnboardingClient from "./OnboardingClient";
+import OnboardingClient from "./components/onboardingClient";
 
 export default function OnboardingPage() {
   return (

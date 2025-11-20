@@ -3,9 +3,9 @@ import { tokenStorageService } from "@/shared/lib/localStorage";
 import { ChevronLeft, Settings } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
-import { CAPTIONS } from "../i18n";
+import { CAPTIONS } from "../../i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import { organizationsController } from "../organizationsController";
+import { organizationsController } from "../../controllers/organizationsController";
 
 export function ConfigureStep({ next }: { next: () => void }) {
   const handleSendConfigs = async () => {

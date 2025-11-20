@@ -8,7 +8,7 @@ import { ApiError } from "../types/network";
 import { GLOBAL_CAPTIONS } from "../i18n/captions";
 import { authController } from "../network/api/authController";
 import { ROUTES } from "../routes";
-import { organizationsController } from "@/views/(pages)/onboarding/organizationsController";
+import { organizationsController } from "@/views/(pages)/onboarding/controllers/organizationsController";
 
 export function useLogin() {
   const queryClient = useQueryClient();

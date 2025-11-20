@@ -13,10 +13,10 @@ import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { useState } from "react";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import { useSignup } from "../hooks";
+import { useSignup } from "../../hooks";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { AddUserRequest } from "../types";
+import { AddUserRequest } from "../../types";
 import { useLogin } from "@/shared/hooks/use-auth";
 
 export function AddUserStep({

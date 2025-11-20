@@ -1,5 +1,5 @@
 import { handleCelebration } from "@/shared/lib";
-import { CAPTIONS } from "../i18n";
+import { CAPTIONS } from "../../i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { Button } from "@/shared/components/ui";
 import { ChevronLeft } from "lucide-react";

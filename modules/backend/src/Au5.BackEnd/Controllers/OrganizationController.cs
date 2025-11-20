@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 namespace Au5.BackEnd.Controllers;
 
 [Route("organizations")]
-[Authorize(Policy = AuthorizationPolicies.AdminOnly)]
 public class OrganizationController(ISender mediator) : BaseController
 {
 	[HttpPost("")]
+	[Authorize(Policy = AuthorizationPolicies.AdminOnly)]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> UpdateOrganization([FromBody] OrganizationCommand command)
 	{
@@ -17,6 +17,7 @@ public class OrganizationController(ISender mediator) : BaseController
 	}
 
 	[HttpGet("")]
+	[Authorize(Policy = AuthorizationPolicies.AdminOnly)]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> GetOrganization()
 	{

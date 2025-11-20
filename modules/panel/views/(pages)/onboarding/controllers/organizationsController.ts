@@ -1,5 +1,5 @@
 import { apiRequestClient } from "@/shared/network/apiRequestClient";
-import { ExtensionConfig } from "./types";
+import { ExtensionConfig } from "../types";
 import { API_URLS } from "@/shared/network/api/urls";
 
 export const organizationsController = {

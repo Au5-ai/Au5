@@ -1,7 +1,7 @@
 import { Button } from "@/shared/components/ui";
 import { ChevronLeft, ChevronRight, Download } from "lucide-react";
 import Image from "next/image";
-import { CAPTIONS } from "../i18n";
+import { CAPTIONS } from "../../i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 
 export function DownloadStep({ next }: { next: () => void }) {
