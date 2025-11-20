@@ -1,4 +1,5 @@
 "use client";
+
 import Logo from "@/shared/components/logo";
 import { Card, CardContent } from "@/shared/components/ui";
 import { CheckCircle2, Circle } from "lucide-react";
@@ -13,7 +14,7 @@ import { CompleteStep } from "./steps/complete-step";
 import { DownloadStep } from "./steps/download-step";
 import { AddUserStep } from "./steps/addUser-step";
 
-export default function OnboardingPage() {
+export default function OnboardingClientWrapper() {
   const [currentStep, setCurrentStep] = useState(1);
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<"loading" | "ok" | "error">("loading");
@@ -22,19 +23,22 @@ export default function OnboardingPage() {
   useEffect(() => {
     const userId = searchParams.get("id");
     const hash = searchParams.get("hash");
+
     if (!userId || !hash) {
       setStatus("error");
       return;
     }
+
     const verify = async () => {
       try {
         const response = await userController.verify(userId, hash);
         setStatus(response ? "ok" : "error");
-        setEmail(response.email);
+        setEmail(response?.email ?? null);
       } catch {
         setStatus("error");
       }
     };
+
     verify();
   }, [searchParams]);
 
@@ -73,7 +77,7 @@ export default function OnboardingPage() {
       description: CAPTIONS.completeSetupDescription,
       component: <CompleteStep />,
     },
-  ];
+  ] as const;
 
   if (status === "loading") {
     return (
@@ -81,9 +85,7 @@ export default function OnboardingPage() {
         <div className="min-h-100 w-full flex items-center justify-center">
           <div className="text-center">
             <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600 font-medium">
-              {GLOBAL_CAPTIONS.loading}
-            </p>
+            <p className="text-gray-600 font-medium">{GLOBAL_CAPTIONS.loading}</p>
           </div>
         </div>
       </div>
@@ -106,37 +108,24 @@ export default function OnboardingPage() {
 
                     return (
                       <div key={step.id} className="relative">
-                        <div
-                          className={`flex items-start gap-3 rounded-xl p-3 transition-all ${
-                            isActive ? "bg-muted" : ""
-                          }`}>
+                        <div className={`flex items-start gap-3 rounded-xl p-3 transition-all ${isActive ? "bg-muted" : ""}`}>
                           <div className="relative mt-1 z-10">
                             {isCompleted ? (
                               <CheckCircle2 className="h-5 w-5 text-green-500 bg-muted rounded-full" />
                             ) : (
                               <Circle
-                                className={`h-5 w-5 ${
-                                  isActive
-                                    ? "text-primary"
-                                    : "text-muted-foreground"
-                                } bg-muted rounded-full`}
+                                className={`h-5 w-5 ${isActive ? "text-primary" : "text-muted-foreground"} bg-muted rounded-full`}
                                 style={isActive ? { strokeWidth: 5 } : {}}
                               />
                             )}
                           </div>
                           <div>
-                            <p
-                              className={`font-medium ${
-                                isActive ? "text-primary" : "text-foreground"
-                              }`}>
+                            <p className={`font-medium ${isActive ? "text-primary" : "text-foreground"}`}>
                               {step.title}
                             </p>
-                            <p className="text-sm text-muted-foreground">
-                              {step.description}
-                            </p>
+                            <p className="text-sm text-muted-foreground">{step.description}</p>
                           </div>
                         </div>
-
                         {!isLastStep && (
                           <div className="absolute left-[22px] top-[44px] w-0.5 h-6 bg-border"></div>
                         )}
@@ -145,7 +134,6 @@ export default function OnboardingPage() {
                   })}
                 </div>
               </div>
-              {/* Step Content */}
               <Card className="flex-1 shadow-none border-0 py-0">
                 <CardContent className="p-6 h-full flex flex-col justify-between">
                   {Steps[currentStep - 1].component}
