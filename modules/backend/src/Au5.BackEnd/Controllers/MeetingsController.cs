@@ -4,6 +4,7 @@ using Au5.Application.Features.Meetings.AddBot;
 using Au5.Application.Features.Meetings.CloseMeetingByUser;
 using Au5.Application.Features.Meetings.ExportToText;
 using Au5.Application.Features.Meetings.GetFullTranscription;
+using Au5.Application.Features.Meetings.GetLatestSharedOrParticipatedMeetings;
 using Au5.Application.Features.Meetings.MyMeeting;
 using Au5.Application.Features.Meetings.ToggleArchive;
 using Au5.Application.Features.Meetings.ToggleFavorite;
@@ -110,5 +111,12 @@ public class MeetingsController(ISender mediator) : BaseController
 		return result.IsSuccess
 			? Content(result.Data!, "text/plain", System.Text.Encoding.UTF8)
 			: BadRequest(result.Error);
+	}
+
+	[HttpGet("latest")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> GetLatestSharedOrParticipatedMeetings(CancellationToken cancellationToken)
+	{
+		return Ok(await mediator.Send(new GetLatestSharedOrParticipatedMeetingsQuery(), cancellationToken));
 	}
 }
