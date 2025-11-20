@@ -1,34 +1,34 @@
+using Au5.Application.Dtos.MeetingDtos;
+using Au5.Application.Features.MeetingSpaces.AddMeetingToSpace;
+using Au5.Application.Features.MeetingSpaces.RemoveMeetingFromSpace;
 using Au5.Application.Features.Spaces.CreateSpace;
 using Au5.Application.Features.Spaces.GetSpaceMeetings;
 using Au5.Application.Features.Spaces.GetSpaces;
-using Au5.Application.Features.Spaces.GetUserSpaces;
+using Au5.Application.Features.Spaces.SpaceMembers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
 
+[Authorize(Policy = AuthorizationPolicies.UserOrAdmin)]
 public class SpacesController(ISender mediator) : BaseController
 {
 	[HttpGet]
 	[Route("")]
+	[Authorize(Policy = AuthorizationPolicies.AdminOnly)]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> GetSpaces(CancellationToken ct)
 	{
-		return Ok(await mediator.Send(new GetSpacesQuery(), ct));
+		return Ok(await mediator.Send(new SpacesQuery(), ct));
 	}
 
 	[HttpPost]
 	[Route("")]
-	[ProducesResponseType(StatusCodes.Status200OK)]
+	[Authorize(Policy = AuthorizationPolicies.AdminOnly)]
+	[ProducesResponseType(typeof(SpaceDto), StatusCodes.Status201Created)]
 	public async Task<IActionResult> CreateSpace([FromBody] CreateSpaceCommand command, CancellationToken ct)
 	{
-		return Ok(await mediator.Send(command, ct));
-	}
-
-	[HttpGet]
-	[Route("my-spaces")]
-	[ProducesResponseType(StatusCodes.Status200OK)]
-	public async Task<IActionResult> GetMySpaces(CancellationToken ct)
-	{
-		return Ok(await mediator.Send(new GetUserSpacesQuery(), ct));
+		var result = await mediator.Send(command, ct);
+		return CreatedAtAction(nameof(CreateSpace), new { id = result.Data.Id }, result);
 	}
 
 	[HttpGet]
@@ -36,6 +36,34 @@ public class SpacesController(ISender mediator) : BaseController
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> GetSpaceMeetings([FromRoute] Guid spaceId, CancellationToken ct)
 	{
-		return Ok(await mediator.Send(new GetSpaceMeetingsQuery(spaceId), ct));
+		return Ok(await mediator.Send(new SpaceMeetingsQuery(spaceId), ct));
+	}
+
+	[HttpPost]
+	[Route("{spaceId}/meetings/{meetingId}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> AddMeetingToSpace([FromRoute] Guid meetingId, [FromRoute] Guid spaceId, CancellationToken ct)
+	{
+		var command = new AddMeetingToSpaceCommand(meetingId, spaceId);
+		return Ok(await mediator.Send(command, ct));
+	}
+
+	[HttpDelete]
+	[Route("{spaceId}/meetings/{meetingId}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> RemoveMeetingFromSpace([FromRoute] Guid meetingId, [FromRoute] Guid spaceId, CancellationToken ct)
+	{
+		var command = new RemoveMeetingFromSpaceCommand(meetingId, spaceId);
+		return Ok(await mediator.Send(command, ct));
+	}
+
+	[HttpGet]
+	[Route("{spaceId}/members")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	public async Task<IActionResult> GetSpaceMembers([FromRoute] Guid spaceId, CancellationToken ct)
+	{
+		return Ok(await mediator.Send(new SpaceMemebersQuery(spaceId), ct));
 	}
 }

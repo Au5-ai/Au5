@@ -1,11 +1,11 @@
-import { ElementHandle, Page } from "playwright";
+import { Page } from "playwright";
 import { logger } from "../../common/utils/logger";
 import { delay } from "../../common/utils";
 
 export class CaptionEnabler {
   private readonly MAX_RETRIES = 3;
   private readonly RETRY_DELAY_MS = 1_000;
-  private readonly STEP_DELAY_MS = 700;
+  private readonly STEP_DELAY_MS = 3_000;
   private readonly COMBOBOX_TIMEOUT_MS = 3_000;
   private readonly DROPDOWN_DELAY_MS = 500;
   private readonly LANGUAGE_SELECTION_DELAY_MS = 500;
@@ -22,23 +22,22 @@ export class CaptionEnabler {
         1
       );
 
-      const turnOnButton = await this.retryWithBackoff(
-        async () => await this.findTurnOnCaptionButton(),
-        "Find caption button",
-        this.MAX_RETRIES
-      );
-
-      if (!turnOnButton) {
-        throw new Error("Caption button not found after retries");
-      }
-
       await this.retryWithBackoff(
         async () => {
-          await turnOnButton.click({ force: true });
+          const clicked = await this.clickCaptionButton();
+          if (!clicked) {
+            throw new Error("Caption button not found or click failed");
+          }
+
           await delay(this.STEP_DELAY_MS);
+
+          const verified = await this.verifyCaptionButtonClicked();
+          if (!verified) {
+            throw new Error("Caption button click did not enable captions");
+          }
           return true;
         },
-        "Click caption button",
+        "Click caption button and verify",
         this.MAX_RETRIES
       );
 
@@ -184,6 +183,44 @@ export class CaptionEnabler {
     }
   }
 
+  private async verifyCaptionButtonClicked(): Promise<boolean> {
+    logger.info("[CaptionEnabler] Verifying caption button state changed...");
+
+    await delay(300);
+
+    try {
+      const stateChanged = await this.page.evaluate(() => {
+        const captionButton = Array.from(
+          document.querySelectorAll('[role="button"]')
+        ).find((btn) =>
+          btn.textContent?.toLowerCase().includes("closed_caption")
+        ) as HTMLElement;
+
+        if (!captionButton) {
+          return false;
+        }
+        return true;
+      });
+
+      if (stateChanged) {
+        logger.info("[CaptionEnabler] Caption button state confirmed as ON");
+        return true;
+      } else {
+        logger.warn(
+          "[CaptionEnabler] Caption button still shows OFF state after click"
+        );
+        return false;
+      }
+    } catch (error) {
+      logger.error(
+        `[CaptionEnabler] State verification failed: ${
+          (error as Error).message
+        }`
+      );
+      return false;
+    }
+  }
+
   private async selectLanguageFallback(languageValue: string): Promise<void> {
     logger.info(
       `[CaptionEnabler] Attempting fallback language selection for: ${languageValue}`
@@ -249,12 +286,13 @@ export class CaptionEnabler {
     });
   }
 
-  private async findTurnOnCaptionButton(): Promise<ElementHandle<HTMLElement> | null> {
-    logger.info("[CaptionEnabler] Searching for caption button...");
+  private async clickCaptionButton(): Promise<boolean> {
+    logger.info("[CaptionEnabler] Finding and clicking caption button...");
 
-    const handle = await this.page.evaluateHandle(() => {
+    return await this.page.evaluate(() => {
       const findButton = (): HTMLElement | null => {
         const buttons = document.querySelectorAll('[role="button"]');
+
         for (const btn of buttons) {
           if (btn instanceof HTMLElement) {
             const text = btn.innerText.trim().toLowerCase();
@@ -275,17 +313,15 @@ export class CaptionEnabler {
         return null;
       };
 
-      return findButton();
-    });
+      const button = findButton();
+      if (button) {
+        button.scrollIntoView({ block: "center", behavior: "smooth" });
+        button.click();
+        return true;
+      }
 
-    const element = handle.asElement();
-    if (element) {
-      logger.info("[CaptionEnabler] Caption button found");
-      return element as ElementHandle<HTMLElement>;
-    } else {
-      logger.warn("[CaptionEnabler] Caption button not found");
-      return null;
-    }
+      return false;
+    });
   }
 
   private async activateLanguageDropdownOverlay(): Promise<boolean> {

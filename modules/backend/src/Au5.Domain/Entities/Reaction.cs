@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Au5.Domain.Entities;
 
 [Entity]
@@ -12,4 +14,9 @@ public class Reaction
 	public string ClassName { get; set; }
 
 	public bool IsActive { get; set; }
+
+	public Guid OrganizationId { get; set; }
+
+	[ForeignKey(nameof(OrganizationId))]
+	public Organization Organization { get; set; }
 }

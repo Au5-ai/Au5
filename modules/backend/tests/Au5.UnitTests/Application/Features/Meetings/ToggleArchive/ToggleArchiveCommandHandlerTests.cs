@@ -27,7 +27,7 @@ public class ToggleArchiveCommandHandlerTests
 		var userId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
 		var meetId = "test-meet-id";
-		var command = new ToggleArchiveCommand(meetingId, meetId);
+		var command = new ToggleArchiveCommand(meetingId);
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
@@ -57,7 +57,7 @@ public class ToggleArchiveCommandHandlerTests
 		var userId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
 		var meetId = "test-meet-id";
-		var command = new ToggleArchiveCommand(meetingId, meetId);
+		var command = new ToggleArchiveCommand(meetingId);
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
@@ -86,8 +86,7 @@ public class ToggleArchiveCommandHandlerTests
 	{
 		var userId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
-		var meetId = "test-meet-id";
-		var command = new ToggleArchiveCommand(meetingId, meetId);
+		var command = new ToggleArchiveCommand(meetingId);
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
@@ -99,7 +98,7 @@ public class ToggleArchiveCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsFailure);
-		Assert.Equal("General.NotFound", result.Error.Code);
+		Assert.Equal("Meeting.NotFound", result.Error.Code);
 	}
 
 	[Fact]
@@ -107,8 +106,7 @@ public class ToggleArchiveCommandHandlerTests
 	{
 		var userId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
-		var meetId = "test-meet-id";
-		var command = new ToggleArchiveCommand(meetingId, meetId);
+		var command = new ToggleArchiveCommand(Guid.NewGuid());
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
@@ -126,7 +124,7 @@ public class ToggleArchiveCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsFailure);
-		Assert.Equal("General.NotFound", result.Error.Code);
+		Assert.Equal("Meeting.NotFound", result.Error.Code);
 	}
 
 	[Fact]
@@ -136,7 +134,7 @@ public class ToggleArchiveCommandHandlerTests
 		var otherUserId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
 		var meetId = "test-meet-id";
-		var command = new ToggleArchiveCommand(meetingId, meetId);
+		var command = new ToggleArchiveCommand(meetingId);
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
@@ -154,7 +152,7 @@ public class ToggleArchiveCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsFailure);
-		Assert.Equal("General.Forbidden", result.Error.Code);
+		Assert.Equal("Meeting.NotParticipant", result.Error.Code);
 	}
 
 	[Fact]
@@ -163,7 +161,7 @@ public class ToggleArchiveCommandHandlerTests
 		var userId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
 		var meetId = "test-meet-id";
-		var command = new ToggleArchiveCommand(meetingId, meetId);
+		var command = new ToggleArchiveCommand(meetingId);
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
@@ -181,7 +179,7 @@ public class ToggleArchiveCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsFailure);
-		Assert.Equal("General.BadRequest", result.Error.Code);
+		Assert.Equal("Meeting.AlreadyActive", result.Error.Code);
 	}
 
 	[Fact]
@@ -190,7 +188,7 @@ public class ToggleArchiveCommandHandlerTests
 		var userId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
 		var meetId = "test-meet-id";
-		var command = new ToggleArchiveCommand(meetingId, meetId);
+		var command = new ToggleArchiveCommand(meetingId);
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
@@ -210,7 +208,7 @@ public class ToggleArchiveCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsFailure);
-		Assert.Equal("General.Failure", result.Error.Code);
+		Assert.Equal("Meeting.FailedToUpdate", result.Error.Code);
 	}
 
 	private static Meeting CreateMeeting(Guid meetingId, string meetId, MeetingStatus status)

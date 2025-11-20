@@ -17,24 +17,24 @@ public class ToggleFavoriteCommandHandler : IRequestHandler<ToggleFavoriteComman
 	{
 		var meeting = await _dbContext.Set<Meeting>()
 			.Include(x => x.Participants)
-			.FirstOrDefaultAsync(x => x.Id == request.MeetingId && x.MeetId == request.MeetId, cancellationToken);
+			.FirstOrDefaultAsync(x => x.Id == request.MeetingId, cancellationToken);
 
 		if (meeting is null)
 		{
-			return Error.NotFound(description: AppResources.Meeting.NotFound);
+			return Error.NotFound("Meeting.NotFound", AppResources.Meeting.NotFound);
 		}
 
 		var isParticipant = meeting.Participants.Any(p => p.UserId == _currentUserService.UserId);
 		if (!isParticipant)
 		{
-			return Error.Forbidden(description: AppResources.Meeting.UnauthorizedToModify);
+			return Error.Forbidden("Meeting.NotParticipant", AppResources.Meeting.UnauthorizedToModify);
 		}
 
 		meeting.IsFavorite = !meeting.IsFavorite;
 
 		var result = await _dbContext.SaveChangesAsync(cancellationToken);
 		return result.IsFailure
-			? Error.Failure(description: AppResources.Meeting.FailedToToggleFavorite)
+			? Error.Failure("Meeting.FailedToUpdate", AppResources.Meeting.FailedToToggleFavorite)
 			: new ToggleFavoriteResponse(meeting.IsFavorite);
 	}
 }

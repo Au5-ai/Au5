@@ -2,18 +2,15 @@ namespace Au5.Application.Services;
 
 public class MeetingService : IMeetingService
 {
-	private const string FallbackBotName = "Au5";
 	private static readonly TimeSpan CacheExpiration = TimeSpan.FromHours(1);
 
 	private readonly SemaphoreSlim _lock = new(1, 1);
 	private readonly ICacheProvider _cacheProvider;
-	private readonly IApplicationDbContext _dbContext;
 	private readonly IDataProvider _dataProvider;
 
-	public MeetingService(ICacheProvider cacheProvider, IApplicationDbContext dbContext, IDataProvider dataProvider)
+	public MeetingService(ICacheProvider cacheProvider, IDataProvider dataProvider)
 	{
 		_cacheProvider = cacheProvider ?? throw new ArgumentNullException(nameof(cacheProvider));
-		_dbContext = dbContext;
 		_dataProvider = dataProvider ?? throw new ArgumentNullException(nameof(dataProvider));
 	}
 
@@ -54,7 +51,7 @@ public class MeetingService : IMeetingService
 		}
 	}
 
-	public async Task AddGuestsToMeet(List<Participant> users, string meetId)
+	public async Task AddGuestsToMeet(string meetId, IReadOnlyCollection<Guest> guests)
 	{
 		var key = GetMeetingKey(meetId);
 		var meeting = await _cacheProvider.GetAsync<Meeting>(key);
@@ -64,15 +61,15 @@ public class MeetingService : IMeetingService
 			return;
 		}
 
-		foreach (var user in users)
+		foreach (var guest in guests)
 		{
-			if (!meeting.Guests.Any(g => g.FullName == user.FullName))
+			if (!meeting.Guests.Any(g => g.FullName == guest.FullName))
 			{
 				meeting.Guests.Add(new GuestsInMeeting
 				{
 					MeetingId = meeting.Id,
-					FullName = user.FullName,
-					PictureUrl = user.PictureUrl
+					FullName = guest.FullName,
+					PictureUrl = guest.PictureUrl
 				});
 			}
 		}
@@ -80,25 +77,25 @@ public class MeetingService : IMeetingService
 		await _cacheProvider.SetAsync(key, meeting, CacheExpiration);
 	}
 
-	public async Task<string> BotIsAdded(string meetId)
+	public async Task<bool> BotIsAdded(string meetId, string botName)
 	{
 		var key = GetMeetingKey(meetId);
 		var meeting = await _cacheProvider.GetAsync<Meeting>(key);
 
 		if (meeting is null || meeting.IsEnded())
 		{
-			return string.Empty;
+			return false;
 		}
 
 		if (!meeting.IsBotAdded)
 		{
-			meeting.BotName = await GetBotNameFromConfigAsync();
+			meeting.BotName = botName;
 			meeting.IsBotAdded = true;
 			meeting.Status = MeetingStatus.Recording;
 		}
 
 		await _cacheProvider.SetAsync(key, meeting, CacheExpiration);
-		return meeting.BotName;
+		return true;
 	}
 
 	public async Task<bool> PauseMeeting(string meetId, bool isPause)
@@ -268,11 +265,5 @@ public class MeetingService : IMeetingService
 			HashToken = hashToken,
 			Status = MeetingStatus.AddingBot,
 		};
-	}
-
-	private async Task<string> GetBotNameFromConfigAsync(CancellationToken cancellationToken = default)
-	{
-		var config = await _dbContext.Set<SystemConfig>().AsNoTracking().FirstOrDefaultAsync(cancellationToken);
-		return config?.BotName ?? FallbackBotName;
 	}
 }

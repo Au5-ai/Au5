@@ -20,7 +20,7 @@ export const userController = {
 
   retryInvite: (userId: string): Promise<{ link: string }> =>
     apiRequestClient<{ link: string }>(
-      API_URLS.USERS.USER_INVITATIONS(userId),
+      API_URLS.USERS.RESEND_INVITATION(userId),
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

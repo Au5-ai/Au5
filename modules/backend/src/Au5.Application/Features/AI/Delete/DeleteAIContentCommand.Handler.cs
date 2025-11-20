@@ -12,7 +12,7 @@ public class DeleteAIContentCommandHandler(IApplicationDbContext dbContext, ICur
 
 		if (aiContent is null)
 		{
-			return Error.NotFound(description: "AI Content not found");
+			return Error.NotFound("AI.ContentNotFound", "AI Content not found");
 		}
 
 		aiContent.RemoverUserId = _currentUserService.UserId;

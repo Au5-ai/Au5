@@ -11,7 +11,7 @@ public class GetMyInfoQueryHandler(IApplicationDbContext applicationDbContext, I
 	{
 		var user = await _dbContext.Set<User>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == _currentUserService.UserId && x.IsActive, cancellationToken);
 		return user == null
-			? Error.Unauthorized(description: AppResources.Auth.UnAuthorizedAction)
+			? Error.Unauthorized("Auth.Unauthorized", AppResources.Auth.UnAuthorizedAction)
 			: new Participant
 			{
 				Id = user.Id,

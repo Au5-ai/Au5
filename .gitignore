@@ -482,3 +482,4 @@ $RECYCLE.BIN/
 
 # Virtual environment folder
 venv/
+/modules/backend/src/Au5.BackEnd/appsettings.Development.json

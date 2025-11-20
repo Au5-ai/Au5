@@ -9,7 +9,6 @@ export interface Space {
   name: string;
   description: string;
   isActive: boolean;
-  usersCount: number;
   users: SpaceUser[];
   createdAt?: string;
 }
@@ -22,7 +21,6 @@ export interface UserInSpace {
 export interface CreateSpaceCommand {
   name: string;
   description: string;
-  parentId?: string;
   users: UserInSpace[];
 }
 

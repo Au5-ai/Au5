@@ -1,4 +1,10 @@
-import { IMeetingPlatform, MeetingConfiguration, EntryMessage } from "./types";
+import {
+  IMeetingPlatform,
+  MeetingConfiguration,
+  EntryMessage,
+  Participant,
+  GuestJoinedInMeetingMessage,
+} from "./types";
 import { logger } from "./common/utils/logger";
 import { LogMessages } from "./common/constants";
 import { MeetingHubClient } from "./hub/meeting-hub-client";
@@ -49,6 +55,7 @@ export async function addNewBotToMeeting(
   if (hasJoined) {
     await initializeHubClient(config);
     await state.platform.observeTranscriptions(onTranscriptionReceived);
+    await state.platform.observeParticipations(onParticipantChanged);
   }
 }
 
@@ -82,5 +89,25 @@ async function onTranscriptionReceived(message: EntryMessage): Promise<void> {
   }
 }
 
+async function onParticipantChanged(
+  participants: Participant[]
+): Promise<void> {
+  if (!state.hubClient) {
+    logger.error(LogMessages.BotManager.hubClientNotInitialized);
+    return;
+  }
+
+  if (!state.config) {
+    logger.error("[BotManager] Meeting configuration is not set.");
+    return;
+  }
+  const message: GuestJoinedInMeetingMessage = {
+    meetId: state.config.meetId,
+    guests: participants,
+    type: "GuestJoinedInMeeting",
+  };
+  await state.hubClient.sendMessage(message);
+  logger.info("[BotManager] Guest joined:", participants);
+}
 process.on("SIGTERM", () => shutdownManager?.handleProcessShutdown("SIGTERM"));
 process.on("SIGINT", () => shutdownManager?.handleProcessShutdown("SIGINT"));

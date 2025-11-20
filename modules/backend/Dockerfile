@@ -50,5 +50,41 @@ RUN dotnet publish "./Au5.BackEnd.csproj" -c $BUILD_CONFIGURATION -o /app/publis
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
+
+# Environment variables for CORS
+ENV Cors__AllowedOrigins__0="http://localhost:3001"
+ENV Cors__AllowedOrigins__1="https://localhost:8000"
+ENV Cors__AllowedOrigins__2="https://localhost:8001"
+
+# Environment variables for JWT Settings
+ENV JwtSettings__SecretKey="YOUR_SECRET_KEY_CHANGE_IN_PRODUCTION"
+ENV JwtSettings__Issuer="YOUR_ISSUER"
+ENV JwtSettings__Audience="YOUR_AUDIENCE"
+ENV JwtSettings__ExpiryMinutes="1000"
+
+# Environment variables for Organization Configuration
+ENV Organization__HubUrl="http://localhost:1366/meetingHub"
+ENV Organization__Direction="rtl"
+ENV Organization__Language="fa-IR"
+ENV Organization__ServiceBaseUrl="http://localhost:1366"
+ENV Organization__BotFatherUrl="http://localhost:8081"
+ENV Organization__BotHubUrl="http://host.containers.internal:1366/meetingHub"
+ENV Organization__OpenAIToken=""
+ENV Organization__OpenAIProxyUrl=""
+ENV Organization__PanelUrl="http://localhost:3001"
+ENV Organization__AIProviderUrl="http://localhost:8000"
+ENV Organization__AutoLeaveWaitingEnter="30000"
+ENV Organization__AutoLeaveNoParticipant="60000"
+ENV Organization__AutoLeaveAllParticipantsLeft="120000"
+ENV Organization__MeetingVideoRecording="false"
+ENV Organization__MeetingAudioRecording="false"
+ENV Organization__MeetingTranscription="true"
+ENV Organization__MeetingTranscriptionModel="liveCaption"
+ENV Organization__SmtpUseSSl="false"
+ENV Organization__SmtpHost="https://mail.au5.ai"
+ENV Organization__SmtpPort="25"
+ENV Organization__SmtpUser="Admin@au5.ai"
+ENV Organization__SmtpPassword="!QAZ2wsx"
+
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Au5.BackEnd.dll"]

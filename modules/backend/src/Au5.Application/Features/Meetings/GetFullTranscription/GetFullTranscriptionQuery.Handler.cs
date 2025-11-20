@@ -21,11 +21,11 @@ public class GetFullTranscriptionQueryHandler : IRequestHandler<GetFullTranscrip
 				.ThenInclude(rac => rac.Reaction)
 			.Include(x => x.MeetingSpaces)
 				.ThenInclude(m => m.Space)
-			.FirstOrDefaultAsync(m => m.Id == request.MeetingId && m.MeetId == request.MeetId, cancellationToken);
+			.FirstOrDefaultAsync(m => m.Id == request.MeetingId, cancellationToken);
 
 		if (meeting is null)
 		{
-			return Error.NotFound(description: "No meeting with this ID was found.");
+			return Error.NotFound("Meeting.NotFound", "No meeting with this ID was found.");
 		}
 
 		var orderedEntries = meeting.Entries

@@ -83,6 +83,14 @@ internal static class AppResources
 	}
 
 	/// <summary>
+	/// User related messages.
+	/// </summary>
+	internal static class UserMessages
+	{
+		public const string UserNotFound = "User not found. Please verify your information and try again.";
+	}
+
+	/// <summary>
 	/// Meeting space related messages.
 	/// </summary>
 	internal static class MeetingSpace

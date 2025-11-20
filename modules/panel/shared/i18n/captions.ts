@@ -36,10 +36,14 @@ export const GLOBAL_CAPTIONS = {
     email: {
       label: "Username (Email)",
       placeholder: "m@example.com",
-      hint: "Please use your work or organization email. This account is for business purposes only.",
+      hint: "Please use your work or organization email.",
     },
     fullname: {
       label: "Full Name",
+    },
+    organizationName: {
+      label: "Organization Name",
+      placeholder: "Enter your organization name",
     },
     password: {
       label: "Password",
@@ -60,6 +64,11 @@ export const GLOBAL_CAPTIONS = {
       required: "Full name is required",
       invalidLength:
         "Full name must be at least 2 characters and at most 50 characters",
+    },
+    organizationName: {
+      required: "Organization name is required",
+      invalidLength:
+        "Organization name must be at least 2 characters and at most 100 characters",
     },
     password: {
       required: "Password is required",
@@ -129,6 +138,8 @@ export const GLOBAL_CAPTIONS = {
       deleteAIContentError: "Failed to delete AI content. Please try again.",
       exportSuccess: "Meeting transcription exported successfully",
       exportError: "Failed to export meeting transcription. Please try again.",
+      renameSuccess: "Meeting has been renamed successfully",
+      renameError: "Failed to rename meeting. Please try again.",
     },
   },
 } as const;

@@ -6,8 +6,6 @@ public record CreateSpaceCommand : IRequest<Result<CreateSpaceResponse>>
 
 	public string Description { get; init; }
 
-	public Guid? ParentId { get; init; }
-
 	public List<UserInSpace> Users { get; init; }
 }
 

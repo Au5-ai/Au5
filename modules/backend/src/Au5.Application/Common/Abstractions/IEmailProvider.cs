@@ -4,7 +4,7 @@ namespace Au5.Application.Common.Abstractions;
 
 public interface IEmailProvider
 {
-	Task<List<InviteResponse>> SendInviteAsync(List<User> invited, string organizationName, SmtpOptions smtpOption);
+	Task<List<InviteResponse>> SendInviteAsync(IReadOnlyCollection<User> invited, string organizationName, SmtpOptions smtpOption);
 }
 
 public record InviteResponse

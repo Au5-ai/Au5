@@ -9,5 +9,7 @@ public class TestCurrentUserServiceFake : ICurrentUserService
 
 	public RoleTypes? Role { get; set; } = RoleTypes.Admin;
 
+	public Guid OrganizationId { get; set; } = Guid.Empty;
+
 	public bool IsAuthenticated { get; set; } = false;
 }

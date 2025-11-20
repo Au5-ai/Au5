@@ -1,6 +1,8 @@
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using Au5.Application.Common.Options;
 using Au5.Application.Dtos.AI;
+using Microsoft.Extensions.Options;
 
 namespace Au5.Application.Features.AI.Generate;
 
@@ -10,13 +12,15 @@ public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand,
 	private readonly IApplicationDbContext _dbContext;
 	private readonly ICurrentUserService _currentUserService;
 	private readonly IDataProvider _dataProvider;
+	private readonly OrganizationOptions _organizationOptions;
 
-	public AIGenerateCommandHandler(IAIEngineAdapter aiEngineAdapter, IApplicationDbContext dbContext, ICurrentUserService currentUserService, IDataProvider dataProvider)
+	public AIGenerateCommandHandler(IAIEngineAdapter aiEngineAdapter, IApplicationDbContext dbContext, ICurrentUserService currentUserService, IDataProvider dataProvider, IOptions<OrganizationOptions> options)
 	{
 		_aiEngineAdapter = aiEngineAdapter;
 		_dbContext = dbContext;
 		_currentUserService = currentUserService;
 		_dataProvider = dataProvider;
+		_organizationOptions = options.Value;
 	}
 
 	public async IAsyncEnumerable<string> Handle(
@@ -32,10 +36,10 @@ public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand,
 			yield break;
 		}
 
-		var assistant = _dbContext.Set<Assistant>().FirstOrDefault(x => x.Id == request.AssistantId);
-		var config = _dbContext.Set<SystemConfig>().FirstOrDefault();
+		var assistant = _dbContext.Set<Assistant>().FirstOrDefault(x => x.Id == request.AssistantId && x.OrganizationId == _currentUserService.OrganizationId);
+		var organization = _dbContext.Set<Organization>().FirstOrDefault(x => x.Id == _currentUserService.OrganizationId);
 
-		if (assistant is null || config is null)
+		if (assistant is null || organization is null)
 		{
 			yield return JsonSerializer.Serialize(new { error = "Meeting, Assistant, or Config not found." }) + "\n\n";
 			yield break;
@@ -49,7 +53,7 @@ public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand,
 			.Include(x => x.Entries)
 				.ThenInclude(ent => ent.Reactions)
 				.ThenInclude(rac => rac.Reaction)
-			.FirstOrDefaultAsync(m => m.Id == request.MeetingId && m.MeetId == request.MeetId, cancellationToken);
+			.FirstOrDefaultAsync(m => m.Id == request.MeetingId, cancellationToken);
 
 		if (meeting is null)
 		{
@@ -71,15 +75,15 @@ public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand,
 					}
 				}
 			},
-			ApiKey = config.OpenAIToken,
-			ProxyUrl = config.OpenAIProxyUrl,
+			ApiKey = _organizationOptions.OpenAIToken,
+			ProxyUrl = _organizationOptions.OpenAIProxyUrl,
 			Stream = true
 		};
 
 		string finalContent = null;
 		int completionTokens = 0, promptTokens = 0, totalTokens = 0;
 
-		var stream = await _aiEngineAdapter.RunThreadAsync(config.AIProviderUrl, runThreadRequest, cancellationToken);
+		var stream = await _aiEngineAdapter.RunThreadAsync(_organizationOptions.AIProviderUrl, runThreadRequest, cancellationToken);
 		await foreach (var jsonChunk in stream.WithCancellation(cancellationToken))
 		{
 			if (!string.IsNullOrWhiteSpace(jsonChunk))

@@ -267,7 +267,7 @@ class ChatPanel {
       botContainer.classList.add("hidden");
       const botRequested = document.createElement("div");
       botRequested.className = "au5-join-time";
-      botRequested.innerText = `🤖 ${request.botName} bot requested by ${request.user.fullName}`;
+      botRequested.innerText = `🤖 bot requested by ${request.user.fullName}`;
       this.transcriptionsContainerEl.appendChild(botRequested);
     }
   }
@@ -463,14 +463,14 @@ const _ApiRoutes = class _ApiRoutes {
     }
     return _ApiRoutes.instance;
   }
-  addBot(meetingId, meetId) {
-    return `${this.config.service.baseUrl}/meetings/${meetingId}/sessions/${meetId}/bots`;
+  addBot() {
+    return `${this.config.service.serviceBaseUrl}/meetings/bots`;
   }
   getReactions() {
-    return `${this.config.service.baseUrl}/reactions`;
+    return `${this.config.service.serviceBaseUrl}/reactions`;
   }
-  closeMeeting(meetingId, meetId) {
-    return `${this.config.service.baseUrl}/meetings/${meetingId}/sessions/${meetId}/close`;
+  closeMeeting(meetingId) {
+    return `${this.config.service.serviceBaseUrl}/meetings/${meetingId}/close`;
   }
 };
 __publicField(_ApiRoutes, "instance");
@@ -554,7 +554,7 @@ class BackEndApi {
   }
   async addBot(body) {
     const token = await this.tokenManager.getToken();
-    return apiRequest(ApiRoutes.getInstance(this.config).addBot(body.meetingId, body.meetId), {
+    return apiRequest(ApiRoutes.getInstance(this.config).addBot(), {
       method: "POST",
       body,
       authToken: token || ""
@@ -569,7 +569,7 @@ class BackEndApi {
   }
   async closeMeeting(body) {
     const token = await this.tokenManager.getToken();
-    return apiRequest(ApiRoutes.getInstance(this.config).closeMeeting(body.meetingId, body.meetId), {
+    return apiRequest(ApiRoutes.getInstance(this.config).closeMeeting(body.meetingId), {
       method: "POST",
       authToken: token || ""
     });
@@ -3599,9 +3599,7 @@ class UIHandlers {
       }
       const meetId = this.platform.getMeetId();
       const response = await this.backendApi.addBot({
-        meetingId: "00000000-0000-0000-0000-000000000000",
         meetId,
-        botName: this.config.service.botName,
         platform: this.platform.getPlatformName()
       }).catch((error) => {
         showToast("Failed to add bot :(");
@@ -3612,7 +3610,6 @@ class UIHandlers {
         const message = {
           type: MessageTypes.RequestToAddBot,
           meetId,
-          botName: this.config.service.botName,
           user: this.config.user
         };
         (_a = this.meetingHubClient) == null ? void 0 : _a.sendMessage(message);

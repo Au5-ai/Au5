@@ -15,7 +15,8 @@ export const landingCaptions = {
     imageAlt: "Au5.ai meeting insights dashboard",
   },
   navigation: {
-    letsGoButton: "Let's Go",
+    signup: "Sign Up",
+    login: "Log In",
   },
 } as const;
 

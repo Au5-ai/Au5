@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React, { JSX, useState } from "react";
+import React, { useState } from "react";
 
 type Custom404Props = {
   errorCode?: string;

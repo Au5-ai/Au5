@@ -29,15 +29,15 @@ public class ToggleFavoriteCommandHandlerTests
 		var userId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
 		var meetId = "test-meet-id";
-		var command = new ToggleFavoriteCommand(meetingId, meetId);
+		var command = new ToggleFavoriteCommand(meetingId);
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
 		var meeting = CreateMeeting(meetingId, meetId, false);
-		meeting.Participants = new List<ParticipantInMeeting>
-		{
+		meeting.Participants =
+		[
 			new() { UserId = userId }
-		};
+		];
 
 		var meetings = new List<Meeting> { meeting };
 		var meetingDbSet = meetings.BuildMockDbSet();
@@ -59,15 +59,15 @@ public class ToggleFavoriteCommandHandlerTests
 		var userId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
 		var meetId = "test-meet-id";
-		var command = new ToggleFavoriteCommand(meetingId, meetId);
+		var command = new ToggleFavoriteCommand(meetingId);
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
 		var meeting = CreateMeeting(meetingId, meetId, true);
-		meeting.Participants = new List<ParticipantInMeeting>
-		{
+		meeting.Participants =
+		[
 			new() { UserId = userId }
-		};
+		];
 
 		var meetings = new List<Meeting> { meeting };
 		var meetingDbSet = meetings.BuildMockDbSet();
@@ -88,8 +88,7 @@ public class ToggleFavoriteCommandHandlerTests
 	{
 		var userId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
-		var meetId = "test-meet-id";
-		var command = new ToggleFavoriteCommand(meetingId, meetId);
+		var command = new ToggleFavoriteCommand(meetingId);
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
@@ -101,7 +100,7 @@ public class ToggleFavoriteCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsFailure);
-		Assert.Equal("General.NotFound", result.Error.Code);
+		Assert.Equal("Meeting.NotFound", result.Error.Code);
 	}
 
 	[Fact]
@@ -109,16 +108,15 @@ public class ToggleFavoriteCommandHandlerTests
 	{
 		var userId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
-		var meetId = "test-meet-id";
-		var command = new ToggleFavoriteCommand(meetingId, meetId);
+		var command = new ToggleFavoriteCommand(Guid.NewGuid());
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
 		var meeting = CreateMeeting(meetingId, "different-meet-id", false);
-		meeting.Participants = new List<ParticipantInMeeting>
-		{
+		meeting.Participants =
+		[
 			new() { UserId = userId }
-		};
+		];
 
 		var meetings = new List<Meeting> { meeting };
 		var meetingDbSet = meetings.BuildMockDbSet();
@@ -128,7 +126,7 @@ public class ToggleFavoriteCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsFailure);
-		Assert.Equal("General.NotFound", result.Error.Code);
+		Assert.Equal("Meeting.NotFound", result.Error.Code);
 	}
 
 	[Fact]
@@ -138,15 +136,15 @@ public class ToggleFavoriteCommandHandlerTests
 		var otherUserId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
 		var meetId = "test-meet-id";
-		var command = new ToggleFavoriteCommand(meetingId, meetId);
+		var command = new ToggleFavoriteCommand(meetingId);
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
 		var meeting = CreateMeeting(meetingId, meetId, false);
-		meeting.Participants = new List<ParticipantInMeeting>
-		{
+		meeting.Participants =
+		[
 			new() { UserId = otherUserId }
-		};
+		];
 
 		var meetings = new List<Meeting> { meeting };
 		var meetingDbSet = meetings.BuildMockDbSet();
@@ -156,7 +154,7 @@ public class ToggleFavoriteCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsFailure);
-		Assert.Equal("General.Forbidden", result.Error.Code);
+		Assert.Equal("Meeting.NotParticipant", result.Error.Code);
 	}
 
 	[Fact]
@@ -165,15 +163,15 @@ public class ToggleFavoriteCommandHandlerTests
 		var userId = Guid.NewGuid();
 		var meetingId = Guid.NewGuid();
 		var meetId = "test-meet-id";
-		var command = new ToggleFavoriteCommand(meetingId, meetId);
+		var command = new ToggleFavoriteCommand(meetingId);
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
 		var meeting = CreateMeeting(meetingId, meetId, false);
-		meeting.Participants = new List<ParticipantInMeeting>
-		{
+		meeting.Participants =
+		[
 			new() { UserId = userId }
-		};
+		];
 
 		var meetings = new List<Meeting> { meeting };
 		var meetingDbSet = meetings.BuildMockDbSet();
@@ -185,7 +183,7 @@ public class ToggleFavoriteCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsFailure);
-		Assert.Equal("General.Failure", result.Error.Code);
+		Assert.Equal("Meeting.FailedToUpdate", result.Error.Code);
 	}
 
 	private static Meeting CreateMeeting(Guid meetingId, string meetId, bool isFavorite)
@@ -205,9 +203,9 @@ public class ToggleFavoriteCommandHandlerTests
 			Duration = "30m",
 			Status = MeetingStatus.Ended,
 			IsFavorite = isFavorite,
-			Participants = new List<ParticipantInMeeting>(),
-			Guests = new List<GuestsInMeeting>(),
-			Entries = new List<Entry>()
+			Participants = [],
+			Guests = [],
+			Entries = []
 		};
 	}
 }
