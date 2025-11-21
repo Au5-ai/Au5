@@ -1,6 +1,6 @@
 using Au5.Application.Dtos.Spaces;
 
-namespace Au5.Application.Features.Spaces.SpaceMembers;
+namespace Au5.Application.Features.Spaces.GetSpaceMembers;
 
 public sealed class SpaceMembersQueryHandler : IRequestHandler<SpaceMemebersQuery, Result<SpaceMembersResponse>>
 {

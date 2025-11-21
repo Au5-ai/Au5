@@ -1,6 +1,6 @@
-using Au5.Application.Features.Spaces.SpaceMembers;
+using Au5.Application.Features.Spaces.GetSpaceMembers;
 
-namespace Au5.UnitTests.Application.Features.Spaces.SpaceMembers;
+namespace Au5.UnitTests.Application.Features.Spaces.GetSpaceMembers;
 
 public class SpaceMembersQueryHandlerTests
 {
