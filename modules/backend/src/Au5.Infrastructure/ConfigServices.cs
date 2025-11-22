@@ -39,7 +39,7 @@ public static class ConfigureServices
 		services.AddScoped<IEmailProvider, EmailProvider>();
 		services.AddTransient<ISmtpClientWrapper, SmtpClientWrapper>();
 
-		services.AddSingleton<OpenAIClient>(sp =>
+		services.AddSingleton(sp =>
 		{
 			var orgOptions = configuration.GetSection(OrganizationOptions.SectionName).Get<OrganizationOptions>();
 			var options = new OpenAIClientOptions();
