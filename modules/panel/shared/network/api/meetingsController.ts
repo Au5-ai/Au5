@@ -125,25 +125,38 @@ export const meetingsController = {
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          buffer = decoder.decode(value, { stream: true });
+          buffer += decoder.decode(value, { stream: true });
           const lines = buffer.split("\n\n");
+          buffer = lines.pop() || "";
+
           for (const line of lines) {
             const clean = line.trim();
             if (!clean) continue;
             try {
               const json = JSON.parse(clean);
-              if (json.error) {
+
+              if (json.type === "error" && json.error) {
                 onError?.(new Error(json.error));
+                return;
               }
-              if (json.content) {
+
+              if (json.type === "cached" && json.content) {
                 onDelta?.(json.content);
-              } else if (json.event === "thread.message.delta") {
-                await new Promise((res) => setTimeout(res, 60));
-                onDelta?.(json.data.delta.content[0].text.value);
-              } else if (json.event === "thread.message.completed") {
                 onEnd?.();
-              } else if (json.event === "thread.run.completed") {
-                onDelta?.("");
+                return;
+              }
+
+              if (json.type === "text" && json.text) {
+                onDelta?.(json.text);
+              } else if (json.type === "status") {
+                if (json.status === "completed") {
+                  onEnd?.();
+                } else if (
+                  json.status === "failed" ||
+                  json.status === "cancelled"
+                ) {
+                  onError?.(new Error(`AI generation ${json.status}`));
+                }
               }
             } catch {
               // ignore parse errors for incomplete chunks
