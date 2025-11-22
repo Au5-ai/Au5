@@ -181,11 +181,11 @@ export default function TranscriptionView() {
         className="w-full gap-0">
         <div className="bg-muted px-4 sticky top-0 z-20 h-12 flex items-center">
           <TabsList className="gap-4">
-            <TabsTrigger value="Transcription">
+            <TabsTrigger value="Transcription" className="cursor-pointer">
               <CaptionsIcon className="h-4 w-4" /> Transcription
             </TabsTrigger>
 
-            <TabsTrigger value="AIConversation">
+            <TabsTrigger value="AIConversation" className="cursor-pointer">
               <Sparkles className="h-4 w-4" /> AI meeting notes
               <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums">
                 {aiContents.length}
@@ -193,6 +193,7 @@ export default function TranscriptionView() {
             </TabsTrigger>
           </TabsList>
         </div>
+
         <TabsContent value="Transcription">
           <div className="flex">
             <div className="flex-[2] bg-white">
@@ -207,20 +208,20 @@ export default function TranscriptionView() {
                   speakers={speakers}
                 />
               </div>
+
               <div className="divide-y divide-gray-100">
                 {filteredEntries.length > 0 ? (
                   filteredEntries.map((entry, index) => (
-                    <TranscriptionEntry
-                      key={entry.blockId}
-                      entry={entry}
-                      index={index}
-                    />
+                    <div key={entry.blockId} className="cursor-pointer">
+                      <TranscriptionEntry entry={entry} index={index} />
+                    </div>
                   ))
                 ) : (
                   <NoSearchResults />
                 )}
               </div>
             </div>
+
             <div className="flex-[1] border-gray-100 border-l">
               <div className="flex h-[calc(100vh-48px)] w-full sticky top-[48px]">
                 <main className="flex-1 p-4">
@@ -243,17 +244,22 @@ export default function TranscriptionView() {
                         </span>
                       </span>
                     </div>
+
                     <SidebarSeparator className="mx-0 mt-4 mb-4 bg-gray-100" />
-                    <MeetingSpaceCollapsible
-                      defaultOpen={true}
-                      spaces={spaces}
-                      icon={Blocks}
-                      name="Add to your spaces"
-                      selectedSpaceIds={transcription.spaces.map(
-                        (space) => space.id,
-                      )}
-                      onSelect={handleSpaceSelection}
-                    />
+
+                    <div className="cursor-pointer">
+                      <MeetingSpaceCollapsible
+                        defaultOpen={true}
+                        spaces={spaces}
+                        icon={Blocks}
+                        name="Add to your spaces"
+                        selectedSpaceIds={transcription.spaces.map(
+                          (space) => space.id,
+                        )}
+                        onSelect={handleSpaceSelection}
+                      />
+                    </div>
+
                     <SidebarSeparator className="mx-0 mt-4 mb-4 bg-gray-100" />
                   </div>
                 </main>
@@ -261,6 +267,7 @@ export default function TranscriptionView() {
             </div>
           </div>
         </TabsContent>
+
         <TabsContent value="AIConversation">
           <AIConversation
             onNewContent={(newContent) =>
