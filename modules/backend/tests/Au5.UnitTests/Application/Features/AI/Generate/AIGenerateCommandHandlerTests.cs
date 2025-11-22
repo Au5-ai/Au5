@@ -10,11 +10,10 @@ namespace Au5.UnitTests.Application.Features.AI.Generate;
 
 public class AIGenerateCommandHandlerTests
 {
-	private readonly Mock<IAIEngineAdapter> _aiEngineAdapterMock;
+	private readonly Mock<IAIClient> _aiAdapterMock;
 	private readonly Mock<IApplicationDbContext> _dbContextMock;
 	private readonly Mock<ICurrentUserService> _currentUserServiceMock;
 	private readonly Mock<IDataProvider> _dataProviderMock;
-	private readonly Mock<IOptions<OrganizationOptions>> _optionsMock;
 	private readonly AIGenerateCommandHandler _handler;
 	private readonly Guid _userId;
 	private readonly Guid _organizationId;
@@ -22,11 +21,10 @@ public class AIGenerateCommandHandlerTests
 
 	public AIGenerateCommandHandlerTests()
 	{
-		_aiEngineAdapterMock = new Mock<IAIEngineAdapter>();
+		_aiAdapterMock = new Mock<IAIClient>();
 		_dbContextMock = new Mock<IApplicationDbContext>();
 		_currentUserServiceMock = new Mock<ICurrentUserService>();
 		_dataProviderMock = new Mock<IDataProvider>();
-		_optionsMock = new Mock<IOptions<OrganizationOptions>>();
 
 		_userId = Guid.NewGuid();
 		_organizationId = Guid.NewGuid();
@@ -40,15 +38,13 @@ public class AIGenerateCommandHandlerTests
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(_userId);
 		_currentUserServiceMock.Setup(x => x.OrganizationId).Returns(_organizationId);
-		_optionsMock.Setup(x => x.Value).Returns(_organizationOptions);
 		_dataProviderMock.Setup(x => x.Now).Returns(new DateTime(2025, 11, 16, 10, 0, 0));
 
 		_handler = new AIGenerateCommandHandler(
-			_aiEngineAdapterMock.Object,
+			_aiAdapterMock.Object,
 			_dbContextMock.Object,
 			_currentUserServiceMock.Object,
-			_dataProviderMock.Object,
-			_optionsMock.Object);
+			_dataProviderMock.Object);
 	}
 
 	[Fact]
@@ -85,8 +81,8 @@ public class AIGenerateCommandHandlerTests
 		Assert.Single(results);
 		var jsonResult = JsonSerializer.Deserialize<JsonElement>(results[0]);
 		Assert.Equal(existingContent, jsonResult.GetProperty("content").GetString());
-		_aiEngineAdapterMock.Verify(
-			x => x.RunThreadAsync(It.IsAny<string>(), It.IsAny<RunThreadRequest>(), It.IsAny<CancellationToken>()),
+		_aiAdapterMock.Verify(
+			x => x.RunThreadAsync(It.IsAny<RunThreadRequest>(), It.IsAny<CancellationToken>()),
 			Times.Never);
 	}
 
@@ -246,8 +242,8 @@ public class AIGenerateCommandHandlerTests
 		_dbContextMock.Setup(db => db.Set<Meeting>())
 			.Returns(new List<Meeting> { meeting }.BuildMockDbSet().Object);
 
-		_aiEngineAdapterMock.Setup(
-				x => x.RunThreadAsync(It.IsAny<string>(), It.IsAny<RunThreadRequest>(), It.IsAny<CancellationToken>()))
+		_aiAdapterMock.Setup(
+				x => x.RunThreadAsync(It.IsAny<RunThreadRequest>(), It.IsAny<CancellationToken>()))
 			.ReturnsAsync(ToAsyncEnumerable(Array.Empty<string>()));
 
 		var command = new AIGenerateCommand
@@ -262,14 +258,10 @@ public class AIGenerateCommandHandlerTests
 			results.Add(result);
 		}
 
-		_aiEngineAdapterMock.Verify(
+		_aiAdapterMock.Verify(
 			x => x.RunThreadAsync(
-				_organizationOptions.AIProviderUrl,
 				It.Is<RunThreadRequest>(r =>
-					r.AssistantId == assistant.OpenAIAssistantId &&
-					r.ApiKey == _organizationOptions.OpenAIToken &&
-					r.ProxyUrl == _organizationOptions.OpenAIProxyUrl &&
-					r.Stream),
+					r.AssistantId == assistant.OpenAIAssistantId),
 				It.IsAny<CancellationToken>()),
 			Times.Once);
 	}
@@ -314,8 +306,8 @@ public class AIGenerateCommandHandlerTests
 			.Returns(new List<Meeting> { meeting }.BuildMockDbSet().Object);
 
 		var chunks = new[] { "chunk1", "chunk2", "chunk3" };
-		_aiEngineAdapterMock.Setup(
-				x => x.RunThreadAsync(It.IsAny<string>(), It.IsAny<RunThreadRequest>(), It.IsAny<CancellationToken>()))
+		_aiAdapterMock.Setup(
+				x => x.RunThreadAsync(It.IsAny<RunThreadRequest>(), It.IsAny<CancellationToken>()))
 			.ReturnsAsync(ToAsyncEnumerable(chunks));
 
 		var command = new AIGenerateCommand
@@ -401,8 +393,8 @@ public class AIGenerateCommandHandlerTests
 			}
 		});
 
-		_aiEngineAdapterMock.Setup(
-				x => x.RunThreadAsync(It.IsAny<string>(), It.IsAny<RunThreadRequest>(), It.IsAny<CancellationToken>()))
+		_aiAdapterMock.Setup(
+				x => x.RunThreadAsync(It.IsAny<RunThreadRequest>(), It.IsAny<CancellationToken>()))
 			.ReturnsAsync(ToAsyncEnumerable(new[] { completedMessage }));
 
 		var command = new AIGenerateCommand
@@ -505,8 +497,8 @@ public class AIGenerateCommandHandlerTests
 			}
 		});
 
-		_aiEngineAdapterMock.Setup(
-				x => x.RunThreadAsync(It.IsAny<string>(), It.IsAny<RunThreadRequest>(), It.IsAny<CancellationToken>()))
+		_aiAdapterMock.Setup(
+				x => x.RunThreadAsync(It.IsAny<RunThreadRequest>(), It.IsAny<CancellationToken>()))
 			.ReturnsAsync(ToAsyncEnumerable(new[] { completedMessage, usageMessage }));
 
 		var command = new AIGenerateCommand
@@ -567,8 +559,8 @@ public class AIGenerateCommandHandlerTests
 			.Returns(new List<Meeting> { meeting }.BuildMockDbSet().Object);
 
 		var chunks = new[] { "chunk1", string.Empty, "   ", null, "chunk2" };
-		_aiEngineAdapterMock.Setup(
-				x => x.RunThreadAsync(It.IsAny<string>(), It.IsAny<RunThreadRequest>(), It.IsAny<CancellationToken>()))
+		_aiAdapterMock.Setup(
+				x => x.RunThreadAsync(It.IsAny<RunThreadRequest>(), It.IsAny<CancellationToken>()))
 			.ReturnsAsync(ToAsyncEnumerable(chunks));
 
 		var command = new AIGenerateCommand
@@ -628,8 +620,8 @@ public class AIGenerateCommandHandlerTests
 			.Returns(new List<Meeting> { meeting }.BuildMockDbSet().Object);
 
 		var chunks = new[] { "invalid json", "{ broken json", "valid chunk" };
-		_aiEngineAdapterMock.Setup(
-				x => x.RunThreadAsync(It.IsAny<string>(), It.IsAny<RunThreadRequest>(), It.IsAny<CancellationToken>()))
+		_aiAdapterMock.Setup(
+				x => x.RunThreadAsync(It.IsAny<RunThreadRequest>(), It.IsAny<CancellationToken>()))
 			.ReturnsAsync(ToAsyncEnumerable(chunks));
 
 		var command = new AIGenerateCommand
@@ -692,8 +684,8 @@ public class AIGenerateCommandHandlerTests
 			data = new { }
 		});
 
-		_aiEngineAdapterMock.Setup(
-				x => x.RunThreadAsync(It.IsAny<string>(), It.IsAny<RunThreadRequest>(), It.IsAny<CancellationToken>()))
+		_aiAdapterMock.Setup(
+				x => x.RunThreadAsync(It.IsAny<RunThreadRequest>(), It.IsAny<CancellationToken>()))
 			.ReturnsAsync(ToAsyncEnumerable(new[] { otherMessage }));
 
 		var command = new AIGenerateCommand
@@ -778,8 +770,8 @@ public class AIGenerateCommandHandlerTests
 			}
 		});
 
-		_aiEngineAdapterMock.Setup(
-				x => x.RunThreadAsync(It.IsAny<string>(), It.IsAny<RunThreadRequest>(), It.IsAny<CancellationToken>()))
+		_aiAdapterMock.Setup(
+				x => x.RunThreadAsync(It.IsAny<RunThreadRequest>(), It.IsAny<CancellationToken>()))
 			.ReturnsAsync(ToAsyncEnumerable(new[] { completedMessage }));
 
 		var command = new AIGenerateCommand
@@ -839,8 +831,8 @@ public class AIGenerateCommandHandlerTests
 		_dbContextMock.Setup(db => db.Set<Meeting>())
 			.Returns(new List<Meeting> { meeting }.BuildMockDbSet().Object);
 
-		_aiEngineAdapterMock.Setup(
-				x => x.RunThreadAsync(It.IsAny<string>(), It.IsAny<RunThreadRequest>(), cancellationToken))
+		_aiAdapterMock.Setup(
+				x => x.RunThreadAsync(It.IsAny<RunThreadRequest>(), cancellationToken))
 			.ReturnsAsync(ToAsyncEnumerable(Array.Empty<string>()));
 
 		var command = new AIGenerateCommand
@@ -855,8 +847,8 @@ public class AIGenerateCommandHandlerTests
 			results.Add(result);
 		}
 
-		_aiEngineAdapterMock.Verify(
-			x => x.RunThreadAsync(It.IsAny<string>(), It.IsAny<RunThreadRequest>(), cancellationToken),
+		_aiAdapterMock.Verify(
+			x => x.RunThreadAsync(It.IsAny<RunThreadRequest>(), cancellationToken),
 			Times.Once);
 	}
 
