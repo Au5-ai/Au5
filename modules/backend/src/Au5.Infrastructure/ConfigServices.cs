@@ -55,11 +55,21 @@ public static class ConfigureServices
 
 		services.AddScoped<IAIClient, OpenAIClientAdapter>();
 
-		services.AddStackExchangeRedisCache(options =>
+		var useRedis = configuration.GetValue("CacheSettings:UseRedis", false);
+		var redisConnectionString = configuration.GetConnectionString("Redis");
+
+		if (useRedis && !string.IsNullOrWhiteSpace(redisConnectionString))
 		{
-			options.Configuration = configuration.GetConnectionString("Redis")!;
-			options.InstanceName = "Au5:";
-		});
+			services.AddStackExchangeRedisCache(options =>
+			{
+				options.Configuration = redisConnectionString;
+				options.InstanceName = "Au5:";
+			});
+		}
+		else
+		{
+			services.AddDistributedMemoryCache();
+		}
 
 		return services;
 	}

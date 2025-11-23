@@ -82,17 +82,23 @@ public static class Extensions
 				caching.AddPolicy("HealthChecks",
 				build: static policy => policy.Expire(TimeSpan.FromSeconds(30))));
 
-		builder.Services.AddHealthChecks()
+		var healthChecksBuilder = builder.Services.AddHealthChecks()
 			.AddCheck("self", () => HealthCheckResult.Healthy(), ["live"])
 			.AddSqlServer(
 				connectionString: builder.Configuration.GetConnectionString("ApplicationDbContext") ?? "",
 				name: "database",
-				tags: ["ready"])
+				tags: ["ready"]);
 
-			.AddRedis(
-				redisConnectionString: builder.Configuration.GetConnectionString("Redis") ?? "",
+		var useRedis = builder.Configuration.GetValue<bool>("CacheSettings:UseRedis", false);
+		var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
+
+		if (useRedis && !string.IsNullOrWhiteSpace(redisConnectionString))
+		{
+			healthChecksBuilder.AddRedis(
+				redisConnectionString: redisConnectionString,
 				name: "redis_cache",
 				tags: ["ready"]);
+		}
 
 		return builder;
 	}
