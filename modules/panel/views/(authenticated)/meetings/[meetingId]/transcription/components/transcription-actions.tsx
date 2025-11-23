@@ -80,9 +80,8 @@ export function TranscriptionActions({
 
       setCurrentFavoriteStatus(response.isFavorite);
     } catch (error) {
-      console.error("Failed to toggle favorite:", error);
       toast.error("Failed to Change state of Favorite");
-      setCurrentFavoriteStatus(!currentFavoriteStatus);
+      setCurrentFavoriteStatus(currentFavoriteStatus);
     } finally {
       setTimeout(() => setIsToggling(false), 300);
     }
