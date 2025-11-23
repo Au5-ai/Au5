@@ -16,10 +16,9 @@ public class AddAssistantCommandHandlerTests
 		var configDbSetMock = config.BuildMockDbSet();
 		var dbSetMock = new List<Assistant>().BuildMockDbSet();
 		var dbContextMock = new Mock<IApplicationDbContext>();
-		var aiEngineAdapterMock = new Mock<IAIEngineAdapter>();
+		var aiEngineMock = new Mock<IAIClient>();
 		var currentUserServiceMock = new Mock<ICurrentUserService>();
 		var dataProviderMock = new Mock<IDataProvider>();
-		var options = new Mock<IOptions<OrganizationOptions>>();
 
 		var organizationOptions = new OrganizationOptions
 		{
@@ -27,9 +26,8 @@ public class AddAssistantCommandHandlerTests
 			OpenAIToken = "test-token",
 			OpenAIProxyUrl = "https://proxy.com"
 		};
-		options.Setup(x => x.Value).Returns(organizationOptions);
 
-		aiEngineAdapterMock.Setup(x => x.CreateAssistantAsync(It.IsAny<string>(), It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync("assistant-id");
+		aiEngineMock.Setup(x => x.CreateAssistantAsync(It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync("assistant-id");
 		dbContextMock.Setup(x => x.Set<Assistant>()).Returns(dbSetMock.Object);
 		dbContextMock.Setup(x => x.Set<Organization>()).Returns(configDbSetMock.Object);
 		dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success());
@@ -44,7 +42,7 @@ public class AddAssistantCommandHandlerTests
 		currentUserServiceMock.Setup(x => x.OrganizationId).Returns(organizationId);
 		currentUserServiceMock.Setup(x => x.Role).Returns(RoleTypes.Admin);
 
-		var handler = new AddAssistantCommandHandler(dbContextMock.Object, aiEngineAdapterMock.Object, currentUserServiceMock.Object, dataProviderMock.Object, options.Object);
+		var handler = new AddAssistantCommandHandler(dbContextMock.Object, aiEngineMock.Object, currentUserServiceMock.Object, dataProviderMock.Object);
 		var command = new AddAssistantCommand
 		{
 			Name = "Test Assistant",
@@ -68,10 +66,9 @@ public class AddAssistantCommandHandlerTests
 		var configDbSetMock = config.BuildMockDbSet();
 		var dbSetMock = new List<Assistant>().BuildMockDbSet();
 		var dbContextMock = new Mock<IApplicationDbContext>();
-		var aiEngineAdapterMock = new Mock<IAIEngineAdapter>();
+		var aiEngineMock = new Mock<IAIClient>();
 		var currentUserServiceMock = new Mock<ICurrentUserService>();
 		var dataProviderMock = new Mock<IDataProvider>();
-		var options = new Mock<IOptions<OrganizationOptions>>();
 
 		var organizationOptions = new OrganizationOptions
 		{
@@ -79,9 +76,8 @@ public class AddAssistantCommandHandlerTests
 			OpenAIToken = "test-token",
 			OpenAIProxyUrl = "https://proxy.com"
 		};
-		options.Setup(x => x.Value).Returns(organizationOptions);
 
-		aiEngineAdapterMock.Setup(x => x.CreateAssistantAsync(It.IsAny<string>(), It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync("assistant-id");
+		aiEngineMock.Setup(x => x.CreateAssistantAsync(It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync("assistant-id");
 		dbContextMock.Setup(x => x.Set<Assistant>()).Returns(dbSetMock.Object);
 		dbContextMock.Setup(x => x.Set<Organization>()).Returns(configDbSetMock.Object);
 		dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure(Error.Failure(description: "fail")));
@@ -92,7 +88,7 @@ public class AddAssistantCommandHandlerTests
 		dataProviderMock.Setup(x => x.NewGuid()).Returns(Guid.NewGuid());
 		dataProviderMock.Setup(x => x.UtcNow).Returns(DateTime.UtcNow);
 
-		var handler = new AddAssistantCommandHandler(dbContextMock.Object, aiEngineAdapterMock.Object, currentUserServiceMock.Object, dataProviderMock.Object, options.Object);
+		var handler = new AddAssistantCommandHandler(dbContextMock.Object, aiEngineMock.Object, currentUserServiceMock.Object, dataProviderMock.Object);
 		var command = new AddAssistantCommand
 		{
 			Name = "Test Assistant",
@@ -115,26 +111,17 @@ public class AddAssistantCommandHandlerTests
 		List<Organization> config = [new Organization() { }];
 		var configDbSetMock = config.BuildMockDbSet();
 		var dbContextMock = new Mock<IApplicationDbContext>();
-		var aiEngineAdapterMock = new Mock<IAIEngineAdapter>();
+		var aiEngineMock = new Mock<IAIClient>();
 		var currentUserServiceMock = new Mock<ICurrentUserService>();
 		var dataProviderMock = new Mock<IDataProvider>();
-		var options = new Mock<IOptions<OrganizationOptions>>();
-
-		var organizationOptions = new OrganizationOptions
-		{
-			AIProviderUrl = "https://api.openai.com",
-			OpenAIToken = "test-token",
-			OpenAIProxyUrl = "https://proxy.com"
-		};
-		options.Setup(x => x.Value).Returns(organizationOptions);
 
 		currentUserServiceMock.Setup(x => x.UserId).Returns(Guid.NewGuid());
 		currentUserServiceMock.Setup(x => x.OrganizationId).Returns(Guid.NewGuid());
 		currentUserServiceMock.Setup(x => x.Role).Returns(RoleTypes.Admin);
-		aiEngineAdapterMock.Setup(x => x.CreateAssistantAsync(It.IsAny<string>(), It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(string.Empty);
+		aiEngineMock.Setup(x => x.CreateAssistantAsync(It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(string.Empty);
 		dbContextMock.Setup(x => x.Set<Assistant>()).Returns(dbSetMock.Object);
 		dbContextMock.Setup(x => x.Set<Organization>()).Returns(configDbSetMock.Object);
-		var handler = new AddAssistantCommandHandler(dbContextMock.Object, aiEngineAdapterMock.Object, currentUserServiceMock.Object, dataProviderMock.Object, options.Object);
+		var handler = new AddAssistantCommandHandler(dbContextMock.Object, aiEngineMock.Object, currentUserServiceMock.Object, dataProviderMock.Object);
 		var command = new AddAssistantCommand
 		{
 			Name = "Test Assistant",
@@ -157,29 +144,19 @@ public class AddAssistantCommandHandlerTests
 		List<Organization> config = [];
 		var configDbSetMock = config.BuildMockDbSet();
 		var dbContextMock = new Mock<IApplicationDbContext>();
-		var aiEngineAdapterMock = new Mock<IAIEngineAdapter>();
+		var aiEngineMock = new Mock<IAIClient>();
 		var currentUserServiceMock = new Mock<ICurrentUserService>();
 		var dataProviderMock = new Mock<IDataProvider>();
-		var options = new Mock<IOptions<OrganizationOptions>>();
-
-		var organizationOptions = new OrganizationOptions
-		{
-			AIProviderUrl = "https://api.openai.com",
-			OpenAIToken = "test-token",
-			OpenAIProxyUrl = "https://proxy.com"
-		};
-		options.Setup(x => x.Value).Returns(organizationOptions);
 
 		currentUserServiceMock.Setup(x => x.UserId).Returns(Guid.NewGuid());
-		aiEngineAdapterMock.Setup(x => x.CreateAssistantAsync(It.IsAny<string>(), It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(string.Empty);
+		aiEngineMock.Setup(x => x.CreateAssistantAsync(It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(string.Empty);
 		dbContextMock.Setup(x => x.Set<Assistant>()).Returns(dbSetMock.Object);
 		dbContextMock.Setup(x => x.Set<Organization>()).Returns(configDbSetMock.Object);
 		var handler = new AddAssistantCommandHandler(
 			dbContextMock.Object,
-			aiEngineAdapterMock.Object,
+			aiEngineMock.Object,
 			currentUserServiceMock.Object,
-			dataProviderMock.Object,
-			options.Object);
+			dataProviderMock.Object);
 		var command = new AddAssistantCommand
 		{
 			Name = "Test Assistant",
@@ -203,20 +180,11 @@ public class AddAssistantCommandHandlerTests
 		var assistantsList = new List<Assistant>();
 		var dbSetMock = assistantsList.BuildMockDbSet();
 		var dbContextMock = new Mock<IApplicationDbContext>();
-		var aiEngineAdapterMock = new Mock<IAIEngineAdapter>();
+		var aiEngineMock = new Mock<IAIClient>();
 		var currentUserServiceMock = new Mock<ICurrentUserService>();
 		var dataProviderMock = new Mock<IDataProvider>();
-		var options = new Mock<IOptions<OrganizationOptions>>();
 
-		var organizationOptions = new OrganizationOptions
-		{
-			AIProviderUrl = "https://api.openai.com",
-			OpenAIToken = "test-token",
-			OpenAIProxyUrl = "https://proxy.com"
-		};
-		options.Setup(x => x.Value).Returns(organizationOptions);
-
-		aiEngineAdapterMock.Setup(x => x.CreateAssistantAsync(It.IsAny<string>(), It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync("assistant-id");
+		aiEngineMock.Setup(x => x.CreateAssistantAsync(It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync("assistant-id");
 		dbContextMock.Setup(x => x.Set<Assistant>()).Returns(dbSetMock.Object);
 		dbContextMock.Setup(x => x.Set<Organization>()).Returns(configDbSetMock.Object);
 		dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success());
@@ -229,7 +197,7 @@ public class AddAssistantCommandHandlerTests
 		currentUserServiceMock.Setup(x => x.OrganizationId).Returns(organizationId);
 		currentUserServiceMock.Setup(x => x.Role).Returns(RoleTypes.Admin);
 
-		var handler = new AddAssistantCommandHandler(dbContextMock.Object, aiEngineAdapterMock.Object, currentUserServiceMock.Object, dataProviderMock.Object, options.Object);
+		var handler = new AddAssistantCommandHandler(dbContextMock.Object, aiEngineMock.Object, currentUserServiceMock.Object, dataProviderMock.Object);
 		var command = new AddAssistantCommand
 		{
 			Name = "Test Assistant",
@@ -253,20 +221,11 @@ public class AddAssistantCommandHandlerTests
 		var assistantsList = new List<Assistant>();
 		var dbSetMock = assistantsList.BuildMockDbSet();
 		var dbContextMock = new Mock<IApplicationDbContext>();
-		var aiEngineAdapterMock = new Mock<IAIEngineAdapter>();
+		var aiEngineMock = new Mock<IAIClient>();
 		var currentUserServiceMock = new Mock<ICurrentUserService>();
 		var dataProviderMock = new Mock<IDataProvider>();
-		var options = new Mock<IOptions<OrganizationOptions>>();
 
-		var organizationOptions = new OrganizationOptions
-		{
-			AIProviderUrl = "https://api.openai.com",
-			OpenAIToken = "test-token",
-			OpenAIProxyUrl = "https://proxy.com"
-		};
-		options.Setup(x => x.Value).Returns(organizationOptions);
-
-		aiEngineAdapterMock.Setup(x => x.CreateAssistantAsync(It.IsAny<string>(), It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync("assistant-id");
+		aiEngineMock.Setup(x => x.CreateAssistantAsync(It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync("assistant-id");
 		dbContextMock.Setup(x => x.Set<Assistant>()).Returns(dbSetMock.Object);
 		dbContextMock.Setup(x => x.Set<Organization>()).Returns(configDbSetMock.Object);
 		dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success());
@@ -279,7 +238,7 @@ public class AddAssistantCommandHandlerTests
 		currentUserServiceMock.Setup(x => x.OrganizationId).Returns(organizationId);
 		currentUserServiceMock.Setup(x => x.Role).Returns(RoleTypes.User);
 
-		var handler = new AddAssistantCommandHandler(dbContextMock.Object, aiEngineAdapterMock.Object, currentUserServiceMock.Object, dataProviderMock.Object, options.Object);
+		var handler = new AddAssistantCommandHandler(dbContextMock.Object, aiEngineMock.Object, currentUserServiceMock.Object, dataProviderMock.Object);
 		var command = new AddAssistantCommand
 		{
 			Name = "Test Assistant",
@@ -302,20 +261,11 @@ public class AddAssistantCommandHandlerTests
 		var configDbSetMock = config.BuildMockDbSet();
 		var dbSetMock = new List<Assistant>().BuildMockDbSet();
 		var dbContextMock = new Mock<IApplicationDbContext>();
-		var aiEngineAdapterMock = new Mock<IAIEngineAdapter>();
+		var aiEngineMock = new Mock<IAIClient>();
 		var currentUserServiceMock = new Mock<ICurrentUserService>();
 		var dataProviderMock = new Mock<IDataProvider>();
-		var options = new Mock<IOptions<OrganizationOptions>>();
 
-		var organizationOptions = new OrganizationOptions
-		{
-			AIProviderUrl = "https://api.openai.com",
-			OpenAIToken = "test-api-key",
-			OpenAIProxyUrl = "https://proxy.url"
-		};
-		options.Setup(x => x.Value).Returns(organizationOptions);
-
-		aiEngineAdapterMock.Setup(x => x.CreateAssistantAsync(It.IsAny<string>(), It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync("assistant-id");
+		aiEngineMock.Setup(x => x.CreateAssistantAsync(It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync("assistant-id");
 		dbContextMock.Setup(x => x.Set<Assistant>()).Returns(dbSetMock.Object);
 		dbContextMock.Setup(x => x.Set<Organization>()).Returns(configDbSetMock.Object);
 		dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success());
@@ -326,7 +276,7 @@ public class AddAssistantCommandHandlerTests
 		dataProviderMock.Setup(x => x.NewGuid()).Returns(Guid.NewGuid());
 		dataProviderMock.Setup(x => x.UtcNow).Returns(DateTime.UtcNow);
 
-		var handler = new AddAssistantCommandHandler(dbContextMock.Object, aiEngineAdapterMock.Object, currentUserServiceMock.Object, dataProviderMock.Object, options.Object);
+		var handler = new AddAssistantCommandHandler(dbContextMock.Object, aiEngineMock.Object, currentUserServiceMock.Object, dataProviderMock.Object);
 		var command = new AddAssistantCommand
 		{
 			Name = "Test Assistant",
@@ -339,15 +289,12 @@ public class AddAssistantCommandHandlerTests
 		var result = await handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		aiEngineAdapterMock.Verify(
+		aiEngineMock.Verify(
 			x => x.CreateAssistantAsync(
-				"https://api.openai.com",
 				It.Is<CreateAssistantRequest>(req =>
 					req.Name == "Test Assistant" &&
 					req.Instructions == "test instructions" &&
-					req.Model == "gpt-4-turbo" &&
-					req.ApiKey == "test-api-key" &&
-					req.ProxyUrl == "https://proxy.url"),
+					req.Model == "gpt-4-turbo"),
 				It.IsAny<CancellationToken>()),
 			Times.Once);
 	}
@@ -360,20 +307,11 @@ public class AddAssistantCommandHandlerTests
 		var assistantsList = new List<Assistant>();
 		var dbSetMock = assistantsList.BuildMockDbSet();
 		var dbContextMock = new Mock<IApplicationDbContext>();
-		var aiEngineAdapterMock = new Mock<IAIEngineAdapter>();
+		var aiEngineMock = new Mock<IAIClient>();
 		var currentUserServiceMock = new Mock<ICurrentUserService>();
 		var dataProviderMock = new Mock<IDataProvider>();
-		var options = new Mock<IOptions<OrganizationOptions>>();
 
-		var organizationOptions = new OrganizationOptions
-		{
-			AIProviderUrl = "https://api.openai.com",
-			OpenAIToken = "test-token",
-			OpenAIProxyUrl = "https://proxy.com"
-		};
-		options.Setup(x => x.Value).Returns(organizationOptions);
-
-		aiEngineAdapterMock.Setup(x => x.CreateAssistantAsync(It.IsAny<string>(), It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync("openai-asst-123");
+		aiEngineMock.Setup(x => x.CreateAssistantAsync(It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync("openai-asst-123");
 		dbContextMock.Setup(x => x.Set<Assistant>()).Returns(dbSetMock.Object);
 		dbContextMock.Setup(x => x.Set<Organization>()).Returns(configDbSetMock.Object);
 		dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success());
@@ -388,7 +326,7 @@ public class AddAssistantCommandHandlerTests
 		currentUserServiceMock.Setup(x => x.OrganizationId).Returns(expectedOrgId);
 		currentUserServiceMock.Setup(x => x.Role).Returns(RoleTypes.Admin);
 
-		var handler = new AddAssistantCommandHandler(dbContextMock.Object, aiEngineAdapterMock.Object, currentUserServiceMock.Object, dataProviderMock.Object, options.Object);
+		var handler = new AddAssistantCommandHandler(dbContextMock.Object, aiEngineMock.Object, currentUserServiceMock.Object, dataProviderMock.Object);
 		var command = new AddAssistantCommand
 		{
 			Name = "My Assistant",

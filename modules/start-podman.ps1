@@ -129,37 +129,13 @@ if ($LASTEXITCODE -eq 0) {
     exit 1
 }
 
-Write-Host "`n[9/10] Building and starting AI Engine..." -ForegroundColor Yellow
-podman build -t au5-ai-engine ./aiEngine
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "[ERROR] Failed to build AI Engine" -ForegroundColor Red
-    exit 1
-}
-
-podman run -d `
-  --name au5-ai-engine `
-  --pod au5-pod `
-  -e APP_MODE=development `
-  -e QDRANT_HOST=localhost `
-  -e QDRANT_PORT=6333 `
-  --env-file ./aiEngine/.env `
-  --restart unless-stopped `
-  au5-ai-engine | Out-Null
-
-if ($LASTEXITCODE -eq 0) {
-    Write-Host "[OK] AI Engine container started" -ForegroundColor Green
-} else {
-    Write-Host "[ERROR] Failed to start AI Engine" -ForegroundColor Red
-    exit 1
-}
-
+Write-Host "`n[9/10] Updating all containers..." -ForegroundColor Yellow
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "    Service Endpoints" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "Backend API:    " -NoNewline; Write-Host "http://localhost:1366" -ForegroundColor White
 Write-Host "Bot Father:     " -NoNewline; Write-Host "http://localhost:1367" -ForegroundColor White
 Write-Host "Panel:          " -NoNewline; Write-Host "http://localhost:1368" -ForegroundColor White
-Write-Host "AI Engine:      " -NoNewline; Write-Host "http://localhost:8000" -ForegroundColor White
 Write-Host "SQL Server:     " -NoNewline; Write-Host "localhost:15433" -ForegroundColor White
 Write-Host "Redis:          " -NoNewline; Write-Host "localhost:6379" -ForegroundColor White
 Write-Host "Qdrant:         " -NoNewline; Write-Host "http://localhost:6333" -ForegroundColor White

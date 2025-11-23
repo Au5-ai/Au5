@@ -46,7 +46,7 @@ export const AIAssistantList: React.FC<AIAssistantListProps> = ({
 
           return (
             <Card
-              onClick={() => onClick?.(assistant)}
+              onClick={() => (isUsed ? null : onClick?.(assistant))}
               key={assistant.id}
               className={cardClass}>
               <div className="flex items-starts gap-2 w-full">

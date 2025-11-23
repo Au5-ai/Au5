@@ -1,17 +1,14 @@
 using Au5.Application.Common;
-using Au5.Application.Common.Options;
 using Au5.Application.Dtos.AI;
-using Microsoft.Extensions.Options;
 
 namespace Au5.Application.Features.Assistants.AddAssistant;
 
-public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngineAdapter aiEngine, ICurrentUserService currentUserService, IDataProvider dataProvider, IOptions<OrganizationOptions> options) : IRequestHandler<AddAssistantCommand, Result<AddAssisstantResponse>>
+public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIClient aiClient, ICurrentUserService currentUserService, IDataProvider dataProvider) : IRequestHandler<AddAssistantCommand, Result<AddAssisstantResponse>>
 {
 	private readonly IApplicationDbContext _dbContext = dbContext;
-	private readonly IAIEngineAdapter _aiEngine = aiEngine;
+	private readonly IAIClient _aiClient = aiClient;
 	private readonly ICurrentUserService _currentUserService = currentUserService;
 	private readonly IDataProvider _dataProvider = dataProvider;
-	private readonly OrganizationOptions _organizationOptions = options.Value;
 
 	public async ValueTask<Result<AddAssisstantResponse>> Handle(AddAssistantCommand request, CancellationToken cancellationToken)
 	{
@@ -21,16 +18,12 @@ public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIEngi
 			return Error.Failure("Organization.NotConfigured", AppResources.System.IsNotConfigured);
 		}
 
-		var assistantId = await _aiEngine.CreateAssistantAsync(
-			_organizationOptions.AIProviderUrl,
+		var assistantId = await _aiClient.CreateAssistantAsync(
 			new CreateAssistantRequest()
 			{
 				Instructions = request.Instructions,
 				Model = request.LLMModel,
-				ApiKey = _organizationOptions.OpenAIToken,
-				ProxyUrl = _organizationOptions.OpenAIProxyUrl,
 				Name = request.Name,
-				Tools = []
 			}, cancellationToken);
 
 		if (string.IsNullOrEmpty(assistantId))

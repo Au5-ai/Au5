@@ -1,13 +1,6 @@
 USE [Au5]
 GO
 
--- Add LLMModel column to Organization table if it doesn't exist
-IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Organization]') AND name = 'LLMModel')
-BEGIN
-    ALTER TABLE [dbo].[Organization] ADD [LLMModel] NVARCHAR(50) NOT NULL DEFAULT 'gpt-4o'
-END
-GO
-
 DELETE FROM [dbo].[GuestsInMeeting];
 DELETE FROM [dbo].[ParticipantInMeeting];
 DELETE FROM  [dbo].[Entry];
