@@ -22,7 +22,6 @@ public class AddAssistantCommandHandlerTests
 
 		var organizationOptions = new OrganizationOptions
 		{
-			AIProviderUrl = "https://api.openai.com",
 			OpenAIToken = "test-token",
 			OpenAIProxyUrl = "https://proxy.com"
 		};
@@ -72,7 +71,6 @@ public class AddAssistantCommandHandlerTests
 
 		var organizationOptions = new OrganizationOptions
 		{
-			AIProviderUrl = "https://api.openai.com",
 			OpenAIToken = "test-token",
 			OpenAIProxyUrl = "https://proxy.com"
 		};
