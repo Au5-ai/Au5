@@ -4,6 +4,7 @@ using Au5.Application.Common.Abstractions;
 using Au5.Application.Common.Options;
 using Au5.Infrastructure.Adapters;
 using Au5.Infrastructure.Authentication;
+using Au5.Infrastructure.BackgroundServices;
 using Au5.Infrastructure.Persistence.Context;
 using Au5.Infrastructure.Providers;
 using Microsoft.EntityFrameworkCore;
@@ -55,11 +56,23 @@ public static class ConfigureServices
 
 		services.AddScoped<IAIClient, OpenAIClientAdapter>();
 
-		services.AddStackExchangeRedisCache(options =>
+		services.AddHostedService<ExpiredTokenCleanupService>();
+
+		var useRedis = configuration.GetValue("CacheSettings:UseRedis", false);
+		var redisConnectionString = configuration.GetConnectionString("Redis");
+
+		if (useRedis && !string.IsNullOrWhiteSpace(redisConnectionString))
 		{
-			options.Configuration = configuration.GetConnectionString("Redis")!;
-			options.InstanceName = "Au5:";
-		});
+			services.AddStackExchangeRedisCache(options =>
+			{
+				options.Configuration = redisConnectionString;
+				options.InstanceName = "Au5:";
+			});
+		}
+		else
+		{
+			services.AddDistributedMemoryCache();
+		}
 
 		return services;
 	}
