@@ -16,7 +16,7 @@ export function useSignup() {
     mutationFn: signupController.createAdmin,
     onSuccess: async (response, signupData) => {
       if (!response.isDone) {
-        toast.success(GLOBAL_CAPTIONS.pages.signup.singupException);
+        toast.error(GLOBAL_CAPTIONS.pages.signup.singupException);
         return;
       }
 
