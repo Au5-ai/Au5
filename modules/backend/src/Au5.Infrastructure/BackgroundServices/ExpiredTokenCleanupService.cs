@@ -55,19 +55,13 @@ public class ExpiredTokenCleanupService : BackgroundService
 		var dbContext = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
 
 		var now = _dataProvider.Now;
-		var expiredTokens = await dbContext.Set<BlacklistedToken>()
+		var expiredTokensCount = await dbContext.Set<BlacklistedToken>()
 			.Where(t => t.ExpiresAt <= now)
-			.ToListAsync(cancellationToken);
+			.ExecuteDeleteAsync(cancellationToken);
 
-		if (expiredTokens.Count != 0)
+		if (expiredTokensCount > 0)
 		{
-			foreach (var token in expiredTokens)
-			{
-				dbContext.Set<BlacklistedToken>().Remove(token);
-			}
-
-			await dbContext.SaveChangesAsync(cancellationToken);
-			_logger.LogInformation("Cleaned up {Count} expired blacklisted tokens", expiredTokens.Count);
+			_logger.LogInformation("Cleaned up {Count} expired blacklisted tokens", expiredTokensCount);
 		}
 	}
 }
