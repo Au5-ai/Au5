@@ -1,11 +1,13 @@
 using System.Data;
 using Au5.Application.Common.Abstractions;
+using Au5.Application.Common.Options;
 using Au5.Domain.Entities;
 using Au5.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Au5.Infrastructure.BackgroundServices;
 
@@ -14,13 +16,14 @@ public class ExpiredTokenCleanupService : BackgroundService
 	private readonly IServiceScopeFactory _scopeFactory;
 	private readonly IDataProvider _dataProvider;
 	private readonly ILogger<ExpiredTokenCleanupService> _logger;
-	private readonly TimeSpan _cleanupInterval = TimeSpan.FromMinutes(1);
+	private readonly TimeSpan _cleanupInterval;
 
-	public ExpiredTokenCleanupService(IServiceScopeFactory scopeFactory, IDataProvider dataProvider, ILogger<ExpiredTokenCleanupService> logger)
+	public ExpiredTokenCleanupService(IServiceScopeFactory scopeFactory, IDataProvider dataProvider, ILogger<ExpiredTokenCleanupService> logger, IOptions<CacheSettings> options)
 	{
 		_scopeFactory = scopeFactory;
 		_dataProvider = dataProvider;
 		_logger = logger;
+		_cleanupInterval = TimeSpan.FromMinutes(options.Value.TokenCleanupIntervalMinutes);
 	}
 
 	protected override async Task ExecuteAsync(CancellationToken stoppingToken)

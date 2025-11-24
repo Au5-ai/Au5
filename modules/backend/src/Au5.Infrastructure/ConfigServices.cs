@@ -23,6 +23,8 @@ public static class ConfigureServices
 		this IServiceCollection services,
 		IConfiguration configuration)
 	{
+		services.Configure<ServiceSettings>(configuration.GetSection(ServiceSettings.SectionName));
+
 		var connectionString = configuration.GetConnectionString(nameof(ApplicationDbContext));
 
 		Guard.Against.Null(connectionString, message: "Connection string 'DefaultConnection' not found.");
@@ -58,7 +60,8 @@ public static class ConfigureServices
 
 		services.AddHostedService<ExpiredTokenCleanupService>();
 
-		var useRedis = configuration.GetValue("CacheSettings:UseRedis", false);
+		var serviceSettings = configuration.GetSection(ServiceSettings.SectionName).Get<ServiceSettings>();
+		var useRedis = serviceSettings?.UseRedis ?? false;
 		var redisConnectionString = configuration.GetConnectionString("Redis");
 
 		if (useRedis && !string.IsNullOrWhiteSpace(redisConnectionString))
