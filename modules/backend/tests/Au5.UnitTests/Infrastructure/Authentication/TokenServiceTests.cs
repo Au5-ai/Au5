@@ -1,16 +1,19 @@
 using System.IdentityModel.Tokens.Jwt;
+using Au5.Domain.Entities;
 using Au5.Shared;
 using Microsoft.IdentityModel.Tokens;
+using MockQueryable.Moq;
 
 namespace Au5.UnitTests.Infrastructure.Authentication;
 
 public class TokenServiceTests
 {
 	private readonly JwtSettings _jwtSettings;
-	private readonly Mock<ICacheProvider> _cacheProviderMock;
+	private readonly Mock<IApplicationDbContext> _dbContextMock;
 	private readonly Mock<IDataProvider> _dataProviderMock;
 	private readonly IOptions<JwtSettings> _jwtOptions;
 	private readonly TokenService _tokenService;
+	private readonly Mock<DbSet<BlacklistedToken>> _blacklistedTokensDbSetMock;
 
 	public TokenServiceTests()
 	{
@@ -22,14 +25,17 @@ public class TokenServiceTests
 			ExpiryMinutes = 60
 		};
 
-		_cacheProviderMock = new Mock<ICacheProvider>();
+		_dbContextMock = new Mock<IApplicationDbContext>();
 		_dataProviderMock = new Mock<IDataProvider>();
+		_blacklistedTokensDbSetMock = new Mock<DbSet<BlacklistedToken>>();
+
+		_dbContextMock.Setup(x => x.Set<BlacklistedToken>()).Returns(_blacklistedTokensDbSetMock.Object);
 
 		var optionsMock = new Mock<IOptions<JwtSettings>>();
 		optionsMock.Setup(o => o.Value).Returns(_jwtSettings);
 		_jwtOptions = optionsMock.Object;
 
-		_tokenService = new TokenService(_jwtOptions, _cacheProviderMock.Object, _dataProviderMock.Object);
+		_tokenService = new TokenService(_jwtOptions, _dataProviderMock.Object, _dbContextMock.Object);
 	}
 
 	[Fact]
@@ -78,71 +84,153 @@ public class TokenServiceTests
 	}
 
 	[Fact]
-	public async Task IsTokenBlacklistedAsync_ShouldReturnTrueIfKeyExists()
+	public async Task Should_ReturnTrue_When_TokenIsBlacklisted()
 	{
-		// Arrange
 		var userId = Guid.NewGuid().ToString();
 		var jti = Guid.NewGuid().ToString();
-		var key = $"jwt_bl_{userId}_{jti}";
+		var now = DateTime.UtcNow;
 
-		_cacheProviderMock.Setup(c => c.ExistsAsync(key)).ReturnsAsync(true);
+		_dataProviderMock.Setup(x => x.Now).Returns(now);
 
-		// Act
+		var blacklistedTokens = new List<BlacklistedToken>
+		{
+			new()
+			{
+				Id = Guid.NewGuid(),
+				UserId = userId,
+				Jti = jti,
+				ExpiresAt = now.AddMinutes(10),
+				BlacklistedAt = now
+			}
+		}.BuildMockDbSet();
+
+		_dbContextMock.Setup(x => x.Set<BlacklistedToken>()).Returns(blacklistedTokens.Object);
+
 		var result = await _tokenService.IsTokenBlacklistedAsync(userId, jti);
 
-		// Assert
 		Assert.True(result);
 	}
 
 	[Fact]
-	public async Task IsTokenBlacklistedAsync_ShouldReturnFalseIfKeyMissing()
+	public async Task Should_ReturnFalse_When_TokenIsNotBlacklisted()
 	{
-		// Arrange
 		var userId = Guid.NewGuid().ToString();
 		var jti = Guid.NewGuid().ToString();
-		var key = $"jwt_bl_{userId}_{jti}";
+		var now = DateTime.UtcNow;
 
-		_cacheProviderMock.Setup(c => c.ExistsAsync(key)).ReturnsAsync(false);
+		_dataProviderMock.Setup(x => x.Now).Returns(now);
 
-		// Act
+		var blacklistedTokens = new List<BlacklistedToken>().BuildMockDbSet();
+
+		_dbContextMock.Setup(x => x.Set<BlacklistedToken>()).Returns(blacklistedTokens.Object);
+
 		var result = await _tokenService.IsTokenBlacklistedAsync(userId, jti);
 
-		// Assert
 		Assert.False(result);
 	}
 
 	[Fact]
-	public async Task BlacklistTokenAsync_ShouldDoNothingIfTokenAlreadyExpired()
+	public async Task Should_ReturnFalse_When_TokenIsExpired()
 	{
 		var userId = Guid.NewGuid().ToString();
 		var jti = Guid.NewGuid().ToString();
-		var now = DateTime.Now;
+		var now = DateTime.UtcNow;
+
+		_dataProviderMock.Setup(x => x.Now).Returns(now);
+
+		var blacklistedTokens = new List<BlacklistedToken>
+		{
+			new()
+			{
+				Id = Guid.NewGuid(),
+				UserId = userId,
+				Jti = jti,
+				ExpiresAt = now.AddMinutes(-10),
+				BlacklistedAt = now.AddMinutes(-20)
+			}
+		}.BuildMockDbSet();
+
+		_dbContextMock.Setup(x => x.Set<BlacklistedToken>()).Returns(blacklistedTokens.Object);
+
+		var result = await _tokenService.IsTokenBlacklistedAsync(userId, jti);
+
+		Assert.False(result);
+	}
+
+	[Fact]
+	public async Task Should_DoNothing_When_TokenAlreadyExpired()
+	{
+		var userId = Guid.NewGuid().ToString();
+		var jti = Guid.NewGuid().ToString();
+		var now = DateTime.UtcNow;
 		var expired = now.AddSeconds(-10);
 
 		_dataProviderMock.Setup(x => x.Now).Returns(now);
 
+		var blacklistedTokens = new List<BlacklistedToken>().BuildMockDbSet();
+		_dbContextMock.Setup(x => x.Set<BlacklistedToken>()).Returns(blacklistedTokens.Object);
+
 		await _tokenService.BlacklistTokenAsync(userId, jti, expired);
 
-		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<TimeSpan>()), Times.Never);
+		_blacklistedTokensDbSetMock.Verify(x => x.Add(It.IsAny<BlacklistedToken>()), Times.Never);
 	}
 
 	[Fact]
-	public async Task BlacklistTokenAsync_ShouldCacheWithCorrectKeyAndTTL()
+	public async Task Should_AddTokenToBlacklist_When_ValidToken()
 	{
 		var userId = Guid.NewGuid().ToString();
 		var jti = Guid.NewGuid().ToString();
-		var now = DateTime.Now;
+		var now = DateTime.UtcNow;
 		var expiry = now.AddMinutes(10);
-		var expectedKey = $"jwt_bl_{userId}_{jti}";
+		var newGuid = Guid.NewGuid();
 
 		_dataProviderMock.Setup(x => x.Now).Returns(now);
+		_dataProviderMock.Setup(x => x.NewGuid()).Returns(newGuid);
+
+		var blacklistedTokens = new List<BlacklistedToken>().BuildMockDbSet();
+		_dbContextMock.Setup(x => x.Set<BlacklistedToken>()).Returns(blacklistedTokens.Object);
+		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success());
 
 		await _tokenService.BlacklistTokenAsync(userId, jti, expiry);
 
-		// Assert
-		_cacheProviderMock.Verify(
-			x =>
-			x.SetAsync(expectedKey, true, It.Is<TimeSpan>(ttl => ttl.TotalMinutes <= 10 && ttl.TotalMinutes > 9)),
+		blacklistedTokens.Verify(
+			x => x.Add(It.Is<BlacklistedToken>(t =>
+				t.Id == newGuid &&
+				t.UserId == userId &&
+				t.Jti == jti &&
+				t.ExpiresAt == expiry &&
+				t.BlacklistedAt == now)),
 			Times.Once);
+
+		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+	}
+
+	[Fact]
+	public async Task Should_NotAddDuplicate_When_TokenAlreadyBlacklisted()
+	{
+		var userId = Guid.NewGuid().ToString();
+		var jti = Guid.NewGuid().ToString();
+		var now = DateTime.UtcNow;
+		var expiry = now.AddMinutes(10);
+
+		_dataProviderMock.Setup(x => x.Now).Returns(now);
+
+		var blacklistedTokens = new List<BlacklistedToken>
+		{
+			new()
+			{
+				Id = Guid.NewGuid(),
+				UserId = userId,
+				Jti = jti,
+				ExpiresAt = expiry,
+				BlacklistedAt = now
+			}
+		}.BuildMockDbSet();
+
+		_dbContextMock.Setup(x => x.Set<BlacklistedToken>()).Returns(blacklistedTokens.Object);
+
+		await _tokenService.BlacklistTokenAsync(userId, jti, expiry);
+
+		_blacklistedTokensDbSetMock.Verify(x => x.Add(It.IsAny<BlacklistedToken>()), Times.Never);
 	}
 }
