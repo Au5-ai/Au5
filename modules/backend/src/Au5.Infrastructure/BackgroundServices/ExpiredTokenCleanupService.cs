@@ -18,7 +18,7 @@ public class ExpiredTokenCleanupService : BackgroundService
 	private readonly ILogger<ExpiredTokenCleanupService> _logger;
 	private readonly TimeSpan _cleanupInterval;
 
-	public ExpiredTokenCleanupService(IServiceScopeFactory scopeFactory, IDataProvider dataProvider, ILogger<ExpiredTokenCleanupService> logger, IOptions<CacheSettings> options)
+	public ExpiredTokenCleanupService(IServiceScopeFactory scopeFactory, IDataProvider dataProvider, ILogger<ExpiredTokenCleanupService> logger, IOptions<ServiceSettings> options)
 	{
 		_scopeFactory = scopeFactory;
 		_dataProvider = dataProvider;
