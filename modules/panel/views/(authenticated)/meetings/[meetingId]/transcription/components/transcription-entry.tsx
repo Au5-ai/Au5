@@ -22,7 +22,7 @@ export default function TranscriptionEntry({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.02 }}
-      className={`group relative py-4 px-4 hover:bg-slate-50/50 border-r-2 ${
+      className={`group relative py-4 px-6 hover:bg-slate-50/50 border-r-2 ${
         isChat ? "border-r-transparent bg-indigo-50/30" : "border-r-transparent"
       }`}>
       <div className="flex gap-2">

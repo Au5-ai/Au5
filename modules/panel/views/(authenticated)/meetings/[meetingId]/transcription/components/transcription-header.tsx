@@ -23,7 +23,7 @@ export default function TranscriptionHeader({
 
   return (
     <div className="bg-white top-0 z-10">
-      <div className="px-4 py-4">
+      <div className="px-6 py-4">
         <div className="flex justify-start gap-4">
           <PlatformLogo platform={meeting.platform} />
           <div className="flex justify-between items-start w-full">

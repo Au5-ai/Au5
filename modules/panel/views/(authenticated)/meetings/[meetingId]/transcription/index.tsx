@@ -179,7 +179,7 @@ export default function TranscriptionView() {
         value={selectedTab}
         onValueChange={setSelectedTab}
         className="w-full gap-0">
-        <div className="bg-muted px-4 sticky top-0 z-20 h-12 flex items-center">
+        <div className="bg-muted px-6 sticky top-0 z-20 h-12 flex items-center">
           <TabsList className="gap-4">
             <TabsTrigger value="Transcription">
               <CaptionsIcon className="h-4 w-4" /> Transcription
@@ -223,9 +223,9 @@ export default function TranscriptionView() {
             </div>
             <div className="flex-[1] border-gray-100 border-l">
               <div className="flex h-[calc(100vh-48px)] w-full sticky top-[48px]">
-                <main className="flex-1 p-4">
+                <main className="flex-1 py-4 px-6">
                   <div className="">
-                    <div className="flex items-center gap-3 text-sm text-gray-600 mb-6">
+                    <div className="flex items-center gap-3 text-sm text-gray-600 mb-4">
                       <ParticipantAvatar
                         fullName={transcription.userRecorder.fullName}
                         pictureUrl={transcription.userRecorder.pictureUrl}

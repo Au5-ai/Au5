@@ -37,7 +37,7 @@ export default function TranscriptionFilters({
 
   return (
     <div className="bg-white">
-      <div className="px-4 py-4">
+      <div className="px-6 py-4">
         <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
