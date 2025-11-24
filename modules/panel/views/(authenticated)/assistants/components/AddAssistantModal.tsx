@@ -141,6 +141,8 @@ export function AddAssistantModal({
             onChange={(e) => setInstructions(e.target.value)}
             placeholder="You are a summarization assistant. Read the provided transcription and generate ..."
             disabled={isLoading}
+            rows={5}
+            className="max-h-32 overflow-y-auto resize-none"
           />
 
           <Label
@@ -153,6 +155,8 @@ export function AddAssistantModal({
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Description (optional)"
             disabled={isLoading}
+            rows={2}
+            className="max-h-12 overflow-y-auto resize-none"
           />
           {error && <div className="text-red-500 text-sm">{error}</div>}
           <DialogFooter>

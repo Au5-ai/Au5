@@ -81,7 +81,9 @@ export const AIAssistantList: React.FC<AIAssistantListProps> = ({
                     </div>
                   </div>
                   <span className="text-gray-500 text-sm">
-                    {truncateFirstLine(assistant.description)}
+                    {truncateFirstLine(
+                      assistant.description || "No description provided.",
+                    )}
                   </span>
                 </div>
               </div>

@@ -75,10 +75,12 @@ export function MeetingSpaceCollapsible({
               ) : null}
               {spaces?.map((item) => (
                 <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton onClick={() => handleSpaceSelect(item.id)}>
+                  <SidebarMenuButton
+                    className="cursor-pointer"
+                    onClick={() => handleSpaceSelect(item.id)}>
                     <div
                       data-active={internalSelectedSpaces.has(item.id)}
-                      className="group/calendar-item border-sidebar-border text-sidebar-primary-foreground data-[active=true]:border-sidebar-primary data-[active=true]:bg-sidebar-primary flex aspect-square size-4 shrink-0 items-center justify-center rounded-xs border">
+                      className="cursor-pointer group/calendar-item border-sidebar-border text-sidebar-primary-foreground data-[active=true]:border-sidebar-primary data-[active=true]:bg-sidebar-primary flex aspect-square size-4 shrink-0 items-center justify-center rounded-xs border">
                       <Check className="hidden size-3 group-data-[active=true]/calendar-item:block" />
                     </div>
                     {item.name}

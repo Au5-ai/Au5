@@ -50,7 +50,16 @@ export function AssistantsGrid({ assistants, isLoading }: AssistantsGridProps) {
             </Badge>
           </div>
           <div className="text-muted-foreground text-sm">
-            {assistant.instructions}
+            {assistant.instructions && assistant.instructions.length > 100 ? (
+              <>
+                {assistant.instructions.substring(0, 100)}...{" "}
+                <span className="italic text-xs text-blue-500">
+                  (truncated)
+                </span>
+              </>
+            ) : (
+              assistant.instructions
+            )}
           </div>
         </Card>
       ))}
