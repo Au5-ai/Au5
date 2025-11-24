@@ -49,10 +49,10 @@ export function AssistantsGrid({ assistants, isLoading }: AssistantsGridProps) {
               )}
             </Badge>
           </div>
-          <div className="text-muted-foreground text-sm">
-            {assistant.instructions && assistant.instructions.length > 100 ? (
+          <div className="text-muted-foreground text-sm" dir="auto">
+            {assistant.instructions && assistant.instructions.length > 80 ? (
               <>
-                {assistant.instructions.substring(0, 100)}...{" "}
+                {assistant.instructions.substring(0, 80)}...{" "}
                 <span className="italic text-xs text-blue-500">
                   (truncated)
                 </span>
