@@ -89,7 +89,7 @@ public static class Extensions
 				name: "database",
 				tags: ["ready"]);
 
-		var useRedis = builder.Configuration.GetValue<bool>("CacheSettings:UseRedis", false);
+		var useRedis = builder.Configuration.GetValue("ServiceSettings:UseRedis", false);
 		var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
 
 		if (useRedis && !string.IsNullOrWhiteSpace(redisConnectionString))

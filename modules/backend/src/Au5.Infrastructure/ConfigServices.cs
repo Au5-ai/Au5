@@ -4,6 +4,7 @@ using Au5.Application.Common.Abstractions;
 using Au5.Application.Common.Options;
 using Au5.Infrastructure.Adapters;
 using Au5.Infrastructure.Authentication;
+using Au5.Infrastructure.BackgroundServices;
 using Au5.Infrastructure.Persistence.Context;
 using Au5.Infrastructure.Providers;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,8 @@ public static class ConfigureServices
 		this IServiceCollection services,
 		IConfiguration configuration)
 	{
+		services.Configure<ServiceSettings>(configuration.GetSection(ServiceSettings.SectionName));
+
 		var connectionString = configuration.GetConnectionString(nameof(ApplicationDbContext));
 
 		Guard.Against.Null(connectionString, message: "Connection string 'DefaultConnection' not found.");
@@ -55,7 +58,10 @@ public static class ConfigureServices
 
 		services.AddScoped<IAIClient, OpenAIClientAdapter>();
 
-		var useRedis = configuration.GetValue("CacheSettings:UseRedis", false);
+		services.AddHostedService<ExpiredTokenCleanupService>();
+
+		var serviceSettings = configuration.GetSection(ServiceSettings.SectionName).Get<ServiceSettings>();
+		var useRedis = serviceSettings?.UseRedis ?? false;
 		var redisConnectionString = configuration.GetConnectionString("Redis");
 
 		if (useRedis && !string.IsNullOrWhiteSpace(redisConnectionString))

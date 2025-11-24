@@ -86,7 +86,8 @@ ENV Organization__SmtpUser="Admin@au5.ai"
 ENV Organization__SmtpPassword="!QAZ2wsx"
 
 # Environment variables for Cache Settings
-ENV CacheSettings__UseRedis="false"
+ENV ServiceSettings__UseRedis="false"
+ENV ServiceSettings__TokenCleanupIntervalMinutes="60"
 
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Au5.BackEnd.dll"]
