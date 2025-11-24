@@ -1,11 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { AddUserRequest, AddUserResponse } from "./types";
+import { AddUserRequest, AddUserResponse } from "../types";
 import { useRouter } from "next/navigation";
-import { signupController } from "./signupController";
+import { signupController } from "../api/signup-controller";
 import { handleAuthSuccess } from "@/shared/hooks/use-auth";
 import { authController } from "@/shared/network/api/authController";
 import { ROUTES } from "@/shared/routes";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
+import { toast } from "sonner";
 
 export function useSignup() {
   const queryClient = useQueryClient();
@@ -15,9 +16,11 @@ export function useSignup() {
     mutationFn: signupController.createAdmin,
     onSuccess: async (response, signupData) => {
       if (!response.isDone) {
-        throw new Error(GLOBAL_CAPTIONS.pages.signup.singupException);
+        toast.success(GLOBAL_CAPTIONS.pages.signup.singupException);
+        return;
       }
 
+      toast.success(GLOBAL_CAPTIONS.pages.signup.signupSuccess);
       try {
         const loginResponse = await authController.login({
           username: signupData.email,
@@ -26,14 +29,12 @@ export function useSignup() {
 
         handleAuthSuccess(loginResponse, queryClient);
         router.push(ROUTES.PLAYGROUND);
-      } catch (loginError) {
-        console.error("Auto-login after signup failed:", loginError);
+      } catch {
         router.push(ROUTES.LOGIN);
       }
     },
-    // onError: (error) => {
-    //   const message = handleAuthError(error);
-    //   toast.error(message);
-    // },
+    onError: () => {
+      toast.error("Signup failed. Please try again.");
+    },
   });
 }

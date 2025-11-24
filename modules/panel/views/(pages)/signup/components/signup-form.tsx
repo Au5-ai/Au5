@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, validateEmail, validatePassword } from "@/shared/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/components/ui/button";
 import {
   Card,
@@ -11,108 +11,15 @@ import {
 } from "@/shared/components/ui/card";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
-import { useState } from "react";
-import { useSignup } from "../hooks";
-import { AddUserRequest } from "../types";
+import { useSignupForm } from "../hooks";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [formData, setFormData] = useState({
-    email: "",
-    fullname: "",
-    organizationName: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  const [errors, setErrors] = useState({
-    email: "",
-    fullname: "",
-    organizationName: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  const signupMutation = useSignup();
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-
-    if (errors[field as keyof typeof errors]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors = {
-      email: "",
-      fullname: "",
-      organizationName: "",
-      password: "",
-      confirmPassword: "",
-    };
-
-    if (!formData.email) {
-      newErrors.email = GLOBAL_CAPTIONS.validation.email.required;
-    } else if (!validateEmail(formData.email)) {
-      newErrors.email = GLOBAL_CAPTIONS.validation.email.invalid;
-    }
-
-    if (!formData.fullname.trim()) {
-      newErrors.fullname = GLOBAL_CAPTIONS.validation.fullname.required;
-    } else if (
-      formData.fullname.trim().length < 2 ||
-      formData.fullname.trim().length > 50
-    ) {
-      newErrors.fullname = GLOBAL_CAPTIONS.validation.fullname.invalidLength;
-    }
-
-    if (!formData.organizationName.trim()) {
-      newErrors.organizationName =
-        GLOBAL_CAPTIONS.validation.organizationName.required;
-    } else if (
-      formData.organizationName.trim().length < 2 ||
-      formData.organizationName.trim().length > 100
-    ) {
-      newErrors.organizationName =
-        GLOBAL_CAPTIONS.validation.organizationName.invalidLength;
-    }
-
-    if (!formData.password) {
-      newErrors.password = GLOBAL_CAPTIONS.validation.password.required;
-    } else if (!validatePassword(formData.password)) {
-      newErrors.password = GLOBAL_CAPTIONS.validation.password.invalid;
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword =
-        GLOBAL_CAPTIONS.validation.confirmPassword.required;
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword =
-        GLOBAL_CAPTIONS.validation.confirmPassword.mismatch;
-    }
-
-    setErrors(newErrors);
-    return !Object.values(newErrors).some((error) => error !== "");
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (validateForm()) {
-      const signupData: AddUserRequest = {
-        email: formData.email,
-        fullName: formData.fullname,
-        organizationName: formData.organizationName,
-        password: formData.password,
-        repeatedPassword: formData.confirmPassword,
-      };
-
-      signupMutation.mutate(signupData);
-    }
-  };
+  const { formData, errors, isSubmitting, handleInputChange, handleSubmit } =
+    useSignupForm();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -243,8 +150,8 @@ export function SignupForm({
                 <Button
                   type="submit"
                   className="w-full cursor-pointer"
-                  disabled={signupMutation.isPending}>
-                  {signupMutation.isPending
+                  disabled={isSubmitting}>
+                  {isSubmitting
                     ? GLOBAL_CAPTIONS.pages.signup.form.submittingButton
                     : GLOBAL_CAPTIONS.pages.signup.form.submitButton}
                 </Button>
