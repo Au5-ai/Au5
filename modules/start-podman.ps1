@@ -83,6 +83,37 @@ podman run -d `
   -e ASPNETCORE_ENVIRONMENT=Production `
   -e "ConnectionStrings__ApplicationDbContext=Server=localhost,1433;Database=Au5;User Id=Au5User;Password=Au5UserStrong!Pass123;TrustServerCertificate=true" `
   -e "ConnectionStrings__Redis=localhost:6379" `
+  -e "Cors__AllowedOrigins__0=http://localhost:3001" `
+  -e "Cors__AllowedOrigins__1=https://localhost:8000" `
+  -e "Cors__AllowedOrigins__2=https://localhost:8001" `
+  -e "JwtSettings__SecretKey=CgOZGhxCXD4gpFfA8iPGBS5f0ZzGva1i2R9hLFiPICc=" `
+  -e "JwtSettings__EncryptionKey=NekPtiUPYrlLr0dx3zJRtwga3pJNgccm1aO5+zWGMOc=" `
+  -e "JwtSettings__Issuer=Au5.BackEnd" `
+  -e "JwtSettings__Audience=Au5.Client" `
+  -e "JwtSettings__ExpiryMinutes=1000" `
+  -e "Organization__Direction=rtl" `
+  -e "Organization__Language=fa-IR" `
+  -e "Organization__HubUrl=http://localhost:1366/meetingHub" `
+  -e "Organization__ServiceBaseUrl=http://localhost:1366" `
+  -e "Organization__BotFatherUrl=http://localhost:8081" `
+  -e "Organization__BotHubUrl=http://host.containers.internal:1366/meetingHub" `
+  -e "Organization__PanelUrl=http://localhost:3001" `
+  -e "Organization__OpenAIProxyUrl=https://api.openai.com/v1" `
+  -e "Organization__OpenAIToken=YOUR_OPENAI_API_KEY" `
+  -e "Organization__AutoLeaveWaitingEnter=30000" `
+  -e "Organization__AutoLeaveNoParticipant=60000" `
+  -e "Organization__AutoLeaveAllParticipantsLeft=120000" `
+  -e "Organization__MeetingVideoRecording=false" `
+  -e "Organization__MeetingAudioRecording=false" `
+  -e "Organization__MeetingTranscription=true" `
+  -e "Organization__MeetingTranscriptionModel=liveCaption" `
+  -e "Organization__SmtpUseSSl=false" `
+  -e "Organization__SmtpHost=https://mail.au5.ai" `
+  -e "Organization__SmtpPort=25" `
+  -e "Organization__SmtpUser=Admin@au5.ai" `
+  -e "Organization__SmtpPassword=!QAZ2wsx" `
+  -e "ServiceSettings__UseRedis=false" `
+  -e "ServiceSettings__TokenCleanupIntervalMinutes=60"`
   --restart unless-stopped `
   au5-backend | Out-Null
 
