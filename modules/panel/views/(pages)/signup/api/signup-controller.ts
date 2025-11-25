@@ -1,5 +1,5 @@
 import { apiRequestClient } from "@/shared/network/apiRequestClient";
-import { AddUserRequest, AddUserResponse } from "./types";
+import { AddUserRequest, AddUserResponse } from "../types";
 import { API_URLS } from "@/shared/network/api/urls";
 
 export const signupController = {
