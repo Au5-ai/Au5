@@ -1,6 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using Au5.Application.Common.Abstractions;
 using Au5.Application.Features.Authentication.Login;
 using Au5.Domain.Common;
@@ -38,17 +37,32 @@ public class TokenService : ITokenService
 			new Claim(ClaimConstants.Jti, jti)
 		};
 
-		var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.SecretKey));
-		var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+		var signingKeyBytes = Convert.FromBase64String(_jwt.SecretKey);
+		var signingKey = new SymmetricSecurityKey(signingKeyBytes);
+		var signingCreds = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
-		var token = new JwtSecurityToken(
-			issuer: _jwt.Issuer,
-			audience: _jwt.Audience,
-			claims: claims,
-			expires: _dataProvider.Now.AddMinutes(_jwt.ExpiryMinutes),
-			signingCredentials: creds);
+		var encryptionKeyBytes = Convert.FromBase64String(_jwt.EncryptionKey);
+		var encryptionKey = new SymmetricSecurityKey(encryptionKeyBytes);
+		var encryptingCreds = new EncryptingCredentials(
+			encryptionKey,
+			SecurityAlgorithms.Aes256KW,
+			SecurityAlgorithms.Aes128CbcHmacSha256);
 
-		return new TokenResponse(new JwtSecurityTokenHandler().WriteToken(token), _jwt.ExpiryMinutes * 60, string.Empty, "Bearer");
+		var tokenDescriptor = new SecurityTokenDescriptor
+		{
+			Subject = new ClaimsIdentity(claims),
+			Expires = _dataProvider.Now.AddMinutes(_jwt.ExpiryMinutes),
+			Issuer = _jwt.Issuer,
+			Audience = _jwt.Audience,
+			SigningCredentials = signingCreds,
+			EncryptingCredentials = encryptingCreds
+		};
+
+		var tokenHandler = new JwtSecurityTokenHandler();
+		var token = tokenHandler.CreateToken(tokenDescriptor);
+		var tokenString = tokenHandler.WriteToken(token);
+
+		return new TokenResponse(tokenString, _jwt.ExpiryMinutes * 60, string.Empty, "Bearer");
 	}
 
 	public async Task BlacklistTokenAsync(string userId, string jti, DateTime expiry)
@@ -91,12 +105,9 @@ public class TokenService : ITokenService
 
 	public async Task<bool> IsTokenBlacklistedAsync(string userId, string jti)
 	{
-		if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(jti))
-		{
-			return false;
-		}
-
-		return await _dbContext.Set<BlacklistedToken>()
-			.AnyAsync(x => x.UserId == userId && x.Jti == jti && x.ExpiresAt > _dataProvider.Now);
+		return !string.IsNullOrWhiteSpace(userId) &&
+			   !string.IsNullOrWhiteSpace(jti) &&
+			   await _dbContext.Set<BlacklistedToken>()
+				   .AnyAsync(x => x.UserId == userId && x.Jti == jti && x.ExpiresAt > _dataProvider.Now);
 	}
 }

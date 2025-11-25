@@ -57,9 +57,10 @@ ENV Cors__AllowedOrigins__1="https://localhost:8000"
 ENV Cors__AllowedOrigins__2="https://localhost:8001"
 
 # Environment variables for JWT Settings
-ENV JwtSettings__SecretKey="YOUR_SECRET_KEY_CHANGE_IN_PRODUCTION"
-ENV JwtSettings__Issuer="YOUR_ISSUER"
-ENV JwtSettings__Audience="YOUR_AUDIENCE"
+ENV JwtSettings__SecretKey="CgOZGhxCXD4gpFfA8iPGBS5f0ZzGva1i2R9hLFiPICc="
+ENV JwtSettings__EncryptionKey="NekPtiUPYrlLr0dx3zJRtwga3pJNgccm1aO5+zWGMOc="
+ENV JwtSettings__Issuer="Au5.BackEnd"
+ENV JwtSettings__Audience="Au5.Client"
 ENV JwtSettings__ExpiryMinutes="1000"
 
 # Environment variables for Organization Configuration
