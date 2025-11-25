@@ -41,6 +41,7 @@ public static class ConfigServices
 				ValidateAudience = true,
 				ValidateLifetime = true,
 				ValidateIssuerSigningKey = true,
+				RequireSignedTokens = true,
 				ValidIssuer = jwtSettings.Issuer,
 				ValidAudience = jwtSettings.Audience,
 				IssuerSigningKey = new SymmetricSecurityKey(key)
