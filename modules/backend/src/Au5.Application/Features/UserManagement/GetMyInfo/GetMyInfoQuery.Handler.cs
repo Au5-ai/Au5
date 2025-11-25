@@ -9,15 +9,18 @@ public class GetMyInfoQueryHandler(IApplicationDbContext applicationDbContext, I
 
 	public async ValueTask<Result<Participant>> Handle(GetMyInfoQuery request, CancellationToken cancellationToken)
 	{
-		var user = await _dbContext.Set<User>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == _currentUserService.UserId && x.IsActive, cancellationToken);
-		return user == null
-			? Error.Unauthorized("Auth.Unauthorized", AppResources.Auth.UnAuthorizedAction)
-			: new Participant
+		var user = await _dbContext.Set<User>().AsNoTracking()
+			.Where(x => x.Id == _currentUserService.UserId && x.IsActive)
+			.Select(user => new Participant
 			{
 				Id = user.Id,
 				FullName = user.FullName,
 				PictureUrl = user.PictureUrl,
 				Email = user.Email
-			};
+			}).FirstOrDefaultAsync(cancellationToken);
+
+		return user == null
+			? Error.Unauthorized("Auth.Unauthorized", AppResources.Auth.UnAuthorizedAction)
+			: user;
 	}
 }
