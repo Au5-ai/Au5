@@ -1,7 +1,5 @@
-using System.IdentityModel.Tokens.Jwt;
 using Au5.Domain.Entities;
 using Au5.Shared;
-using Microsoft.IdentityModel.Tokens;
 using MockQueryable.Moq;
 
 namespace Au5.UnitTests.Infrastructure.Authentication;
