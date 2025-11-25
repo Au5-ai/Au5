@@ -47,34 +47,28 @@ export function useSignupForm() {
   };
 
   const validateForm = (): boolean => {
-    const newErrors: FormErrors = {
-      email: "",
-      fullname: "",
-      organizationName: "",
-      password: "",
-      confirmPassword: "",
+    const results = {
+      email: validators.email(formData.email),
+      fullname: validators.fullname(formData.fullname),
+      organizationName: validators.organizationName(formData.organizationName),
+      password: validators.password(formData.password),
+      confirmPassword: validators.confirmPassword(
+        formData.confirmPassword,
+        formData.password,
+      ),
     };
 
-    const emailResult = validators.email(formData.email);
-    newErrors.email = emailResult.error;
-
-    const fullnameResult = validators.fullname(formData.fullname);
-    newErrors.fullname = fullnameResult.error;
-
-    const orgResult = validators.organizationName(formData.organizationName);
-    newErrors.organizationName = orgResult.error;
-
-    const passwordResult = validators.password(formData.password);
-    newErrors.password = passwordResult.error;
-
-    const confirmPasswordResult = validators.confirmPassword(
-      formData.confirmPassword,
-      formData.password,
-    );
-    newErrors.confirmPassword = confirmPasswordResult.error;
+    const newErrors = {
+      email: results.email.error,
+      fullname: results.fullname.error,
+      organizationName: results.organizationName.error,
+      password: results.password.error,
+      confirmPassword: results.confirmPassword.error,
+    };
 
     setErrors(newErrors);
-    return !Object.values(newErrors).some((error) => error !== "");
+
+    return Object.values(results).every((result) => result.isValid);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
