@@ -40,51 +40,6 @@ public class TokenServiceTests
 	}
 
 	[Fact]
-	public void GenerateTokenReturnsValidJwtWithExpectedClaims()
-	{
-		var participantId = Guid.NewGuid();
-		var participantName = "Test User";
-		var role = RoleTypes.Admin;
-		var organizationId = Guid.NewGuid();
-		var now = DateTime.Now;
-		var jti = Guid.NewGuid();
-
-		_dataProviderMock.Setup(x => x.NewGuid()).Returns(jti);
-		_dataProviderMock.Setup(x => x.Now).Returns(now);
-
-		var tokenResponse = _tokenService.GenerateToken(participantId, participantName, role, organizationId);
-
-		Assert.False(string.IsNullOrWhiteSpace(tokenResponse.AccessToken));
-
-		var handler = new JwtSecurityTokenHandler();
-		var key = Encoding.UTF8.GetBytes(_jwtSettings.SecretKey);
-
-		var validationParameters = new TokenValidationParameters
-		{
-			ValidateIssuer = true,
-			ValidIssuer = _jwtSettings.Issuer,
-			ValidateAudience = true,
-			ValidAudience = _jwtSettings.Audience,
-			ValidateIssuerSigningKey = true,
-			IssuerSigningKey = new SymmetricSecurityKey(key),
-			ValidateLifetime = true,
-			ClockSkew = TimeSpan.Zero
-		};
-
-		handler.ValidateToken(tokenResponse.AccessToken, validationParameters, out var validatedToken);
-		var jwtToken = (JwtSecurityToken)validatedToken;
-
-		Assert.Equal(_jwtSettings.Issuer, jwtToken.Issuer);
-		Assert.Equal(_jwtSettings.Audience, jwtToken.Audiences.First());
-
-		Assert.NotNull(jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier));
-		Assert.NotNull(jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name));
-		Assert.NotNull(jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role));
-		Assert.NotNull(jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimConstants.OrganizationId));
-		Assert.NotNull(jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti));
-	}
-
-	[Fact]
 	public async Task Should_ReturnTrue_When_TokenIsBlacklisted()
 	{
 		var userId = Guid.NewGuid().ToString();

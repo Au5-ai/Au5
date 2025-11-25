@@ -11,17 +11,7 @@ public sealed class LoginCommandHandler(IApplicationDbContext dbContext, ITokenS
 	public async ValueTask<Result<TokenResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
 	{
 		var user = await _dbContext.Set<User>()
-			.AsNoTracking()
-			.Where(u => u.Email == request.Username && u.IsActive)
-			.Select(u => new User()
-			{
-				Id = u.Id,
-				FullName = u.FullName,
-				Password = u.Password,
-				Role = u.Role,
-				OrganizationId = u.OrganizationId
-			})
-			.FirstOrDefaultAsync(cancellationToken)
+			.FirstOrDefaultAsync(u => u.Email == request.Username && u.IsActive, cancellationToken)
 			.ConfigureAwait(false);
 
 		if (user is null || user.Password != HashHelper.HashPassword(request.Password, user.Id))
