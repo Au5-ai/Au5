@@ -20,6 +20,7 @@ public class TokenServiceTests
 		_jwtSettings = new JwtSettings
 		{
 			SecretKey = "Au5SecretKey*&^%$SDFGHMNBV8528452",
+			EncryptionKey = "Au5EncryptKey*&^%$SDFGHMNBV852845",
 			Issuer = "TestIssuer",
 			Audience = "TestAudience",
 			ExpiryMinutes = 60
