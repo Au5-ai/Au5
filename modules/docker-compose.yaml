@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -13,16 +12,6 @@ services:
       - sqlserver_data:/var/opt/mssql
     restart: unless-stopped
 
-  redis:
-    image: redis:7-alpine
-    container_name: au5-redis
-    command: [ "redis-server", "--appendonly", "yes" ]
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    restart: unless-stopped
-
   backend:
     build:
       context: ./backend
@@ -33,67 +22,26 @@ services:
       - ConnectionStrings__ApplicationDbContext=Server=sqlserver,1433;Database=Au5Db;User Id=Au5User;Password=Au5UserStrong!Pass123;TrustServerCertificate=true
       - ConnectionStrings__Redis=redis:6379
     depends_on:
-      - sqlserver
-      - redis
+      sqlserver:
+        condition: service_healthy
     ports:
       - "1366:8080"
     restart: unless-stopped
 
-  botfather:
+  panel:
     build:
-      context: ./botFather
-    image: au5-botfather
-    container_name: au5-botfather
-    volumes:
-      - /run/podman/podman.sock:/var/run/docker.sock
+      context: ./panel
+    image: au5-panel
+    container_name: au5-panel
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://backend:8080
+    ports:
+      - "1368:3000"
     depends_on:
       - backend
-    ports:
-      - "1367:8081"
-    restart: unless-stopped
-
-  ai-engine:
-    build:
-      context: ./aiEngine
-    image: au5-ai-engine
-    container_name: au5-ai-engine
-    environment:
-      - APP_MODE=development
-      - QDRANT_HOST=qdrant
-      - QDRANT_PORT=6333
-    env_file:
-      - ../aiEngine/.env
-    ports:
-      - "8000:8000"
-    depends_on:
-      - qdrant
-    restart: unless-stopped
-
-  # panel:
-  #   build:
-  #     context: ./panel
-  #   image: au5-panel
-  #   container_name: au5-panel
-  #   environment:
-  #     - NODE_ENV=production
-  #     - NEXT_PUBLIC_API_URL=http://localhost:1366
-  #   ports:
-  #     - "1368:3000"
-  #   depends_on:
-  #     - backend
-  #   restart: unless-stopped
-
-  qdrant:
-    image: qdrant/qdrant:latest
-    container_name: au5-qdrant
-    ports:
-      - "6333:6333"
-      - "6334:6334"
-    volumes:
-      - qdrant_data:/qdrant/storage
     restart: unless-stopped
 
 volumes:
   sqlserver_data:
   redis_data:
-  qdrant_data:
