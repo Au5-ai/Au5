@@ -1,5 +1,10 @@
-import { API_BASE_URL } from "../config";
 import { ApiError, ProblemDetails } from "../types/network";
+
+let API_BASE_URL: string | null = null;
+
+export function setRuntimeApiBaseUrl(url: string) {
+  API_BASE_URL = url;
+}
 
 export async function apiRequestClient<T>(
   endpoint: string,
