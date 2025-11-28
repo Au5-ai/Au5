@@ -12,7 +12,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["http://localhost/*"],
+      "matches": ["<all_urls>"],
       "js": ["content.js"]
     }
   ],
