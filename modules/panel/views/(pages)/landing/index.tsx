@@ -5,7 +5,6 @@ import Logo from "@/shared/components/logo";
 import { Button } from "@/shared/components/ui";
 import { useRouter } from "next/navigation";
 import { landingCaptions } from "./i18n";
-import { log } from "console";
 
 export default function Home() {
   const router = useRouter();
