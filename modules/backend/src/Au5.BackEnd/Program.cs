@@ -36,15 +36,6 @@ builder.AddServiceDefaults();
 				.WithOrigins(allowedOrigins)
 				.AllowAnyHeader()
 				.AllowAnyMethod());
-
-		options.AddPolicy("AllowAllWithCredentials", policy =>
-		{
-			policy
-				.WithOrigins(allowedOrigins)
-				.AllowAnyMethod()
-				.AllowAnyHeader()
-				.AllowCredentials();
-		});
 	});
 
 	builder.Services.AddControllers();
@@ -64,9 +55,6 @@ builder.AddServiceDefaults();
 var app = builder.Build();
 {
 	app.UseExceptionHandler();
-	app.MapDefaultEndpoints();
-
-	app.UseCors("AllowAllWithCredentials");
 
 	if (app.Environment.IsProduction())
 	{
@@ -75,12 +63,14 @@ var app = builder.Build();
 	}
 
 	app.UseRouting();
+	app.UseCors();
 
 	app.UseAuthentication();
 	app.UseMiddleware<JwtBlacklistMiddleware>();
 	app.UseAuthorization();
 
-	app.MapHub<MeetingHub>("/meetinghub").RequireCors("AllowAllWithCredentials");
+	app.MapDefaultEndpoints();
+	app.MapHub<MeetingHub>("/meetinghub");
 
 	app.MapControllers();
 

@@ -1,7 +1,7 @@
 export const GLOBAL_CAPTIONS = {
   back: "Back",
   next: "Next",
-  brandName: "Au5.ai",
+  brandName: "Riter",
   playground: "playground",
   loading: "Loading ...",
   loadingConfigs: "Loading Configs...",

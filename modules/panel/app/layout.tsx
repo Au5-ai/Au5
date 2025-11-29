@@ -5,7 +5,7 @@ import { ConfigProvider } from "@/shared/providers/config-provider";
 import { Toaster } from "@/shared/components/ui";
 
 export const metadata: Metadata = {
-  title: "Au5.ai",
+  title: "Riter",
   description: "Meeting note taker",
 };
 
