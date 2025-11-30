@@ -79,7 +79,8 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 				Password = _organizationOptions.SmtpPassword,
 				Port = _organizationOptions.SmtpPort,
 				User = _organizationOptions.SmtpUser,
-				UseSsl = _organizationOptions.SmtpUseSSl
+				UseSsl = _organizationOptions.SmtpUseSSl,
+				From = _organizationOptions.SmtpFrom
 			});
 		}
 		else

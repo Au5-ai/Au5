@@ -44,5 +44,7 @@ public class OrganizationOptions
 
 	public string SmtpUser { get; set; }
 
+	public string SmtpFrom { get; set; }
+
 	public bool SmtpUseSSl { get; set; }
 }

@@ -17,18 +17,19 @@ public class EmailProvider(ISmtpClientWrapper smtpClient, IUrlGenerator urlGener
 		List<InviteResponse> respose = [];
 		try
 		{
-			// var secureSocketOptions = smtpOption.UseSsl ?
-			// MailKit.Security.SecureSocketOptions.StartTls :
-			// MailKit.Security.SecureSocketOptions.None;
+			var secureSocketOptions = smtpOption.UseSsl ?
+			MailKit.Security.SecureSocketOptions.StartTls :
+			MailKit.Security.SecureSocketOptions.None;
 
-			// await _smtpClient.ConnectAsync(smtpOption.Host, smtpOption.Port, secureSocketOptions);
+			await _smtpClient.ConnectAsync(smtpOption.Host, smtpOption.Port, secureSocketOptions);
 
-			// if (!string.IsNullOrWhiteSpace(smtpOption.User) &&
-			// !string.IsNullOrWhiteSpace(smtpOption.Password) &&
-			// _smtpClient.Capabilities.HasFlag(MailKit.Net.Smtp.SmtpCapabilities.Authentication))
-			// {
-			// await _smtpClient.AuthenticateAsync(smtpOption.User, smtpOption.Password);
-			// }
+			if (!string.IsNullOrWhiteSpace(smtpOption.User) &&
+			!string.IsNullOrWhiteSpace(smtpOption.Password) &&
+			_smtpClient.Capabilities.HasFlag(MailKit.Net.Smtp.SmtpCapabilities.Authentication))
+			{
+				await _smtpClient.AuthenticateAsync(smtpOption.User, smtpOption.Password);
+			}
+
 			foreach (var user in invited)
 			{
 				var link = _urlGenerator.GenerateExtensionConfigUrl(smtpOption.BaseUrl, user.Id, user.Email);
@@ -37,7 +38,7 @@ public class EmailProvider(ISmtpClientWrapper smtpClient, IUrlGenerator urlGener
 
 				var message = new MimeMessage();
 
-				message.From.Add(new MailboxAddress(organizationName, smtpOption.User));
+				message.From.Add(new MailboxAddress(organizationName, smtpOption.From));
 				message.To.Add(MailboxAddress.Parse(user.Email));
 
 				message.Subject = "You're Invited! Please Verify Your Email";
