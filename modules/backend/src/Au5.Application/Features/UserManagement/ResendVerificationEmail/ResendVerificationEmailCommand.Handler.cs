@@ -53,7 +53,8 @@ public class ResendVerificationEmailCommandHandler : IRequestHandler<ResendVerif
 			Password = _organizationOptions.SmtpPassword,
 			Port = _organizationOptions.SmtpPort,
 			User = _organizationOptions.SmtpUser,
-			UseSsl = _organizationOptions.SmtpUseSSl
+			UseSsl = _organizationOptions.SmtpUseSSl,
+			From = _organizationOptions.SmtpFrom
 		});
 
 		return (response is null || response.Count is 0) ? Error.Failure("Email.FailedToSend", AppResources.System.FailedToSMTPConnection) : new ResendVerificationEmailResponse(response.First().Link);
