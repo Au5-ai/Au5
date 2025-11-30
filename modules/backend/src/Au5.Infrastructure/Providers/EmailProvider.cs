@@ -1,15 +1,16 @@
 using Au5.Application.Common.Abstractions;
 using Au5.Application.Dtos;
 using Au5.Domain.Entities;
-using MailKit.Net.Smtp;
+using Au5.Infrastructure.Adapters;
 using Microsoft.Extensions.Logging;
 using MimeKit;
 
 namespace Au5.Infrastructure.Providers;
 
-public class EmailProvider(IUrlGenerator urlGenerator, ILogger<EmailProvider> logger) : IEmailProvider
+public class EmailProvider(ISmtpClientWrapper smtpClient, IUrlGenerator urlGenerator, ILogger<EmailProvider> logger) : IEmailProvider
 {
 	private readonly IUrlGenerator _urlGenerator = urlGenerator;
+	private readonly ISmtpClientWrapper _smtpClient = smtpClient;
 
 	public async Task<List<InviteResponse>> SendInviteAsync(IReadOnlyCollection<User> invited, string organizationName, SmtpOptions smtpOption)
 	{
@@ -20,9 +21,11 @@ public class EmailProvider(IUrlGenerator urlGenerator, ILogger<EmailProvider> lo
 			MailKit.Security.SecureSocketOptions.SslOnConnect :
 			MailKit.Security.SecureSocketOptions.None;
 
-			using var client = new SmtpClient();
-			await client.ConnectAsync(smtpOption.Host, smtpOption.Port, secureSocketOptions);
-			await client.AuthenticateAsync(smtpOption.User, smtpOption.Password);
+			await _smtpClient.ConnectAsync(smtpOption.Host, smtpOption.Port, secureSocketOptions);
+			if (!string.IsNullOrWhiteSpace(smtpOption.User) && !string.IsNullOrWhiteSpace(smtpOption.Password))
+			{
+				await _smtpClient.AuthenticateAsync(smtpOption.User, smtpOption.Password);
+			}
 
 			foreach (var user in invited)
 			{
@@ -40,14 +43,18 @@ public class EmailProvider(IUrlGenerator urlGenerator, ILogger<EmailProvider> lo
 				var builder = new BodyBuilder { HtmlBody = emailBody };
 				message.Body = builder.ToMessageBody();
 
-				await client.SendAsync(message);
+				await _smtpClient.SendAsync(message);
 			}
 
-			await client.DisconnectAsync(true);
+			await _smtpClient.DisconnectAsync(true);
 		}
 		catch (Exception ex)
 		{
 			logger.LogInformation(message: ex.Message);
+		}
+		finally
+		{
+			_smtpClient.Dispose();
 		}
 
 		return respose;
