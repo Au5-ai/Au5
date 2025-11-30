@@ -12,5 +12,3 @@ export function randomDelay(amount: number): number {
 export function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
-
-export { ScreenshotManager } from "./screenshot";

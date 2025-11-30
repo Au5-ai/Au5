@@ -3,16 +3,13 @@ import { Page } from "playwright-core";
 import { Caption, GoogleCaptionConfiguration, MutationContext } from "./types";
 import { CaptionExtractor } from "./caption-extractor";
 import { logger } from "../../common/utils/logger";
-import { ScreenshotManager } from "../../common/utils/screenshot";
 
 export class CaptionMutationHandler {
   private captionExtractor: CaptionExtractor;
   private previousTranscripts: Record<string, string> = {};
-  private screenshotManager: ScreenshotManager;
 
   constructor(private page: Page, private config: GoogleCaptionConfiguration) {
     this.captionExtractor = new CaptionExtractor(page);
-    this.screenshotManager = new ScreenshotManager();
   }
 
   async observe(pushToHub: (message: EntryMessage) => void) {
@@ -63,12 +60,8 @@ export class CaptionMutationHandler {
       }
     }
 
-    const screenshotPath = await this.screenshotManager.takeScreenshot(
-      this.page,
-      `transcript-not-found-${Date.now()}.png`
-    );
     logger.error(
-      `[GoogleMeet] Transcript container not found after ${maxRetries} attempts. Screenshot saved to: ${screenshotPath}`
+      `[GoogleMeet] Transcript container not found after ${maxRetries} attempts.`
     );
     throw new Error("Transcript container not found in DOM");
   }

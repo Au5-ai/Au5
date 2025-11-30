@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ScreenshotManager = void 0;
 exports.randomDelay = randomDelay;
 exports.delay = delay;
 /**
@@ -16,5 +15,3 @@ function randomDelay(amount) {
 function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
-var screenshot_1 = require("./screenshot");
-Object.defineProperty(exports, "ScreenshotManager", { enumerable: true, get: function () { return screenshot_1.ScreenshotManager; } });

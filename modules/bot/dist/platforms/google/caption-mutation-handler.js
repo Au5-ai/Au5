@@ -3,14 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CaptionMutationHandler = void 0;
 const caption_extractor_1 = require("./caption-extractor");
 const logger_1 = require("../../common/utils/logger");
-const screenshot_1 = require("../../common/utils/screenshot");
 class CaptionMutationHandler {
     constructor(page, config) {
         this.page = page;
         this.config = config;
         this.previousTranscripts = {};
         this.captionExtractor = new caption_extractor_1.CaptionExtractor(page);
-        this.screenshotManager = new screenshot_1.ScreenshotManager();
     }
     async observe(pushToHub) {
         try {
@@ -42,8 +40,7 @@ class CaptionMutationHandler {
                 await new Promise((resolve) => setTimeout(resolve, retryDelays[attempt]));
             }
         }
-        const screenshotPath = await this.screenshotManager.takeScreenshot(this.page, `transcript-not-found-${Date.now()}.png`);
-        logger_1.logger.error(`[GoogleMeet] Transcript container not found after ${maxRetries} attempts. Screenshot saved to: ${screenshotPath}`);
+        logger_1.logger.error(`[GoogleMeet] Transcript container not found after ${maxRetries} attempts.`);
         throw new Error("Transcript container not found in DOM");
     }
     async observeTranscriptContainer(ctx, pushToHub) {

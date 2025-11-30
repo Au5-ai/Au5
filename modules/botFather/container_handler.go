@@ -6,13 +6,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
 	"sync"
 	"time"
 
 	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/client"
 )
 
@@ -89,28 +86,13 @@ func createContainerHandler(w http.ResponseWriter, r *http.Request) {
 		"MEETING_CONFIG=" + string(meetingConfigJSON),
 	}
 
-	// Create screenshots directory on host for this specific bot
-	screenshotsDir := filepath.Join("/var/au5/screenshots", containerName(meetingConfig.MeetId, meetingConfig.HashToken))
-	if err := os.MkdirAll(screenshotsDir, 0755); err != nil {
-		log.Printf("Warning: Failed to create screenshots directory: %v", err)
-	}
-
 	resp, err := cli.ContainerCreate(
 		ctx,
 		&container.Config{
-			Image: "au5-bot",
+			Image: botImage,
 			Env:   envVars,
 		},
-		&container.HostConfig{
-			NetworkMode: container.NetworkMode("au5"),
-			Mounts: []mount.Mount{
-				{
-					Type:   mount.TypeBind,
-					Source: screenshotsDir,
-					Target: "/app/screenshots",
-				},
-			},
-		},
+		nil,
 		nil,
 		nil,
 		containerName(meetingConfig.MeetId, meetingConfig.HashToken),
