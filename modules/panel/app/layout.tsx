@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { QueryProvider } from "@/shared/providers/query-provider";
-import { ConfigProvider } from "@/shared/providers/config-provider";
 import { Toaster } from "@/shared/components/ui";
 
 export const metadata: Metadata = {
