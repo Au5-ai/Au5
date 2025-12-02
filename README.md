@@ -11,9 +11,6 @@ The Au5 platform consists of the following modules:
 
 - **Backend** (.NET 9): Core API and business logic with SignalR hubs
 - **Panel** (Next.js): Web-based admin panel and user interface
-- **Bot** (Node.js/TypeScript): Meeting bot for joining and transcribing meetings
-- **BotFather** (Go): Container orchestration service for managing bot instances
-- **Extension** (TypeScript): Browser extension for meeting integration
 
 ## 📋 Prerequisites
 
@@ -42,7 +39,6 @@ Before installing Au5, ensure you have one of the following container runtimes i
 2. **Access the services:**
    - **Panel (Frontend)**: http://localhost:1368
    - **Backend API**: http://localhost:1366
-   - **Bot Father**: http://localhost:1367
    - **SQL Server**: localhost:1433
    - **Redis**: localhost:6379
 
