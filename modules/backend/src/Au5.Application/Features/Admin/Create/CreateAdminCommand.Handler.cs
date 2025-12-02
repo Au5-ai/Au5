@@ -1,5 +1,6 @@
 using Au5.Application.Common;
 using Au5.Application.Common.Options;
+using Au5.Application.Common.Utils;
 using Microsoft.Extensions.Options;
 
 namespace Au5.Application.Features.Admin.Create;
@@ -45,7 +46,7 @@ public class CreateAdminCommandHandler : IRequestHandler<CreateAdminCommand, Res
 			IsActive = true,
 			Role = RoleTypes.Admin,
 			CreatedAt = _dataProvider.Now,
-			PictureUrl = string.Empty,
+			PictureUrl = $"https://www.gravatar.com/avatar/{GravatarHelper.GetGravatarHash(request.Email)}?d=identicon",
 			Status = UserStatus.CompleteSignUp,
 			OrganizationId = organizationId
 		};
