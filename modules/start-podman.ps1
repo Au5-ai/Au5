@@ -10,15 +10,12 @@ Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "    Au5 Podman Deployment Script" -ForegroundColor Cyan
 Write-Host "========================================`n" -ForegroundColor Cyan
 
-Write-Host "[1/10] Creating Au5 pod with network configuration..." -ForegroundColor Yellow
+Write-Host "[1/8] Creating Au5 pod with network configuration..." -ForegroundColor Yellow
 podman pod create --name au5-pod --network au5 `
   -p 15433:1433 `
   -p 6379:6379 `
   -p 1366:8080 `
-  -p 1367:8081 `
-  -p 8000:8000 `
-  -p 6333:6333 `
-  -p 6334:6334
+  -p 8000:8000
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "[OK] Pod created successfully" -ForegroundColor Green
@@ -27,13 +24,12 @@ if ($LASTEXITCODE -eq 0) {
     exit 1
 }
 
-Write-Host "`n[2/10] Creating persistent volumes..." -ForegroundColor Yellow
+Write-Host "\n[2/8] Creating persistent volumes..." -ForegroundColor Yellow
 podman volume create sqlserver_data | Out-Null
 podman volume create redis_data | Out-Null
-podman volume create qdrant_data | Out-Null
-Write-Host "[OK] Volumes created (sqlserver_data, redis_data, qdrant_data)" -ForegroundColor Green
+Write-Host "[OK] Volumes created (sqlserver_data, redis_data)" -ForegroundColor Green
 
-Write-Host "`n[3/10] Starting SQL Server container..." -ForegroundColor Yellow
+Write-Host "\n[3/8] Starting SQL Server container..." -ForegroundColor Yellow
 podman run -d `
   --name au5-sqlserver `
   --pod au5-pod `
@@ -51,7 +47,7 @@ if ($LASTEXITCODE -eq 0) {
     exit 1
 }
 
-Write-Host "`n[4/10] Starting Redis container..." -ForegroundColor Yellow
+Write-Host "\n[4/8] Starting Redis container..." -ForegroundColor Yellow
 podman run -d `
   --name au5-redis `
   --pod au5-pod `
@@ -66,11 +62,11 @@ if ($LASTEXITCODE -eq 0) {
     exit 1
 }
 
-Write-Host "`n[5/10] Waiting for databases to initialize..." -ForegroundColor Yellow
+Write-Host "\n[5/8] Waiting for databases to initialize..." -ForegroundColor Yellow
 Start-Sleep -Seconds 15
 Write-Host "[OK] Database initialization wait complete" -ForegroundColor Green
 
-Write-Host "`n[6/10] Building and starting Backend..." -ForegroundColor Yellow
+Write-Host "\n[6/8] Building and starting Backend..." -ForegroundColor Yellow
 podman build -t au5-backend ./backend
 if ($LASTEXITCODE -ne 0) {
     Write-Host "[ERROR] Failed to build Backend" -ForegroundColor Red
@@ -112,6 +108,7 @@ podman run -d `
   -e "Organization__SmtpPort=25" `
   -e "Organization__SmtpUser=Admin@au5.ai" `
   -e "Organization__SmtpPassword=!QAZ2wsx" `
+  -e "Organization__SmtpFrom=Admin@au5.ai" `
   -e "ServiceSettings__UseRedis=false" `
   -e "ServiceSettings__TokenCleanupIntervalMinutes=60"`
   --restart unless-stopped `
@@ -124,52 +121,14 @@ if ($LASTEXITCODE -eq 0) {
     exit 1
 }
 
-Write-Host "`n[7/10] Building and starting Bot Father..." -ForegroundColor Yellow
-podman build -t au5-botfather ./botFather
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "[ERROR] Failed to build Bot Father" -ForegroundColor Red
-    exit 1
-}
-
-podman run -d `
-  --name au5-botfather `
-  --pod au5-pod `
-  -v /run/podman/podman.sock:/var/run/docker.sock `
-  --restart unless-stopped `
-  au5-botfather | Out-Null
-
-if ($LASTEXITCODE -eq 0) {
-    Write-Host "[OK] Bot Father container started" -ForegroundColor Green
-} else {
-    Write-Host "[ERROR] Failed to start Bot Father" -ForegroundColor Red
-    exit 1
-}
-
-Write-Host "`n[8/10] Starting Qdrant vector database..." -ForegroundColor Yellow
-podman run -d `
-  --name au5-qdrant `
-  --pod au5-pod `
-  -v qdrant_data:/qdrant/storage `
-  --restart unless-stopped `
-  qdrant/qdrant:latest | Out-Null
-
-if ($LASTEXITCODE -eq 0) {
-    Write-Host "[OK] Qdrant container started" -ForegroundColor Green
-} else {
-    Write-Host "[ERROR] Failed to start Qdrant" -ForegroundColor Red
-    exit 1
-}
-
-Write-Host "`n[9/10] Updating all containers..." -ForegroundColor Yellow
+Write-Host "`n[7/8] Deployment summary..." -ForegroundColor Yellow
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "    Service Endpoints" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "Backend API:    " -NoNewline; Write-Host "http://localhost:1366" -ForegroundColor White
-Write-Host "Bot Father:     " -NoNewline; Write-Host "http://localhost:1367" -ForegroundColor White
 Write-Host "Panel:          " -NoNewline; Write-Host "http://localhost:1368" -ForegroundColor White
 Write-Host "SQL Server:     " -NoNewline; Write-Host "localhost:15433" -ForegroundColor White
 Write-Host "Redis:          " -NoNewline; Write-Host "localhost:6379" -ForegroundColor White
-Write-Host "Qdrant:         " -NoNewline; Write-Host "http://localhost:6333" -ForegroundColor White
 Write-Host "========================================`n" -ForegroundColor Cyan
 
 Write-Host "Management Commands:" -ForegroundColor Magenta
@@ -177,7 +136,7 @@ Write-Host "  Stop all:   " -NoNewline; Write-Host "podman pod stop au5-pod" -Fo
 Write-Host "  Remove all: " -NoNewline; Write-Host "podman pod rm -f au5-pod" -ForegroundColor White
 Write-Host ""
 
-Write-Host "[10/10] Initializing Au5 Database..." -ForegroundColor Yellow
+Write-Host "[8/8] Initializing Au5 Database..." -ForegroundColor Yellow
 
 Write-Host "  >> Waiting for SQL Server to be ready..." -ForegroundColor Cyan
 $retryCount = 0
