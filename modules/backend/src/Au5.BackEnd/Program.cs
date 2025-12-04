@@ -70,7 +70,7 @@ var app = builder.Build();
 	app.UseAuthorization();
 
 	app.MapDefaultEndpoints();
-	app.MapHub<MeetingHub>("/meetinghub");
+	app.MapHub<MeetingHub>("/meetinghub").AllowAnonymous();
 
 	app.MapControllers();
 
