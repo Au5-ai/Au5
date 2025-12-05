@@ -1,4 +1,5 @@
 using Au5.Application.Common.Options;
+using Au5.Application.Common.Utils;
 using Au5.Application.Features.Admin.Create;
 using Au5.Domain.Entities;
 using Au5.Shared;
@@ -59,6 +60,7 @@ public class CreateAdminCommandHandlerTests
 		Assert.True(result.Data.IsDone);
 
 		organizationDbSet.Verify(m => m.Add(It.IsAny<Organization>()), Times.Once);
+
 		userDbSet.Verify(m => m.Add(It.IsAny<User>()), Times.Once);
 		_mockDbContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 	}
