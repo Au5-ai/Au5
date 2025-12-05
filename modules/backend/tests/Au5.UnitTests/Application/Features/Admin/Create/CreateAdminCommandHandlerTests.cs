@@ -187,7 +187,7 @@ public class CreateAdminCommandHandlerTests
 		Assert.True(capturedUser.IsActive);
 		Assert.Equal(RoleTypes.Admin, capturedUser.Role);
 		Assert.Equal(now, capturedUser.CreatedAt);
-		Assert.Equal(string.Empty, capturedUser.PictureUrl);
+		Assert.Equal("https://www.gravatar.com/avatar/5b37040e6200edb3c7f409e994076872?d=identicon", capturedUser.PictureUrl);
 		Assert.Equal(UserStatus.CompleteSignUp, capturedUser.Status);
 		Assert.Equal(organizationId, capturedUser.OrganizationId);
 	}
