@@ -17,7 +17,6 @@ export function useSignup() {
     mutationFn: signupController.createAdmin,
     onSuccess: async (response, signupData) => {
       if (!response.isDone) {
-        console.log("Signup not completed:", response);
         toast.error(GLOBAL_CAPTIONS.pages.signup.singupException);
         return;
       }

@@ -23,7 +23,7 @@ public class CreateAdminCommandHandler : IRequestHandler<CreateAdminCommand, Res
 	public async ValueTask<Result<CreateAdminResponse>> Handle(CreateAdminCommand request, CancellationToken cancellationToken)
 	{
 		var existingAdmin = await _dbContext.Set<User>()
-			.FirstOrDefaultAsync(u => u.Role == RoleTypes.Admin, cancellationToken);
+			.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
 
 		if (existingAdmin is not null)
 		{
