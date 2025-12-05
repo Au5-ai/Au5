@@ -3,10 +3,9 @@ import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { CAPTIONS } from "../../i18n";
-import { ChevronLeft } from "lucide-react";
 import { useSignupForm } from "../../hooks";
 
-export function SignupStep({ prev }: { prev: () => void }) {
+export function SignupStep() {
   const { formData, errors, isSubmitting, handleInputChange, handleSubmit } =
     useSignupForm();
 

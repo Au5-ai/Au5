@@ -18,12 +18,6 @@ export default function SignupClient() {
     }
   };
 
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep((prev) => prev - 1);
-    }
-  };
-
   const Steps = [
     {
       id: 1,
@@ -35,7 +29,7 @@ export default function SignupClient() {
       id: 2,
       title: CAPTIONS.signupTitle,
       description: CAPTIONS.signupDescription,
-      component: <SignupStep prev={prevStep} />,
+      component: <SignupStep />,
     },
   ];
 

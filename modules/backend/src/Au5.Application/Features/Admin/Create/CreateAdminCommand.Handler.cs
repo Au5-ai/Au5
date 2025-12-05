@@ -22,6 +22,14 @@ public class CreateAdminCommandHandler : IRequestHandler<CreateAdminCommand, Res
 
 	public async ValueTask<Result<CreateAdminResponse>> Handle(CreateAdminCommand request, CancellationToken cancellationToken)
 	{
+		var existingAdmin = await _dbContext.Set<User>()
+			.FirstOrDefaultAsync(u => u.Role == RoleTypes.Admin, cancellationToken);
+
+		if (existingAdmin is not null)
+		{
+			return Error.Failure("Admin.AlreadyExists", AppResources.User.AlreadyExists);
+		}
+
 		var organizationId = _dataProvider.NewGuid();
 
 		var organization = new Organization

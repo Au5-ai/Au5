@@ -7,15 +7,17 @@ import { authController } from "@/shared/network/api/authController";
 import { ROUTES } from "@/shared/routes";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { toast } from "sonner";
+import { ApiError } from "next/dist/server/api-utils";
 
 export function useSignup() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  return useMutation<AddUserResponse, unknown, AddUserRequest>({
+  return useMutation<AddUserResponse, ApiError, AddUserRequest>({
     mutationFn: signupController.createAdmin,
     onSuccess: async (response, signupData) => {
       if (!response.isDone) {
+        console.log("Signup not completed:", response);
         toast.error(GLOBAL_CAPTIONS.pages.signup.singupException);
         return;
       }
@@ -33,8 +35,10 @@ export function useSignup() {
         router.push(ROUTES.LOGIN);
       }
     },
-    onError: () => {
-      toast.error("Signup failed. Please try again.");
+    onError: (error) => {
+      toast.error(
+        error.message || GLOBAL_CAPTIONS.pages.signup.singupException,
+      );
     },
   });
 }
