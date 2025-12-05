@@ -5,12 +5,14 @@ namespace Au5.Application.Common.Utils;
 
 public static class GravatarHelper
 {
-	public static string GetGravatarHash(string email)
+	public static string GetGravatarUrl(string email)
 	{
-		using var md5 = MD5.Create();
-		byte[] inputBytes = Encoding.UTF8.GetBytes(email.Trim().ToLower());
-		byte[] hashBytes = md5.ComputeHash(inputBytes);
+		var normalizedEmail = email.Trim().ToLowerInvariant();
+		var emailBytes = Encoding.UTF8.GetBytes(normalizedEmail);
 
-		return Convert.ToHexString(hashBytes).ToLower();
+		var hashBytes = MD5.HashData(emailBytes);
+		var hash = Convert.ToHexString(hashBytes).ToLowerInvariant();
+
+		return $"https://www.gravatar.com/avatar/{hash}?d=identicon";
 	}
 }
