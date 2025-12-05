@@ -70,6 +70,7 @@ internal static class AppResources
 	internal static class User
 	{
 		public const string AlreadyExists = "An user with this email already exists. Please use a different email address.";
+
 		public const string EmailAlreadyVerified = "This email address has already been verified. A verification email cannot be sent again.";
 
 		public const string UserNotFound = "User not found. Please verify your information and try again.";

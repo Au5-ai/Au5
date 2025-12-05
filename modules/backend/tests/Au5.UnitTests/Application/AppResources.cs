@@ -12,6 +12,7 @@ internal static class AppResources
 	/// </summary>
 	internal static class System
 	{
+		public const string FailedToAddAdmin = "Faild to add admin. Please check the data and try again.";
 		public const string FailedToConfig = "Failed to configure the system. Please check your settings and try again.";
 		public const string IsNotConfigured = "The system has not been configured yet. Please complete the initial setup.";
 		public const string FailedToSetup = "System setup was not completed successfully. Please review the configuration and try again.";
@@ -37,6 +38,17 @@ internal static class AppResources
 		public const string FailedToClose = "Failed to close the meeting. Please try again or contact support if the issue persists.";
 		public const string NoContent = "No content is available for this meeting. The meeting may not have started or no transcription data exists.";
 		public const string InvalidTranscriptionModel = "Invalid transcription model specified. Please use either 'liveCaption' or 'liveAudio'.";
+	}
+
+	internal static class User
+	{
+		public const string AlreadyExists = "An user with this email already exists. Please use a different email address.";
+
+		public const string EmailAlreadyVerified = "This email address has already been verified. A verification email cannot be sent again.";
+
+		public const string UserNotFound = "User not found. Please verify your information and try again.";
+
+		public const string FailedToUpdateUserInfo = "Failed to Update User.";
 	}
 
 	/// <summary>
