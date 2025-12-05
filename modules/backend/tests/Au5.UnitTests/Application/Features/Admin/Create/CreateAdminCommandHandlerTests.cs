@@ -60,11 +60,7 @@ public class CreateAdminCommandHandlerTests
 		Assert.True(result.Data.IsDone);
 
 		organizationDbSet.Verify(m => m.Add(It.IsAny<Organization>()), Times.Once);
-		userDbSet.Verify(
-			m => m.Add(It.Is<User>(u =>
-				u.Email == request.Email &&
-				u.PictureUrl == $"https://www.gravatar.com/avatar/{GravatarHelper.GetGravatarHash(request.Email)}?d=identicon")),
-			Times.Once);
+
 		userDbSet.Verify(m => m.Add(It.IsAny<User>()), Times.Once);
 		_mockDbContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 	}

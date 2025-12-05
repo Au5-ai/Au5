@@ -46,7 +46,7 @@ public class CreateAdminCommandHandler : IRequestHandler<CreateAdminCommand, Res
 			IsActive = true,
 			Role = RoleTypes.Admin,
 			CreatedAt = _dataProvider.Now,
-			PictureUrl = $"https://www.gravatar.com/avatar/{GravatarHelper.GetGravatarHash(request.Email)}?d=identicon",
+			PictureUrl = GravatarHelper.GetGravatarUrl(request.Email),
 			Status = UserStatus.CompleteSignUp,
 			OrganizationId = organizationId
 		};
