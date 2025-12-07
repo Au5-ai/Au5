@@ -43,7 +43,7 @@ public class ResendVerificationEmailCommandHandler : IRequestHandler<ResendVerif
 
 		if (config is null)
 		{
-			return Error.Failure("Organization.NotConfigured", AppResources.System.IsNotConfigured);
+			return Error.Failure("Organization.NotConfigured", AppResources.Organization.IsNotConfigured);
 		}
 
 		var response = await _emailProvider.SendInviteAsync([user], config.OrganizationName, new SmtpOptions()
@@ -57,6 +57,6 @@ public class ResendVerificationEmailCommandHandler : IRequestHandler<ResendVerif
 			From = _organizationOptions.SmtpFrom
 		});
 
-		return (response is null || response.Count is 0) ? Error.Failure("Email.FailedToSend", AppResources.System.FailedToSMTPConnection) : new ResendVerificationEmailResponse(response.First().Link);
+		return (response is null || response.Count is 0) ? Error.Failure("Email.FailedToSend", AppResources.Organization.FailedToSMTPConnection) : new ResendVerificationEmailResponse(response.First().Link);
 	}
 }

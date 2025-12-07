@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/shared/components/ui/dialog";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -29,6 +30,9 @@ import {
   AlertCircle,
   XCircle,
   CheckCircle2,
+  Users2Icon,
+  EraserIcon,
+  AtSign,
 } from "lucide-react";
 import { getRoleDisplay, getRoleType, validateEmail } from "@/shared/lib/utils";
 import { USER_MANAGEMENT_CAPTIONS } from "../i18n";
@@ -58,7 +62,7 @@ export default function InviteModal({
   const [duplicateEmails, setDuplicateEmails] = useState<string[]>([]);
   const [inviteResult, setInviteResult] = useState<{
     success: string[];
-    failed: string[];
+    failed: Record<string, string>;
   } | null>(null);
 
   const validateAndAddEmail = () => {
@@ -146,7 +150,7 @@ export default function InviteModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md bg-white border-gray-200">
+      <DialogContent className="w-[800px] bg-white border-gray-200">
         {invitationsSent === 0 ? (
           <>
             <DialogHeader className="pb-6">
@@ -329,68 +333,86 @@ export default function InviteModal({
             </DialogFooter>
           </>
         ) : (
-          <div className="pt-6 text-center">
-            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Send className="w-6 h-6 text-green-600" />
-            </div>
-            <h3 className="font-medium text-gray-900 mb-1">
-              {USER_MANAGEMENT_CAPTIONS.inviteModal.invitationsSent}
-            </h3>
+          <>
+            <DialogHeader className="pb-2">
+              <DialogTitle className="flex items-center gap-3 text-xl font-semibold text-gray-900">
+                <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                  <AtSign className="w-5 h-5 text-gray-600" />
+                </div>
+                Status of Invitations
+              </DialogTitle>
+              <DialogDescription className="text-gray-500">
+                Please review the results of your user invitations below.
+              </DialogDescription>
+            </DialogHeader>
             <div className="text-sm text-gray-600 mb-4">
-              {invitationsSent}{" "}
-              {invitationsSent !== 1
-                ? USER_MANAGEMENT_CAPTIONS.inviteModal.invitationsSent
-                : USER_MANAGEMENT_CAPTIONS.inviteModal.invitationsSentCount}
-              <br />
               {inviteResult && (
-                <>
-                  {inviteResult.success.length > 0 && (
-                    <div>
-                      <h3 className="text-sm font-medium text-green-600 flex items-center gap-2">
-                        <CheckCircle2 className="h-4 w-4" />
-                        {inviteResult.success.length}{" "}
-                        {GLOBAL_CAPTIONS.actions.succeeded}
-                      </h3>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {inviteResult.success.map((email) => (
-                          <Badge
-                            key={email}
-                            variant="secondary"
-                            className="bg-green-100 text-green-800">
-                            {email}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {inviteResult.failed.length > 0 && (
-                    <div className="mt-4 ">
-                      <h3 className="text-sm font-medium text-red-600 flex items-center gap-2">
-                        <XCircle className="h-4 w-4" />
-                        {inviteResult.failed.length}{" "}
-                        {GLOBAL_CAPTIONS.actions.failed}
-                      </h3>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {inviteResult.failed.map((email) => (
-                          <Badge key={email} variant="destructive">
-                            {email}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </>
+                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                      <tr>
+                        <th className="text-left py-2 px-4 text-xs font-medium text-gray-700">
+                          Email
+                        </th>
+                        <th className="text-left py-2 px-4 text-xs font-medium text-gray-700">
+                          Status
+                        </th>
+                        <th className="text-left py-2 px-4 text-xs text-gray-700">
+                          Message
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {inviteResult.success.map((email) => (
+                        <tr key={email} className="border-b border-gray-100">
+                          <td className="py-2 px-4 text-sm">{email}</td>
+                          <td className="py-2 px-4">
+                            <Badge
+                              variant="secondary"
+                              className="bg-green-100 text-green-800 border-0">
+                              <CheckCircle2 className="w-3 h-3 mr-1" />
+                              Success
+                            </Badge>
+                          </td>
+                          <td className="py-2 px-4 text-sm text-gray-600">
+                            Added to your organization
+                          </td>
+                        </tr>
+                      ))}
+                      {Object.entries(inviteResult.failed).map(
+                        ([key, value]) => (
+                          <tr key={key} className="border-b border-gray-100">
+                            <td className="py-2 px-4 text-sm">{key}</td>
+                            <td className="py-2 px-4">
+                              <Badge
+                                variant="secondary"
+                                className="bg-red-100 text-red-800 border-0">
+                                <XCircle className="w-3 h-3 mr-1" />
+                                Failed
+                              </Badge>
+                            </td>
+                            <td className="py-2 px-4 text-sm text-red-600">
+                              {value}
+                            </td>
+                          </tr>
+                        ),
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
-            <Button
-              onClick={() => {
-                onOpenChange(false);
-                onReloadData();
-              }}
-              className="bg-black hover:bg-gray-800 text-white mt-8">
-              {GLOBAL_CAPTIONS.actions.done}
-            </Button>
-          </div>
+            <DialogFooter className="pt-6 flex gap-3">
+              <Button
+                onClick={() => {
+                  onOpenChange(false);
+                  onReloadData();
+                }}
+                className="bg-black hover:bg-gray-800 text-white mt-8">
+                {GLOBAL_CAPTIONS.actions.done}
+              </Button>
+            </DialogFooter>
+          </>
         )}
       </DialogContent>
     </Dialog>

@@ -3,7 +3,6 @@ using Au5.Application.Common.Options;
 using Au5.Application.Features.Organizations.ExtensionConfig;
 using Au5.Domain.Entities;
 using MockQueryable.Moq;
-using static Au5.UnitTests.Application.AppResources;
 using UserEntity = Au5.Domain.Entities.User;
 
 namespace Au5.UnitTests.Application.Features.Organizations.ExtensionConfig;
@@ -102,7 +101,7 @@ public class ExtensionConfigQueryHandlerTests
 		Assert.False(result.IsSuccess);
 		Assert.Null(result.Data);
 		Assert.Equal(HttpStatusCode.InternalServerError, result.Error.Type);
-		Assert.Equal(AppResources.System.IsNotConfigured, result.Error.Description);
+		Assert.Equal(AppResources.Organization.IsNotConfigured, result.Error.Description);
 	}
 
 	[Fact]
@@ -134,7 +133,7 @@ public class ExtensionConfigQueryHandlerTests
 		Assert.False(result.IsSuccess);
 		Assert.Null(result.Data);
 		Assert.Equal(HttpStatusCode.Unauthorized, result.Error.Type);
-		Assert.Equal(UserMessages.UserNotFound, result.Error.Description);
+		Assert.Equal(AppResources.User.UserNotFound, result.Error.Description);
 	}
 
 	[Fact]

@@ -107,7 +107,7 @@ public class AddBotCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.False(result.IsSuccess);
-		Assert.Equal(AppResources.System.IsNotConfigured, result.Error.Description);
+		Assert.Equal(AppResources.Organization.IsNotConfigured, result.Error.Description);
 		_dbContextMock.Verify(x => x.Set<Meeting>(), Times.Never);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
 		_botFatherMock.Verify(x => x.CreateBotContainerAsync(It.IsAny<string>(), It.IsAny<BotPayload>(), It.IsAny<CancellationToken>()), Times.Never);

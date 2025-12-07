@@ -167,7 +167,7 @@ public class AddAssistantCommandHandlerTests
 		var result = await handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsFailure);
-		Assert.Equal(AppResources.System.IsNotConfigured, result.Error.Description);
+		Assert.Equal(AppResources.Organization.IsNotConfigured, result.Error.Description);
 	}
 
 	[Fact]

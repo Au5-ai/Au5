@@ -8,8 +8,8 @@ export const userController = {
 
   inviteUsers: (
     invites: { email: string; role: number }[],
-  ): Promise<{ success: string[]; failed: string[] }> =>
-    apiRequestClient<{ success: string[]; failed: string[] }>(
+  ): Promise<{ success: string[]; failed: Record<string, string> }> =>
+    apiRequestClient<{ success: string[]; failed: Record<string, string> }>(
       API_URLS.USERS.INVITATIONS,
       {
         method: "POST",

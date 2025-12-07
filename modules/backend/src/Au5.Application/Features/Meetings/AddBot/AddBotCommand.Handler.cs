@@ -44,7 +44,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 		var config = await _dbContext.Set<Organization>().AsNoTracking().FirstOrDefaultAsync(o => o.Id == _currentUserService.OrganizationId, cancellationToken);
 		if (config is null)
 		{
-			return Error.Failure("Organization.NotConfigured", AppResources.System.IsNotConfigured);
+			return Error.Failure("Organization.NotConfigured", AppResources.Organization.IsNotConfigured);
 		}
 
 		var meeting = new Meeting

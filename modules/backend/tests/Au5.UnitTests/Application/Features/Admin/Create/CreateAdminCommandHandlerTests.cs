@@ -90,7 +90,7 @@ public class CreateAdminCommandHandlerTests
 
 		Assert.False(result.IsSuccess);
 		Assert.Equal("Admin.AlreadyExists", result.Error.Code);
-		Assert.Equal(AppResources.User.AlreadyExists, result.Error.Description);
+		Assert.Equal(AppResources.Admin.EmailAlreadyRegistered, result.Error.Description);
 
 		_mockDbContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
 	}
@@ -114,7 +114,7 @@ public class CreateAdminCommandHandlerTests
 
 		Assert.False(result.IsSuccess);
 		Assert.Equal("Admin.FailedToCreate", result.Error.Code);
-		Assert.Equal(AppResources.System.FailedToAddAdmin, result.Error.Description);
+		Assert.Equal(AppResources.Organization.FailedToAddAdmin, result.Error.Description);
 
 		organizationDbSet.Verify(m => m.Add(It.IsAny<Organization>()), Times.Once);
 		userDbSet.Verify(m => m.Add(It.IsAny<User>()), Times.Once);

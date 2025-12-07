@@ -11,7 +11,7 @@ public record InviteUsersRequest
 
 public class InviteUsersResponse
 {
-	public List<string> Success { get; init; }
+	required public IReadOnlyCollection<string> Success { get; init; }
 
-	public List<string> Failed { get; init; }
+	required public IReadOnlyDictionary<string, string> Failed { get; init; }
 }
