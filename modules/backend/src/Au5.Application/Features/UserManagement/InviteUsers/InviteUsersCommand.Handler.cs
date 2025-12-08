@@ -29,9 +29,8 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 
 	public async ValueTask<Result<InviteUsersResponse>> Handle(InviteUsersCommand request, CancellationToken cancellationToken)
 	{
-		List<User> invited = [];
-		List<string> success = [];
-		Dictionary<string, string> failed = [];
+		List<InvitationResult> results = [];
+		List<User> usersToInvite = [];
 
 		var config = await GetOrganizationConfigAsync(cancellationToken);
 		if (config is null)
@@ -41,38 +40,39 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 
 		var existingUsers = await GetExistingUsersAsync(request.Invites.Select(x => x.Email), cancellationToken);
 
-		ProcessInvitations(request.Invites, existingUsers, invited, success, failed);
+		ProcessInvitations(request.Invites, existingUsers, usersToInvite, results);
 
 		var saveResult = await _context.SaveChangesAsync(cancellationToken);
 
 		if (saveResult.IsSuccess)
 		{
-			await ProcessEmailInvitationsAsync(invited, config.OrganizationName, success, failed);
+			await ProcessEmailInvitationsAsync(usersToInvite, config.OrganizationName, results);
 		}
 		else
 		{
-			HandleSaveFailure(request.Invites, existingUsers, success, failed);
+			UpdateResultsForSaveFailure(results);
 		}
 
-		return new InviteUsersResponse { Failed = failed, Success = success };
+		return new InviteUsersResponse { Results = results };
 	}
 
-	private static void HandleSaveFailure(
-		List<InviteUsersRequest> invites,
-		HashSet<string> existingUsers,
-		List<string> success,
-		Dictionary<string, string> failed)
+	private static void UpdateResultsForSaveFailure(List<InvitationResult> results)
 	{
-		success.Clear();
-		failed.Clear();
-
-		foreach (var invite in invites)
+		var resultsList = results.ToList();
+		foreach (var result in resultsList)
 		{
-			var errorMessage = existingUsers.Contains(invite.Email)
-				? AppResources.User.AlreadyExistsInDatabase
-				: AppResources.User.FailedToSaveToDatabase;
-
-			failed.TryAdd(invite.Email, errorMessage);
+			if (!result.AlreadyExists)
+			{
+				var index = results.IndexOf(result);
+				results[index] = new InvitationResult
+				{
+					Email = result.Email,
+					StoredInDatabase = false,
+					EmailSent = false,
+					AlreadyExists = false,
+					ErrorMessage = AppResources.User.FailedToSaveToDatabase
+				};
+			}
 		}
 	}
 
@@ -98,15 +98,21 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 	private void ProcessInvitations(
 		List<InviteUsersRequest> invites,
 		HashSet<string> existingUsers,
-		List<User> invited,
-		List<string> success,
-		Dictionary<string, string> failed)
+		List<User> usersToInvite,
+		List<InvitationResult> results)
 	{
 		foreach (var userInvited in invites.Distinct())
 		{
 			if (existingUsers.Contains(userInvited.Email))
 			{
-				failed.TryAdd(userInvited.Email, AppResources.User.AlreadyExistsInDatabase);
+				results.Add(new InvitationResult
+				{
+					Email = userInvited.Email,
+					StoredInDatabase = false,
+					EmailSent = false,
+					AlreadyExists = true,
+					ErrorMessage = AppResources.User.AlreadyExistsInDatabase
+				});
 				continue;
 			}
 
@@ -125,16 +131,22 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 			};
 
 			_context.Set<User>().Add(user);
-			invited.Add(user);
-			success.Add(userInvited.Email);
+			usersToInvite.Add(user);
+			results.Add(new InvitationResult
+			{
+				Email = userInvited.Email,
+				StoredInDatabase = true,
+				EmailSent = false,
+				AlreadyExists = false,
+				ErrorMessage = null
+			});
 		}
 	}
 
 	private async Task ProcessEmailInvitationsAsync(
-		List<User> invited,
+		List<User> usersToInvite,
 		string organizationName,
-		List<string> success,
-		Dictionary<string, string> failed)
+		List<InvitationResult> results)
 	{
 		var smtpOptions = new SmtpOptions
 		{
@@ -147,17 +159,22 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 			From = _organizationOptions.SmtpFrom
 		};
 
-		var emailSentResponse = await _emailProvider.SendInviteAsync(invited, organizationName, smtpOptions);
+		var emailSentResponse = await _emailProvider.SendInviteAsync(usersToInvite, organizationName, smtpOptions);
 
-		foreach (var item in emailSentResponse)
+		foreach (var emailResult in emailSentResponse)
 		{
-			if (item.IsEmailSent)
+			var result = results.FirstOrDefault(r => r.Email.Equals(emailResult.Email, StringComparison.OrdinalIgnoreCase));
+			if (result is not null)
 			{
-				success.Add(item.Email);
-			}
-			else
-			{
-				failed.TryAdd(item.Email, AppResources.User.FailedToSendInvitationEmail);
+				var index = results.IndexOf(result);
+				results[index] = new InvitationResult
+				{
+					Email = result.Email,
+					StoredInDatabase = result.StoredInDatabase,
+					EmailSent = emailResult.IsEmailSent,
+					AlreadyExists = result.AlreadyExists,
+					ErrorMessage = emailResult.IsEmailSent ? null : AppResources.User.FailedToSendInvitationEmail
+				};
 			}
 		}
 	}

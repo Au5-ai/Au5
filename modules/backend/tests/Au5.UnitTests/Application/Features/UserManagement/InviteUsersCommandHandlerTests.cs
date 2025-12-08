@@ -84,9 +84,13 @@ public class InviteUsersCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Contains("exists@example.com", result.Data.Failed.Keys);
-		Assert.Equal(AppResources.User.AlreadyExistsInDatabase, result.Data.Failed["exists@example.com"]);
-		Assert.Empty(result.Data.Success);
+		Assert.Single(result.Data.Results);
+		var inviteResult = result.Data.Results.First();
+		Assert.Equal("exists@example.com", inviteResult.Email);
+		Assert.False(inviteResult.StoredInDatabase);
+		Assert.False(inviteResult.EmailSent);
+		Assert.True(inviteResult.AlreadyExists);
+		Assert.Equal(AppResources.User.AlreadyExistsInDatabase, inviteResult.ErrorMessage);
 
 		_emailProviderMock.Verify(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()), Times.Never);
 	}
@@ -113,12 +117,17 @@ public class InviteUsersCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Empty(result.Data.Success);
-		Assert.Equal(2, result.Data.Failed.Count);
-		Assert.Contains("one@example.com", result.Data.Failed.Keys);
-		Assert.Contains("two@example.com", result.Data.Failed.Keys);
-		Assert.Equal(AppResources.User.FailedToSaveToDatabase, result.Data.Failed["one@example.com"]);
-		Assert.Equal(AppResources.User.FailedToSaveToDatabase, result.Data.Failed["two@example.com"]);
+		Assert.Equal(2, result.Data.Results.Count);
+		foreach (var inviteResult in result.Data.Results)
+		{
+			Assert.False(inviteResult.StoredInDatabase);
+			Assert.False(inviteResult.EmailSent);
+			Assert.False(inviteResult.AlreadyExists);
+			Assert.Equal(AppResources.User.FailedToSaveToDatabase, inviteResult.ErrorMessage);
+		}
+
+		Assert.Contains(result.Data.Results, r => r.Email == "one@example.com");
+		Assert.Contains(result.Data.Results, r => r.Email == "two@example.com");
 
 		_emailProviderMock.Verify(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()), Times.Never);
 	}
@@ -148,12 +157,19 @@ public class InviteUsersCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Empty(result.Data.Success);
-		Assert.Equal(2, result.Data.Failed.Count);
-		Assert.Contains("exists@example.com", result.Data.Failed.Keys);
-		Assert.Contains("new@example.com", result.Data.Failed.Keys);
-		Assert.Equal(AppResources.User.AlreadyExistsInDatabase, result.Data.Failed["exists@example.com"]);
-		Assert.Equal(AppResources.User.FailedToSaveToDatabase, result.Data.Failed["new@example.com"]);
+		Assert.Equal(2, result.Data.Results.Count);
+
+		var existingUserResult = result.Data.Results.First(r => r.Email == "exists@example.com");
+		Assert.False(existingUserResult.StoredInDatabase);
+		Assert.False(existingUserResult.EmailSent);
+		Assert.True(existingUserResult.AlreadyExists);
+		Assert.Equal(AppResources.User.AlreadyExistsInDatabase, existingUserResult.ErrorMessage);
+
+		var newUserResult = result.Data.Results.First(r => r.Email == "new@example.com");
+		Assert.False(newUserResult.StoredInDatabase);
+		Assert.False(newUserResult.EmailSent);
+		Assert.False(newUserResult.AlreadyExists);
+		Assert.Equal(AppResources.User.FailedToSaveToDatabase, newUserResult.ErrorMessage);
 
 		_emailProviderMock.Verify(
 			e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()), Times.Never);
@@ -277,11 +293,18 @@ public class InviteUsersCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Equal(6, result.Data.Success.Count);
-		Assert.Contains("user1@example.com", result.Data.Success);
-		Assert.Contains("user2@example.com", result.Data.Success);
-		Assert.Contains("user3@example.com", result.Data.Success);
-		Assert.Empty(result.Data.Failed);
+		Assert.Equal(3, result.Data.Results.Count);
+		foreach (var inviteResult in result.Data.Results)
+		{
+			Assert.True(inviteResult.StoredInDatabase);
+			Assert.True(inviteResult.EmailSent);
+			Assert.False(inviteResult.AlreadyExists);
+			Assert.Null(inviteResult.ErrorMessage);
+		}
+
+		Assert.Contains(result.Data.Results, r => r.Email == "user1@example.com");
+		Assert.Contains(result.Data.Results, r => r.Email == "user2@example.com");
+		Assert.Contains(result.Data.Results, r => r.Email == "user3@example.com");
 
 		_emailProviderMock.Verify(
 			e => e.SendInviteAsync(
@@ -320,12 +343,17 @@ public class InviteUsersCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Empty(result.Data.Success);
-		Assert.Equal(2, result.Data.Failed.Count);
-		Assert.Contains("user1@example.com", result.Data.Failed.Keys);
-		Assert.Contains("user2@example.com", result.Data.Failed.Keys);
-		Assert.Equal(AppResources.User.AlreadyExistsInDatabase, result.Data.Failed["user1@example.com"]);
-		Assert.Equal(AppResources.User.AlreadyExistsInDatabase, result.Data.Failed["user2@example.com"]);
+		Assert.Equal(2, result.Data.Results.Count);
+		foreach (var inviteResult in result.Data.Results)
+		{
+			Assert.False(inviteResult.StoredInDatabase);
+			Assert.False(inviteResult.EmailSent);
+			Assert.True(inviteResult.AlreadyExists);
+			Assert.Equal(AppResources.User.AlreadyExistsInDatabase, inviteResult.ErrorMessage);
+		}
+
+		Assert.Contains(result.Data.Results, r => r.Email == "user1@example.com");
+		Assert.Contains(result.Data.Results, r => r.Email == "user2@example.com");
 
 		_emailProviderMock.Verify(
 			e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()),
@@ -356,9 +384,13 @@ public class InviteUsersCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Equal(2, result.Data.Success.Count);
-		Assert.Empty(result.Data.Failed);
-		Assert.Contains("new@example.com", result.Data.Success);
+		Assert.Single(result.Data.Results);
+		var inviteResult = result.Data.Results.First();
+		Assert.Equal("new@example.com", inviteResult.Email);
+		Assert.True(inviteResult.StoredInDatabase);
+		Assert.True(inviteResult.EmailSent);
+		Assert.False(inviteResult.AlreadyExists);
+		Assert.Null(inviteResult.ErrorMessage);
 	}
 
 	[Fact]
@@ -385,14 +417,25 @@ public class InviteUsersCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Empty(result.Data.Success);
-		Assert.Equal(3, result.Data.Failed.Count);
-		Assert.Contains("new1@example.com", result.Data.Failed.Keys);
-		Assert.Contains("exists@example.com", result.Data.Failed.Keys);
-		Assert.Contains("new2@example.com", result.Data.Failed.Keys);
-		Assert.Equal(AppResources.User.FailedToSaveToDatabase, result.Data.Failed["new1@example.com"]);
-		Assert.Equal(AppResources.User.AlreadyExistsInDatabase, result.Data.Failed["exists@example.com"]);
-		Assert.Equal(AppResources.User.FailedToSaveToDatabase, result.Data.Failed["new2@example.com"]);
+		Assert.Equal(3, result.Data.Results.Count);
+
+		var new1Result = result.Data.Results.First(r => r.Email == "new1@example.com");
+		Assert.False(new1Result.StoredInDatabase);
+		Assert.False(new1Result.EmailSent);
+		Assert.False(new1Result.AlreadyExists);
+		Assert.Equal(AppResources.User.FailedToSaveToDatabase, new1Result.ErrorMessage);
+
+		var existsResult = result.Data.Results.First(r => r.Email == "exists@example.com");
+		Assert.False(existsResult.StoredInDatabase);
+		Assert.False(existsResult.EmailSent);
+		Assert.True(existsResult.AlreadyExists);
+		Assert.Equal(AppResources.User.AlreadyExistsInDatabase, existsResult.ErrorMessage);
+
+		var new2Result = result.Data.Results.First(r => r.Email == "new2@example.com");
+		Assert.False(new2Result.StoredInDatabase);
+		Assert.False(new2Result.EmailSent);
+		Assert.False(new2Result.AlreadyExists);
+		Assert.Equal(AppResources.User.FailedToSaveToDatabase, new2Result.ErrorMessage);
 
 		_emailProviderMock.Verify(
 			e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()),
@@ -428,12 +471,17 @@ public class InviteUsersCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Equal(2, result.Data.Success.Count);
-		Assert.Equal(2, result.Data.Failed.Count);
-		Assert.Contains("user1@example.com", result.Data.Failed.Keys);
-		Assert.Contains("user2@example.com", result.Data.Failed.Keys);
-		Assert.Equal(AppResources.User.FailedToSendInvitationEmail, result.Data.Failed["user1@example.com"]);
-		Assert.Equal(AppResources.User.FailedToSendInvitationEmail, result.Data.Failed["user2@example.com"]);
+		Assert.Equal(2, result.Data.Results.Count);
+		foreach (var inviteResult in result.Data.Results)
+		{
+			Assert.True(inviteResult.StoredInDatabase);
+			Assert.False(inviteResult.EmailSent);
+			Assert.False(inviteResult.AlreadyExists);
+			Assert.Equal(AppResources.User.FailedToSendInvitationEmail, inviteResult.ErrorMessage);
+		}
+
+		Assert.Contains(result.Data.Results, r => r.Email == "user1@example.com");
+		Assert.Contains(result.Data.Results, r => r.Email == "user2@example.com");
 	}
 
 	[Fact]
@@ -465,11 +513,19 @@ public class InviteUsersCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Equal(3, result.Data.Success.Count);
-		Assert.Single(result.Data.Failed);
-		Assert.Contains("success@example.com", result.Data.Success);
-		Assert.Contains("failed@example.com", result.Data.Failed.Keys);
-		Assert.Equal(AppResources.User.FailedToSendInvitationEmail, result.Data.Failed["failed@example.com"]);
+		Assert.Equal(2, result.Data.Results.Count);
+
+		var successResult = result.Data.Results.First(r => r.Email == "success@example.com");
+		Assert.True(successResult.StoredInDatabase);
+		Assert.True(successResult.EmailSent);
+		Assert.False(successResult.AlreadyExists);
+		Assert.Null(successResult.ErrorMessage);
+
+		var failedResult = result.Data.Results.First(r => r.Email == "failed@example.com");
+		Assert.True(failedResult.StoredInDatabase);
+		Assert.False(failedResult.EmailSent);
+		Assert.False(failedResult.AlreadyExists);
+		Assert.Equal(AppResources.User.FailedToSendInvitationEmail, failedResult.ErrorMessage);
 	}
 
 	[Fact]
@@ -497,10 +553,17 @@ public class InviteUsersCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Equal(2, result.Data.Success.Count);
-		Assert.Contains("user1@example.com", result.Data.Success);
-		Assert.Contains("user2@example.com", result.Data.Success);
-		Assert.Empty(result.Data.Failed);
+		Assert.Equal(2, result.Data.Results.Count);
+		foreach (var inviteResult in result.Data.Results)
+		{
+			Assert.True(inviteResult.StoredInDatabase);
+			Assert.False(inviteResult.EmailSent);
+			Assert.False(inviteResult.AlreadyExists);
+			Assert.Null(inviteResult.ErrorMessage);
+		}
+
+		Assert.Contains(result.Data.Results, r => r.Email == "user1@example.com");
+		Assert.Contains(result.Data.Results, r => r.Email == "user2@example.com");
 	}
 
 	[Fact]

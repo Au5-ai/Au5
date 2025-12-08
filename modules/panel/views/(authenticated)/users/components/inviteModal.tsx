@@ -37,7 +37,7 @@ import {
 import { getRoleDisplay, getRoleType, validateEmail } from "@/shared/lib/utils";
 import { USER_MANAGEMENT_CAPTIONS } from "../i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import { userController } from "../userController";
+import { userController, InviteUsersResponse } from "../userController";
 
 interface Invite {
   email: string;
@@ -60,16 +60,19 @@ export default function InviteModal({
   const [invitationsSent, setInvitationsSent] = useState(0);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [duplicateEmails, setDuplicateEmails] = useState<string[]>([]);
-  const [inviteResult, setInviteResult] = useState<{
-    success: string[];
-    failed: Record<string, string>;
-  } | null>(null);
+  const [inviteResult, setInviteResult] = useState<InviteUsersResponse | null>(
+    null,
+  );
 
   const validateAndAddEmail = () => {
     const trimmedEmail = currentEmail.trim().toLowerCase();
     setEmailError(null);
     if (!trimmedEmail) {
       setEmailError(USER_MANAGEMENT_CAPTIONS.inviteModal.pleaseEnterEmail);
+      return;
+    }
+    if (invites.length >= 5) {
+      setEmailError(USER_MANAGEMENT_CAPTIONS.inviteModal.maxInvitesReached);
       return;
     }
     if (!validateEmail(trimmedEmail)) {
@@ -227,6 +230,7 @@ export default function InviteModal({
                       setEmailError(null);
                     }}
                     onKeyUp={handleKeyPress}
+                    disabled={invites.length >= 5}
                     className={`flex-1 border-gray-200 ${
                       emailError ? "border-red-500 focus:ring-red-500" : ""
                     }`}
@@ -235,6 +239,7 @@ export default function InviteModal({
                     variant="outline"
                     onClick={validateAndAddEmail}
                     size="sm"
+                    disabled={invites.length >= 5}
                     className="border-gray-200 hover:bg-gray-50 h-9">
                     <Plus className="w-4 h-4" />
                   </Button>
@@ -258,9 +263,9 @@ export default function InviteModal({
                     className="space-y-2">
                     <Label className="text-sm font-medium text-gray-700">
                       {USER_MANAGEMENT_CAPTIONS.inviteModal.inviting} (
-                      {invites.length})
+                      {invites.length}/5)
                     </Label>
-                    <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex flex-wrap gap-2 p-3 rounded-lg border border-gray-200">
                       {invites.map((invite) => {
                         const isDuplicate = duplicateEmails.includes(
                           invite.email,
@@ -354,51 +359,67 @@ export default function InviteModal({
                         <th className="text-left py-2 px-4 text-xs font-medium text-gray-700">
                           Email
                         </th>
-                        <th className="text-left py-2 px-4 text-xs font-medium text-gray-700">
-                          Status
+                        <th className="text-center py-2 px-4 text-xs font-medium text-gray-700">
+                          Stored in Database
                         </th>
-                        <th className="text-left py-2 px-4 text-xs text-gray-700">
-                          Message
+                        <th className="text-center py-2 px-4 text-xs font-medium text-gray-700">
+                          Invitation Email
+                        </th>
+                        <th className="text-center py-2 px-4 text-xs font-medium text-gray-700">
+                          Already Exists
                         </th>
                       </tr>
                     </thead>
                     <tbody>
-                      {inviteResult.success.map((email) => (
-                        <tr key={email} className="border-b border-gray-100">
-                          <td className="py-2 px-4 text-sm">{email}</td>
-                          <td className="py-2 px-4">
-                            <Badge
-                              variant="secondary"
-                              className="bg-green-100 text-green-800 border-0">
-                              <CheckCircle2 className="w-3 h-3 mr-1" />
-                              Success
-                            </Badge>
+                      {inviteResult.results.map((result) => (
+                        <tr
+                          key={result.email}
+                          className="border-b border-gray-100">
+                          <td className="py-2 px-4 text-sm">{result.email}</td>
+                          <td className="py-2 px-4 text-center">
+                            {result.storedInDatabase ? (
+                              <CheckCircle2 className="w-5 h-5 text-green-600 mx-auto" />
+                            ) : (
+                              <XCircle className="w-5 h-5 text-gray-300 mx-auto" />
+                            )}
                           </td>
-                          <td className="py-2 px-4 text-sm text-gray-600">
-                            Added to your organization
+                          <td className="py-2 px-4 text-center">
+                            {result.emailSent ? (
+                              <CheckCircle2 className="w-5 h-5 text-green-600 mx-auto" />
+                            ) : result.alreadyExists ? (
+                              <XCircle className="w-5 h-5 text-gray-300 mx-auto" />
+                            ) : (
+                              <XCircle className="w-5 h-5 text-red-600 mx-auto" />
+                            )}
+                          </td>
+                          <td className="py-2 px-4 text-center">
+                            {result.alreadyExists ? (
+                              <CheckCircle2 className="w-5 h-5 text-orange-600 mx-auto" />
+                            ) : (
+                              <XCircle className="w-5 h-5 text-gray-300 mx-auto" />
+                            )}
                           </td>
                         </tr>
                       ))}
-                      {Object.entries(inviteResult.failed).map(
-                        ([key, value]) => (
-                          <tr key={key} className="border-b border-gray-100">
-                            <td className="py-2 px-4 text-sm">{key}</td>
-                            <td className="py-2 px-4">
-                              <Badge
-                                variant="secondary"
-                                className="bg-red-100 text-red-800 border-0">
-                                <XCircle className="w-3 h-3 mr-1" />
-                                Failed
-                              </Badge>
-                            </td>
-                            <td className="py-2 px-4 text-sm text-red-600">
-                              {value}
-                            </td>
-                          </tr>
-                        ),
-                      )}
                     </tbody>
                   </table>
+                  {inviteResult.results.some((r) => r.errorMessage) && (
+                    <div className="bg-red-50 border-t border-red-200 p-3">
+                      <p className="text-xs font-medium text-red-800 mb-2">
+                        Errors:
+                      </p>
+                      {inviteResult.results
+                        .filter((r) => r.errorMessage)
+                        .map((result) => (
+                          <p
+                            key={result.email}
+                            className="text-xs text-red-700">
+                            <strong>{result.email}:</strong>{" "}
+                            {result.errorMessage}
+                          </p>
+                        ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
