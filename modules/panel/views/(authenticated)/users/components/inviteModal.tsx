@@ -394,7 +394,7 @@ export default function InviteModal({
                           </td>
                           <td className="py-2 px-4 text-center">
                             {result.alreadyExists ? (
-                              <CheckCircle2 className="w-5 h-5 text-orange-600 mx-auto" />
+                              <AlertCircle className="w-5 h-5 text-orange-600 mx-auto" />
                             ) : (
                               <XCircle className="w-5 h-5 text-gray-300 mx-auto" />
                             )}
