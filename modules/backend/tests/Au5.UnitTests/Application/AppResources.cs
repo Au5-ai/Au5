@@ -10,7 +10,7 @@ internal static class AppResources
 	/// <summary>
 	/// System configuration related messages.
 	/// </summary>
-	internal static class System
+	internal static class Organization
 	{
 		public const string FailedToAddAdmin = "Faild to add admin. Please check the data and try again.";
 		public const string FailedToConfig = "Failed to configure the system. Please check your settings and try again.";
@@ -40,9 +40,17 @@ internal static class AppResources
 		public const string InvalidTranscriptionModel = "Invalid transcription model specified. Please use either 'liveCaption' or 'liveAudio'.";
 	}
 
+	internal static class Admin
+	{
+		public const string EmailAlreadyRegistered = "An user with this email already exists. Please use a different email address.";
+	}
+
 	internal static class User
 	{
-		public const string AlreadyExists = "An user with this email already exists. Please use a different email address.";
+		public const string FailedToSendInvitationEmail = "Failed to send invitation email.";
+		public const string FailedToSaveToDatabase = "Failed to save user data to the database.";
+		public const string AlreadyExistsInDatabase = "User already exists in the database.";
+		public const string EmailAlreadyRegistered = "An user with this email already exists. Please use a different email address.";
 
 		public const string EmailAlreadyVerified = "This email address has already been verified. A verification email cannot be sent again.";
 
@@ -92,14 +100,6 @@ internal static class AppResources
 	internal static class Assistant
 	{
 		public const string OpenAIConnectionFailed = "Can not connect to OpenAI platform, Please check and try again.";
-	}
-
-	/// <summary>
-	/// User related messages.
-	/// </summary>
-	internal static class UserMessages
-	{
-		public const string UserNotFound = "User not found. Please verify your information and try again.";
 	}
 
 	/// <summary>

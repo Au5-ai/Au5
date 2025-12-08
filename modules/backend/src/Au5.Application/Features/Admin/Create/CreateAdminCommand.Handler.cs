@@ -28,7 +28,7 @@ public class CreateAdminCommandHandler : IRequestHandler<CreateAdminCommand, Res
 
 		if (existingAdmin is not null)
 		{
-			return Error.Failure("Admin.AlreadyExists", AppResources.User.AlreadyExists);
+			return Error.Failure("Admin.AlreadyExists", AppResources.Admin.EmailAlreadyRegistered);
 		}
 
 		var organizationId = _dataProvider.NewGuid();
@@ -63,7 +63,7 @@ public class CreateAdminCommandHandler : IRequestHandler<CreateAdminCommand, Res
 		var dbResult = await _dbContext.SaveChangesAsync(cancellationToken);
 
 		return dbResult.IsFailure
-			? Error.Failure("Admin.FailedToCreate", AppResources.System.FailedToAddAdmin)
+			? Error.Failure("Admin.FailedToCreate", AppResources.Organization.FailedToAddAdmin)
 			: new CreateAdminResponse
 			{
 				IsDone = dbResult.IsSuccess

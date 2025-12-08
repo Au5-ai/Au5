@@ -28,7 +28,7 @@ public class OrganizationQueryHandlerTests
 		var result = await _handler.Handle(query, CancellationToken.None);
 
 		Assert.True(result.IsFailure);
-		Assert.Equal(AppResources.System.IsNotConfigured, result.Error.Description);
+		Assert.Equal(AppResources.Organization.IsNotConfigured, result.Error.Description);
 	}
 
 	[Fact]

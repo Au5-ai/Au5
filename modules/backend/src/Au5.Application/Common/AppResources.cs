@@ -10,7 +10,7 @@ internal static class AppResources
 	/// <summary>
 	/// System configuration related messages.
 	/// </summary>
-	internal static class System
+	internal static class Organization
 	{
 		public const string FailedToConfig = "Failed to configure the system. Please check your settings and try again.";
 		public const string IsNotConfigured = "The system has not been configured yet. Please complete the initial setup.";
@@ -67,15 +67,24 @@ internal static class AppResources
 		public const string AssistantInstructionsMaxLength = "Assistant instructions must not exceed 2000 characters.";
 	}
 
+	internal static class Admin
+	{
+		public const string EmailAlreadyRegistered = "An user with this email already exists. Please use a different email address.";
+	}
+
 	internal static class User
 	{
-		public const string AlreadyExists = "An user with this email already exists. Please use a different email address.";
-
 		public const string EmailAlreadyVerified = "This email address has already been verified. A verification email cannot be sent again.";
 
 		public const string UserNotFound = "User not found. Please verify your information and try again.";
 
 		public const string FailedToUpdateUserInfo = "Failed to Update User.";
+
+		public const string AlreadyExistsInDatabase = "User already exists in the database.";
+
+		public const string FailedToSendInvitationEmail = "Failed to send invitation email.";
+
+		public const string FailedToSaveToDatabase = "Failed to save user data to the database.";
 	}
 
 	/// <summary>

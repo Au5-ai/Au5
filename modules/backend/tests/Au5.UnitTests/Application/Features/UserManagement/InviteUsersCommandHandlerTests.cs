@@ -46,7 +46,7 @@ public class InviteUsersCommandHandlerTests
 	}
 
 	[Fact]
-	public async Task Handle_ConfigMissing_ReturnsFailure()
+	public async Task Should_ReturnUnauthorizedError_When_OrganizationNotConfigured()
 	{
 		_dbContextMock.Setup(db => db.Set<Organization>())
 			.Returns(new List<Organization>().BuildMockDbSet().Object);
@@ -58,12 +58,13 @@ public class InviteUsersCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsFailure);
-		Assert.Equal(AppResources.System.IsNotConfigured, result.Error.Description);
+		Assert.Equal("Organization.NotConfigured", result.Error.Code);
+		Assert.Equal(AppResources.Organization.IsNotConfigured, result.Error.Description);
 		_emailProviderMock.Verify(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()), Times.Never);
 	}
 
 	[Fact]
-	public async Task Handle_UserAlreadyExists_ShouldBeFailed()
+	public async Task Should_AddEmailToFailedWithProperMessage_When_UserAlreadyExistsAndSaveFails()
 	{
 		var config = new Organization { Id = _organizationId };
 		_dbContextMock.Setup(db => db.Set<Organization>())
@@ -83,14 +84,19 @@ public class InviteUsersCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Contains("exists@example.com", result.Data.Failed);
-		Assert.Empty(result.Data.Success);
+		Assert.Single(result.Data.Results);
+		var inviteResult = result.Data.Results.First();
+		Assert.Equal("exists@example.com", inviteResult.Email);
+		Assert.False(inviteResult.StoredInDatabase);
+		Assert.False(inviteResult.EmailSent);
+		Assert.True(inviteResult.AlreadyExists);
+		Assert.Equal(AppResources.User.AlreadyExistsInDatabase, inviteResult.ErrorMessage);
 
 		_emailProviderMock.Verify(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()), Times.Never);
 	}
 
 	[Fact]
-	public async Task Handle_SaveChangesFails_ShouldReturnAllFailed()
+	public async Task Should_ReturnAllInvitesAsFailedWithDatabaseError_When_SaveChangesFails()
 	{
 		var config = new Organization { Id = _organizationId };
 		_dbContextMock.Setup(db => db.Set<Organization>())
@@ -111,15 +117,23 @@ public class InviteUsersCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Empty(result.Data.Success);
-		Assert.Contains("one@example.com", result.Data.Failed);
-		Assert.Contains("two@example.com", result.Data.Failed);
+		Assert.Equal(2, result.Data.Results.Count);
+		foreach (var inviteResult in result.Data.Results)
+		{
+			Assert.False(inviteResult.StoredInDatabase);
+			Assert.False(inviteResult.EmailSent);
+			Assert.False(inviteResult.AlreadyExists);
+			Assert.Equal(AppResources.User.FailedToSaveToDatabase, inviteResult.ErrorMessage);
+		}
+
+		Assert.Contains(result.Data.Results, r => r.Email == "one@example.com");
+		Assert.Contains(result.Data.Results, r => r.Email == "two@example.com");
 
 		_emailProviderMock.Verify(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()), Times.Never);
 	}
 
 	[Fact]
-	public async Task Handle_MixedUsers_ShouldPartiallySucceed()
+	public async Task Should_ReturnPartialSuccess_When_SomeUsersExistAndSaveFails()
 	{
 		var config = new Organization { Id = _organizationId };
 		_dbContextMock.Setup(db => db.Set<Organization>())
@@ -129,7 +143,10 @@ public class InviteUsersCommandHandlerTests
 			.Returns(new List<User> { new() { Email = "exists@example.com" } }.BuildMockDbSet().Object);
 
 		_dbContextMock.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
-			.ReturnsAsync(Result.Success());
+			.ReturnsAsync(Result.Failure(Error.Forbidden("Forbidden")));
+
+		_emailProviderMock.Setup(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()))
+			.ReturnsAsync(new List<InviteResponse>());
 
 		var command = new InviteUsersCommand(
 		[
@@ -140,18 +157,26 @@ public class InviteUsersCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Contains("new@example.com", result.Data.Success);
-		Assert.Contains("exists@example.com", result.Data.Failed);
+		Assert.Equal(2, result.Data.Results.Count);
+
+		var existingUserResult = result.Data.Results.First(r => r.Email == "exists@example.com");
+		Assert.False(existingUserResult.StoredInDatabase);
+		Assert.False(existingUserResult.EmailSent);
+		Assert.True(existingUserResult.AlreadyExists);
+		Assert.Equal(AppResources.User.AlreadyExistsInDatabase, existingUserResult.ErrorMessage);
+
+		var newUserResult = result.Data.Results.First(r => r.Email == "new@example.com");
+		Assert.False(newUserResult.StoredInDatabase);
+		Assert.False(newUserResult.EmailSent);
+		Assert.False(newUserResult.AlreadyExists);
+		Assert.Equal(AppResources.User.FailedToSaveToDatabase, newUserResult.ErrorMessage);
 
 		_emailProviderMock.Verify(
-			e => e.SendInviteAsync(
-			It.Is<List<User>>(u => u.Any(x => x.Email == "new@example.com")),
-			It.IsAny<string>(),
-			It.IsAny<SmtpOptions>()), Times.Once);
+			e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()), Times.Never);
 	}
 
 	[Fact]
-	public async Task Handle_ValidInvites_ShouldAddUsersWithCorrectProperties()
+	public async Task Should_AddUsersWithCorrectProperties_When_ValidInvitesProvided()
 	{
 		var config = new Organization { Id = _organizationId, OrganizationName = "Test Org" };
 		_dbContextMock.Setup(db => db.Set<Organization>())
@@ -166,6 +191,13 @@ public class InviteUsersCommandHandlerTests
 
 		_dbContextMock.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success());
+
+		_emailProviderMock.Setup(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()))
+			.ReturnsAsync(new List<InviteResponse>
+			{
+				new() { Email = "admin@example.com", IsEmailSent = true, UserId = Guid.NewGuid(), Link = "link1" },
+				new() { Email = "user@example.com", IsEmailSent = true, UserId = Guid.NewGuid(), Link = "link2" }
+			});
 
 		var command = new InviteUsersCommand(
 		[
@@ -192,7 +224,7 @@ public class InviteUsersCommandHandlerTests
 	}
 
 	[Fact]
-	public async Task Handle_SuccessfulInvite_ShouldSendEmailWithCorrectSmtpOptions()
+	public async Task Should_SendEmailWithCorrectSmtpOptions_When_InvitationSuccessful()
 	{
 		var config = new Organization { Id = _organizationId, OrganizationName = "Test Organization" };
 		_dbContextMock.Setup(db => db.Set<Organization>())
@@ -203,6 +235,12 @@ public class InviteUsersCommandHandlerTests
 
 		_dbContextMock.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success());
+
+		_emailProviderMock.Setup(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()))
+			.ReturnsAsync(new List<InviteResponse>
+			{
+				new() { Email = "test@example.com", IsEmailSent = true, UserId = Guid.NewGuid(), Link = "link" }
+			});
 
 		var command = new InviteUsersCommand([new() { Email = "test@example.com", Role = RoleTypes.User }]);
 
@@ -225,7 +263,7 @@ public class InviteUsersCommandHandlerTests
 	}
 
 	[Fact]
-	public async Task Handle_MultipleNewUsers_ShouldInviteAll()
+	public async Task Should_InviteAllNewUsers_When_NoUsersExistAndEmailsSendSuccessfully()
 	{
 		var config = new Organization { Id = _organizationId, OrganizationName = "Test Org" };
 		_dbContextMock.Setup(db => db.Set<Organization>())
@@ -237,6 +275,14 @@ public class InviteUsersCommandHandlerTests
 		_dbContextMock.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success());
 
+		_emailProviderMock.Setup(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()))
+			.ReturnsAsync(new List<InviteResponse>
+			{
+				new() { Email = "user1@example.com", IsEmailSent = true, UserId = Guid.NewGuid(), Link = "link1" },
+				new() { Email = "user2@example.com", IsEmailSent = true, UserId = Guid.NewGuid(), Link = "link2" },
+				new() { Email = "user3@example.com", IsEmailSent = true, UserId = Guid.NewGuid(), Link = "link3" }
+			});
+
 		var command = new InviteUsersCommand(
 		[
 			new() { Email = "user1@example.com", Role = RoleTypes.User },
@@ -247,11 +293,18 @@ public class InviteUsersCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Equal(3, result.Data.Success.Count);
-		Assert.Contains("user1@example.com", result.Data.Success);
-		Assert.Contains("user2@example.com", result.Data.Success);
-		Assert.Contains("user3@example.com", result.Data.Success);
-		Assert.Empty(result.Data.Failed);
+		Assert.Equal(3, result.Data.Results.Count);
+		foreach (var inviteResult in result.Data.Results)
+		{
+			Assert.True(inviteResult.StoredInDatabase);
+			Assert.True(inviteResult.EmailSent);
+			Assert.False(inviteResult.AlreadyExists);
+			Assert.Null(inviteResult.ErrorMessage);
+		}
+
+		Assert.Contains(result.Data.Results, r => r.Email == "user1@example.com");
+		Assert.Contains(result.Data.Results, r => r.Email == "user2@example.com");
+		Assert.Contains(result.Data.Results, r => r.Email == "user3@example.com");
 
 		_emailProviderMock.Verify(
 			e => e.SendInviteAsync(
@@ -262,7 +315,7 @@ public class InviteUsersCommandHandlerTests
 	}
 
 	[Fact]
-	public async Task Handle_AllUsersExist_ShouldReturnAllFailed()
+	public async Task Should_ReturnAllFailedWithExistsMessage_When_AllUsersAlreadyExist()
 	{
 		var config = new Organization { Id = _organizationId, OrganizationName = "Test Org" };
 		_dbContextMock.Setup(db => db.Set<Organization>())
@@ -276,7 +329,10 @@ public class InviteUsersCommandHandlerTests
 			}.BuildMockDbSet().Object);
 
 		_dbContextMock.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
-			.ReturnsAsync(Result.Success());
+			.ReturnsAsync(Result.Failure(Error.Forbidden("Forbidden")));
+
+		_emailProviderMock.Setup(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()))
+			.ReturnsAsync(new List<InviteResponse>());
 
 		var command = new InviteUsersCommand(
 		[
@@ -287,21 +343,25 @@ public class InviteUsersCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Empty(result.Data.Success);
-		Assert.Equal(2, result.Data.Failed.Count);
-		Assert.Contains("user1@example.com", result.Data.Failed);
-		Assert.Contains("user2@example.com", result.Data.Failed);
+		Assert.Equal(2, result.Data.Results.Count);
+		foreach (var inviteResult in result.Data.Results)
+		{
+			Assert.False(inviteResult.StoredInDatabase);
+			Assert.False(inviteResult.EmailSent);
+			Assert.True(inviteResult.AlreadyExists);
+			Assert.Equal(AppResources.User.AlreadyExistsInDatabase, inviteResult.ErrorMessage);
+		}
+
+		Assert.Contains(result.Data.Results, r => r.Email == "user1@example.com");
+		Assert.Contains(result.Data.Results, r => r.Email == "user2@example.com");
 
 		_emailProviderMock.Verify(
-			e => e.SendInviteAsync(
-				It.Is<List<User>>(users => users.Count == 0),
-				"Test Org",
-				It.IsAny<SmtpOptions>()),
-			Times.Once);
+			e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()),
+			Times.Never);
 	}
 
 	[Fact]
-	public async Task Handle_SaveChangesSucceeds_ShouldNotAddToFailed()
+	public async Task Should_ReturnSuccessWithNoFailures_When_SaveChangesSucceeds()
 	{
 		var config = new Organization { Id = _organizationId };
 		_dbContextMock.Setup(db => db.Set<Organization>())
@@ -313,18 +373,28 @@ public class InviteUsersCommandHandlerTests
 		_dbContextMock.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success());
 
+		_emailProviderMock.Setup(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()))
+			.ReturnsAsync(new List<InviteResponse>
+			{
+				new() { Email = "new@example.com", IsEmailSent = true, UserId = Guid.NewGuid(), Link = "link" }
+			});
+
 		var command = new InviteUsersCommand([new() { Email = "new@example.com", Role = RoleTypes.User }]);
 
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Single(result.Data.Success);
-		Assert.Empty(result.Data.Failed);
-		Assert.Contains("new@example.com", result.Data.Success);
+		Assert.Single(result.Data.Results);
+		var inviteResult = result.Data.Results.First();
+		Assert.Equal("new@example.com", inviteResult.Email);
+		Assert.True(inviteResult.StoredInDatabase);
+		Assert.True(inviteResult.EmailSent);
+		Assert.False(inviteResult.AlreadyExists);
+		Assert.Null(inviteResult.ErrorMessage);
 	}
 
 	[Fact]
-	public async Task Handle_SaveChangesFails_ShouldClearSuccessAndAddToFailed()
+	public async Task Should_ClearSuccessAndAddAllToFailedWithProperMessages_When_SaveChangesFails()
 	{
 		var config = new Organization { Id = _organizationId };
 		_dbContextMock.Setup(db => db.Set<Organization>())
@@ -347,14 +417,188 @@ public class InviteUsersCommandHandlerTests
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Empty(result.Data.Success);
-		Assert.Equal(3, result.Data.Failed.Count);
-		Assert.Contains("new1@example.com", result.Data.Failed);
-		Assert.Contains("exists@example.com", result.Data.Failed);
-		Assert.Contains("new2@example.com", result.Data.Failed);
+		Assert.Equal(3, result.Data.Results.Count);
+
+		var new1Result = result.Data.Results.First(r => r.Email == "new1@example.com");
+		Assert.False(new1Result.StoredInDatabase);
+		Assert.False(new1Result.EmailSent);
+		Assert.False(new1Result.AlreadyExists);
+		Assert.Equal(AppResources.User.FailedToSaveToDatabase, new1Result.ErrorMessage);
+
+		var existsResult = result.Data.Results.First(r => r.Email == "exists@example.com");
+		Assert.False(existsResult.StoredInDatabase);
+		Assert.False(existsResult.EmailSent);
+		Assert.True(existsResult.AlreadyExists);
+		Assert.Equal(AppResources.User.AlreadyExistsInDatabase, existsResult.ErrorMessage);
+
+		var new2Result = result.Data.Results.First(r => r.Email == "new2@example.com");
+		Assert.False(new2Result.StoredInDatabase);
+		Assert.False(new2Result.EmailSent);
+		Assert.False(new2Result.AlreadyExists);
+		Assert.Equal(AppResources.User.FailedToSaveToDatabase, new2Result.ErrorMessage);
 
 		_emailProviderMock.Verify(
 			e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()),
 			Times.Never);
+	}
+
+	[Fact]
+	public async Task Should_AddEmailToFailedWithEmailError_When_EmailSendingFails()
+	{
+		var config = new Organization { Id = _organizationId, OrganizationName = "Test Org" };
+		_dbContextMock.Setup(db => db.Set<Organization>())
+			.Returns(new List<Organization> { config }.BuildMockDbSet().Object);
+
+		_dbContextMock.Setup(db => db.Set<User>())
+			.Returns(new List<User>().BuildMockDbSet().Object);
+
+		_dbContextMock.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
+			.ReturnsAsync(Result.Success());
+
+		_emailProviderMock.Setup(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()))
+			.ReturnsAsync(new List<InviteResponse>
+			{
+				new() { Email = "user1@example.com", IsEmailSent = false, UserId = Guid.NewGuid(), Link = "link1" },
+				new() { Email = "user2@example.com", IsEmailSent = false, UserId = Guid.NewGuid(), Link = "link2" }
+			});
+
+		var command = new InviteUsersCommand(
+		[
+			new() { Email = "user1@example.com", Role = RoleTypes.User },
+			new() { Email = "user2@example.com", Role = RoleTypes.Admin }
+		]);
+
+		var result = await _handler.Handle(command, CancellationToken.None);
+
+		Assert.True(result.IsSuccess);
+		Assert.Equal(2, result.Data.Results.Count);
+		foreach (var inviteResult in result.Data.Results)
+		{
+			Assert.True(inviteResult.StoredInDatabase);
+			Assert.False(inviteResult.EmailSent);
+			Assert.False(inviteResult.AlreadyExists);
+			Assert.Equal(AppResources.User.FailedToSendInvitationEmail, inviteResult.ErrorMessage);
+		}
+
+		Assert.Contains(result.Data.Results, r => r.Email == "user1@example.com");
+		Assert.Contains(result.Data.Results, r => r.Email == "user2@example.com");
+	}
+
+	[Fact]
+	public async Task Should_ReturnMixedResults_When_SomeEmailsSendSuccessfullyAndSomeFail()
+	{
+		var config = new Organization { Id = _organizationId, OrganizationName = "Test Org" };
+		_dbContextMock.Setup(db => db.Set<Organization>())
+			.Returns(new List<Organization> { config }.BuildMockDbSet().Object);
+
+		_dbContextMock.Setup(db => db.Set<User>())
+			.Returns(new List<User>().BuildMockDbSet().Object);
+
+		_dbContextMock.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
+			.ReturnsAsync(Result.Success());
+
+		_emailProviderMock.Setup(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()))
+			.ReturnsAsync(new List<InviteResponse>
+			{
+				new() { Email = "success@example.com", IsEmailSent = true, UserId = Guid.NewGuid(), Link = "link1" },
+				new() { Email = "failed@example.com", IsEmailSent = false, UserId = Guid.NewGuid(), Link = "link2" }
+			});
+
+		var command = new InviteUsersCommand(
+		[
+			new() { Email = "success@example.com", Role = RoleTypes.User },
+			new() { Email = "failed@example.com", Role = RoleTypes.Admin }
+		]);
+
+		var result = await _handler.Handle(command, CancellationToken.None);
+
+		Assert.True(result.IsSuccess);
+		Assert.Equal(2, result.Data.Results.Count);
+
+		var successResult = result.Data.Results.First(r => r.Email == "success@example.com");
+		Assert.True(successResult.StoredInDatabase);
+		Assert.True(successResult.EmailSent);
+		Assert.False(successResult.AlreadyExists);
+		Assert.Null(successResult.ErrorMessage);
+
+		var failedResult = result.Data.Results.First(r => r.Email == "failed@example.com");
+		Assert.True(failedResult.StoredInDatabase);
+		Assert.False(failedResult.EmailSent);
+		Assert.False(failedResult.AlreadyExists);
+		Assert.Equal(AppResources.User.FailedToSendInvitationEmail, failedResult.ErrorMessage);
+	}
+
+	[Fact]
+	public async Task Should_AddUsersToSuccessBeforeEmailSending_When_SaveSucceeds()
+	{
+		var config = new Organization { Id = _organizationId, OrganizationName = "Test Org" };
+		_dbContextMock.Setup(db => db.Set<Organization>())
+			.Returns(new List<Organization> { config }.BuildMockDbSet().Object);
+
+		_dbContextMock.Setup(db => db.Set<User>())
+			.Returns(new List<User>().BuildMockDbSet().Object);
+
+		_dbContextMock.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
+			.ReturnsAsync(Result.Success());
+
+		_emailProviderMock.Setup(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()))
+			.ReturnsAsync(new List<InviteResponse>());
+
+		var command = new InviteUsersCommand(
+		[
+			new() { Email = "user1@example.com", Role = RoleTypes.User },
+			new() { Email = "user2@example.com", Role = RoleTypes.Admin }
+		]);
+
+		var result = await _handler.Handle(command, CancellationToken.None);
+
+		Assert.True(result.IsSuccess);
+		Assert.Equal(2, result.Data.Results.Count);
+		foreach (var inviteResult in result.Data.Results)
+		{
+			Assert.True(inviteResult.StoredInDatabase);
+			Assert.False(inviteResult.EmailSent);
+			Assert.False(inviteResult.AlreadyExists);
+			Assert.Null(inviteResult.ErrorMessage);
+		}
+
+		Assert.Contains(result.Data.Results, r => r.Email == "user1@example.com");
+		Assert.Contains(result.Data.Results, r => r.Email == "user2@example.com");
+	}
+
+	[Fact]
+	public async Task Should_HandleDuplicateInvitesInCommand_When_SameEmailAppearsMultipleTimes()
+	{
+		var config = new Organization { Id = _organizationId, OrganizationName = "Test Org" };
+		_dbContextMock.Setup(db => db.Set<Organization>())
+			.Returns(new List<Organization> { config }.BuildMockDbSet().Object);
+
+		_dbContextMock.Setup(db => db.Set<User>())
+			.Returns(new List<User>().BuildMockDbSet().Object);
+
+		var addedUsers = new List<User>();
+		_dbContextMock.Setup(db => db.Set<User>().Add(It.IsAny<User>()))
+			.Callback<User>(addedUsers.Add);
+
+		_dbContextMock.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
+			.ReturnsAsync(Result.Success());
+
+		_emailProviderMock.Setup(e => e.SendInviteAsync(It.IsAny<List<User>>(), It.IsAny<string>(), It.IsAny<SmtpOptions>()))
+			.ReturnsAsync(new List<InviteResponse>
+			{
+				new() { Email = "duplicate@example.com", IsEmailSent = true, UserId = Guid.NewGuid(), Link = "link" }
+			});
+
+		var command = new InviteUsersCommand(
+		[
+			new() { Email = "duplicate@example.com", Role = RoleTypes.User },
+			new() { Email = "duplicate@example.com", Role = RoleTypes.User }
+		]);
+
+		var result = await _handler.Handle(command, CancellationToken.None);
+
+		Assert.True(result.IsSuccess);
+		Assert.Single(addedUsers);
+		Assert.Equal("duplicate@example.com", addedUsers[0].Email);
 	}
 }

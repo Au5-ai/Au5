@@ -67,7 +67,7 @@ public class OrganizationCommandHandlerTests
 
 		Assert.False(result.IsSuccess);
 		Assert.Equal(System.Net.HttpStatusCode.Unauthorized, result.Error.Type);
-		Assert.Equal(AppResources.System.IsNotConfigured, result.Error.Description);
+		Assert.Equal(AppResources.Organization.IsNotConfigured, result.Error.Description);
 		dbSet.Verify(x => x.Add(It.IsAny<Organization>()), Times.Never);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
 	}
@@ -103,7 +103,7 @@ public class OrganizationCommandHandlerTests
 		dbSet.Verify(x => x.Add(It.IsAny<Organization>()), Times.Never);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 		Assert.False(result.IsSuccess);
-		Assert.Equal(AppResources.System.FailedToConfig, result.Error.Description);
+		Assert.Equal(AppResources.Organization.FailedToConfig, result.Error.Description);
 	}
 
 	[Fact]

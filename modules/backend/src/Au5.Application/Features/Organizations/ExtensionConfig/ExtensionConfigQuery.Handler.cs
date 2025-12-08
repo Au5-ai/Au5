@@ -23,7 +23,7 @@ public class ExtensionConfigQueryHandler : IRequestHandler<ExtensionConfigQuery,
 
 		if (existingConfig is null)
 		{
-			return Error.Failure("Organization.NotConfigured", AppResources.System.IsNotConfigured);
+			return Error.Failure("Organization.NotConfigured", AppResources.Organization.IsNotConfigured);
 		}
 
 		var currentUser = await _dbContext.Set<User>().AsNoTracking().Select(x => new Participant()

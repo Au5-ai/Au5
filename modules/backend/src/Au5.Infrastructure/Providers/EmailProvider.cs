@@ -7,12 +7,13 @@ using MimeKit;
 
 namespace Au5.Infrastructure.Providers;
 
-public class EmailProvider(ISmtpClientWrapper smtpClient, IUrlGenerator urlGenerator, ILogger<EmailProvider> logger) : IEmailProvider
+public class EmailProvider(ISmtpClientWrapper smtpClient, IUrlGenerator urlGenerator, ILogger<EmailProvider> logger)
+	: IEmailProvider
 {
 	private readonly IUrlGenerator _urlGenerator = urlGenerator;
 	private readonly ISmtpClientWrapper _smtpClient = smtpClient;
 
-	public async Task<List<InviteResponse>> SendInviteAsync(IReadOnlyCollection<User> invited, string organizationName, SmtpOptions smtpOption)
+	public async Task<IReadOnlyCollection<InviteResponse>> SendInviteAsync(IReadOnlyCollection<User> invited, string organizationName, SmtpOptions smtpOption)
 	{
 		List<InviteResponse> respose = [];
 		try
@@ -29,31 +30,34 @@ public class EmailProvider(ISmtpClientWrapper smtpClient, IUrlGenerator urlGener
 
 			foreach (var user in invited)
 			{
-				var link = _urlGenerator.GenerateExtensionConfigUrl(smtpOption.BaseUrl, user.Id, user.Email);
-				respose.Add(new InviteResponse() { Link = link, UserId = user.Id });
-				var emailBody = BuildInviteEmailBody(link, organizationName);
-
-				var message = new MimeMessage();
-
-				message.From.Add(new MailboxAddress(organizationName, smtpOption.From));
-				message.To.Add(MailboxAddress.Parse(user.Email));
-
-				message.Subject = "You're Invited! Please Verify Your Email";
-
-				var builder = new BodyBuilder { HtmlBody = emailBody };
-				message.Body = builder.ToMessageBody();
-
-				await _smtpClient.SendAsync(message);
+				try
+				{
+					var link = _urlGenerator.GenerateExtensionConfigUrl(smtpOption.BaseUrl, user.Id, user.Email);
+					var emailBody = BuildInviteEmailBody(link, organizationName);
+					var message = new MimeMessage();
+					message.From.Add(new MailboxAddress(organizationName, smtpOption.From));
+					message.To.Add(MailboxAddress.Parse(user.Email));
+					message.Subject = "You're Invited! Please Verify Your Email";
+					var builder = new BodyBuilder { HtmlBody = emailBody };
+					message.Body = builder.ToMessageBody();
+					await _smtpClient.SendAsync(message);
+					respose.Add(new InviteResponse() { Email = user.Email, Link = link, UserId = user.Id, IsEmailSent = true });
+				}
+				catch (Exception ex)
+				{
+					logger.LogError(ex, "Failed to send invitation email to {Email}", user.Email);
+					respose.Add(new InviteResponse() { Email = user.Email, UserId = user.Id });
+				}
 			}
-
-			await _smtpClient.DisconnectAsync(true);
 		}
 		catch (Exception ex)
 		{
-			logger.LogInformation(message: ex.Message);
+			respose.AddRange(invited.Select(user => new InviteResponse() { Email = user.Email, UserId = user.Id }));
+			logger.LogError(ex, "Failed to send invitation emails due to an SMTP connection error.");
 		}
 		finally
 		{
+			await _smtpClient.DisconnectAsync(true);
 			_smtpClient.Dispose();
 		}
 
@@ -140,16 +144,3 @@ public class EmailProvider(ISmtpClientWrapper smtpClient, IUrlGenerator urlGener
 		return html;
 	}
 }
-
-//var secureSocketOptions = smtpOption.UseSsl ?
-//MailKit.Security.SecureSocketOptions.StartTls :
-//MailKit.Security.SecureSocketOptions.None;
-
-//await _smtpClient.ConnectAsync(smtpOption.Host, smtpOption.Port, secureSocketOptions);
-
-//if (!string.IsNullOrWhiteSpace(smtpOption.User) &&
-//!string.IsNullOrWhiteSpace(smtpOption.Password) &&
-//_smtpClient.Capabilities.HasFlag(MailKit.Net.Smtp.SmtpCapabilities.Authentication))
-//{
-//	await _smtpClient.AuthenticateAsync(smtpOption.User, smtpOption.Password);
-//}

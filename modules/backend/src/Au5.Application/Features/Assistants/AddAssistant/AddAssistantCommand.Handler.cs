@@ -15,7 +15,7 @@ public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIClie
 		var config = await _dbContext.Set<Organization>().AsNoTracking().FirstOrDefaultAsync(cancellationToken);
 		if (config is null)
 		{
-			return Error.Failure("Organization.NotConfigured", AppResources.System.IsNotConfigured);
+			return Error.Failure("Organization.NotConfigured", AppResources.Organization.IsNotConfigured);
 		}
 
 		var assistantId = await _aiClient.CreateAssistantAsync(
