@@ -45,7 +45,7 @@ public class EmailProvider(ISmtpClientWrapper smtpClient, IUrlGenerator urlGener
 				}
 				catch (Exception ex)
 				{
-					logger.LogError(message: ex.Message);
+					logger.LogError(ex, "Failed to send invitation email to {Email}", user.Email);
 					respose.Add(new InviteResponse() { Email = user.Email, UserId = user.Id });
 				}
 			}

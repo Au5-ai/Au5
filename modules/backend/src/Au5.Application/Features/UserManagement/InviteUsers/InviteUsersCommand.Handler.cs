@@ -58,13 +58,12 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 
 	private static void UpdateResultsForSaveFailure(List<InvitationResult> results)
 	{
-		var resultsList = results.ToList();
-		foreach (var result in resultsList)
+		for (var i = 0; i < results.Count; i++)
 		{
+			var result = results[i];
 			if (!result.AlreadyExists)
 			{
-				var index = results.IndexOf(result);
-				results[index] = new InvitationResult
+				results[i] = new InvitationResult
 				{
 					Email = result.Email,
 					StoredInDatabase = false,
@@ -101,7 +100,7 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 		List<User> usersToInvite,
 		List<InvitationResult> results)
 	{
-		foreach (var userInvited in invites.Distinct())
+		foreach (var userInvited in invites.DistinctBy(i => i.Email))
 		{
 			if (existingUsers.Contains(userInvited.Email))
 			{
@@ -161,13 +160,14 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 
 		var emailSentResponse = await _emailProvider.SendInviteAsync(usersToInvite, organizationName, smtpOptions);
 
-		foreach (var emailResult in emailSentResponse)
+		var emailResponseMap = emailSentResponse.ToDictionary(r => r.Email, StringComparer.OrdinalIgnoreCase);
+
+		for (var i = 0; i < results.Count; i++)
 		{
-			var result = results.FirstOrDefault(r => r.Email.Equals(emailResult.Email, StringComparison.OrdinalIgnoreCase));
-			if (result is not null)
+			var result = results[i];
+			if (result.StoredInDatabase && emailResponseMap.TryGetValue(result.Email, out var emailResult))
 			{
-				var index = results.IndexOf(result);
-				results[index] = new InvitationResult
+				results[i] = new InvitationResult
 				{
 					Email = result.Email,
 					StoredInDatabase = result.StoredInDatabase,
