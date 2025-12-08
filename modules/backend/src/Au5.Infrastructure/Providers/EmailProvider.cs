@@ -53,7 +53,7 @@ public class EmailProvider(ISmtpClientWrapper smtpClient, IUrlGenerator urlGener
 		catch (Exception ex)
 		{
 			respose.AddRange(invited.Select(user => new InviteResponse() { Email = user.Email, UserId = user.Id }));
-			logger.LogInformation(message: ex.Message);
+			logger.LogError(ex, "Failed to send invitation emails due to an SMTP connection error.");
 		}
 		finally
 		{
