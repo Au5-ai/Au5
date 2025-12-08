@@ -153,7 +153,7 @@ export default function InviteModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[800px] bg-white border-gray-200">
+      <DialogContent className="w-full max-w-4xl bg-white border-gray-200">
         {invitationsSent === 0 ? (
           <>
             <DialogHeader className="pb-6">
