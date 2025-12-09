@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useLogin } from "@/shared/hooks/use-auth";
 import { ROUTES } from "@/shared/routes";
-import { loginCaptions } from "./i18n";
+import { loginCaptions } from "../i18n";
 
 export function useLoginForm() {
   const [username, setUsername] = useState("");

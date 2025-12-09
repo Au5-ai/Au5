@@ -6,7 +6,8 @@ import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { loginCaptions } from "./i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import { useLoginForm } from "./use-login-form";
+import { useLoginForm } from "./hooks/use-login-form";
+import { Loader2 } from "lucide-react";
 
 export function LoginForm({
   className,
@@ -64,9 +65,14 @@ export function LoginForm({
           type="submit"
           className="w-full cursor-pointer"
           disabled={isPending}>
-          {isPending
-            ? loginCaptions.loggingInButton
-            : loginCaptions.loginButton}
+          {isPending ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              {loginCaptions.loggingInButton}
+            </>
+          ) : (
+            loginCaptions.loginButton
+          )}
         </Button>
         <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
           <span className="bg-background text-muted-foreground relative z-10 px-2">
