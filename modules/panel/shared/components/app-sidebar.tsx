@@ -15,6 +15,8 @@ import * as React from "react";
 import Logo from "./logo";
 import { NavSpaces } from "./nav-spaces";
 import { MySpacesResponse } from "../types/space";
+import { NavSecondary } from "./nav-secondary";
+import { navSecondary } from "../models/secondary-sidebar";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user?: User;
@@ -43,6 +45,7 @@ export function AppSidebar({ user, menu, spaces, ...props }: AppSidebarProps) {
         {spaces !== undefined && spaces.length > 0 && (
           <NavSpaces spaces={spaces} />
         )}
+        <NavSecondary items={navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>{user && <NavUser {...user} />}</SidebarFooter>
       <SidebarRail />
