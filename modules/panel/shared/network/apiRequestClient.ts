@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { API_BASE_URL } from "../config";
 import { ApiError, ProblemDetails } from "../types/network";
 
@@ -35,13 +36,16 @@ export async function apiRequestClient<T>(
           status: 403,
         });
       }
-
-      const errorData: ProblemDetails = await response.json().catch(() => ({
-        title: "Unknown Error",
-        detail: "An unknown error occurred.",
-        status: response.status,
-      }));
-
+      const errorData: ProblemDetails = await response
+        .json()
+        .catch((response) => ({
+          title: response.title || "Unknown Error",
+          detail:
+            response.detail ||
+            "An error occurred while processing the request.",
+          status: response.status,
+        }));
+      toast.error(errorData.detail);
       throw new ApiError(
         response.status,
         errorData.title || "HTTP Error",

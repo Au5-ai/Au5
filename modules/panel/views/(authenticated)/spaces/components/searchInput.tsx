@@ -166,7 +166,7 @@ export default function UserSearchInput({
       )}
 
       {selectedUsers.length > 0 && (
-        <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+        <div className="flex flex-wrap gap-2">
           {selectedUsers.map((user) => (
             <Badge
               key={user.id}

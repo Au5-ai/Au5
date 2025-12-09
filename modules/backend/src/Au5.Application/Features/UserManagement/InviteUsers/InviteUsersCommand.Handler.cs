@@ -1,5 +1,6 @@
 using Au5.Application.Common;
 using Au5.Application.Common.Options;
+using Au5.Application.Common.Utils;
 using Au5.Application.Dtos;
 using Microsoft.Extensions.Options;
 
@@ -123,7 +124,7 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 				CreatedAt = _dataProvider.Now,
 				FullName = "Not Entered",
 				Password = "Not Entered",
-				PictureUrl = string.Empty,
+				PictureUrl = GravatarHelper.GetGravatarUrl(userInvited.Email),
 				Role = userInvited.Role,
 				Status = UserStatus.SendVerificationLink,
 				OrganizationId = _currentUser.OrganizationId

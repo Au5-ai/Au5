@@ -117,9 +117,9 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
                 <TableHead className="font-semibold text-gray-700">
                   Admins
                 </TableHead>
-                <TableHead className="font-semibold text-gray-700 text-right pr-4">
+                {/* <TableHead className="font-semibold text-gray-700 text-right pr-4">
                   Actions
-                </TableHead>
+                </TableHead> */}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -208,8 +208,7 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
                           <Badge
                             variant="secondary"
                             className="bg-purple-100 text-purple-700 border-0">
-                            +
-                            {space.users.filter((u) => u.isAdmin).length - 3}
+                            +{space.users.filter((u) => u.isAdmin).length - 3}
                           </Badge>
                         )}
                       </div>
@@ -220,7 +219,7 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
                       </div>
                     )}
                   </TableCell>
-                  <TableCell className="text-right pr-4">
+                  {/* <TableCell className="text-right pr-4">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <button type="button" aria-label="Open space actions menu" className="p-2 rounded-lg hover:bg-gray-100 transition">
@@ -246,7 +245,7 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
