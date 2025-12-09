@@ -122,10 +122,7 @@ export const GLOBAL_CAPTIONS = {
         submittingButton: "Signing Up...",
       },
       footer: {
-        text: "By clicking continue, you agree to our",
-        terms: "Terms of Service",
-        and: "and",
-        privacy: "Privacy Policy",
+        text: "made with ❤️ in earth.",
       },
     },
     meetings: {

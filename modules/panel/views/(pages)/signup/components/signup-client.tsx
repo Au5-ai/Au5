@@ -91,10 +91,7 @@ export default function SignupClient() {
           </div>
         </div>
         <div className="text-muted-foreground text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4 *:[a]:hover:text-primary">
-          {GLOBAL_CAPTIONS.pages.signup.footer.text}{" "}
-          <a href="#">{GLOBAL_CAPTIONS.pages.signup.footer.terms}</a>{" "}
-          {GLOBAL_CAPTIONS.pages.signup.footer.and}{" "}
-          <a href="#">{GLOBAL_CAPTIONS.pages.signup.footer.privacy}</a>.
+          {GLOBAL_CAPTIONS.pages.signup.footer.text}
         </div>
       </div>
     </div>

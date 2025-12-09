@@ -34,10 +34,5 @@ export function useSignup() {
         router.push(ROUTES.LOGIN);
       }
     },
-    onError: (error) => {
-      toast.error(
-        error.message || GLOBAL_CAPTIONS.pages.signup.singupException,
-      );
-    },
   });
 }

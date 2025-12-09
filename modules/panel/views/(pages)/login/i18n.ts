@@ -7,6 +7,7 @@ export const loginCaptions = {
   noAccountText: "Don't have an account?",
   contactAdminLink: "Contact Admin",
   welcomeBackTitle: "Welcome Back",
+  successLogin: "Successfully logged in!",
   welcomeMessage:
     "Empower your meetings with real-time transcription, smart automation, and seamless integrations.",
 } as const;

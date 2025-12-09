@@ -11,7 +11,6 @@ import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/shared/routes";
 import { toast } from "sonner";
-import { ApiError } from "@/shared/types/network";
 
 export function LoginForm({
   className,
@@ -29,19 +28,18 @@ export function LoginForm({
       { username, password },
       {
         onSuccess: () => {
+          toast.success(loginCaptions.successLogin);
           router.push(ROUTES.PLAYGROUND);
         },
-        onError: (error: unknown) => {
-          if (error instanceof ApiError) {
-            toast.error(
-              error.problemDetails.detail || error.problemDetails.title,
-            );
-          } else if (error instanceof Error) {
-            toast.error(error.message);
-          } else {
-            toast.error("Login failed. Please try again.");
-          }
-        },
+        // onError: (error: unknown) => {
+        //   if (error instanceof ApiError) {
+        //     toast.error(error.problemDetails.detail);
+        //   } else if (error instanceof Error) {
+        //     toast.error(error.message);
+        //   } else {
+        //     toast.error("Login failed. Please try again.");
+        //   }
+        // },
       },
     );
   };
@@ -100,8 +98,8 @@ export function LoginForm({
       </div>
       <div className="text-center text-sm">
         {loginCaptions.noAccountText}{" "}
-        <a href="#" className="underline underline-offset-4">
-          {loginCaptions.contactAdminLink}
+        <a href="/signup" className="underline underline-offset-4">
+          Create an account
         </a>
       </div>
     </form>
