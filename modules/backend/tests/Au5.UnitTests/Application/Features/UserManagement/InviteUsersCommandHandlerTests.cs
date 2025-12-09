@@ -217,7 +217,7 @@ public class InviteUsersCommandHandlerTests
 		Assert.Equal(UserStatus.SendVerificationLink, adminUser.Status);
 		Assert.Equal("Not Entered", adminUser.FullName);
 		Assert.Equal("Not Entered", adminUser.Password);
-		Assert.Empty(adminUser.PictureUrl);
+		Assert.NotEmpty(adminUser.PictureUrl);
 
 		var regularUser = addedUsers.First(u => u.Email == "user@example.com");
 		Assert.Equal(RoleTypes.User, regularUser.Role);

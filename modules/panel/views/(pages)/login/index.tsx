@@ -1,3 +1,5 @@
+"use client";
+
 import { LoginForm } from "./login-form";
 import Logo from "@/shared/components/logo";
 import Image from "next/image";

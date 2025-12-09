@@ -46,11 +46,11 @@ export async function apiRequestClient<T>(
           status: response.status,
         }));
       toast.error(errorData.detail);
-      // throw new ApiError(
-      //   response.status,
-      //   errorData.title || "HTTP Error",
-      //   errorData,
-      // );
+      throw new ApiError(
+        response.status,
+        errorData.title || "HTTP Error",
+        errorData,
+      );
     }
 
     return await response.json();
