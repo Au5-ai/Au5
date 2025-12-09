@@ -5,7 +5,7 @@ export const loginCaptions = {
   loggingInButton: "Logging in...",
   orContinueWith: "Or continue with",
   noAccountText: "Don't have an account?",
-  contactAdminLink: "Contact Admin",
+  createAccountLink: "Create an account",
   welcomeBackTitle: "Welcome Back",
   successLogin: "Successfully logged in!",
   welcomeMessage:

@@ -4,45 +4,22 @@ import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
-import { useLogin } from "@/shared/hooks/use-auth";
-import { useState } from "react";
 import { loginCaptions } from "./i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import { useRouter } from "next/navigation";
-import { ROUTES } from "@/shared/routes";
-import { toast } from "sonner";
+import { useLoginForm } from "./use-login-form";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const loginMutation = useLogin();
-  const router = useRouter();
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    loginMutation.mutate(
-      { username, password },
-      {
-        onSuccess: () => {
-          toast.success(loginCaptions.successLogin);
-          router.push(ROUTES.PLAYGROUND);
-        },
-        // onError: (error: unknown) => {
-        //   if (error instanceof ApiError) {
-        //     toast.error(error.problemDetails.detail);
-        //   } else if (error instanceof Error) {
-        //     toast.error(error.message);
-        //   } else {
-        //     toast.error("Login failed. Please try again.");
-        //   }
-        // },
-      },
-    );
-  };
+  const {
+    username,
+    setUsername,
+    password,
+    handlePasswordChange,
+    handleSubmit,
+    isPending,
+  } = useLoginForm();
 
   return (
     <form
@@ -77,7 +54,8 @@ export function LoginForm({
             id="password"
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => handlePasswordChange(e.target.value)}
+            minLength={8}
             required
           />
         </div>
@@ -85,8 +63,8 @@ export function LoginForm({
         <Button
           type="submit"
           className="w-full cursor-pointer"
-          disabled={loginMutation.isPending}>
-          {loginMutation.isPending
+          disabled={isPending}>
+          {isPending
             ? loginCaptions.loggingInButton
             : loginCaptions.loginButton}
         </Button>
@@ -99,7 +77,7 @@ export function LoginForm({
       <div className="text-center text-sm">
         {loginCaptions.noAccountText}{" "}
         <a href="/signup" className="underline underline-offset-4">
-          Create an account
+          {loginCaptions.createAccountLink}
         </a>
       </div>
     </form>
