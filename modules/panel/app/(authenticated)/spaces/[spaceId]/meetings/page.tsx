@@ -1,1 +1,1 @@
-export { default } from "@/views/(authenticated)/spaces/meetings";
+export { default } from "@/views/(authenticated)/spaces/[spaceId]/meetings";
