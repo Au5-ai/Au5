@@ -12,10 +12,6 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Configure DNS first
-RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf && \
-    echo "nameserver 1.1.1.1" >> /etc/resolv.conf
-
 # Set NuGet environment variables for better performance and retry
 ENV NUGET_XMLDOC_MODE=skip
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
