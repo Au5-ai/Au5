@@ -50,8 +50,6 @@ jobs:
             type=raw,value=${{ github.event.inputs.backend_version }},enable=${{ github.event_name == 'workflow_dispatch' }}
             type=raw,value=latest,enable=${{ github.event.inputs.push_latest == 'true' }}
             type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
 
       - name: 🏗️ Build and push Backend Docker image
         uses: docker/build-push-action@v5
@@ -91,8 +89,6 @@ jobs:
             type=raw,value=${{ github.event.inputs.panel_version }},enable=${{ github.event_name == 'workflow_dispatch' }}
             type=raw,value=latest,enable=${{ github.event.inputs.push_latest == 'true' }}
             type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
 
       - name: 🏗️ Build and push Panel Docker image
         uses: docker/build-push-action@v5
