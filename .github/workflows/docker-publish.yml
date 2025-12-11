@@ -3,10 +3,6 @@ name: Build and Push Docker Images
 on:
   release:
     types: [published]
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
   workflow_dispatch:
     inputs:
       backend_version:
@@ -49,23 +45,20 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKER_USERNAME }}/au5-backend
+          images: mhakarimi/au5-backend
           tags: |
             type=raw,value=${{ github.event.inputs.backend_version }},enable=${{ github.event_name == 'workflow_dispatch' }}
             type=raw,value=latest,enable=${{ github.event.inputs.push_latest == 'true' }}
-            type=semver,pattern={{version}},enable=${{ github.event_name == 'release' }}
-            type=semver,pattern={{major}}.{{minor}},enable=${{ github.event_name == 'release' }}
-            type=semver,pattern={{major}},enable=${{ github.event_name == 'release' }}
-            type=sha,prefix={{branch}}-
-            type=ref,event=branch
-            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
 
       - name: 🏗️ Build and push Backend Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./modules/backend
           file: ./modules/backend/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
@@ -93,23 +86,20 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKER_USERNAME }}/au5-panel
+          images: mhakarimi/au5-panel
           tags: |
             type=raw,value=${{ github.event.inputs.panel_version }},enable=${{ github.event_name == 'workflow_dispatch' }}
             type=raw,value=latest,enable=${{ github.event.inputs.push_latest == 'true' }}
-            type=semver,pattern={{version}},enable=${{ github.event_name == 'release' }}
-            type=semver,pattern={{major}}.{{minor}},enable=${{ github.event_name == 'release' }}
-            type=semver,pattern={{major}},enable=${{ github.event_name == 'release' }}
-            type=sha,prefix={{branch}}-
-            type=ref,event=branch
-            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
 
       - name: 🏗️ Build and push Panel Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./modules/panel
           file: ./modules/panel/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
