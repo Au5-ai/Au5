@@ -3,7 +3,7 @@
 import { Card } from "@/shared/components/ui/card";
 import { MeetingData } from "@/shared/types";
 import { MeetingCard } from "./meeting-card";
-import NoRecordsState from "@/shared/components/empty-states/no-record";
+import { EmptyMeetings } from "../empty-states/meeting-empty";
 
 interface MeetingsListProps {
   meetings: MeetingData;
@@ -12,7 +12,7 @@ interface MeetingsListProps {
 
 export function MeetingsList({ meetings, title }: MeetingsListProps) {
   if (meetings.length === 0) {
-    return <NoRecordsState />;
+    return <EmptyMeetings />;
   }
 
   return (

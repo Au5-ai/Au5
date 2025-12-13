@@ -1,43 +1,40 @@
+"use client";
 import { Button } from "@/shared/components/ui";
 import { ChevronLeft, ChevronRight, Download } from "lucide-react";
 import Image from "next/image";
 import { CAPTIONS } from "../../i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import { useState } from "react";
 
-const MESSAGE_SOURCE = "AU5_PANEL";
-const EXTENSION_SOURCE = "AU5_EXTENSION";
+// const MESSAGE_SOURCE = "AU5_PANEL";
+// const EXTENSION_SOURCE = "AU5_EXTENSION";
 
 export function DownloadStep({ next }: { next: () => void }) {
-  const [error, setError] = useState<string>("");
-  const [checking, setChecking] = useState(false);
-
   const checkExtension = () => {
-    setError("");
-    setChecking(true);
+    next();
+    // setError("");
+    // setChecking(true);
 
-    const timeout = setTimeout(() => {
-      setError("Extension is not installed. Please install it first.");
-      setChecking(false);
-    }, 2000);
+    // const timeout = setTimeout(() => {
+    //   setError("Extension is not installed. Please install it first.");
+    //   setChecking(false);
+    // }, 2000);
 
-    const handleMessage = (event: MessageEvent) => {
-      if (
-        event.source === window &&
-        event.data?.source === EXTENSION_SOURCE &&
-        event.data?.type === "PING_REPLY" &&
-        event.data?.installed
-      ) {
-        clearTimeout(timeout);
-        setChecking(false);
-        window.removeEventListener("message", handleMessage);
-        next();
-      }
-    };
+    // const handleMessage = (event: MessageEvent) => {
+    //   if (
+    //     event.source === window &&
+    //     event.data?.source === EXTENSION_SOURCE &&
+    //     event.data?.type === "PING_REPLY" &&
+    //     event.data?.installed
+    //   ) {
+    //     clearTimeout(timeout);
+    //     setChecking(false);
+    //     window.removeEventListener("message", handleMessage);
+    //     next();
+    //   }
+    // };
 
-    window.addEventListener("message", handleMessage);
-
-    window.postMessage({ source: MESSAGE_SOURCE, type: "PING_EXTENSION" }, "*");
+    // window.addEventListener("message", handleMessage);
+    // window.postMessage({ source: MESSAGE_SOURCE, type: "PING_EXTENSION" }, "*");
   };
 
   return (
@@ -83,12 +80,10 @@ export function DownloadStep({ next }: { next: () => void }) {
           {GLOBAL_CAPTIONS.back}
         </Button>
 
-        <Button onClick={checkExtension} disabled={checking}>
-          {checking ? "Checking..." : "I installed the extension"}{" "}
-          <ChevronRight />
+        <Button onClick={checkExtension}>
+          {"I installed the extension"} <ChevronRight />
         </Button>
       </div>
-      {error && <p className="text-sm text-red-500 mt-2 text-right">{error}</p>}
     </>
   );
 }

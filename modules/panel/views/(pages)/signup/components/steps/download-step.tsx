@@ -12,30 +12,31 @@ export function DownloadStep({ next }: { next: () => void }) {
   const [checking, setChecking] = useState(false);
 
   const checkExtension = () => {
-    setChecking(true);
+    next();
+    // setChecking(true);
 
-    const timeout = setTimeout(() => {
-      toast.error("Extension is not installed. Please install it first.");
-      setChecking(false);
-    }, 2000);
+    // const timeout = setTimeout(() => {
+    //   toast.error("Extension is not installed. Please install it first.");
+    //   setChecking(false);
+    // }, 2000);
 
-    const handleMessage = (event: MessageEvent) => {
-      if (
-        event.source === window &&
-        event.data?.source === EXTENSION_SOURCE &&
-        event.data?.type === "PING_REPLY" &&
-        event.data?.installed
-      ) {
-        clearTimeout(timeout);
-        setChecking(false);
-        window.removeEventListener("message", handleMessage);
-        next();
-      }
-    };
+    // const handleMessage = (event: MessageEvent) => {
+    //   if (
+    //     event.source === window &&
+    //     event.data?.source === EXTENSION_SOURCE &&
+    //     event.data?.type === "PING_REPLY" &&
+    //     event.data?.installed
+    //   ) {
+    //     clearTimeout(timeout);
+    //     setChecking(false);
+    //     window.removeEventListener("message", handleMessage);
+    //     next();
+    //   }
+    // };
 
-    window.addEventListener("message", handleMessage);
+    // window.addEventListener("message", handleMessage);
 
-    window.postMessage({ source: MESSAGE_SOURCE, type: "PING_EXTENSION" }, "*");
+    // window.postMessage({ source: MESSAGE_SOURCE, type: "PING_EXTENSION" }, "*");
   };
 
   return (
