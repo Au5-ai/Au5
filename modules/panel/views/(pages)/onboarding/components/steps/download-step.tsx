@@ -5,36 +5,9 @@ import Image from "next/image";
 import { CAPTIONS } from "../../i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 
-// const MESSAGE_SOURCE = "AU5_PANEL";
-// const EXTENSION_SOURCE = "AU5_EXTENSION";
-
 export function DownloadStep({ next }: { next: () => void }) {
   const checkExtension = () => {
     next();
-    // setError("");
-    // setChecking(true);
-
-    // const timeout = setTimeout(() => {
-    //   setError("Extension is not installed. Please install it first.");
-    //   setChecking(false);
-    // }, 2000);
-
-    // const handleMessage = (event: MessageEvent) => {
-    //   if (
-    //     event.source === window &&
-    //     event.data?.source === EXTENSION_SOURCE &&
-    //     event.data?.type === "PING_REPLY" &&
-    //     event.data?.installed
-    //   ) {
-    //     clearTimeout(timeout);
-    //     setChecking(false);
-    //     window.removeEventListener("message", handleMessage);
-    //     next();
-    //   }
-    // };
-
-    // window.addEventListener("message", handleMessage);
-    // window.postMessage({ source: MESSAGE_SOURCE, type: "PING_EXTENSION" }, "*");
   };
 
   return (
