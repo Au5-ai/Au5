@@ -19,7 +19,7 @@ public static class DateTimeExtensions
 		}
 
 		return timeSpan.TotalDays < 1
-			? $"{timeSpan.TotalHours}h {timeSpan.Minutes}m"
-			: $"{timeSpan.TotalDays}d {timeSpan.Hours}h {timeSpan.Minutes}m";
+			? $"{timeSpan.Hours}h {timeSpan.Minutes}m"
+			: $"{timeSpan.Days}d {timeSpan.Hours}h {timeSpan.Minutes}m";
 	}
 }
