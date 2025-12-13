@@ -5,6 +5,7 @@ using Au5.Application.Features.Meetings.AddBot;
 using Au5.Application.Features.Meetings.CloseMeetingByUser;
 using Au5.Application.Features.Meetings.Export;
 using Au5.Application.Features.Meetings.GetFullTranscription;
+using Au5.Application.Features.Meetings.GetLatestSharedOrParticipatedMeetings;
 using Au5.Application.Features.Meetings.PublicUrl;
 using Au5.Application.Features.Meetings.Rename;
 using Au5.Application.Features.Meetings.ToggleArchive;
@@ -107,11 +108,18 @@ public class MeetingsController(ISender mediator) : BaseController
 			? Content(result.Data!, "text/plain", System.Text.Encoding.UTF8)
 			: BadRequest(result.Error);
 	}
-
+  
 	[HttpPost("{meetingId}/public-link")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> GetSystemMeetingUrl([FromRoute] Guid meetingId, [FromBody] PublicMeetingUrlCommand command, CancellationToken cancellationToken)
 	{
 		return Ok(await mediator.Send(command with { MeetingId = meetingId }, cancellationToken));
+	}
+  
+	[HttpGet("latest")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> GetLatestSharedOrParticipatedMeetings(CancellationToken cancellationToken)
+	{
+		return Ok(await mediator.Send(new GetLatestSharedOrParticipatedMeetingsQuery(), cancellationToken));
 	}
 }
