@@ -2,6 +2,6 @@ namespace Au5.Domain.Common;
 
 public enum UserStatus
 {
-	SendVerificationLink,
-	CompleteSignUp
+	SendVerificationLink = 0,
+	CompleteSignUp = 1
 }

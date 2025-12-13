@@ -17,6 +17,8 @@ import { NavSpaces } from "./nav-spaces";
 import { MySpacesResponse } from "../types/space";
 import { NavSecondary } from "./nav-secondary";
 import { navSecondary } from "../models/secondary-sidebar";
+import { useExtensionDetection } from "../hooks/use-extension-detection";
+import { Chrome } from "lucide-react";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user?: User;
@@ -25,6 +27,22 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 }
 
 export function AppSidebar({ user, menu, spaces, ...props }: AppSidebarProps) {
+  const { isInstalled } = useExtensionDetection();
+
+  const secondaryItems = React.useMemo(() => {
+    if (isInstalled === false) {
+      return [
+        {
+          title: "Install Chrome Extension",
+          url: "/dl/extension.rar",
+          icon: Chrome,
+        },
+        ...navSecondary,
+      ];
+    }
+    return navSecondary;
+  }, [isInstalled]);
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -45,7 +63,7 @@ export function AppSidebar({ user, menu, spaces, ...props }: AppSidebarProps) {
         {spaces !== undefined && spaces.length > 0 && (
           <NavSpaces spaces={spaces} />
         )}
-        <NavSecondary items={navSecondary} className="mt-auto" />
+        <NavSecondary items={secondaryItems} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>{user && <NavUser {...user} />}</SidebarFooter>
       <SidebarRail />
