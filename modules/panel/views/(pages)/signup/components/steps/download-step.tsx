@@ -2,41 +2,10 @@ import { Button } from "@/shared/components/ui";
 import { ChevronRight, Download } from "lucide-react";
 import Image from "next/image";
 import { CAPTIONS } from "../../i18n";
-import { useState } from "react";
-import { toast } from "sonner";
-
-const MESSAGE_SOURCE = "AU5_PANEL";
-const EXTENSION_SOURCE = "AU5_EXTENSION";
 
 export function DownloadStep({ next }: { next: () => void }) {
-  const [checking, setChecking] = useState(false);
-
   const checkExtension = () => {
     next();
-    // setChecking(true);
-
-    // const timeout = setTimeout(() => {
-    //   toast.error("Extension is not installed. Please install it first.");
-    //   setChecking(false);
-    // }, 2000);
-
-    // const handleMessage = (event: MessageEvent) => {
-    //   if (
-    //     event.source === window &&
-    //     event.data?.source === EXTENSION_SOURCE &&
-    //     event.data?.type === "PING_REPLY" &&
-    //     event.data?.installed
-    //   ) {
-    //     clearTimeout(timeout);
-    //     setChecking(false);
-    //     window.removeEventListener("message", handleMessage);
-    //     next();
-    //   }
-    // };
-
-    // window.addEventListener("message", handleMessage);
-
-    // window.postMessage({ source: MESSAGE_SOURCE, type: "PING_EXTENSION" }, "*");
   };
 
   return (
@@ -77,9 +46,8 @@ export function DownloadStep({ next }: { next: () => void }) {
       </div>
 
       <div className="flex justify-end">
-        <Button onClick={checkExtension} disabled={checking}>
-          {checking ? "Checking..." : "I installed the extension"}{" "}
-          <ChevronRight />
+        <Button onClick={checkExtension}>
+          {"I installed the extension"} <ChevronRight />
         </Button>
       </div>
     </>
