@@ -32,7 +32,7 @@ export function useExtensionDetection() {
 
     window.addEventListener("message", handleMessage);
 
-    window.postMessage({ source: MESSAGE_SOURCE, type: "PING_EXTENSION" }, "*");
+    window.postMessage({ source: MESSAGE_SOURCE, type: "PING_EXTENSION" }, window.location.origin);
 
     return () => {
       clearTimeout(timeout);
