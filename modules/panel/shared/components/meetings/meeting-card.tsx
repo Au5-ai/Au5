@@ -11,8 +11,8 @@ import { Button } from "@/shared/components/ui/button";
 import { Star, Archive, ArchiveRestore } from "lucide-react";
 import { MeetingItem } from "@/shared/types";
 import { useRouter } from "next/navigation";
-import { API_URLS } from "@/shared/network/api/urls";
 import {
+  Badge,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -116,6 +116,13 @@ export function MeetingCard({ item }: MeetingCardProps) {
           </div>
         </div>
         <div className="flex items-center gap-3">
+          <div>
+            {item.status != "Ended" && (
+              <Badge variant="secondary" className="px-2 py-1 text-xs">
+                {item.status}
+              </Badge>
+            )}
+          </div>
           <div className="flex gap-2">
             <Tooltip>
               <TooltipTrigger asChild>

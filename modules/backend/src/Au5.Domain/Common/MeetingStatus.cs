@@ -8,7 +8,7 @@ public enum MeetingStatus : byte
 	/// <summary>
 	/// The meeting has not started yet.
 	/// </summary>
-	AddingBot = 0,
+	WaitingToAddBot = 0,
 
 	/// <summary>
 	/// The meeting is currently in progress and being recorded.
@@ -29,4 +29,9 @@ public enum MeetingStatus : byte
 	/// The meeting has been archived.
 	/// </summary>
 	Archived = 100,
+
+	/// <summary>
+	/// The Meeting has been deleted.
+	/// </summary>
+	Deleted = 255
 }

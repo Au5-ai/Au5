@@ -42,7 +42,7 @@ public class MeetingServiceTests
 		Assert.NotNull(result);
 		Assert.Equal(userJoined.MeetId, result.MeetId);
 		Assert.Equal(userJoined.Platform, result.Platform);
-		Assert.Equal(MeetingStatus.AddingBot, result.Status);
+		Assert.Equal(MeetingStatus.WaitingToAddBot, result.Status);
 		Assert.Single(result.Participants);
 		Assert.Equal(userJoined.User.Id, result.Participants.First().UserId);
 
@@ -79,7 +79,7 @@ public class MeetingServiceTests
 
 		Assert.NotNull(result);
 		Assert.Equal(userJoined.MeetId, result.MeetId);
-		Assert.Equal(MeetingStatus.AddingBot, result.Status);
+		Assert.Equal(MeetingStatus.WaitingToAddBot, result.Status);
 		Assert.NotEqual(existingMeeting.Id, result.Id); // Should be a new meeting
 	}
 
@@ -317,7 +317,7 @@ public class MeetingServiceTests
 		{
 			Id = Guid.NewGuid(),
 			MeetId = "meet123",
-			Status = MeetingStatus.AddingBot,
+			Status = MeetingStatus.WaitingToAddBot,
 			IsBotAdded = false,
 			BotName = null
 		};
