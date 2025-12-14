@@ -25,7 +25,7 @@ public class MeetingTests
 	}
 
 	[Theory]
-	[InlineData(MeetingStatus.AddingBot)]
+	[InlineData(MeetingStatus.WaitingToAddBot)]
 	[InlineData(MeetingStatus.Ended)]
 	public void IsActive_Should_ReturnsFalse_When_StatusIsNotActive(MeetingStatus status)
 	{

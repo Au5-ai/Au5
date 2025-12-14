@@ -184,7 +184,7 @@ public class AddBotCommandHandlerTests
 		Assert.Equal("Au5 Bot", capturedMeeting.BotName);
 		Assert.Equal(userId, capturedMeeting.BotInviterUserId);
 		Assert.Equal("Meet", capturedMeeting.Platform);
-		Assert.Equal(MeetingStatus.AddingBot, capturedMeeting.Status);
+		Assert.Equal(MeetingStatus.WaitingToAddBot, capturedMeeting.Status);
 		Assert.False(capturedMeeting.IsBotAdded);
 		Assert.NotEmpty(capturedMeeting.HashToken);
 		Assert.True(capturedMeeting.CreatedAt <= now);
@@ -457,7 +457,7 @@ public class AddBotCommandHandlerTests
 		_cacheProviderMock.Verify(
 			x => x.SetAsync(
 				It.IsAny<string>(),
-				It.Is<Meeting>(m => m.Status == MeetingStatus.AddingBot),
+				It.Is<Meeting>(m => m.Status == MeetingStatus.WaitingToAddBot),
 				It.Is<TimeSpan>(t => t == TimeSpan.FromHours(2))),
 			Times.Once);
 	}
