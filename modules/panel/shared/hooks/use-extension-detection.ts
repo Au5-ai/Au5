@@ -17,7 +17,6 @@ export function useExtensionDetection() {
     }, CHECK_TIMEOUT);
 
     const handleMessage = (event: MessageEvent) => {
-      console.log("Received message:", event.data);
       if (
         event.source === window &&
         event.data?.source === EXTENSION_SOURCE &&
@@ -33,7 +32,10 @@ export function useExtensionDetection() {
 
     window.addEventListener("message", handleMessage);
 
-    window.postMessage({ source: MESSAGE_SOURCE, type: "PING_EXTENSION" }, "*");
+    window.postMessage(
+      { source: MESSAGE_SOURCE, type: "PING_EXTENSION" },
+      window.location.origin,
+    );
 
     return () => {
       clearTimeout(timeout);
