@@ -263,7 +263,7 @@ public class MeetingService : IMeetingService
 			Participants = [],
 			Guests = [],
 			HashToken = hashToken,
-			Status = MeetingStatus.AddingBot,
+			Status = MeetingStatus.WaitingToAddBot,
 		};
 	}
 }

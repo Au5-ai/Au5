@@ -57,7 +57,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 			BotInviterUserId = _currentUserService.UserId,
 			CreatedAt = _dataProvider.Now,
 			Platform = request.Platform,
-			Status = MeetingStatus.AddingBot,
+			Status = MeetingStatus.WaitingToAddBot,
 			HashToken = hashToken,
 		};
 
