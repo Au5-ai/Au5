@@ -139,7 +139,7 @@ public class GetFullTranscriptionQueryHandlerTests
 		Assert.Equal("Chat", entryDto.EntryType);
 		Assert.Equal("fb0e0485-3bd4-4e6f-9c2e-90706fc90ea9", entryDto.BlockId.ToString());
 		Assert.Equal("Mohammad Karimi", entryDto.FullName);
-		Assert.Equal(entries[0].Timestamp.ToString("o"), entryDto.Timestamp);
+		Assert.Equal("14:33", entryDto.Time);
 		Assert.Equal(3, entryDto.Reactions.Count);
 		Assert.Equal("Goal", entryDto.Reactions[0].Type);
 		Assert.Equal("??", entryDto.Reactions[0].Emoji);

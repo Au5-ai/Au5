@@ -49,7 +49,7 @@ export default function TranscriptionEntry({
                 <div className="flex gap-2 text-xs text-gray-500">
                   <span>{entry.timeline}</span>
                   <span className="text-gray-300">•</span>
-                  <span>{format(new Date(entry.timestamp), "HH:mm")}</span>
+                  <span>{entry.time}</span>
                 </div>
               </div>
             </div>

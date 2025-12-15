@@ -50,7 +50,7 @@ export interface Entry {
   fullName: string;
   pictureUrl: string;
   content: string;
-  timestamp: string;
+  time: string;
   timeline: string;
   entryType: string;
   reactions: Array<Reaction>;

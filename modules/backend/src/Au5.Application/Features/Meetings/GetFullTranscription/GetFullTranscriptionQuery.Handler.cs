@@ -67,7 +67,7 @@ public class GetFullTranscriptionQueryHandler : IRequestHandler<GetFullTranscrip
 				ParticipantId = entry.ParticipantId,
 				FullName = entry.FullName ?? string.Empty,
 				Content = entry.Content,
-				Timestamp = entry.Timestamp.ToString("o"),
+				Time = entry.Timestamp.ToString("HH:mm"),
 				Timeline = entry.Timeline,
 				EntryType = entry.EntryType,
 				Reactions = entry.Reactions.Select(ar =>

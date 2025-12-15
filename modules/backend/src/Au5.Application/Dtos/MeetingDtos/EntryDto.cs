@@ -10,7 +10,7 @@ public record EntryDto
 
 	public string Content { get; init; }
 
-	public string Timestamp { get; init; }
+	public string Time { get; init; }
 
 	public string Timeline { get; init; }
 
