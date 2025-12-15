@@ -28,7 +28,7 @@ function MetadataItem({ icon: Icon, label }: MetadataItemProps) {
 }
 
 export function MeetingMetadata({ meeting }: { meeting: Meeting }) {
-  const totalParticipants = meeting.participants.length + meeting.guests.length;
+  const totalParticipants = meeting.guests.length;
 
   const metadata = [
     { icon: LaptopMinimal, label: meeting.meetingId },
