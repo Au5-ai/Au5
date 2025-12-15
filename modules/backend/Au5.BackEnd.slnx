@@ -1,0 +1,25 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="Dockerfile" />
+    <File Path="README.md" />
+    <File Path="stylecop.json" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Au5.AppHost/Au5.AppHost.csproj" />
+    <Project Path="src/Au5.BackEnd/Au5.BackEnd.csproj" />
+    <Project Path="src/Au5.Infrastructure/Au5.Infrastructure.csproj" />
+    <Project Path="src/Au5.ServiceDefaults/Au5.ServiceDefaults.csproj" />
+    <Project Path="src/Au5.Shared/Au5.Shared.csproj" />
+  </Folder>
+  <Folder Name="/src/core/">
+    <Project Path="src/Au5.Application/Au5.Application.csproj" />
+    <Project Path="src/Au5.Domain/Au5.Domain.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Au5.IntegrationTests/Au5.IntegrationTests.csproj" />
+    <Project Path="tests/Au5.UnitTests/Au5.UnitTests.csproj" />
+  </Folder>
+</Solution>
