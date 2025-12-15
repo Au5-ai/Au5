@@ -5,15 +5,16 @@ import Logo from "@/shared/components/logo";
 import { Button } from "@/shared/components/ui";
 import { useRouter } from "next/navigation";
 import { landingCaptions } from "./i18n";
+import { ROUTES } from "@/shared/routes";
 
 export default function Home() {
   const router = useRouter();
   function signup() {
-    router.push("/signup");
+    router.push(ROUTES.SIGNUP);
   }
 
   function login() {
-    router.push("/login");
+    router.push(ROUTES.LOGIN);
   }
 
   return (

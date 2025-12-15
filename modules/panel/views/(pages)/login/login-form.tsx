@@ -8,6 +8,7 @@ import { loginCaptions } from "./i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { useLoginForm } from "./hooks/use-login-form";
 import { Loader2 } from "lucide-react";
+import { ROUTES } from "@/shared/routes";
 
 export function LoginForm({
   className,
@@ -82,7 +83,7 @@ export function LoginForm({
       </div>
       <div className="text-center text-sm">
         {loginCaptions.noAccountText}{" "}
-        <a href="/signup" className="underline underline-offset-4">
+        <a href={ROUTES.SIGNUP} className="underline underline-offset-4">
           {loginCaptions.createAccountLink}
         </a>
       </div>

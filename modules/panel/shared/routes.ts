@@ -1,4 +1,5 @@
 export const ROUTES = {
+  SIGNUP: "/signup",
   LOGIN: "/login",
   PLAYGROUND: "/playground",
   FORBIDDEN: "/403",
