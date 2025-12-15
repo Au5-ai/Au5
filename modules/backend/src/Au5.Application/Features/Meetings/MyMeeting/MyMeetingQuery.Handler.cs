@@ -38,6 +38,7 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 				Duration = string.IsNullOrEmpty(x.Duration) ? "0m" : x.Duration,
 				x.IsFavorite,
 				Guests = x.Guests.Select(g => g.FullName).ToList(),
+				x.BotInviterUserId,
 				Participants = x.Participants.Select(p => new Participant()
 				{
 					FullName = p.User.FullName,
@@ -63,7 +64,7 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 				x.IsFavorite,
 				x.Guests,
 				x.Participants,
-				x.Participants.FirstOrDefault()?.PictureUrl
+				PictureUrl = x.Participants.FirstOrDefault(p => p.Id == x.BotInviterUserId)?.PictureUrl ?? string.Empty
 			})
 			.ToList();
 

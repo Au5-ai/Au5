@@ -1,16 +1,15 @@
 using Au5.Application.Common.Options;
+using Au5.Application.Common.Utils;
 using Microsoft.Extensions.Options;
 
 namespace Au5.Application.Features.Meetings.PublicUrl;
 
 public class GetMeetingUrlCommandHandler(
-		IUrlGenerator urlGenerator,
 		IApplicationDbContext dbContext,
 		IDataProvider dataProvider,
 		IOptions<OrganizationOptions> options) : IRequestHandler<PublicMeetingUrlCommand, Result<PublicMeetingUrlResponse>>
 {
 	private readonly IApplicationDbContext _dbContext = dbContext;
-	private readonly IUrlGenerator _urlGenerator = urlGenerator;
 	private readonly IDataProvider _dataProvider = dataProvider;
 	private readonly OrganizationOptions _organizationOptions = options.Value;
 
@@ -38,7 +37,7 @@ public class GetMeetingUrlCommandHandler(
 			return Error.Failure("Meeting.FailedToUpdate", "Failed to save changes. Please try again later.");
 		}
 
-		var generatedLink = _urlGenerator.GeneratePublicMeetingUrl(_organizationOptions.ServiceBaseUrl, meeting.Id, meeting.MeetId);
+		var generatedLink = UrlGenerator.GeneratePublicMeetingUrl(_organizationOptions.ServiceBaseUrl, meeting.Id, meeting.MeetId);
 
 		return new PublicMeetingUrlResponse(generatedLink, expiryDate);
 	}

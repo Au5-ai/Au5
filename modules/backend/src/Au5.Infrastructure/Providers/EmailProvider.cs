@@ -1,4 +1,5 @@
 using Au5.Application.Common.Abstractions;
+using Au5.Application.Common.Utils;
 using Au5.Application.Dtos;
 using Au5.Domain.Entities;
 using Au5.Infrastructure.Adapters;
@@ -7,10 +8,9 @@ using MimeKit;
 
 namespace Au5.Infrastructure.Providers;
 
-public class EmailProvider(ISmtpClientWrapper smtpClient, IUrlGenerator urlGenerator, ILogger<EmailProvider> logger)
+public class EmailProvider(ISmtpClientWrapper smtpClient, ILogger<EmailProvider> logger)
 	: IEmailProvider
 {
-	private readonly IUrlGenerator _urlGenerator = urlGenerator;
 	private readonly ISmtpClientWrapper _smtpClient = smtpClient;
 
 	public async Task<IReadOnlyCollection<InviteResponse>> SendInviteAsync(IReadOnlyCollection<User> invited, string organizationName, SmtpOptions smtpOption)
@@ -32,7 +32,7 @@ public class EmailProvider(ISmtpClientWrapper smtpClient, IUrlGenerator urlGener
 			{
 				try
 				{
-					var link = _urlGenerator.GenerateExtensionConfigUrl(smtpOption.BaseUrl, user.Id, user.Email);
+					var link = UrlGenerator.GenerateExtensionConfigUrl(smtpOption.BaseUrl, user.Id, user.Email);
 					var emailBody = BuildInviteEmailBody(link, organizationName);
 					var message = new MimeMessage();
 					message.From.Add(new MailboxAddress(organizationName, smtpOption.From));

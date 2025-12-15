@@ -17,7 +17,6 @@ public static class ConfigureServices
 
 		services.AddSingleton<IDataProvider, SystemDataProvider>();
 		services.AddScoped<IMeetingService, MeetingService>();
-		services.AddScoped<IUrlGenerator, UrlGenerator>();
 		services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 		services.AddMediator(options =>
 		{

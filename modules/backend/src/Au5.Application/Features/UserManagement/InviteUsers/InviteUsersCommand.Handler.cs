@@ -124,7 +124,7 @@ public class InviteUsersCommandHandler : IRequestHandler<InviteUsersCommand, Res
 				CreatedAt = _dataProvider.Now,
 				FullName = "Not Entered",
 				Password = "Not Entered",
-				PictureUrl = GravatarHelper.GetGravatarUrl(userInvited.Email),
+				PictureUrl = UrlGenerator.GetGravatarUrl(userInvited.Email),
 				Role = userInvited.Role,
 				Status = UserStatus.SendVerificationLink,
 				OrganizationId = _currentUser.OrganizationId
