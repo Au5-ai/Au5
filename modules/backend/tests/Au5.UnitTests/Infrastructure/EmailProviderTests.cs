@@ -10,7 +10,6 @@ namespace Au5.UnitTests.Infrastructure;
 public class EmailProviderTests
 {
 	private readonly Mock<ISmtpClientWrapper> _mockSmtp;
-	private readonly Mock<IUrlGenerator> _urlGenerator;
 	private readonly Mock<ILogger<EmailProvider>> _mockLogger;
 	private readonly EmailProvider _service;
 	private readonly string _organizationName = "Test Organization";
@@ -18,9 +17,8 @@ public class EmailProviderTests
 	public EmailProviderTests()
 	{
 		_mockSmtp = new Mock<ISmtpClientWrapper>();
-		_urlGenerator = new();
 		_mockLogger = new Mock<ILogger<EmailProvider>>();
-		_service = new EmailProvider(_mockSmtp.Object, _urlGenerator.Object, _mockLogger.Object);
+		_service = new EmailProvider(_mockSmtp.Object, _mockLogger.Object);
 	}
 
 	[Fact]

@@ -10,12 +10,19 @@ import ReactionBadges from "./transcription-reaction-badges";
 
 export default function TranscriptionEntry({
   entry,
+  participants,
   index,
 }: {
   entry: Entry;
+  participants: { fullName: string; pictureUrl?: string }[];
   index: number;
 }) {
   const isChat = entry.entryType === "Chat";
+
+  const getPicturesUrl = (fullName: string): string => {
+    const participant = participants.find((p) => p.fullName === fullName);
+    return participant?.pictureUrl || "";
+  };
 
   return (
     <motion.div
@@ -32,7 +39,7 @@ export default function TranscriptionEntry({
               <div className="flex items-center">
                 <ParticipantAvatar
                   fullName={entry.fullName}
-                  pictureUrl={entry.pictureUrl}
+                  pictureUrl={getPicturesUrl(entry.fullName)}
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -42,7 +49,7 @@ export default function TranscriptionEntry({
                 <div className="flex gap-2 text-xs text-gray-500">
                   <span>{entry.timeline}</span>
                   <span className="text-gray-300">•</span>
-                  <span>{format(new Date(entry.timestamp), "HH:mm")}</span>
+                  <span>{entry.time}</span>
                 </div>
               </div>
             </div>

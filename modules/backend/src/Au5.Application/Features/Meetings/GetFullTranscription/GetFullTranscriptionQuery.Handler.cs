@@ -66,10 +66,9 @@ public class GetFullTranscriptionQueryHandler : IRequestHandler<GetFullTranscrip
 				BlockId = entry.BlockId,
 				ParticipantId = entry.ParticipantId,
 				FullName = entry.FullName ?? string.Empty,
-				PictureUrl = string.Empty, // TODO: Add PictureUrl From Participant with Id entry.ParticipantId
 				Content = entry.Content,
-				Timestamp = entry.Timestamp.ToString("o"),
-				Timeline = (entry.Timestamp - baseTime).ToString(@"hh\:mm\:ss"),
+				Time = entry.Timestamp.ToString("HH:mm"),
+				Timeline = entry.Timeline,
 				EntryType = entry.EntryType,
 				Reactions = entry.Reactions.Select(ar =>
 					new ReactionDto

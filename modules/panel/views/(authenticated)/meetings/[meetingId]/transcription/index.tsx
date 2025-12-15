@@ -211,6 +211,7 @@ export default function TranscriptionView() {
                 {filteredEntries.length > 0 ? (
                   filteredEntries.map((entry, index) => (
                     <TranscriptionEntry
+                      participants={transcription.participants}
                       key={entry.blockId}
                       entry={entry}
                       index={index}

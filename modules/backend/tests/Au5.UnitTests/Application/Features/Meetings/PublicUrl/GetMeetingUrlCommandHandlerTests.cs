@@ -9,7 +9,6 @@ namespace Au5.UnitTests.Application.Features.Meetings.PublicUrl;
 public class GetMeetingUrlCommandHandlerTests
 {
 	private readonly Mock<IApplicationDbContext> _dbContextMock;
-	private readonly Mock<IUrlGenerator> _urlGeneratorMock;
 	private readonly Mock<IDataProvider> _dataProviderMock;
 	private readonly Mock<IOptions<OrganizationOptions>> _optionsMock;
 	private readonly GetMeetingUrlCommandHandler _handler;
@@ -18,7 +17,6 @@ public class GetMeetingUrlCommandHandlerTests
 	public GetMeetingUrlCommandHandlerTests()
 	{
 		_dbContextMock = new Mock<IApplicationDbContext>();
-		_urlGeneratorMock = new Mock<IUrlGenerator>();
 		_dataProviderMock = new Mock<IDataProvider>();
 		_optionsMock = new Mock<IOptions<OrganizationOptions>>();
 
@@ -30,7 +28,6 @@ public class GetMeetingUrlCommandHandlerTests
 		_optionsMock.Setup(x => x.Value).Returns(_organizationOptions);
 
 		_handler = new GetMeetingUrlCommandHandler(
-			_urlGeneratorMock.Object,
 			_dbContextMock.Object,
 			_dataProviderMock.Object,
 			_optionsMock.Object);
@@ -60,11 +57,6 @@ public class GetMeetingUrlCommandHandlerTests
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success());
 		_dataProviderMock.Setup(x => x.Now).Returns(currentDate);
-		_urlGeneratorMock.Setup(x => x.GeneratePublicMeetingUrl(
-			_organizationOptions.ServiceBaseUrl,
-			meetingId,
-			meetId))
-			.Returns("https://service.test.com/public/meet-123");
 
 		var command = new PublicMeetingUrlCommand(meetingId, expirationDays);
 
@@ -72,19 +64,13 @@ public class GetMeetingUrlCommandHandlerTests
 
 		Assert.True(result.IsSuccess);
 		Assert.NotNull(result.Data);
-		Assert.Equal("https://service.test.com/public/meet-123", result.Data.Link);
+		Assert.Equal($"https://service.test.com/public/meeting/{meetingId}/meet-123", result.Data.Link);
 		Assert.Equal(expectedExpiryDate, result.Data.ExpiryDate);
 		Assert.True(meeting.PublicLinkEnabled);
 		Assert.Equal(expectedExpiryDate, meeting.PublicLinkExpiration);
 
 		_dbContextMock.Verify(
 			x => x.SaveChangesAsync(It.IsAny<CancellationToken>()),
-			Times.Once);
-		_urlGeneratorMock.Verify(
-			x => x.GeneratePublicMeetingUrl(
-				_organizationOptions.ServiceBaseUrl,
-				meetingId,
-				meetId),
 			Times.Once);
 	}
 
@@ -95,7 +81,6 @@ public class GetMeetingUrlCommandHandlerTests
 		_optionsMock.Setup(x => x.Value).Returns((OrganizationOptions)null);
 
 		var handlerWithNullOptions = new GetMeetingUrlCommandHandler(
-			_urlGeneratorMock.Object,
 			_dbContextMock.Object,
 			_dataProviderMock.Object,
 			_optionsMock.Object);
@@ -124,7 +109,6 @@ public class GetMeetingUrlCommandHandlerTests
 		invalidOptionsMock.Setup(x => x.Value).Returns(invalidOptions);
 
 		var handlerWithInvalidOptions = new GetMeetingUrlCommandHandler(
-			_urlGeneratorMock.Object,
 			_dbContextMock.Object,
 			_dataProviderMock.Object,
 			invalidOptionsMock.Object);
@@ -156,12 +140,6 @@ public class GetMeetingUrlCommandHandlerTests
 		Assert.False(result.IsSuccess);
 		Assert.Equal("No meeting with this ID was found.", result.Error.Description);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
-		_urlGeneratorMock.Verify(
-			x => x.GeneratePublicMeetingUrl(
-				It.IsAny<string>(),
-				It.IsAny<Guid>(),
-				It.IsAny<string>()),
-			Times.Never);
 	}
 
 	[Fact]
@@ -192,12 +170,6 @@ public class GetMeetingUrlCommandHandlerTests
 		Assert.False(result.IsSuccess);
 		Assert.Equal("Failed to save changes. Please try again later.", result.Error.Description);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-		_urlGeneratorMock.Verify(
-			x => x.GeneratePublicMeetingUrl(
-				It.IsAny<string>(),
-				It.IsAny<Guid>(),
-				It.IsAny<string>()),
-			Times.Never);
 	}
 
 	[Theory]
@@ -225,11 +197,6 @@ public class GetMeetingUrlCommandHandlerTests
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success());
 		_dataProviderMock.Setup(x => x.Now).Returns(currentDate);
-		_urlGeneratorMock.Setup(x => x.GeneratePublicMeetingUrl(
-			It.IsAny<string>(),
-			It.IsAny<Guid>(),
-			It.IsAny<string>()))
-			.Returns("https://service.test.com/public/meet-456");
 
 		var command = new PublicMeetingUrlCommand(meetingId, expirationDays);
 
@@ -262,11 +229,6 @@ public class GetMeetingUrlCommandHandlerTests
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success());
 		_dataProviderMock.Setup(x => x.Now).Returns(currentDate);
-		_urlGeneratorMock.Setup(x => x.GeneratePublicMeetingUrl(
-			It.IsAny<string>(),
-			It.IsAny<Guid>(),
-			It.IsAny<string>()))
-			.Returns("https://service.test.com/public/meet-789");
 
 		Assert.False(meeting.PublicLinkEnabled);
 
@@ -300,11 +262,6 @@ public class GetMeetingUrlCommandHandlerTests
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success());
 		_dataProviderMock.Setup(x => x.Now).Returns(currentDate);
-		_urlGeneratorMock.Setup(x => x.GeneratePublicMeetingUrl(
-			It.IsAny<string>(),
-			It.IsAny<Guid>(),
-			It.IsAny<string>()))
-			.Returns("https://service.test.com/public/meet-update");
 
 		var command = new PublicMeetingUrlCommand(meetingId, 60);
 		var result = await _handler.Handle(command, CancellationToken.None);
@@ -339,16 +296,10 @@ public class GetMeetingUrlCommandHandlerTests
 		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
 			.ReturnsAsync(Result.Success());
 		_dataProviderMock.Setup(x => x.Now).Returns(DateTime.UtcNow);
-		_urlGeneratorMock.Setup(x => x.GeneratePublicMeetingUrl(baseUrl, meetingId, meetId))
-			.Returns(expectedUrl);
 
 		var command = new PublicMeetingUrlCommand(meetingId, 30);
 		var result = await _handler.Handle(command, CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Equal(expectedUrl, result.Data.Link);
-		_urlGeneratorMock.Verify(
-			x => x.GeneratePublicMeetingUrl(baseUrl, meetingId, meetId),
-			Times.Once);
 	}
 }

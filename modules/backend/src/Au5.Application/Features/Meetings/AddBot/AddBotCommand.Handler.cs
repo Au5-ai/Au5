@@ -1,5 +1,6 @@
 using Au5.Application.Common;
 using Au5.Application.Common.Options;
+using Au5.Application.Common.Utils;
 using Au5.Application.Services.Models;
 using Microsoft.Extensions.Options;
 
@@ -9,7 +10,6 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 {
 	private readonly IApplicationDbContext _dbContext;
 	private readonly IBotFatherAdapter _botFather;
-	private readonly IUrlGenerator _meetingUrlService;
 	private readonly ICacheProvider _cacheProvider;
 	private readonly ICurrentUserService _currentUserService;
 	private readonly IDataProvider _dataProvider;
@@ -19,7 +19,6 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 	public AddBotCommandHandler(
 		IApplicationDbContext dbContext,
 		IBotFatherAdapter botFather,
-		IUrlGenerator meetingUrlService,
 		ICacheProvider cacheProvider,
 		ICurrentUserService currentUserService,
 		IDataProvider dataProvider,
@@ -28,7 +27,6 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 	{
 		_dbContext = dbContext;
 		_botFather = botFather;
-		_meetingUrlService = meetingUrlService;
 		_cacheProvider = cacheProvider;
 		_currentUserService = currentUserService;
 		_dataProvider = dataProvider;
@@ -92,7 +90,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 		{
 			HubUrl = _organizationOptions.BotHubUrl,
 			Platform = request.Platform,
-			MeetingUrl = _meetingUrlService.GenerateMeetingUrl(request.Platform, request.MeetId),
+			MeetingUrl = UrlGenerator.GenerateMeetingUrl(request.Platform, request.MeetId),
 			BotDisplayName = config.BotName,
 			MeetId = request.MeetId,
 			HashToken = hashToken,
