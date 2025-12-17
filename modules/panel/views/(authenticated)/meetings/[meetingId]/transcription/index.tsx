@@ -31,7 +31,7 @@ import { MeetingSpaceCollapsible } from "./components/meeting-space-collapsible"
 export default function TranscriptionView() {
   const [aiContents, setAIContents] = useState<AIContent[]>([]);
   const [selectedTab, setSelectedTab] = useState("Transcription");
-  const [transcription, setTranscription] = useState<Meeting>();
+  const [meeting, setMeeting] = useState<Meeting>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -61,7 +61,7 @@ export default function TranscriptionView() {
         setLoading(true);
         setError(null);
         const data = await meetingsController.getTranscription(meetingId);
-        setTranscription(data);
+        setMeeting(data);
       } catch (err) {
         console.error("Failed to load transcription:", err);
         setError("Failed to load transcription data. Please try again.");
@@ -77,22 +77,22 @@ export default function TranscriptionView() {
   }, [meetingId]);
 
   const speakers: string[] = useMemo(() => {
-    if (!transcription?.entries) return [];
+    if (!meeting?.entries) return [];
 
     const uniqueParticipants = new Set<string>();
-    transcription.entries.forEach((entry) => {
+    meeting.entries.forEach((entry) => {
       if (entry?.fullName) {
         uniqueParticipants.add(entry.fullName);
       }
     });
 
     return Array.from(uniqueParticipants).sort();
-  }, [transcription]);
+  }, [meeting]);
 
   const filteredEntries = useMemo(() => {
-    if (!transcription?.entries) return [];
+    if (!meeting?.entries) return [];
 
-    let filtered = transcription.entries;
+    let filtered = meeting.entries;
 
     if (filterType !== "all") {
       const targetType =
@@ -115,12 +115,7 @@ export default function TranscriptionView() {
     }
 
     return filtered;
-  }, [transcription, filterType, selectedSpeaker, searchQuery]);
-
-  const recordingDate = (meeting: Meeting) =>
-    meeting.entries?.[0]?.timestamp
-      ? new Date(meeting.entries[0].timestamp)
-      : new Date(meeting.createdAt || Date.now());
+  }, [meeting, filterType, selectedSpeaker, searchQuery]);
 
   const handleSpaceSelection = async (spaceId: string, isSelected: boolean) => {
     try {
@@ -159,7 +154,7 @@ export default function TranscriptionView() {
     );
   }
 
-  if (!transcription) {
+  if (!meeting) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center">
         <div className="text-center">
@@ -174,7 +169,7 @@ export default function TranscriptionView() {
 
   return (
     <div className="min-h-screen w-full">
-      <TranscriptionHeader meeting={transcription} />
+      <TranscriptionHeader meeting={meeting} />
       <Tabs
         value={selectedTab}
         onValueChange={setSelectedTab}
@@ -211,7 +206,7 @@ export default function TranscriptionView() {
                 {filteredEntries.length > 0 ? (
                   filteredEntries.map((entry, index) => (
                     <TranscriptionEntry
-                      participants={transcription.participants}
+                      participants={meeting.participants}
                       key={entry.blockId}
                       entry={entry}
                       index={index}
@@ -228,19 +223,25 @@ export default function TranscriptionView() {
                   <div className="">
                     <div className="flex items-center gap-3 text-sm text-gray-600 mb-4">
                       <ParticipantAvatar
-                        fullName={transcription.userRecorder.fullName}
-                        pictureUrl={transcription.userRecorder.pictureUrl}
+                        fullName={meeting.userRecorder.fullName}
+                        pictureUrl={meeting.userRecorder.pictureUrl}
                       />
                       <span className="flex flex-col">
                         <span>
                           Recorded by{" "}
                           <span className="font-medium text-gray-900">
-                            {transcription.userRecorder.fullName}
+                            {meeting.userRecorder.fullName}
                           </span>
                         </span>
                         <span>
-                          {format(recordingDate(transcription), "dd MMMM yy")}{" "}
-                          {format(recordingDate(transcription), "HH:mm")}
+                          {format(
+                            new Date(meeting.createdAt || Date.now()),
+                            "dd MMMM yy",
+                          )}{" "}
+                          {format(
+                            new Date(meeting.createdAt || Date.now()),
+                            "HH:mm",
+                          )}
                         </span>
                       </span>
                     </div>
@@ -250,9 +251,7 @@ export default function TranscriptionView() {
                       spaces={spaces}
                       icon={Blocks}
                       name="Add to your spaces"
-                      selectedSpaceIds={transcription.spaces.map(
-                        (space) => space.id,
-                      )}
+                      selectedSpaceIds={meeting.spaces.map((space) => space.id)}
                       onSelect={handleSpaceSelection}
                     />
                     <SidebarSeparator className="mx-0 mt-4 mb-4 bg-gray-100" />
