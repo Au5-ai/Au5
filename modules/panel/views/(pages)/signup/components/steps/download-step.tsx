@@ -2,6 +2,7 @@ import { Button } from "@/shared/components/ui";
 import { ChevronRight, Download } from "lucide-react";
 import Image from "next/image";
 import { CAPTIONS } from "../../i18n";
+import { ROUTES } from "@/shared/routes";
 
 export function DownloadStep({ next }: { next: () => void }) {
   const checkExtension = () => {
@@ -28,7 +29,7 @@ export function DownloadStep({ next }: { next: () => void }) {
           />
           <div className="flex justify-between py-6">
             <Button variant="outline" className="cursor-pointer" asChild>
-              <a href="/dl/extension.rar" download>
+              <a href={ROUTES.EXTENSION_LINK} download>
                 <Download />
                 {CAPTIONS.downloadButtonText}
               </a>

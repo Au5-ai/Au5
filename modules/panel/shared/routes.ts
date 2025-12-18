@@ -8,4 +8,5 @@ export const ROUTES = {
     TRANSCRIPTION: (meetingId: string) =>
       `/meetings/${meetingId}/transcription`,
   },
+  EXTENSION_LINK: "/dl/extension.rar",
 } as const;

@@ -1,9 +1,10 @@
 import { Chrome, Gem, Info } from "lucide-react";
+import { ROUTES } from "../routes";
 
 const navSecondary = [
   {
     title: "Install Chrome Extension",
-    url: "/dl/extension.rar",
+    url: ROUTES.EXTENSION_LINK,
     icon: Chrome,
   },
   {
