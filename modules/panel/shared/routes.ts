@@ -8,5 +8,6 @@ export const ROUTES = {
     TRANSCRIPTION: (meetingId: string) =>
       `/meetings/${meetingId}/transcription`,
   },
-  EXTENSION_LINK: "/dl/extension.rar",
+  EXTENSION_LINK:
+    "https://github.com/Au5-ai/Au5/tree/main/modules/extension/dist/extension.rar",
 } as const;
