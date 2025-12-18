@@ -47,8 +47,8 @@ export const meetingsController = {
   ): Promise<{ isArchived: boolean }> => {
     return apiRequestClient<{ isArchived: boolean }>(
       archive
-        ? API_URLS.MEETING.ARCHIVE(meetingId)
-        : API_URLS.MEETING.UNARCHIVE(meetingId),
+        ? API_URLS.MEETING.UNARCHIVE(meetingId)
+        : API_URLS.MEETING.ARCHIVE(meetingId),
       {
         method: "POST",
       },

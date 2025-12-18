@@ -25,7 +25,7 @@ public class ToggleArchiveCommandHandler : IRequestHandler<ToggleArchiveCommand,
 		}
 
 		var isParticipant = meeting.Participants.Any(p => p.UserId == _currentUserService.UserId);
-		if (!isParticipant)
+		if (!isParticipant && meeting.BotInviterUserId != _currentUserService.UserId)
 		{
 			return Error.Forbidden("Meeting.NotParticipant", AppResources.Meeting.UnauthorizedToModify);
 		}
