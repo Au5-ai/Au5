@@ -156,6 +156,34 @@ public class ToggleArchiveCommandHandlerTests
 	}
 
 	[Fact]
+	public async Task Should_ReturnMeeting_When_UserIsNotParticipantButIsInviter()
+	{
+		var userId = Guid.NewGuid();
+		var otherUserId = Guid.NewGuid();
+		var meetingId = Guid.NewGuid();
+		var meetId = "test-meet-id";
+		var command = new ToggleArchiveCommand(meetingId);
+
+		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
+
+		var meeting = CreateMeeting(meetingId, meetId, MeetingStatus.Ended);
+		meeting.BotInviterUserId = userId;
+		meeting.Participants =
+		[
+			new() { UserId = otherUserId }
+		];
+
+		var meetings = new List<Meeting> { meeting };
+		var meetingDbSet = meetings.BuildMockDbSet();
+
+		_dbContextMock.Setup(x => x.Set<Meeting>()).Returns(meetingDbSet.Object);
+
+		var result = await _handler.Handle(command, CancellationToken.None);
+
+		Assert.False(result.IsFailure);
+	}
+
+	[Fact]
 	public async Task Should_ReturnBadRequest_When_TryingToArchiveActiveMeeting()
 	{
 		var userId = Guid.NewGuid();

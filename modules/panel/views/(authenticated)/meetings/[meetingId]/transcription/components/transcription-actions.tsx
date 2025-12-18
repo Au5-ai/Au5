@@ -106,7 +106,6 @@ export function TranscriptionActions({
       setIsArchived(response.isArchived);
     } catch (error) {
       console.error("Failed to toggle archive:", error);
-      toast.error(GLOBAL_CAPTIONS.pages.meetings.archiveError);
     } finally {
       setIsArchiving(false);
       setShowArchiveModal(false);

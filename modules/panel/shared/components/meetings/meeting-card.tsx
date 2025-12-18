@@ -70,7 +70,6 @@ export function MeetingCard({ item }: MeetingCardProps) {
       setIsArchived(response.isArchived);
     } catch (error) {
       console.error("Failed to toggle archive:", error);
-      toast.error(GLOBAL_CAPTIONS.pages.meetings.archiveError);
     } finally {
       setIsArchiving(false);
       setShowArchiveModal(false);
@@ -118,7 +117,7 @@ export function MeetingCard({ item }: MeetingCardProps) {
         <div className="flex items-center gap-3">
           <div>
             {item.status != "Ended" && (
-              <Badge variant="secondary" className="px-2 py-1 text-xs">
+              <Badge variant="outline" className="px-2 py-1">
                 {item.status}
               </Badge>
             )}
@@ -129,6 +128,9 @@ export function MeetingCard({ item }: MeetingCardProps) {
                 <Button
                   variant="ghost"
                   size="icon"
+                  disabled={
+                    item.status !== "Ended" && item.status !== "Archived"
+                  }
                   className={`cursor-pointer ${
                     isArchived
                       ? "text-green-600 hover:text-green-700 hover:bg-green-50"
