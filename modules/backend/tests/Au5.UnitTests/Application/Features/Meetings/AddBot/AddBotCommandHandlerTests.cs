@@ -16,6 +16,7 @@ public class AddBotCommandHandlerTests
 	private readonly Mock<DbSet<Meeting>> _meetingDbSetMock;
 	private readonly Mock<IDataProvider> _dataProviderMock;
 	private readonly Mock<IMeetingService> _meetingServiceMock;
+	private readonly Mock<ITokenService> _tokenServiceMock;
 	private readonly AddBotCommandHandler _handler;
 	private readonly Mock<IOptions<OrganizationOptions>> _options;
 
@@ -28,6 +29,7 @@ public class AddBotCommandHandlerTests
 		_currentUserServiceMock = new Mock<ICurrentUserService>();
 		_dataProviderMock = new Mock<IDataProvider>();
 		_meetingServiceMock = new Mock<IMeetingService>();
+		_tokenServiceMock = new Mock<ITokenService>();
 		_options = new Mock<IOptions<OrganizationOptions>>();
 
 		var organizationOptions = new OrganizationOptions
@@ -44,6 +46,9 @@ public class AddBotCommandHandlerTests
 		};
 		_options.Setup(x => x.Value).Returns(organizationOptions);
 
+		_tokenServiceMock.Setup(x => x.GenerateBotToken(It.IsAny<Guid>(), It.IsAny<string>()))
+			.Returns("fake-bot-token");
+
 		_handler = new AddBotCommandHandler(
 			_dbContextMock.Object,
 			_botFatherMock.Object,
@@ -51,6 +56,7 @@ public class AddBotCommandHandlerTests
 			_currentUserServiceMock.Object,
 			_dataProviderMock.Object,
 			_meetingServiceMock.Object,
+			_tokenServiceMock.Object,
 			_options.Object);
 	}
 
