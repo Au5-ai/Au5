@@ -16,6 +16,8 @@ public record BotPayload
 
 	public string HashToken { get; init; }
 
+	public string JwtToken { get; init; }
+
 	public string Language { get; init; }
 
 	[JsonPropertyName("autoLeave")]

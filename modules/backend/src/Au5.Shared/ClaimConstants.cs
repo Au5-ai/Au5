@@ -10,4 +10,7 @@ public static class ClaimConstants
 	public const string OrganizationId = "organization_id";
 	public const string Jti = "jti";
 	public const string Exp = "exp";
+	public const string MeetingId = "meeting_id";
+	public const string MeetId = "meet_id";
+	public const string Type = "type";
 }

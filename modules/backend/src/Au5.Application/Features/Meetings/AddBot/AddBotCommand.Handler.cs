@@ -14,6 +14,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 	private readonly ICurrentUserService _currentUserService;
 	private readonly IDataProvider _dataProvider;
 	private readonly IMeetingService _meetingService;
+	private readonly ITokenService _tokenService;
 	private readonly OrganizationOptions _organizationOptions;
 
 	public AddBotCommandHandler(
@@ -23,6 +24,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 		ICurrentUserService currentUserService,
 		IDataProvider dataProvider,
 		IMeetingService meetingService,
+		ITokenService tokenService,
 		IOptions<OrganizationOptions> options)
 	{
 		_dbContext = dbContext;
@@ -31,6 +33,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 		_currentUserService = currentUserService;
 		_dataProvider = dataProvider;
 		_meetingService = meetingService;
+		_tokenService = tokenService;
 		_organizationOptions = options.Value;
 	}
 
@@ -80,12 +83,12 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 			await _cacheProvider.SetAsync(meetingKey, cachedMeeting, TimeSpan.FromHours(2));
 		}
 
-		var payload = BuildBotPayload(request, config, hashToken);
+		var payload = BuildBotPayload(request, config, hashToken, meetingId);
 		await _botFather.CreateBotContainerAsync(_organizationOptions.BotFatherUrl, payload, cancellationToken);
 		return new AddBotCommandResponse(meetingId);
 	}
 
-	private BotPayload BuildBotPayload(AddBotCommand request, Organization config, string hashToken) =>
+	private BotPayload BuildBotPayload(AddBotCommand request, Organization config, string hashToken, Guid meetingId) =>
 		new()
 		{
 			HubUrl = _organizationOptions.BotHubUrl,
@@ -95,6 +98,7 @@ public class AddBotCommandHandler : IRequestHandler<AddBotCommand, Result<AddBot
 			MeetId = request.MeetId,
 			HashToken = hashToken,
 			Language = config.Language,
+			JwtToken = _tokenService.GenerateBotToken(meetingId, request.MeetId),
 			AutoLeaveSettings = new()
 			{
 				WaitingEnter = _organizationOptions.AutoLeaveWaitingEnter,

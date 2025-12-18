@@ -13,6 +13,7 @@ namespace Au5.Infrastructure.Authentication;
 
 public class TokenService : ITokenService
 {
+	public const int JwtBotTokenExpiryMinutes = 60 * 2;
 	private readonly JwtSettings _jwt;
 	private readonly IDataProvider _dataProvider;
 	private readonly IApplicationDbContext _dbContext;
@@ -63,6 +64,40 @@ public class TokenService : ITokenService
 		var tokenString = tokenHandler.WriteToken(token);
 
 		return new TokenResponse(tokenString, _jwt.ExpiryMinutes * 60, string.Empty, "Bearer");
+	}
+
+	public string GenerateBotToken(Guid meetingId, string meetId)
+	{
+		var jti = _dataProvider.NewGuid().ToString();
+		var claims = new[]
+		{
+			new Claim(ClaimConstants.MeetingId, meetingId.ToString()),
+			new Claim(ClaimConstants.MeetId, meetId),
+			new Claim(ClaimConstants.Role, "Bot"),
+			new Claim(ClaimConstants.Type, "BotConnection"),
+			new Claim(ClaimConstants.Jti, jti)
+		};
+		var signingKeyBytes = Convert.FromBase64String(_jwt.SecretKey);
+		var signingKey = new SymmetricSecurityKey(signingKeyBytes);
+		var signingCreds = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
+		var encryptionKeyBytes = Convert.FromBase64String(_jwt.EncryptionKey);
+		var encryptionKey = new SymmetricSecurityKey(encryptionKeyBytes);
+		var encryptingCreds = new EncryptingCredentials(
+			encryptionKey,
+			SecurityAlgorithms.Aes256KW,
+			SecurityAlgorithms.Aes128CbcHmacSha256);
+		var tokenDescriptor = new SecurityTokenDescriptor
+		{
+			Subject = new ClaimsIdentity(claims),
+			Expires = _dataProvider.Now.AddMinutes(JwtBotTokenExpiryMinutes),
+			Issuer = _jwt.Issuer,
+			Audience = _jwt.Audience,
+			SigningCredentials = signingCreds,
+			EncryptingCredentials = encryptingCreds
+		};
+		var tokenHandler = new JwtSecurityTokenHandler();
+		var token = tokenHandler.CreateToken(tokenDescriptor);
+		return tokenHandler.WriteToken(token);
 	}
 
 	public async Task BlacklistTokenAsync(string userId, string jti, DateTime expiry)

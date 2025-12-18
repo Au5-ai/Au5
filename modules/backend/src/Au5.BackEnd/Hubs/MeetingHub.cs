@@ -3,6 +3,7 @@
 // </copyright>
 
 using Au5.Application.Common.Abstractions;
+using Au5.Shared;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Hubs;
@@ -12,6 +13,24 @@ public class MeetingHub(IMeetingService meetingService, ICurrentUserService curr
 {
 	private const string METHOD = "ReceiveMessage";
 	private readonly ICurrentUserService _currentUserService = currentUserService;
+
+	public override async Task OnConnectedAsync()
+	{
+		var httpContext = Context.GetHttpContext();
+		var userType = httpContext?.User.FindFirst(ClaimConstants.Type)?.Value;
+
+		if (userType == "BotConnection")
+		{
+			var meetId = httpContext.User.FindFirst(ClaimConstants.MeetId)?.Value;
+
+			if (!string.IsNullOrWhiteSpace(meetId))
+			{
+				await Groups.AddToGroupAsync(Context.ConnectionId, meetId);
+			}
+		}
+
+		await base.OnConnectedAsync();
+	}
 
 	public async Task UserJoinedInMeeting(UserJoinedInMeetingMessage msg)
 	{
