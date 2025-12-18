@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Riter",
+  "short_name": "Riter",
+  "description": "Meeting note taker and AI transcription for Google Meet.",
+  "version": "1.2.5",
+  "action": {
+    "default_title": "Open Side Panel"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self';"
+  },
+  "icons": {
+    "128": "assets/icons/128x.png"
+  },
+  "permissions": ["sidePanel", "storage"],
+  "host_permissions": ["<all_urls>"]
+}

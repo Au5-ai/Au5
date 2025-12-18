@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html data-gpts-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles/au5-panel.css" />
+    <link rel="stylesheet" href="styles/framework.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <div class="au5-panel">
+      <!-- User UnAuthorized -->
+      <div id="au5-userUnAuthorized" class="au5-container hidden">
+        <img
+          class="au5-userUnAuthorized-icon au5-img"
+          src="assets/images/user-unauthorized.png"
+          alt="User UnAuthorized Icon"
+        />
+        <div class="au5-intro-title">User UnAuthorized</div>
+        <div class="au5-intro-text">You need to set your login info to see the transcriptions.</div>
+        <button id="au5-btn-login" class="au5-btn-login au5-btn">Login</button>
+      </div>
+
+      <!-- noActiveMeeting -->
+      <div id="au5-noActiveMeeting" class="au5-container hidden">
+        <div class="au5-url-invalid">
+          <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M16.7427 7.75738L8.25739 16.2427M16.7427 16.2426L8.25739 7.75732"
+              stroke="#FF1C1C"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <div class="au5-url"></div>
+        </div>
+        <img
+          class="au5-noActiveMeeting-icon au5-img"
+          src="assets/images/no-active-meeting.png"
+          alt="No Active Meeting Icon"
+        />
+        <div class="au5-intro-title">Invalid Meeting Url !</div>
+        <div class="au5-intro-text">You can go to meeting page and start a meeting to see the transcriptions here.</div>
+
+        <button id="au5-btn-reload" class="au5-btn-reload au5-btn">Reload</button>
+      </div>
+
+      <!-- activeMeetingButNotStarted -->
+      <div id="au5-activeMeetingButNotStarted" class="au5-container hidden">
+        <div class="au5-url-valid" id="au5-url">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M5 13L8.52642 15.8211C9.35374 16.483 10.5536 16.3848 11.2624 15.5973L19 7"
+              stroke="#00A344"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+
+          <div class="au5-url"></div>
+        </div>
+        <img
+          class="au5-meetingNotStarted-icon au5-img"
+          src="assets/images/meeting_not_started.png"
+          alt="No Active Meeting Icon"
+        />
+
+        <div class="au5-intro-title">Ready to join?</div>
+        <div class="au5-intro-text">
+          You can start the transcription by clicking on the "Start Transcription" button.
+        </div>
+        <button id="au5-btn-joinMeeting" class="au5-btn-joinMeeting au5-btn">Start Transcription</button>
+      </div>
+
+      <!-- activeMeeting -->
+      <div id="au5-activeMeeting" class="ant-app sider-sidepanel hidden">
+        <div dir="ltr" class="chat-gpt-quick-query-container disable-translator-fab in-sidepanel">
+          <div class="chat-gpt-query-model-wrapper outline-none active:outline-none focus:outline-none" tabindex="1">
+            <div class="chat-gpt-query-model text-base show">
+              <div class="flip-y">
+                <div class="flex size-full overflow-hidden bg-grey-layer1-normal">
+                  <div class="flex flex-col relative p-1 transition-all w-[calc(100%-44px)] pe-0">
+                    <div
+                      class="tab-container w-full relative flex-1 overflow-hidden bg-grey-layer2-normal rounded-xl"
+                      style="--scrollbar-margin-block-start: 12px"
+                    >
+                      <div class="contents">
+                        <div class="query-chat-panel relative flex flex-col h-full text-sm">
+                          <div class="flex w-full h-full">
+                            <div class="flex flex-col w-full h-full">
+                              <div
+                                class="au5-transcriptions-container chat-list relative custom-scrollbar-reset-margin custom-scrollbar custom-scrollbar-hidden custom-scrollbar-float pl-1 pt-1 pr-1 pb-6 pt-4 flex-1 overflow-y-auto scrollbar-gutter-stable"
+                                style="--scrollbar-margin-block-start: 12px"
+                              >
+                                <div id="au5-addBot-container" class="absolute inset-x-0 top-1/4">
+                                  <div class="mb-2.5 max-w-[790px] mx-auto px-4">
+                                    <div class="flex flex-col items-start px-2 text-left justify-start">
+                                      <div class="text-[36px] font-semibold text-left">Hi,</div>
+                                      <div class="mt-[8px] font-semibold leading-5 text-[18px]">
+                                        There is no bot here yet 🤖
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    id="au5-btn-addbot"
+                                    class="mt-4 max-w-[790px] mx-auto ps-6 pe-2 flex flex-wrap gap-[6px]"
+                                  >
+                                    <div
+                                      class="text-xs font-semibold- cursor-pointer inline-flex items-center gap-[6px] rounded-full border border-solid border-grey-line1-normal px-3 py-2 leading-[14px] bg-grey-fill1-hover05 hover:bg-grey-fill1-hover"
+                                    >
+                                      <svg
+                                        width="1rem"
+                                        height="1rem"
+                                        viewBox="0 0 16 16"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="w-4 h-4 text-gray-alpha-700"
+                                      >
+                                        <path
+                                          fill-rule="evenodd"
+                                          clip-rule="evenodd"
+                                          d="M9.24057 12.8449C8.84388 12.9462 8.42823 13 8 13C6.82535 13 5.7453 12.5949 4.89193 11.9169C5.5351 11.7961 6.12351 11.5522 6.67094 11.2428C7.27186 11.7313 7.90219 12.2 8.54534 12.5373C8.77124 12.6558 9.00337 12.7605 9.24057 12.8449ZM11.0006 11.9999C10.962 11.9999 10.9228 12.0044 10.8836 12.0137C10.3114 12.1508 9.69597 12.0116 9.00983 11.6517C8.53238 11.4013 8.0487 11.0589 7.55594 10.6704C8.00242 10.3483 8.42301 10.0003 8.82718 9.6658L8.85779 9.64048C10.2396 8.4971 11.438 7.52066 12.9764 7.51058C12.992 7.67161 13 7.83487 13 8C13 9.63553 12.2147 11.0877 11.0006 11.9999ZM12.7761 6.51597C10.9558 6.60495 9.55713 7.76311 8.30571 8.79931L8.22029 8.87002C7.71979 9.28415 7.23892 9.67752 6.75298 10.0109C6.65435 9.92765 6.55521 9.8435 6.45572 9.75907L6.45558 9.75895L6.45557 9.75894C5.88698 9.27637 5.30713 8.78425 4.74616 8.39243C4.2028 8.01291 3.61947 7.6842 3.01939 7.5566C3.24379 5.00287 5.388 3 8 3C10.2447 3 12.1439 4.47917 12.7761 6.51597ZM3.03514 8.59591C3.37134 8.70756 3.74849 8.91537 4.17355 9.21226C4.692 9.57437 5.22393 10.0256 5.78771 10.5039L5.78771 10.5039L5.84218 10.5501C5.26723 10.8304 4.66558 11 4 11C3.99988 11 3.99976 11 3.99964 11C3.48439 10.314 3.14147 9.49126 3.03514 8.59591ZM2 8C2 11.3137 4.68629 14 8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8Z"
+                                          fill="currentColor"
+                                        ></path>
+                                      </svg>
+
+                                      <span id="au5-btn-addbot-text">Add bot</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!-- Transcription -->
+                              </div>
+                              <div>
+                                <div
+                                  id="au5-bot-playContainer"
+                                  class="chat-input-top-bar px-3 gap-2 py-2 flex justify-start items-center hidden"
+                                >
+                                  <div class="flex gap-[6px] min-w-[90px] max-w-[calc(100%-40px)]">
+                                    <div class="text-xs overflow-hidden">
+                                      <div
+                                        class="model-btn flex justify-center items-center cursor-pointer ps-[6px] pe-[5px] py-[7px] leading-4 rounded-3xl gap-[2px]"
+                                      >
+                                        <div class="icon flex-center rounded-full size-4 ms-[1px] me-[2px]">
+                                          <div
+                                            class="flex items-center justify-center rounded-full"
+                                            style="width: 18px; height: 18px"
+                                          >
+                                            <span
+                                              class="inline-flex shrink-0 [&amp;&gt;svg]:size-[inherit]"
+                                              style="width: 18px; height: 18px"
+                                            >
+                                              <svg
+                                                width="16"
+                                                height="16"
+                                                viewBox="0 0 16 16"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                              >
+                                                <path
+                                                  d="M7.99992 3.99992V1.33325H5.33325"
+                                                  stroke="currentColor"
+                                                  stroke-width="1.33333"
+                                                  stroke-linecap="round"
+                                                  stroke-linejoin="round"
+                                                />
+                                                <path
+                                                  d="M10 7.33325V8.66659"
+                                                  stroke="currentColor"
+                                                  stroke-width="1.33333"
+                                                  stroke-linecap="round"
+                                                  stroke-linejoin="round"
+                                                />
+                                                <path
+                                                  d="M1.33325 8H2.66659"
+                                                  stroke="currentColor"
+                                                  stroke-width="1.33333"
+                                                  stroke-linecap="round"
+                                                  stroke-linejoin="round"
+                                                />
+                                                <path
+                                                  d="M13.3333 8H14.6666"
+                                                  stroke="currentColor"
+                                                  stroke-width="1.33333"
+                                                  stroke-linecap="round"
+                                                  stroke-linejoin="round"
+                                                />
+                                                <path
+                                                  d="M13.3334 10.6667C13.3334 11.0203 13.1929 11.3594 12.9429 11.6095C12.6928 11.8595 12.3537 12 12.0001 12H5.88541C5.53182 12.0001 5.19274 12.1406 4.94275 12.3907L3.47475 13.8587C3.40855 13.9249 3.32422 13.9699 3.23241 13.9882C3.1406 14.0064 3.04544 13.9971 2.95895 13.9612C2.87247 13.9254 2.79855 13.8648 2.74654 13.7869C2.69453 13.7091 2.66676 13.6176 2.66675 13.524V5.33333C2.66675 4.97971 2.80722 4.64057 3.05727 4.39052C3.30732 4.14048 3.64646 4 4.00008 4H12.0001C12.3537 4 12.6928 4.14048 12.9429 4.39052C13.1929 4.64057 13.3334 4.97971 13.3334 5.33333V10.6667Z"
+                                                  stroke="currentColor"
+                                                  stroke-width="1.33333"
+                                                  stroke-linecap="round"
+                                                  stroke-linejoin="round"
+                                                />
+                                                <path
+                                                  d="M6 7.33325V8.66659"
+                                                  stroke="currentColor"
+                                                  stroke-width="1.33333"
+                                                  stroke-linecap="round"
+                                                  stroke-linejoin="round"
+                                                />
+                                              </svg>
+                                            </span>
+                                          </div>
+                                        </div>
+                                        <div
+                                          id="au5-bot-name"
+                                          class="flex items-center pl-[2px] pr-[2px] transition-transform duration-100"
+                                        ></div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div id="au5-bot-actionContainer" class="flex items-center ms-auto">
+                                    <div
+                                      id="au5-meeting-closeAction"
+                                      data-tooltip="Close Meeting"
+                                      class="topbar-btn size-[30px] model-btn model-btn-no-bg overflow-hidden flex-center text-xs p-[5px] rounded-lg"
+                                    >
+                                      <svg
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 16 16"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                      >
+                                        <path
+                                          d="M6.2 14H9.8C12.8 14 14 12.8 14 9.8V6.2C14 3.2 12.8 2 9.8 2H6.2C3.2 2 2 3.2 2 6.2V9.8C2 12.8 3.2 14 6.2 14Z"
+                                          stroke="currentColor"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                        />
+                                      </svg>
+                                    </div>
+
+                                    <div
+                                      id="au5-bot-pauseAction"
+                                      data-tooltip="Pause"
+                                      class="topbar-btn size-[30px] model-btn model-btn-no-bg overflow-hidden flex-center text-xs p-[5px] rounded-lg"
+                                    >
+                                      <svg
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 16 16"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                      >
+                                        <path
+                                          d="M7.1 12.74V3.26C7.1 2.36 6.72 2 5.76 2H3.34C2.38 2 2 2.36 2 3.26V12.74C2 13.64 2.38 14 3.34 14H5.76C6.72 14 7.1 13.64 7.1 12.74Z"
+                                          stroke="currentColor"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                        />
+                                        <path
+                                          d="M14.0001 12.74V3.26C14.0001 2.36 13.6201 2 12.6601 2H10.2401C9.28681 2 8.90015 2.36 8.90015 3.26V12.74C8.90015 13.64 9.28015 14 10.2401 14H12.6601C13.6201 14 14.0001 13.64 14.0001 12.74Z"
+                                          stroke="currentColor"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      id="au5-bot-playAction"
+                                      data-tooltip="Start"
+                                      class="topbar-btn size-[30px] model-btn model-btn-no-bg overflow-hidden flex-center text-xs p-[5px] rounded-lg"
+                                      style="display: none"
+                                    >
+                                      <svg
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 16 16"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                      >
+                                        <path
+                                          d="M2.66675 8V5.62667C2.66675 2.68 4.75341 1.47334 7.30675 2.94667L9.36675 4.13334L11.4267 5.32C13.9801 6.79334 13.9801 9.20667 11.4267 10.68L9.36675 11.8667L7.30675 13.0533C4.75341 14.5267 2.66675 13.32 2.66675 10.3733V8Z"
+                                          stroke="currentColor"
+                                          stroke-miterlimit="10"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                        />
+                                      </svg>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="input-box relative max-w-[790px] mx-auto">
+                                  <div
+                                    class="chat-input-box relative bg-grey-layer2-normal px-3 max-w-[790px] mx-auto pb-1"
+                                  >
+                                    <div class="main-input-area">
+                                      <div
+                                        class="chat-input-area relative z-10 min-h-[97px] rounded-2xl border flex-1 items-center pb-[6px] border-solid border-grey-line2-normal hover:border-grey-line2-hover cursor-text"
+                                      >
+                                        <div class="px-[10px] pe-[2px] mt-1 pt-[6px] pb-[2px] flex flex-col gap-1">
+                                          <div class="relative">
+                                            <textarea
+                                              id="au5-input-message"
+                                              dir="auto"
+                                              placeholder="Type your message here..."
+                                              class="ant-input chat-input ant-input-borderless custom-scrollbar"
+                                            ></textarea>
+                                          </div>
+                                          <div class="bottom-area flex items-center me-[8px] justify-between">
+                                            <div class="ms-auto">
+                                              <span class="btn-wrapper"
+                                                ><button
+                                                  id="au5-btn-sendMessage"
+                                                  role="button"
+                                                  class="send-btn relative right-[-2px] size-[30px] rounded-lg transition-colors text-base flex-center bg-transparent hover:bg-grey-fill1-hover cursor-pointer text-text-primary-1"
+                                                >
+                                                  <svg
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 16 16"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                  >
+                                                    <path
+                                                      d="M12.0467 6.38001L8.00004 2.33334L3.95337 6.38001"
+                                                      stroke="currentColor"
+                                                      stroke-width="1.5"
+                                                      stroke-miterlimit="10"
+                                                      stroke-linecap="round"
+                                                      stroke-linejoin="round"
+                                                    />
+                                                    <path
+                                                      d="M8 13.6667V2.44666"
+                                                      stroke="currentColor"
+                                                      stroke-width="1.5"
+                                                      stroke-miterlimit="10"
+                                                      stroke-linecap="round"
+                                                      stroke-linejoin="round"
+                                                    />
+                                                  </svg></button
+                                              ></span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div
+                                class="relative bottom-0 flex shrink-0 h-[38px] bg-grey-layer2-normal rounded-b-xl rtl:flex-row-reverse"
+                              >
+                                <div
+                                  class="flex w-full relative items-center justify-between px-3 mx-auto max-w-[790px]"
+                                >
+                                  <div id="pricing" class="flex items-center text-[12px] rtl:flex-row-reverse w-full">
+                                    <div
+                                      class="flex items-center gap-[5px] h-[30px] rounded-[35px] whitespace-nowrap me-[6px]"
+                                    >
+                                      <div
+                                        id="connection-status"
+                                        class="ant-dropdown-trigger online max-w-[140px] h-5 items-center model-btn flex truncate bg-grey-fill2-normal hover:bg-grey-fill2-hover rounded-xl pr-[6px] pl-[6px] cursor-pointer opacity-100"
+                                      >
+                                        <span class="font-bold" id="connection-status-text"></span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div id="feedbackIcons" class="flex items-center gap-[2px]">
+                                    <div
+                                      id="issue-link"
+                                      data-tooltip="Request a feature"
+                                      class="sidebar-footer-link hover:bg-[--gpts-bg-darken3] rounded-lg text-text-primary-4 cursor-pointer flex justify-center items-center w-[24px] h-[24px]"
+                                    >
+                                      <div class="w-full h-full flex-center">
+                                        <svg
+                                          width="14"
+                                          height="14"
+                                          viewBox="0 0 14 14"
+                                          fill="none"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                          <path
+                                            d="M4.66675 10.5H9.33342M4.66675 10.5C4.66675 11.7887 5.71142 12.8333 7.00008 12.8333C8.28875 12.8333 9.33342 11.7887 9.33342 10.5M4.66675 10.5V9.2101C4.66675 8.82872 4.47226 8.47953 4.19514 8.2175C3.40792 7.47314 2.91675 6.41893 2.91675 5.25001C2.91675 2.99484 4.74492 1.16667 7.00008 1.16667C9.25524 1.16667 11.0834 2.99484 11.0834 5.25001C11.0834 6.41893 10.5922 7.47314 9.80502 8.2175C9.5279 8.47953 9.33342 8.82872 9.33342 9.2101V10.5M5.83341 5.25001L7.00008 6.41667M7.00008 6.41667L8.16675 5.25001M7.00008 6.41667V10.5"
+                                            stroke="currentColor"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                          />
+                                        </svg>
+                                      </div>
+                                    </div>
+                                    <div
+                                      id="discord-link"
+                                      data-tooltip="Join us"
+                                      class="sidebar-footer-link hover:bg-[--gpts-bg-darken3] rounded-lg text-text-primary-4 cursor-pointer flex justify-center items-center w-[24px] h-[24px]"
+                                    >
+                                      <div class="w-full h-full flex-center">
+                                        <svg
+                                          width="14"
+                                          height="14"
+                                          viewBox="0 0 14 14"
+                                          fill="none"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                          <path
+                                            d="M11.241 3.10916C10.4652 2.74749 9.62515 2.48499 8.75015 2.33333C8.73476 2.33355 8.72009 2.33984 8.70932 2.35083C8.60432 2.54333 8.48182 2.79416 8.40015 2.98666C7.47206 2.84675 6.52824 2.84675 5.60015 2.98666C5.51848 2.78833 5.39598 2.54333 5.28515 2.35083C5.27932 2.33916 5.26182 2.33333 5.24432 2.33333C4.36932 2.48499 3.53515 2.74749 2.75348 3.10916C2.74765 3.10916 2.74182 3.11499 2.73598 3.12083C1.14932 5.49499 0.711816 7.80499 0.92765 10.0917C0.92765 10.1033 0.933483 10.115 0.94515 10.1208C1.99515 10.8908 3.00432 11.3575 4.00182 11.6667C4.01932 11.6725 4.03682 11.6667 4.04265 11.655C4.27598 11.3342 4.48598 10.9958 4.66682 10.64C4.67848 10.6167 4.66682 10.5933 4.64348 10.5875C4.31098 10.4592 3.99598 10.3075 3.68682 10.1325C3.66348 10.1208 3.66348 10.0858 3.68098 10.0683C3.74515 10.0217 3.80932 9.96916 3.87348 9.92249C3.88515 9.91083 3.90265 9.91083 3.91432 9.91666C5.92098 10.8325 8.08515 10.8325 10.0685 9.91666C10.0802 9.91083 10.0977 9.91083 10.1093 9.92249C10.1735 9.97499 10.2376 10.0217 10.3018 10.0742C10.3251 10.0917 10.3251 10.1267 10.296 10.1383C9.99265 10.3192 9.67182 10.465 9.33932 10.5933C9.31598 10.5992 9.31015 10.6283 9.31598 10.6458C9.50265 11.0017 9.71265 11.34 9.94015 11.6608C9.95765 11.6667 9.97515 11.6725 9.99265 11.6667C10.996 11.3575 12.0051 10.8908 13.0551 10.1208C13.0668 10.115 13.0726 10.1033 13.0726 10.0917C13.3293 7.44916 12.6468 5.15666 11.2643 3.12083C11.2585 3.11499 11.2527 3.10916 11.241 3.10916ZM4.97015 8.69749C4.36932 8.69749 3.86765 8.14333 3.86765 7.46083C3.86765 6.77833 4.35765 6.22416 4.97015 6.22416C5.58848 6.22416 6.07848 6.78416 6.07265 7.46083C6.07265 8.14333 5.58265 8.69749 4.97015 8.69749ZM9.03598 8.69749C8.43515 8.69749 7.93348 8.14333 7.93348 7.46083C7.93348 6.77833 8.42348 6.22416 9.03598 6.22416C9.65432 6.22416 10.1443 6.78416 10.1385 7.46083C10.1385 8.14333 9.65432 8.69749 9.03598 8.69749Z"
+                                            fill="currentColor"
+                                          />
+                                        </svg>
+                                      </div>
+                                    </div>
+                                    <div
+                                      id="github-link"
+                                      data-tooltip="Source code"
+                                      class="sidebar-footer-link hover:bg-[--gpts-bg-darken3] rounded-lg text-text-primary-4 cursor-pointer flex justify-center items-center w-[24px] h-[24px]"
+                                    >
+                                      <div class="w-full h-full flex-center">
+                                        <svg
+                                          width="14"
+                                          height="14"
+                                          viewBox="0 0 14 14"
+                                          fill="none"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                          <path
+                                            d="M7.00008 1.16667C6.23404 1.16667 5.47549 1.31756 4.76776 1.61071C4.06003 1.90386 3.41697 2.33354 2.87529 2.87522C1.78133 3.96918 1.16675 5.45291 1.16675 7C1.16675 9.57834 2.84091 11.7658 5.15675 12.5417C5.44842 12.5883 5.54175 12.4075 5.54175 12.25V11.2642C3.92591 11.6142 3.58175 10.4825 3.58175 10.4825C3.31341 9.80584 2.93425 9.625 2.93425 9.625C2.40341 9.26334 2.97508 9.275 2.97508 9.275C3.55841 9.31584 3.86758 9.87584 3.86758 9.87584C4.37508 10.7625 5.23258 10.5 5.56508 10.36C5.61758 9.98084 5.76925 9.72417 5.93258 9.57834C4.63758 9.4325 3.27841 8.93084 3.27841 6.70834C3.27841 6.06084 3.50008 5.54167 3.87925 5.1275C3.82091 4.98167 3.61675 4.37501 3.93758 3.58751C3.93758 3.58751 4.42758 3.43001 5.54175 4.18251C6.00258 4.05417 6.50425 3.99001 7.00008 3.99001C7.49592 3.99001 7.99758 4.05417 8.45842 4.18251C9.57258 3.43001 10.0626 3.58751 10.0626 3.58751C10.3834 4.37501 10.1792 4.98167 10.1209 5.1275C10.5001 5.54167 10.7217 6.06084 10.7217 6.70834C10.7217 8.93667 9.35675 9.42667 8.05592 9.5725C8.26592 9.75334 8.45842 10.1092 8.45842 10.6517V12.25C8.45842 12.4075 8.55175 12.5942 8.84925 12.5417C11.1651 11.76 12.8334 9.57834 12.8334 7C12.8334 6.23396 12.6825 5.47542 12.3894 4.76768C12.0962 4.05995 11.6665 3.41689 11.1249 2.87522C10.5832 2.33354 9.94013 1.90386 9.2324 1.61071C8.52467 1.31756 7.76613 1.16667 7.00008 1.16667Z"
+                                            fill="currentColor"
+                                          />
+                                        </svg>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="switch-bar bg-grey-layer1-normal pt-2 pb-3 flex flex-col items-center gap-4 h-full w-[44px] max-w-[44px]"
+                  >
+                    <div class="flex flex-col gap-4 justify-center">
+                      <div
+                        class="switchbar-tab-item rounded-lg px-2 text-text-primary-3 group cursor-pointer flex-center flex-col"
+                      >
+                        <div
+                          class="switchbar-tab-item-icon relative rounded-lg flex flex-col items-center justify-center group-hover:bg-grey-layer2-normal !bg-grey-layer2-normal text-brand-primary-normal arc-edge w-8 h-8"
+                        >
+                          <div class="size-5">
+                            <svg
+                              width="20"
+                              height="20"
+                              viewBox="0 0 20 20"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M6.6665 8.33333H13.3332M6.6665 11.6667H9.99984M9.1665 2.5H10.8332C14.9753 2.5 18.3332 5.85786 18.3332 10C18.3332 14.1421 14.9753 17.5 10.8332 17.5H4.99984C3.15889 17.5 1.6665 16.0076 1.6665 14.1667V10C1.6665 5.85786 5.02437 2.5 9.1665 2.5Z"
+                                stroke="currentColor"
+                                stroke-width="1"
+                                stroke-linecap="round"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="bottom-area mt-auto flex flex-col justify-center items-center gap-1">
+                      <div
+                        id="au5-theme-toggle"
+                        class="w-8 h-8 flex items-center justify-center rounded-lg cursor-pointer text-text-primary-3 hover:bg-[--gpts-bg-darken3] undefined"
+                      >
+                        <svg
+                          id="lightmode"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <circle cx="8.00008" cy="7.99999" r="3.33333" stroke="currentColor" />
+                          <path d="M8 1.33334V2.66668" stroke="currentColor" stroke-linecap="round" />
+                          <path d="M8 13.3333V14.6667" stroke="currentColor" stroke-linecap="round" />
+                          <path d="M13.7734 4.66666L12.6187 5.33332" stroke="currentColor" stroke-linecap="round" />
+                          <path d="M3.3811 10.6667L2.2264 11.3333" stroke="currentColor" stroke-linecap="round" />
+                          <path d="M2.22656 4.66672L3.38126 5.33338" stroke="currentColor" stroke-linecap="round" />
+                          <path d="M12.6189 10.6667L13.7736 11.3333" stroke="currentColor" stroke-linecap="round" />
+                        </svg>
+
+                        <svg
+                          id="darkmode"
+                          class="hidden"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M12.2189 9.91243C8.83266 9.91243 6.08757 7.16734 6.08757 3.78108C6.08757 3.16164 6.17943 2.56365 6.35027 2C3.83264 2.76307 2 5.10184 2 7.86865C2 11.2549 4.7451 14 8.13135 14C10.8982 14 13.2369 12.1674 14 9.64973C13.4363 9.82057 12.8384 9.91243 12.2189 9.91243Z"
+                            stroke="currentColor"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      </div>
+                      <div class="mt-3 cursor-pointer">
+                        <div class="relative shrink-0" style="width: 24px; height: 24px">
+                          <img id="userAvatar" class="size-full rounded-full" src="" alt="avatar" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="scripts/ui.js"></script>
+  </body>
+</html>
