@@ -128,7 +128,9 @@ export function MeetingCard({ item }: MeetingCardProps) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  disabled={item.status !== "Ended"}
+                  disabled={
+                    item.status !== "Ended" && item.status !== "Archived"
+                  }
                   className={`cursor-pointer ${
                     isArchived
                       ? "text-green-600 hover:text-green-700 hover:bg-green-50"
