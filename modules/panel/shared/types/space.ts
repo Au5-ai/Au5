@@ -33,3 +33,17 @@ export interface MySpacesResponse {
   name: string;
   description: string;
 }
+
+export interface SpaceMember {
+  userId: string;
+  fullName: string;
+  email: string;
+  isAdmin: boolean;
+  pictureUrl: string;
+  joinedAt: string;
+  isYou: boolean;
+}
+
+export interface SpaceMembersResponse {
+  users: SpaceMember[];
+}
