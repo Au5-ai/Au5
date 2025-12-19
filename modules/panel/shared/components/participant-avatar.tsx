@@ -9,6 +9,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/shared/components/ui/avatar";
+import { getColorFromName } from "../lib";
 
 export default function ParticipantAvatar({
   fullName,
@@ -19,16 +20,6 @@ export default function ParticipantAvatar({
   pictureUrl: string;
   className?: string;
 }) {
-  const getColorFromName = (name: string) => {
-    if (!name) return "#6b7280";
-    let hash = 0;
-    for (let i = 0; i < name.length; i++) {
-      hash = name.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const hue = hash % 360;
-    return `hsl(${hue}, 70%, 65%)`;
-  };
-
   const fallbackColor = getColorFromName(fullName);
 
   return (

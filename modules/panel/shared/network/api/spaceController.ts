@@ -3,6 +3,7 @@ import {
   CreateSpaceResponse,
   MySpacesResponse,
   Space,
+  SpaceMembersResponse,
 } from "@/shared/types/space";
 import { apiRequestClient } from "../apiRequestClient";
 import { API_URLS } from "./urls";
@@ -27,6 +28,11 @@ export const spaceController = {
   },
   meetings: (spaceId: string) => (): Promise<MeetingData> => {
     return apiRequestClient<MeetingData>(API_URLS.SPACES.MEETINGS(spaceId), {
+      method: "GET",
+    });
+  },
+  members: (spaceId: string) => (): Promise<SpaceMembersResponse> => {
+    return apiRequestClient(API_URLS.SPACES.MEMBERS(spaceId), {
       method: "GET",
     });
   },

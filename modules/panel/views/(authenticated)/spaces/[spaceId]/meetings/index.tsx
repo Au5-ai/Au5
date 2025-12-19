@@ -7,6 +7,7 @@ import { NetworkError } from "@/shared/components/empty-states/error";
 import { MeetingsList } from "@/shared/components/meetings";
 import { useCurrentUserSpaces } from "@/shared/hooks/use-user";
 import { spaceController } from "@/shared/network/api/spaceController";
+import { GroupAvatar } from "@/shared/components/group-avatar";
 
 export default function SpaceMeetingsView() {
   const params = useParams();
@@ -23,6 +24,13 @@ export default function SpaceMeetingsView() {
     queryFn: spaceController.meetings(spaceId),
   });
 
+  const { data: membersData } = useQuery({
+    queryKey: ["space-members", spaceId],
+    queryFn: spaceController.members(spaceId),
+  });
+
+  const currentUserIsAdmin = membersData?.users?.find((m) => m.isYou)?.isAdmin ?? false;
+
   if (loading) {
     return <MeetingListSkeleton />;
   }
@@ -31,5 +39,23 @@ export default function SpaceMeetingsView() {
     return <NetworkError />;
   }
 
-  return <MeetingsList meetings={meetings} title={`${title} Meetings`} />;
+  return (
+    <div className="flex flex-1 flex-col">
+      <div className="container px-6 py-4">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold mb-1">{title} Meetings</h1>
+          {membersData?.users && (
+            <GroupAvatar
+              members={membersData.users}
+              showAddButton={currentUserIsAdmin}
+              onAddClick={() => {
+                // TODO: Implement add member functionality
+              }}
+            />
+          )}
+        </div>
+      </div>
+      <MeetingsList meetings={meetings} />
+    </div>
+  );
 }

@@ -31,7 +31,8 @@ public class GetSpacesQueryHandler(IApplicationDbContext context, ICurrentUserSe
 				Email = us.User.Email,
 				PictureUrl = us.User.PictureUrl,
 				JoinedAt = us.JoinedAt,
-				IsAdmin = us.IsAdmin
+				IsAdmin = us.IsAdmin,
+				IsYou = us.UserId.Equals(_currentUserService.UserId)
 			}).ToList() ?? []
 		}).ToList();
 

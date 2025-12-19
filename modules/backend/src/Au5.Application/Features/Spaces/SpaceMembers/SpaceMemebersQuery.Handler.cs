@@ -31,7 +31,8 @@ public sealed class SpaceMembersQueryHandler : IRequestHandler<SpaceMemebersQuer
 						JoinedAt = us.JoinedAt,
 						IsAdmin = us.IsAdmin,
 						FullName = us.User.FullName,
-						PictureUrl = us.User.PictureUrl
+						PictureUrl = us.User.PictureUrl,
+						IsYou = us.UserId.Equals(_currentUserService.UserId)
 					})
 					.ToArray()
 			})
