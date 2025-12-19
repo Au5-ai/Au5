@@ -13,8 +13,7 @@ public class RemoveMeetingCommandHandler : IRequestHandler<RemoveMeetingCommand,
 
 	public async ValueTask<Result<RemoveMeetingResponse>> Handle(RemoveMeetingCommand request, CancellationToken cancellationToken)
 	{
-		var meeting = _dbContext.Set<Meeting>()
-			.FirstOrDefault(m => m.Id == request.MeetingId);
+		var meeting = await _dbContext.Set<Meeting>().FirstOrDefaultAsync(m => m.Id == request.MeetingId, cancellationToken);
 
 		if (meeting is null)
 		{
