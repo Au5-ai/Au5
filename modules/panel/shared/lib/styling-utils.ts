@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const getColorFromName = (name: string) => {
+export const getColorFromName = (name: string) => {
   if (!name) return "#6b7280";
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
@@ -14,4 +14,3 @@ const getColorFromName = (name: string) => {
   const hue = hash % 360;
   return `hsl(${hue}, 70%, 65%)`;
 };
-export { getColorFromName };
