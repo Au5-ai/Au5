@@ -86,7 +86,7 @@ export function MeetingCard({ item, onRemoveSuccess }: MeetingCardProps) {
   };
 
   const handleRemoveConfirm = async () => {
-    if (!item.meetingId || !item.meetId) return;
+if (!item.meetingId) return;
 
     try {
       setIsRemoving(true);
