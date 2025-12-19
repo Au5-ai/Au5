@@ -29,7 +29,7 @@ export default function SpaceMeetingsView() {
     queryFn: spaceController.members(spaceId),
   });
 
-  const currentUserIsAdmin = membersData?.users?.some((m) => m.isYou);
+  const currentUserIsAdmin = membersData?.users?.find((m) => m.isYou)?.isAdmin ?? false;
 
   if (loading) {
     return <MeetingListSkeleton />;
