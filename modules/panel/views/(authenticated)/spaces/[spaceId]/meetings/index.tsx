@@ -49,7 +49,7 @@ export default function SpaceMeetingsView() {
               members={membersData.users}
               showAddButton={currentUserIsAdmin}
               onAddClick={() => {
-                console.log("Add member clicked");
+                // TODO: Implement add member functionality
               }}
             />
           )}
