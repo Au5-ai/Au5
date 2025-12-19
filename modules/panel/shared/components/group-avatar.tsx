@@ -33,7 +33,11 @@ export function GroupAvatar({
     md: "h-10 w-10 text-sm",
     lg: "h-12 w-12 text-base",
   };
-
+  const iconSizeClasses = {
+    sm: "h-3 w-3",
+    md: "h-4 w-4",
+    lg: "h-5 w-5",
+  };
   const visibleMembers = members.slice(0, maxVisible);
   const remainingCount = members.length - maxVisible;
 
@@ -76,11 +80,11 @@ export function GroupAvatar({
       )}
       {showAddButton && onAddClick && (
         <Tooltip>
-          <TooltipTrigger className="z-10">
+          <TooltipTrigger asChild>
             <button
               onClick={onAddClick}
-              className={`${sizeClasses[size]} rounded-full z-50 border-2 border-background bg-primary text-primary-foreground flex items-center justify-center font-medium hover:bg-primary/90 transition-colors`}>
-              <Plus className="h-4 w-4" />
+              className={`${sizeClasses[size]} rounded-full z-10 border-2 border-background bg-primary text-primary-foreground flex items-center justify-center font-medium hover:bg-primary/90 transition-colors`}>
+              <Plus className={iconSizeClasses[size]} />
             </button>
           </TooltipTrigger>
           <TooltipContent>Add member</TooltipContent>
