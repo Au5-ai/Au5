@@ -34,12 +34,15 @@ export interface MySpacesResponse {
   description: string;
 }
 
-export interface SpaceMember {
+export interface Member {
   userId: string;
   fullName: string;
   email: string;
-  isAdmin: boolean;
   pictureUrl: string;
+}
+
+export interface SpaceMember extends Member {
+  isAdmin: boolean;
   joinedAt: string;
   isYou: boolean;
 }
