@@ -10,12 +10,14 @@ import {
   AvatarImage,
 } from "@/shared/components/ui/avatar";
 import { Plus } from "lucide-react";
+import { SpaceMember } from "../types/space";
 
-interface Member {
-  userId: string;
-  fullName: string;
-  pictureUrl: string;
-  email: string;
+interface GroupAvatarProps {
+  members: SpaceMember[];
+  maxVisible?: number;
+  size?: "sm" | "md" | "lg";
+  showAddButton?: boolean;
+  onAddClick?: () => void;
 }
 
 const getColorFromName = (name: string) => {
@@ -27,14 +29,6 @@ const getColorFromName = (name: string) => {
   const hue = hash % 360;
   return `hsl(${hue}, 70%, 65%)`;
 };
-
-interface GroupAvatarProps {
-  members: Member[];
-  maxVisible?: number;
-  size?: "sm" | "md" | "lg";
-  showAddButton?: boolean;
-  onAddClick?: () => void;
-}
 
 export function GroupAvatar({
   members,
