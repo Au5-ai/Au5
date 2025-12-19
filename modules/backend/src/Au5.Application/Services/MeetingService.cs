@@ -181,13 +181,12 @@ public class MeetingService : IMeetingService
 					EntryId = entryBlock.Id,
 					ReactionId = reaction.ReactionId,
 					Participants = [new Participant()
-					{
-						Id = reaction.User.Id,
-						FullName = reaction.User.FullName,
-						PictureUrl = reaction.User.PictureUrl
-					}
-
-],
+						{
+							Id = reaction.User.Id,
+							FullName = reaction.User.FullName,
+							PictureUrl = reaction.User.PictureUrl
+						},
+					],
 				};
 				entryBlock.Reactions.Add(existingReaction);
 			}

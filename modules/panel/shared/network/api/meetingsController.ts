@@ -90,6 +90,14 @@ export const meetingsController = {
       },
     );
   },
+  removeMeeting: (meetingId: string): Promise<{ isRemoved: boolean }> => {
+    return apiRequestClient<{ isRemoved: boolean }>(
+      API_URLS.MEETING.REMOVE(meetingId),
+      {
+        method: "DELETE",
+      },
+    );
+  },
   exportToText: (meetingId: string): Promise<string> => {
     return apiRequestClientText(API_URLS.MEETING.EXPORT(meetingId, "text"), {
       method: "GET",

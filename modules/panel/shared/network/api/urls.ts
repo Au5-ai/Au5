@@ -30,6 +30,7 @@ export const API_URLS = {
     CLOSE: (meetingId: string) => `/meetings/${meetingId}/close`,
     ADD_BOT: "/meetings/bots",
     GENERATE_AI: (meetingId: string) => `/meetings/${meetingId}/ai-contents`,
+    REMOVE: (meetingId: string) => `/meetings/${meetingId}`,
   },
   SINGUP: {
     ADD_ADMIN: "/admin/hello",

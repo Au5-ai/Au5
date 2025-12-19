@@ -1,12 +1,13 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { MeetingListSkeleton } from "@/shared/components/meetings/meeting-list-skeleton";
 import { meetingsController } from "@/shared/network/api/meetingsController";
 import { NetworkError } from "@/shared/components/empty-states/error";
 import { MeetingsList } from "@/shared/components/meetings";
 
 export default function MyMeetingsView() {
+  const queryClient = useQueryClient();
   const {
     data: meetings = [],
     isLoading: loading,
@@ -16,6 +17,10 @@ export default function MyMeetingsView() {
     queryFn: meetingsController.my,
   });
 
+  const handleRemoveSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ["meetings", "my"] });
+  };
+
   if (loading) {
     return <MeetingListSkeleton />;
   }
@@ -24,5 +29,11 @@ export default function MyMeetingsView() {
     return <NetworkError />;
   }
 
-  return <MeetingsList meetings={meetings} title="Meeting Transcription" />;
+  return (
+    <MeetingsList
+      meetings={meetings}
+      title="Meeting Transcription"
+      onRemoveSuccess={handleRemoveSuccess}
+    />
+  );
 }
