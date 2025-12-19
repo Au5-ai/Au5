@@ -8,7 +8,7 @@ import {
 } from "@/shared/components/ui/avatar";
 import { CardContent } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
-import { Star, Archive, ArchiveRestore } from "lucide-react";
+import { Star, Archive, ArchiveRestore, Trash2 } from "lucide-react";
 import { MeetingItem } from "@/shared/types";
 import { useRouter } from "next/navigation";
 import {
@@ -22,15 +22,19 @@ import { toast } from "sonner";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { ArchiveConfirmationModal } from "./archive-confirmation-modal";
 import { ROUTES } from "@/shared/routes";
+import { RemoveConfirmationModal } from "./remove-confirmation-modal";
 
 interface MeetingCardProps {
   item: MeetingItem;
   onDeleteClick?: (item: MeetingItem) => void;
+  onRemoveSuccess?: (meetingId: string) => void;
 }
 
-export function MeetingCard({ item }: MeetingCardProps) {
+export function MeetingCard({ item, onRemoveSuccess }: MeetingCardProps) {
   const [showArchiveModal, setShowArchiveModal] = React.useState(false);
+  const [showRemoveModal, setShowRemoveModal] = React.useState(false);
   const [isArchiving, setIsArchiving] = React.useState(false);
+  const [isRemoving, setIsRemoving] = React.useState(false);
   const [isArchived, setIsArchived] = React.useState(
     item.status === "Archived",
   );
@@ -45,6 +49,11 @@ export function MeetingCard({ item }: MeetingCardProps) {
   const handleArchiveClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowArchiveModal(true);
+  };
+
+  const handleRemoveMeeting = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowRemoveModal(true);
   };
 
   const handleModalOpenChange = (open: boolean) => {
@@ -73,6 +82,28 @@ export function MeetingCard({ item }: MeetingCardProps) {
     } finally {
       setIsArchiving(false);
       setShowArchiveModal(false);
+    }
+  };
+
+  const handleRemoveConfirm = async () => {
+if (!item.meetingId) return;
+
+    try {
+      setIsRemoving(true);
+      const response = await meetingsController.removeMeeting(item.meetingId);
+
+      if (response.isRemoved) {
+        toast.success(GLOBAL_CAPTIONS.pages.meetings.removeSuccess);
+        onRemoveSuccess?.(item.meetingId);
+      } else {
+        toast.error(GLOBAL_CAPTIONS.pages.meetings.removeError);
+      }
+    } catch (error) {
+      console.error("Failed to Remove Meeting:", error);
+      toast.error(GLOBAL_CAPTIONS.pages.meetings.removeError);
+    } finally {
+      setIsRemoving(false);
+      setShowRemoveModal(false);
     }
   };
 
@@ -123,31 +154,48 @@ export function MeetingCard({ item }: MeetingCardProps) {
             )}
           </div>
           <div className="flex gap-2">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  disabled={
-                    item.status !== "Ended" && item.status !== "Archived"
-                  }
-                  className={`cursor-pointer ${
-                    isArchived
-                      ? "text-green-600 hover:text-green-700 hover:bg-green-50"
-                      : "text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-                  }`}
-                  onClick={handleArchiveClick}>
-                  {isArchived ? (
-                    <ArchiveRestore className="h-4 w-4" />
-                  ) : (
-                    <Archive className="h-4 w-4" />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{isArchived ? "Remove from Archive" : "Move to Archive"}</p>
-              </TooltipContent>
-            </Tooltip>
+            {(item.status === "Ended" || item.status === "Archived") && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`cursor-pointer ${
+                      isArchived
+                        ? "text-green-600 hover:text-green-700 hover:bg-green-50"
+: "text-gray-600 hover:text-gray-700 hover:bg-orange-50"
+                    }`}
+                    onClick={handleArchiveClick}>
+                    {isArchived ? (
+                      <ArchiveRestore className="h-4 w-4" />
+                    ) : (
+                      <Archive className="h-4 w-4" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    {isArchived ? "Remove from Archive" : "Move to Archive"}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            )}
+            {item.status !== "Ended" && item.status !== "Archived" && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="cursor-pointer text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                    onClick={handleRemoveMeeting}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Remove Meeting</p>
+                </TooltipContent>
+              </Tooltip>
+            )}
           </div>
         </div>
       </CardContent>
@@ -158,6 +206,12 @@ export function MeetingCard({ item }: MeetingCardProps) {
         isArchived={isArchived}
         onConfirm={handleArchiveConfirm}
         isLoading={isArchiving}
+      />
+      <RemoveConfirmationModal
+        open={showRemoveModal}
+        onOpenChange={(open) => setShowRemoveModal(open)}
+        onConfirm={handleRemoveConfirm}
+        isLoading={isRemoving}
       />
     </>
   );

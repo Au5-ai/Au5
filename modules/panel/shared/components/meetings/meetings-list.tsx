@@ -8,16 +8,21 @@ import { EmptyMeetings } from "../empty-states/meeting-empty";
 interface MeetingsListProps {
   meetings: MeetingData;
   title: string;
+  onRemoveSuccess?: (meetingId: string) => void;
 }
 
-export function MeetingsList({ meetings, title }: MeetingsListProps) {
+export function MeetingsList({
+  meetings,
+  title,
+  onRemoveSuccess,
+}: MeetingsListProps) {
   if (meetings.length === 0) {
     return <EmptyMeetings />;
   }
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="container mx-auto px-6 py-4">
+      <div className="container px-6 py-4">
         <h1 className="text-2xl font-bold mb-1">{title}</h1>
       </div>
       {meetings.map((group, groupIndex) => (
@@ -27,7 +32,11 @@ export function MeetingsList({ meetings, title }: MeetingsListProps) {
           </h2>
           <Card className="divide-y shadow-none border-none p-0">
             {group.items.map((item, index) => (
-              <MeetingCard key={index} item={item} />
+              <MeetingCard
+                key={index}
+                item={item}
+                onRemoveSuccess={onRemoveSuccess}
+              />
             ))}
           </Card>
         </div>

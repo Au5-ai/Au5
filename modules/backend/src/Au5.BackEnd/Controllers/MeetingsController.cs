@@ -6,6 +6,7 @@ using Au5.Application.Features.Meetings.CloseMeetingByUser;
 using Au5.Application.Features.Meetings.Export;
 using Au5.Application.Features.Meetings.GetFullTranscription;
 using Au5.Application.Features.Meetings.PublicUrl;
+using Au5.Application.Features.Meetings.RemoveMeeting;
 using Au5.Application.Features.Meetings.Rename;
 using Au5.Application.Features.Meetings.ToggleArchive;
 using Au5.Application.Features.Meetings.ToggleFavorite;
@@ -113,5 +114,12 @@ public class MeetingsController(ISender mediator) : BaseController
 	public async Task<IActionResult> GetSystemMeetingUrl([FromRoute] Guid meetingId, [FromBody] PublicMeetingUrlCommand command, CancellationToken cancellationToken)
 	{
 		return Ok(await mediator.Send(command with { MeetingId = meetingId }, cancellationToken));
+	}
+
+	[HttpDelete("{meetingId}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> RemoveMeeting([FromRoute] Guid meetingId, CancellationToken cancellationToken)
+	{
+		return Ok(await mediator.Send(new RemoveMeetingCommand(meetingId), cancellationToken));
 	}
 }
