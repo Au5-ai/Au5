@@ -163,7 +163,7 @@ if (!item.meetingId) return;
                     className={`cursor-pointer ${
                       isArchived
                         ? "text-green-600 hover:text-green-700 hover:bg-green-50"
-                        : "text-black-600 hover:text-black-700 hover:bg-orange-50"
+: "text-gray-600 hover:text-gray-700 hover:bg-orange-50"
                     }`}
                     onClick={handleArchiveClick}>
                     {isArchived ? (
