@@ -11,15 +11,8 @@ import {
 } from "@/shared/components/ui/avatar";
 import { Plus } from "lucide-react";
 
-interface Member {
-  userId: string;
-  fullName: string;
-  pictureUrl: string;
-  email: string;
-}
-
 interface GroupAvatarProps {
-  members: Member[];
+  members: SpaceMember[];
   maxVisible?: number;
   size?: "sm" | "md" | "lg";
   showAddButton?: boolean;
