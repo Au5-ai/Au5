@@ -94,7 +94,7 @@ export function GroupAvatar({
           <TooltipTrigger className="z-10">
             <button
               onClick={onAddClick}
-              className={`${sizeClasses[size]} rounded-full z-999 border-2 border-background bg-primary text-primary-foreground flex items-center justify-center font-medium hover:bg-primary/90 transition-colors`}>
+              className={`${sizeClasses[size]} rounded-full z-50 border-2 border-background bg-primary text-primary-foreground flex items-center justify-center font-medium hover:bg-primary/90 transition-colors`}>
               <Plus className="h-4 w-4" />
             </button>
           </TooltipTrigger>
