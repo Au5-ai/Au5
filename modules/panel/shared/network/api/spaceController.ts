@@ -31,11 +31,9 @@ export const spaceController = {
       method: "GET",
     });
   },
-  members:
-    (spaceId: string) =>
-    (): Promise<SpaceMembersResponse> => {
-      return apiRequestClient(API_URLS.SPACES.MEMBERS(spaceId), {
-        method: "GET",
-      });
-    },
+  members: (spaceId: string) => (): Promise<SpaceMembersResponse> => {
+    return apiRequestClient(API_URLS.SPACES.MEMBERS(spaceId), {
+      method: "GET",
+    });
+  },
 };
