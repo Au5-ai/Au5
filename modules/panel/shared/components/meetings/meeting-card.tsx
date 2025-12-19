@@ -86,7 +86,7 @@ export function MeetingCard({ item, onRemoveSuccess }: MeetingCardProps) {
   };
 
   const handleRemoveConfirm = async () => {
-    if (!item.meetingId || !item.meetId) return;
+if (!item.meetingId) return;
 
     try {
       setIsRemoving(true);
@@ -163,7 +163,7 @@ export function MeetingCard({ item, onRemoveSuccess }: MeetingCardProps) {
                     className={`cursor-pointer ${
                       isArchived
                         ? "text-green-600 hover:text-green-700 hover:bg-green-50"
-                        : "text-black-600 hover:text-black-700 hover:bg-orange-50"
+: "text-gray-600 hover:text-gray-700 hover:bg-orange-50"
                     }`}
                     onClick={handleArchiveClick}>
                     {isArchived ? (
