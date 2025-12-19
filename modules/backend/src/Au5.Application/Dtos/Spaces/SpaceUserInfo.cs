@@ -4,6 +4,8 @@ public record SpaceUserInfo
 {
 	public Guid UserId { get; init; }
 
+	public bool IsYou { get; set; }
+
 	public string FullName { get; init; }
 
 	public string Email { get; init; }

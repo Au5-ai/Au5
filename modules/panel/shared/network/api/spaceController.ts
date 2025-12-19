@@ -30,4 +30,21 @@ export const spaceController = {
       method: "GET",
     });
   },
+  members:
+    (spaceId: string) =>
+    (): Promise<{
+      users: Array<{
+        userId: string;
+        fullName: string;
+        email: string;
+        isAdmin: boolean;
+        pictureUrl: string;
+        joinedAt: string;
+        isYou: boolean;
+      }>;
+    }> => {
+      return apiRequestClient(API_URLS.SPACES.MEMBERS(spaceId), {
+        method: "GET",
+      });
+    },
 };

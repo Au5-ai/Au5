@@ -24,5 +24,12 @@ export default function ArchivedMeetingsView() {
     return <NetworkError />;
   }
 
-  return <MeetingsList meetings={meetings} title="Archived Transcription" />;
+  return (
+    <div className="flex flex-1 flex-col">
+      <div className="container px-6 py-4">
+        <h1 className="text-2xl font-bold mb-1">Archived Transcription</h1>
+      </div>
+      <MeetingsList meetings={meetings} />
+    </div>
+  );
 }
