@@ -1,6 +1,4 @@
 using Au5.Application.Common;
-using Au5.Application.Common.Abstractions;
-using Microsoft.EntityFrameworkCore;
 
 namespace Au5.Application.Features.UserManagement.VerifyUser.Query;
 
@@ -26,11 +24,6 @@ public class VerifyUserQueryHandler : IRequestHandler<VerifyUserQuery, Result<Ve
 			return Error.BadRequest("User.NotFound", AppResources.User.UserNotFound);
 		}
 
-		if (user.IsRegistered())
-		{
-			return Error.Unauthorized("User.AlreadyRegistered", AppResources.Auth.UnAuthorizedAction);
-		}
-
-		return new VerifyUserResponse(user.Email);
+		return new VerifyUserResponse(user.Email,user.IsRegistered());
 	}
 }

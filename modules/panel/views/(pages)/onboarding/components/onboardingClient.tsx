@@ -12,6 +12,7 @@ import { ConfigureStep } from "./steps/configure-step";
 import { CompleteStep } from "./steps/complete-step";
 import { DownloadStep } from "./steps/download-step";
 import { AddUserStep } from "./steps/addUser-step";
+import { ROUTES } from "@/shared/routes";
 
 export default function OnboardingClient() {
   const router = useRouter();
@@ -24,20 +25,24 @@ export default function OnboardingClient() {
     const userId = searchParams.get("id");
     const hash = searchParams.get("hash");
     if (!userId || !hash) {
-      router.push("/403");
+      router.push(ROUTES.FORBIDDEN);
       return;
     }
     const verify = async () => {
       try {
         const response = await userController.verify(userId, hash);
         if (response) {
+          if (response.isRegistered) {
+            router.push(ROUTES.REGISTERED);
+            return;
+          }
           setStatus("ok");
           setEmail(response.email);
         } else {
-          router.push("/403");
+          router.push(ROUTES.LOGIN);
         }
       } catch {
-        router.push("/403");
+        router.push(ROUTES.LOGIN);
       }
     };
     verify();

@@ -125,6 +125,13 @@ export const GLOBAL_CAPTIONS = {
         text: "made with ❤️ in earth.",
       },
     },
+    registered: {
+      title: "Already Registered",
+      description:
+        "Your account has been successfully created. Please log in with your username and password to continue.",
+      loginButton: "Go to Login",
+      messageTitle: "Registration Complete",
+    },
     meetings: {
       aiAssistants: "AI Assistants",
       speakerSttistics: "Speaker Statistics",
