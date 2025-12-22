@@ -4,6 +4,9 @@ export const API_URLS = {
     MY_SPACES: "/users/spaces",
     MEETINGS: (spaceId: string) => `/spaces/${spaceId}/meetings`,
     MEMBERS: (spaceId: string) => `/spaces/${spaceId}/members`,
+    ADD_MEMBERS: (spaceId: string) => `/spaces/${spaceId}/members`,
+    REMOVE_MEMBER: (spaceId: string, userId: string) =>
+      `/spaces/${spaceId}/members/${userId}`,
     ADD_MEETING: (spaceId: string, meetingId: string) =>
       `/spaces/${spaceId}/meetings/${meetingId}`,
     REMOVE_MEETING: (spaceId: string, meetingId: string) =>

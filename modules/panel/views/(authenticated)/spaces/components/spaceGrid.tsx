@@ -108,9 +108,7 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
                 <TableHead className="font-medium text-gray-700 px-4">
                   Space Name
                 </TableHead>
-                <TableHead className="font-semibold text-gray-700">
-                  Description
-                </TableHead>
+
                 <TableHead className="font-semibold text-gray-700">
                   Assigned Users
                 </TableHead>
@@ -132,11 +130,7 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
                       {space.name}
                     </span>
                   </TableCell>
-                  <TableCell>
-                    <p className="text-gray-600 max-w-md line-clamp-2">
-                      {space.description || "—"}
-                    </p>
-                  </TableCell>
+
                   <TableCell>
                     {space.users && space.users.length > 0 ? (
                       <div className="flex items-center gap-2">

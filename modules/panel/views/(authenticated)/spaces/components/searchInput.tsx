@@ -164,32 +164,6 @@ export default function UserSearchInput({
           </CommandList>
         </Command>
       )}
-
-      {selectedUsers.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {selectedUsers.map((user) => (
-            <Badge
-              key={user.id}
-              variant="secondary"
-              className="pl-1 pr-2 py-1.5 bg-white border border-gray-200 hover:border-gray-300 transition-colors">
-              <div className="flex items-center gap-2">
-                <UserAvatar user={user} />
-                <span className="text-sm font-medium text-gray-700 flex flex-col">
-                  <span>{user.fullName}</span>
-                  <span className="text-xs text-gray-500">{user.email}</span>
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleRemoveUser(user.id)}
-                  aria-label={`Remove ${user.fullName || user.email}`}
-                  className="hover:bg-gray-100 rounded-full p-0.5 transition-colors cursor-pointer">
-                  <X className="w-3 h-3 text-gray-500" />
-                </button>
-              </div>
-            </Badge>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

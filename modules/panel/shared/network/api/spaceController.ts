@@ -36,4 +36,19 @@ export const spaceController = {
       method: "GET",
     });
   },
+  addMembers: (
+    spaceId: string,
+    users: { userId: string; isAdmin: boolean }[],
+  ): Promise<void> => {
+    return apiRequestClient(API_URLS.SPACES.ADD_MEMBERS(spaceId), {
+      method: "POST",
+      body: JSON.stringify({ users }),
+      headers: { "Content-Type": "application/json" },
+    });
+  },
+  removeUserFromSpace: (spaceId: string, userId: string): Promise<void> => {
+    return apiRequestClient(API_URLS.SPACES.REMOVE_MEMBER(spaceId, userId), {
+      method: "DELETE",
+    });
+  },
 };
