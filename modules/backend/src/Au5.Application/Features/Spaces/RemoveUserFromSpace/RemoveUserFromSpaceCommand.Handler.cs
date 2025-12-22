@@ -37,19 +37,12 @@ public class RemoveUserFromSpaceCommandHandler : IRequestHandler<RemoveUserFromS
 			return Error.NotFound("Space.UserNotInSpace", AppResources.Space.UserNotInSpaceMessage);
 		}
 
-		if (request.UserId == currentUserId)
+		if (request.UserId != currentUserId && (currentUserSpace == null || !currentUserSpace.IsAdmin))
 		{
-			_context.Set<UserSpace>().Remove(targetUserSpace);
+			return Error.Forbidden("Space.NoPermission", AppResources.Space.NoPermissionMessage);
 		}
-		else
-		{
-			if (currentUserSpace == null || !currentUserSpace.IsAdmin)
-			{
-				return Error.Forbidden("Space.NoPermission", AppResources.Space.NoPermissionMessage);
-			}
 
-			_context.Set<UserSpace>().Remove(targetUserSpace);
-		}
+		_context.Set<UserSpace>().Remove(targetUserSpace);
 
 		var result = await _context.SaveChangesAsync(cancellationToken);
 
