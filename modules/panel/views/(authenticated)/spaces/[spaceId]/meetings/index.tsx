@@ -45,9 +45,7 @@ export default function SpaceMeetingsView() {
       toast.success("Members added successfully");
       queryClient.invalidateQueries({ queryKey: ["space-members", spaceId] });
       setIsAddMemberModalOpen(false);
-    } catch (error) {
-      toast.error("Failed to add members");
-    }
+    } catch (error) {}
   };
 
   if (loading) {
@@ -80,6 +78,7 @@ export default function SpaceMeetingsView() {
         open={isAddMemberModalOpen}
         onOpenChange={setIsAddMemberModalOpen}
         onMembersAdded={handleAddMembers}
+        currentMembers={membersData?.users || []}
       />
     </div>
   );
