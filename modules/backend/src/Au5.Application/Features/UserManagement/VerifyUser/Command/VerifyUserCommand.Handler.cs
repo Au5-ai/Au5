@@ -43,6 +43,7 @@ public class VerifyUserCommandHandler : IRequestHandler<VerifyUserCommand, Resul
 			? Error.Failure("User.FailedToUpdate", AppResources.User.FailedToUpdateUserInfo)
 			: new VerifyUserResponse
 			{
+				Email = user.Email,
 				IsDone = dbResult.IsSuccess
 			};
 	}

@@ -18,15 +18,9 @@ import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { AddUserRequest } from "../../types";
 import { useLogin } from "@/shared/hooks/use-auth";
+import { Loader2 } from "lucide-react";
 
-export function AddUserStep({
-  email,
-  next,
-  ...props
-}: {
-  email: string | null;
-  next: () => void;
-}) {
+export function AddUserStep({ next, ...props }: { next: () => void }) {
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     fullname: "",
@@ -104,9 +98,12 @@ export function AddUserStep({
         repeatedPassword: formData.confirmPassword,
       };
 
-      await signupMutation.mutateAsync(signupData);
+      const signupResponse = await signupMutation.mutateAsync(signupData);
+      if (!signupResponse.isDone || !signupResponse.email) {
+        return;
+      }
       await loginMutation.mutateAsync({
-        username: email ?? "",
+        username: signupResponse.email,
         password: formData.password,
       });
       toast.success(GLOBAL_CAPTIONS.pages.signup.signupSuccess);
@@ -122,7 +119,7 @@ export function AddUserStep({
             {GLOBAL_CAPTIONS.pages.signup.form.title}
           </CardTitle>
           <CardDescription>
-            Sign up with your <b>{email}</b> email account
+            Enter your details to create your account
           </CardDescription>
         </CardHeader>
         <CardContent className="mt-8">
@@ -198,9 +195,14 @@ export function AddUserStep({
                 </div>
 
                 <Button type="submit" disabled={signupMutation.isPending}>
-                  {signupMutation.isPending
-                    ? GLOBAL_CAPTIONS.pages.signup.form.submittingButton
-                    : GLOBAL_CAPTIONS.pages.signup.form.submitButton}
+                  {signupMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      {GLOBAL_CAPTIONS.pages.signup.form.submittingButton}
+                    </>
+                  ) : (
+                    GLOBAL_CAPTIONS.pages.signup.form.submitButton
+                  )}
                 </Button>
               </div>
             </div>

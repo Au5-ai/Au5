@@ -24,4 +24,5 @@ export interface AddUserRequest {
 
 export interface AddUserResponse {
   isDone: boolean;
+  email: string;
 }

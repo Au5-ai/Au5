@@ -4,5 +4,6 @@ public record VerifyUserCommand(Guid UserId, Guid OrganizationId, string HashedE
 
 public record VerifyUserResponse
 {
+	public string Email { get; init; }
 	public bool IsDone { get; init; }
 }
