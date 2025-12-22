@@ -7,7 +7,8 @@ export const CAPTIONS = {
   configureExtensionDescription: "Configure the extension settings",
   completeSetupTitle: "Let's Go",
   completeSetupDescription: "Complete the setup",
-  downloadButtonText: "Add to Chrome - It's free!",
+  downloadButtonText: "Download Extension - It's free!",
+  refreshAndContinueButton: "Refresh & Continue",
   sendConfigButtonText: "Send Config To Extension",
   configurationSentSuccess: "Configuration sent to extension!",
   congratulationsTitle: "🎉 Congratulations! 🎉",
@@ -15,4 +16,12 @@ export const CAPTIONS = {
     "You've successfully completed the onboarding process! Welcome to our amazing platform. You're now ready to explore all the incredible features we have to offer.",
   readyMessage: "🚀 Ready to take off? Let's build something amazing together!",
   enjoyButtonText: "Enjoy 🎉🎉",
+  extensionNotDetected: "Extension not detected",
+  extensionDetected: "Extension detected and ready!",
+  extensionDetecting: "Detecting extension...",
+  refreshPageButton: "Refresh This Page",
+  openNewTabButton: "Open in New Tab",
+  checkAgainButton: "Check Again",
+  extensionNotDetectedMessage:
+    "The extension needs to be loaded on this page to receive configuration. Please refresh this page or open the configuration in a new tab.",
 } as const;

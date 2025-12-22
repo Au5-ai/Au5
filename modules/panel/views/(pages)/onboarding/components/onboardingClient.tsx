@@ -18,16 +18,18 @@ export default function OnboardingClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<"loading" | "ok" | "error">("loading");
-  const [email, setEmail] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
 
   useEffect(() => {
     const userId = searchParams.get("id");
     const hash = searchParams.get("hash");
+    const stepParam = searchParams.get("step");
+
     if (!userId || !hash) {
       router.push(ROUTES.FORBIDDEN);
       return;
     }
+
     const verify = async () => {
       try {
         const response = await userController.verify(userId, hash);
@@ -37,7 +39,6 @@ export default function OnboardingClient() {
             return;
           }
           setStatus("ok");
-          setEmail(response.email);
         } else {
           router.push(ROUTES.LOGIN);
         }
@@ -45,27 +46,47 @@ export default function OnboardingClient() {
         router.push(ROUTES.LOGIN);
       }
     };
-    verify();
+    if (!stepParam) {
+      verify();
+    } else {
+      setStatus("ok");
+      const step = parseInt(stepParam, 10);
+      if (step >= 1 && step <= 4) {
+        setCurrentStep(step);
+      }
+    }
   }, [searchParams, router]);
 
   const nextStep = () => {
     if (currentStep < 4) {
-      setCurrentStep((prev) => prev + 1);
+      const newStep = currentStep + 1;
+      setCurrentStep(newStep);
+      updateStepInUrl(newStep);
     }
+  };
+
+  const updateStepInUrl = (step: number) => {
+    const userId = searchParams.get("id");
+    const hash = searchParams.get("hash");
+    const params = new URLSearchParams();
+    if (userId) params.set("id", userId);
+    if (hash) params.set("hash", hash);
+    params.set("step", step.toString());
+    router.replace(`?${params.toString()}`);
   };
 
   const Steps = [
     {
       id: 1,
-      title: CAPTIONS.addUserTitle,
-      description: CAPTIONS.addUserDescription,
-      component: <AddUserStep email={email} next={nextStep} />,
-    },
-    {
-      id: 2,
       title: CAPTIONS.downloadExtensionTitle,
       description: CAPTIONS.downloadExtensionDescription,
       component: <DownloadStep next={nextStep} />,
+    },
+    {
+      id: 2,
+      title: CAPTIONS.addUserTitle,
+      description: CAPTIONS.addUserDescription,
+      component: <AddUserStep next={nextStep} />,
     },
     {
       id: 3,
@@ -91,7 +112,7 @@ export default function OnboardingClient() {
         <div className="flex flex-col gap-6">
           <Logo href="#" text={GLOBAL_CAPTIONS.brandName} />
           <div className="flex items-center justify-center w-[800px]">
-            <div className="flex rounded-xl border shadow-sm w-full h-[600px] gap-2 bg-card text-card-foreground">
+            <div className="flex rounded-xl border shadow-sm w-full h-[650px] gap-2 bg-card text-card-foreground">
               <div className="w-64 p-4 bg-muted rounded-tr-none rounded-br-none rounded-xl">
                 <div className="flex flex-col">
                   {Steps.map((step, index) => {

@@ -2,7 +2,6 @@ import { handleCelebration } from "@/shared/lib";
 import { CAPTIONS } from "../../i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { Button } from "@/shared/components/ui";
-import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function CompleteStep() {
@@ -22,10 +21,7 @@ export function CompleteStep() {
       </div>
 
       <div className="flex justify-between">
-        <Button variant="outline" disabled>
-          <ChevronLeft />
-          {GLOBAL_CAPTIONS.back}
-        </Button>
+        <div></div>
 
         <Button
           className="cursor-pointer"

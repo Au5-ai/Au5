@@ -1,6 +1,6 @@
-import { Button } from "@/shared/components/ui";
+import { Button, Label } from "@/shared/components/ui";
 import { tokenStorageService } from "@/shared/lib/localStorage";
-import { ChevronLeft, Settings } from "lucide-react";
+import { ChevronLeft, Puzzle, Settings } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { CAPTIONS } from "../../i18n";
@@ -54,20 +54,30 @@ export function ConfigureStep({ next }: { next: () => void }) {
         </p>
         <div>
           <Image
-            src="/assets/images/welcome.png"
+            src="/assets/images/config.png"
             alt="Configure Extension"
             className="rounded-lg"
-            width={480}
-            height={100}
+            width={485}
+            height={400}
             style={{ height: "auto" }}
           />
         </div>
+
+        <Label className="mt-4 hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3  border-blue-400 ">
+          <div className="grid gap-1.5 font-normal">
+            <p className="text-sm leading-none font-medium">
+              <Puzzle className="inline-block mr-2 mb-1" />
+              Here, we will send the configuration to the extension.
+            </p>
+            <p className="text-muted-foreground text-sm">
+              Make sure the extension is installed and running in your browser.
+            </p>
+          </div>
+        </Label>
       </div>
+
       <div className="flex justify-between">
-        <Button variant="outline" disabled>
-          <ChevronLeft />
-          {GLOBAL_CAPTIONS.back}
-        </Button>
+        <div></div>
 
         <Button onClick={handleSendConfigs}>
           <Settings />

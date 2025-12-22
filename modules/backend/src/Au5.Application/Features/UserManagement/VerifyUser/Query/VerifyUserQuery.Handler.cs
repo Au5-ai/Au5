@@ -24,6 +24,6 @@ public class VerifyUserQueryHandler : IRequestHandler<VerifyUserQuery, Result<Ve
 			return Error.BadRequest("User.NotFound", AppResources.User.UserNotFound);
 		}
 
-		return new VerifyUserResponse(user.Email,user.IsRegistered());
+		return new VerifyUserResponse(user.Email, user.IsRegistered());
 	}
 }

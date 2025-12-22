@@ -6,9 +6,5 @@ export function useSignup() {
   return useMutation<AddUserResponse, unknown, AddUserRequest>({
     mutationFn: userController.verifyUser,
     onSuccess: async () => {},
-    // onError: (error) => {
-    //   const message = handleAuthError(error);
-    //   toast.error(message);
-    // },
   });
 }
