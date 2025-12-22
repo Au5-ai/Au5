@@ -80,7 +80,7 @@ export function GroupAvatar({
       )}
       {showAddButton && onAddClick && (
         <Tooltip>
-          <TooltipTrigger asChild>
+          <TooltipTrigger asChild className="cursor-pointer">
             <button
               onClick={onAddClick}
               className={`${sizeClasses[size]} rounded-full z-10 border-2 border-background bg-primary text-primary-foreground flex items-center justify-center font-medium hover:bg-primary/90 transition-colors`}>
