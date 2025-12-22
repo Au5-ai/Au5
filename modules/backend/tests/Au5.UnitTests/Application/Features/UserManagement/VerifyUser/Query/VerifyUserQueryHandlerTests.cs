@@ -1,8 +1,6 @@
 using System.Net;
 using Au5.Application.Features.UserManagement.VerifyUser.Query;
-using Au5.Domain.Common;
 using Au5.Domain.Entities;
-using Au5.Shared;
 using MockQueryable.Moq;
 
 namespace Au5.UnitTests.Application.Features.UserManagement.VerifyUser.Query;
@@ -69,7 +67,7 @@ public class VerifyUserQueryHandlerTests
 	}
 
 	[Fact]
-	public async Task Should_ReturnUnauthorized_When_UserIsAlreadyRegistered()
+	public async Task Should_ReturnIsRegistered_When_UserIsAlreadyRegistered()
 	{
 		var userId = Guid.NewGuid();
 		var email = "test@example.com";
@@ -94,9 +92,8 @@ public class VerifyUserQueryHandlerTests
 
 		var result = await _handler.Handle(query, CancellationToken.None);
 
-		Assert.False(result.IsSuccess);
-		Assert.Equal(HttpStatusCode.Unauthorized, result.Error.Type);
-		Assert.Contains("authorized", result.Error.Description, StringComparison.OrdinalIgnoreCase);
+		Assert.True(result.IsSuccess);
+		Assert.True(result.Data.IsRegistered);
 	}
 
 	[Fact]
