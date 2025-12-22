@@ -5,6 +5,7 @@ using Au5.Application.Features.Spaces.AddMembersToSpace;
 using Au5.Application.Features.Spaces.CreateSpace;
 using Au5.Application.Features.Spaces.GetSpaceMeetings;
 using Au5.Application.Features.Spaces.GetSpaces;
+using Au5.Application.Features.Spaces.RemoveUserFromSpace;
 using Au5.Application.Features.Spaces.SpaceMembers;
 using Microsoft.AspNetCore.Authorization;
 
@@ -78,5 +79,16 @@ public class SpacesController(ISender mediator) : BaseController
 	{
 		var commandWithSpaceId = command with { SpaceId = spaceId };
 		return Ok(await mediator.Send(commandWithSpaceId, ct));
+	}
+
+	[HttpDelete]
+	[Route("{spaceId}/members/{userId}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	public async Task<IActionResult> RemoveUserFromSpace([FromRoute] Guid spaceId, [FromRoute] Guid userId, CancellationToken ct)
+	{
+		var command = new RemoveUserFromSpaceCommand { SpaceId = spaceId, UserId = userId };
+		return Ok(await mediator.Send(command, ct));
 	}
 }

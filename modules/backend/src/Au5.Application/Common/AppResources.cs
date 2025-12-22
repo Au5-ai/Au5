@@ -114,6 +114,8 @@ internal static class AppResources
 		public const string NoUsersMessage = "At least one user is required";
 		public const string AllUsersAlreadyMembersMessage = "All specified users are already members of this space";
 		public const string AddMembersFailedMessage = "Failed to add members to space";
+		public const string UserNotInSpaceMessage = "User is not a member of this space";
+		public const string RemoveUserFailedMessage = "Failed to remove user from space";
 	}
 
 	internal static class Assistant

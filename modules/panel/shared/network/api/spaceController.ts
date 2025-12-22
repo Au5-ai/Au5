@@ -46,4 +46,9 @@ export const spaceController = {
       headers: { "Content-Type": "application/json" },
     });
   },
+  removeUserFromSpace: (spaceId: string, userId: string): Promise<void> => {
+    return apiRequestClient(API_URLS.SPACES.REMOVE_MEMBER(spaceId, userId), {
+      method: "DELETE",
+    });
+  },
 };
