@@ -37,9 +37,9 @@ const UserAvatar = ({
   user: User;
   size?: string;
 }) => (
-  <Avatar className={`${size} rounded-lg`}>
+  <Avatar className={`${size}`}>
     <AvatarImage src={user.pictureUrl} alt={user.fullName} />
-    <AvatarFallback className={`${size} rounded-lg border-2 border-gray-200`}>
+    <AvatarFallback className={`${size} border-2 border-gray-200`}>
       {getUserInitials(user)}
     </AvatarFallback>
   </Avatar>

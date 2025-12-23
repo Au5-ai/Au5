@@ -138,12 +138,12 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
                           {space.users.slice(0, 3).map((user, idx) => (
                             <Tooltip key={idx}>
                               <TooltipTrigger asChild>
-                                <Avatar className="h-8 w-8 rounded-lg">
+                                <Avatar className="h-8 w-8">
                                   <AvatarImage
                                     src={user.pictureUrl}
                                     alt={user.fullName}
                                   />
-                                  <AvatarFallback className="h-8 w-8 rounded-lg border-2 border-gray-200">
+                                  <AvatarFallback className="h-8 w-8 border-2 border-gray-200">
                                     {user.fullName?.charAt(0) ||
                                       user.email?.charAt(0)}
                                   </AvatarFallback>
@@ -181,12 +181,12 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
                             .map((user, idx) => (
                               <Tooltip key={idx}>
                                 <TooltipTrigger asChild>
-                                  <Avatar className="h-8 w-8 rounded-lg">
+                                  <Avatar className="h-8 w-8">
                                     <AvatarImage
                                       src={user.pictureUrl}
                                       alt={user.fullName}
                                     />
-                                    <AvatarFallback className="h-8 w-8 rounded-lg border-2 border-purple-200 bg-purple-50">
+                                    <AvatarFallback className="h-8 w-8 border-2 border-purple-200 bg-purple-50">
                                       {user.fullName?.charAt(0) ||
                                         user.email?.charAt(0)}
                                     </AvatarFallback>
