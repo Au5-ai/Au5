@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ROUTES } from "@/shared/routes";
 import { tokenStorageService } from "@/shared/lib/localStorage";
@@ -72,7 +72,7 @@ export function useOnboardingSteps() {
     }
   }, [searchParams]);
 
-  const nextStep = () => {
+  const nextStep = useCallback(() => {
     if (currentStep < 4) {
       const newStep = currentStep + 1;
       setCurrentStep(newStep);
@@ -80,7 +80,7 @@ export function useOnboardingSteps() {
       const hash = searchParams.get("hash");
       updateStepInUrl(newStep, userId, hash, router);
     }
-  };
+  }, [currentStep, searchParams, router]);
 
   return { currentStep, nextStep };
 }
