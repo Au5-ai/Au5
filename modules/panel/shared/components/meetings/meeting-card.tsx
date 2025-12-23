@@ -26,11 +26,16 @@ import { RemoveConfirmationModal } from "./remove-confirmation-modal";
 
 interface MeetingCardProps {
   item: MeetingItem;
+  allowArchive?: boolean;
   onDeleteClick?: (item: MeetingItem) => void;
   onRemoveSuccess?: (meetingId: string) => void;
 }
 
-export function MeetingCard({ item, onRemoveSuccess }: MeetingCardProps) {
+export function MeetingCard({
+  item,
+  allowArchive = true,
+  onRemoveSuccess,
+}: MeetingCardProps) {
   const [showArchiveModal, setShowArchiveModal] = React.useState(false);
   const [showRemoveModal, setShowRemoveModal] = React.useState(false);
   const [isArchiving, setIsArchiving] = React.useState(false);
@@ -86,7 +91,7 @@ export function MeetingCard({ item, onRemoveSuccess }: MeetingCardProps) {
   };
 
   const handleRemoveConfirm = async () => {
-if (!item.meetingId) return;
+    if (!item.meetingId) return;
 
     try {
       setIsRemoving(true);
@@ -154,48 +159,51 @@ if (!item.meetingId) return;
             )}
           </div>
           <div className="flex gap-2">
-            {(item.status === "Ended" || item.status === "Archived") && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={`cursor-pointer ${
-                      isArchived
-                        ? "text-green-600 hover:text-green-700 hover:bg-green-50"
-: "text-gray-600 hover:text-gray-700 hover:bg-orange-50"
-                    }`}
-                    onClick={handleArchiveClick}>
-                    {isArchived ? (
-                      <ArchiveRestore className="h-4 w-4" />
-                    ) : (
-                      <Archive className="h-4 w-4" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>
-                    {isArchived ? "Remove from Archive" : "Move to Archive"}
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            )}
-            {item.status !== "Ended" && item.status !== "Archived" && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="cursor-pointer text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-                    onClick={handleRemoveMeeting}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Remove Meeting</p>
-                </TooltipContent>
-              </Tooltip>
-            )}
+            {allowArchive &&
+              (item.status === "Ended" || item.status === "Archived") && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className={`cursor-pointer ${
+                        isArchived
+                          ? "text-green-600 hover:text-green-700 hover:bg-green-50"
+                          : "text-gray-600 hover:text-gray-700 hover:bg-orange-50"
+                      }`}
+                      onClick={handleArchiveClick}>
+                      {isArchived ? (
+                        <ArchiveRestore className="h-4 w-4" />
+                      ) : (
+                        <Archive className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      {isArchived ? "Remove from Archive" : "Move to Archive"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            {allowArchive &&
+              item.status !== "Ended" &&
+              item.status !== "Archived" && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="cursor-pointer text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                      onClick={handleRemoveMeeting}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Remove Meeting</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
           </div>
         </div>
       </CardContent>

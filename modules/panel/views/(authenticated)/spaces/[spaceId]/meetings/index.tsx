@@ -72,7 +72,7 @@ export default function SpaceMeetingsView() {
           )}
         </div>
       </div>
-      <MeetingsList meetings={meetings} />
+      <MeetingsList allowArchive={false} meetings={meetings} />
 
       <AddMemberModal
         open={isAddMemberModalOpen}

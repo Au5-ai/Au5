@@ -7,10 +7,15 @@ import { EmptyMeetings } from "../empty-states/meeting-empty";
 
 interface MeetingsListProps {
   meetings: MeetingData;
+  allowArchive?: boolean;
   onRemoveSuccess?: (meetingId: string) => void;
 }
 
-export function MeetingsList({ meetings, onRemoveSuccess }: MeetingsListProps) {
+export function MeetingsList({
+  meetings,
+  allowArchive = true,
+  onRemoveSuccess,
+}: MeetingsListProps) {
   if (meetings.length === 0) {
     return <EmptyMeetings />;
   }
@@ -27,6 +32,7 @@ export function MeetingsList({ meetings, onRemoveSuccess }: MeetingsListProps) {
               <MeetingCard
                 key={index}
                 item={item}
+                allowArchive={allowArchive}
                 onRemoveSuccess={onRemoveSuccess}
               />
             ))}
