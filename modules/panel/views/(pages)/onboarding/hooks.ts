@@ -86,14 +86,17 @@ export function useOnboardingSteps() {
 }
 
 export function useDownloadStep() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [isInstalled, setIsInstalled] = useState(false);
 
   const handleRefreshAndContinue = () => {
     const userId = searchParams.get("id");
     const hash = searchParams.get("hash");
-    updateStepInUrl(2, userId, hash, router);
+    const params = new URLSearchParams();
+    if (userId) params.set("id", userId);
+    if (hash) params.set("hash", hash);
+    params.set("step", "2");
+    window.location.href = `?${params.toString()}`;
   };
 
   return { isInstalled, setIsInstalled, handleRefreshAndContinue };
