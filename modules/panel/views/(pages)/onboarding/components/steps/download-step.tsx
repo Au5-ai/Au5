@@ -4,24 +4,13 @@ import { RefreshCw, Download } from "lucide-react";
 import Image from "next/image";
 import { CAPTIONS } from "../../i18n";
 import { ROUTES } from "@/shared/routes";
-import { useSearchParams } from "next/navigation";
 import { Checkbox } from "@/shared/components/ui/checkbox";
 import { Label } from "@/shared/components/ui/label";
-import { useState } from "react";
+import { useDownloadStep } from "../../hooks";
 
-export function DownloadStep({ next }: { next: () => void }) {
-  const searchParams = useSearchParams();
-  const [isInstalled, setIsInstalled] = useState(false);
-
-  const handleRefreshAndContinue = () => {
-    const userId = searchParams.get("id");
-    const hash = searchParams.get("hash");
-    const params = new URLSearchParams();
-    if (userId) params.set("id", userId);
-    if (hash) params.set("hash", hash);
-    params.set("step", "2");
-    window.location.href = `?${params.toString()}`;
-  };
+export function DownloadStep() {
+  const { isInstalled, setIsInstalled, handleRefreshAndContinue } =
+    useDownloadStep();
 
   return (
     <>

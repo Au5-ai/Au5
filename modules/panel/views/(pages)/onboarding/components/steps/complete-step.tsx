@@ -12,9 +12,7 @@ export function CompleteStep() {
         <h2 className="text-2xl font-bold text-gray-900 mb-8">
           {CAPTIONS.congratulationsTitle}
         </h2>
-
         <p className="text-gray-600 mb-6">{CAPTIONS.completionMessage}</p>
-
         <div className="space-y-3">
           <p className="text-sm text-gray-500">{CAPTIONS.readyMessage}</p>
         </div>
@@ -22,12 +20,10 @@ export function CompleteStep() {
 
       <div className="flex justify-between">
         <div></div>
-
         <Button
           className="cursor-pointer"
           onClick={() => {
             handleCelebration();
-
             setTimeout(() => {
               router.push(`/${GLOBAL_CAPTIONS.playground}`);
             }, 3000);

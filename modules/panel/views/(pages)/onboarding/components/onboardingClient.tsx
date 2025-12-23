@@ -2,85 +2,25 @@
 import Logo from "@/shared/components/logo";
 import { Card, CardContent } from "@/shared/components/ui";
 import { CheckCircle2, Circle } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import { CAPTIONS } from "../i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { LoadingPage } from "@/shared/components/loading-page";
-import { userController } from "../controllers/userController";
 import { ConfigureStep } from "./steps/configure-step";
 import { CompleteStep } from "./steps/complete-step";
 import { DownloadStep } from "./steps/download-step";
 import { AddUserStep } from "./steps/addUser-step";
-import { ROUTES } from "@/shared/routes";
+import { useOnboardingVerification, useOnboardingSteps } from "../hooks";
 
 export default function OnboardingClient() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [status, setStatus] = useState<"loading" | "ok" | "error">("loading");
-  const [currentStep, setCurrentStep] = useState(1);
-
-  useEffect(() => {
-    const userId = searchParams.get("id");
-    const hash = searchParams.get("hash");
-    const stepParam = searchParams.get("step");
-
-    if (!userId || !hash) {
-      router.push(ROUTES.FORBIDDEN);
-      return;
-    }
-
-    const verify = async () => {
-      try {
-        const response = await userController.verify(userId, hash);
-        if (response) {
-          if (response.isRegistered) {
-            router.push(ROUTES.REGISTERED);
-            return;
-          }
-          setStatus("ok");
-        } else {
-          router.push(ROUTES.LOGIN);
-        }
-      } catch {
-        router.push(ROUTES.LOGIN);
-      }
-    };
-    if (!stepParam) {
-      verify();
-    } else {
-      setStatus("ok");
-      const step = parseInt(stepParam, 10);
-      if (step >= 1 && step <= 4) {
-        setCurrentStep(step);
-      }
-    }
-  }, [searchParams, router]);
-
-  const nextStep = () => {
-    if (currentStep < 4) {
-      const newStep = currentStep + 1;
-      setCurrentStep(newStep);
-      updateStepInUrl(newStep);
-    }
-  };
-
-  const updateStepInUrl = (step: number) => {
-    const userId = searchParams.get("id");
-    const hash = searchParams.get("hash");
-    const params = new URLSearchParams();
-    if (userId) params.set("id", userId);
-    if (hash) params.set("hash", hash);
-    params.set("step", step.toString());
-    router.replace(`?${params.toString()}`);
-  };
+  const { status } = useOnboardingVerification();
+  const { currentStep, nextStep } = useOnboardingSteps();
 
   const Steps = [
     {
       id: 1,
       title: CAPTIONS.downloadExtensionTitle,
       description: CAPTIONS.downloadExtensionDescription,
-      component: <DownloadStep next={nextStep} />,
+      component: <DownloadStep />,
     },
     {
       id: 2,
@@ -156,7 +96,6 @@ export default function OnboardingClient() {
                   })}
                 </div>
               </div>
-              {/* Step Content */}
               <Card className="flex-1 shadow-none border-0 py-0">
                 <CardContent className="p-6 h-full flex flex-col justify-between">
                   {Steps[currentStep - 1].component}
@@ -168,6 +107,4 @@ export default function OnboardingClient() {
       </div>
     );
   }
-
-  return null;
 }
