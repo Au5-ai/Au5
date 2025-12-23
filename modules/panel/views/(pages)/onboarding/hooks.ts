@@ -8,7 +8,7 @@ import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { AddUserRequest, AddUserResponse } from "./types";
 import { userController } from "./controllers/userController";
 import { organizationsController } from "./controllers/organizationsController";
-import { parseStepFromUrl, updateStepInUrl } from "./utils";
+import { buildOnboardingUrlParams, parseStepFromUrl, updateStepInUrl } from "./utils";
 import { CAPTIONS } from "./i18n";
 
 export function useSignup() {
@@ -92,11 +92,8 @@ export function useDownloadStep() {
   const handleRefreshAndContinue = () => {
     const userId = searchParams.get("id");
     const hash = searchParams.get("hash");
-    const params = new URLSearchParams();
-    if (userId) params.set("id", userId);
-    if (hash) params.set("hash", hash);
-    params.set("step", "2");
-    window.location.href = `?${params.toString()}`;
+    const params = buildOnboardingUrlParams(2, userId, hash);
+    window.location.href = `?${params}`;
   };
 
   return { isInstalled, setIsInstalled, handleRefreshAndContinue };
