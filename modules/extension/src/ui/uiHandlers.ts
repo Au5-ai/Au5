@@ -162,7 +162,7 @@ export class UIHandlers {
 
   private handleGithubLink(): this {
     const btn = document.getElementById("github-link");
-    btn?.addEventListener("click", () => window.open("https://github.com/Au5-ai/au5-issues/issues", "_blank"));
+    btn?.addEventListener("click", () => window.open("https://github.com/Au5-ai/au5", "_blank", "noopener,noreferrer"));
     return this;
   }
 
@@ -174,7 +174,9 @@ export class UIHandlers {
 
   private handleAddIssueLink(): this {
     const btn = document.getElementById("issue-link");
-    btn?.addEventListener("click", () => window.open("https://github.com/Au5-ai/au5-issues/issues", "_blank"));
+    btn?.addEventListener("click", () =>
+      window.open("https://github.com/Au5-ai/au5/issues", "_blank", "noopener,noreferrer")
+    );
     return this;
   }
 
@@ -190,16 +192,25 @@ export class UIHandlers {
         console.error("Platform or configuration is not set.");
         return;
       }
+
+      const addBotText = document.getElementById("au5-btn-addbot-text");
+      if (addBotText) {
+        disabled = true;
+        addBotText.textContent = "Loading...";
+      }
+
       const meetId = this.platform.getMeetId();
       const response = await this.backendApi
         .addBot({
-          meetingId: "00000000-0000-0000-0000-000000000000",
           meetId: meetId,
-          botName: this.config.service.botName,
           platform: this.platform.getPlatformName()
         })
         .catch(error => {
           showToast("Failed to add bot :(");
+          if (addBotText) {
+            disabled = false;
+            addBotText.textContent = "Add bot";
+          }
           return;
         });
 
@@ -208,15 +219,12 @@ export class UIHandlers {
         const message = {
           type: MessageTypes.RequestToAddBot,
           meetId: meetId,
-          botName: this.config.service.botName,
           user: this.config.user
         } as RequestToAddBotMessage;
         this.meetingHubClient?.sendMessage(message);
 
-        const addBotText = document.getElementById("au5-btn-addbot-text");
         if (addBotText) {
-          let seconds = 60;
-          disabled = true;
+          let seconds = 120;
           addBotText.textContent = `${seconds}s to retry`;
           const interval = setInterval(() => {
             seconds--;
@@ -230,7 +238,11 @@ export class UIHandlers {
           }, 1000);
         }
       } else {
-        console.error("Failed to add bot:", response.error);
+        console.error("Failed to add bot:", response?.error);
+        if (addBotText) {
+          disabled = false;
+          addBotText.textContent = "Add bot";
+        }
       }
     });
     return this;
@@ -363,36 +375,50 @@ export class UIHandlers {
   }
 
   private handleMeetingCloseActions(): this {
+    let disabled = false;
     const meetingCloseAction = document.getElementById("au5-meeting-closeAction") as HTMLDivElement | null;
 
-    meetingCloseAction?.addEventListener("click", () => {
+    meetingCloseAction?.addEventListener("click", async () => {
+      if (disabled) {
+        console.warn("Close action is disabled, please wait.");
+        return;
+      }
       if (!this.platform || !this.meetingHubClient) return;
 
       const meeting = JSON.parse(localStorage.getItem("au5-meetingId") || "null");
       if (!meeting) {
         return;
       }
+
+      disabled = true;
+      const originalTooltip = meetingCloseAction.getAttribute("data-tooltip");
+      meetingCloseAction.setAttribute("data-tooltip", "Closing...");
+      meetingCloseAction.style.opacity = "0.6";
+      meetingCloseAction.style.cursor = "wait";
+
       const meetId = this.platform?.getMeetId();
       const meetingModel: CloseMeetingModel = {
         meetId: meetId,
         meetingId: meeting.meetingId
       };
-      this.backendApi
-        .closeMeeting(meetingModel)
-        .then(() => {
-          const message = {
-            type: MessageTypes.CloseMeeting,
-            meetId: meetId
-          } as CloseMeetingMessage;
 
-          this.meetingHubClient.sendMessage(message);
+      try {
+        await this.backendApi.closeMeeting(meetingModel);
 
-          this.closeSidePanel(this.config.service.panelUrl);
-        })
-        .catch(error => {
-          showToast("Failed to close meeting :(");
-          return;
-        });
+        const message = {
+          type: MessageTypes.CloseMeeting,
+          meetId: meetId
+        } as CloseMeetingMessage;
+
+        this.meetingHubClient.sendMessage(message);
+        this.closeSidePanel(this.config.service.panelUrl);
+      } catch (error) {
+        showToast("Failed to close meeting :(");
+        disabled = false;
+        meetingCloseAction.setAttribute("data-tooltip", originalTooltip || "Close Meeting");
+        meetingCloseAction.style.opacity = "1";
+        meetingCloseAction.style.cursor = "pointer";
+      }
     });
     return this;
   }

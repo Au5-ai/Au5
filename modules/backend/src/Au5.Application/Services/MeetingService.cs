@@ -2,24 +2,21 @@ namespace Au5.Application.Services;
 
 public class MeetingService : IMeetingService
 {
-	private const string FallbackBotName = "Au5";
 	private static readonly TimeSpan CacheExpiration = TimeSpan.FromHours(1);
 
 	private readonly SemaphoreSlim _lock = new(1, 1);
 	private readonly ICacheProvider _cacheProvider;
-	private readonly IApplicationDbContext _dbContext;
-	private readonly IDateTimeProvider _dateTimeProvider;
+	private readonly IDataProvider _dataProvider;
 
-	public MeetingService(ICacheProvider cacheProvider, IApplicationDbContext dbContext, IDateTimeProvider dateTimeProvider)
+	public MeetingService(ICacheProvider cacheProvider, IDataProvider dataProvider)
 	{
 		_cacheProvider = cacheProvider ?? throw new ArgumentNullException(nameof(cacheProvider));
-		_dbContext = dbContext;
-		_dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
+		_dataProvider = dataProvider ?? throw new ArgumentNullException(nameof(dataProvider));
 	}
 
-	public static string GetMeetingKey(string meetId)
+	public string GetMeetingKey(string meetId)
 	{
-		var today = DateTime.Now.Date;
+		var today = _dataProvider.Now.Date;
 		return $"meeting:{meetId}:{today:yyyyMMdd}";
 	}
 
@@ -54,7 +51,7 @@ public class MeetingService : IMeetingService
 		}
 	}
 
-	public async Task AddGuestsToMeet(List<Participant> users, string meetId)
+	public async Task AddGuestsToMeet(string meetId, IReadOnlyCollection<Guest> guests)
 	{
 		var key = GetMeetingKey(meetId);
 		var meeting = await _cacheProvider.GetAsync<Meeting>(key);
@@ -64,15 +61,15 @@ public class MeetingService : IMeetingService
 			return;
 		}
 
-		foreach (var user in users)
+		foreach (var guest in guests)
 		{
-			if (!meeting.Guests.Any(g => g.FullName == user.FullName))
+			if (!meeting.Guests.Any(g => g.FullName == guest.FullName))
 			{
 				meeting.Guests.Add(new GuestsInMeeting
 				{
 					MeetingId = meeting.Id,
-					FullName = user.FullName,
-					PictureUrl = user.PictureUrl
+					FullName = guest.FullName,
+					PictureUrl = guest.PictureUrl
 				});
 			}
 		}
@@ -80,25 +77,25 @@ public class MeetingService : IMeetingService
 		await _cacheProvider.SetAsync(key, meeting, CacheExpiration);
 	}
 
-	public async Task<string> BotIsAdded(string meetId)
+	public async Task<bool> BotIsAdded(string meetId, string botName)
 	{
 		var key = GetMeetingKey(meetId);
 		var meeting = await _cacheProvider.GetAsync<Meeting>(key);
 
 		if (meeting is null || meeting.IsEnded())
 		{
-			return string.Empty;
+			return false;
 		}
 
 		if (!meeting.IsBotAdded)
 		{
-			meeting.BotName = await GetBotNameFromConfigAsync();
+			meeting.BotName = botName;
 			meeting.IsBotAdded = true;
 			meeting.Status = MeetingStatus.Recording;
 		}
 
 		await _cacheProvider.SetAsync(key, meeting, CacheExpiration);
-		return meeting.BotName;
+		return true;
 	}
 
 	public async Task<bool> PauseMeeting(string meetId, bool isPause)
@@ -136,7 +133,7 @@ public class MeetingService : IMeetingService
 			}
 			else
 			{
-				var now = _dateTimeProvider.Now;
+				var now = _dataProvider.Now;
 				var start = meeting.CreatedAt;
 
 				meeting.Entries.Add(CreateEntryFromMessage(entry, start, now));
@@ -184,13 +181,12 @@ public class MeetingService : IMeetingService
 					EntryId = entryBlock.Id,
 					ReactionId = reaction.ReactionId,
 					Participants = [new Participant()
-					{
-						Id = reaction.User.Id,
-						FullName = reaction.User.FullName,
-						PictureUrl = reaction.User.PictureUrl
-					}
-
-],
+						{
+							Id = reaction.User.Id,
+							FullName = reaction.User.FullName,
+							PictureUrl = reaction.User.PictureUrl
+						},
+					],
 				};
 				entryBlock.Reactions.Add(existingReaction);
 			}
@@ -253,7 +249,7 @@ public class MeetingService : IMeetingService
 
 	private Meeting CreateNewMeeting(UserJoinedInMeetingMessage userJoined)
 	{
-		var meetingId = Guid.NewGuid();
+		var meetingId = _dataProvider.NewGuid();
 		var hashToken = HashHelper.HashSafe(meetingId.ToString());
 
 		return new Meeting
@@ -261,18 +257,12 @@ public class MeetingService : IMeetingService
 			Id = meetingId,
 			MeetId = userJoined.MeetId,
 			Entries = [],
-			CreatedAt = _dateTimeProvider.Now,
+			CreatedAt = _dataProvider.Now,
 			Platform = userJoined.Platform,
 			Participants = [],
 			Guests = [],
 			HashToken = hashToken,
-			Status = MeetingStatus.AddingBot,
+			Status = MeetingStatus.WaitingToAddBot,
 		};
-	}
-
-	private async Task<string> GetBotNameFromConfigAsync(CancellationToken cancellationToken = default)
-	{
-		var config = await _dbContext.Set<SystemConfig>().AsNoTracking().FirstOrDefaultAsync(cancellationToken);
-		return config?.BotName ?? FallbackBotName;
 	}
 }

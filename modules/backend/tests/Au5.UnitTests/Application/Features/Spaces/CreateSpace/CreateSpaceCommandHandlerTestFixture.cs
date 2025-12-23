@@ -1,12 +1,17 @@
 using Au5.Application.Features.Spaces.CreateSpace;
 using Au5.Domain.Entities;
+using Au5.Shared;
 using MockQueryable.Moq;
 
 namespace Au5.UnitTests.Application.Features.Spaces.CreateSpace;
 
 public class CreateSpaceCommandHandlerTestFixture
 {
+	private Guid _organizationId = Guid.NewGuid();
+
 	public Mock<IApplicationDbContext> MockDbContext { get; } = new();
+
+	public Mock<ICurrentUserService> MockCurrentUserService { get; } = new();
 
 	public CreateSpaceCommandHandler Handler { get; private set; }
 
@@ -60,6 +65,8 @@ public class CreateSpaceCommandHandlerTestFixture
 
 	public CreateSpaceCommandHandlerTestFixture WithValidUsers(int userCount = 2)
 	{
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		TestUsers = [];
 		for (var i = 0; i < userCount; i++)
 		{
@@ -70,7 +77,7 @@ public class CreateSpaceCommandHandlerTestFixture
 				Email = $"user{i + 1}@example.com",
 				PictureUrl = $"https://example.com/user{i + 1}.jpg",
 				IsActive = true,
-				CreatedAt = DateTime.UtcNow,
+				CreatedAt = now,
 				Role = RoleTypes.User,
 				Status = UserStatus.CompleteSignUp
 			});
@@ -84,13 +91,15 @@ public class CreateSpaceCommandHandlerTestFixture
 
 	public CreateSpaceCommandHandlerTestFixture WithInactiveUser()
 	{
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		var inactiveUser = new User
 		{
 			Id = Guid.NewGuid(),
 			FullName = "Inactive User",
 			Email = "inactive@example.com",
 			IsActive = false,
-			CreatedAt = DateTime.UtcNow,
+			CreatedAt = now,
 			Role = RoleTypes.User,
 			Status = UserStatus.CompleteSignUp
 		};
@@ -114,12 +123,16 @@ public class CreateSpaceCommandHandlerTestFixture
 	public CreateSpaceCommandHandlerTestFixture WithSuccessfulSave()
 	{
 		var spaces = new List<Space>();
+		var userSpaces = new List<UserSpace>();
 
 		MockDbContext.Setup(db => db.Set<Space>().Add(It.IsAny<Space>()))
 			.Callback<Space>(s => spaces.Add(s));
 
+		MockDbContext.Setup(db => db.Set<UserSpace>().AddRange(It.IsAny<IEnumerable<UserSpace>>()))
+			.Callback<IEnumerable<UserSpace>>(us => userSpaces.AddRange(us));
+
 		MockDbContext.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
-			.ReturnsAsync(Au5.Shared.Result.Success())
+			.ReturnsAsync(Result.Success())
 			.Callback(() =>
 			{
 				if (spaces.Any())
@@ -135,7 +148,7 @@ public class CreateSpaceCommandHandlerTestFixture
 	public CreateSpaceCommandHandlerTestFixture WithFailedSave()
 	{
 		MockDbContext.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
-			.ReturnsAsync(Au5.Shared.Result.Failure(Au5.Shared.Error.Failure("Database save failed")));
+			.ReturnsAsync(Result.Failure(Error.Failure("Database save failed")));
 
 		return this;
 	}
@@ -163,25 +176,34 @@ public class CreateSpaceCommandHandlerTestFixture
 		return this;
 	}
 
+	public CreateSpaceCommandHandlerTestFixture WithOrganizationId(Guid organizationId)
+	{
+		_organizationId = organizationId;
+		return this;
+	}
+
 	public CreateSpaceCommandHandler BuildHandler()
 	{
-		Handler = new CreateSpaceCommandHandler(MockDbContext.Object);
+		var dataProviderMock = new Mock<IDataProvider>();
+		dataProviderMock.Setup(d => d.NewGuid()).Returns(Guid.NewGuid());
+		dataProviderMock.Setup(d => d.UtcNow).Returns(DateTime.UtcNow);
+		MockCurrentUserService.Setup(u => u.OrganizationId).Returns(_organizationId);
+		Handler = new CreateSpaceCommandHandler(MockDbContext.Object, dataProviderMock.Object, MockCurrentUserService.Object);
 		return Handler;
 	}
 
-	public CreateSpaceCommand CreateValidCommand(bool withParent = false, bool withUsers = true)
+	public CreateSpaceCommand CreateValidCommand(bool withUsers = true)
 	{
 		var command = new CreateSpaceCommand
 		{
 			Name = "Test Space",
 			Description = "Test Description",
-			ParentId = withParent ? TestParentSpace?.Id : null,
 			Users = withUsers && TestUsers.Any()
-				? TestUsers.Select((user, index) => new UserInSpace
+				? [.. TestUsers.Select((user, index) => new UserInSpace
 				{
 					UserId = user.Id,
 					IsAdmin = index == 0 // First user is admin
-				}).ToList()
+				})]
 				: []
 		};
 

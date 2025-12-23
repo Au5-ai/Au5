@@ -6,29 +6,33 @@ public class AddMeetingToSpaceCommandHandler : IRequestHandler<AddMeetingToSpace
 {
 	private readonly IApplicationDbContext _dbContext;
 	private readonly ICurrentUserService _currentUserService;
+	private readonly IDataProvider _dataProvider;
 
-	public AddMeetingToSpaceCommandHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
+	public AddMeetingToSpaceCommandHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService, IDataProvider dataProvider)
 	{
 		_dbContext = dbContext;
 		_currentUserService = currentUserService;
+		_dataProvider = dataProvider;
 	}
 
 	public async ValueTask<Result<AddMeetingToSpaceResponse>> Handle(AddMeetingToSpaceCommand request, CancellationToken cancellationToken)
 	{
+		var organizationId = _currentUserService.OrganizationId;
+
 		var meeting = await _dbContext.Set<Meeting>()
 			.FirstOrDefaultAsync(m => m.Id == request.MeetingId, cancellationToken);
 
 		if (meeting == null)
 		{
-			return Error.NotFound(description: AppResources.MeetingSpace.MeetingNotFound);
+			return Error.NotFound("Meeting.NotFound", AppResources.MeetingSpace.MeetingNotFound);
 		}
 
 		var space = await _dbContext.Set<Space>()
-			.FirstOrDefaultAsync(s => s.Id == request.SpaceId && s.IsActive, cancellationToken);
+			.FirstOrDefaultAsync(s => s.Id == request.SpaceId && s.IsActive && s.OrganizationId == organizationId, cancellationToken);
 
 		if (space == null)
 		{
-			return Error.NotFound(description: AppResources.MeetingSpace.SpaceNotFound);
+			return Error.NotFound("Space.NotFound", AppResources.MeetingSpace.SpaceNotFound);
 		}
 
 		var existingMeetingSpace = await _dbContext.Set<MeetingSpace>()
@@ -36,7 +40,7 @@ public class AddMeetingToSpaceCommandHandler : IRequestHandler<AddMeetingToSpace
 
 		if (existingMeetingSpace != null)
 		{
-			return Error.BadRequest(description: AppResources.MeetingSpace.MeetingAlreadyInSpace);
+			return Error.BadRequest("MeetingSpace.AlreadyExists", AppResources.MeetingSpace.MeetingAlreadyInSpace);
 		}
 
 		var meetingSpace = new MeetingSpace
@@ -44,7 +48,7 @@ public class AddMeetingToSpaceCommandHandler : IRequestHandler<AddMeetingToSpace
 			MeetingId = request.MeetingId,
 			SpaceId = request.SpaceId,
 			UserId = _currentUserService.UserId,
-			CreatedAt = DateTime.UtcNow
+			CreatedAt = _dataProvider.UtcNow
 		};
 
 		_dbContext.Set<MeetingSpace>().Add(meetingSpace);

@@ -19,7 +19,7 @@ public class GetUserMenusQueryHandler : IRequestHandler<GetUserMenusQuery, Resul
 		var userRole = _currentUserService.Role;
 		if (userRole is null)
 		{
-			return Error.Forbidden(description: AppResources.Auth.UserRoleNotFound);
+			return Error.Forbidden("Auth.RoleNotFound", AppResources.Auth.UserRoleNotFound);
 		}
 
 		var menus = await _dbContext

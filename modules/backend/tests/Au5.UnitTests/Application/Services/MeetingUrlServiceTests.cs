@@ -1,10 +1,8 @@
-using Au5.Application.Services;
+using Au5.Application.Common.Utils;
 
 namespace Au5.UnitTests.Application.Services;
 public class MeetingUrlServiceTests
 {
-	private readonly MeetingUrlService _service = new();
-
 	[Theory]
 	[InlineData("googlemeet", "abc-xyz", "https://meet.google.com/abc-xyz")]
 	[InlineData("zoom", "123456789", "https://zoom.us/j/123456789")]
@@ -12,7 +10,7 @@ public class MeetingUrlServiceTests
 	[InlineData("GoogleMeet", "abc-xyz", "https://meet.google.com/abc-xyz")]
 	public void GetMeetingUrl_Should_ReturnExpectedUrl_When_PlatformIsSupported(string platform, string meetId, string expectedUrl)
 	{
-		var result = _service.GetMeetingUrl(platform, meetId);
+		var result = UrlGenerator.GenerateMeetingUrl(platform, meetId);
 
 		Assert.Equal(expectedUrl, result);
 	}
@@ -23,6 +21,6 @@ public class MeetingUrlServiceTests
 		var platform = "skype";
 		var meetId = "someId";
 
-		Assert.Throws<NotSupportedException>(() => _service.GetMeetingUrl(platform, meetId));
+		Assert.Throws<NotSupportedException>(() => UrlGenerator.GenerateMeetingUrl(platform, meetId));
 	}
 }

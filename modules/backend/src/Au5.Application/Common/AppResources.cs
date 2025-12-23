@@ -10,7 +10,7 @@ internal static class AppResources
 	/// <summary>
 	/// System configuration related messages.
 	/// </summary>
-	internal static class System
+	internal static class Organization
 	{
 		public const string FailedToConfig = "Failed to configure the system. Please check your settings and try again.";
 		public const string IsNotConfigured = "The system has not been configured yet. Please complete the initial setup.";
@@ -35,6 +35,7 @@ internal static class AppResources
 	/// </summary>
 	internal static class Meeting
 	{
+		public const string FailedToRemove = "Failed to remove the meeting. Please try again or contact support if the issue persists.";
 		public const string FailedToAddBot = "Failed to add bot to the meeting. Please check the bot configuration and try again.";
 		public const string NotFound = "The requested meeting could not be found. Please verify the meeting ID and try again.";
 		public const string FailedToClose = "Failed to close the meeting. Please try again or contact support if the issue persists.";
@@ -67,6 +68,11 @@ internal static class AppResources
 		public const string AssistantInstructionsMaxLength = "Assistant instructions must not exceed 2000 characters.";
 	}
 
+	internal static class Admin
+	{
+		public const string EmailAlreadyRegistered = "An user with this email already exists. Please use a different email address.";
+	}
+
 	internal static class User
 	{
 		public const string EmailAlreadyVerified = "This email address has already been verified. A verification email cannot be sent again.";
@@ -74,6 +80,12 @@ internal static class AppResources
 		public const string UserNotFound = "User not found. Please verify your information and try again.";
 
 		public const string FailedToUpdateUserInfo = "Failed to Update User.";
+
+		public const string AlreadyExistsInDatabase = "User already exists in the database.";
+
+		public const string FailedToSendInvitationEmail = "Failed to send invitation email.";
+
+		public const string FailedToSaveToDatabase = "Failed to save user data to the database.";
 	}
 
 	/// <summary>
@@ -97,6 +109,13 @@ internal static class AppResources
 		public const string NameMaxLength = "Space name must not exceed 100 characters.";
 		public const string DescriptionMaxLength = "Space description must not exceed 500 characters.";
 		public const string InvalidUserIds = "All user IDs must be valid GUIDs.";
+
+		public const string NoPermissionMessage = "You do not have permission to modify this space";
+		public const string NoUsersMessage = "At least one user is required";
+		public const string AllUsersAlreadyMembersMessage = "All specified users are already members of this space";
+		public const string AddMembersFailedMessage = "Failed to add members to space";
+		public const string UserNotInSpaceMessage = "User is not a member of this space";
+		public const string RemoveUserFailedMessage = "Failed to remove user from space";
 	}
 
 	internal static class Assistant

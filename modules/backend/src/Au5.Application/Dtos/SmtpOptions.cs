@@ -7,6 +7,6 @@ public record SmtpOptions
 	public bool UseSsl { get; set; }
 	public string User { get; init; }
 	public string Password { get; init; }
+	public string From { get; set; }
 	public string BaseUrl { get; init; }
-
 }

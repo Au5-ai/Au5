@@ -3,6 +3,7 @@ global using System.Text;
 global using Au5.Application.Common.Abstractions;
 global using Au5.Domain.Common;
 global using Au5.Infrastructure.Authentication;
+global using Au5.Shared;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Options;
 global using Moq;

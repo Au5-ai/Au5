@@ -49,8 +49,6 @@ public static class Extensions
 			{
 				tracing.AddSource(builder.Environment.ApplicationName)
 					.AddAspNetCoreInstrumentation()
-					// Uncomment the following line to enable gRPC instrumentation (requires the OpenTelemetry.Instrumentation.GrpcNetClient package)
-					//.AddGrpcClientInstrumentation()
 					.AddHttpClientInstrumentation();
 			});
 
@@ -82,17 +80,23 @@ public static class Extensions
 				caching.AddPolicy("HealthChecks",
 				build: static policy => policy.Expire(TimeSpan.FromSeconds(30))));
 
-		builder.Services.AddHealthChecks()
+		var healthChecksBuilder = builder.Services.AddHealthChecks()
 			.AddCheck("self", () => HealthCheckResult.Healthy(), ["live"])
 			.AddSqlServer(
 				connectionString: builder.Configuration.GetConnectionString("ApplicationDbContext") ?? "",
 				name: "database",
-				tags: ["ready"])
+				tags: ["ready"]);
 
-			.AddRedis(
-				redisConnectionString: builder.Configuration.GetConnectionString("Redis") ?? "",
+		var useRedis = builder.Configuration.GetValue("ServiceSettings:UseRedis", false);
+		var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
+
+		if (useRedis && !string.IsNullOrWhiteSpace(redisConnectionString))
+		{
+			healthChecksBuilder.AddRedis(
+				redisConnectionString: redisConnectionString,
 				name: "redis_cache",
 				tags: ["ready"]);
+		}
 
 		return builder;
 	}

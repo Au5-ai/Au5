@@ -1,46 +1,51 @@
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.Json;
 using Au5.Application.Dtos.AI;
-using Au5.Application.Features.Meetings.GetFullTranscription;
 
 namespace Au5.Application.Features.AI.Generate;
 
 public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand, string>
 {
-	private readonly IAIEngineAdapter _aiEngineAdapter;
+	private readonly IAIClient _aiClient;
 	private readonly IApplicationDbContext _dbContext;
 	private readonly ICurrentUserService _currentUserService;
+	private readonly IDataProvider _dataProvider;
 
-	public AIGenerateCommandHandler(IAIEngineAdapter aiEngineAdapter, IApplicationDbContext dbContext, ICurrentUserService currentUserService)
+	public AIGenerateCommandHandler(IAIClient aIClient, IApplicationDbContext dbContext, ICurrentUserService currentUserService, IDataProvider dataProvider)
 	{
-		_aiEngineAdapter = aiEngineAdapter;
+		_aiClient = aIClient;
 		_dbContext = dbContext;
 		_currentUserService = currentUserService;
+		_dataProvider = dataProvider;
 	}
 
 	public async IAsyncEnumerable<string> Handle(
 		AIGenerateCommand request,
 		[EnumeratorCancellation] CancellationToken cancellationToken)
 	{
-		var aiContent = _dbContext.Set<AIContents>()
-			.FirstOrDefault(x => x.MeetingId == request.MeetingId && x.AssistantId == request.AssistantId);
+		var aiContent = await _dbContext.Set<AIContents>()
+			.AsNoTracking()
+			.FirstOrDefaultAsync(x => x.MeetingId == request.MeetingId && x.AssistantId == request.AssistantId && x.IsActive, cancellationToken);
 
 		if (aiContent is not null)
 		{
-			yield return JsonSerializer.Serialize(new { content = aiContent.Content }) + "\n\n";
+			yield return JsonSerializer.Serialize(new { type = "cached", content = aiContent.Content }) + "\n\n";
 			yield break;
 		}
 
-		var assistant = _dbContext.Set<Assistant>().FirstOrDefault(x => x.Id == request.AssistantId);
-		var config = _dbContext.Set<SystemConfig>().FirstOrDefault();
+		var assistant = await _dbContext.Set<Assistant>()
+			.AsNoTracking()
+			.FirstOrDefaultAsync(x => x.Id == request.AssistantId && x.OrganizationId == _currentUserService.OrganizationId, cancellationToken);
 
-		if (assistant is null || config is null)
+		if (assistant is null)
 		{
-			yield return JsonSerializer.Serialize(new { error = "Meeting, Assistant, or Config not found." }) + "\n\n";
+			yield return JsonSerializer.Serialize(new { type = "error", error = "Assistant not found." }) + "\n\n";
 			yield break;
 		}
 
 		var meeting = await _dbContext.Set<Meeting>()
+			.AsNoTracking()
 			.Include(x => x.User)
 			.Include(x => x.Guests)
 			.Include(x => x.Participants)
@@ -48,120 +53,82 @@ public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand,
 			.Include(x => x.Entries)
 				.ThenInclude(ent => ent.Reactions)
 				.ThenInclude(rac => rac.Reaction)
-			.FirstOrDefaultAsync(m => m.Id == request.MeetingId && m.MeetId == request.MeetId, cancellationToken);
+			.FirstOrDefaultAsync(m => m.Id == request.MeetingId, cancellationToken);
 
 		if (meeting is null)
 		{
-			yield return JsonSerializer.Serialize(new { error = "No meeting with this ID was found." }) + "\n\n";
+			yield return JsonSerializer.Serialize(new { type = "error", error = "Meeting not found." }) + "\n\n";
 			yield break;
 		}
 
-		var orderedEntries = meeting.Entries
-			.OrderBy(e => e.Timestamp)
-			.ToList();
+		var contentBuilder = new StringBuilder();
+		var isCompleted = false;
 
-		var baseTime = meeting.CreatedAt;
-
-		var fullTranscription = new FullTranscriptionResponse
-		{
-			Title = meeting.MeetName,
-			UserRecorder = meeting.User.ToParticipant(),
-			Platform = meeting.Platform,
-			CreatedAt = meeting.CreatedAt.ToString("o"),
-			ClosedAt = meeting.ClosedAt.ToString("o"),
-			Duration = meeting.Duration,
-			Participants = meeting.Participants
-										.Select(p => p.User.ToParticipant())
-										.ToList()
-										.AsReadOnly(),
-			Guests = meeting.Guests?.Select(g => g.ToParticipant())
-									.ToList()
-									.AsReadOnly(),
-			Entries = orderedEntries.Select(entry => new EntryDto
+		var stream = await _aiClient.RunThreadAsync(
+			new RunThreadRequest
 			{
-				ParticipantId = entry.ParticipantId,
-				FullName = entry.FullName ?? string.Empty,
-				Content = entry.Content,
-				Timestamp = entry.Timestamp.ToString("o"),
-				Timeline = (entry.Timestamp - baseTime).ToString(@"hh\:mm\:ss"),
-				EntryType = entry.EntryType,
-				Reactions = entry.Reactions.Select(ar =>
-					new ReactionDto
-					{
-						Id = ar.ReactionId,
-						Participants = ar.Participants,
-						Type = ar.Reaction.Type,
-						Emoji = ar.Reaction.Emoji,
-						ClassName = ar.Reaction.ClassName
-					})
-				.ToList()
-				.AsReadOnly()
-			})
-			.ToList()
-			.AsReadOnly()
-		};
-
-		var runThreadRequest = new RunThreadRequest
-		{
-			AssistantId = assistant.OpenAIAssistantId,
-			Thread = new Dtos.AI.Thread()
-			{
+				AssistantId = assistant.OpenAIAssistantId,
 				Messages = new[]
 				{
-					new ThreadMessage()
-					{
-						Role = "user",
-						Content = JsonSerializer.Serialize(fullTranscription)
-					}
+					FormatTranscription(meeting)
 				}
-			},
-			ApiKey = config.OpenAIToken,
-			ProxyUrl = config.OpenAIProxyUrl,
-			Stream = true
-		};
+			}, cancellationToken);
 
-		string finalContent = null;
-		int completionTokens = 0, promptTokens = 0, totalTokens = 0;
-
-		var stream = await _aiEngineAdapter.RunThreadAsync(config.AIProviderUrl, runThreadRequest, cancellationToken);
 		await foreach (var jsonChunk in stream.WithCancellation(cancellationToken))
 		{
-			if (!string.IsNullOrWhiteSpace(jsonChunk))
+			if (string.IsNullOrWhiteSpace(jsonChunk))
 			{
-				try
-				{
-					using var doc = JsonDocument.Parse(jsonChunk);
-					var root = doc.RootElement;
-					var eventType = root.GetProperty("event").GetString();
-					if (eventType == "thread.message.completed")
-					{
-						var data = root.GetProperty("data");
-						var contentArr = data.GetProperty("content");
-						if (contentArr.GetArrayLength() > 0)
-						{
-							var text = contentArr[0].GetProperty("text").GetProperty("value").GetString();
-							finalContent = text;
-						}
-					}
-					else if (eventType == "thread.run.step.completed")
-					{
-						var data = root.GetProperty("data");
-						if (data.TryGetProperty("usage", out var usage))
-						{
-							completionTokens = usage.GetProperty("completion_tokens").GetInt32();
-							promptTokens = usage.GetProperty("prompt_tokens").GetInt32();
-							totalTokens = usage.GetProperty("total_tokens").GetInt32();
-						}
-					}
-				}
-				catch
-				{
-				}
+				continue;
+			}
 
+			var shouldYield = true;
+			JsonDocument doc = null;
+
+			try
+			{
+				doc = JsonDocument.Parse(jsonChunk);
+				var root = doc.RootElement;
+
+				if (root.TryGetProperty("type", out var typeProperty))
+				{
+					var type = typeProperty.GetString();
+
+					if (type == "text" && root.TryGetProperty("text", out var textProperty))
+					{
+						var textChunk = textProperty.GetString();
+						contentBuilder.Append(textChunk);
+					}
+					else if (type == "status" && root.TryGetProperty("status", out var statusProperty))
+					{
+						var status = statusProperty.GetString();
+						if (status is "completed" or "failed" or "cancelled")
+						{
+							isCompleted = true;
+						}
+					}
+				}
+			}
+			catch (JsonException)
+			{
+				shouldYield = false;
+			}
+			finally
+			{
+				doc?.Dispose();
+			}
+
+			if (shouldYield)
+			{
 				yield return jsonChunk;
+			}
+
+			if (isCompleted)
+			{
+				break;
 			}
 		}
 
+		var finalContent = contentBuilder.ToString();
 		if (!string.IsNullOrWhiteSpace(finalContent))
 		{
 			var aiContentNew = new AIContents
@@ -169,14 +136,38 @@ public class AIGenerateCommandHandler : IStreamRequestHandler<AIGenerateCommand,
 				MeetingId = meeting.Id,
 				AssistantId = assistant.Id,
 				Content = finalContent,
-				CompletionTokens = completionTokens,
-				PromptTokens = promptTokens,
-				TotalTokens = totalTokens,
-				CreatedAt = DateTime.Now,
+				CompletionTokens = 0,
+				PromptTokens = 0,
+				TotalTokens = 0,
+				CreatedAt = _dataProvider.Now,
 				UserId = _currentUserService.UserId,
+				IsActive = true,
 			};
 			_dbContext.Set<AIContents>().Add(aiContentNew);
 			await _dbContext.SaveChangesAsync(cancellationToken);
 		}
+	}
+
+	private static string FormatTranscription(Meeting meeting)
+	{
+		var sb = new StringBuilder();
+		var orderedEntries = meeting.Entries.OrderBy(e => e.Timestamp);
+
+		foreach (var entry in orderedEntries)
+		{
+			sb.AppendLine($"[Speaker: {entry.FullName ?? "Unknown"}]");
+			sb.AppendLine(entry.Content);
+
+			if (entry.Reactions != null && entry.Reactions.Count != 0)
+			{
+				var reactions = entry.Reactions
+					.Select(r => $"{r.Reaction.Emoji} {r.Reaction.Type} from {string.Join(", ", r.Participants.Select(x => x.FullName))}");
+				sb.AppendLine($"(Reactions: {string.Join(", ", reactions)})");
+			}
+
+			sb.AppendLine();
+		}
+
+		return sb.ToString();
 	}
 }

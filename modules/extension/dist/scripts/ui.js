@@ -267,7 +267,7 @@ class ChatPanel {
       botContainer.classList.add("hidden");
       const botRequested = document.createElement("div");
       botRequested.className = "au5-join-time";
-      botRequested.innerText = `🤖 ${request.botName} bot requested by ${request.user.fullName}`;
+      botRequested.innerText = `🤖 bot requested by ${request.user.fullName}`;
       this.transcriptionsContainerEl.appendChild(botRequested);
     }
   }
@@ -463,14 +463,14 @@ const _ApiRoutes = class _ApiRoutes {
     }
     return _ApiRoutes.instance;
   }
-  addBot(meetingId, meetId) {
-    return `${this.config.service.baseUrl}/meetings/${meetingId}/sessions/${meetId}/actions/addBot`;
+  addBot() {
+    return `${this.config.service.serviceBaseUrl}/meetings/bots`;
   }
   getReactions() {
-    return `${this.config.service.baseUrl}/reactions`;
+    return `${this.config.service.serviceBaseUrl}/reactions`;
   }
-  closeMeeting(meetingId, meetId) {
-    return `${this.config.service.baseUrl}/meetings/${meetingId}/sessions/${meetId}/actions/close`;
+  closeMeeting(meetingId) {
+    return `${this.config.service.serviceBaseUrl}/meetings/${meetingId}/close`;
   }
 };
 __publicField(_ApiRoutes, "instance");
@@ -498,27 +498,80 @@ async function apiRequest(url, options = {}) {
   }
   return response.json();
 }
+const ACCESS_TOKEN_KEY = "access_token";
+class TokenManager {
+  async getToken() {
+    try {
+      return await new Promise((resolve, reject) => {
+        chrome.storage.local.get(ACCESS_TOKEN_KEY, (result) => {
+          const token = result[ACCESS_TOKEN_KEY];
+          resolve(token || null);
+        });
+      });
+    } catch (error) {
+      console.error("Error retrieving token:", error);
+      return null;
+    }
+  }
+  async setToken(token) {
+    try {
+      await new Promise((resolve, reject) => {
+        chrome.storage.local.set({ [ACCESS_TOKEN_KEY]: token }, () => {
+          if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError);
+          } else {
+            resolve();
+          }
+        });
+      });
+    } catch (error) {
+      console.error("Error saving token:", error);
+      throw error;
+    }
+  }
+  async removeToken() {
+    try {
+      await new Promise((resolve, reject) => {
+        chrome.storage.local.remove(ACCESS_TOKEN_KEY, () => {
+          if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError);
+          } else {
+            resolve();
+          }
+        });
+      });
+    } catch (error) {
+      console.error("Error removing token:", error);
+      throw error;
+    }
+  }
+}
 class BackEndApi {
   constructor(config2) {
+    __publicField(this, "tokenManager");
     this.config = config2;
+    this.tokenManager = new TokenManager();
   }
   async addBot(body) {
-    return apiRequest(ApiRoutes.getInstance(this.config).addBot(body.meetingId, body.meetId), {
+    const token = await this.tokenManager.getToken();
+    return apiRequest(ApiRoutes.getInstance(this.config).addBot(), {
       method: "POST",
       body,
-      authToken: this.config.service.jwtToken
+      authToken: token || ""
     });
   }
   async getReactions() {
+    const token = await this.tokenManager.getToken();
     return apiRequest(ApiRoutes.getInstance(this.config).getReactions(), {
       method: "GET",
-      authToken: this.config.service.jwtToken
+      authToken: token || ""
     });
   }
   async closeMeeting(body) {
-    return apiRequest(ApiRoutes.getInstance(this.config).closeMeeting(body.meetingId, body.meetId), {
+    const token = await this.tokenManager.getToken();
+    return apiRequest(ApiRoutes.getInstance(this.config).closeMeeting(body.meetingId), {
       method: "POST",
-      authToken: this.config.service.jwtToken
+      authToken: token || ""
     });
   }
 }
@@ -3354,13 +3407,16 @@ class MeetingHubClient {
     __publicField(this, "config");
     __publicField(this, "platform");
     __publicField(this, "chatPanel");
+    __publicField(this, "tokenManager");
     this.config = config2;
     this.platform = platform2;
     this.meetId = platform2.getMeetId();
     this.chatPanel = chatPanel2;
+    this.tokenManager = new TokenManager();
     this.connection = new HubConnectionBuilder().withUrl(this.config.service.hubUrl, {
-      accessTokenFactory: () => {
-        return this.config.service.jwtToken || "";
+      accessTokenFactory: async () => {
+        const token = await this.tokenManager.getToken();
+        return token || "";
       }
     }).withAutomaticReconnect().build();
     this.connection.onclose((err) => {
@@ -3512,7 +3568,7 @@ class UIHandlers {
   }
   handleGithubLink() {
     const btn = document.getElementById("github-link");
-    btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://github.com/Au5-ai/au5-issues/issues", "_blank"));
+    btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://github.com/Au5-ai/au5", "_blank", "noopener,noreferrer"));
     return this;
   }
   handleDiscordLink() {
@@ -3522,7 +3578,10 @@ class UIHandlers {
   }
   handleAddIssueLink() {
     const btn = document.getElementById("issue-link");
-    btn == null ? void 0 : btn.addEventListener("click", () => window.open("https://github.com/Au5-ai/au5-issues/issues", "_blank"));
+    btn == null ? void 0 : btn.addEventListener(
+      "click",
+      () => window.open("https://github.com/Au5-ai/au5/issues", "_blank", "noopener,noreferrer")
+    );
     return this;
   }
   handleAddBot() {
@@ -3538,14 +3597,21 @@ class UIHandlers {
         console.error("Platform or configuration is not set.");
         return;
       }
+      const addBotText = document.getElementById("au5-btn-addbot-text");
+      if (addBotText) {
+        disabled = true;
+        addBotText.textContent = "Loading...";
+      }
       const meetId = this.platform.getMeetId();
       const response = await this.backendApi.addBot({
-        meetingId: "00000000-0000-0000-0000-000000000000",
         meetId,
-        botName: this.config.service.botName,
         platform: this.platform.getPlatformName()
       }).catch((error) => {
         showToast("Failed to add bot :(");
+        if (addBotText) {
+          disabled = false;
+          addBotText.textContent = "Add bot";
+        }
         return;
       });
       if (response) {
@@ -3553,14 +3619,11 @@ class UIHandlers {
         const message = {
           type: MessageTypes.RequestToAddBot,
           meetId,
-          botName: this.config.service.botName,
           user: this.config.user
         };
         (_a = this.meetingHubClient) == null ? void 0 : _a.sendMessage(message);
-        const addBotText = document.getElementById("au5-btn-addbot-text");
         if (addBotText) {
-          let seconds = 60;
-          disabled = true;
+          let seconds = 120;
           addBotText.textContent = `${seconds}s to retry`;
           const interval = setInterval(() => {
             seconds--;
@@ -3574,7 +3637,11 @@ class UIHandlers {
           }, 1e3);
         }
       } else {
-        console.error("Failed to add bot:", response.error);
+        console.error("Failed to add bot:", response == null ? void 0 : response.error);
+        if (addBotText) {
+          disabled = false;
+          addBotText.textContent = "Add bot";
+        }
       }
     });
     return this;
@@ -3692,30 +3759,44 @@ class UIHandlers {
     return this;
   }
   handleMeetingCloseActions() {
+    let disabled = false;
     const meetingCloseAction = document.getElementById("au5-meeting-closeAction");
-    meetingCloseAction == null ? void 0 : meetingCloseAction.addEventListener("click", () => {
+    meetingCloseAction == null ? void 0 : meetingCloseAction.addEventListener("click", async () => {
       var _a;
+      if (disabled) {
+        console.warn("Close action is disabled, please wait.");
+        return;
+      }
       if (!this.platform || !this.meetingHubClient) return;
       const meeting = JSON.parse(localStorage.getItem("au5-meetingId") || "null");
       if (!meeting) {
         return;
       }
+      disabled = true;
+      const originalTooltip = meetingCloseAction.getAttribute("data-tooltip");
+      meetingCloseAction.setAttribute("data-tooltip", "Closing...");
+      meetingCloseAction.style.opacity = "0.6";
+      meetingCloseAction.style.cursor = "wait";
       const meetId = (_a = this.platform) == null ? void 0 : _a.getMeetId();
       const meetingModel = {
         meetId,
         meetingId: meeting.meetingId
       };
-      this.backendApi.closeMeeting(meetingModel).then(() => {
+      try {
+        await this.backendApi.closeMeeting(meetingModel);
         const message = {
           type: MessageTypes.CloseMeeting,
           meetId
         };
         this.meetingHubClient.sendMessage(message);
         this.closeSidePanel(this.config.service.panelUrl);
-      }).catch((error) => {
+      } catch (error) {
         showToast("Failed to close meeting :(");
-        return;
-      });
+        disabled = false;
+        meetingCloseAction.setAttribute("data-tooltip", originalTooltip || "Close Meeting");
+        meetingCloseAction.style.opacity = "1";
+        meetingCloseAction.style.cursor = "pointer";
+      }
     });
     return this;
   }

@@ -28,12 +28,24 @@ export async function apiRequestClient<T>(
     const response = await fetch(url, config);
 
     if (!response.ok) {
-      const errorData: ProblemDetails = await response.json().catch(() => ({
-        title: "Unknown Error",
-        detail: "An unknown error occurred.",
-        status: response.status,
-      }));
-
+      if (response.status === 403) {
+        window.location.href = "/403";
+        throw new ApiError(403, "Forbidden", {
+          title: "Forbidden",
+          detail: "You don't have permission to access this resource.",
+          status: 403,
+        });
+      }
+      const errorData: ProblemDetails = await response
+        .json()
+        .catch((response) => ({
+          title: response.title || "Unknown Error",
+          detail:
+            response.detail ||
+            "An error occurred while processing the request.",
+          status: response.status,
+        }));
+      toast.error(errorData.detail);
       throw new ApiError(
         response.status,
         errorData.title || "HTTP Error",
@@ -44,17 +56,19 @@ export async function apiRequestClient<T>(
     return await response.json();
   } catch (error) {
     if (error instanceof ApiError) {
-      toast.error(error.problemDetails.detail);
       throw error;
     }
 
-    toast.error("An unexpected error occurred during the request.");
+    const errorMessage =
+      error instanceof Error && error.message === "Failed to fetch"
+        ? "Unable to connect to the server. Please check your connection and try again."
+        : error instanceof Error
+          ? error.message
+          : "An unexpected error occurred during the request.";
+
     throw new ApiError(0, "Network Error", {
       title: "Network Error",
-      detail:
-        error instanceof Error
-          ? error.message
-          : "An unexpected error occurred during the request.",
+      detail: errorMessage,
     });
   }
 }
@@ -83,4 +97,72 @@ export async function apiRequestClientStream(
   }
 
   return fetch(url, config);
+}
+
+export async function apiRequestClientText(
+  endpoint: string,
+  options: RequestInit = {},
+): Promise<string> {
+  const url = `${API_BASE_URL}${endpoint}`;
+
+  const config: RequestInit = {
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+    ...options,
+  };
+
+  const token = localStorage.getItem("access_token");
+  if (token) {
+    config.headers = {
+      ...config.headers,
+      Authorization: `Bearer ${token}`,
+    };
+  }
+
+  try {
+    const response = await fetch(url, config);
+
+    if (!response.ok) {
+      if (response.status === 403) {
+        window.location.href = "/403";
+        throw new ApiError(403, "Forbidden", {
+          title: "Forbidden",
+          detail: "You don't have permission to access this resource.",
+          status: 403,
+        });
+      }
+
+      const errorData: ProblemDetails = await response.json().catch(() => ({
+        title: "Unknown Error",
+        detail: "An unknown error occurred.",
+        status: response.status,
+      }));
+
+      throw new ApiError(
+        response.status,
+        errorData.title || "HTTP Error",
+        errorData,
+      );
+    }
+
+    return await response.text();
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+
+    const errorMessage =
+      error instanceof Error && error.message === "Failed to fetch"
+        ? "Unable to connect to the server. Please check your connection and try again."
+        : error instanceof Error
+          ? error.message
+          : "An unexpected error occurred during the request.";
+
+    throw new ApiError(0, "Network Error", {
+      title: "Network Error",
+      detail: errorMessage,
+    });
+  }
 }

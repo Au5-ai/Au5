@@ -12,10 +12,6 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Configure DNS first
-RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf && \
-    echo "nameserver 1.1.1.1" >> /etc/resolv.conf
-
 # Set NuGet environment variables for better performance and retry
 ENV NUGET_XMLDOC_MODE=skip
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
@@ -50,5 +46,6 @@ RUN dotnet publish "./Au5.BackEnd.csproj" -c $BUILD_CONFIGURATION -o /app/publis
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
+
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Au5.BackEnd.dll"]

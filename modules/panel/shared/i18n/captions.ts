@@ -1,7 +1,7 @@
 export const GLOBAL_CAPTIONS = {
   back: "Back",
   next: "Next",
-  brandName: "Au5.ai",
+  brandName: "Riter",
   playground: "playground",
   loading: "Loading ...",
   loadingConfigs: "Loading Configs...",
@@ -28,15 +28,22 @@ export const GLOBAL_CAPTIONS = {
     sending: "Sending...",
     moveToArchive: "Move to Archive",
     removeFromArchive: "Remove from Archive",
+    export: "Export",
+    exportToText: "Export to Text",
+    exportToPdf: "Export to PDF (Coming Soon)",
   },
   fields: {
     email: {
       label: "Username (Email)",
       placeholder: "m@example.com",
-      hint: "Please use your work or organization email. This account is for business purposes only.",
+      hint: "Please use your work or organization email.",
     },
     fullname: {
       label: "Full Name",
+    },
+    organizationName: {
+      label: "Organization Name",
+      placeholder: "Enter your organization name",
     },
     password: {
       label: "Password",
@@ -57,6 +64,11 @@ export const GLOBAL_CAPTIONS = {
       required: "Full name is required",
       invalidLength:
         "Full name must be at least 2 characters and at most 50 characters",
+    },
+    organizationName: {
+      required: "Organization name is required",
+      invalidLength:
+        "Organization name must be at least 2 characters and at most 100 characters",
     },
     password: {
       required: "Password is required",
@@ -110,18 +122,29 @@ export const GLOBAL_CAPTIONS = {
         submittingButton: "Signing Up...",
       },
       footer: {
-        text: "By clicking continue, you agree to our",
-        terms: "Terms of Service",
-        and: "and",
-        privacy: "Privacy Policy",
+        text: "made with ❤️ in earth.",
       },
+    },
+    registered: {
+      title: "Already Registered",
+      description:
+        "Your account has been successfully created. Please log in with your username and password to continue.",
+      loginButton: "Go to Login",
+      messageTitle: "Registration Complete",
     },
     meetings: {
       aiAssistants: "AI Assistants",
       speakerSttistics: "Speaker Statistics",
       archivedSuccess: "Meeting has been archived successfully",
       unarchivedSuccess: "Meeting has been removed from archive successfully",
-      archiveError: "Failed to change archive status. Please try again.",
+      removeSuccess: "Meeting has been removed successfully",
+      removeError: "Failed to remove meeting. Please try again.",
+      deleteAIContentSuccess: "AI content has been deleted successfully",
+      deleteAIContentError: "Failed to delete AI content. Please try again.",
+      exportSuccess: "Meeting transcription exported successfully",
+      exportError: "Failed to export meeting transcription. Please try again.",
+      renameSuccess: "Meeting has been renamed successfully",
+      renameError: "Failed to rename meeting. Please try again.",
     },
   },
 } as const;

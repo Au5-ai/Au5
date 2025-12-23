@@ -1,6 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { Frame, MoreHorizontal, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 import {
   SidebarGroup,
@@ -17,12 +20,43 @@ import {
   DropdownMenuTrigger,
 } from "./ui";
 import { MySpacesResponse } from "../types/space";
+import Link from "next/link";
+import LeaveSpaceModal from "./leave-space-modal";
+import { spaceController } from "../network/api/spaceController";
+import { useCurrentUser } from "../hooks/use-user";
+import { toast } from "sonner";
 
 export function NavSpaces({
   spaces,
 }: {
   spaces: MySpacesResponse[] | undefined;
 }) {
+  const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
+  const [selectedSpace, setSelectedSpace] = useState<MySpacesResponse | null>(
+    null,
+  );
+  const [isLeaving, setIsLeaving] = useState(false);
+  const queryClient = useQueryClient();
+  const { data: currentUser } = useCurrentUser();
+
+  const handleLeaveSpace = async () => {
+    if (!selectedSpace || !currentUser) return;
+
+    setIsLeaving(true);
+    try {
+      await spaceController.removeUserFromSpace(
+        selectedSpace.id,
+        currentUser.id,
+      );
+      toast.success(`Left ${selectedSpace.name} successfully`);
+      queryClient.invalidateQueries({ queryKey: ["userSpaces"] });
+      setIsLeaveModalOpen(false);
+    } catch (error) {
+    } finally {
+      setIsLeaving(false);
+    }
+  };
+
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Spaces</SidebarGroupLabel>
@@ -30,10 +64,10 @@ export function NavSpaces({
         {spaces?.map((item) => (
           <SidebarMenuItem key={item.id}>
             <SidebarMenuButton asChild>
-              <a href={`/spaces/${item.id}/meetings`}>
+              <Link href={`/spaces/${item.id}/meetings`}>
                 <Frame />
                 <span>{item.name}</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
             {/* {item.showBadge && (
               <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
@@ -49,8 +83,13 @@ export function NavSpaces({
                 className="w-48 rounded-lg"
                 side="right"
                 align="start">
-                <DropdownMenuItem>
-                  <Trash2 className="text-muted-foreground" />
+                <DropdownMenuItem
+                  onClick={() => {
+                    setSelectedSpace(item);
+                    setIsLeaveModalOpen(true);
+                  }}
+                  className="text-red-600 focus:text-red-600">
+                  <Trash2 className="text-red-600" />
                   <span>Leave Space</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -58,6 +97,14 @@ export function NavSpaces({
           </SidebarMenuItem>
         ))}
       </SidebarMenu>
+
+      <LeaveSpaceModal
+        open={isLeaveModalOpen}
+        onOpenChange={setIsLeaveModalOpen}
+        onConfirm={handleLeaveSpace}
+        spaceName={selectedSpace?.name || ""}
+        isLoading={isLeaving}
+      />
     </SidebarGroup>
   );
 }

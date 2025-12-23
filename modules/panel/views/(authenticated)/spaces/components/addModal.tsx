@@ -10,11 +10,12 @@ import {
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
-import { Textarea } from "@/shared/components/ui/textarea";
-import { Frame, Loader2, Plus } from "lucide-react";
+import { Switch } from "@/shared/components/ui/switch";
+import { Frame, Loader2, Plus, X } from "lucide-react";
 import UserSearchInput from "./searchInput";
 import { CreateSpaceCommand } from "@/shared/types/space";
 import { User } from "@/shared/types";
+import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui";
 
 interface AddSpaceModalProps {
   open: boolean;
@@ -22,10 +23,14 @@ interface AddSpaceModalProps {
   onSpaceAdded: (command: CreateSpaceCommand) => Promise<void>;
 }
 
+interface AssignedUser extends User {
+  isAdmin: boolean;
+}
+
 interface SpaceFormState {
   name: string;
   description: string;
-  assignedUsers: User[];
+  assignedUsers: AssignedUser[];
 }
 
 const INITIAL_FORM_STATE: SpaceFormState = {
@@ -55,7 +60,7 @@ export default function AddSpaceModal({
       description: formData.description,
       users: formData.assignedUsers.map((user) => ({
         userId: user.id,
-        isAdmin: false,
+        isAdmin: user.isAdmin,
       })),
     };
     await onSpaceAdded(command);
@@ -102,33 +107,89 @@ export default function AddSpaceModal({
           </div>
 
           <div className="space-y-2">
-            <Label
-              htmlFor="description"
-              className="text-sm font-medium text-gray-700">
-              Description
-            </Label>
-            <Textarea
-              id="description"
-              placeholder="Describe the purpose of this space..."
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              rows={3}
-              className=" border-gray-200 focus:bg-white transition-colors resize-none"
-            />
-          </div>
-
-          <div className="space-y-2">
             <Label className="text-sm font-medium text-gray-700">
               Assign Users
             </Label>
             <UserSearchInput
               selectedUsers={formData.assignedUsers}
-              onUsersChange={(users) =>
-                setFormData({ ...formData, assignedUsers: users })
-              }
+              onUsersChange={(users) => {
+                const updatedUsers = users.map((user) => {
+                  const existing = formData.assignedUsers.find(
+                    (u) => u.id === user.id,
+                  );
+                  return existing ? existing : { ...user, isAdmin: false };
+                });
+                setFormData({ ...formData, assignedUsers: updatedUsers });
+              }}
             />
+
+            {formData.assignedUsers.length > 0 && (
+              <div className="mt-3 space-y-2">
+                {formData.assignedUsers.map((user) => (
+                  <div
+                    key={user.id}
+                    className="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex items-center gap-3 flex-1">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage
+                          src={user.pictureUrl}
+                          alt={user.fullName}
+                        />
+                        <AvatarFallback>
+                          {user.fullName.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900">
+                          {user.fullName}
+                        </p>
+                        <p className="text-xs text-gray-500">{user.email}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
+                        <Label
+                          htmlFor={`admin-${user.id}`}
+                          className="text-sm text-gray-700 cursor-pointer">
+                          Admin
+                        </Label>
+                        <Switch
+                          id={`admin-${user.id}`}
+                          checked={user.isAdmin}
+                          onCheckedChange={(checked) => {
+                            setFormData({
+                              ...formData,
+                              assignedUsers: formData.assignedUsers.map((u) =>
+                                u.id === user.id
+                                  ? { ...u, isAdmin: checked }
+                                  : u,
+                              ),
+                            });
+                          }}
+                        />
+                      </div>
+
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setFormData({
+                            ...formData,
+                            assignedUsers: formData.assignedUsers.filter(
+                              (u) => u.id !== user.id,
+                            ),
+                          });
+                        }}
+                        className="h-8 w-8 p-0 hover:bg-gray-200">
+                        <X className="w-4 h-4 text-gray-500" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <DialogFooter className="gap-2">

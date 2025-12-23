@@ -8,7 +8,7 @@ public class MyMeetingQueryHandlerTests
 {
 	[Theory]
 	[InlineData(MeetingStatus.Ended, "meet123")]
-	[InlineData(MeetingStatus.AddingBot, "meet123")]
+	[InlineData(MeetingStatus.WaitingToAddBot, "meet123")]
 	[InlineData(MeetingStatus.Recording, "meet123")]
 	[InlineData(MeetingStatus.Paused, "meet123")]
 	[InlineData(MeetingStatus.Archived, "meet999")]
@@ -250,7 +250,7 @@ public class MyMeetingQueryHandlerTests
 				Platform = "Google Meet",
 				BotName = "Bot1",
 				CreatedAt = new DateTime(2025, 8, 15, 14, 30, 0),
-				Status = MeetingStatus.AddingBot,
+				Status = MeetingStatus.WaitingToAddBot,
 				Duration = "15m",
 				Participants =
 				[

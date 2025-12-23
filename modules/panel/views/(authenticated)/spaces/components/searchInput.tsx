@@ -37,9 +37,9 @@ const UserAvatar = ({
   user: User;
   size?: string;
 }) => (
-  <Avatar className={`${size} rounded-lg`}>
+  <Avatar className={`${size}`}>
     <AvatarImage src={user.pictureUrl} alt={user.fullName} />
-    <AvatarFallback className={`${size} rounded-lg border-2 border-gray-200`}>
+    <AvatarFallback className={`${size} border-2 border-gray-200`}>
       {getUserInitials(user)}
     </AvatarFallback>
   </Avatar>
@@ -163,32 +163,6 @@ export default function UserSearchInput({
             </CommandGroup>
           </CommandList>
         </Command>
-      )}
-
-      {selectedUsers.length > 0 && (
-        <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
-          {selectedUsers.map((user) => (
-            <Badge
-              key={user.id}
-              variant="secondary"
-              className="pl-1 pr-2 py-1.5 bg-white border border-gray-200 hover:border-gray-300 transition-colors">
-              <div className="flex items-center gap-2">
-                <UserAvatar user={user} />
-                <span className="text-sm font-medium text-gray-700 flex flex-col">
-                  <span>{user.fullName}</span>
-                  <span className="text-xs text-gray-500">{user.email}</span>
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleRemoveUser(user.id)}
-                  aria-label={`Remove ${user.fullName || user.email}`}
-                  className="hover:bg-gray-100 rounded-full p-0.5 transition-colors cursor-pointer">
-                  <X className="w-3 h-3 text-gray-500" />
-                </button>
-              </div>
-            </Badge>
-          ))}
-        </div>
       )}
     </div>
   );

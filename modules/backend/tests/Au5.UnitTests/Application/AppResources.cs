@@ -10,8 +10,9 @@ internal static class AppResources
 	/// <summary>
 	/// System configuration related messages.
 	/// </summary>
-	internal static class System
+	internal static class Organization
 	{
+		public const string FailedToAddAdmin = "Faild to add admin. Please check the data and try again.";
 		public const string FailedToConfig = "Failed to configure the system. Please check your settings and try again.";
 		public const string IsNotConfigured = "The system has not been configured yet. Please complete the initial setup.";
 		public const string FailedToSetup = "System setup was not completed successfully. Please review the configuration and try again.";
@@ -37,6 +38,25 @@ internal static class AppResources
 		public const string FailedToClose = "Failed to close the meeting. Please try again or contact support if the issue persists.";
 		public const string NoContent = "No content is available for this meeting. The meeting may not have started or no transcription data exists.";
 		public const string InvalidTranscriptionModel = "Invalid transcription model specified. Please use either 'liveCaption' or 'liveAudio'.";
+	}
+
+	internal static class Admin
+	{
+		public const string EmailAlreadyRegistered = "An user with this email already exists. Please use a different email address.";
+	}
+
+	internal static class User
+	{
+		public const string FailedToSendInvitationEmail = "Failed to send invitation email.";
+		public const string FailedToSaveToDatabase = "Failed to save user data to the database.";
+		public const string AlreadyExistsInDatabase = "User already exists in the database.";
+		public const string EmailAlreadyRegistered = "An user with this email already exists. Please use a different email address.";
+
+		public const string EmailAlreadyVerified = "This email address has already been verified. A verification email cannot be sent again.";
+
+		public const string UserNotFound = "User not found. Please verify your information and try again.";
+
+		public const string FailedToUpdateUserInfo = "Failed to Update User.";
 	}
 
 	/// <summary>
@@ -75,6 +95,13 @@ internal static class AppResources
 		public const string NameMaxLength = "Space name must not exceed 100 characters.";
 		public const string DescriptionMaxLength = "Space description must not exceed 500 characters.";
 		public const string InvalidUserIds = "All user IDs must be valid GUIDs.";
+
+		public const string NoUsersMessage = "At least one user is required";
+		public const string NoPermissionMessage = "You do not have permission to modify this space";
+		public const string AllUsersAlreadyMembersMessage = "All specified users are already members of this space";
+		public const string AddMembersFailedMessage = "Failed to add members to space";
+		public const string UserNotInSpaceMessage = "User is not a member of this space";
+		public const string RemoveUserFailedMessage = "Failed to remove user from space";
 	}
 
 	internal static class Assistant

@@ -7,6 +7,10 @@ public static class ClaimConstants
 	public const string UserId = ClaimTypes.NameIdentifier;
 	public const string Name = ClaimTypes.Name;
 	public const string Role = ClaimTypes.Role;
+	public const string OrganizationId = "organization_id";
 	public const string Jti = "jti";
 	public const string Exp = "exp";
+	public const string MeetingId = "meeting_id";
+	public const string MeetId = "meet_id";
+	public const string Type = "type";
 }

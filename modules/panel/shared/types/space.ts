@@ -8,11 +8,7 @@ export interface Space {
   id: string;
   name: string;
   description: string;
-  parentId: string | null;
-  parentName: string | null;
   isActive: boolean;
-  childrenCount: number;
-  usersCount: number;
   users: SpaceUser[];
   createdAt?: string;
 }
@@ -25,7 +21,6 @@ export interface UserInSpace {
 export interface CreateSpaceCommand {
   name: string;
   description: string;
-  parentId?: string;
   users: UserInSpace[];
 }
 
@@ -37,4 +32,21 @@ export interface MySpacesResponse {
   id: string;
   name: string;
   description: string;
+}
+
+export interface Member {
+  userId: string;
+  fullName: string;
+  email: string;
+  pictureUrl: string;
+}
+
+export interface SpaceMember extends Member {
+  isAdmin: boolean;
+  joinedAt: string;
+  isYou: boolean;
+}
+
+export interface SpaceMembersResponse {
+  users: SpaceMember[];
 }

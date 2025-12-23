@@ -1,12 +1,16 @@
+using System.ClientModel;
 using Ardalis.GuardClauses;
 using Au5.Application.Common.Abstractions;
+using Au5.Application.Common.Options;
 using Au5.Infrastructure.Adapters;
 using Au5.Infrastructure.Authentication;
+using Au5.Infrastructure.BackgroundServices;
 using Au5.Infrastructure.Persistence.Context;
 using Au5.Infrastructure.Providers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OpenAI;
 
 namespace Au5.Infrastructure;
 
@@ -19,6 +23,8 @@ public static class ConfigureServices
 		this IServiceCollection services,
 		IConfiguration configuration)
 	{
+		services.Configure<ServiceSettings>(configuration.GetSection(ServiceSettings.SectionName));
+
 		var connectionString = configuration.GetConnectionString(nameof(ApplicationDbContext));
 
 		Guard.Against.Null(connectionString, message: "Connection string 'DefaultConnection' not found.");
@@ -35,13 +41,41 @@ public static class ConfigureServices
 		services.AddScoped<IBotFatherAdapter, BotFatherAdapter>();
 		services.AddScoped<IEmailProvider, EmailProvider>();
 		services.AddTransient<ISmtpClientWrapper, SmtpClientWrapper>();
-		services.AddScoped<IAIEngineAdapter, AIEngineAdapter>();
 
-		services.AddStackExchangeRedisCache(options =>
+		services.AddSingleton(sp =>
 		{
-			options.Configuration = configuration.GetConnectionString("Redis")!;
-			options.InstanceName = "Au5:";
+			var orgOptions = configuration.GetSection(OrganizationOptions.SectionName).Get<OrganizationOptions>();
+			var options = new OpenAIClientOptions();
+
+			if (!string.IsNullOrWhiteSpace(orgOptions?.OpenAIProxyUrl))
+			{
+				options.Endpoint = new Uri(orgOptions.OpenAIProxyUrl);
+			}
+
+			var apiKey = orgOptions?.OpenAIToken ?? string.Empty;
+			return new OpenAIClient(new ApiKeyCredential(apiKey), options);
 		});
+
+		services.AddScoped<IAIClient, OpenAIClientAdapter>();
+
+		services.AddHostedService<ExpiredTokenCleanupService>();
+
+		var serviceSettings = configuration.GetSection(ServiceSettings.SectionName).Get<ServiceSettings>();
+		var useRedis = serviceSettings?.UseRedis ?? false;
+		var redisConnectionString = configuration.GetConnectionString("Redis");
+
+		if (useRedis && !string.IsNullOrWhiteSpace(redisConnectionString))
+		{
+			services.AddStackExchangeRedisCache(options =>
+			{
+				options.Configuration = redisConnectionString;
+				options.InstanceName = "Au5:";
+			});
+		}
+		else
+		{
+			services.AddDistributedMemoryCache();
+		}
 
 		return services;
 	}

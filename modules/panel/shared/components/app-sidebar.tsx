@@ -15,6 +15,8 @@ import * as React from "react";
 import Logo from "./logo";
 import { NavSpaces } from "./nav-spaces";
 import { MySpacesResponse } from "../types/space";
+import { NavSecondary } from "./nav-secondary";
+import { navSecondary } from "../models/secondary-sidebar";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user?: User;
@@ -33,18 +35,17 @@ export function AppSidebar({ user, menu, spaces, ...props }: AppSidebarProps) {
             <Logo width={32} height={32} noBackground />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-medium">
-              {user?.fullName || "User"}
-            </span>
-            <span className="truncate text-xs">
-              {user?.email || "email@example.com"}
-            </span>
+            <span className="truncate font-medium">Riter</span>
+            <span className="truncate text-xs">Meeting Note Taker</span>
           </div>
         </SidebarMenuButton>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={menu} />
-        <NavSpaces spaces={spaces} />
+        {spaces !== undefined && spaces.length > 0 && (
+          <NavSpaces spaces={spaces} />
+        )}
+        <NavSecondary items={navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>{user && <NavUser {...user} />}</SidebarFooter>
       <SidebarRail />

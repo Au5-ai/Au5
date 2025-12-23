@@ -1,20 +1,13 @@
 USE [Au5]
 GO
 
--- Add LLMModel column to SystemConfig table if it doesn't exist
-IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[SystemConfig]') AND name = 'LLMModel')
-BEGIN
-    ALTER TABLE [dbo].[SystemConfig] ADD [LLMModel] NVARCHAR(50) NOT NULL DEFAULT 'gpt-4o'
-END
-GO
-
 DELETE FROM [dbo].[GuestsInMeeting];
 DELETE FROM [dbo].[ParticipantInMeeting];
 DELETE FROM  [dbo].[Entry];
 DELETE FROM [dbo].[Meeting];
 
 Declare @EmptyGuid uniqueidentifier = '00000000-0000-0000-0000-000000000000';
-DECLARE @userId UNIQUEIDENTIFIER = '5A775BB5-6AFA-4A99-8B59-7E1A9D5672EA';
+DECLARE @userId UNIQUEIDENTIFIER = '08168E03-E466-4886-8946-7B62AE715FA3'; -- Change With your ID
 DECLARE @meetingId_one UNIQUEIDENTIFIER = NEWID();
 DECLARE @meetingId_two UNIQUEIDENTIFIER = NEWID();
 DECLARE @meetingId_three UNIQUEIDENTIFIER = NEWID();
@@ -33,6 +26,7 @@ INSERT INTO [dbo].[Meeting]
 		   ,[ClosedAt]
            ,[Duration]
            ,[Status]
+		   ,IsFavorite
 		   )
      VALUES
            (@meetingId_one,
@@ -47,7 +41,8 @@ INSERT INTO [dbo].[Meeting]
 		   '2025-07-14 11:41:44',
 		   '2025-07-14 13:41:44',
 		   '1h 35m',
-		   30),
+		   30,
+		   1),
            (@meetingId_two,
 		   'sfc-tthd-nnf',
 		   '1:1 With Nil',
@@ -60,7 +55,8 @@ INSERT INTO [dbo].[Meeting]
 		   '2025-07-14 10:09:02',
 		   '2025-07-14 11:09:02',
 		   '1h 35m',
-		   30),
+		   30,
+		   0),
            (@meetingId_three,
 		   'kmu-werq-aww',
 		   'Integration Testing With Team',
@@ -73,7 +69,8 @@ INSERT INTO [dbo].[Meeting]
 		   '2025-07-13  15:23:22',
 		   '2025-07-13 16:09:02',
 		   '1h 35m',
-		   30);
+		   30,
+		   0);
 INSERT INTO [dbo].[ParticipantInMeeting]
            ([MeetingId]
            ,[UserId])

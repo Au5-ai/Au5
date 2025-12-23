@@ -17,6 +17,9 @@ public readonly record struct Error
 
 	public HttpStatusCode Type { get; }
 
+	public static Error Failure(string description = "A failure has occurred.")
+		=> new("General.Failure", description, HttpStatusCode.InternalServerError);
+
 	public static Error Failure(string code = "General.Failure", string description = "A failure has occurred.")
 		=> new(code, description, HttpStatusCode.InternalServerError);
 

@@ -11,7 +11,18 @@ public record InviteUsersRequest
 
 public class InviteUsersResponse
 {
-	public List<string> Success { get; init; }
+	required public IReadOnlyCollection<InvitationResult> Results { get; init; }
+}
 
-	public List<string> Failed { get; init; }
+public class InvitationResult
+{
+	required public string Email { get; init; }
+
+	public bool StoredInDatabase { get; init; }
+
+	public bool EmailSent { get; init; }
+
+	public bool AlreadyExists { get; init; }
+
+	public string ErrorMessage { get; init; }
 }

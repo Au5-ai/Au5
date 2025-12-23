@@ -8,8 +8,6 @@ public class AddBotCommandValiadtorTests
 	private readonly AddBotCommandValiadtor _validator = new();
 
 	[Theory]
-	[InlineData("", "BotName")]
-	[InlineData(null, "BotName")]
 	[InlineData("", "Platform")]
 	[InlineData(null, "Platform")]
 	[InlineData("", "MeetId")]
@@ -18,9 +16,8 @@ public class AddBotCommandValiadtorTests
 	{
 		var command = propertyName switch
 		{
-			"BotName" => new AddBotCommand("TestPlatform", invalidValue!, "MeetId"),
-			"Platform" => new AddBotCommand(invalidValue!, "BotName", "MeetId"),
-			"MeetId" => new AddBotCommand("TestPlatform", "BotName", invalidValue!),
+			"Platform" => new AddBotCommand(invalidValue!, "MeetId"),
+			"MeetId" => new AddBotCommand("TestPlatform", invalidValue!),
 			_ => throw new ArgumentException("Unknown property", nameof(propertyName))
 		};
 
@@ -33,7 +30,7 @@ public class AddBotCommandValiadtorTests
 	[Fact]
 	public void Should_NotReturnValidationError_When_RequestIsCorrectl()
 	{
-		var command = new AddBotCommand("TestPlatform", "BotName", "MeetId");
+		var command = new AddBotCommand("TestPlatform", "MeetId");
 		var result = _validator.TestValidate(command);
 
 		result.ShouldNotHaveAnyValidationErrors();

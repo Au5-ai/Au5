@@ -37,6 +37,30 @@ export default function SpaceManagement() {
     await createSpaceMutation.mutateAsync(command);
   };
 
+  const addMembersMutation = useMutation({
+    mutationFn: ({
+      spaceId,
+      users,
+    }: {
+      spaceId: string;
+      users: { userId: string; isAdmin: boolean }[];
+    }) => spaceController.addMembers(spaceId, users),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["spaces"] });
+      toast.success("Members added successfully");
+    },
+    onError: (error: Error) => {
+      toast.error(`Failed to add members: ${error.message}`);
+    },
+  });
+
+  const handleMembersAdded = async (
+    spaceId: string,
+    users: { userId: string; isAdmin: boolean }[],
+  ) => {
+    await addMembersMutation.mutateAsync({ spaceId, users });
+  };
+
   return (
     <div className="flex flex-1 flex-col px-6 py-4">
       <div className="container mx-auto mb-4 flex items-center justify-between">
@@ -57,7 +81,11 @@ export default function SpaceManagement() {
       </div>
       <div className="w-full">
         <div className="max-w-7xl mx-auto">
-          <SpaceGrid spaces={spaces} isLoading={isLoading} />
+          <SpaceGrid
+            spaces={spaces}
+            isLoading={isLoading}
+            onMembersAdded={handleMembersAdded}
+          />
           <AddSpaceModal
             open={isModalOpen}
             onOpenChange={setIsModalOpen}

@@ -30,6 +30,7 @@ export const USER_MANAGEMENT_CAPTIONS = {
     duplicateEmail: "Duplicate email",
     pleaseEnterEmail: "Please enter an email address",
     failedToSendInvitations: "Failed to send invitations:",
+    maxInvitesReached: "Maximum 5 users can be invited at once",
   },
   roles: {
     userDescription: "- Standard access",

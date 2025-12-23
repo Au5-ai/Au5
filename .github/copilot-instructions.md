@@ -1,72 +1,195 @@
 # Copilot AI Agent Instructions for Au5
 
-## Panel (UI) Module
+Au5 is an AI-powered meeting assistant platform with a Next.js frontend (Panel) and .NET 9 backend, using Podman/Docker for containerization.
 
-- This is a Next.js (App Router) project for the Au5 Panel UI, supporting user onboarding, authentication, and configuration workflows.
-- The codebase is modular, with key logic in `views/(pages)/exConfig/steps/`, shared UI in `shared/components/`, and API/network logic in `shared/network/`.
-- State management and async flows use React hooks and TanStack React Query.
+## 🏗️ Architecture Overview
 
-## Key Architectural Patterns
+**Monorepo Structure:**
 
-- **Global captions:** All user-facing text comes from `shared/i18n/captions` for localization.
-- **UI components:** Use only components from `shared/components/ui/` for forms, buttons, etc. Do not use raw HTML elements for UI.
+- `modules/panel/` - Next.js 15 frontend with App Router
+- `modules/backend/` - .NET 9 backend with Clean Architecture
+- Container orchestration via Podman (PowerShell scripts in `modules/`)
 
-## Developer Workflows
+**Backend follows Clean Architecture:**
 
-- **Start dev server:** `npm run dev` (from `modules/panel`)
-- **Lint:** `npm run lint`
-- **Build:** `npm run build`
-- **Test:** (No test script found; add if needed)
-- **Environment:** Use `.env.local` for secrets/config.
+- `Au5.Domain` - Entities, enums, domain logic (no dependencies)
+- `Au5.Application` - Business logic, CQRS with Mediator pattern, validators
+- `Au5.Infrastructure` - Data access (EF Core), external services, auth
+- `Au5.BackEnd` - API controllers, SignalR hubs, middleware
+- `Au5.Shared` - Cross-cutting utilities (Result pattern, constants)
 
-## Project Conventions
+**Frontend follows Feature-Based Structure:**
 
-- **File naming:** Use kebab-case for files, PascalCase for components.
-- **Component props:** Always type props explicitly.
-- **Error handling:** Show errors using `toast` from `sonner`.
-- **Form validation:** Use local state and validation helpers from `shared/lib/utils`.
-- **API requests:** Use `apiRequestClient` and URLs from `shared/network/api/urls`.
+- `app/` - Next.js App Router pages and layouts
+- `views/` - Page-level components organized by route
+- `shared/` - Reusable components, hooks, network clients, i18n
 
-## Integration Points
+## 🔑 Key Patterns & Conventions
 
-- **Backend:** All API calls go through the backend defined in `shared/network/api/urls`.
-- **i18n:** All captions and validation messages are centralized.
+### Backend (.NET)
 
-## References
+**CQRS with Mediator:**
 
-- Main entry: `app/page.tsx`
-- Onboarding: `views/(pages)/exConfig`
-- Shared UI: `shared/components/ui/`
-- API: `shared/network/`
-- Auth: `shared/hooks/use-auth.ts`
+- Commands/Queries in `Au5.Application/Features/{Domain}/{Action}/`
+- Handlers implement `IRequestHandler<TRequest, TResponse>`
+- Pattern: `{Action}Command.Handler.cs` or `{Action}Query.Handler.cs`
+- Example: `LoginCommand.Handler.cs`, `GetUsersQuery.Handler.cs`
 
-## BackEnd Module
+**Result Pattern (No Exceptions for Business Logic):**
 
-**Overview:**
+```csharp
+// Return Result<T> from handlers, not throw exceptions
+return Result.Success(data);
+return Error.Unauthorized("Auth.InvalidCredentials", message);
+```
 
-- Language: C# (.NET)
-- Solution: `Au5.BackEnd.sln`
-- Main API: `src/Au5.BackEnd/Au5.BackEnd.csproj`
-- Domain: `src/Au5.Domain/Au5.Domain.csproj`
-- Host: `src/Au5.AppHost/Au5.AppHost.csproj`
-- Library: `src/Au5.ServiceDefaults/Au5.ServiceDefaults.csproj`
-- Application: `src/Au5.Application/Au5.Application.csproj`
-- Infrastructure: `src/Au5.Infrastructure/Au5.Infrastructure.csproj`
-- Shared: `src/Au5.Shared/Au5.Shared.csproj`
-- Unit Tests: `tests/Au5.UnitTests/Au5.UnitTests.csproj`
-- Integration Tests: `tests/Au5.IntegrationTests/Au5.IntegrationTests.csproj`
+**Validation:**
 
-**Guidelines:**
+- FluentValidation validators live alongside commands/queries
+- Automatic validation via `ValidatorBehavior<,>` pipeline
+- See `Au5.Application/ConfigServices.cs` for pipeline setup
 
-- Follow SOLID principles and clean architecture.
-- Write unit and integration tests for new features.
-- Don't write comments in code.
-- Reuse shared code from the Au5.Shared project when possible.
+**Entity Framework:**
 
-**Unit Test Rules:**
+- DbContext: `Au5.Infrastructure/Persistence/Context/ApplicationDbContext.cs`
+- No cascade delete (configured globally in OnModelCreating)
+- Entities marked with `[Entity]` attribute
+- Seed data via `modelBuilder.SeedData()` extension
 
-- Don't write comments in Unit Tests.
-- Name test methods using the pattern: `Should_<ExpectedResult>_When_<Condition>` (e.g., `Should_ReturnToken_When_ValidUser`).
-- Use pure xUnit assertions (`Assert.Equal`, `Assert.True`, etc.), avoid other assertion libraries.
-- Mock `DbSet<T>` using MockQueryable.Moq for LINQ support.
-- Use Moq's `Mock<>` for all dependencies and services.
+**StyleCop Rules:**
+
+- Use tabs for indentation (see `stylecop.json`)
+- No code comments (exception: copyright headers in some files)
+- Using directives outside namespace
+
+**Testing:**
+
+- Test naming: `Should_<ExpectedResult>_When_<Condition>`
+- Pure xUnit assertions only (no FluentAssertions)
+- Mock EF DbSet with MockQueryable.Moq for LINQ
+- All dependencies mocked with Moq
+
+**SignalR Hub:**
+
+- `MeetingHub` at `/meetinghub` handles real-time meeting events
+- Authorized access with group-based broadcasting
+
+### Frontend (Next.js)
+
+**Centralized i18n:**
+
+- ALL user-facing text in `shared/i18n/captions.ts` via `GLOBAL_CAPTIONS`
+- Never hardcode UI strings - always reference captions
+- Example: `GLOBAL_CAPTIONS.fields.email.label`
+
+**UI Components:**
+
+- Use ONLY components from `shared/components/ui/` (Radix UI + Tailwind)
+- Never use raw HTML `<button>`, `<input>` - use `Button`, `Input`, etc.
+- Components use `class-variance-authority` for variants
+
+**API Communication:**
+
+- `apiRequestClient` in `shared/network/apiRequestClient.ts` handles all requests
+- URLs defined in `shared/network/api/urls.ts` (e.g., `API_URLS.AUTH.LOGIN`)
+- JWT stored in localStorage as `access_token`
+- Auto-redirects to `/403` on forbidden responses
+- Errors shown via `toast` from `sonner`
+
+**State Management:**
+
+- TanStack React Query for server state
+- React hooks for local state
+- QueryProvider wraps app in `app/layout.tsx`
+
+**Routing:**
+
+- Route groups: `(authenticated)`, `(pages)` in `app/` and `views/`
+- Protected routes handle auth via middleware/hooks
+
+## 🚀 Developer Workflows
+
+**Backend:**
+
+```bash
+cd modules/backend
+dotnet restore
+dotnet build
+dotnet test
+dotnet ef migrations add <Name> --project src/Au5.Infrastructure
+dotnet ef database update --project src/Au5.Infrastructure
+```
+
+**Frontend:**
+
+```bash
+cd modules/panel
+npm install
+npm run dev        # Start dev server (Turbopack)
+npm run lint       # ESLint
+npm run build      # Production build
+```
+
+**Container Orchestration:**
+
+```powershell
+# From modules/
+.\start-podman.ps1   # Start all services
+.\stop-podman.ps1    # Stop all services
+```
+
+**Service Ports:**
+
+- Panel: http://localhost:1368
+- Backend API: http://localhost:1366
+- SQL Server: localhost:1433
+- Redis: localhost:6379
+
+## 🔧 Integration Points
+
+**Backend ↔ Frontend:**
+
+- REST API with JWT authentication
+- SignalR hub for real-time updates
+- CORS configured in `appsettings.json` → `Cors:AllowedOrigins`
+
+**Backend ↔ Database:**
+
+- SQL Server via EF Core
+- Connection string in `appsettings.Development.json`
+- Migrations in `Au5.Infrastructure/Migrations/`
+
+**Caching:**
+
+- Optional Redis (controlled by `ServiceSettings:UseRedis`)
+- Fallback to in-memory cache
+
+**External Services:**
+
+- OpenAI integration for AI features (configured via `Organization:OpenAIToken`)
+- Email via MailKit (SMTP settings in Organization config)
+
+## 📁 Key Files & Directories
+
+**Backend:**
+
+- [modules/backend/src/Au5.BackEnd/Program.cs](modules/backend/src/Au5.BackEnd/Program.cs) - Application entry point, middleware pipeline
+- [modules/backend/src/Au5.Application/ConfigServices.cs](modules/backend/src/Au5.Application/ConfigServices.cs) - Service registration, Mediator setup
+- [modules/backend/src/Au5.Domain/Entities/](modules/backend/src/Au5.Domain/Entities/) - All domain entities
+- [modules/backend/src/Au5.BackEnd/Hubs/MeetingHub.cs](modules/backend/src/Au5.BackEnd/Hubs/MeetingHub.cs) - SignalR hub
+
+**Frontend:**
+
+- [modules/panel/shared/network/apiRequestClient.ts](modules/panel/shared/network/apiRequestClient.ts) - HTTP client
+- [modules/panel/shared/i18n/captions.ts](modules/panel/shared/i18n/captions.ts) - All UI text
+- [modules/panel/shared/network/api/urls.ts](modules/panel/shared/network/api/urls.ts) - API endpoint definitions
+- [modules/panel/app/layout.tsx](modules/panel/app/layout.tsx) - Root layout with providers
+
+## ⚠️ Critical Rules
+
+1. **Backend:** No comments in code, use Result pattern, name tests with Should_When pattern
+2. **Frontend:** All text from GLOBAL_CAPTIONS, use UI components from shared/components/ui
+3. **Backend:** Tabs for indentation (StyleCop enforced)
+4. **Frontend:** File naming: kebab-case, Component naming: PascalCase
+5. **Backend:** All handlers in separate `.Handler.cs` files within feature folders
+6. **Frontend:** Type all props explicitly, validate forms locally before API calls

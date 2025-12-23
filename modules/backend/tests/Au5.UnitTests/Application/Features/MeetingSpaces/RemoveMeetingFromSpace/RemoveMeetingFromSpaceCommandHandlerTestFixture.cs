@@ -21,12 +21,14 @@ public class RemoveMeetingFromSpaceCommandHandlerTestFixture
 
 	public RemoveMeetingFromSpaceCommandHandlerTestFixture WithExistingMeetingSpace()
 	{
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		TestMeetingSpace = new MeetingSpace
 		{
 			MeetingId = TestMeetingId,
 			SpaceId = TestSpaceId,
 			UserId = Guid.NewGuid(),
-			CreatedAt = DateTime.UtcNow
+			CreatedAt = now
 		};
 
 		TestMeetingSpaces = [TestMeetingSpace];

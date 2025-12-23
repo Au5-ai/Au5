@@ -1,4 +1,5 @@
 const CONFIGURATION_KEY = "configuration";
+const ACCESS_TOKEN_KEY = "access_token";
 const MESSAGE_SOURCE = "AU5_PANEL";
 const EXTENSION_SOURCE = "AU5_EXTENSION";
 function isValidMessage(event) {
@@ -8,7 +9,11 @@ function handlePingExtension() {
   window.postMessage({ source: EXTENSION_SOURCE, type: "PING_REPLY", installed: true }, "*");
 }
 function handleOpenSidePanel() {
-  chrome.runtime.sendMessage({ type: "OPEN_SIDEPANEL" });
+  try {
+    chrome.runtime.sendMessage({ type: "OPEN_SIDEPANEL" });
+  } catch (e) {
+    console.error("Extension context invalidated:", e);
+  }
 }
 function handleConfigUpdate(config) {
   var _a;
@@ -17,8 +22,43 @@ function handleConfigUpdate(config) {
     return;
   }
   chrome.storage.local.set({ [CONFIGURATION_KEY]: JSON.stringify(config) }, () => {
-    console.log("✅ Config saved from content.js:", config);
+    console.log("Config saved from content.js:", config);
   });
+}
+function handleTokenUpdate(token) {
+  var _a;
+  if (!((_a = chrome == null ? void 0 : chrome.storage) == null ? void 0 : _a.local)) {
+    console.error("chrome.storage.local is undefined in content.js");
+    return;
+  }
+  try {
+    chrome.storage.local.set({ [ACCESS_TOKEN_KEY]: token }, () => {
+      if (chrome.runtime.lastError) {
+        console.error("Error saving auth token:", chrome.runtime.lastError);
+        return;
+      }
+    });
+  } catch (e) {
+    console.error("Extension context invalidated:", e);
+  }
+}
+function handleTokenRemove() {
+  var _a;
+  if (!((_a = chrome == null ? void 0 : chrome.storage) == null ? void 0 : _a.local)) {
+    console.error("chrome.storage.local is undefined in content.js");
+    return;
+  }
+  try {
+    chrome.storage.local.remove(ACCESS_TOKEN_KEY, () => {
+      if (chrome.runtime.lastError) {
+        console.error("Error removing auth token:", chrome.runtime.lastError);
+        return;
+      }
+      console.log("Auth token removed from content.js");
+    });
+  } catch (e) {
+    console.error("Extension context invalidated:", e);
+  }
 }
 function handleMessage(event) {
   if (!isValidMessage(event)) return;
@@ -32,6 +72,12 @@ function handleMessage(event) {
       break;
     case "CONFIG_UPDATE":
       handleConfigUpdate(payload);
+      break;
+    case "TOKEN_UPDATE":
+      handleTokenUpdate(payload);
+      break;
+    case "TOKEN_REMOVE":
+      handleTokenRemove();
       break;
   }
 }

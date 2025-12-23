@@ -2,33 +2,21 @@ using Au5.Application.Messages;
 using Au5.Application.Services;
 using Au5.Domain.Entities;
 using Au5.Shared;
-using MockQueryable.Moq;
 
 namespace Au5.UnitTests.Application;
 
 public class MeetingServiceTests
 {
 	private readonly Mock<ICacheProvider> _cacheProviderMock;
-	private readonly Mock<IApplicationDbContext> _dbContextMock;
-	private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
+	private readonly Mock<IDataProvider> _dateTimeProviderMock;
 	private readonly MeetingService _meetingService;
 
 	public MeetingServiceTests()
 	{
 		_cacheProviderMock = new Mock<ICacheProvider>();
-		_dbContextMock = new Mock<IApplicationDbContext>();
-		_dateTimeProviderMock = new Mock<IDateTimeProvider>();
+		_dateTimeProviderMock = new Mock<IDataProvider>();
 
-		// Set up the default SystemConfig for tests
-		var systemConfigs = new List<SystemConfig>
-		{
-			new() { Id = Guid.NewGuid(), BotName = "Cando" }
-		};
-
-		var systemConfigDbSet = systemConfigs.BuildMockDbSet();
-		_dbContextMock.Setup(x => x.Set<SystemConfig>()).Returns(systemConfigDbSet.Object);
-
-		_meetingService = new MeetingService(_cacheProviderMock.Object, _dbContextMock.Object, _dateTimeProviderMock.Object);
+		_meetingService = new MeetingService(_cacheProviderMock.Object, _dateTimeProviderMock.Object);
 	}
 
 	[Fact]
@@ -54,7 +42,7 @@ public class MeetingServiceTests
 		Assert.NotNull(result);
 		Assert.Equal(userJoined.MeetId, result.MeetId);
 		Assert.Equal(userJoined.Platform, result.Platform);
-		Assert.Equal(MeetingStatus.AddingBot, result.Status);
+		Assert.Equal(MeetingStatus.WaitingToAddBot, result.Status);
 		Assert.Single(result.Participants);
 		Assert.Equal(userJoined.User.Id, result.Participants.First().UserId);
 
@@ -91,7 +79,7 @@ public class MeetingServiceTests
 
 		Assert.NotNull(result);
 		Assert.Equal(userJoined.MeetId, result.MeetId);
-		Assert.Equal(MeetingStatus.AddingBot, result.Status);
+		Assert.Equal(MeetingStatus.WaitingToAddBot, result.Status);
 		Assert.NotEqual(existingMeeting.Id, result.Id); // Should be a new meeting
 	}
 
@@ -176,11 +164,10 @@ public class MeetingServiceTests
 	[Fact]
 	public async Task AddGuestsToMeet_WhenMeetingDoesNotExist_ShouldNotAddGuests()
 	{
-		var guests = new List<Participant>
+		var guests = new List<Guest>
 		{
 			new()
 			{
-				Id = Guid.NewGuid(),
 				FullName = "Guest User",
 				PictureUrl = "https://example.com/guest.jpg"
 			}
@@ -189,7 +176,7 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync((Meeting)null);
 
-		await _meetingService.AddGuestsToMeet(guests, "meet123");
+		await _meetingService.AddGuestsToMeet("meet123", guests);
 
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), It.IsAny<TimeSpan>()), Times.Never);
 	}
@@ -205,11 +192,10 @@ public class MeetingServiceTests
 			Guests = []
 		};
 
-		var guests = new List<Participant>
+		var guests = new List<Guest>
 		{
 			new()
 			{
-				Id = Guid.NewGuid(),
 				FullName = "Guest User",
 				PictureUrl = "https://example.com/guest.jpg"
 			}
@@ -218,7 +204,7 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync(endedMeeting);
 
-		await _meetingService.AddGuestsToMeet(guests, "meet123");
+		await _meetingService.AddGuestsToMeet("meet123", guests);
 
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), It.IsAny<TimeSpan>()), Times.Never);
 	}
@@ -234,17 +220,15 @@ public class MeetingServiceTests
 			Guests = []
 		};
 
-		var guests = new List<Participant>
+		var guests = new List<Guest>
 		{
 			new()
 			{
-				Id = Guid.NewGuid(),
 				FullName = "Guest User 1",
 				PictureUrl = "https://example.com/guest1.jpg"
 			},
 			new()
 			{
-				Id = Guid.NewGuid(),
 				FullName = "Guest User 2",
 				PictureUrl = "https://example.com/guest2.jpg"
 			}
@@ -253,7 +237,7 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync(activeMeeting);
 
-		await _meetingService.AddGuestsToMeet(guests, "meet123");
+		await _meetingService.AddGuestsToMeet("meet123", guests);
 
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.Is<Meeting>(m => m.Guests.Count == 2), TimeSpan.FromHours(1)), Times.Once);
 	}
@@ -278,11 +262,10 @@ public class MeetingServiceTests
 			]
 		};
 
-		var guests = new List<Participant>
+		var guests = new List<Guest>
 		{
 			new()
 			{
-				Id = Guid.NewGuid(),
 				FullName = existingGuestName,
 				PictureUrl = "https://example.com/guest.jpg"
 			}
@@ -291,7 +274,7 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync(activeMeeting);
 
-		await _meetingService.AddGuestsToMeet(guests, "meet123");
+		await _meetingService.AddGuestsToMeet("meet123", guests);
 
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.Is<Meeting>(m => m.Guests.Count == 1), TimeSpan.FromHours(1)), Times.Once);
 	}
@@ -302,9 +285,9 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync((Meeting)null);
 
-		var result = await _meetingService.BotIsAdded("meet123");
+		var result = await _meetingService.BotIsAdded("meet123", "cando");
 
-		Assert.Equal(string.Empty, result);
+		Assert.False(result);
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), It.IsAny<Meeting>(), It.IsAny<TimeSpan>()), Times.Never);
 	}
 
@@ -322,9 +305,9 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync(endedMeeting);
 
-		var result = await _meetingService.BotIsAdded("meet123");
+		var result = await _meetingService.BotIsAdded("meet123", "cando");
 
-		Assert.Equal(string.Empty, result);
+		Assert.False(result);
 	}
 
 	[Fact]
@@ -334,7 +317,7 @@ public class MeetingServiceTests
 		{
 			Id = Guid.NewGuid(),
 			MeetId = "meet123",
-			Status = MeetingStatus.AddingBot,
+			Status = MeetingStatus.WaitingToAddBot,
 			IsBotAdded = false,
 			BotName = null
 		};
@@ -342,9 +325,8 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync(activeMeeting);
 
-		var result = await _meetingService.BotIsAdded("meet123");
+		var result = await _meetingService.BotIsAdded("meet123", "Cando");
 
-		Assert.Equal("Cando", result);
 		Assert.True(activeMeeting.IsBotAdded);
 		Assert.Equal("Cando", activeMeeting.BotName);
 		Assert.Equal(MeetingStatus.Recording, activeMeeting.Status);
@@ -366,9 +348,9 @@ public class MeetingServiceTests
 		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
 			.ReturnsAsync(activeMeeting);
 
-		var result = await _meetingService.BotIsAdded("meet123");
+		var result = await _meetingService.BotIsAdded("meet123", "Cando");
 
-		Assert.Equal("Cando", result);
+		Assert.True(result);
 		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromHours(1)), Times.Once);
 	}
 
@@ -444,13 +426,15 @@ public class MeetingServiceTests
 	[Fact]
 	public async Task UpsertBlock_WhenMeetingDoesNotExist_ShouldReturnFalse()
 	{
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		var entry = new EntryMessage
 		{
 			MeetId = "meet123",
 			BlockId = Guid.NewGuid(),
 			Content = "Test content",
 			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Mohammad K" },
-			Timestamp = DateTime.Now,
+			Timestamp = now,
 			EntryType = "Transcription"
 		};
 
@@ -473,13 +457,15 @@ public class MeetingServiceTests
 			Entries = []
 		};
 
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		var entry = new EntryMessage
 		{
 			MeetId = "meet123",
 			BlockId = Guid.NewGuid(),
 			Content = "Test content",
 			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Mohammad K" },
-			Timestamp = DateTime.Now,
+			Timestamp = now,
 			EntryType = "Transcription"
 		};
 
@@ -497,6 +483,8 @@ public class MeetingServiceTests
 		var blockId = Guid.NewGuid();
 		var participantId = Guid.NewGuid();
 
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		var existingEntry = new Entry
 		{
 			Id = 1,
@@ -504,7 +492,7 @@ public class MeetingServiceTests
 			Content = "Original content",
 			ParticipantId = participantId,
 			FullName = "Mohammad K",
-			Timestamp = DateTime.Now.AddMinutes(-5),
+			Timestamp = now.AddMinutes(-5),
 			EntryType = "Transcription",
 			Reactions = []
 		};
@@ -523,7 +511,7 @@ public class MeetingServiceTests
 			BlockId = blockId,
 			Content = "Updated content",
 			Participant = new Participant { Id = participantId, FullName = "Mohammad K" },
-			Timestamp = DateTime.Now,
+			Timestamp = now,
 			EntryType = "Transcription"
 		};
 
@@ -549,13 +537,15 @@ public class MeetingServiceTests
 			Entries = []
 		};
 
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		var entry = new EntryMessage
 		{
 			MeetId = "meet123",
 			BlockId = Guid.NewGuid(),
 			Content = "New content",
 			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Jane Doe" },
-			Timestamp = DateTime.Now,
+			Timestamp = now,
 			EntryType = "Transcription"
 		};
 
@@ -858,5 +848,187 @@ public class MeetingServiceTests
 		var meeting = await _meetingService.CloseMeeting(entry.MeetId, CancellationToken.None);
 		var timeline = meeting.Entries.First().Timeline;
 		Assert.Equal(expectedTimeline, timeline);
+	}
+
+	[Fact]
+	public void GetMeetingKey_Should_ReturnCorrectKeyFormat_WithMeetIdAndDate()
+	{
+		var meetId = "meet123";
+		var testDate = new DateTime(2025, 11, 17);
+		_dateTimeProviderMock.Setup(x => x.Now).Returns(testDate);
+
+		var result = _meetingService.GetMeetingKey(meetId);
+
+		Assert.Equal("meeting:meet123:20251117", result);
+	}
+
+	[Fact]
+	public void GetMeetingKey_Should_UseTodayDate_WhenCalled()
+	{
+		var meetId = "test-meet";
+		var testDate = new DateTime(2025, 1, 5);
+		_dateTimeProviderMock.Setup(x => x.Now).Returns(testDate);
+
+		var result = _meetingService.GetMeetingKey(meetId);
+
+		Assert.Contains("20250105", result);
+		Assert.StartsWith("meeting:test-meet:", result);
+	}
+
+	[Fact]
+	public async Task CloseMeeting_WhenMeetingExists_ShouldRemoveFromCacheAndReturnMeeting()
+	{
+		var existingMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Recording,
+			Participants = []
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(existingMeeting);
+
+		var result = await _meetingService.CloseMeeting("meet123", CancellationToken.None);
+
+		Assert.NotNull(result);
+		Assert.Equal(existingMeeting.Id, result.Id);
+		Assert.Equal(existingMeeting.MeetId, result.MeetId);
+		_cacheProviderMock.Verify(x => x.RemoveAsync(It.IsAny<string>()), Times.Once);
+	}
+
+	[Fact]
+	public async Task CloseMeeting_WhenMeetingDoesNotExist_ShouldReturnNull()
+	{
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync((Meeting)null);
+
+		var result = await _meetingService.CloseMeeting("meet123", CancellationToken.None);
+
+		Assert.Null(result);
+		_cacheProviderMock.Verify(x => x.RemoveAsync(It.IsAny<string>()), Times.Never);
+	}
+
+	[Fact]
+	public async Task AppliedReaction_WhenReactionExistsWithNullParticipants_ShouldInitializeParticipantsAndAddUser()
+	{
+		var blockId = Guid.NewGuid();
+		var participantId = Guid.NewGuid();
+
+		var existingReaction = new AppliedReactions
+		{
+			ReactionId = 1,
+			EntryId = 1,
+			Participants = null
+		};
+
+		var entry = new Entry
+		{
+			Id = 1,
+			BlockId = blockId,
+			Content = "Test content",
+			ParticipantId = Guid.NewGuid(),
+			Reactions = [existingReaction]
+		};
+
+		var activeMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Recording,
+			Entries = [entry],
+			Participants = [new ParticipantInMeeting { UserId = participantId }]
+		};
+
+		var reaction = new ReactionAppliedMessage
+		{
+			MeetId = "meet123",
+			BlockId = blockId,
+			ReactionId = 1,
+			User = new Participant { Id = participantId, FullName = "Mohammad K", PictureUrl = "pic.jpg" },
+			ReactionType = "👍"
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(activeMeeting);
+
+		await _meetingService.AppliedReaction(reaction);
+
+		Assert.NotNull(existingReaction.Participants);
+		Assert.Single(existingReaction.Participants);
+		Assert.Equal(participantId, existingReaction.Participants.First().Id);
+		_cacheProviderMock.Verify(x => x.SetAsync(It.IsAny<string>(), activeMeeting, TimeSpan.FromHours(1)), Times.Once);
+	}
+
+	[Fact]
+	public async Task UpsertBlock_WhenCreatingNewEntry_ShouldSetCorrectTimestampAndTimeline()
+	{
+		var meetingStartTime = new DateTime(2025, 11, 17, 10, 0, 0);
+		var entryTime = new DateTime(2025, 11, 17, 10, 15, 30);
+
+		var activeMeeting = new Meeting
+		{
+			Id = Guid.NewGuid(),
+			MeetId = "meet123",
+			Status = MeetingStatus.Recording,
+			Entries = [],
+			CreatedAt = meetingStartTime
+		};
+
+		var entry = new EntryMessage
+		{
+			MeetId = "meet123",
+			BlockId = Guid.NewGuid(),
+			Content = "Test content",
+			Participant = new Participant { Id = Guid.NewGuid(), FullName = "Jane Doe" },
+			Timestamp = entryTime,
+			EntryType = "Transcription"
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync(activeMeeting);
+		_dateTimeProviderMock.Setup(x => x.Now).Returns(entryTime);
+
+		var result = await _meetingService.UpsertBlock(entry);
+
+		Assert.True(result);
+		Assert.Single(activeMeeting.Entries);
+
+		var addedEntry = activeMeeting.Entries.First();
+		Assert.Equal(entryTime, addedEntry.Timestamp);
+		Assert.Equal("00:15:30", addedEntry.Timeline);
+	}
+
+	[Fact]
+	public async Task AddUserToMeeting_Should_GenerateHashToken_WhenCreatingNewMeeting()
+	{
+		var newMeetingId = Guid.NewGuid();
+		var userJoined = new UserJoinedInMeetingMessage
+		{
+			MeetId = "meet123",
+			Platform = "GoogleMeet",
+			User = new Participant
+			{
+				Id = Guid.NewGuid(),
+				FullName = "Mohammad K",
+				PictureUrl = "https://example.com/picture.jpg",
+			}
+		};
+
+		_cacheProviderMock.Setup(x => x.GetAsync<Meeting>(It.IsAny<string>()))
+			.ReturnsAsync((Meeting)null);
+		_dateTimeProviderMock.Setup(x => x.NewGuid()).Returns(newMeetingId);
+		_dateTimeProviderMock.Setup(x => x.Now).Returns(DateTime.UtcNow);
+
+		var result = await _meetingService.AddUserToMeeting(userJoined);
+
+		Assert.NotNull(result);
+		Assert.NotNull(result.HashToken);
+		Assert.NotEmpty(result.HashToken);
+		Assert.Equal(newMeetingId, result.Id);
+		Assert.Equal(userJoined.MeetId, result.MeetId);
+		Assert.Equal(userJoined.Platform, result.Platform);
+		Assert.Empty(result.Entries);
+		Assert.Empty(result.Guests);
 	}
 }

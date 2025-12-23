@@ -1,10 +1,10 @@
 namespace Au5.Application.Features.AI.GetAll;
 
-public record GetAIContentsQuery(Guid MeetingId, string MeetId) : IRequest<Result<IReadOnlyCollection<AIContentsResponse>>>;
+public record GetAIContentsQuery(Guid MeetingId) : IRequest<Result<IReadOnlyCollection<AIContentsResponse>>>;
 
 public record AIContentsResponse
 {
-	public int Id { get; set; }
+	public Guid Id { get; set; }
 
 	public Participant User { get; set; }
 

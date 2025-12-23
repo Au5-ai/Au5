@@ -18,11 +18,11 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 		.Include(x => x.Participants)
 			.ThenInclude(x => x.User)
 		.AsNoTracking()
-		.Where(x => x.Participants.Any(p => p.UserId == _currentUserService.UserId));
+		.Where(x => x.Participants.Any(p => p.UserId == _currentUserService.UserId) || x.BotInviterUserId == _currentUserService.UserId);
 
 		query = request.Status == MeetingStatus.Archived
-			? query.Where(x => x.Status == MeetingStatus.Archived)
-			: query.Where(x => x.Status != MeetingStatus.Archived);
+			? query.Where(x => x.Status == MeetingStatus.Archived && x.Status != MeetingStatus.Deleted)
+			: query.Where(x => x.Status != MeetingStatus.Archived && x.Status != MeetingStatus.Deleted);
 
 		var meetingsRaw = await query
 			.OrderByDescending(x => x.CreatedAt)
@@ -38,6 +38,7 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 				Duration = string.IsNullOrEmpty(x.Duration) ? "0m" : x.Duration,
 				x.IsFavorite,
 				Guests = x.Guests.Select(g => g.FullName).ToList(),
+				x.BotInviterUserId,
 				Participants = x.Participants.Select(p => new Participant()
 				{
 					FullName = p.User.FullName,
@@ -63,7 +64,7 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 				x.IsFavorite,
 				x.Guests,
 				x.Participants,
-				x.Participants.FirstOrDefault()?.PictureUrl
+				PictureUrl = x.Participants.FirstOrDefault(p => p.Id == x.BotInviterUserId)?.PictureUrl ?? string.Empty
 			})
 			.ToList();
 

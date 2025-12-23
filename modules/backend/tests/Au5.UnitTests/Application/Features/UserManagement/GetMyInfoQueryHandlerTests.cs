@@ -1,8 +1,8 @@
 using System.Net;
 using Au5.Application.Features.UserManagement.GetMyInfo;
-using Au5.Domain.Entities;
 using MockQueryable.Moq;
 using static Au5.UnitTests.Application.AppResources;
+using User = Au5.Domain.Entities.User;
 
 namespace Au5.UnitTests.Application.Features.UserManagement;
 public class GetMyInfoQueryHandlerTests

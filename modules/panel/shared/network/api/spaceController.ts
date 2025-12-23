@@ -3,9 +3,11 @@ import {
   CreateSpaceResponse,
   MySpacesResponse,
   Space,
+  SpaceMembersResponse,
 } from "@/shared/types/space";
 import { apiRequestClient } from "../apiRequestClient";
 import { API_URLS } from "./urls";
+import { MeetingData } from "@/shared/types";
 
 export const spaceController = {
   getSpaces: (): Promise<Space[]> => {
@@ -22,6 +24,31 @@ export const spaceController = {
   mySpaces: (): Promise<MySpacesResponse[]> => {
     return apiRequestClient<MySpacesResponse[]>(API_URLS.SPACES.MY_SPACES, {
       method: "GET",
+    });
+  },
+  meetings: (spaceId: string) => (): Promise<MeetingData> => {
+    return apiRequestClient<MeetingData>(API_URLS.SPACES.MEETINGS(spaceId), {
+      method: "GET",
+    });
+  },
+  members: (spaceId: string) => (): Promise<SpaceMembersResponse> => {
+    return apiRequestClient(API_URLS.SPACES.MEMBERS(spaceId), {
+      method: "GET",
+    });
+  },
+  addMembers: (
+    spaceId: string,
+    users: { userId: string; isAdmin: boolean }[],
+  ): Promise<void> => {
+    return apiRequestClient(API_URLS.SPACES.ADD_MEMBERS(spaceId), {
+      method: "POST",
+      body: JSON.stringify({ users }),
+      headers: { "Content-Type": "application/json" },
+    });
+  },
+  removeUserFromSpace: (spaceId: string, userId: string): Promise<void> => {
+    return apiRequestClient(API_URLS.SPACES.REMOVE_MEMBER(spaceId, userId), {
+      method: "DELETE",
     });
   },
 };

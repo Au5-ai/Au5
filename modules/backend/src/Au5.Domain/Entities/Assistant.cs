@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Au5.Domain.Entities;
 
 [Entity]
@@ -26,4 +28,9 @@ public class Assistant
 	public bool IsActive { get; set; }
 
 	public DateTime CreatedAt { get; set; }
+
+	public Guid OrganizationId { get; set; }
+
+	[ForeignKey(nameof(OrganizationId))]
+	public Organization Organization { get; set; }
 }

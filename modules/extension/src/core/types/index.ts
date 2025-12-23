@@ -19,18 +19,16 @@ export interface Entry {
 export interface Participant {
   id: string;
   fullName: string;
+  email?: string;
   pictureUrl: string;
 }
 
 export interface ServiceIntegration {
   panelUrl: string;
-  baseUrl: string;
+  serviceBaseUrl: string;
   direction: "ltr" | "rtl";
   language: string;
   hubUrl: string;
-  companyName: string;
-  botName: string;
-  jwtToken: string;
 }
 
 export interface AppConfiguration {
@@ -57,7 +55,6 @@ export interface CloseMeetingMessage extends IMessage {
 export interface RequestToAddBotMessage extends IMessage {
   readonly type: MessageTypes.RequestToAddBot;
   meetId: string;
-  botName: string;
   user: Participant;
 }
 

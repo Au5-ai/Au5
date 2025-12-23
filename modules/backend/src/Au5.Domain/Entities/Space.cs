@@ -11,11 +11,9 @@ public class Space
 
 	public bool IsActive { get; set; }
 
-	public Guid? ParentId { get; set; }
+	public Guid OrganizationId { get; set; }
 
-	public Space Parent { get; set; }
-
-	public ICollection<Space> Children { get; set; }
+	public Organization Organization { get; set; }
 
 	public ICollection<UserSpace> UserSpaces { get; set; }
 

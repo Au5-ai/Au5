@@ -8,6 +8,7 @@ import { ApiError } from "../types/network";
 import { GLOBAL_CAPTIONS } from "../i18n/captions";
 import { authController } from "../network/api/authController";
 import { ROUTES } from "../routes";
+import { organizationsController } from "@/views/(pages)/onboarding/controllers/organizationsController";
 
 export function useLogin() {
   const queryClient = useQueryClient();
@@ -26,24 +27,54 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: () => authController.logout(),
-    onSuccess: () => {
+    onSettled: () => {
       tokenStorageService.remove();
       queryClient.clear();
-      router.push(ROUTES.LOGIN);
-    },
-    onError: () => {
-      tokenStorageService.remove();
-      queryClient.clear();
+
+      if (typeof window !== "undefined") {
+        window.postMessage(
+          {
+            source: "AU5_PANEL",
+            type: "TOKEN_REMOVE",
+            payload: null,
+          },
+          "*",
+        );
+      }
+
       router.push(ROUTES.LOGIN);
     },
   });
 }
-export function handleAuthSuccess(
+export async function handleAuthSuccess(
   data: LoginResponse,
   queryClient: ReturnType<typeof useQueryClient>,
 ) {
   tokenStorageService.set(data.accessToken);
   queryClient.invalidateQueries({ queryKey: ["user"] });
+
+  if (typeof window !== "undefined") {
+    window.postMessage(
+      {
+        source: "AU5_PANEL",
+        type: "TOKEN_UPDATE",
+        payload: data.accessToken,
+      },
+      "*",
+    );
+  }
+
+  const extensionConfig = await organizationsController.getExtensionConfig();
+  if (extensionConfig) {
+    window.postMessage(
+      {
+        source: "AU5_PANEL",
+        type: "CONFIG_UPDATE",
+        payload: extensionConfig,
+      },
+      "*",
+    );
+  }
 }
 
 export function handleAuthError(error: unknown) {

@@ -2,6 +2,7 @@ import React from "react";
 import { ArrowRight, CheckCircle } from "lucide-react";
 import { Button } from "@/shared/components/ui";
 import { heroSectionCaptions } from "./i18n";
+import { ROUTES } from "@/shared/routes";
 
 export default function HeroSection() {
   return (
@@ -76,9 +77,11 @@ export default function HeroSection() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" variant="outline">
-                {heroSectionCaptions.downloadButton}
-                <ArrowRight className="ml-2 w-5 h-5" />
+              <Button size="lg" variant="outline" asChild>
+                <a href={ROUTES.EXTENSION_LINK} download>
+                  {heroSectionCaptions.downloadButton}
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </a>
               </Button>
             </div>
 

@@ -2,11 +2,13 @@ namespace Au5.Application.Common.Abstractions;
 
 public interface IMeetingService
 {
+	string GetMeetingKey(string meetId);
+
 	Task<Meeting> AddUserToMeeting(UserJoinedInMeetingMessage userJoined);
 
-	Task AddGuestsToMeet(List<Participant> users, string meetId);
+	Task AddGuestsToMeet(string meetId, IReadOnlyCollection<Guest> guests);
 
-	Task<string> BotIsAdded(string meetId);
+	Task<bool> BotIsAdded(string meetId, string botName);
 
 	Task<bool> PauseMeeting(string meetId, bool isPause);
 

@@ -142,7 +142,7 @@
 
 [dir="auto"],
 [dir="rtl"] {
-  font-family: "Vazirmatn" !important;
+  font-family: "Vazirmatn", sans-serif !important;
 }
 
 .bg-linear-gradient {

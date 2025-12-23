@@ -32,6 +32,8 @@ public class GetUserSpacesQueryHandlerTestFixture
 
 	public GetUserSpacesQueryHandlerTestFixture WithUserSpaces(Guid userId, int spaceCount)
 	{
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		for (var i = 0; i < spaceCount; i++)
 		{
 			var space = new Space
@@ -47,7 +49,7 @@ public class GetUserSpacesQueryHandlerTestFixture
 				UserId = userId,
 				SpaceId = space.Id,
 				Space = space,
-				JoinedAt = DateTime.UtcNow.AddDays(-i),
+				JoinedAt = now.AddDays(-i),
 				IsAdmin = i == 0
 			};
 
@@ -63,6 +65,8 @@ public class GetUserSpacesQueryHandlerTestFixture
 
 	public GetUserSpacesQueryHandlerTestFixture WithInactiveUserSpaces(Guid userId, int spaceCount)
 	{
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		for (var i = 0; i < spaceCount; i++)
 		{
 			var space = new Space
@@ -78,7 +82,7 @@ public class GetUserSpacesQueryHandlerTestFixture
 				UserId = userId,
 				SpaceId = space.Id,
 				Space = space,
-				JoinedAt = DateTime.UtcNow.AddDays(-i),
+				JoinedAt = now.AddDays(-i),
 				IsAdmin = false
 			};
 
@@ -94,6 +98,8 @@ public class GetUserSpacesQueryHandlerTestFixture
 
 	public GetUserSpacesQueryHandlerTestFixture WithSpecificUserSpace(Guid userId, Guid spaceId, string spaceName, string spaceDescription)
 	{
+		var now = DateTime.Parse("2025-01-15T10:00:00");
+
 		var space = new Space
 		{
 			Id = spaceId,
@@ -107,7 +113,7 @@ public class GetUserSpacesQueryHandlerTestFixture
 			UserId = userId,
 			SpaceId = spaceId,
 			Space = space,
-			JoinedAt = DateTime.UtcNow,
+			JoinedAt = now,
 			IsAdmin = true
 		};
 
@@ -126,8 +132,8 @@ public class GetUserSpacesQueryHandlerTestFixture
 		return this;
 	}
 
-	public GetUserSpacesQuery CreateQuery()
+	public UserSpacesQuery CreateQuery()
 	{
-		return new GetUserSpacesQuery();
+		return new UserSpacesQuery();
 	}
 }

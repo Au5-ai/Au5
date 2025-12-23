@@ -17,17 +17,17 @@ public class ToggleArchiveCommandHandler : IRequestHandler<ToggleArchiveCommand,
 	{
 		var meeting = await _dbContext.Set<Meeting>()
 			.Include(x => x.Participants)
-			.FirstOrDefaultAsync(x => x.Id == request.MeetingId && x.MeetId == request.MeetId, cancellationToken);
+			.FirstOrDefaultAsync(x => x.Id == request.MeetingId, cancellationToken);
 
 		if (meeting is null)
 		{
-			return Error.NotFound(description: AppResources.Meeting.NotFound);
+			return Error.NotFound("Meeting.NotFound", AppResources.Meeting.NotFound);
 		}
 
 		var isParticipant = meeting.Participants.Any(p => p.UserId == _currentUserService.UserId);
-		if (!isParticipant)
+		if (!isParticipant && meeting.BotInviterUserId != _currentUserService.UserId)
 		{
-			return Error.Forbidden(description: AppResources.Meeting.UnauthorizedToModify);
+			return Error.Forbidden("Meeting.NotParticipant", AppResources.Meeting.UnauthorizedToModify);
 		}
 
 		switch (meeting.Status)
@@ -39,12 +39,12 @@ public class ToggleArchiveCommandHandler : IRequestHandler<ToggleArchiveCommand,
 				meeting.Status = MeetingStatus.Archived;
 				break;
 			default:
-				return Error.BadRequest(description: AppResources.Meeting.CannotArchiveActiveMeeting);
+				return Error.BadRequest("Meeting.AlreadyActive", AppResources.Meeting.CannotArchiveActiveMeeting);
 		}
 
 		var result = await _dbContext.SaveChangesAsync(cancellationToken);
 		return result.IsFailure
-			? Error.Failure(description: AppResources.Meeting.FailedToToggleArchive)
+			? Error.Failure("Meeting.FailedToUpdate", AppResources.Meeting.FailedToToggleArchive)
 			: new ToggleArchiveResponse(meeting.Status == MeetingStatus.Archived);
 	}
 }

@@ -20,7 +20,7 @@ public class GetFullTranscriptionQueryHandlerTests
 		var dbSet = new List<Meeting>().BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<Meeting>()).Returns(dbSet.Object);
 
-		var query = new GetFullTranscriptionQuery(Guid.NewGuid(), "not-exist");
+		var query = new GetFullTranscriptionQuery(Guid.NewGuid());
 
 		var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -89,7 +89,8 @@ public class GetFullTranscriptionQueryHandlerTests
 				Content = "Sfdljadf",
 				Timestamp = new DateTime(2025, 8, 29, 14, 33, 56, 498, DateTimeKind.Unspecified),
 				EntryType = "Chat",
-				Reactions = reactions
+				Reactions = reactions,
+				Timeline = "00:01:55"
 			}
 		};
 
@@ -114,7 +115,7 @@ public class GetFullTranscriptionQueryHandlerTests
 		var dbSet = new List<Meeting> { meeting }.BuildMockDbSet();
 		_dbContextMock.Setup(db => db.Set<Meeting>()).Returns(dbSet.Object);
 
-		var query = new GetFullTranscriptionQuery(meetingId, "dzc-awqw-ioi");
+		var query = new GetFullTranscriptionQuery(meetingId);
 
 		var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -138,8 +139,7 @@ public class GetFullTranscriptionQueryHandlerTests
 		Assert.Equal("Chat", entryDto.EntryType);
 		Assert.Equal("fb0e0485-3bd4-4e6f-9c2e-90706fc90ea9", entryDto.BlockId.ToString());
 		Assert.Equal("Mohammad Karimi", entryDto.FullName);
-		Assert.Equal(entries[0].Timestamp.ToString("o"), entryDto.Timestamp);
-		Assert.Equal((entries[0].Timestamp - createdAt).ToString(@"hh\:mm\:ss"), entryDto.Timeline);
+		Assert.Equal("14:33", entryDto.Time);
 		Assert.Equal(3, entryDto.Reactions.Count);
 		Assert.Equal("Goal", entryDto.Reactions[0].Type);
 		Assert.Equal("??", entryDto.Reactions[0].Emoji);

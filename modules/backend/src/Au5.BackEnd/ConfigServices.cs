@@ -1,4 +1,3 @@
-using System.Text;
 using Au5.Application.Common.Abstractions;
 using Au5.BackEnd.Filters;
 using Au5.BackEnd.Services;
@@ -11,6 +10,7 @@ namespace Au5.BackEnd;
 public static class ConfigServices
 {
 	public const string JWTSETTING = "JwtSettings";
+	private const string HubUrl = "/meetinghub";
 
 	public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration config)
 	{
@@ -21,12 +21,15 @@ public static class ConfigServices
 
 		var jwtSettings = config.GetSection(JWTSETTING).Get<JwtSettings>();
 
-		if (jwtSettings is null || string.IsNullOrWhiteSpace(jwtSettings.SecretKey))
+		if (jwtSettings is null ||
+			string.IsNullOrWhiteSpace(jwtSettings.SecretKey) ||
+			string.IsNullOrWhiteSpace(jwtSettings.EncryptionKey))
 		{
-			throw new InvalidOperationException("JWT settings are missing or invalid.");
+			throw new InvalidOperationException("JWT settings are missing or invalid. Both SecretKey and EncryptionKey are required.");
 		}
 
-		var key = Encoding.UTF8.GetBytes(jwtSettings.SecretKey);
+		var signingKeyBytes = Convert.FromBase64String(jwtSettings.SecretKey);
+		var encryptionKeyBytes = Convert.FromBase64String(jwtSettings.EncryptionKey);
 
 		services.AddAuthentication(options =>
 		{
@@ -38,12 +41,23 @@ public static class ConfigServices
 			options.TokenValidationParameters = new TokenValidationParameters
 			{
 				ValidateIssuer = true,
-				ValidateAudience = true,
-				ValidateLifetime = true,
-				ValidateIssuerSigningKey = true,
 				ValidIssuer = jwtSettings.Issuer,
+				ValidateAudience = true,
 				ValidAudience = jwtSettings.Audience,
-				IssuerSigningKey = new SymmetricSecurityKey(key)
+				ValidateLifetime = true,
+				RequireExpirationTime = true,
+				ClockSkew = TimeSpan.FromSeconds(5),
+				ValidateIssuerSigningKey = true,
+				IssuerSigningKey = new SymmetricSecurityKey(signingKeyBytes),
+				TokenDecryptionKey = new SymmetricSecurityKey(encryptionKeyBytes),
+				RequireSignedTokens = true,
+				RequireAudience = true,
+				ValidAlgorithms = new[]
+				{
+					SecurityAlgorithms.HmacSha256,
+					SecurityAlgorithms.Aes256KW,
+					SecurityAlgorithms.Aes128CbcHmacSha256
+				}
 			};
 
 			options.Events = new JwtBearerEvents
@@ -54,14 +68,13 @@ public static class ConfigServices
 					var path = context.HttpContext.Request.Path;
 
 					if (!string.IsNullOrEmpty(accessToken) &&
-						path.StartsWithSegments("/meetinghub"))
+						path.StartsWithSegments(HubUrl))
 					{
 						context.Token = accessToken;
 					}
 
 					return Task.CompletedTask;
 				},
-
 				OnChallenge = async context =>
 				{
 					if (!context.Handled)
