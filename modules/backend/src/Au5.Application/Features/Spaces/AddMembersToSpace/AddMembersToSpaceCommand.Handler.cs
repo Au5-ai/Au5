@@ -40,7 +40,10 @@ public class AddMembersToSpaceCommandHandler : IRequestHandler<AddMembersToSpace
 		var currentUserSpace = space.UserSpaces.FirstOrDefault(us => us.UserId == currentUserId);
 		if (currentUserSpace == null || !currentUserSpace.IsAdmin)
 		{
-			return Error.Forbidden("Space.NoPermission", AppResources.Space.NoPermissionMessage);
+			if (_currentUserService.Role != RoleTypes.Admin)
+			{
+				return Error.Forbidden("Space.NoPermission", AppResources.Space.NoPermissionMessage);
+			}
 		}
 
 		var userIds = request.Users.Select(u => u.UserId).ToList();

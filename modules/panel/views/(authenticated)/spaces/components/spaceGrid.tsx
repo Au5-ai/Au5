@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -35,16 +36,37 @@ import {
   Edit,
   Ban,
   Eye,
+  Users2Icon,
 } from "lucide-react";
 import NoRecordsState from "@/shared/components/empty-states/no-record";
 import { Space } from "@/shared/types/space";
+import AddMemberModal from "./addMemberModal";
 
 interface SpaceGridProps {
   spaces: Space[];
   isLoading: boolean;
+  onMembersAdded: (
+    spaceId: string,
+    users: { userId: string; isAdmin: boolean }[],
+  ) => Promise<void>;
 }
 
-export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
+export default function SpaceGrid({
+  spaces,
+  isLoading,
+  onMembersAdded,
+}: SpaceGridProps) {
+  const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
+  const [selectedSpace, setSelectedSpace] = useState<Space | null>(null);
+
+  const handleAddMembers = async (
+    users: { userId: string; isAdmin: boolean }[],
+  ) => {
+    if (selectedSpace) {
+      await onMembersAdded(selectedSpace.id, users);
+      setIsAddMemberModalOpen(false);
+    }
+  };
   if (isLoading) {
     return (
       <Card className="border-0 shadow-sm bg-white py-0">
@@ -115,9 +137,9 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
                 <TableHead className="font-semibold text-gray-700">
                   Admins
                 </TableHead>
-                {/* <TableHead className="font-semibold text-gray-700 text-right pr-4">
+                <TableHead className="font-semibold text-gray-700 text-right pr-4">
                   Actions
-                </TableHead> */}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -138,12 +160,12 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
                           {space.users.slice(0, 3).map((user, idx) => (
                             <Tooltip key={idx}>
                               <TooltipTrigger asChild>
-                                <Avatar className="h-8 w-8 rounded-lg">
+                                <Avatar className="h-8 w-8">
                                   <AvatarImage
                                     src={user.pictureUrl}
                                     alt={user.fullName}
                                   />
-                                  <AvatarFallback className="h-8 w-8 rounded-lg border-2 border-gray-200">
+                                  <AvatarFallback className="h-8 w-8 border-2 border-gray-200">
                                     {user.fullName?.charAt(0) ||
                                       user.email?.charAt(0)}
                                   </AvatarFallback>
@@ -181,12 +203,12 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
                             .map((user, idx) => (
                               <Tooltip key={idx}>
                                 <TooltipTrigger asChild>
-                                  <Avatar className="h-8 w-8 rounded-lg">
+                                  <Avatar className="h-8 w-8">
                                     <AvatarImage
                                       src={user.pictureUrl}
                                       alt={user.fullName}
                                     />
-                                    <AvatarFallback className="h-8 w-8 rounded-lg border-2 border-purple-200 bg-purple-50">
+                                    <AvatarFallback className="h-8 w-8 border-2 border-purple-200 bg-purple-50">
                                       {user.fullName?.charAt(0) ||
                                         user.email?.charAt(0)}
                                     </AvatarFallback>
@@ -213,39 +235,42 @@ export default function SpaceGrid({ spaces, isLoading }: SpaceGridProps) {
                       </div>
                     )}
                   </TableCell>
-                  {/* <TableCell className="text-right pr-4">
+                  <TableCell className="text-right pr-4">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <button type="button" aria-label="Open space actions menu" className="p-2 rounded-lg hover:bg-gray-100 transition">
+                        <button
+                          type="button"
+                          aria-label="Open space actions menu"
+                          className="p-2 rounded-lg hover:bg-gray-100 transition">
                           <MoreVertical className="w-5 h-5 text-gray-500" />
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-44">
-                        <DropdownMenuItem className="flex items-center gap-2">
-                          <Eye className="w-4 h-4 text-gray-600" />
-                          View Users
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="flex items-center gap-2">
-                          <Shield className="w-4 h-4 text-gray-600" />
-                          Set Admins
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="flex items-center gap-2">
-                          <Ban className="w-4 h-4 text-gray-600" />
-                          {space.isActive ? "Disable Space" : "Enable Space"}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="flex items-center gap-2">
-                          <Edit className="w-4 h-4 text-gray-600" />
-                          Edit Space
+                        <DropdownMenuItem
+                          className="flex items-center gap-2 cursor-pointer"
+                          onClick={() => {
+                            setSelectedSpace(space);
+                            setIsAddMemberModalOpen(true);
+                          }}>
+                          <Users2Icon className="w-4 h-4 text-gray-600" />
+                          Add Members
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  </TableCell> */}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </div>
       </CardContent>
+
+      <AddMemberModal
+        open={isAddMemberModalOpen}
+        onOpenChange={setIsAddMemberModalOpen}
+        onMembersAdded={handleAddMembers}
+        currentMembers={[]}
+      />
     </Card>
   );
 }

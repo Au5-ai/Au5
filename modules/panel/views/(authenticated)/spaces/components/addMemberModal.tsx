@@ -110,12 +110,12 @@ export default function AddMemberModal({
                           key={user.id}
                           className="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200">
                           <div className="flex items-center gap-3 flex-1">
-                            <Avatar className="h-8 w-8 rounded-lg">
+                            <Avatar className="h-8 w-8">
                               <AvatarImage
                                 src={user.pictureUrl}
                                 alt={user.fullName}
                               />
-                              <AvatarFallback className="rounded-lg">
+                              <AvatarFallback>
                                 {user.fullName.charAt(0)}
                               </AvatarFallback>
                             </Avatar>
@@ -182,12 +182,12 @@ export default function AddMemberModal({
                           key={user.id}
                           className="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200">
                           <div className="flex items-center gap-3 flex-1">
-                            <Avatar className="h-8 w-8 rounded-lg">
+                            <Avatar className="h-8 w-8">
                               <AvatarImage
                                 src={user.pictureUrl}
                                 alt={user.fullName}
                               />
-                              <AvatarFallback className="rounded-lg">
+                              <AvatarFallback>
                                 {user.fullName.charAt(0)}
                               </AvatarFallback>
                             </Avatar>
@@ -259,12 +259,12 @@ export default function AddMemberModal({
                       <div
                         key={member.userId}
                         className="flex items-center gap-3 p-2 bg-white rounded-lg border border-gray-200">
-                        <Avatar className="h-8 w-8 rounded-lg">
+                        <Avatar className="h-8 w-8">
                           <AvatarImage
                             src={member.pictureUrl}
                             alt={member.fullName}
                           />
-                          <AvatarFallback className="rounded-lg">
+                          <AvatarFallback>
                             {member.fullName.charAt(0)}
                           </AvatarFallback>
                         </Avatar>
@@ -295,12 +295,12 @@ export default function AddMemberModal({
                       <div
                         key={member.userId}
                         className="flex items-center gap-3 p-2 bg-white rounded-lg border border-gray-200">
-                        <Avatar className="h-8 w-8 rounded-lg">
+                        <Avatar className="h-8 w-8">
                           <AvatarImage
                             src={member.pictureUrl}
                             alt={member.fullName}
                           />
-                          <AvatarFallback className="rounded-lg">
+                          <AvatarFallback>
                             {member.fullName.charAt(0)}
                           </AvatarFallback>
                         </Avatar>

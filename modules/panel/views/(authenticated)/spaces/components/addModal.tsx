@@ -10,7 +10,6 @@ import {
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
-import { Textarea } from "@/shared/components/ui/textarea";
 import { Switch } from "@/shared/components/ui/switch";
 import { Frame, Loader2, Plus, X } from "lucide-react";
 import UserSearchInput from "./searchInput";
@@ -131,12 +130,12 @@ export default function AddSpaceModal({
                     key={user.id}
                     className="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200">
                     <div className="flex items-center gap-3 flex-1">
-                      <Avatar className="h-8 w-8 rounded-lg">
+                      <Avatar className="h-8 w-8">
                         <AvatarImage
                           src={user.pictureUrl}
                           alt={user.fullName}
                         />
-                        <AvatarFallback className="rounded-lg">
+                        <AvatarFallback>
                           {user.fullName.charAt(0)}
                         </AvatarFallback>
                       </Avatar>

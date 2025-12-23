@@ -26,10 +26,10 @@ export default function ParticipantAvatar({
     <Tooltip>
       <TooltipTrigger className="flex items-start">
         <div className="avatar-container">
-          <Avatar className={`rounded-lg ${className ?? ""}`}>
+          <Avatar className={`${className ?? ""}`}>
             <AvatarImage src={pictureUrl} alt={fullName} />
             <AvatarFallback
-              className="rounded-lg text-white"
+              className="text-white"
               style={{ backgroundColor: fallbackColor }}>
               {fullName?.charAt(0)?.toUpperCase() || "U"}
             </AvatarFallback>
