@@ -39,7 +39,10 @@ public class RemoveUserFromSpaceCommandHandler : IRequestHandler<RemoveUserFromS
 
 		if (request.UserId != currentUserId && (currentUserSpace == null || !currentUserSpace.IsAdmin))
 		{
-			return Error.Forbidden("Space.NoPermission", AppResources.Space.NoPermissionMessage);
+			if (_currentUserService.Role != RoleTypes.Admin)
+			{
+				return Error.Forbidden("Space.NoPermission", AppResources.Space.NoPermissionMessage);
+			}
 		}
 
 		_context.Set<UserSpace>().Remove(targetUserSpace);
