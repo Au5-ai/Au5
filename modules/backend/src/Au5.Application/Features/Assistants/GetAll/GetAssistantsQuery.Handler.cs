@@ -21,19 +21,18 @@ public class GetAssistantsQueryHandler : IRequestHandler<GetAssistantsQuery, Res
 
 		if (_currentUserService.Role == RoleTypes.Admin)
 		{
-			return await assistants.Where(x => x.IsDefault || x.UserId == userId).ToListAsync(cancellationToken);
+			var adminQuery = assistants.Where(x => x.IsDefault || x.UserId == userId);
+			if (request.IsActive.HasValue)
+			{
+				adminQuery = adminQuery.Where(x => x.IsActive == request.IsActive.Value);
+			}
+
+			return await adminQuery.ToListAsync(cancellationToken);
 		}
 
-		IQueryable<Assistant> query;
-
-		if (request.IsActive.HasValue)
-		{
-			query = assistants.Where(x => (x.IsDefault && x.IsActive) || (x.UserId == userId && x.IsActive));
-		}
-		else
-		{
-			query = assistants.Where(x => x.UserId == userId);
-		}
+		var query = request.IsActive.HasValue
+			? assistants.Where(x => (x.IsDefault && x.IsActive) || (x.UserId == userId && x.IsActive))
+			: assistants.Where(x => x.UserId == userId);
 
 		return await query.ToListAsync(cancellationToken);
 	}

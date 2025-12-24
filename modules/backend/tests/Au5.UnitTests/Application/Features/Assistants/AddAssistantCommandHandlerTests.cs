@@ -254,6 +254,48 @@ public class AddAssistantCommandHandlerTests
 	}
 
 	[Fact]
+	public async Task Should_SetIsDefaultFalse_When_UserIsNotAdminEvenIfRequestIsTrue()
+	{
+		List<Organization> config = [new Organization()];
+		var configDbSetMock = config.BuildMockDbSet();
+		var assistantsList = new List<Assistant>();
+		var dbSetMock = assistantsList.BuildMockDbSet();
+		var dbContextMock = new Mock<IApplicationDbContext>();
+		var aiEngineMock = new Mock<IAIClient>();
+		var currentUserServiceMock = new Mock<ICurrentUserService>();
+		var dataProviderMock = new Mock<IDataProvider>();
+
+		aiEngineMock.Setup(x => x.CreateAssistantAsync(It.IsAny<CreateAssistantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync("assistant-id");
+		dbContextMock.Setup(x => x.Set<Assistant>()).Returns(dbSetMock.Object);
+		dbContextMock.Setup(x => x.Set<Organization>()).Returns(configDbSetMock.Object);
+		dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success());
+
+		var userId = Guid.NewGuid();
+		var organizationId = Guid.NewGuid();
+		dataProviderMock.Setup(x => x.NewGuid()).Returns(Guid.NewGuid());
+		dataProviderMock.Setup(x => x.UtcNow).Returns(DateTime.UtcNow);
+		currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
+		currentUserServiceMock.Setup(x => x.OrganizationId).Returns(organizationId);
+		currentUserServiceMock.Setup(x => x.Role).Returns(RoleTypes.User);
+
+		var handler = new AddAssistantCommandHandler(dbContextMock.Object, aiEngineMock.Object, currentUserServiceMock.Object, dataProviderMock.Object);
+		var command = new AddAssistantCommand
+		{
+			Name = "Test Assistant",
+			Icon = "icon.png",
+			Description = "desc",
+			Instructions = "prompt",
+			LLMModel = "gpt-4",
+			IsDefault = true
+		};
+
+		var result = await handler.Handle(command, CancellationToken.None);
+
+		Assert.True(result.IsSuccess);
+		dbSetMock.Verify(x => x.Add(It.Is<Assistant>(a => !a.IsDefault)), Times.Once);
+	}
+
+	[Fact]
 	public async Task Should_PassCorrectDataToAIEngine_When_CreatingAssistant()
 	{
 		List<Organization> config = [new Organization()];
