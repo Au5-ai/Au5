@@ -6,26 +6,25 @@ import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { loginCaptions } from "./i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import { useLoginForm } from "./hooks/use-login-form";
-import { Loader2 } from "lucide-react";
+import { EyeClosed, Loader2 } from "lucide-react";
 import { ROUTES } from "@/shared/routes";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye } from "lucide-react";
+import { useState } from "react";
+import { useLoginForm } from "./hooks/use-login-form";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const loginMutation = useLogin();
-  const router = useRouter();
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    loginMutation.mutate({ username, password });
-    router.push(ROUTES.PLAYGROUND);
-  };
+  const {
+    username,
+    setUsername,
+    password,
+    handlePasswordChange,
+    handleSubmit,
+    isPending,
+  } = useLoginForm();
 
   return (
     <form
@@ -63,7 +62,7 @@ export function LoginForm({
               id="password"
               type={showPassword ? "text" : "password"}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => handlePasswordChange(e.target.value)}
               required
               className="pr-10"
             />
@@ -72,9 +71,8 @@ export function LoginForm({
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-              aria-label={showPassword ? "Hide password" : "Show password"}
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              aria-label={showPassword ? "Hide password" : "Show password"}>
+              {showPassword ? <EyeClosed size={18} /> : <Eye size={18} />}
             </button>
           </div>
         </div>

@@ -18,7 +18,7 @@ import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { AddUserRequest } from "../../types";
 import { useLogin } from "@/shared/hooks/use-auth";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, EyeClosed } from "lucide-react";
 
 export function AddUserStep({ next, ...props }: { next: () => void }) {
   const searchParams = useSearchParams();
@@ -27,6 +27,8 @@ export function AddUserStep({ next, ...props }: { next: () => void }) {
     password: "",
     confirmPassword: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [errors, setErrors] = useState({
     fullname: "",
@@ -150,17 +152,34 @@ export function AddUserStep({ next, ...props }: { next: () => void }) {
                   <Label htmlFor="password">
                     {GLOBAL_CAPTIONS.fields.password.label}
                   </Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder={GLOBAL_CAPTIONS.fields.password.placeholder}
-                    value={formData.password}
-                    onChange={(e) =>
-                      handleInputChange("password", e.target.value)
-                    }
-                    className={errors.password ? "border-red-500" : ""}
-                    required
-                  />
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder={GLOBAL_CAPTIONS.fields.password.placeholder}
+                      value={formData.password}
+                      onChange={(e) =>
+                        handleInputChange("password", e.target.value)
+                      }
+                      className={
+                        errors.password ? "border-red-500 pr-10" : "pr-10"
+                      }
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }>
+                      {showPassword ? (
+                        <EyeClosed size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
+                    </button>
+                  </div>
                   {errors.password && (
                     <p className="text-sm text-red-500 mt-1">
                       {errors.password}
@@ -174,19 +193,38 @@ export function AddUserStep({ next, ...props }: { next: () => void }) {
                   <Label htmlFor="confirmPassword">
                     {GLOBAL_CAPTIONS.fields.confirmPassword.label}
                   </Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder={
-                      GLOBAL_CAPTIONS.fields.confirmPassword.placeholder
-                    }
-                    value={formData.confirmPassword}
-                    onChange={(e) =>
-                      handleInputChange("confirmPassword", e.target.value)
-                    }
-                    className={errors.confirmPassword ? "border-red-500" : ""}
-                    required
-                  />
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder={
+                        GLOBAL_CAPTIONS.fields.confirmPassword.placeholder
+                      }
+                      value={formData.confirmPassword}
+                      onChange={(e) =>
+                        handleInputChange("confirmPassword", e.target.value)
+                      }
+                      className={
+                        errors.confirmPassword
+                          ? "border-red-500 pr-10"
+                          : "pr-10"
+                      }
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword((prev) => !prev)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                      aria-label={
+                        showConfirmPassword ? "Hide password" : "Show password"
+                      }>
+                      {showConfirmPassword ? (
+                        <EyeClosed size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
+                    </button>
+                  </div>
                   {errors.confirmPassword && (
                     <p className="text-sm text-red-500 mt-1">
                       {errors.confirmPassword}
