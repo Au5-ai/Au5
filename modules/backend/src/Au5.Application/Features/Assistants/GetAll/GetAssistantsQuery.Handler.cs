@@ -13,6 +13,7 @@ public class GetAssistantsQueryHandler : IRequestHandler<GetAssistantsQuery, Res
 
 	public async ValueTask<Result<IReadOnlyCollection<Assistant>>> Handle(GetAssistantsQuery request, CancellationToken cancellationToken)
 	{
+		var userId = _currentUserService.UserId;
 		var organizationId = _currentUserService.OrganizationId;
 		var assistants = _dbContext.Set<Assistant>()
 			.Where(a => a.OrganizationId == organizationId)
@@ -20,20 +21,18 @@ public class GetAssistantsQueryHandler : IRequestHandler<GetAssistantsQuery, Res
 
 		if (_currentUserService.Role == RoleTypes.Admin)
 		{
-			return await assistants.Where(x => x.IsDefault).ToListAsync(cancellationToken);
+			var adminQuery = assistants.Where(x => x.IsDefault || x.UserId == userId);
+			if (request.IsActive.HasValue)
+			{
+				adminQuery = adminQuery.Where(x => x.IsActive == request.IsActive.Value);
+			}
+
+			return await adminQuery.ToListAsync(cancellationToken);
 		}
 
-		var userId = _currentUserService.UserId;
-		IQueryable<Assistant> query;
-
-		if (request.IsActive.HasValue)
-		{
-			query = assistants.Where(x => (x.IsDefault && x.IsActive) || (x.UserId == userId && x.IsActive));
-		}
-		else
-		{
-			query = assistants.Where(x => x.UserId == userId);
-		}
+		var query = request.IsActive.HasValue
+			? assistants.Where(x => (x.IsDefault && x.IsActive) || (x.UserId == userId && x.IsActive))
+			: assistants.Where(x => x.UserId == userId);
 
 		return await query.ToListAsync(cancellationToken);
 	}

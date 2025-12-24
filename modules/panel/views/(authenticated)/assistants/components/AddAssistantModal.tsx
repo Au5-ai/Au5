@@ -13,6 +13,8 @@ import { Input, Button } from "@/shared/components/ui";
 import { ASSISTANTS_CAPTIONS } from "../i18n";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { Bot } from "lucide-react";
+import { useCurrentUser } from "@/shared/hooks/use-user";
+import { Checkbox } from "@/shared/components/ui/checkbox";
 import { Emojis } from "../models";
 import {
   Select,
@@ -31,6 +33,7 @@ interface AddAssistantModalProps {
     llmModel: string;
     instructions: string;
     description: string;
+    isDefault: boolean;
   }) => Promise<void>;
   isLoading: boolean;
 }
@@ -46,7 +49,11 @@ export function AddAssistantModal({
   const [instructions, setInstructions] = useState("");
   const [llmModel, setLlmModel] = useState("gpt-4o");
   const [icon, setIcon] = useState("🤖");
+  const [isDefault, setIsDefault] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const { data: currentUser } = useCurrentUser();
+  const isAdmin = currentUser?.role === "Admin";
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -61,12 +68,14 @@ export function AddAssistantModal({
       instructions: instructions.trim(),
       description: description.trim(),
       icon,
+      isDefault: isAdmin ? isDefault : false,
     });
     setName("");
     setInstructions("");
     setDescription("");
     setIcon("🤖");
     setLlmModel("gpt-4o");
+    setIsDefault(false);
   };
 
   return (
@@ -120,11 +129,9 @@ export function AddAssistantModal({
             <SelectContent className="w-full">
               <SelectItem value="gpt-4.1">gpt-4.1</SelectItem>
               <SelectItem value="gpt-4.1-mini">gpt-4.1-mini</SelectItem>
-              <SelectItem value="gpt-4.1-nano">gpt-4.1-nano</SelectItem>
               <SelectItem value="gpt-4o">gpt-4o</SelectItem>
               <SelectItem value="gpt-4o-mini">gpt-4o-mini</SelectItem>
               <SelectItem value="o3-mini">o3-mini</SelectItem>
-              <SelectItem value="o1">o1</SelectItem>
               <SelectItem value="gpt-4-turbo">gpt-4-turbo</SelectItem>
               <SelectItem value="gpt-4">gpt-4</SelectItem>
               <SelectItem value="gpt-3.5-turbo">gpt-3.5-turbo</SelectItem>
@@ -158,6 +165,23 @@ export function AddAssistantModal({
             rows={2}
             className="max-h-12 overflow-y-auto resize-none"
           />
+
+          {isAdmin && (
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="isDefault"
+                checked={isDefault}
+                onCheckedChange={(checked) => setIsDefault(checked === true)}
+                disabled={isLoading}
+              />
+              <Label
+                htmlFor="isDefault"
+                className="text-sm font-medium text-gray-700 cursor-pointer">
+                Public for all users
+              </Label>
+            </div>
+          )}
+
           {error && <div className="text-red-500 text-sm">{error}</div>}
           <DialogFooter>
             <Button

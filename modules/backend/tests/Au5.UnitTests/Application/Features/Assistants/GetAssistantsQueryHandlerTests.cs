@@ -27,8 +27,7 @@ public class GetAssistantsQueryHandlerTests
 		var result = await handler.Handle(new GetAssistantsQuery(null), CancellationToken.None);
 
 		Assert.True(result.IsSuccess);
-		Assert.Equal(2, result.Data.Count);
-		Assert.All(result.Data, x => Assert.True(x.IsDefault));
+		Assert.Equal(3, result.Data.Count);
 	}
 
 	[Fact]
