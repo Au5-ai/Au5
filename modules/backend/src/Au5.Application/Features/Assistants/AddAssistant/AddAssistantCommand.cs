@@ -11,6 +11,8 @@ public class AddAssistantCommand : IRequest<Result<AddAssisstantResponse>>
 	public string Instructions { get; init; }
 
 	public string LLMModel { get; set; }
+
+	public bool IsDefault { get; set; }
 }
 
 public record AddAssisstantResponse(Guid Id);

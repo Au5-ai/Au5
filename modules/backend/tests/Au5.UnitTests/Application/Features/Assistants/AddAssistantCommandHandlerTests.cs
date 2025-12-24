@@ -202,7 +202,8 @@ public class AddAssistantCommandHandlerTests
 			Icon = "icon.png",
 			Description = "desc",
 			Instructions = "prompt",
-			LLMModel = "gpt-4"
+			LLMModel = "gpt-4",
+			IsDefault = true
 		};
 
 		var result = await handler.Handle(command, CancellationToken.None);

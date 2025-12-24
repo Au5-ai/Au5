@@ -31,7 +31,7 @@ public class AddAssistantCommandHandler(IApplicationDbContext dbContext, IAIClie
 			return Error.Failure("Assistant.FailedToCreate", AppResources.Assistant.OpenAIConnectionFailed);
 		}
 
-		var isDefault = _currentUserService.Role == RoleTypes.Admin;
+		var isDefault = _currentUserService.Role == RoleTypes.Admin && request.IsDefault;
 		var entity = new Assistant
 		{
 			Id = _dataProvider.NewGuid(),
