@@ -4,13 +4,13 @@ public record GetMyInfoQuery() : IRequest<Result<UserInfo>>;
 
 public class UserInfo
 {
-	public Guid Id { get; set; }
+	public Guid Id { get; init; }
 
-	public string FullName { get; set; }
+	public string FullName { get; init; }
 
-	public string PictureUrl { get; set; }
+	public string PictureUrl { get; init; }
 
-	public string Email { get; set; }
+	public string Email { get; init; }
 
-	public string Role { get; set; }
+	public string Role { get; init; }
 }
