@@ -37,7 +37,7 @@ public class GetMeetingUrlCommandHandler(
 			return Error.Failure("Meeting.FailedToUpdate", "Failed to save changes. Please try again later.");
 		}
 
-		var generatedLink = UrlGenerator.GeneratePublicMeetingUrl(_organizationOptions.ServiceBaseUrl, meeting.Id, HashHelper.HashSafe(meeting.MeetId));
+		var generatedLink = UrlGenerator.GeneratePublicMeetingUrl(_organizationOptions.ServiceBaseUrl, meeting.Id, meeting.MeetId);
 
 		return new PublicMeetingUrlResponse(generatedLink, expiryDate);
 	}
