@@ -15,7 +15,7 @@ public class ParticipantInMeetingConfig : IEntityTypeConfiguration<ParticipantIn
 			.IsRequired()
 			.HasDefaultValue(false);
 
-		builder.Property(x => x.IsArchived)
+		builder.Property(x => x.IsFavorite)
 			.IsRequired()
 			.HasDefaultValue(false);
 	}

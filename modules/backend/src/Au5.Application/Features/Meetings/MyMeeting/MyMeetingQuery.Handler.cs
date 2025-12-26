@@ -18,7 +18,7 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 		.Include(x => x.Participants)
 			.ThenInclude(x => x.User)
 		.AsNoTracking()
-		.Where(x => x.Participants.Any(p => p.UserId == _currentUserService.UserId));
+		.Where(x => x.Status != MeetingStatus.Deleted);
 
 		query = request.Status == MyMeetingStatus.Archived
 			? query.Where(x => x.Participants.Any(p => p.UserId == _currentUserService.UserId && p.IsArchived))

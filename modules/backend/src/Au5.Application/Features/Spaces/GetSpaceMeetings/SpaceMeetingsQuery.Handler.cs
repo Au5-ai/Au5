@@ -25,7 +25,8 @@ public class GetSpaceMeetingsQueryHandler(IApplicationDbContext context, ICurren
             .ThenInclude(m => m.Participants)
                 .ThenInclude(p => p.User)
         .Include(ms => ms.Meeting)
-            .ThenInclude(m => m.Guests);
+            .ThenInclude(m => m.Guests)
+        .Where(x => x.Meeting.Status != MeetingStatus.Deleted);
 
         var meetingsRaw = await query
             .OrderByDescending(x => x.CreatedAt)
@@ -40,6 +41,7 @@ public class GetSpaceMeetingsQueryHandler(IApplicationDbContext context, ICurren
                 Duration = string.IsNullOrEmpty(x.Meeting.Duration) ? "0m" : x.Meeting.Duration,
                 x.Meeting.IsFavorite,
                 x.Meeting.BotInviterUserId,
+                x.Meeting.Status,
                 Guests = x.Meeting.Guests.Select(g => g.FullName).ToList(),
                 Participants = x.Meeting.Participants.Select(p => new Participant()
                 {
@@ -61,6 +63,7 @@ public class GetSpaceMeetingsQueryHandler(IApplicationDbContext context, ICurren
                 x.BotName,
                 Date = x.Date.ToString("dddd, MMMM dd"),
                 Time = x.Date.ToString("h:mm tt"),
+                x.Status,
                 x.Duration,
                 x.IsFavorite,
                 x.Guests,
@@ -82,6 +85,7 @@ public class GetSpaceMeetingsQueryHandler(IApplicationDbContext context, ICurren
                 Platform = m.Platform,
                 BotName = m.BotName,
                 Duration = m.Duration,
+                Status = m.Status.ToString(),
                 Time = m.Time,
                 IsFavorite = m.IsFavorite,
                 Guests = m.Guests,

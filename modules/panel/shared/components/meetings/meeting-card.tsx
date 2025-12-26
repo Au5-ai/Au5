@@ -188,24 +188,22 @@ export function MeetingCard({
                 </TooltipContent>
               </Tooltip>
             )}
-            {/* {allowArchive &&
-              item.status !== "Ended" &&
-              item.status !== "Archived" && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="cursor-pointer text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-                      onClick={handleRemoveMeeting}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Remove Meeting</p>
-                  </TooltipContent>
-                </Tooltip>
-              )} */}
+            {allowArchive && item.status !== "Ended" && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="cursor-pointer text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                    onClick={handleRemoveMeeting}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Remove Meeting</p>
+                </TooltipContent>
+              </Tooltip>
+            )}
           </div>
         </div>
       </CardContent>
