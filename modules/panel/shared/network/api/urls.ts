@@ -23,7 +23,7 @@ export const API_URLS = {
     AI_CONTENTS: (meetingId: string) => `/meetings/${meetingId}/ai-contents`,
     DELETE_AI_CONTENT: (meetingId: string, id: string) =>
       `/meetings/${meetingId}/ai-contents/${id}`,
-    ARCHIVED: `/users/me/meetings?status=archived`,
+    ARCHIVED: `/users/me/archived-meetings`,
     TRANSCRIPTION: (meetingId: string) => `/meetings/${meetingId}/transcript`,
     TOGGLE_FAVORITE: (meetingId: string) => `/meetings/${meetingId}/favorite`,
     ARCHIVE: (meetingId: string) => `/meetings/${meetingId}/archive`,

@@ -20,8 +20,7 @@ public class RemoveMeetingCommandHandler : IRequestHandler<RemoveMeetingCommand,
 			return Error.BadRequest("Meeting.NotFound", AppResources.Meeting.NotFound);
 		}
 
-		meeting.Status = MeetingStatus.Deleted;
-
+		//meeting.Status = MeetingStatus.Deleted;
 		var result = await _dbContext.SaveChangesAsync(cancellationToken);
 		return result.IsSuccess
 			? new RemoveMeetingResponse() { IsRemoved = true }

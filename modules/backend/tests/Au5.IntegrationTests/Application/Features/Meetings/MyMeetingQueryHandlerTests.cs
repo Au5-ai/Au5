@@ -22,7 +22,7 @@ public class MyMeetingQueryHandlerTests : BaseIntegrationTest
 		var userId = UserId;
 		TestCurrentUserService.UserId = userId;
 		TestCurrentUserService.IsAuthenticated = true;
-		var query = new MyMeetingQuery(MeetingStatus.Ended);
+		var query = new MyMeetingQuery(MyMeetingStatus.Active);
 		var result = await Mediator.Send(query);
 		Assert.True(result.IsSuccess);
 		Assert.NotNull(result.Data);
@@ -45,12 +45,12 @@ public class MyMeetingQueryHandlerTests : BaseIntegrationTest
 	public async Task Handle_Should_ReturnArchievedMeetings_When_UserIsAvailable()
 	{
 		var sql = EmbededResources.GetEmbeddedResourceAsString(BaseTestFilesPath + "AddMeetingDataAsSeed.sql");
-		sql = sql.Replace("@@Status", ((byte)MeetingStatus.Archived).ToString()).Replace("@@UserId", UserId.ToString());
+		sql = sql.Replace("@@Status", ((byte)MyMeetingStatus.Archived).ToString()).Replace("@@UserId", UserId.ToString());
 		DbContext.Database.ExecuteSqlRaw(sql);
 		var userId = UserId;
 		TestCurrentUserService.UserId = userId;
 		TestCurrentUserService.IsAuthenticated = true;
-		var query = new MyMeetingQuery(MeetingStatus.Archived);
+		var query = new MyMeetingQuery(MyMeetingStatus.Archived);
 
 		var result = await Mediator.Send(query);
 		Assert.True(result.IsSuccess);

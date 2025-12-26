@@ -1,6 +1,5 @@
 using Au5.Application.Features.Meetings.ToggleArchive;
 using Au5.Domain.Entities;
-using Au5.Shared;
 using MockQueryable.Moq;
 
 namespace Au5.UnitTests.Application.Features.Meetings.ToggleArchive;
@@ -48,7 +47,7 @@ public class ToggleArchiveCommandHandlerTests
 
 		Assert.True(result.IsSuccess);
 		Assert.True(result.Data.IsArchived);
-		Assert.Equal(MeetingStatus.Archived, meeting.Status);
+		Assert.Equal(MeetingStatus.Ended, meeting.Status);
 	}
 
 	[Fact]
@@ -61,7 +60,7 @@ public class ToggleArchiveCommandHandlerTests
 
 		_currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
-		var meeting = CreateMeeting(meetingId, meetId, MeetingStatus.Archived);
+		var meeting = CreateMeeting(meetingId, meetId, MeetingStatus.Ended);
 		meeting.Participants =
 		[
 			new() { UserId = userId }

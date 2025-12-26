@@ -10,5 +10,13 @@ public class ParticipantInMeetingConfig : IEntityTypeConfiguration<ParticipantIn
 	{
 		builder.HasKey(t => t.Id)
 			.HasName("PK_dbo_ParticipantInMeeting");
+
+		builder.Property(x => x.IsArchived)
+			.IsRequired()
+			.HasDefaultValue(false);
+
+		builder.Property(x => x.IsArchived)
+			.IsRequired()
+			.HasDefaultValue(false);
 	}
 }

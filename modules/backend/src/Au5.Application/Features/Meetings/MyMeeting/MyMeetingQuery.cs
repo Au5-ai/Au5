@@ -1,6 +1,12 @@
 namespace Au5.Application.Features.Meetings.MyMeeting;
 
-public record MyMeetingQuery(MeetingStatus Status) : IRequest<Result<IReadOnlyCollection<MyMeetingsGroupedResponse>>>;
+public record MyMeetingQuery(MyMeetingStatus Status) : IRequest<Result<IReadOnlyCollection<MyMeetingsGroupedResponse>>>;
+
+public enum MyMeetingStatus
+{
+	Active,
+	Archived
+}
 
 public record class MyMeetingsGroupedResponse
 {
@@ -19,7 +25,7 @@ public record class MyMeetingItem
 	public string Duration { get; init; }
 	public string Time { get; init; }
 	public bool IsFavorite { get; init; }
-	public string PictureUrl { get; init; }
 	public IReadOnlyList<string> Guests { get; init; }
 	public IReadOnlyList<Participant> Participants { get; init; }
+	public Participant Creator { get; init; }
 }

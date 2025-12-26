@@ -9,7 +9,6 @@ using Au5.Application.Features.UserManagement.ResendVerificationEmail;
 using Au5.Application.Features.UserManagement.Search;
 using Au5.Application.Features.UserManagement.VerifyUser.Command;
 using Au5.Application.Features.UserManagement.VerifyUser.Query;
-using Au5.Domain.Common;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
@@ -41,15 +40,16 @@ public class UsersController(ISender mediator) : BaseController
 
 	[HttpGet("me/meetings")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	public async Task<IActionResult> MyMeetings([FromQuery] string status, CancellationToken cancellationToken)
+	public async Task<IActionResult> MyMeetings(CancellationToken cancellationToken)
 	{
-		var meetingStatus = MeetingStatus.Ended;
-		if (status.Equals("archived", StringComparison.OrdinalIgnoreCase))
-		{
-			meetingStatus = MeetingStatus.Archived;
-		}
+		return Ok(await mediator.Send(new MyMeetingQuery(MyMeetingStatus.Active), cancellationToken));
+	}
 
-		return Ok(await mediator.Send(new MyMeetingQuery(meetingStatus), cancellationToken));
+	[HttpGet("me/archived-meetings")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> MyArchivedMeetings(CancellationToken cancellationToken)
+	{
+		return Ok(await mediator.Send(new MyMeetingQuery(MyMeetingStatus.Archived), cancellationToken));
 	}
 
 	[HttpGet]

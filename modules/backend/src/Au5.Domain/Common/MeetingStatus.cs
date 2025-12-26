@@ -24,14 +24,4 @@ public enum MeetingStatus : byte
 	/// The meeting has ended.
 	/// </summary>
 	Ended = 30,
-
-	/// <summary>
-	/// The meeting has been archived.
-	/// </summary>
-	Archived = 100,
-
-	/// <summary>
-	/// The Meeting has been deleted.
-	/// </summary>
-	Deleted = 255
 }

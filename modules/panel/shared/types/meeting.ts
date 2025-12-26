@@ -12,7 +12,7 @@ export interface MeetingItem {
   duration: string;
   time: string;
   isFavorite: boolean;
-  pictureUrl: string;
+  creator: Participant;
   guests: string[];
   participants: Participant[];
 }

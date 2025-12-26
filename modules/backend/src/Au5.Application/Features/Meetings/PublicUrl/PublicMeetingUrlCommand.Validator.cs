@@ -11,7 +11,7 @@ public class PublicMeetingUrlCommandValidator : AbstractValidator<PublicMeetingU
 			.WithMessage(AppResources.Validation.Required);
 		RuleFor(s => s.ExpirationDays)
 			.NotNull()
-			.Must(s => s is 30 or 60 or 90)
-			.WithMessage("ExpirationDays must be one of the following values: 30, 60, or 90.");
+			.Must(s => s is 7 or 30 or 45)
+			.WithMessage("ExpirationDays must be one of the following values: 7, 30, or 45.");
 	}
 }

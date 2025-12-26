@@ -7,12 +7,9 @@ namespace Au5.UnitTests.Application.Features.Meetings.MyMeeting;
 public class MyMeetingQueryHandlerTests
 {
 	[Theory]
-	[InlineData(MeetingStatus.Ended, "meet123")]
-	[InlineData(MeetingStatus.WaitingToAddBot, "meet123")]
-	[InlineData(MeetingStatus.Recording, "meet123")]
-	[InlineData(MeetingStatus.Paused, "meet123")]
-	[InlineData(MeetingStatus.Archived, "meet999")]
-	public async Task Handle_Should_Return_Meetings_For_User(MeetingStatus status, string meetId)
+	[InlineData(MyMeetingStatus.Active, "meet123")]
+	[InlineData(MyMeetingStatus.Archived, "meet999")]
+	public async Task Handle_Should_Return_Meetings_For_User(MyMeetingStatus status, string meetId)
 	{
 		var userId = Guid.NewGuid();
 		var meetings = GetMeetings(userId);
@@ -53,7 +50,7 @@ public class MyMeetingQueryHandlerTests
 
 		var handler = new MyMeetingQueryHandler(mockContext.Object, currentUserService.Object);
 
-		var query = new MyMeetingQuery(MeetingStatus.Ended);
+		var query = new MyMeetingQuery(MyMeetingStatus.Active);
 
 		var result = await handler.Handle(query, CancellationToken.None);
 
@@ -80,7 +77,7 @@ public class MyMeetingQueryHandlerTests
 
 		var handler = new MyMeetingQueryHandler(mockContext.Object, currentUserService.Object);
 
-		var query = new MyMeetingQuery(MeetingStatus.Ended);
+		var query = new MyMeetingQuery(MyMeetingStatus.Active);
 
 		var result = await handler.Handle(query, CancellationToken.None);
 
@@ -130,7 +127,7 @@ public class MyMeetingQueryHandlerTests
 				Platform = "Zoom",
 				BotName = "Bot2",
 				CreatedAt = new DateTime(2025, 8, 14, 10, 0, 0),
-				Status = MeetingStatus.Archived,
+				Status = MeetingStatus.Ended,
 				Participants =
 				[
 					new()
@@ -277,7 +274,7 @@ public class MyMeetingQueryHandlerTests
 				Platform = "Zoom",
 				BotName = "Bot2",
 				CreatedAt = new DateTime(2025, 8, 14, 10, 0, 0),
-				Status = MeetingStatus.Archived,
+				Status = MeetingStatus.Ended,
 				Participants =
 				[
 					new()
@@ -290,7 +287,8 @@ public class MyMeetingQueryHandlerTests
 							 Id = userId,
 							 FullName = "Mohammad",
 							 PictureUrl = "https://example.com/picture.jpg"
-						 }
+						 },
+						 IsArchived = true
 					},
 				],
 				Guests = []
