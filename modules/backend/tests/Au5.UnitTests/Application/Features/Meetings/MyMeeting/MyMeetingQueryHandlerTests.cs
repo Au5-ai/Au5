@@ -140,7 +140,8 @@ public class MyMeetingQueryHandlerTests
 							 Id = userId,
 							 FullName = "Mohammad",
 							 PictureUrl = "https://example.com/picture.jpg"
-						 }
+						 },
+						 IsArchived = true
 					},
 				],
 				Guests = []

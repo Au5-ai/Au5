@@ -64,7 +64,8 @@ public class GetMeetingUrlCommandHandlerTests
 
 		Assert.True(result.IsSuccess);
 		Assert.NotNull(result.Data);
-		Assert.Equal($"https://service.test.com/public/meeting/{meetingId}/meet-123", result.Data.Link);
+		var expectedHash = HashHelper.HashSafe(meetId);
+		Assert.Equal($"https://service.test.com/public/meeting/{meetingId}/{expectedHash}", result.Data.Link);
 		Assert.Equal(expectedExpiryDate, result.Data.ExpiryDate);
 		Assert.True(meeting.PublicLinkEnabled);
 		Assert.Equal(expectedExpiryDate, meeting.PublicLinkExpiration);
