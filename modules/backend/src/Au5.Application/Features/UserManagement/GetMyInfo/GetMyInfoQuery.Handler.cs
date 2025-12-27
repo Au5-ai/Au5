@@ -9,7 +9,8 @@ public class GetMyInfoQueryHandler(IApplicationDbContext applicationDbContext, I
 
 	public async ValueTask<Result<UserInfo>> Handle(GetMyInfoQuery request, CancellationToken cancellationToken)
 	{
-		var user = await _dbContext.Set<User>().AsNoTracking()
+		var user = await _dbContext.Set<User>()
+			.Include(x => x.Organization).AsNoTracking()
 			.Where(x => x.Id == _currentUserService.UserId && x.IsActive)
 			.Select(user => new UserInfo
 			{
@@ -17,7 +18,9 @@ public class GetMyInfoQueryHandler(IApplicationDbContext applicationDbContext, I
 				FullName = user.FullName,
 				PictureUrl = user.PictureUrl,
 				Email = user.Email,
-				Role = user.Role.ToString()
+				Role = user.Role.ToString(),
+				OrganizationLogo = user.Organization.LogoAddress,
+				OrganizationName = user.Organization.OrganizationName,
 			}).FirstOrDefaultAsync(cancellationToken);
 
 		return user == null

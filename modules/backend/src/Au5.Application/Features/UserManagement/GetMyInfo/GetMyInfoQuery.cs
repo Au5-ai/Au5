@@ -13,4 +13,8 @@ public class UserInfo
 	public string Email { get; init; }
 
 	public string Role { get; init; }
+
+	public string OrganizationName { get; init; }
+
+	public string OrganizationLogo { get; init; }
 }

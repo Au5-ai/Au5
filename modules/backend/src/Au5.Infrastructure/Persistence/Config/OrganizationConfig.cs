@@ -15,6 +15,10 @@ public class OrganizationConfig : IEntityTypeConfiguration<Organization>
 			.IsRequired()
 			.HasMaxLength(100);
 
+		builder.Property(t => t.LogoAddress)
+			.IsRequired()
+			.HasMaxLength(250);
+
 		builder.Property(t => t.BotName)
 			.IsUnicode(true)
 			.IsRequired()

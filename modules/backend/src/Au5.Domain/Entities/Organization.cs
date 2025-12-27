@@ -8,6 +8,8 @@ public class Organization
 	[JsonIgnore]
 	public Guid Id { get; set; }
 
+	public string LogoAddress { get; set; }
+
 	public string OrganizationName { get; set; }
 
 	public string BotName { get; set; }

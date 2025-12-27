@@ -12,7 +12,6 @@ import { Star, Archive, ArchiveRestore, Trash2 } from "lucide-react";
 import { MeetingItem } from "@/shared/types";
 import { useRouter } from "next/navigation";
 import {
-  Badge,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
