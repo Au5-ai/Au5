@@ -28,7 +28,12 @@ public class GetMyInfoQueryHandlerTests
 			FullName = "Test User",
 			PictureUrl = "http://pic",
 			Email = "mha.karimi@gmail.com",
-			IsActive = true
+			IsActive = true,
+			Organization = new Au5.Domain.Entities.Organization()
+			{
+				OrganizationName = "Test Org",
+				LogoAddress = "http://logo"
+			}
 		};
 
 		var dbSet = new List<User> { user }.BuildMockDbSet();
@@ -45,6 +50,8 @@ public class GetMyInfoQueryHandlerTests
 		Assert.Equal("Test User", result.Data.FullName);
 		Assert.Equal("http://pic", result.Data.PictureUrl);
 		Assert.Equal("mha.karimi@gmail.com", result.Data.Email);
+		Assert.Equal("Test Org", result.Data.OrganizationName);
+		Assert.Equal("http://logo", result.Data.OrganizationLogo);
 	}
 
 	[Fact]
