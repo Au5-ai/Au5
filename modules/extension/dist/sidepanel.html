@@ -8,6 +8,12 @@
   </head>
   <body>
     <div class="au5-panel">
+      <!-- Loading -->
+      <div id="au5-loading" class="au5-container hidden">
+        <div class="au5-spinner"></div>
+        <div class="au5-intro-title">Getting your information...</div>
+      </div>
+
       <!-- User UnAuthorized -->
       <div id="au5-userUnAuthorized" class="au5-container hidden">
         <img
@@ -15,9 +21,11 @@
           src="assets/images/user-unauthorized.png"
           alt="User UnAuthorized Icon"
         />
-        <div class="au5-intro-title">User UnAuthorized</div>
-        <div class="au5-intro-text">You need to set your login info to see the transcriptions.</div>
-        <button id="au5-btn-login" class="au5-btn-login au5-btn">Login</button>
+        <div class="au5-intro-title">Authentication Required</div>
+        <div class="au5-intro-text">
+          Please login to your Riter account to access meeting transcriptions and features.
+        </div>
+        <button id="au5-btn-login" class="au5-btn-login au5-btn">Login to Riter</button>
       </div>
 
       <!-- noActiveMeeting -->

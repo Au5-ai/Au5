@@ -3,6 +3,7 @@ import {MeetingPlatformFactory} from "../core/platforms/meetingPlatformFactory";
 import {AppConfiguration, IMeetingPlatform} from "../core/types";
 import {ChatPanel} from "./chatPanel";
 import {UIHandlers} from "./uiHandlers";
+import {BackEndApi} from "../api/backEndApi";
 
 const configurationManager = new ConfigurationManager();
 const chatPanel = new ChatPanel();
@@ -31,12 +32,24 @@ async function initializeChatPanel(): Promise<void> {
   const url = await getCurrentUrl();
   platform = new MeetingPlatformFactory(url).getPlatform();
 
+  chatPanel.showLoading();
+
   try {
     const local_config = await configurationManager.getConfig();
     if (local_config == null || local_config == undefined) {
       chatPanel.showUserUnAuthorizedContainer();
       return;
     }
+
+    const api = new BackEndApi(local_config);
+    try {
+      await api.getUserMe();
+    } catch (error) {
+      console.error("Failed to authenticate user:", error);
+      chatPanel.showUserUnAuthorizedContainer();
+      return;
+    }
+
     config = local_config;
   } catch (error) {
     chatPanel.showUserUnAuthorizedContainer();
@@ -58,6 +71,15 @@ async function initializeChatPanel(): Promise<void> {
 document.addEventListener("DOMContentLoaded", async () => {
   await initializeChatPanel();
   // Initialize UI handlers with the configuration, platform, and chat panel
+
+  const btn = document.getElementById("au5-btn-login") as HTMLButtonElement | null;
+  btn?.addEventListener("click", () => {
+    chrome.runtime.sendMessage({
+      action: "CLOSE_SIDEPANEL",
+      panelUrl: config?.service?.panelUrl || "https://riter.ir"
+    });
+  });
+
   if (config && chatPanel) {
     new UIHandlers(config, chatPanel).init();
   }
