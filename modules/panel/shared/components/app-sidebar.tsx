@@ -12,7 +12,6 @@ import {
 } from "@/shared/components/ui/sidebar";
 import { User, UserMenuItem } from "@/shared/types";
 import * as React from "react";
-import Image from "next/image";
 import Logo from "./logo";
 import { NavSpaces } from "./nav-spaces";
 import { MySpacesResponse } from "../types/space";
