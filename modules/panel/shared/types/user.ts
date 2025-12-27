@@ -19,6 +19,8 @@ export interface User {
   pictureUrl?: string;
   email: string;
   role: string;
+  organizationName?: string;
+  organizationLogo?: string;
 }
 
 export interface Participant {
