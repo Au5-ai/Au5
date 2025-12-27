@@ -16,4 +16,8 @@ public class ParticipantInMeeting
 	public Guid UserId { get; set; }
 
 	public User User { get; set; }
+
+	public bool IsArchived { get; set; }
+
+	public bool IsFavorite { get; set; }
 }

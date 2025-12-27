@@ -1,6 +1,5 @@
 using Au5.Application.Features.Meetings.RemoveMeeting;
 using Au5.Domain.Entities;
-using Au5.Shared;
 using MockQueryable.Moq;
 
 namespace Au5.UnitTests.Application.Features.Meetings.RemoveMeeting;
@@ -58,28 +57,6 @@ public class RemoveMeetingCommandHandlerTests
 
 		Assert.Equal(MeetingStatus.Deleted, meeting.Status);
 		_dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-	}
-
-	[Fact]
-	public async Task Should_RemoveArchivedMeeting_When_MeetingStatusIsArchived()
-	{
-		var meetingId = Guid.NewGuid();
-		var command = new RemoveMeetingCommand(meetingId);
-
-		var meeting = CreateMeeting(meetingId, MeetingStatus.Archived);
-
-		var meetings = new List<Meeting> { meeting };
-		var meetingDbSet = meetings.BuildMockDbSet();
-
-		_dbContextMock.Setup(x => x.Set<Meeting>()).Returns(meetingDbSet.Object);
-		_dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
-			.ReturnsAsync(Result.Success());
-
-		var result = await _handler.Handle(command, CancellationToken.None);
-
-		Assert.True(result.IsSuccess);
-		Assert.True(result.Data.IsRemoved);
-		Assert.Equal(MeetingStatus.Deleted, meeting.Status);
 	}
 
 	[Fact]
@@ -232,8 +209,8 @@ public class RemoveMeetingCommandHandlerTests
 			BotName = "TestBot",
 			IsBotAdded = true,
 			CreatedAt = now,
-			ClosedAt = status is MeetingStatus.Ended or MeetingStatus.Archived or MeetingStatus.Deleted ? now : default,
-			Duration = status is MeetingStatus.Ended or MeetingStatus.Archived ? "30m" : null,
+			ClosedAt = status is MeetingStatus.Ended or MeetingStatus.Deleted ? now : default,
+			Duration = status is MeetingStatus.Ended ? "30m" : null,
 			Status = status,
 			IsFavorite = false,
 			Participants = [],

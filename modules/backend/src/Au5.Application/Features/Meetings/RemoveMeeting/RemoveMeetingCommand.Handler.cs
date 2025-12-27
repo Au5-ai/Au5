@@ -21,7 +21,6 @@ public class RemoveMeetingCommandHandler : IRequestHandler<RemoveMeetingCommand,
 		}
 
 		meeting.Status = MeetingStatus.Deleted;
-
 		var result = await _dbContext.SaveChangesAsync(cancellationToken);
 		return result.IsSuccess
 			? new RemoveMeetingResponse() { IsRemoved = true }

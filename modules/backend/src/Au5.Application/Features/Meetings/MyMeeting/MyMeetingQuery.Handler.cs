@@ -18,11 +18,11 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 		.Include(x => x.Participants)
 			.ThenInclude(x => x.User)
 		.AsNoTracking()
-		.Where(x => x.Participants.Any(p => p.UserId == _currentUserService.UserId) || x.BotInviterUserId == _currentUserService.UserId);
+		.Where(x => x.Status != MeetingStatus.Deleted);
 
-		query = request.Status == MeetingStatus.Archived
-			? query.Where(x => x.Status == MeetingStatus.Archived && x.Status != MeetingStatus.Deleted)
-			: query.Where(x => x.Status != MeetingStatus.Archived && x.Status != MeetingStatus.Deleted);
+		query = request.Status == MyMeetingStatus.Archived
+			? query.Where(x => x.Participants.Any(p => p.UserId == _currentUserService.UserId && p.IsArchived))
+			: query.Where(x => x.Participants.Any(p => p.UserId == _currentUserService.UserId && !p.IsArchived));
 
 		var meetingsRaw = await query
 			.OrderByDescending(x => x.CreatedAt)
@@ -45,7 +45,7 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 					PictureUrl = p.User.PictureUrl,
 					Email = p.User.Email,
 					Id = p.UserId
-				}).ToList()
+				}).ToList(),
 			})
 			.ToListAsync(cancellationToken);
 
@@ -64,7 +64,7 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 				x.IsFavorite,
 				x.Guests,
 				x.Participants,
-				PictureUrl = x.Participants.FirstOrDefault(p => p.Id == x.BotInviterUserId)?.PictureUrl ?? string.Empty
+				Creator = x.Participants.FirstOrDefault(p => p.Id == x.BotInviterUserId),
 			})
 			.ToList();
 
@@ -86,7 +86,7 @@ public class MyMeetingQueryHandler : IRequestHandler<MyMeetingQuery, Result<IRea
 				IsFavorite = m.IsFavorite,
 				Guests = m.Guests,
 				Participants = m.Participants,
-				PictureUrl = m.PictureUrl
+				Creator = m.Creator
 			}).ToList()
 		}).ToList();
 

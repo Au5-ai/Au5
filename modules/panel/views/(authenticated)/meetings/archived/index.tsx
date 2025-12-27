@@ -29,7 +29,7 @@ export default function ArchivedMeetingsView() {
       <div className="container px-6 py-4">
         <h1 className="text-2xl font-bold mb-1">Archived Transcription</h1>
       </div>
-      <MeetingsList meetings={meetings} />
+      <MeetingsList meetings={meetings} archivedView={true} />
     </div>
   );
 }

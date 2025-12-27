@@ -2,7 +2,6 @@ using Au5.Application.Common.Options;
 using Au5.Application.Dtos.AI;
 using Au5.Application.Features.Assistants.AddAssistant;
 using Au5.Domain.Entities;
-using Au5.Shared;
 using MockQueryable.Moq;
 
 namespace Au5.UnitTests.Application.Features.Assistants;

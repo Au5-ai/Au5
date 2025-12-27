@@ -8,12 +8,14 @@ import { EmptyMeetings } from "../empty-states/meeting-empty";
 interface MeetingsListProps {
   meetings: MeetingData;
   allowArchive?: boolean;
+  archivedView?: boolean;
   onRemoveSuccess?: (meetingId: string) => void;
 }
 
 export function MeetingsList({
   meetings,
   allowArchive = true,
+  archivedView = false,
   onRemoveSuccess,
 }: MeetingsListProps) {
   if (meetings.length === 0) {
@@ -33,6 +35,7 @@ export function MeetingsList({
                 key={index}
                 item={item}
                 allowArchive={allowArchive}
+                archivedView={archivedView}
                 onRemoveSuccess={onRemoveSuccess}
               />
             ))}

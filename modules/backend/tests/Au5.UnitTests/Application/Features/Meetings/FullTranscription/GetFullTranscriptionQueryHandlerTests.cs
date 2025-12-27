@@ -45,6 +45,7 @@ public class GetFullTranscriptionQueryHandlerTests
 
 		var participant = new ParticipantInMeeting
 		{
+			UserId = userId,
 			User = user
 		};
 
@@ -56,7 +57,7 @@ public class GetFullTranscriptionQueryHandlerTests
 				Reaction = new Reaction { Type = "Goal", Emoji = "??" },
 				Participants =
 				[
-					new(userId, null, null, null)
+					new(userId, user.FullName, user.Email, user.PictureUrl)
 				]
 			},
 			new()
@@ -65,7 +66,7 @@ public class GetFullTranscriptionQueryHandlerTests
 				Reaction = new Reaction { Type = "GoodPoint", Emoji = "?" },
 				Participants =
 				[
-					new(userId, null, null, null)
+					new(userId, user.FullName, user.Email, user.PictureUrl)
 				]
 			},
 			new()
@@ -74,7 +75,7 @@ public class GetFullTranscriptionQueryHandlerTests
 				Reaction = new Reaction { Type = "Task", Emoji = "?" },
 				Participants =
 				[
-					new(userId, null, null, null)
+					new (userId, user.FullName, user.Email, user.PictureUrl)
 				]
 			}
 		};
@@ -109,7 +110,8 @@ public class GetFullTranscriptionQueryHandlerTests
 			Status = MeetingStatus.Ended,
 			Participants = [participant],
 			Guests = [new GuestsInMeeting() { FullName = "Ali A", MeetingId = meetingId, Id = 1, PictureUrl = "PicUrl" }],
-			Entries = entries
+			Entries = entries,
+			MeetingSpaces = []
 		};
 
 		var dbSet = new List<Meeting> { meeting }.BuildMockDbSet();
