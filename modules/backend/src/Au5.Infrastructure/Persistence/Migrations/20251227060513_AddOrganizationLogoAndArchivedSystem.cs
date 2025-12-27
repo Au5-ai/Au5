@@ -5,19 +5,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Au5.Infrastructure.Migrations
 {
 	/// <inheritdoc />
-	public partial class AddOrganizationLogo : Migration
+	public partial class AddOrganizationLogoAndArchivedSystem : Migration
 	{
 		/// <inheritdoc />
 		protected override void Up(MigrationBuilder migrationBuilder)
 		{
-			migrationBuilder.AlterColumn<bool>(
+			migrationBuilder.AddColumn<bool>(
+				name: "IsArchived",
+				table: "ParticipantInMeeting",
+				type: "bit",
+				nullable: false,
+				defaultValue: false);
+
+			migrationBuilder.AddColumn<bool>(
 				name: "IsFavorite",
 				table: "ParticipantInMeeting",
 				type: "bit",
 				nullable: false,
-				defaultValue: false,
-				oldClrType: typeof(bool),
-				oldType: "bit");
+				defaultValue: false);
 
 			migrationBuilder.AddColumn<string>(
 				name: "LogoAddress",
@@ -33,17 +38,16 @@ namespace Au5.Infrastructure.Migrations
 		protected override void Down(MigrationBuilder migrationBuilder)
 		{
 			migrationBuilder.DropColumn(
+				name: "IsArchived",
+				table: "ParticipantInMeeting");
+
+			migrationBuilder.DropColumn(
+				name: "IsFavorite",
+				table: "ParticipantInMeeting");
+
+			migrationBuilder.DropColumn(
 				name: "LogoAddress",
 				table: "Organization");
-
-			migrationBuilder.AlterColumn<bool>(
-				name: "IsFavorite",
-				table: "ParticipantInMeeting",
-				type: "bit",
-				nullable: false,
-				oldClrType: typeof(bool),
-				oldType: "bit",
-				oldDefaultValue: false);
 		}
 	}
 }

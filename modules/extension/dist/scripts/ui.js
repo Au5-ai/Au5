@@ -3786,10 +3786,10 @@ class UIHandlers {
         await this.backendApi.closeMeeting(meetingModel);
         const message = {
           type: MessageTypes.CloseMeeting,
-          meetId
+          meetingId: meeting.meetingId
         };
         this.meetingHubClient.sendMessage(message);
-        this.closeSidePanel(this.config.service.panelUrl);
+        this.closeSidePanel(this.config.service.panelUrl, meeting.meetingId);
       } catch (error) {
         showToast("Failed to close meeting :(");
         disabled = false;
@@ -3800,10 +3800,10 @@ class UIHandlers {
     });
     return this;
   }
-  closeSidePanel(panelUrl, meetingId = "", meetId = "") {
+  closeSidePanel(panelUrl, meetingId = "") {
     localStorage.removeItem("au5-meetingId");
-    if (meetingId && meetId) {
-      panelUrl = panelUrl + `/meetings/${meetingId}/sessions/${meetId}/transcription`;
+    if (meetingId) {
+      panelUrl = panelUrl + `/meetings/${meetingId}/transcription`;
     } else {
       panelUrl = panelUrl + "/meetings/my";
     }
@@ -3857,11 +3857,7 @@ class UIHandlers {
         break;
       case MessageTypes.CloseMeeting:
         const closeMeeting = msg;
-        this.closeSidePanel(
-          this.config.service.panelUrl,
-          localStorage.getItem("au5-meetingId") ?? "",
-          closeMeeting.meetId
-        );
+        this.closeSidePanel(this.config.service.panelUrl, closeMeeting.meetingId);
         break;
     }
   }

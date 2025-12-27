@@ -3,7 +3,7 @@
   "name": "Riter",
   "short_name": "Riter",
   "description": "Meeting note taker and AI transcription for Google Meet.",
-  "version": "1.2.5",
+  "version": "1.9.7",
   "action": {
     "default_title": "Open Side Panel"
   },
