@@ -40,6 +40,7 @@ export const GLOBAL_CAPTIONS = {
     },
     fullname: {
       label: "Full Name",
+      placeholder: "Enter your full name",
     },
     organizationName: {
       label: "Organization Name",
