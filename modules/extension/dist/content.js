@@ -6,7 +6,8 @@ function isValidMessage(event) {
   return event.source === window && !!event.data && event.data.source === MESSAGE_SOURCE;
 }
 function handlePingExtension() {
-  window.postMessage({ source: EXTENSION_SOURCE, type: "PING_REPLY", installed: true }, "*");
+  const version = chrome.runtime.getManifest().version;
+  window.postMessage({ source: EXTENSION_SOURCE, type: "PING_REPLY", installed: true, version }, "*");
 }
 function handleOpenSidePanel() {
   try {

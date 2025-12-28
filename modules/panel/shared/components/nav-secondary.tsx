@@ -9,8 +9,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/shared/components/ui/sidebar";
-import { LucideIcon } from "lucide-react";
+import { Bell, LucideIcon } from "lucide-react";
 import { AboutRiterDialog } from "./about-riter-dialog";
+import { useExtensionDetection } from "../hooks/use-extension-detection";
+import { EXTENSION_VERSION } from "../config";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 export function NavSecondary({
   items,
@@ -21,14 +24,22 @@ export function NavSecondary({
     url?: string;
     action?: string;
     icon: LucideIcon;
+    checkVersion?: boolean;
   }[];
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
   const [aboutOpen, setAboutOpen] = React.useState(false);
+  const { extensionVersion } = useExtensionDetection();
 
   const handleItemClick = (item: (typeof items)[number]) => {
     if (item.action === "about") {
       setAboutOpen(true);
     }
+  };
+
+  const hasUpdate = (item: (typeof items)[number]) => {
+    console.log("Checking update for item:", item, extensionVersion);
+    if (!item.checkVersion || !extensionVersion) return false;
+    return extensionVersion !== EXTENSION_VERSION;
   };
 
   return (
@@ -43,6 +54,16 @@ export function NavSecondary({
                     <a href={item.url} target="_blank" rel="noreferrer">
                       <item.icon />
                       <span>{item.title}</span>
+                      {hasUpdate(item) && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Bell className="ml-auto h-4 w-4 text-blue-500 animate-pulse" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>New Version Available</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
                     </a>
                   </SidebarMenuButton>
                 ) : (

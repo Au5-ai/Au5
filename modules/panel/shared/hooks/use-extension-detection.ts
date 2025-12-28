@@ -9,6 +9,7 @@ const CHECK_TIMEOUT = 2000;
 export function useExtensionDetection() {
   const [isInstalled, setIsInstalled] = useState<boolean | null>(null);
   const [isChecking, setIsChecking] = useState(true);
+  const [extensionVersion, setExtensionVersion] = useState<string | null>(null);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -26,6 +27,8 @@ export function useExtensionDetection() {
         clearTimeout(timeout);
         setIsInstalled(true);
         setIsChecking(false);
+        console.log("Extension version received:", event.data?.version);
+        setExtensionVersion(event.data?.version || null);
         window.removeEventListener("message", handleMessage);
       }
     };
@@ -43,5 +46,5 @@ export function useExtensionDetection() {
     };
   }, []);
 
-  return { isInstalled, isChecking };
+  return { isInstalled, isChecking, extensionVersion };
 }
