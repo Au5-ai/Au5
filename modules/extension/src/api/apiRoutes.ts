@@ -23,4 +23,8 @@ export class ApiRoutes {
   public closeMeeting(meetingId: string): string {
     return `${this.config.service.serviceBaseUrl}/meetings/${meetingId}/close`;
   }
+
+  public getUserMe(): string {
+    return `${this.config.service.serviceBaseUrl}/users/me`;
+  }
 }

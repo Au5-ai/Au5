@@ -20,6 +20,7 @@ export class ChatPanel {
       .replace(/'/g, "&#039;");
   }
   private unauthorizedContainerEl: HTMLElement | null;
+  private loadingContainerEl: HTMLElement | null;
   private noActiveMeetingEl: HTMLElement | null;
   private activeMeetingButNotStartedEl: HTMLElement | null;
   private activeMeetingEl: HTMLElement | null;
@@ -30,6 +31,7 @@ export class ChatPanel {
 
   constructor() {
     this.unauthorizedContainerEl = document.getElementById("au5-userUnAuthorized");
+    this.loadingContainerEl = document.getElementById("au5-loading");
     this.noActiveMeetingEl = document.getElementById("au5-noActiveMeeting");
     this.activeMeetingButNotStartedEl = document.getElementById("au5-activeMeetingButNotStarted");
     this.activeMeetingEl = document.getElementById("au5-activeMeeting");
@@ -51,6 +53,13 @@ export class ChatPanel {
 
   public setReactions(reactions: Array<Reaction>): void {
     this.reactions = reactions;
+  }
+
+  public showLoading(): void {
+    this.hideAllContainers();
+    if (this.loadingContainerEl) {
+      this.loadingContainerEl.classList.remove("hidden");
+    }
   }
 
   public showUserUnAuthorizedContainer(): void {
@@ -346,6 +355,7 @@ export class ChatPanel {
   }
 
   private hideAllContainers(): void {
+    if (this.loadingContainerEl) this.loadingContainerEl.classList.add("hidden");
     if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.add("hidden");
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("hidden");

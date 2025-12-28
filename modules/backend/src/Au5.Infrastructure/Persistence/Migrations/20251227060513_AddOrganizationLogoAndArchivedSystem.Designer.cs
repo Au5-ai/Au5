@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Au5.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251226105414_AddArchivedToParticipants")]
-    partial class AddArchivedToParticipants
+    [Migration("20251227060513_AddOrganizationLogoAndArchivedSystem")]
+    partial class AddOrganizationLogoAndArchivedSystem
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -494,6 +494,12 @@ namespace Au5.Infrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(5)");
 
+                    b.Property<string>("LogoAddress")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)");
+
                     b.Property<string>("OrganizationName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -520,7 +526,9 @@ namespace Au5.Infrastructure.Migrations
                         .HasDefaultValue(false);
 
                     b.Property<bool>("IsFavorite")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<Guid>("MeetingId")
                         .HasColumnType("uniqueidentifier");

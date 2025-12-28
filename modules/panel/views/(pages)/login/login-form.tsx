@@ -6,17 +6,14 @@ import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { loginCaptions } from "./i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
-import { EyeClosed, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { ROUTES } from "@/shared/routes";
-import { Eye } from "lucide-react";
-import { useState } from "react";
 import { useLoginForm } from "./hooks/use-login-form";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-  const [showPassword, setShowPassword] = useState(false);
   const {
     username,
     setUsername,
@@ -60,20 +57,11 @@ export function LoginForm({
           <div className="relative">
             <Input
               id="password"
-              type={showPassword ? "text" : "password"}
+              type="password"
               value={password}
               onChange={(e) => handlePasswordChange(e.target.value)}
               required
-              className="pr-10"
             />
-
-            <button
-              type="button"
-              onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-              aria-label={showPassword ? "Hide password" : "Show password"}>
-              {showPassword ? <EyeClosed size={18} /> : <Eye size={18} />}
-            </button>
           </div>
         </div>
 

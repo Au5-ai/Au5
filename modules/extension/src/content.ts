@@ -28,7 +28,8 @@ function isValidMessage(event: MessageEvent<MessageEventData>): boolean {
 }
 
 function handlePingExtension() {
-  window.postMessage({source: EXTENSION_SOURCE, type: "PING_REPLY", installed: true}, "*");
+  const version = chrome.runtime.getManifest().version;
+  window.postMessage({source: EXTENSION_SOURCE, type: "PING_REPLY", installed: true, version}, "*");
 }
 
 function handleOpenSidePanel() {

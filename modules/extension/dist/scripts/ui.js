@@ -78,6 +78,7 @@ const DEFAULT_AVATAR_URL = "assets/icons/default-avatar.jpg";
 class ChatPanel {
   constructor() {
     __publicField(this, "unauthorizedContainerEl");
+    __publicField(this, "loadingContainerEl");
     __publicField(this, "noActiveMeetingEl");
     __publicField(this, "activeMeetingButNotStartedEl");
     __publicField(this, "activeMeetingEl");
@@ -87,6 +88,7 @@ class ChatPanel {
     __publicField(this, "stateManager", StateManager.getInstance());
     var _a;
     this.unauthorizedContainerEl = document.getElementById("au5-userUnAuthorized");
+    this.loadingContainerEl = document.getElementById("au5-loading");
     this.noActiveMeetingEl = document.getElementById("au5-noActiveMeeting");
     this.activeMeetingButNotStartedEl = document.getElementById("au5-activeMeetingButNotStarted");
     this.activeMeetingEl = document.getElementById("au5-activeMeeting");
@@ -108,6 +110,12 @@ class ChatPanel {
   }
   setReactions(reactions) {
     this.reactions = reactions;
+  }
+  showLoading() {
+    this.hideAllContainers();
+    if (this.loadingContainerEl) {
+      this.loadingContainerEl.classList.remove("hidden");
+    }
   }
   showUserUnAuthorizedContainer() {
     this.hideAllContainers();
@@ -362,6 +370,7 @@ class ChatPanel {
     }
   }
   hideAllContainers() {
+    if (this.loadingContainerEl) this.loadingContainerEl.classList.add("hidden");
     if (this.unauthorizedContainerEl) this.unauthorizedContainerEl.classList.add("hidden");
     if (this.noActiveMeetingEl) this.noActiveMeetingEl.classList.add("hidden");
     if (this.activeMeetingButNotStartedEl) this.activeMeetingButNotStartedEl.classList.add("hidden");
@@ -472,6 +481,9 @@ const _ApiRoutes = class _ApiRoutes {
   closeMeeting(meetingId) {
     return `${this.config.service.serviceBaseUrl}/meetings/${meetingId}/close`;
   }
+  getUserMe() {
+    return `${this.config.service.serviceBaseUrl}/users/me`;
+  }
 };
 __publicField(_ApiRoutes, "instance");
 let ApiRoutes = _ApiRoutes;
@@ -571,6 +583,13 @@ class BackEndApi {
     const token = await this.tokenManager.getToken();
     return apiRequest(ApiRoutes.getInstance(this.config).closeMeeting(body.meetingId), {
       method: "POST",
+      authToken: token || ""
+    });
+  }
+  async getUserMe() {
+    const token = await this.tokenManager.getToken();
+    return apiRequest(ApiRoutes.getInstance(this.config).getUserMe(), {
+      method: "GET",
       authToken: token || ""
     });
   }
@@ -3786,10 +3805,10 @@ class UIHandlers {
         await this.backendApi.closeMeeting(meetingModel);
         const message = {
           type: MessageTypes.CloseMeeting,
-          meetId
+          meetingId: meeting.meetingId
         };
         this.meetingHubClient.sendMessage(message);
-        this.closeSidePanel(this.config.service.panelUrl);
+        this.closeSidePanel(this.config.service.panelUrl, meeting.meetingId);
       } catch (error) {
         showToast("Failed to close meeting :(");
         disabled = false;
@@ -3800,10 +3819,10 @@ class UIHandlers {
     });
     return this;
   }
-  closeSidePanel(panelUrl, meetingId = "", meetId = "") {
+  closeSidePanel(panelUrl, meetingId = "") {
     localStorage.removeItem("au5-meetingId");
-    if (meetingId && meetId) {
-      panelUrl = panelUrl + `/meetings/${meetingId}/sessions/${meetId}/transcription`;
+    if (meetingId) {
+      panelUrl = panelUrl + `/meetings/${meetingId}/transcription`;
     } else {
       panelUrl = panelUrl + "/meetings/my";
     }
@@ -3857,11 +3876,7 @@ class UIHandlers {
         break;
       case MessageTypes.CloseMeeting:
         const closeMeeting = msg;
-        this.closeSidePanel(
-          this.config.service.panelUrl,
-          localStorage.getItem("au5-meetingId") ?? "",
-          closeMeeting.meetId
-        );
+        this.closeSidePanel(this.config.service.panelUrl, closeMeeting.meetingId);
         break;
     }
   }
@@ -3884,9 +3899,18 @@ async function getCurrentUrl() {
 async function initializeChatPanel() {
   const url = await getCurrentUrl();
   platform = new MeetingPlatformFactory(url).getPlatform();
+  chatPanel.showLoading();
   try {
     const local_config = await configurationManager.getConfig();
     if (local_config == null || local_config == void 0) {
+      chatPanel.showUserUnAuthorizedContainer();
+      return;
+    }
+    const api = new BackEndApi(local_config);
+    try {
+      await api.getUserMe();
+    } catch (error) {
+      console.error("Failed to authenticate user:", error);
       chatPanel.showUserUnAuthorizedContainer();
       return;
     }
@@ -3905,6 +3929,14 @@ async function initializeChatPanel() {
 }
 document.addEventListener("DOMContentLoaded", async () => {
   await initializeChatPanel();
+  const btn = document.getElementById("au5-btn-login");
+  btn == null ? void 0 : btn.addEventListener("click", () => {
+    var _a;
+    chrome.runtime.sendMessage({
+      action: "CLOSE_SIDEPANEL",
+      panelUrl: ((_a = config == null ? void 0 : config.service) == null ? void 0 : _a.panelUrl) || "https://riter.ir"
+    });
+  });
   if (config && chatPanel) {
     new UIHandlers(config, chatPanel).init();
   }

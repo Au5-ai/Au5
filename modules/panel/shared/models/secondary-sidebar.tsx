@@ -6,6 +6,7 @@ const navSecondary = [
     title: "Install Chrome Extension",
     url: ROUTES.EXTENSION_LINK,
     icon: Chrome,
+    checkVersion: true,
   },
   {
     title: "Request a Feature",

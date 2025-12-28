@@ -1,6 +1,6 @@
 {
   "name": "au5-panel",
-  "version": "1.8.19",
+  "version": "1.9.7",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",

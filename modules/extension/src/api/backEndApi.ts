@@ -35,4 +35,12 @@ export class BackEndApi {
       authToken: token || ""
     });
   }
+
+  public async getUserMe(): Promise<any> {
+    const token = await this.tokenManager.getToken();
+    return apiRequest<any>(ApiRoutes.getInstance(this.config).getUserMe(), {
+      method: "GET",
+      authToken: token || ""
+    });
+  }
 }
