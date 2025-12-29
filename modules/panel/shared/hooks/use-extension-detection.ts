@@ -27,7 +27,6 @@ export function useExtensionDetection() {
         clearTimeout(timeout);
         setIsInstalled(true);
         setIsChecking(false);
-        console.log("Extension version received:", event.data?.version);
         setExtensionVersion(event.data?.version || null);
         window.removeEventListener("message", handleMessage);
       }

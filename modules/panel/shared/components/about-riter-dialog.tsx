@@ -26,7 +26,7 @@ export function AboutRiterDialog({
             <div className="space-y-4 pt-4">
               <div className="space-y-1">
                 <p className="text-sm font-medium text-foreground">Version</p>
-                <p className="text-sm text-muted-foreground">1.9.7</p>
+                <p className="text-sm text-muted-foreground">1.9.8</p>
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-foreground">

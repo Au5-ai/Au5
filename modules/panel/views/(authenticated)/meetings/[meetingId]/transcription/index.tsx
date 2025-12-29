@@ -27,6 +27,7 @@ import TranscriptionFilters from "./components/transcription-filters";
 import TranscriptionEntry from "./components/transcription-entry";
 import ParticipantAvatar from "@/shared/components/participant-avatar";
 import { MeetingSpaceCollapsible } from "./components/meeting-space-collapsible";
+import ParticipantList from "./components/participant-list";
 
 export default function TranscriptionView() {
   const [aiContents, setAIContents] = useState<AIContent[]>([]);
@@ -255,6 +256,10 @@ export default function TranscriptionView() {
                       onSelect={handleSpaceSelection}
                     />
                     <SidebarSeparator className="mx-0 mt-4 mb-4 bg-gray-100" />
+                    <ParticipantList
+                      participants={meeting.participants}
+                      guests={meeting.guests}
+                    />
                   </div>
                 </main>
               </div>

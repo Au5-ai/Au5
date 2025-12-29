@@ -5,15 +5,7 @@ import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { toast } from "sonner";
-import {
-  Bot,
-  Brain,
-  PenLine,
-  User,
-  Plus,
-  Copy,
-  Trash2Icon,
-} from "lucide-react";
+import { Bot, Brain, PenLine, Plus, Copy, Trash2Icon } from "lucide-react";
 import {
   Card,
   Button,
@@ -304,7 +296,7 @@ export default function AIConversation({
             </div>
 
             <div className="flex-1 flex flex-col items-center justify-start p-6">
-              <Card className="flex flex-col w-full max-w-3xl mx-auto p-0 gap-8 shadow-none border-0">
+              <Card className="flex flex-col w-full mx-auto p-0 gap-8 shadow-none border-0">
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -319,7 +311,7 @@ export default function AIConversation({
                     )}
                   </div>
                   {isFetching === false && (
-                    <div className="relative w-[80%]">
+                    <div className="relative">
                       <div
                         dir="auto"
                         className="overflow-y-auto scrollbar-gutter-stable prose prose-slate max-w-none bg-muted text-foreground p-4 rounded-xl prose-p:my-1 prose-li:my-0 prose-ul:my-1 prose-ol:my-1 leading-relaxed">
