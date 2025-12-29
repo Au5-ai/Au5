@@ -17,14 +17,17 @@ export default function ParticipantList({
   participants,
   guests,
 }: ParticipantListProps) {
-  const participantNames = new Set(
-    participants.map((p) => p.fullName.toLowerCase()),
+  const allParticipantsMap = new Map();
+  participants.forEach((p) =>
+    allParticipantsMap.set(p.fullName.toLowerCase(), p),
   );
-  const uniqueGuests = guests.filter(
-    (guest) => !participantNames.has(guest.fullName.toLowerCase()),
-  );
-  const allParticipants = [...participants, ...uniqueGuests];
-
+  guests.forEach((g) => {
+    const key = g.fullName.toLowerCase();
+    if (!allParticipantsMap.has(key)) {
+      allParticipantsMap.set(key, g);
+    }
+  });
+  const allParticipants = Array.from(allParticipantsMap.values());
   if (allParticipants.length === 0) return null;
 
   return (
