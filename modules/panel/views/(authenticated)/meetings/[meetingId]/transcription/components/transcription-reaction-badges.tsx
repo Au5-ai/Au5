@@ -30,7 +30,7 @@ export default function TranscriptionReactionBadges({
         const remainingCount = reaction.participants.length - 3;
 
         return (
-          <Tooltip key={index}>
+          <Tooltip key={reaction.id}>
             <TooltipTrigger>
               <Badge
                 variant="outline"
