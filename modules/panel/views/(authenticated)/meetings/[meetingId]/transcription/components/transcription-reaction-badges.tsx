@@ -73,7 +73,7 @@ export default function TranscriptionReactionBadges({
                 </p>
                 <div className="text-xs text-muted-foreground space-y-0.5">
                   {reaction.participants.map((p, idx) => (
-                    <div key={idx}>{p.fullName}</div>
+                    <div key={p.id}>{p.fullName}</div>
                   ))}
                 </div>
               </div>
