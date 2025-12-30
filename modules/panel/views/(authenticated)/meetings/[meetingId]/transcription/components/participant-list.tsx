@@ -84,12 +84,30 @@ export default function ParticipantList({
         </SidebarGroupLabel>
         <CollapsibleContent>
           <SidebarGroupContent className="mt-2 mb-4 max-h-[600px] overflow-y-auto">
-            {speakingData.length > 0 && (
+            {speakingData.length > 1 && (
               <div className="mb-2 mt-2 p-3 bg-gray-50 rounded-lg sticky top-0 z-10">
                 <PieChart data={speakingData} />
               </div>
             )}
             <div className="space-y-2 pr-2">
+              <div
+                className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer border border-dashed border-gray-300 hover:border-gray-400"
+                onClick={() => {
+                  console.log("Add participant clicked");
+                }}>
+                <div className="h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+                  <Users className="h-5 w-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-700">
+                    Add Participant
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Invite others to this meeting
+                  </p>
+                </div>
+              </div>
+
               {allParticipants.map((participant, index) => {
                 const fallbackColor = getColorFromName(participant.fullName);
                 return (
@@ -143,9 +161,9 @@ interface PieChartProps {
 function PieChart({ data }: PieChartProps) {
   if (data.length === 0) return null;
 
-  const size = 160;
+  const size = 120;
   const center = size / 2;
-  const radius = size / 2 - 10;
+  const radius = size / 2 - 8;
 
   let currentAngle = -90;
 
