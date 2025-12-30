@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".dockerignore" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/BotFather.Api/BotFather.Api.csproj" />
+    <Project Path="src/BotFather.Shared/BotFather.Shared.csproj" />
+  </Folder>
+</Solution>
