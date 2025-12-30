@@ -37,7 +37,6 @@ export function NavSecondary({
   };
 
   const hasUpdate = (item: (typeof items)[number]) => {
-    console.log("Checking update for item:", item, extensionVersion);
     if (!item.checkVersion || !extensionVersion) return false;
     return extensionVersion !== EXTENSION_VERSION;
   };
