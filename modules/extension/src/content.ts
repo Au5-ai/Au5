@@ -21,8 +21,6 @@ type AppConfiguration = {
   };
 };
 
-let addBotDisabled = false;
-
 function isValidMessage(event: MessageEvent<MessageEventData>): boolean {
   return event.source === window && !!event.data && event.data.source === MESSAGE_SOURCE;
 }
@@ -114,6 +112,7 @@ function handleMessage(event: MessageEvent<MessageEventData>) {
 
 window.addEventListener("message", handleMessage);
 
+// let addBotDisabled = false;
 // async function handleAddBot() {
 //   console.log("Add bot button clicked");
 //   if (addBotDisabled) {

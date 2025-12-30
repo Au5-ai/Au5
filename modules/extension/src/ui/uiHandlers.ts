@@ -407,6 +407,7 @@ export class UIHandlers {
 
         const message = {
           type: MessageTypes.CloseMeeting,
+          meetId: meetId,
           meetingId: meeting.meetingId
         } as CloseMeetingMessage;
 
@@ -443,7 +444,6 @@ export class UIHandlers {
         const botJoinedMsg = msg as BotJoinedInMeetingMessage;
         this.chatPanel.botJoined(botJoinedMsg.botName);
         break;
-
       case MessageTypes.Entry:
         const transcriptEntry = msg as EntryMessage;
         this.chatPanel.addEntry({
@@ -455,7 +455,6 @@ export class UIHandlers {
           timestamp: transcriptEntry.timestamp
         });
         break;
-
       case MessageTypes.UserJoinedInMeeting:
         const userJoinedMsg = msg as UserJoinedInMeetingMessage;
         if (!userJoinedMsg.user) {
@@ -463,7 +462,6 @@ export class UIHandlers {
         }
         this.chatPanel.usersJoined(userJoinedMsg.user.fullName);
         break;
-
       case MessageTypes.ReactionApplied:
         const reactionMsg = msg as ReactionAppliedMessage;
         if (!reactionMsg.meetId || !reactionMsg.blockId || !reactionMsg.user || !reactionMsg.reactionType) {
@@ -471,17 +469,14 @@ export class UIHandlers {
         }
         this.chatPanel.addReaction(reactionMsg);
         break;
-
       case MessageTypes.RequestToAddBot:
         const requestToAddBotMsg = msg as RequestToAddBotMessage;
         this.chatPanel.botRequested(requestToAddBotMsg);
         break;
-
       case MessageTypes.PauseAndPlayTranscription:
         const pauseAndPlayTranscription = msg as PauseAndPlayTranscriptionMessage;
         this.chatPanel.pauseAndPlay(pauseAndPlayTranscription);
         break;
-
       case MessageTypes.MeetingIsActive:
         const meetingIsActive = msg as MeetingIsActiveMessage;
         this.chatPanel.botJoined(meetingIsActive.botName);

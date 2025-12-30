@@ -49,6 +49,7 @@ export interface UserJoinedInMeetingMessage extends IMessage {
 
 export interface CloseMeetingMessage extends IMessage {
   readonly type: MessageTypes.CloseMeeting;
+  meetId: string;
   meetingId: string;
 }
 
