@@ -12,6 +12,7 @@ import {
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { useState } from "react";
+import { Eye, EyeClosed } from "lucide-react";
 import { useSignup } from "../hooks";
 import { AddUserRequest } from "../types";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
@@ -33,6 +34,10 @@ export function SignupForm({
     password: "",
     confirmPassword: "",
   });
+
+ 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const signupMutation = useSignup();
 
@@ -123,7 +128,9 @@ export function SignupForm({
                     type="email"
                     placeholder={GLOBAL_CAPTIONS.fields.email.placeholder}
                     value={formData.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("email", e.target.value)
+                    }
                     className={errors.email ? "border-red-500" : ""}
                     required
                   />
@@ -134,6 +141,7 @@ export function SignupForm({
                     {GLOBAL_CAPTIONS.fields.email.hint}
                   </p>
                 </div>
+
                 <div className="grid gap-2">
                   <Label htmlFor="fullname">
                     {GLOBAL_CAPTIONS.fields.fullname.label}
@@ -141,6 +149,7 @@ export function SignupForm({
                   <Input
                     id="fullname"
                     type="text"
+                    placeholder={GLOBAL_CAPTIONS.fields.fullname.placeholder}
                     value={formData.fullname}
                     onChange={(e) =>
                       handleInputChange("fullname", e.target.value)
@@ -154,21 +163,38 @@ export function SignupForm({
                     </p>
                   )}
                 </div>
+
+                {/* PASSWORD FIELD WITH SHOW / HIDE */}
                 <div className="grid gap-2">
                   <Label htmlFor="password">
                     {GLOBAL_CAPTIONS.fields.password.label}
                   </Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder={GLOBAL_CAPTIONS.fields.password.placeholder}
-                    value={formData.password}
-                    onChange={(e) =>
-                      handleInputChange("password", e.target.value)
-                    }
-                    className={errors.password ? "border-red-500" : ""}
-                    required
-                  />
+
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder={GLOBAL_CAPTIONS.fields.password.placeholder}
+                      value={formData.password}
+                      onChange={(e) =>
+                        handleInputChange("password", e.target.value)
+                      }
+                      className={
+                        errors.password ? "border-red-500 pr-10" : "pr-10"
+                      }
+                      required
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((p) => !p)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? <EyeClosed size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+
                   {errors.password && (
                     <p className="text-sm text-red-500 mt-1">
                       {errors.password}
@@ -178,23 +204,48 @@ export function SignupForm({
                     {GLOBAL_CAPTIONS.fields.password.hint}
                   </p>
                 </div>
+
+                
                 <div className="grid gap-2">
                   <Label htmlFor="confirmPassword">
                     {GLOBAL_CAPTIONS.fields.confirmPassword.label}
                   </Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder={
-                      GLOBAL_CAPTIONS.fields.confirmPassword.placeholder
-                    }
-                    value={formData.confirmPassword}
-                    onChange={(e) =>
-                      handleInputChange("confirmPassword", e.target.value)
-                    }
-                    className={errors.confirmPassword ? "border-red-500" : ""}
-                    required
-                  />
+
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder={
+                        GLOBAL_CAPTIONS.fields.confirmPassword.placeholder
+                      }
+                      value={formData.confirmPassword}
+                      onChange={(e) =>
+                        handleInputChange("confirmPassword", e.target.value)
+                      }
+                      className={
+                        errors.confirmPassword
+                          ? "border-red-500 pr-10"
+                          : "pr-10"
+                      }
+                      required
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword((p) => !p)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                      aria-label={
+                        showConfirmPassword ? "Hide password" : "Show password"
+                      }
+                    >
+                      {showConfirmPassword ? (
+                        <EyeClosed size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
+                    </button>
+                  </div>
+
                   {errors.confirmPassword && (
                     <p className="text-sm text-red-500 mt-1">
                       {errors.confirmPassword}
@@ -205,7 +256,8 @@ export function SignupForm({
                 <Button
                   type="submit"
                   className="w-full cursor-pointer"
-                  disabled={signupMutation.isPending}>
+                  disabled={signupMutation.isPending}
+                >
                   {signupMutation.isPending
                     ? GLOBAL_CAPTIONS.pages.signup.form.submittingButton
                     : GLOBAL_CAPTIONS.pages.signup.form.submitButton}
@@ -215,6 +267,7 @@ export function SignupForm({
           </form>
         </CardContent>
       </Card>
+
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
         {GLOBAL_CAPTIONS.pages.signup.footer.text}{" "}
         <a href="#">{GLOBAL_CAPTIONS.pages.signup.footer.terms}</a>{" "}

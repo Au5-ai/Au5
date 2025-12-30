@@ -37,6 +37,7 @@ export const GLOBAL_CAPTIONS = {
     },
     fullname: {
       label: "Full Name",
+      placeholder: "Enter your full name",
     },
     password: {
       label: "Password",
