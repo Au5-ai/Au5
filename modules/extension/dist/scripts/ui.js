@@ -3805,6 +3805,7 @@ class UIHandlers {
         await this.backendApi.closeMeeting(meetingModel);
         const message = {
           type: MessageTypes.CloseMeeting,
+          meetId,
           meetingId: meeting.meetingId
         };
         this.meetingHubClient.sendMessage(message);
