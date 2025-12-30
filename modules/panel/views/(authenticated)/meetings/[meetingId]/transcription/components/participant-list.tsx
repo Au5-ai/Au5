@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { ChevronRight, Users } from "lucide-react";
-import { Participant } from "@/shared/types";
+import { Entry, Participant } from "@/shared/types";
 import {
   Avatar,
   AvatarFallback,
@@ -21,12 +21,14 @@ import { getColorFromName } from "@/shared/lib";
 interface ParticipantListProps {
   participants: Participant[];
   guests: Participant[];
+  entries: Entry[];
   defaultOpen?: boolean;
 }
 
 export default function ParticipantList({
   participants,
   guests,
+  entries,
   defaultOpen = true,
 }: ParticipantListProps) {
   const allParticipantsMap = new Map();
@@ -40,6 +42,32 @@ export default function ParticipantList({
     }
   });
   const allParticipants = Array.from(allParticipantsMap.values());
+
+  const speakingData = useMemo(() => {
+    if (!entries || entries.length === 0) return [];
+
+    const speakingCounts = new Map<string, number>();
+    entries.forEach((entry) => {
+      if (entry.entryType === "Transcription") {
+        const count = speakingCounts.get(entry.fullName) || 0;
+        speakingCounts.set(entry.fullName, count + 1);
+      }
+    });
+
+    const total = Array.from(speakingCounts.values()).reduce(
+      (sum, count) => sum + count,
+      0,
+    );
+
+    return Array.from(speakingCounts.entries())
+      .map(([name, count]) => ({
+        name,
+        percentage: total > 0 ? (count / total) * 100 : 0,
+        count,
+      }))
+      .sort((a, b) => b.percentage - a.percentage);
+  }, [entries]);
+
   if (allParticipants.length === 0) return null;
 
   return (
@@ -50,13 +78,18 @@ export default function ParticipantList({
           className="group/label text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground w-full text-sm">
           <CollapsibleTrigger className="cursor-pointer">
             <Users className="mr-2 h-4 w-4" />
-            Participants ({allParticipants.length})
+            Participants & Contributions ({allParticipants.length})
             <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
           </CollapsibleTrigger>
         </SidebarGroupLabel>
         <CollapsibleContent>
-          <SidebarGroupContent className="mt-2">
-            <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2">
+          <SidebarGroupContent className="mt-2 mb-4 max-h-[600px] overflow-y-auto">
+            {speakingData.length > 0 && (
+              <div className="mb-2 mt-2 p-3 bg-gray-50 rounded-lg sticky top-0 z-10">
+                <PieChart data={speakingData} />
+              </div>
+            )}
+            <div className="space-y-2 pr-2">
               {allParticipants.map((participant, index) => {
                 const fallbackColor = getColorFromName(participant.fullName);
                 return (
@@ -82,6 +115,16 @@ export default function ParticipantList({
                         {participant.email}
                       </p>
                     </div>
+                    {speakingData.find(
+                      (s) => s.name === participant.fullName,
+                    ) && (
+                      <div className="text-xs font-medium text-gray-600">
+                        {speakingData
+                          .find((s) => s.name === participant.fullName)
+                          ?.percentage.toFixed(1)}
+                        %
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -90,5 +133,86 @@ export default function ParticipantList({
         </CollapsibleContent>
       </Collapsible>
     </SidebarGroup>
+  );
+}
+
+interface PieChartProps {
+  data: { name: string; percentage: number; count: number }[];
+}
+
+function PieChart({ data }: PieChartProps) {
+  if (data.length === 0) return null;
+
+  const size = 160;
+  const center = size / 2;
+  const radius = size / 2 - 10;
+
+  let currentAngle = -90;
+
+  const slices = data.map((item) => {
+    const sliceAngle = (item.percentage / 100) * 360;
+    const startAngle = currentAngle;
+    const endAngle = currentAngle + sliceAngle;
+    currentAngle = endAngle;
+
+    const startRad = (startAngle * Math.PI) / 180;
+    const endRad = (endAngle * Math.PI) / 180;
+
+    const x1 = center + radius * Math.cos(startRad);
+    const y1 = center + radius * Math.sin(startRad);
+    const x2 = center + radius * Math.cos(endRad);
+    const y2 = center + radius * Math.sin(endRad);
+
+    const largeArc = sliceAngle > 180 ? 1 : 0;
+
+    const pathData = [
+      `M ${center} ${center}`,
+      `L ${x1} ${y1}`,
+      `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
+      "Z",
+    ].join(" ");
+
+    return {
+      ...item,
+      pathData,
+      color: getColorFromName(item.name),
+    };
+  });
+
+  return (
+    <div className="flex gap-4 items-center">
+      <svg width={size} height={size} className="flex-shrink-0">
+        {slices.map((slice, index) => (
+          <path
+            key={index}
+            d={slice.pathData}
+            fill={slice.color}
+            stroke="white"
+            strokeWidth="2"
+          />
+        ))}
+      </svg>
+      <div className="flex-1 space-y-2">
+        {data.map((item, index) => {
+          const color = getColorFromName(item.name);
+          return (
+            <div key={index} className="flex items-center gap-2">
+              <div
+                className="w-3 h-3 rounded-sm flex-shrink-0"
+                style={{ backgroundColor: color }}
+              />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-gray-900 truncate">
+                  {item.name}
+                </p>
+              </div>
+              <span className="text-xs font-semibold text-gray-700 flex-shrink-0">
+                {item.percentage.toFixed(1)}%
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }

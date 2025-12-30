@@ -259,6 +259,7 @@ export default function TranscriptionView() {
                     <ParticipantList
                       participants={meeting.participants}
                       guests={meeting.guests}
+                      entries={meeting.entries}
                     />
                   </div>
                 </main>
