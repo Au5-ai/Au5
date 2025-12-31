@@ -22,9 +22,9 @@ public class AddParticipantCommandHandler : IRequestHandler<AddParticipantComman
 		}
 
 		var existingParticipantIds = await _context.Set<ParticipantInMeeting>()
-			.Where(x => x.MeetingId == request.MeetingId && request.ParticipantsId.Contains(x.UserId))
-			.Select(x => x.UserId)
-			.ToListAsync(cancellationToken);
+		.Where(x => x.MeetingId == request.MeetingId && request.ParticipantsId.Contains(x.UserId))
+		.Select(x => x.UserId)
+		.ToListAsync(cancellationToken);
 
 		var newParticipantIds = request.ParticipantsId.Except(existingParticipantIds).ToList();
 
@@ -33,25 +33,26 @@ public class AddParticipantCommandHandler : IRequestHandler<AddParticipantComman
 			return new List<Participant>();
 		}
 
-		var participants = newParticipantIds.Select(userId => new ParticipantInMeeting
+		var usersToAdd = await _context.Set<User>()
+			.Where(u => newParticipantIds.Contains(u.Id))
+			.Select(u => new Participant(u.Id, u.FullName, u.Email, u.PictureUrl))
+			.ToListAsync(cancellationToken);
+
+		if (usersToAdd.Count == 0)
 		{
-			UserId = userId,
+			return new List<Participant>();
+		}
+
+		var participants = usersToAdd.Select(user => new ParticipantInMeeting
+		{
+			UserId = user.Id,
 			MeetingId = request.MeetingId
 		}).ToList();
 
 		_context.Set<ParticipantInMeeting>().AddRange(participants);
 		var result = await _context.SaveChangesAsync(cancellationToken);
 
-		if (result.IsFailure)
-		{
-			return Error.Failure("Participant.AddFailed", AppResources.Meeting.FailedToAddParticipant);
-		}
-
-		var addedUsers = await _context.Set<User>()
-			.Where(u => newParticipantIds.Contains(u.Id))
-			.Select(u => new Participant(u.Id, u.FullName, u.Email, u.PictureUrl))
-			.ToListAsync(cancellationToken);
-
-		return addedUsers;
+		return result.IsFailure ? Error.Failure("Participant.AddFailed", AppResources.Meeting.FailedToAddParticipant)
+			: usersToAdd;
 	}
 }
