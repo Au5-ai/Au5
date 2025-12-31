@@ -482,5 +482,6 @@ $RECYCLE.BIN/
 
 # Virtual environment folder
 venv/
+/modules/botFather/src/botFather.Api/appsettings.Development.json
 /modules/backend/src/Au5.BackEnd/appsettings.Development.json
 /modules/panel/shared/config.ts
