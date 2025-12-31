@@ -11,6 +11,7 @@ using Au5.Application.Features.Meetings.RemoveMeeting;
 using Au5.Application.Features.Meetings.Rename;
 using Au5.Application.Features.Meetings.ToggleArchive;
 using Au5.Application.Features.Meetings.ToggleFavorite;
+using Au5.Application.Features.Meetings.UpdateEntry;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
@@ -129,5 +130,12 @@ public class MeetingsController(ISender mediator) : BaseController
 	public async Task<IActionResult> RemoveMeeting([FromRoute] Guid meetingId, CancellationToken cancellationToken)
 	{
 		return Ok(await mediator.Send(new RemoveMeetingCommand(meetingId), cancellationToken));
+	}
+
+	[HttpPut("{meetingId}/entries/{entryId}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> UpdateEntry([FromRoute] Guid meetingId, [FromRoute] int entryId, [FromBody] UpdateEntryCommand command, CancellationToken cancellationToken)
+	{
+		return Ok(await mediator.Send(command with { MeetingId = meetingId, EntryId = entryId }, cancellationToken));
 	}
 }

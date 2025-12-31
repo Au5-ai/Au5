@@ -1,26 +1,71 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { MessageCircle, Mic } from "lucide-react";
+import { MessageCircle, Mic, Pencil, Check, X } from "lucide-react";
+import { toast } from "sonner";
 import { Entry } from "@/shared/types";
 import ParticipantAvatar from "@/shared/components/participant-avatar";
 import ReactionBadges from "./transcription-reaction-badges";
+import { Button } from "@/shared/components/ui";
+import { Textarea } from "@/shared/components/ui/textarea";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
+import { meetingsController } from "@/shared/network/api/meetingsController";
 
 export default function TranscriptionEntry({
   entry,
   participants,
   index,
+  meetingId,
 }: {
   entry: Entry;
   participants: { fullName: string; pictureUrl?: string }[];
   index: number;
+  meetingId: string;
 }) {
   const isChat = entry.entryType === "Chat";
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(entry.content);
+  const [isSaving, setIsSaving] = useState(false);
 
   const getPicturesUrl = (fullName: string): string => {
     const participant = participants.find((p) => p.fullName === fullName);
     return participant?.pictureUrl || "";
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+    setEditedContent(entry.content);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setEditedContent(entry.content);
+  };
+
+  const handleSave = async () => {
+    if (!editedContent.trim()) {
+      toast.error("Content cannot be empty");
+      return;
+    }
+
+    if (editedContent === entry.content) {
+      setIsEditing(false);
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      await meetingsController.updateEntry(meetingId, entry.id, editedContent);
+      entry.content = editedContent;
+      setIsEditing(false);
+      toast.success(GLOBAL_CAPTIONS.pages.meetings.updateEntrySuccess);
+    } catch (error) {
+      console.error("Failed to update entry:", error);
+      toast.error(GLOBAL_CAPTIONS.pages.meetings.updateEntryError);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -68,11 +113,52 @@ export default function TranscriptionEntry({
           </div>
 
           <div className="mb-3">
-            <p
-              className={`text-gray-800 leading-relaxed text-justify`}
-              dir="auto">
-              {entry.content}
-            </p>
+            {isEditing ? (
+              <div className="space-y-2">
+                <Textarea
+                  value={editedContent}
+                  onChange={(e) => setEditedContent(e.target.value)}
+                  className="min-h-[100px] text-gray-800"
+                  disabled={isSaving}
+                />
+                <div className="flex gap-2 justify-end">
+                  <Button
+                    onClick={handleCancel}
+                    size="sm"
+                    variant="outline"
+                    disabled={isSaving}>
+                    <X className="w-4 h-4" />
+                    {GLOBAL_CAPTIONS.actions.cancel}
+                  </Button>
+                  <Button
+                    onClick={handleSave}
+                    size="sm"
+                    disabled={isSaving}
+                    className="gap-1">
+                    <Check className="w-4 h-4" />
+                    {isSaving
+                      ? GLOBAL_CAPTIONS.actions.saving
+                      : GLOBAL_CAPTIONS.actions.save}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="relative group/content">
+                <p
+                  className={`text-gray-800 leading-relaxed text-justify`}
+                  dir="auto">
+                  {entry.content}
+                </p>
+                <Button
+                  onClick={handleEdit}
+                  size="sm"
+                  variant="ghost"
+                  className="absolute -right-2 -top-2 opacity-0 group-hover/content:opacity-100 transition-opacity gap-1">
+                  <Pencil className="w-3 h-3" />
+                  {GLOBAL_CAPTIONS.actions.edit}
+                </Button>
+              </div>
+            )}
           </div>
 
           <ReactionBadges reactions={entry.reactions} />

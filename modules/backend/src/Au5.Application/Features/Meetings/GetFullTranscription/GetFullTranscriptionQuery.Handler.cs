@@ -64,6 +64,7 @@ public class GetFullTranscriptionQueryHandler : IRequestHandler<GetFullTranscrip
 					.OrderBy(e => e.Timestamp)
 					.Select(entry => new EntryDto
 					{
+						Id = entry.Id,
 						BlockId = entry.BlockId,
 						ParticipantId = entry.ParticipantId,
 						FullName = entry.FullName ?? string.Empty,

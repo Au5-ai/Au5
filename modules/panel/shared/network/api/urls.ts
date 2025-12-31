@@ -37,6 +37,8 @@ export const API_URLS = {
     REMOVE: (meetingId: string) => `/meetings/${meetingId}`,
     ADD_PARTICIPANTS: (meetingId: string) =>
       `/meetings/${meetingId}/participants`,
+    UPDATE_ENTRY: (meetingId: string, entryId: number) =>
+      `/meetings/${meetingId}/entries/${entryId}`,
   },
   SINGUP: {
     ADD_ADMIN: "/admin/hello",

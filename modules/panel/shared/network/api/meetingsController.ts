@@ -200,4 +200,18 @@ export const meetingsController = {
       },
     );
   },
+  updateEntry: (
+    meetingId: string,
+    entryId: number,
+    content: string,
+  ): Promise<Record<string, never>> => {
+    return apiRequestClient<Record<string, never>>(
+      API_URLS.MEETING.UPDATE_ENTRY(meetingId, entryId),
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content }),
+      },
+    );
+  },
 };

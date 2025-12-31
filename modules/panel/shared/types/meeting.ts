@@ -45,6 +45,7 @@ export interface Meeting {
 }
 
 export interface Entry {
+  id: number;
   blockId: string;
   participantId: string;
   fullName: string;

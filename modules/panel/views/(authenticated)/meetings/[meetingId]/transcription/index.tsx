@@ -211,6 +211,7 @@ export default function TranscriptionView() {
                       key={entry.blockId}
                       entry={entry}
                       index={index}
+                      meetingId={meetingId}
                     />
                   ))
                 ) : (
