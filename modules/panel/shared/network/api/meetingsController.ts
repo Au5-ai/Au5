@@ -1,4 +1,4 @@
-import { AIContent, Meeting, MeetingData } from "@/shared/types";
+import { AIContent, Meeting, MeetingData, Participant } from "@/shared/types";
 import {
   apiRequestClient,
   apiRequestClientStream,
@@ -95,6 +95,19 @@ export const meetingsController = {
       API_URLS.MEETING.REMOVE(meetingId),
       {
         method: "DELETE",
+      },
+    );
+  },
+  addParticipants: (
+    meetingId: string,
+    participantsId: string[],
+  ): Promise<Participant[]> => {
+    return apiRequestClient<Participant[]>(
+      API_URLS.MEETING.ADD_PARTICIPANTS(meetingId),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(participantsId),
       },
     );
   },

@@ -35,6 +35,7 @@ internal static class AppResources
 	/// </summary>
 	internal static class Meeting
 	{
+		public const string FailedToAddParticipant = "Failed to add participant to the meeting. Please try again or contact support if the issue persists.";
 		public const string FailedToRemove = "Failed to remove the meeting. Please try again or contact support if the issue persists.";
 		public const string FailedToAddBot = "Failed to add bot to the meeting. Please check the bot configuration and try again.";
 		public const string NotFound = "The requested meeting could not be found. Please verify the meeting ID and try again.";
