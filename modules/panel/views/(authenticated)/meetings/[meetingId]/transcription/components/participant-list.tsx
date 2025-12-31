@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { ChevronRight, Users } from "lucide-react";
 import { Entry, Participant } from "@/shared/types";
 import {
@@ -17,11 +17,15 @@ import {
   SidebarGroupLabel,
 } from "@/shared/components/ui/sidebar";
 import { getColorFromName } from "@/shared/lib";
+import { PieChart } from "@/shared/components/charts/pie-chart";
+import AddParticipantItem from "./add-participant-item";
+import AddParticipantsModal from "./add-participants-modal";
 
 interface ParticipantListProps {
   participants: Participant[];
   guests: Participant[];
   entries: Entry[];
+  meetingId: string;
   defaultOpen?: boolean;
 }
 
@@ -29,8 +33,11 @@ export default function ParticipantList({
   participants,
   guests,
   entries,
+  meetingId,
   defaultOpen = true,
 }: ParticipantListProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newParticipants, setNewParticipants] = useState<Participant[]>([]);
   const allParticipantsMap = new Map();
   participants.forEach((p) =>
     allParticipantsMap.set(p.fullName.toLowerCase(), p),
@@ -39,6 +46,12 @@ export default function ParticipantList({
     const key = g.fullName.toLowerCase();
     if (!allParticipantsMap.has(key)) {
       allParticipantsMap.set(key, g);
+    }
+  });
+  newParticipants.forEach((p) => {
+    const key = p.fullName.toLowerCase();
+    if (!allParticipantsMap.has(key)) {
+      allParticipantsMap.set(key, p);
     }
   });
   const allParticipants = Array.from(allParticipantsMap.values());
@@ -89,24 +102,8 @@ export default function ParticipantList({
                 <PieChart data={speakingData} />
               </div>
             )}
-            <div className="space-y-2 pr-2">
-              <div
-                className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer border border-dashed border-gray-300 hover:border-gray-400"
-                onClick={() => {
-                  console.log("Add participant clicked");
-                }}>
-                <div className="h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
-                  <Users className="h-5 w-5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-700">
-                    Add Participant
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    Invite others to this meeting
-                  </p>
-                </div>
-              </div>
+            <div className="space-y-2">
+              <AddParticipantItem onClick={() => setIsModalOpen(true)} />
 
               {allParticipants.map((participant, index) => {
                 const fallbackColor = getColorFromName(participant.fullName);
@@ -150,87 +147,16 @@ export default function ParticipantList({
           </SidebarGroupContent>
         </CollapsibleContent>
       </Collapsible>
+
+      <AddParticipantsModal
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        meetingId={meetingId}
+        existingParticipantIds={allParticipants.map((p) => p.id)}
+        onParticipantsAdded={(addedParticipants) => {
+          setNewParticipants([...newParticipants, ...addedParticipants]);
+        }}
+      />
     </SidebarGroup>
-  );
-}
-
-interface PieChartProps {
-  data: { name: string; percentage: number; count: number }[];
-}
-
-function PieChart({ data }: PieChartProps) {
-  if (data.length === 0) return null;
-
-  const size = 120;
-  const center = size / 2;
-  const radius = size / 2 - 8;
-
-  let currentAngle = -90;
-
-  const slices = data.map((item) => {
-    const sliceAngle = (item.percentage / 100) * 360;
-    const startAngle = currentAngle;
-    const endAngle = currentAngle + sliceAngle;
-    currentAngle = endAngle;
-
-    const startRad = (startAngle * Math.PI) / 180;
-    const endRad = (endAngle * Math.PI) / 180;
-
-    const x1 = center + radius * Math.cos(startRad);
-    const y1 = center + radius * Math.sin(startRad);
-    const x2 = center + radius * Math.cos(endRad);
-    const y2 = center + radius * Math.sin(endRad);
-
-    const largeArc = sliceAngle > 180 ? 1 : 0;
-
-    const pathData = [
-      `M ${center} ${center}`,
-      `L ${x1} ${y1}`,
-      `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
-      "Z",
-    ].join(" ");
-
-    return {
-      ...item,
-      pathData,
-      color: getColorFromName(item.name),
-    };
-  });
-
-  return (
-    <div className="flex gap-4 items-center">
-      <svg width={size} height={size} className="flex-shrink-0">
-        {slices.map((slice, index) => (
-          <path
-            key={index}
-            d={slice.pathData}
-            fill={slice.color}
-            stroke="white"
-            strokeWidth="2"
-          />
-        ))}
-      </svg>
-      <div className="flex-1 space-y-2">
-        {data.map((item, index) => {
-          const color = getColorFromName(item.name);
-          return (
-            <div key={index} className="flex items-center gap-2">
-              <div
-                className="w-3 h-3 rounded-sm flex-shrink-0"
-                style={{ backgroundColor: color }}
-              />
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-gray-900 truncate">
-                  {item.name}
-                </p>
-              </div>
-              <span className="text-xs font-semibold text-gray-700 flex-shrink-0">
-                {item.percentage.toFixed(1)}%
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
   );
 }

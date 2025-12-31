@@ -31,6 +31,17 @@ export const GLOBAL_CAPTIONS = {
     export: "Export",
     exportToText: "Export to Text",
     exportToPdf: "Export to PDF (Coming Soon)",
+    add: "Add",
+    search: "Search",
+    addSelected: "Add Selected",
+  },
+  participants: {
+    addParticipants: "Add Participants",
+    searchUsers: "Search users to add",
+    noUsersFound: "No users found",
+    addingParticipants: "Adding participants...",
+    participantsAdded: "Participants added successfully",
+    failedToAdd: "Failed to add participants",
   },
   fields: {
     email: {
