@@ -485,3 +485,4 @@ venv/
 /modules/botFather/src/botFather.Api/appsettings.Development.json
 /modules/backend/src/Au5.BackEnd/appsettings.Development.json
 /modules/panel/shared/config.ts
+/modules/botFather/src/BotFather.Api/appsettings.Development.json
