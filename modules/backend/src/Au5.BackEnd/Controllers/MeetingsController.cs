@@ -134,8 +134,9 @@ public class MeetingsController(ISender mediator) : BaseController
 
 	[HttpPut("{meetingId}/entries/{entryId}")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	public async Task<IActionResult> UpdateEntry([FromRoute] Guid meetingId, [FromRoute] int entryId, [FromBody] UpdateEntryCommand command, CancellationToken cancellationToken)
+	public async Task<IActionResult> UpdateEntry([FromRoute] Guid meetingId, [FromRoute] int entryId, [FromBody] UpdateEntryBody body, CancellationToken cancellationToken)
 	{
-		return Ok(await mediator.Send(command with { MeetingId = meetingId, EntryId = entryId }, cancellationToken));
+		var command = new UpdateEntryCommand(meetingId, entryId, body.Content);
+		return Ok(await mediator.Send(command, cancellationToken));
 	}
 }
