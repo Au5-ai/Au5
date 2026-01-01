@@ -2,12 +2,29 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { MessageCircle, Mic, Pencil, Check, X } from "lucide-react";
+import {
+  MessageCircle,
+  Mic,
+  Pencil,
+  Check,
+  X,
+  SplitIcon,
+  PenLine,
+  Trash,
+  MessageSquareIcon,
+  MessageSquarePlus,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Entry } from "@/shared/types";
 import ParticipantAvatar from "@/shared/components/participant-avatar";
 import ReactionBadges from "./transcription-reaction-badges";
-import { Button } from "@/shared/components/ui";
+import {
+  Button,
+  Separator,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/shared/components/ui";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 import { meetingsController } from "@/shared/network/api/meetingsController";
@@ -97,8 +114,63 @@ export default function TranscriptionEntry({
                 </div>
               </div>
             </div>
-            <div className="flex items-center items-start gap-2 text-xs text-gray-500">
-              <div className="flex items-center gap-2  bg-gray-50 p-2 rounded-xl">
+            <div className="flex items-center gap-1 text-xs text-gray-500">
+              {!isEditing && (
+                <div className="opacity-0 group-hover:opacity-100 flex items-center gap-2 transition-opacity">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="rounded-xl transition-opacity px-2 hover:text-blue-600 hover:bg-blue-50">
+                        <MessageSquarePlus className="w-3.5 h-3.5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        {GLOBAL_CAPTIONS.actions.comment}
+                        {" - soon"}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="rounded-xl transition-opacity px-2 hover:text-red-600 hover:bg-red-50">
+                        <Trash className="w-3.5 h-3.5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        {GLOBAL_CAPTIONS.actions.delete}
+                        {" - soon"}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={handleEdit}
+                        size="sm"
+                        variant="ghost"
+                        className="rounded-xl transition-opacity px-2">
+                        <PenLine className="w-3.5 h-3.5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{GLOBAL_CAPTIONS.actions.edit}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Separator
+                    orientation="vertical"
+                    className="data-[orientation=vertical]:h-4 mr-1"
+                  />
+                </div>
+              )}
+
+              <div className="flex items-center gap-2 bg-gray-100 p-2 rounded-xl">
                 {isChat ? (
                   <div className="flex items-center gap-1 text-indigo-600">
                     <MessageCircle className="w-3.5 h-3.5" />
@@ -149,14 +221,6 @@ export default function TranscriptionEntry({
                   dir="auto">
                   {entry.content}
                 </p>
-                <Button
-                  onClick={handleEdit}
-                  size="sm"
-                  variant="ghost"
-                  className="absolute -right-2 -top-2 opacity-0 group-hover/content:opacity-100 transition-opacity gap-1">
-                  <Pencil className="w-3 h-3" />
-                  {GLOBAL_CAPTIONS.actions.edit}
-                </Button>
               </div>
             )}
           </div>

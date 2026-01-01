@@ -37,6 +37,8 @@ export const GLOBAL_CAPTIONS = {
     edit: "Edit",
     save: "Save",
     saving: "Saving...",
+    delete: "Delete",
+    comment: "Comment",
   },
   participants: {
     addParticipants: "Add Participants",
