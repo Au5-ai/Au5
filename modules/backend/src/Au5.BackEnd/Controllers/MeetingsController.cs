@@ -13,6 +13,7 @@ using Au5.Application.Features.Meetings.Rename;
 using Au5.Application.Features.Meetings.ToggleArchive;
 using Au5.Application.Features.Meetings.ToggleFavorite;
 using Au5.Application.Features.Meetings.UpdateEntry;
+using Au5.Shared;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
@@ -142,7 +143,9 @@ public class MeetingsController(ISender mediator) : BaseController
 	}
 
 	[HttpDelete("{meetingId}/entries/{entryId}")]
-	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(DeleteEntryCommandResponse), StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
+	[ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
 	public async Task<IActionResult> DeleteEntry([FromRoute] Guid meetingId, [FromRoute] int entryId, CancellationToken cancellationToken)
 	{
 		var command = new DeleteEntryCommand(meetingId, entryId);
