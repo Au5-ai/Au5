@@ -95,6 +95,9 @@ export const GLOBAL_CAPTIONS = {
       required: "Please confirm your password",
       mismatch: "Passwords do not match",
     },
+    content: {
+      required: "Content cannot be empty",
+    },
   },
   emptyState: {
     search: {

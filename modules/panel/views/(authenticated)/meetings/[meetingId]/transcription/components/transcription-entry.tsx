@@ -64,7 +64,7 @@ export default function TranscriptionEntry({
 
   const handleSave = async () => {
     if (!editedContent.trim()) {
-      toast.error("Content cannot be empty");
+      toast.error(GLOBAL_CAPTIONS.validation.content.required);
       return;
     }
 
