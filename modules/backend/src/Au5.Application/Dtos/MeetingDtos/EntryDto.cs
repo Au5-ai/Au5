@@ -2,6 +2,8 @@ namespace Au5.Application.Dtos.MeetingDtos;
 
 public record EntryDto
 {
+	public int Id { get; init; }
+
 	public Guid BlockId { get; init; }
 
 	public Guid ParticipantId { get; init; }

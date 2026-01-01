@@ -34,6 +34,11 @@ export const GLOBAL_CAPTIONS = {
     add: "Add",
     search: "Search",
     addSelected: "Add Selected",
+    edit: "Edit",
+    save: "Save",
+    saving: "Saving...",
+    delete: "Delete",
+    comment: "Comment",
   },
   participants: {
     addParticipants: "Add Participants",
@@ -89,6 +94,9 @@ export const GLOBAL_CAPTIONS = {
     confirmPassword: {
       required: "Please confirm your password",
       mismatch: "Passwords do not match",
+    },
+    content: {
+      required: "Content cannot be empty",
     },
   },
   emptyState: {
@@ -156,6 +164,8 @@ export const GLOBAL_CAPTIONS = {
       exportError: "Failed to export meeting transcription. Please try again.",
       renameSuccess: "Meeting has been renamed successfully",
       renameError: "Failed to rename meeting. Please try again.",
+      updateEntrySuccess: "Entry has been updated successfully",
+      updateEntryError: "Failed to update entry. Please try again.",
     },
   },
 } as const;
