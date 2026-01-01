@@ -4,6 +4,7 @@ using Au5.Application.Features.AI.GetAll;
 using Au5.Application.Features.Meetings.AddBot;
 using Au5.Application.Features.Meetings.AddParticipants;
 using Au5.Application.Features.Meetings.CloseMeetingByUser;
+using Au5.Application.Features.Meetings.DeleteEntry;
 using Au5.Application.Features.Meetings.Export;
 using Au5.Application.Features.Meetings.GetFullTranscription;
 using Au5.Application.Features.Meetings.PublicUrl;
@@ -12,6 +13,7 @@ using Au5.Application.Features.Meetings.Rename;
 using Au5.Application.Features.Meetings.ToggleArchive;
 using Au5.Application.Features.Meetings.ToggleFavorite;
 using Au5.Application.Features.Meetings.UpdateEntry;
+using Au5.Shared;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Au5.BackEnd.Controllers;
@@ -137,6 +139,16 @@ public class MeetingsController(ISender mediator) : BaseController
 	public async Task<IActionResult> UpdateEntry([FromRoute] Guid meetingId, [FromRoute] int entryId, [FromBody] UpdateEntryBody body, CancellationToken cancellationToken)
 	{
 		var command = new UpdateEntryCommand(meetingId, entryId, body.Content);
+		return Ok(await mediator.Send(command, cancellationToken));
+	}
+
+	[HttpDelete("{meetingId}/entries/{entryId}")]
+	[ProducesResponseType(typeof(DeleteEntryCommandResponse), StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
+	[ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+	public async Task<IActionResult> DeleteEntry([FromRoute] Guid meetingId, [FromRoute] int entryId, CancellationToken cancellationToken)
+	{
+		var command = new DeleteEntryCommand(meetingId, entryId);
 		return Ok(await mediator.Send(command, cancellationToken));
 	}
 }

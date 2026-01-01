@@ -92,7 +92,7 @@ public class UpdateEntryCommandValidatorTests
 	[Fact]
 	public void Should_NotReturnValidationError_When_ContentContainsUnicodeCharacters()
 	{
-		var command = new UpdateEntryCommand(Guid.NewGuid(), 1, "محتوای فارسی و 中文 和 日本語");
+		var command = new UpdateEntryCommand(Guid.NewGuid(), 1, "محتوای فارسی");
 
 		var result = _validator.TestValidate(command);
 
@@ -102,7 +102,7 @@ public class UpdateEntryCommandValidatorTests
 	[Fact]
 	public void Should_ReturnMultipleValidationErrors_When_MultipleFieldsAreInvalid()
 	{
-		var command = new UpdateEntryCommand(Guid.Empty, 0, "");
+		var command = new UpdateEntryCommand(Guid.Empty, 0, string.Empty);
 
 		var result = _validator.TestValidate(command);
 

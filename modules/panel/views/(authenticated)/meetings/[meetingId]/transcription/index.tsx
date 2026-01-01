@@ -143,6 +143,16 @@ export default function TranscriptionView() {
     });
   };
 
+  const handleEntryDelete = (entryId: number) => {
+    setMeeting((prevMeeting) => {
+      if (!prevMeeting) return prevMeeting;
+      const updatedEntries = prevMeeting.entries.filter(
+        (entry) => entry.id !== entryId,
+      );
+      return { ...prevMeeting, entries: updatedEntries };
+    });
+  };
+
   if (loading) {
     return (
       <LoadingPage
@@ -223,6 +233,7 @@ export default function TranscriptionView() {
                       index={index}
                       meetingId={meetingId}
                       onEntryUpdate={handleEntryUpdate}
+                      onEntryDelete={handleEntryDelete}
                     />
                   ))
                 ) : (

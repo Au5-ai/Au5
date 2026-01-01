@@ -214,4 +214,15 @@ export const meetingsController = {
       },
     );
   },
+  deleteEntry: (
+    meetingId: string,
+    entryId: number,
+  ): Promise<{ isDeleted: boolean }> => {
+    return apiRequestClient<{ isDeleted: boolean }>(
+      API_URLS.MEETING.DELETE_ENTRY(meetingId, entryId),
+      {
+        method: "DELETE",
+      },
+    );
+  },
 };
