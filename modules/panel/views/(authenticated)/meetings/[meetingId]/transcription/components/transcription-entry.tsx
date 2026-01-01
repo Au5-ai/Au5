@@ -34,11 +34,13 @@ export default function TranscriptionEntry({
   participants,
   index,
   meetingId,
+  onEntryUpdate,
 }: {
   entry: Entry;
   participants: { fullName: string; pictureUrl?: string }[];
   index: number;
   meetingId: string;
+  onEntryUpdate: (entryId: number, newContent: string) => void;
 }) {
   const isChat = entry.entryType === "Chat";
   const [isEditing, setIsEditing] = useState(false);
@@ -74,7 +76,7 @@ export default function TranscriptionEntry({
     setIsSaving(true);
     try {
       await meetingsController.updateEntry(meetingId, entry.id, editedContent);
-      entry.content = editedContent;
+      onEntryUpdate(entry.id, editedContent);
       setIsEditing(false);
       toast.success(GLOBAL_CAPTIONS.pages.meetings.updateEntrySuccess);
     } catch (error) {

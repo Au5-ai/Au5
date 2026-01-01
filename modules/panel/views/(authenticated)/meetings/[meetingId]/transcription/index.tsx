@@ -133,6 +133,16 @@ export default function TranscriptionView() {
     }
   };
 
+  const handleEntryUpdate = (entryId: number, newContent: string) => {
+    setMeeting((prevMeeting) => {
+      if (!prevMeeting) return prevMeeting;
+      const updatedEntries = prevMeeting.entries.map((entry) =>
+        entry.id === entryId ? { ...entry, content: newContent } : entry,
+      );
+      return { ...prevMeeting, entries: updatedEntries };
+    });
+  };
+
   if (loading) {
     return (
       <LoadingPage
@@ -212,6 +222,7 @@ export default function TranscriptionView() {
                       entry={entry}
                       index={index}
                       meetingId={meetingId}
+                      onEntryUpdate={handleEntryUpdate}
                     />
                   ))
                 ) : (
