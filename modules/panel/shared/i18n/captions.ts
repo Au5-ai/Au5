@@ -166,6 +166,8 @@ export const GLOBAL_CAPTIONS = {
       renameError: "Failed to rename meeting. Please try again.",
       updateEntrySuccess: "Entry has been updated successfully",
       updateEntryError: "Failed to update entry. Please try again.",
+      deleteEntrySuccess: "Entry has been deleted successfully",
+      deleteEntryError: "Failed to delete entry. Please try again.",
     },
   },
 } as const;

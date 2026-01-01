@@ -4,6 +4,7 @@ using Au5.Application.Features.AI.GetAll;
 using Au5.Application.Features.Meetings.AddBot;
 using Au5.Application.Features.Meetings.AddParticipants;
 using Au5.Application.Features.Meetings.CloseMeetingByUser;
+using Au5.Application.Features.Meetings.DeleteEntry;
 using Au5.Application.Features.Meetings.Export;
 using Au5.Application.Features.Meetings.GetFullTranscription;
 using Au5.Application.Features.Meetings.PublicUrl;
@@ -137,6 +138,14 @@ public class MeetingsController(ISender mediator) : BaseController
 	public async Task<IActionResult> UpdateEntry([FromRoute] Guid meetingId, [FromRoute] int entryId, [FromBody] UpdateEntryBody body, CancellationToken cancellationToken)
 	{
 		var command = new UpdateEntryCommand(meetingId, entryId, body.Content);
+		return Ok(await mediator.Send(command, cancellationToken));
+	}
+
+	[HttpDelete("{meetingId}/entries/{entryId}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> DeleteEntry([FromRoute] Guid meetingId, [FromRoute] int entryId, CancellationToken cancellationToken)
+	{
+		var command = new DeleteEntryCommand(meetingId, entryId);
 		return Ok(await mediator.Send(command, cancellationToken));
 	}
 }

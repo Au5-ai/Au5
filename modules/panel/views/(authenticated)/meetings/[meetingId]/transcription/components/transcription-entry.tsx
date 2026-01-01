@@ -35,17 +35,20 @@ export default function TranscriptionEntry({
   index,
   meetingId,
   onEntryUpdate,
+  onEntryDelete,
 }: {
   entry: Entry;
   participants: { fullName: string; pictureUrl?: string }[];
   index: number;
   meetingId: string;
   onEntryUpdate: (entryId: number, newContent: string) => void;
+  onEntryDelete: (entryId: number) => void;
 }) {
   const isChat = entry.entryType === "Chat";
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(entry.content);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const getPicturesUrl = (fullName: string): string => {
     const participant = participants.find((p) => p.fullName === fullName);
@@ -84,6 +87,23 @@ export default function TranscriptionEntry({
       toast.error(GLOBAL_CAPTIONS.pages.meetings.updateEntryError);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!confirm("Are you sure you want to delete this entry?")) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await meetingsController.deleteEntry(meetingId, entry.id);
+      onEntryDelete(entry.id);
+      toast.success(GLOBAL_CAPTIONS.pages.meetings.deleteEntrySuccess);
+    } catch (error) {
+      console.error("Failed to delete entry:", error);
+      toast.error(GLOBAL_CAPTIONS.pages.meetings.deleteEntryError);
+      setIsDeleting(false);
     }
   };
 
@@ -138,17 +158,16 @@ export default function TranscriptionEntry({
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
+                        onClick={handleDelete}
                         size="sm"
                         variant="ghost"
+                        disabled={isDeleting}
                         className="rounded-xl transition-opacity px-2 hover:text-red-600 hover:bg-red-50">
                         <Trash className="w-3.5 h-3.5" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>
-                        {GLOBAL_CAPTIONS.actions.delete}
-                        {" - soon"}
-                      </p>
+                      <p>{GLOBAL_CAPTIONS.actions.delete}</p>
                     </TooltipContent>
                   </Tooltip>
                   <Tooltip>
