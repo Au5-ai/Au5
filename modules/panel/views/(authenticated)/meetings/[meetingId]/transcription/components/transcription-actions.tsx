@@ -9,6 +9,8 @@ import {
   FileText,
   FileDown,
   Pen,
+  Copy,
+  Link,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -160,8 +162,36 @@ export function TranscriptionActions({
     toast.info("PDF export feature coming soon!");
   };
 
+  const handleCopyUrl = async () => {
+    try {
+      const currentUrl = window.location.href;
+      await navigator.clipboard.writeText(currentUrl);
+      toast.success(GLOBAL_CAPTIONS.actions.copySuccess);
+    } catch (error) {
+      console.error("Failed to copy URL:", error);
+      toast.error("Failed to copy URL to clipboard");
+    }
+  };
+
   return (
     <div className="flex items-center gap-2 text-sm">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleCopyUrl}
+            disabled={!meetingId || !meetId}
+            className="h-8 gap-2 cursor-pointer hover:bg-gray-100">
+            <Link className="w-4 h-4" />
+            {GLOBAL_CAPTIONS.actions.copy}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Copy meeting URL to clipboard</p>
+        </TooltipContent>
+      </Tooltip>
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button

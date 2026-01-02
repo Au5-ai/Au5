@@ -39,6 +39,8 @@ export const GLOBAL_CAPTIONS = {
     saving: "Saving...",
     delete: "Delete",
     comment: "Comment",
+    copy: "Copy link",
+    copySuccess: "Link copied to clipboard",
   },
   participants: {
     addParticipants: "Add Participants",
