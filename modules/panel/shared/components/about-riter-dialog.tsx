@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/components/ui/dialog";
+import { PANEL_VERSION } from "../config";
 
 interface AboutRiterDialogProps {
   open: boolean;
@@ -26,7 +27,7 @@ export function AboutRiterDialog({
             <div className="space-y-4 pt-4">
               <div className="space-y-1">
                 <p className="text-sm font-medium text-foreground">Version</p>
-                <p className="text-sm text-muted-foreground">1.9.10</p>
+                <p className="text-sm text-muted-foreground">{PANEL_VERSION}</p>
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-foreground">
