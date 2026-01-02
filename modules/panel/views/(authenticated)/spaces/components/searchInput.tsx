@@ -122,7 +122,9 @@ export default function UserSearchInput({
               <CommandEmpty className="py-2  mt-2">
                 <div className="flex items-center justify-center text-gray-500">
                   <UserX className="w-5 h-5 mr-2" />
-                  <p>No users found</p>
+                  <p>
+                    No users found, please add user in User Management menu.
+                  </p>
                 </div>
               </CommandEmpty>
             )}
