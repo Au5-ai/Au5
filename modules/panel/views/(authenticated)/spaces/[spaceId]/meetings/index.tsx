@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { MeetingListSkeleton } from "@/shared/components/meetings/meeting-list-skeleton";
@@ -11,8 +11,12 @@ import { spaceController } from "@/shared/network/api/spaceController";
 import { GroupAvatar } from "@/shared/components/group-avatar";
 import AddMemberModal from "../../components/addMemberModal";
 import { toast } from "sonner";
+import { Button } from "@/shared/components/ui";
+import Image from "next/image";
+import { ROUTES } from "@/shared/routes";
 
 export default function SpaceMeetingsView() {
+  const router = useRouter();
   const params = useParams();
   const queryClient = useQueryClient();
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
@@ -56,6 +60,41 @@ export default function SpaceMeetingsView() {
     return <NetworkError />;
   }
 
+  if (meetings.length === 0) {
+    return (
+      <div className="w-full  border-0 h-full flex flex-col items-center justify-center py-16 px-6 text-center">
+        <div className="rounded-2xl flex items-center justify-center mb-6">
+          <Image
+            src="/assets/images/no-meeting-space.png"
+            alt="No Meetings"
+            width={400}
+            height={400}
+            className="border-0"
+          />
+        </div>
+
+        <div className="max-w-sm mx-auto space-y-3">
+          <h3 className={`text-xl font-semibold tracking-tight`}>
+            Welcome to your new space!
+          </h3>
+          <p className={`text-sm leading-relaxed`}>
+            Add some meetings to get started.
+          </p>
+        </div>
+
+        <div className="mt-8">
+          <Button
+            variant="outline"
+            onClick={() => {
+              router.push(ROUTES.MEETINGS.My);
+            }}>
+            Go to my meeting
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-1 flex-col">
       <div className="container px-6 py-4">
@@ -72,6 +111,7 @@ export default function SpaceMeetingsView() {
           )}
         </div>
       </div>
+
       <MeetingsList allowArchive={false} meetings={meetings} />
 
       <AddMemberModal
