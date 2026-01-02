@@ -5,8 +5,23 @@ import Logo from "@/shared/components/logo";
 import Image from "next/image";
 import { loginCaptions } from "./i18n";
 import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
+import { useState, useEffect } from "react";
 
 export default function LoginPage() {
+  const [currentTipIndex, setCurrentTipIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTipIndex(
+        (prevIndex) => (prevIndex + 1) % loginCaptions.tips.length,
+      );
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const currentTip = loginCaptions.tips[currentTipIndex];
+
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -26,8 +41,8 @@ export default function LoginPage() {
           </h2>
           <div className="mb-8">
             <Image
-              src="/assets/images/hi5.png"
-              alt="Welcome illustration"
+              src={currentTip.image}
+              alt="Tip illustration"
               width={256}
               height={256}
               className="object-contain"
@@ -35,7 +50,7 @@ export default function LoginPage() {
             />
           </div>
           <p className="text-black-100 text-lg leading-relaxed">
-            {loginCaptions.welcomeMessage}
+            {currentTip.text}
           </p>
         </div>
       </div>
