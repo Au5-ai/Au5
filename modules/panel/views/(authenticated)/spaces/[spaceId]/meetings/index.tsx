@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { Button } from "@/shared/components/ui";
 import Image from "next/image";
 import { ROUTES } from "@/shared/routes";
+import { GLOBAL_CAPTIONS } from "@/shared/i18n/captions";
 
 export default function SpaceMeetingsView() {
   const router = useRouter();
@@ -66,7 +67,7 @@ export default function SpaceMeetingsView() {
         <div className="rounded-2xl flex items-center justify-center mb-6">
           <Image
             src="/assets/images/no-meeting-space.png"
-            alt="No Meetings"
+            alt={GLOBAL_CAPTIONS.pages.spaceMeetings.empty.imageAlt}
             width={400}
             height={400}
             className="border-0"
@@ -75,10 +76,10 @@ export default function SpaceMeetingsView() {
 
         <div className="max-w-sm mx-auto space-y-3">
           <h3 className={`text-xl font-semibold tracking-tight`}>
-            Welcome to your new space!
+            {GLOBAL_CAPTIONS.pages.spaceMeetings.empty.title}
           </h3>
           <p className={`text-sm leading-relaxed`}>
-            Add some meetings to get started.
+            {GLOBAL_CAPTIONS.pages.spaceMeetings.empty.description}
           </p>
         </div>
 
@@ -88,7 +89,7 @@ export default function SpaceMeetingsView() {
             onClick={() => {
               router.push(ROUTES.MEETINGS.My);
             }}>
-            Go to my meeting
+            {GLOBAL_CAPTIONS.pages.spaceMeetings.empty.action}
           </Button>
         </div>
       </div>

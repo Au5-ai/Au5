@@ -173,5 +173,13 @@ export const GLOBAL_CAPTIONS = {
       deleteEntrySuccess: "Entry has been deleted successfully",
       deleteEntryError: "Failed to delete entry. Please try again.",
     },
+    spaceMeetings: {
+      empty: {
+        imageAlt: "No Meetings",
+        title: "Welcome to your new space!",
+        description: "Add some meetings to get started.",
+        action: "Go to my meeting",
+      },
+    },
   },
 } as const;
