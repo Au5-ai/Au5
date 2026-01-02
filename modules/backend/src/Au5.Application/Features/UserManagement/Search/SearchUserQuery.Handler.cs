@@ -20,7 +20,7 @@ public class SearchUserQueryHandler : IRequestHandler<SearchUserQuery, IReadOnly
 		}
 
 		var query = _context.Set<User>().Where(u => u.IsActive && u.OrganizationId == _currentUser.OrganizationId);
-		query = query.Where(u => u.FullName.StartsWith(request.Query) || u.Email.StartsWith(request.Query));
+		query = query.Where(u => u.FullName.StartsWith(request.Query));
 
 		var users = await query
 			.Select(u => new Participant
