@@ -39,6 +39,10 @@ export const GLOBAL_CAPTIONS = {
     saving: "Saving...",
     delete: "Delete",
     comment: "Comment",
+    copy: "Copy link",
+    copySuccess: "Link copied to clipboard",
+    copyError: "Failed to copy URL to clipboard",
+    copyTooltip: "Copy meeting URL to clipboard",
   },
   participants: {
     addParticipants: "Add Participants",
@@ -168,6 +172,14 @@ export const GLOBAL_CAPTIONS = {
       updateEntryError: "Failed to update entry. Please try again.",
       deleteEntrySuccess: "Entry has been deleted successfully",
       deleteEntryError: "Failed to delete entry. Please try again.",
+    },
+    spaceMeetings: {
+      empty: {
+        imageAlt: "No Meetings",
+        title: "Welcome to your new space!",
+        description: "Add some meetings to get started.",
+        action: "Go to my meeting",
+      },
     },
   },
 } as const;

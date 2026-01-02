@@ -5,6 +5,7 @@ export const ROUTES = {
   PLAYGROUND: "/playground",
   FORBIDDEN: "/403",
   MEETINGS: {
+    My: "/meetings/my",
     ROOT: "/meetings",
     TRANSCRIPTION: (meetingId: string) =>
       `/meetings/${meetingId}/transcription`,
