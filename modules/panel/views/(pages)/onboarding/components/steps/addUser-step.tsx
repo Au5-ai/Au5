@@ -135,6 +135,7 @@ export function AddUserStep({ next, ...props }: { next: () => void }) {
                   <Input
                     id="fullname"
                     type="text"
+                    placeholder="Enter first and last name"
                     value={formData.fullname}
                     onChange={(e) =>
                       handleInputChange("fullname", e.target.value)

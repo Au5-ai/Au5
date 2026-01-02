@@ -4,4 +4,5 @@ export const CAPTIONS = {
   signupTitle: "Create Account",
   signupDescription: "Enter your details to create your account",
   downloadButtonText: "Add to Chrome - It's free!",
+  refreshAndContinueButton: "Refresh & Continue",
 } as const;
