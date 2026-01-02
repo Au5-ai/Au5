@@ -38,7 +38,7 @@ export default function SignupClient() {
       <div className="flex flex-col gap-6">
         <Logo href="#" text={GLOBAL_CAPTIONS.brandName} />
         <div className="flex items-center justify-center w-[800px]">
-          <div className="flex rounded-xl border shadow-sm w-full h-[600px] gap-2 bg-card text-card-foreground">
+          <div className="flex rounded-xl border shadow-sm w-full gap-2 bg-card text-card-foreground">
             <div className="w-64 p-4 bg-muted rounded-tr-none rounded-br-none rounded-xl">
               <div className="flex flex-col">
                 {Steps.map((step, index) => {
