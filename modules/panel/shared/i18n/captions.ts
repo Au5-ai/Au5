@@ -41,6 +41,8 @@ export const GLOBAL_CAPTIONS = {
     comment: "Comment",
     copy: "Copy link",
     copySuccess: "Link copied to clipboard",
+    copyError: "Failed to copy URL to clipboard",
+    copyTooltip: "Copy meeting URL to clipboard",
   },
   participants: {
     addParticipants: "Add Participants",

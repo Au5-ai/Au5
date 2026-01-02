@@ -169,7 +169,7 @@ export function TranscriptionActions({
       toast.success(GLOBAL_CAPTIONS.actions.copySuccess);
     } catch (error) {
       console.error("Failed to copy URL:", error);
-      toast.error("Failed to copy URL to clipboard");
+      toast.error(GLOBAL_CAPTIONS.actions.copyError);
     }
   };
 
@@ -188,7 +188,7 @@ export function TranscriptionActions({
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>Copy meeting URL to clipboard</p>
+          <p>{GLOBAL_CAPTIONS.actions.copyTooltip}</p>
         </TooltipContent>
       </Tooltip>
 
